@@ -30,6 +30,10 @@
 								click: $.proxy(this.click, this)//,
 								//mousedown: $.proxy(this.mousedown, this)
 							});
+
+		var classes = 'undefined' !== typeof options.classes ? options.classes : '';
+		this.picker.addClass( classes );
+
 		this.isInput = this.element.is('input');
 		this.component = this.element.is('.date') ? this.element.find('.add-on') : false;
 
@@ -136,6 +140,8 @@
 			} else {
 				this.element.prop('value', formated);
 			}
+
+			$(document).trigger('mec_month_picker_date_set', [ this ] );
 		},
 
 		setValue: function(newDate) {
@@ -332,7 +338,7 @@
 		}
 	};
 
-	$.fn.datepicker = function ( option, val ) {
+	$.fn.monthPicker = function ( option, val ) {
 		return this.each(function () {
 			var $this = $(this),
 				data = $this.data('datepicker'),
@@ -444,7 +450,7 @@
 						'</thead>',
 		contTemplate: '<tbody><tr><td colspan="7"></td></tr></tbody>'
 	};
-	DPGlobal.template = '<div class="datepicker dropdown-menu">'+
+	DPGlobal.template = '<div class="mec-month-picker datepicker dropdown-menu">'+
 							'<div class="datepicker-days">'+
 								'<table class=" table-condensed">'+
 									DPGlobal.headTemplate+

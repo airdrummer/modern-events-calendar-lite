@@ -4,6 +4,12 @@ defined('MECEXEC') or die();
 
 /** @var MEC_skin_single $this */
 /** @var boolean $fes */
+/** @var stdClass $event */
+/** @var string $event_colorskin */
+/** @var string $occurrence */
+/** @var array $occurrence_full */
+/** @var string $occurrence_end_date */
+/** @var array $occurrence_end_full */
 
 /**
  * TODO: Optimize
@@ -23,7 +29,7 @@ $more_info = (isset($event->data->meta['mec_more_info']) and trim($event->data->
 if(isset($event->date) and isset($event->date['start']) and isset($event->date['start']['timestamp'])) $more_info = MEC_feature_occurrences::param($event->ID, $event->date['start']['timestamp'], 'more_info', $more_info);
 
 $more_info_target = MEC_feature_occurrences::param($event->ID, $event->date['start']['timestamp'], 'more_info_target', (isset($event->data->meta['mec_more_info_target']) ? $event->data->meta['mec_more_info_target'] : '_self'));
-$more_info_title = MEC_feature_occurrences::param($event->ID, $event->date['start']['timestamp'], 'more_info_title', ((isset($event->data->meta['mec_more_info_title']) and trim($event->data->meta['mec_more_info_title'])) ? $event->data->meta['mec_more_info_title'] : esc_html__('Read More', 'modern-events-calendar-lite')));
+$more_info_title = MEC_feature_occurrences::param($event->ID, $event->date['start']['timestamp'], 'more_info_title', ((isset($event->data->meta['mec_more_info_title']) and trim($event->data->meta['mec_more_info_title'])) ? $event->data->meta['mec_more_info_title'] : esc_html__('Read More', 'modern-events-calendar-lite' )));
 
 $location_id = $this->main->get_master_location_id($event);
 $location = ($location_id ? $this->main->get_location_data($location_id) : array());
@@ -52,10 +58,11 @@ $cost = $this->main->get_event_cost($event);
         <!-- end breadcrumbs -->
 
         <div class="mec-events-event-image">
-            <?php echo MEC_kses::element($event->data->thumbnails['full']); ?>
-            <?php if(isset($settings['featured_image_caption']) and $settings['featured_image_caption']) echo MEC_kses::element($this->main->display_featured_image_caption($event)); ?>
+            <?php echo MEC_kses::element($this->display_image_module($event)); ?>
             <?php do_action('mec_custom_dev_image_section', $event); ?>
         </div>
+
+        <?php echo MEC_kses::full($this->main->display_progress_bar($event)); ?>
 
         <div class="col-md-4<?php if(empty($event->data->thumbnails['full'])) echo ' mec-no-image'; ?>">
 
@@ -68,7 +75,9 @@ $cost = $this->main->get_event_cost($event);
                     $GLOBALS['mec-widget-single'] = $this;
                     $GLOBALS['mec-widget-event'] = $event;
                     $GLOBALS['mec-widget-occurrence'] = $occurrence;
+                    $GLOBALS['mec-widget-occurrence_full'] = $occurrence_full;
                     $GLOBALS['mec-widget-occurrence_end_date'] = $occurrence_end_date;
+                    $GLOBALS['mec-widget-occurrence_end_full'] = $occurrence_end_full;
                     $GLOBALS['mec-widget-cost'] = $cost;
                     $GLOBALS['mec-widget-more_info'] = $more_info;
                     $GLOBALS['mec-widget-location_id'] = $location_id;
@@ -82,7 +91,7 @@ $cost = $this->main->get_event_cost($event);
                     dynamic_sidebar('mec-single-sidebar');
                 ?>
             <?php elseif(current_user_can('edit_theme_options')): ?>
-            <p class="mec-widget-activation-guide"><?php echo sprintf(esc_html__('You should add MEC Single Sidebar Items to the MEC Single Sidebar in %s menu.', 'modern-events-calendar-lite'), '<a href="'.esc_url(get_admin_url(NULL, 'widgets.php')).'" target="_blank">'.esc_html__('Widgets', 'modern-events-calendar-lite').'</a>'); ?></p>
+            <p class="mec-widget-activation-guide"><?php echo sprintf(esc_html__('You should add MEC Single Sidebar Items to the MEC Single Sidebar in %s menu.', 'modern-events-calendar-lite' ), '<a href="'.esc_url(get_admin_url(NULL, 'widgets.php')).'" target="_blank">'.esc_html__('Widgets', 'modern-events-calendar-lite' ).'</a>'); ?></p>
             <?php endif; ?>
 
         </div>
@@ -96,16 +105,18 @@ $cost = $this->main->get_event_cost($event);
                     ?>
                         <div class="mec-single-event-date">
                             <i class="mec-sl-calendar"></i>
-                            <h3 class="mec-date"><?php esc_html_e('Date', 'modern-events-calendar-lite'); ?></h3>
+                            <h3 class="mec-date"><?php esc_html_e('Date', 'modern-events-calendar-lite' ); ?></h3>
                             <dl>
                             <?php if($midnight_event): ?>
                             <dd><abbr class="mec-events-abbr"><?php echo MEC_kses::element($this->main->dateify($event, $this->date_format1)); ?></abbr></dd>
                             <?php else: ?>
-                            <dd><abbr class="mec-events-abbr"><?php echo MEC_kses::element($this->main->date_label((trim($occurrence) ? array('date' => $occurrence) : $event->date['start']), (trim($occurrence_end_date) ? array('date' => $occurrence_end_date) : (isset($event->date['end']) ? $event->date['end'] : NULL)), $this->date_format1, ' - ', true, 0, $event)); ?></abbr></dd>
+                            <dd><abbr class="mec-events-abbr"><?php echo MEC_kses::element($this->main->date_label($occurrence_full, $occurrence_end_full, $this->date_format1, ' - ', true, 0, $event)); ?></abbr></dd>
                             <?php endif; ?>
                             </dl>
                             <?php echo MEC_kses::element($this->main->holding_status($event)); ?>
                         </div>
+
+                        <?php do_action( 'mec_single_after_event_date', $event ) ?>
 
                         <?php
                         if(isset($event->data->meta['mec_hide_time']) and $event->data->meta['mec_hide_time'] == '0')
@@ -115,13 +126,13 @@ $cost = $this->main->get_event_cost($event);
                             ?>
                             <div class="mec-single-event-time">
                                 <i class="mec-sl-clock " style=""></i>
-                                <h3 class="mec-time"><?php esc_html_e('Time', 'modern-events-calendar-lite'); ?></h3>
+                                <h3 class="mec-time"><?php esc_html_e('Time', 'modern-events-calendar-lite' ); ?></h3>
                                 <i class="mec-time-comment"><?php echo (isset($time_comment) ? esc_html($time_comment) : ''); ?></i>
                                 <dl>
                                 <?php if($allday == '0' and isset($event->data->time) and trim($event->data->time['start'])): ?>
                                 <dd><abbr class="mec-events-abbr"><?php echo esc_html($event->data->time['start']); ?><?php echo (trim($event->data->time['end']) ? ' - '.esc_html($event->data->time['end']) : ''); ?></abbr></dd>
                                 <?php else: ?>
-                                <dd><abbr class="mec-events-abbr"><?php echo esc_html($this->main->m('all_day', esc_html__('All Day' , 'modern-events-calendar-lite'))); ?></abbr></dd>
+                                <dd><abbr class="mec-events-abbr"><?php echo esc_html($this->main->m('all_day', esc_html__('All Day' , 'modern-events-calendar-lite' ))); ?></abbr></dd>
                                 <?php endif; ?>
                                 </dl>
                             </div>
@@ -136,7 +147,7 @@ $cost = $this->main->get_event_cost($event);
                         ?>
                         <div class="mec-event-cost">
                             <i class="mec-sl-wallet"></i>
-                            <h3 class="mec-cost"><?php echo esc_html($this->main->m('cost', esc_html__('Cost', 'modern-events-calendar-lite'))); ?></h3>
+                            <h3 class="mec-cost"><?php echo esc_html($this->main->m('cost', esc_html__('Cost', 'modern-events-calendar-lite' ))); ?></h3>
                             <dl><dd class="mec-events-event-cost"><?php echo MEC_kses::element($cost); ?></dd></dl>
                         </div>
                         <?php
@@ -151,7 +162,7 @@ $cost = $this->main->get_event_cost($event);
                     $mec_i = 0; ?>
                     <div class="mec-single-event-label">
                         <i class="mec-fa-bookmark-o"></i>
-                        <h3 class="mec-cost"><?php echo esc_html($this->main->m('taxonomy_labels', esc_html__('Labels', 'modern-events-calendar-lite'))); ?></h3>
+                        <h3 class="mec-cost"><?php echo esc_html($this->main->m('taxonomy_labels', esc_html__('Labels', 'modern-events-calendar-lite' ))); ?></h3>
                         <?php
                             foreach($event->data->labels as $labels=>$label)
                             {
@@ -169,6 +180,7 @@ $cost = $this->main->get_event_cost($event);
                 <?php echo MEC_kses::element($this->main->display_cancellation_reason($event, $this->display_cancellation_reason)); ?>
                 <h1 class="mec-single-title"><?php the_title(); ?></h1>
                 <div class="mec-single-event-description mec-events-content"><?php the_content(); ?><?php do_action('mec_custom_dev_content_section', $event); ?></div>
+                <?php echo MEC_kses::full($this->display_trailer_url($event)); ?>
                 <?php echo MEC_kses::element($this->display_disclaimer($event)); ?>
             </div>
 
@@ -176,6 +188,9 @@ $cost = $this->main->get_event_cost($event);
 
             <!-- Custom Data Fields -->
             <?php $this->display_data_fields($event); ?>
+
+            <!-- FAQ -->
+            <?php $this->display_faq($event); ?>
 
             <!-- Links Module -->
             <?php echo MEC_kses::full($this->main->module('links.details', array('event' => $event))); ?>
@@ -202,7 +217,7 @@ $cost = $this->main->get_event_cost($event);
 
 			<!-- Booking Module -->
             <?php if($this->main->is_sold($event) and count($event->dates) <= 1): ?>
-            <div id="mec-events-meta-group-booking-<?php echo esc_attr($this->uniqueid); ?>" class="mec-sold-tickets warning-msg"><?php esc_html_e('Sold out!', 'modern-events-calendar-lite'); do_action( 'mec_booking_sold_out',$event, null,null,array($event->date) );?> </div>
+            <div id="mec-events-meta-group-booking-<?php echo esc_attr($this->uniqueid); ?>" class="mec-sold-tickets warning-msg"><?php esc_html_e('Sold out!', 'modern-events-calendar-lite' ); do_action( 'mec_booking_sold_out',$event, null,null,array($event->date) );?> </div>
             <?php elseif($this->main->can_show_booking_module($event)): ?>
             <?php $data_lity_class = ''; if(isset($settings['single_booking_style']) and $settings['single_booking_style'] == 'modal' ) $data_lity_class = 'lity-hide '; ?>
             <div class="mec-single-event <?php echo esc_attr($data_lity_class); ?>" id="mec-events-meta-group-booking-box-<?php echo esc_attr($this->uniqueid); ?>">
@@ -218,7 +233,7 @@ $cost = $this->main->get_event_cost($event);
 
             <!-- Tags -->
             <div class="mec-events-meta-group mec-events-meta-group-tags">
-                <?php echo get_the_term_list(get_the_ID(), apply_filters('mec_taxonomy_tag', ''), esc_html__('Tags: ', 'modern-events-calendar-lite'), ', ', '<br />'); ?>
+                <?php echo get_the_term_list(get_the_ID(), apply_filters('mec_taxonomy_tag', ''), esc_html__('Tags: ', 'modern-events-calendar-lite' ), ', ', '<br />'); ?>
             </div>
 
         </div>
@@ -233,12 +248,14 @@ $cost = $this->main->get_event_cost($event);
     if($rank_math_options != 'event') do_action('mec_schema', $event);
 ?>
 <script>
-jQuery(".mec-speaker-avatar a").on('click', function(e)
+jQuery(".mec-speaker-avatar a, .mec-schedule-speakers a").on('click', function(e)
 {
     e.preventDefault();
 
     var id = jQuery(this).attr('href');
     lity(id);
+
+    return false;
 });
 
 // Fix modal booking in some themes
@@ -248,5 +265,7 @@ jQuery(".mec-booking-button.mec-booking-data-lity").on('click', function(e)
 
     var book_id = jQuery(this).attr('href');
     lity(book_id);
+
+    return false;
 });
 </script>

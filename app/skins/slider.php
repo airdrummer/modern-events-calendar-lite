@@ -163,7 +163,7 @@ class MEC_skin_slider extends MEC_skins
         $this->args['paged'] = $this->paged;
         
         // Sort Options
-        $this->args['orderby'] = 'meta_value_num';
+        $this->args['orderby'] = 'mec_start_day_seconds ID';
         $this->args['order'] = 'ASC';
         $this->args['meta_key'] = 'mec_start_day_seconds';
 
@@ -185,6 +185,21 @@ class MEC_skin_slider extends MEC_skins
         
         // We will extend the end date in the loop
         $this->end_date = $this->start_date;
+
+        // Show Ongoing Events
+        $this->show_ongoing_events = (isset($this->atts['show_only_ongoing_events']) and trim($this->atts['show_only_ongoing_events'])) ? '1' : '0';
+        if($this->show_ongoing_events)
+        {
+            $this->args['mec-show-ongoing-events'] = $this->show_ongoing_events;
+            if((strpos($this->style, 'fluent') === false && strpos($this->style, 'liquid') === false))
+            {
+                $this->maximum_date = $this->start_date;
+            }
+        }
+
+        // Include Ongoing Events
+        $this->include_ongoing_events = (isset($this->atts['show_ongoing_events']) and trim($this->atts['show_ongoing_events'])) ? '1' : '0';
+        if($this->include_ongoing_events) $this->args['mec-include-ongoing-events'] = $this->include_ongoing_events;
         
         // Apply Maximum Date
         $apply_sf_date = isset($_REQUEST['apply_sf_date']) ? sanitize_text_field($_REQUEST['apply_sf_date']) : 0;

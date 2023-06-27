@@ -134,7 +134,7 @@ class MEC_skin_yearly_view extends MEC_skins
         $this->args['paged'] = $this->paged;
 
         // Sort Options
-        $this->args['orderby'] = 'meta_value_num';
+        $this->args['orderby'] = 'mec_start_day_seconds ID';
         $this->args['order'] = 'ASC';
         $this->args['meta_key'] = 'mec_start_day_seconds';
 
@@ -155,6 +155,14 @@ class MEC_skin_yearly_view extends MEC_skins
 
         // We will extend the end date in the loop
         $this->end_date = $this->start_date;
+
+        // Show Ongoing Events
+        $this->show_ongoing_events = (isset($this->atts['show_only_ongoing_events']) and trim($this->atts['show_only_ongoing_events'])) ? '1' : '0';
+        if($this->show_ongoing_events) $this->args['mec-show-ongoing-events'] = $this->show_ongoing_events;
+
+        // Include Ongoing Events
+        $this->include_ongoing_events = (isset($this->atts['show_ongoing_events']) and trim($this->atts['show_ongoing_events'])) ? '1' : '0';
+        if($this->include_ongoing_events) $this->args['mec-include-ongoing-events'] = $this->include_ongoing_events;
 
         // Months to Display
         $this->months_to_display = (isset($this->skin_options['months']) and is_array($this->skin_options['months']) and count($this->skin_options['months'])) ? $this->skin_options['months'] : array();

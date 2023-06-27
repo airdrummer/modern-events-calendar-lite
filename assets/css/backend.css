@@ -651,6 +651,10 @@ body.post-type-mec-books th.column-author {
 	overflow: auto;
 }
 
+.mec-form-row.mec-last-tooltip {
+	padding-bottom: 100px !important;
+}
+
 .mec-tooltip {
 	display: inline;
 	position: relative;
@@ -1321,6 +1325,7 @@ body.post-type-mec-books th.column-author {
 
 .wns-be-main .mec-form-row input[type='number'],
 .wns-be-main .mec-form-row input[type='text'],
+.wns-be-main .mec-form-row input[type='password'],
 .wns-be-main .mec-form-row input[type='url'],
 .wns-be-main .mec-form-row select,
 .wns-be-main .mec-form-row textarea {
@@ -1469,6 +1474,7 @@ body.post-type-mec-books th.column-author {
 	line-height: 1;
 	font-weight: 600;
 	padding-top: 10px;
+	display: inline-block;
 }
 
 .mec-form-row input[type='checkbox'] + label {
@@ -1929,7 +1935,7 @@ div#booking_notification_section iframe {
 }
 
 .mec-switcher input + label {
-	display: block;
+	display: inline-block;
 	position: relative;
 	cursor: pointer;
 	outline: 0;
@@ -6179,6 +6185,26 @@ body .csh-category-item a h6 {
 	margin: 10px 0;
 }
 
+li.wns-be-group-menu-li.mec-settings-menu a svg{
+    position: absolute;
+    margin-top: 2px;
+}
+
+li.wns-be-group-menu-li.mec-settings-menu a svg{
+    fill: #A0ABB5;
+    stroke: #A0ABB5;
+}
+
+li.wns-be-group-menu-li.mec-settings-menu:hover a svg{
+    fill: #07bbe9;
+    stroke: #07bbe9;
+}
+
+li.wns-be-group-menu-li.mec-settings-menu.active a svg{
+    fill: #07bbe9;
+    stroke: #07bbe9;
+}
+
 li.wns-be-group-menu-li.mec-settings-menu .mec-settings-submenu {
 	position: absolute;
 	top: -1px;
@@ -7063,6 +7089,7 @@ a.mec-create-shortcode-tabs-link {
 .mec-form-row input[type='number'],
 .mec-form-row input[type='tel'],
 .mec-form-row input[type='text'],
+.mec-form-row input[type='password'],
 .mec-form-row input[type='url'],
 .mec-form-row select,
 .mec-form-row textarea,
@@ -7320,7 +7347,8 @@ a.mec-create-shortcode-tabs-link {
 #mec-hourly-schedule .mec-form-row .mec-col-1 .button,
 #mec-hourly-schedule .mec-form-row.mec-box .button,
 #taxes_option #mec_fees_list .mec-form-row .button,
-#ticket_variations_option #mec_ticket_variations_list .mec-form-row .button {
+#ticket_variations_option #mec_ticket_variations_list .mec-form-row .button,
+#mec_faq_list .mec-faq-actions .mec-faq-remove {
 	color: #ea6485;
 	border-color: #ea6485;
 }
@@ -7328,7 +7356,8 @@ a.mec-create-shortcode-tabs-link {
 #mec-hourly-schedule .mec-form-row .mec-col-1 .button:hover,
 #mec-hourly-schedule .mec-form-row.mec-box .button:hover,
 #taxes_option #mec_fees_list .mec-form-row .button:hover,
-#ticket_variations_option #mec_ticket_variations_list .mec-form-row .button:hover {
+#ticket_variations_option #mec_ticket_variations_list .mec-form-row .button:hover,
+#mec_faq_list .mec-faq-actions .mec-faq-remove:hover {
 	background: rgb(234 100 133 / 0.1);
 }
 
@@ -7596,7 +7625,7 @@ a.mec-create-shortcode-tabs-link {
 
 #mec-wrap .nav-tab-wrapper .nav-tab {
 	position: relative;
-	padding: 28px 22px;
+	padding: 28px 17px;
 	border: none;
 	margin: 0;
 	background: #fff;
@@ -13590,6 +13619,16 @@ div#mec_cancelled_reason_wrapper label {
 	letter-spacing: 0.4px;
 }
 
+/* Disabled date style */
+
+.post-type-mec-events .ui-datepicker.ui-widget .ui-state-disabled .ui-state-default {
+    color: #ccc;
+	width: 30px;
+    height: 30px;
+	line-height: 30px;
+    display: inline-block;
+}
+
 /* Strong Datepicker For Single Event Page & Shortcode Page */
 .post-type-mec_calendars .ui-datepicker.ui-widget .ui-state-default,
 .post-type-mec_calendars .ui-datepicker.ui-widget .ui-widget-content .ui-state-default,
@@ -14141,4 +14180,84 @@ textarea.mec-error {
 .m-e-calendar_page_MEC-settings .mec-custom-msg-notification-wrap,
 .m-e-calendar_page_MEC-settings .wns-be-container .mec-addons-notification-wrap {
 	max-width: 1020px;
+}
+
+/* MEC Event Gallery */
+#mec-event-gallery ul#mec_meta_box_event_gallery {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+#mec-event-gallery ul#mec_meta_box_event_gallery li {
+    flex: 0 1 calc(20% - 20px);
+    margin-right: 20px;
+    position: relative;
+}
+
+#mec-event-gallery ul#mec_meta_box_event_gallery li img {
+    width: 100% !important;
+}
+
+#mec-event-gallery ul#mec_meta_box_event_gallery li span.mec-event-gallery-delete {
+    padding: 0;
+    min-height: 20px;
+    height: 20px;
+    width: 20px;
+    margin: 0;
+    border-radius: 50%;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    box-shadow: none;
+    background: #fff;
+    border-color: #e3e4e5;
+    font-size: 0px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+#mec-event-gallery ul#mec_meta_box_event_gallery li span.mec-event-gallery-delete:before {
+    content:'';
+    width: 20px;
+    height: 20px;
+    display: block;
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBhcmlhLWhpZGRlbj0idHJ1ZSIgZm9jdXNhYmxlPSJmYWxzZSIgd2lkdGg9IjFlbSIgaGVpZ2h0PSIxZW0iIHN0eWxlPSItbXMtdHJhbnNmb3JtOiByb3RhdGUoMzYwZGVnKTsgLXdlYmtpdC10cmFuc2Zvcm06IHJvdGF0ZSgzNjBkZWcpOyB0cmFuc2Zvcm06IHJvdGF0ZSgzNjBkZWcpOyIgcHJlc2VydmVBc3BlY3RSYXRpbz0ieE1pZFlNaWQgbWVldCIgdmlld0JveD0iMCAwIDIwIDIwIiBmaWxsPSIjZWE2NDg1Ij48cGF0aCBkPSJNMTQuOTUgNi40NkwxMS40MSAxMGwzLjU0IDMuNTRsLTEuNDEgMS40MUwxMCAxMS40MmwtMy41MyAzLjUzbC0xLjQyLTEuNDJMOC41OCAxMEw1LjA1IDYuNDdsMS40Mi0xLjQyTDEwIDguNThsMy41NC0zLjUzeiIvPjwvc3ZnPg==");
+    background-position: center;
+}
+
+#mec-event-gallery ul#mec_meta_box_event_gallery li span.mec-event-gallery-delete:hover {
+    color: #fff;
+    border-color: #ea6485;
+    background: #ea6485;
+}
+
+#mec-event-gallery ul#mec_meta_box_event_gallery li span.mec-event-gallery-delete:hover:before {
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBhcmlhLWhpZGRlbj0idHJ1ZSIgZm9jdXNhYmxlPSJmYWxzZSIgd2lkdGg9IjFlbSIgaGVpZ2h0PSIxZW0iIHN0eWxlPSItbXMtdHJhbnNmb3JtOiByb3RhdGUoMzYwZGVnKTsgLXdlYmtpdC10cmFuc2Zvcm06IHJvdGF0ZSgzNjBkZWcpOyB0cmFuc2Zvcm06IHJvdGF0ZSgzNjBkZWcpOyIgcHJlc2VydmVBc3BlY3RSYXRpbz0ieE1pZFlNaWQgbWVldCIgdmlld0JveD0iMCAwIDIwIDIwIiBmaWxsPSIjZmZmZmZmIj48cGF0aCBkPSJNMTQuOTUgNi40NkwxMS40MSAxMGwzLjU0IDMuNTRsLTEuNDEgMS40MUwxMCAxMS40MmwtMy41MyAzLjUzbC0xLjQyLTEuNDJMOC41OCAxMEw1LjA1IDYuNDdsMS40Mi0xLjQyTDEwIDguNThsMy41NC0zLjUzeiIvPjwvc3ZnPg==");
+}
+
+.mec-show-hide-password {
+	cursor: pointer;
+}
+
+.mec-show-hide-password:hover {
+	text-decoration: underline;
+}
+
+.mec-in-days-add-mode #mec_edit_in_days, .mec-in-days-add-mode #mec_cancel_in_days, .mec-in-days-edit-mode #mec_add_in_days {
+	display: none;
+}
+
+.mec-in-days-edit-mode #mec_edit_in_days, .mec-in-days-edit-mode #mec_cancel_in_days, .mec-in-days-add-mode #mec_add_in_days {
+	display: inline;
+}
+
+/* System Information */
+
+ul.system-information li {
+    display: flex;
+}
+
+ul.system-information li .mec-si-label {
+    width: 250px;
+    font-weight: 500
 }

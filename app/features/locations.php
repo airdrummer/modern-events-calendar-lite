@@ -58,8 +58,8 @@ class MEC_feature_locations extends MEC_base
      */
     public function register_taxonomy()
     {
-        $singular_label = $this->main->m('taxonomy_location', esc_html__('Location', 'modern-events-calendar-lite'));
-        $plural_label = $this->main->m('taxonomy_locations', esc_html__('Locations', 'modern-events-calendar-lite'));
+        $singular_label = $this->main->m('taxonomy_location', esc_html__('Location', 'modern-events-calendar-lite' ));
+        $plural_label = $this->main->m('taxonomy_locations', esc_html__('Locations', 'modern-events-calendar-lite' ));
 
         register_taxonomy(
             'mec_location',
@@ -69,16 +69,16 @@ class MEC_feature_locations extends MEC_base
                 'labels'=>array(
                     'name'=>$plural_label,
                     'singular_name'=>$singular_label,
-                    'all_items'=>sprintf(esc_html__('All %s', 'modern-events-calendar-lite'), $plural_label),
-                    'edit_item'=>sprintf(esc_html__('Edit %s', 'modern-events-calendar-lite'), $singular_label),
-                    'view_item'=>sprintf(esc_html__('View %s', 'modern-events-calendar-lite'), $singular_label),
-                    'update_item'=>sprintf(esc_html__('Update %s', 'modern-events-calendar-lite'), $singular_label),
-                    'add_new_item'=>sprintf(esc_html__('Add New %s', 'modern-events-calendar-lite'), $singular_label),
-                    'new_item_name'=>sprintf(esc_html__('New %s Name', 'modern-events-calendar-lite'), $singular_label),
-                    'popular_items'=>sprintf(esc_html__('Popular %s', 'modern-events-calendar-lite'), $plural_label),
-                    'search_items'=>sprintf(esc_html__('Search %s', 'modern-events-calendar-lite'), $plural_label),
-                    'back_to_items'=>sprintf(esc_html__('← Back to %s', 'modern-events-calendar-lite'), $plural_label),
-                    'not_found'=>sprintf(esc_html__('no %s found.', 'modern-events-calendar-lite'), strtolower($plural_label)),
+                    'all_items'=>sprintf(esc_html__('All %s', 'modern-events-calendar-lite' ), $plural_label),
+                    'edit_item'=>sprintf(esc_html__('Edit %s', 'modern-events-calendar-lite' ), $singular_label),
+                    'view_item'=>sprintf(esc_html__('View %s', 'modern-events-calendar-lite' ), $singular_label),
+                    'update_item'=>sprintf(esc_html__('Update %s', 'modern-events-calendar-lite' ), $singular_label),
+                    'add_new_item'=>sprintf(esc_html__('Add New %s', 'modern-events-calendar-lite' ), $singular_label),
+                    'new_item_name'=>sprintf(esc_html__('New %s Name', 'modern-events-calendar-lite' ), $singular_label),
+                    'popular_items'=>sprintf(esc_html__('Popular %s', 'modern-events-calendar-lite' ), $plural_label),
+                    'search_items'=>sprintf(esc_html__('Search %s', 'modern-events-calendar-lite' ), $plural_label),
+                    'back_to_items'=>sprintf(esc_html__('← Back to %s', 'modern-events-calendar-lite' ), $plural_label),
+                    'not_found'=>sprintf(esc_html__('no %s found.', 'modern-events-calendar-lite' ), strtolower($plural_label)),
                 ),
                 'rewrite'=>array('slug'=>'events-location'),
                 'public'=>false,
@@ -100,6 +100,7 @@ class MEC_feature_locations extends MEC_base
         $this->main->load_map_assets(true);
 
         $address = get_metadata('term', $term->term_id, 'address', true);
+        $opening_hour = get_metadata('term', $term->term_id, 'opening_hour', true);
         $latitude = get_metadata('term', $term->term_id, 'latitude', true);
         $longitude = get_metadata('term', $term->term_id, 'longitude', true);
         $url = get_metadata('term', $term->term_id, 'url', true);
@@ -111,10 +112,10 @@ class MEC_feature_locations extends MEC_base
     ?>
         <tr class="form-field">
             <th scope="row">
-                <label for="mec_address"><?php esc_html_e('Address', 'modern-events-calendar-lite'); ?></label>
+                <label for="mec_address"><?php esc_html_e('Address', 'modern-events-calendar-lite' ); ?></label>
             </th>
             <td>
-                <input class="mec-has-tip" type="text" placeholder="<?php esc_attr_e('Enter the location address', 'modern-events-calendar-lite'); ?>" name="address" id="mec_address" value="<?php echo esc_attr($address); ?>" />
+                <input class="mec-has-tip" type="text" placeholder="<?php esc_attr_e('Enter the location address', 'modern-events-calendar-lite' ); ?>" name="address" id="mec_address" value="<?php echo esc_attr($address); ?>" />
 
                 <?php if($status and trim($api_key)): ?>
                 <script>
@@ -131,38 +132,46 @@ class MEC_feature_locations extends MEC_base
         </tr>
         <tr class="form-field">
             <th scope="row">
-                <label for="mec_latitude"><?php esc_html_e('Latitude', 'modern-events-calendar-lite'); ?></label>
+                <label for="mec_opening_hour"><?php esc_html_e('Opening Hour', 'modern-events-calendar-lite' ); ?></label>
             </th>
             <td>
-                <input class="mec-has-tip" type="text" placeholder="<?php esc_attr_e('Geo latitude (Optional for Lite)', 'modern-events-calendar-lite'); ?>" name="latitude" id="mec_latitude" value="<?php echo esc_attr($latitude); ?>" />
+                <input type="text" placeholder="<?php esc_attr_e('Opening hour in text format like 09:15 or 18:30', 'modern-events-calendar-lite' ); ?>" name="opening_hour" id="mec_opening_hour" value="<?php echo esc_attr($opening_hour); ?>" />
             </td>
         </tr>
         <tr class="form-field">
             <th scope="row">
-                <label for="mec_longitude"><?php esc_html_e('Longitude', 'modern-events-calendar-lite'); ?></label>
+                <label for="mec_latitude"><?php esc_html_e('Latitude', 'modern-events-calendar-lite' ); ?></label>
             </th>
             <td>
-                <input class="mec-has-tip" type="text" placeholder="<?php esc_attr_e('Geo longitude (Optional for Lite)', 'modern-events-calendar-lite'); ?>" name="longitude" id="mec_longitude" value="<?php echo esc_attr($longitude); ?>" />
+                <input class="mec-has-tip" type="text" placeholder="<?php esc_attr_e('Geo latitude (Optional for Lite)', 'modern-events-calendar-lite' ); ?>" name="latitude" id="mec_latitude" value="<?php echo esc_attr($latitude); ?>" />
             </td>
         </tr>
         <tr class="form-field">
             <th scope="row">
-                <label for="mec_url"><?php esc_html_e('Location Website', 'modern-events-calendar-lite'); ?></label>
+                <label for="mec_longitude"><?php esc_html_e('Longitude', 'modern-events-calendar-lite' ); ?></label>
             </th>
             <td>
-                <input type="url" placeholder="<?php esc_attr_e('Location Website (Optional)', 'modern-events-calendar-lite'); ?>" name="url" id="mec_url" value="<?php echo esc_attr($url); ?>" />
+                <input class="mec-has-tip" type="text" placeholder="<?php esc_attr_e('Geo longitude (Optional for Lite)', 'modern-events-calendar-lite' ); ?>" name="longitude" id="mec_longitude" value="<?php echo esc_attr($longitude); ?>" />
+            </td>
+        </tr>
+        <tr class="form-field">
+            <th scope="row">
+                <label for="mec_url"><?php esc_html_e('Location Website', 'modern-events-calendar-lite' ); ?></label>
+            </th>
+            <td>
+                <input type="url" placeholder="<?php esc_attr_e('Location Website (Optional)', 'modern-events-calendar-lite' ); ?>" name="url" id="mec_url" value="<?php echo esc_attr($url); ?>" />
             </td>
         </tr>
         <?php do_action('mec_location_after_edit_form', $term); ?>
         <tr class="form-field">
             <th scope="row">
-                <label for="mec_thumbnail_button"><?php esc_html_e('Thumbnail', 'modern-events-calendar-lite'); ?></label>
+                <label for="mec_thumbnail_button"><?php esc_html_e('Thumbnail', 'modern-events-calendar-lite' ); ?></label>
             </th>
             <td>
                 <div id="mec_thumbnail_img"><?php if(trim($thumbnail) != '') echo '<img src="'.esc_url($thumbnail).'" />'; ?></div>
                 <input type="hidden" name="thumbnail" id="mec_thumbnail" value="<?php echo esc_attr($thumbnail); ?>" />
-                <button type="button" class="mec_upload_image_button button" id="mec_thumbnail_button"><?php echo esc_html__('Upload/Add image', 'modern-events-calendar-lite'); ?></button>
-                <button type="button" class="mec_remove_image_button button <?php echo (!trim($thumbnail) ? 'mec-util-hidden' : ''); ?>"><?php echo esc_html__('Remove image', 'modern-events-calendar-lite'); ?></button>
+                <button type="button" class="mec_upload_image_button button" id="mec_thumbnail_button"><?php echo esc_html__('Upload/Add image', 'modern-events-calendar-lite' ); ?></button>
+                <button type="button" class="mec_remove_image_button button <?php echo (!trim($thumbnail) ? 'mec-util-hidden' : ''); ?>"><?php echo esc_html__('Remove image', 'modern-events-calendar-lite' ); ?></button>
             </td>
         </tr>
     <?php
@@ -181,8 +190,8 @@ class MEC_feature_locations extends MEC_base
         $api_key = isset($this->settings['google_maps_api_key']) ? $this->settings['google_maps_api_key'] : '';
     ?>
         <div class="form-field">
-            <label for="mec_address"><?php esc_html_e('Address', 'modern-events-calendar-lite'); ?></label>
-            <input type="text" name="address"  placeholder="<?php esc_attr_e('Enter the location address', 'modern-events-calendar-lite'); ?>" id="mec_address" value="" />
+            <label for="mec_address"><?php esc_html_e('Address', 'modern-events-calendar-lite' ); ?></label>
+            <input type="text" name="address"  placeholder="<?php esc_attr_e('Enter the location address', 'modern-events-calendar-lite' ); ?>" id="mec_address" value="" />
 
             <?php if($status and trim($api_key)): ?>
             <script>
@@ -197,24 +206,28 @@ class MEC_feature_locations extends MEC_base
             <?php endif; ?>
         </div>
         <div class="form-field">
-            <label for="mec_latitude"><?php esc_html_e('Latitude', 'modern-events-calendar-lite'); ?></label>
-            <input type="text" name="latitude"  placeholder="<?php esc_attr_e('Geo latitude (Optional for Lite)', 'modern-events-calendar-lite'); ?>" id="mec_latitude" value="" />
+            <label for="mec_opening_hour"><?php esc_html_e('Opening Hour', 'modern-events-calendar-lite' ); ?></label>
+            <input type="text" placeholder="<?php esc_attr_e('Opening hour in text format like 09:15 or 18:30', 'modern-events-calendar-lite' ); ?>" name="opening_hour" id="mec_opening_hour" value="" />
         </div>
         <div class="form-field">
-            <label for="mec_longitude"><?php esc_html_e('Longitude', 'modern-events-calendar-lite'); ?></label>
-            <input type="text" name="longitude"  placeholder="<?php esc_attr_e('Geo longitude (Optional for Lite)', 'modern-events-calendar-lite'); ?>" id="mec_longitude" value="" />
+            <label for="mec_latitude"><?php esc_html_e('Latitude', 'modern-events-calendar-lite' ); ?></label>
+            <input type="text" name="latitude"  placeholder="<?php esc_attr_e('Geo latitude (Optional for Lite)', 'modern-events-calendar-lite' ); ?>" id="mec_latitude" value="" />
         </div>
         <div class="form-field">
-            <label for="mec_url"><?php esc_html_e('Location Website', 'modern-events-calendar-lite'); ?></label>
-            <input type="url" name="url"  placeholder="<?php esc_attr_e('Location Website (Optional)', 'modern-events-calendar-lite'); ?>" id="mec_url" value="" />
+            <label for="mec_longitude"><?php esc_html_e('Longitude', 'modern-events-calendar-lite' ); ?></label>
+            <input type="text" name="longitude"  placeholder="<?php esc_attr_e('Geo longitude (Optional for Lite)', 'modern-events-calendar-lite' ); ?>" id="mec_longitude" value="" />
+        </div>
+        <div class="form-field">
+            <label for="mec_url"><?php esc_html_e('Location Website', 'modern-events-calendar-lite' ); ?></label>
+            <input type="url" name="url"  placeholder="<?php esc_attr_e('Location Website (Optional)', 'modern-events-calendar-lite' ); ?>" id="mec_url" value="" />
         </div>
         <?php do_action('mec_location_after_add_form'); ?>
         <div class="form-field">
-            <label for="mec_thumbnail_button"><?php esc_html_e('Thumbnail', 'modern-events-calendar-lite'); ?></label>
+            <label for="mec_thumbnail_button"><?php esc_html_e('Thumbnail', 'modern-events-calendar-lite' ); ?></label>
             <div id="mec_thumbnail_img"></div>
             <input type="hidden" name="thumbnail" id="mec_thumbnail" value="" />
-            <button type="button" class="mec_upload_image_button button" id="mec_thumbnail_button"><?php echo esc_html__('Upload/Add image', 'modern-events-calendar-lite'); ?></button>
-            <button type="button" class="mec_remove_image_button button mec-util-hidden"><?php echo esc_html__('Remove image', 'modern-events-calendar-lite'); ?></button>
+            <button type="button" class="mec_upload_image_button button" id="mec_thumbnail_button"><?php echo esc_html__('Upload/Add image', 'modern-events-calendar-lite' ); ?></button>
+            <button type="button" class="mec_remove_image_button button mec-util-hidden"><?php echo esc_html__('Remove image', 'modern-events-calendar-lite' ); ?></button>
         </div>
     <?php
     }
@@ -230,8 +243,9 @@ class MEC_feature_locations extends MEC_base
         if(!isset($_POST['address'])) return;
 
         $address = isset($_POST['address']) ? sanitize_text_field($_POST['address']) : '';
-        $latitude = isset($_POST['latitude']) ? floatval(sanitize_text_field($_POST['latitude'])) : '0';
-        $longitude = isset($_POST['longitude']) ? floatval(sanitize_text_field($_POST['longitude'])) : '0';
+        $opening_hour = isset($_POST['opening_hour']) ? sanitize_text_field($_POST['opening_hour']) : '';
+        $latitude = isset($_POST['latitude']) ? sanitize_text_field($_POST['latitude']) : '0';
+        $longitude = isset($_POST['longitude']) ? sanitize_text_field($_POST['longitude']) : '0';
         $url = (isset($_POST['url']) and trim($_POST['url'])) ? sanitize_url($_POST['url']) : '';
         $thumbnail = isset($_POST['thumbnail']) ? sanitize_text_field($_POST['thumbnail']) : '';
 
@@ -245,6 +259,7 @@ class MEC_feature_locations extends MEC_base
         }
 
         update_term_meta($term_id, 'address', $address);
+        update_term_meta($term_id, 'opening_hour', $opening_hour);
         update_term_meta($term_id, 'latitude', $latitude);
         update_term_meta($term_id, 'longitude', $longitude);
         update_term_meta($term_id, 'url', $url);
@@ -266,11 +281,11 @@ class MEC_feature_locations extends MEC_base
         unset($columns['description']);
         unset($columns['posts']);
 
-        $columns['id'] = esc_html__('ID', 'modern-events-calendar-lite');
-        $columns['name'] = esc_html__('Location', 'modern-events-calendar-lite');
-        $columns['address'] = esc_html__('Address', 'modern-events-calendar-lite');
-        $columns['posts'] = esc_html__('Count', 'modern-events-calendar-lite');
-        $columns['slug'] = esc_html__('Slug', 'modern-events-calendar-lite');
+        $columns['id'] = esc_html__('ID', 'modern-events-calendar-lite' );
+        $columns['name'] = esc_html__('Location', 'modern-events-calendar-lite' );
+        $columns['address'] = esc_html__('Address', 'modern-events-calendar-lite' );
+        $columns['posts'] = esc_html__('Count', 'modern-events-calendar-lite' );
+        $columns['slug'] = esc_html__('Slug', 'modern-events-calendar-lite' );
 
         return $columns;
     }
@@ -307,10 +322,10 @@ class MEC_feature_locations extends MEC_base
     /**
      * Show location meta box
      * @author Webnus <info@webnus.net>
-     * @param object $post
+     * @param WP_Post|object $post
      */
-    public function meta_box_location($post){
-
+    public function meta_box_location($post)
+    {
         FormBuilder::locations( $post );
     }
 
@@ -347,7 +362,8 @@ class MEC_feature_locations extends MEC_base
         }
 
         $address = (isset($_mec['location']['address']) and trim($_mec['location']['address'])) ? sanitize_text_field($_mec['location']['address']) : '';
-        $name = (isset($_mec['location']['name']) and trim($_mec['location']['name'])) ? sanitize_text_field($_mec['location']['name']) : (trim($address) ? $address : esc_html__('Location Name', 'modern-events-calendar-lite'));
+        $opening_hour = (isset($_mec['location']['opening_hour']) and trim($_mec['location']['opening_hour'])) ? sanitize_text_field($_mec['location']['opening_hour']) : '';
+        $name = (isset($_mec['location']['name']) and trim($_mec['location']['name'])) ? sanitize_text_field($_mec['location']['name']) : (trim($address) ? $address : esc_html__('Location Name', 'modern-events-calendar-lite' ));
 
         $term = get_term_by('name', $name, 'mec_location');
 
@@ -388,6 +404,7 @@ class MEC_feature_locations extends MEC_base
         }
 
         update_term_meta($location_id, 'address', $address);
+        update_term_meta($location_id, 'opening_hour', $opening_hour);
         update_term_meta($location_id, 'latitude', $latitude);
         update_term_meta($location_id, 'longitude', $longitude);
         update_term_meta($location_id, 'url', $url);

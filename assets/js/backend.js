@@ -7,7 +7,7 @@ jQuery(document).ready(function($)
         if($(this).val() == '1' || $(this).val() == '2' || $(this).val() == '3' || $(this).val() == '4' || $(this).val() == '6' || $(this).val() == '12')
         {
             valid = true;
-        };
+        }
 
         if(valid === false)
         {
@@ -18,7 +18,7 @@ jQuery(document).ready(function($)
         {
             $(this).removeClass('bootstrap_unvalid');
             $('.mec-tooltiptext').css('visibility', 'hidden');
-        };
+        }
     });
 
     // MEC Accordion
@@ -328,12 +328,12 @@ jQuery(document).ready(function($)
             var PurchaseCode = $('#MECActivation input[type=password][name=MECPurchaseCode]').val();
             var information = { LicenseTypeJson: '', PurchaseCodeJson: PurchaseCode };
             var ajaxAction = 'activate_license';
-            
+
             if ($(this).hasClass('mec_revoke')) {
                 ajaxAction = 'revoke_license';
                 information = '';
-            }            
-            
+            }
+
             $.ajax({
                 url: mec_admin_localize.ajax_url,
                 type: 'POST',
@@ -657,9 +657,16 @@ function mec_skin_toggle()
     }
 
     // Show/Hide Ongoing Events
-    if(skin === 'list' || skin === 'grid' || skin === 'agenda' || skin === 'timeline' || skin === 'custom'){
+    if(
+        skin === 'list' || skin === 'weekly_view' || skin === 'agenda' || skin === 'timeline' || skin === 'monthly_view' ||
+        skin === 'timetable' || skin === 'slider' || skin === 'carousel' || skin === 'masonry' || skin === 'daily_view' ||
+        skin === 'tile' || skin === 'grid' || skin === 'yearly_view' || skin === 'custom' || skin === 'full_calendar'
+    )
+    {
         jQuery('#mec_date_ongoing_filter').show();
-    }else{
+    }
+    else
+    {
         jQuery("#mec_show_only_ongoing_events").prop('checked', false);
         jQuery('#mec_date_ongoing_filter').hide();
     }
@@ -688,11 +695,30 @@ function mec_skin_style_changed(skin, style, context) {
     jQuery('.mec-skin-' + skin + '-date-format-container').hide();
     jQuery('#mec_skin_' + skin + '_date_format_' + style + '_container').show();
 
+    // List Standard Progress Bar
+    if(skin === 'list' && style === 'standard') jQuery('.mec-progress-bar-display-wrapper').removeClass('mec-util-hidden');
+    else jQuery('.mec-progress-bar-display-wrapper').addClass('mec-util-hidden');
+
+    // List Standard Status Bar
+    if(skin === 'list' && style === 'standard') jQuery('.mec-status-bar-display-wrapper').removeClass('mec-util-hidden');
+    else jQuery('.mec-status-bar-display-wrapper').addClass('mec-util-hidden');
+
     // Show Or Hide Include Events Time Switcher
-    if (style == 'classic' || style == 'minimal' || style == 'modern') jQuery(context).parent().parent().find('.mec-include-events-times').show();
+    if (style === 'classic' || style === 'minimal' || style === 'modern') jQuery(context).parent().parent().find('.mec-include-events-times').show();
     else jQuery(context).parent().parent().find('.mec-include-events-times').hide();
 
-    if (style == 'accordion') jQuery(context).parent().parent().find('#mec_skin_list_localtime').hide();
+    if (style === 'accordion')
+    {
+        jQuery(context).parent().parent().find('#mec_skin_list_localtime').hide();
+        jQuery(context).parent().parent().find('.mec-event-price-container').hide();
+    }
+    else
+    {
+        jQuery(context).parent().parent().find('#mec_skin_list_localtime').show();
+        jQuery(context).parent().parent().find('.mec-event-price-container').show();
+    }
+
+    jQuery(document).trigger( 'mec_skin_style_changed', [ skin, style, context ] );
 }
 
 function mec_skin_map_toggle(context)

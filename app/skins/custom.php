@@ -68,6 +68,9 @@ class MEC_skin_custom extends MEC_skins
         // Show "Load More" button or not
         $this->load_more_button = isset($this->skin_options['load_more_button']) ? $this->skin_options['load_more_button'] : true;
 
+        // Pagination
+        $this->pagination = isset($this->skin_options['pagination']) ? $this->skin_options['pagination'] : (!$this->load_more_button ? '0' : 'loadmore');
+
         // Override the style if the style forced by us in a widget etc
         if(isset($this->atts['style']) and trim($this->atts['style']) != '') $this->style = $this->atts['style'];
 
@@ -90,6 +93,7 @@ class MEC_skin_custom extends MEC_skins
         {
 			$this->skin_options['count'] = '1';
 			$this->load_more_button = false;
+			$this->pagination = '0';
 		}
 
         // The count in row
@@ -134,7 +138,7 @@ class MEC_skin_custom extends MEC_skins
         $this->args['paged'] = $this->paged;
 
         // Sort Options
-        $this->args['orderby'] = 'meta_value_num';
+        $this->args['orderby'] = 'mec_start_day_seconds ID';
         $this->args['order'] = 'ASC';
         $this->args['meta_key'] = 'mec_start_day_seconds';
 
@@ -184,7 +188,8 @@ class MEC_skin_custom extends MEC_skins
 
         // Apply Maximum Date
         $apply_sf_date = isset($_REQUEST['apply_sf_date']) ? sanitize_text_field($_REQUEST['apply_sf_date']) : 0;
-        if($apply_sf_date == 1 and isset($this->sf) and isset($this->sf['month']) and trim($this->sf['month'])) $this->maximum_date = date('Y-m-t', strtotime($this->start_date));
+        $month = (isset($this->sf) && isset($this->sf['month']) && trim($this->sf['month'])) ? $this->sf['month'] : (isset($_REQUEST['mec_month']) ? $_REQUEST['mec_month'] : '');
+        if($apply_sf_date == 1 and trim($month)) $this->maximum_date = date('Y-m-t', strtotime($this->start_date));
 
         // Found Events
         $this->found = 0;
@@ -245,7 +250,8 @@ class MEC_skin_custom extends MEC_skins
         $this->offset = isset($_REQUEST['mec_offset']) ? sanitize_text_field($_REQUEST['mec_offset']) : 0;
 
         // Apply Maximum Date
-        if($apply_sf_date == 1 and isset($this->sf) and isset($this->sf['month']) and trim($this->sf['month'])) $this->maximum_date = date('Y-m-t', strtotime($this->start_date));
+        $month = (isset($this->sf) && isset($this->sf['month']) && trim($this->sf['month'])) ? $this->sf['month'] : (isset($_REQUEST['mec_month']) ? $_REQUEST['mec_month'] : '');
+        if($apply_sf_date == 1 and trim($month)) $this->maximum_date = date('Y-m-t', strtotime($this->start_date));
 
         // Return the events
         $this->atts['return_items'] = true;
@@ -267,7 +273,11 @@ class MEC_skin_custom extends MEC_skins
      */
     public function output(){
 
-        add_filter( 'mec_shortcode_designer_readmore_button_status', '__return_true' );
+		$booking_button_status = (bool)($this->skin_options['booking_button'] ?? 0);
+        if( $booking_button_status ){
+
+            add_filter( 'mec_shortcode_designer_readmore_button_status', '__return_true' );
+        }
 
         $html = parent::output();
 

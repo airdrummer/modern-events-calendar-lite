@@ -42,9 +42,9 @@ foreach($this->weeks as $week_number=>$week)
         $passed = ($time < strtotime($this->today));
 
         $weeks .= '<dt data-date-id="'.date('Ymd', $time).'" data-events-count="'.esc_attr($count).'" class="'.((!$count or $passed) ? 'mec-timetable-has-no-event ' : '').(($day == $this->active_date) ? 'mec-timetable-day-active' : '').'">'
-                .'<span>'.esc_html($this->main->date_i18n('D', $time)).'</span> '
-                .esc_html($this->main->date_i18n('j', $time))
-                .'</dt>';
+            .'<span>'.esc_html($this->main->date_i18n('D', $time)).'</span> '
+            .esc_html($this->main->date_i18n('j', $time))
+        .'</dt>';
     }
 
     $weeks .= '</dl>';
@@ -80,7 +80,7 @@ if($this->next_previous_button)
     }
 }
 
-$week_html = '<div class="mec-calendar-d-top"><div class="mec-previous-month mec-load-week mec-color" href="#"><i class="mec-sl-angle-left"></i></div><div class="mec-next-month mec-load-week mec-color" href="#"><i class="mec-sl-angle-right"></i></div><h3 class="mec-current-week">'.sprintf(esc_html__('Week %s', 'modern-events-calendar-lite'), '<span>'.(isset($this->week_of_days[$this->today]) ? $this->week_of_days[$this->today] : 1).'</span>').'</h3></div>';
+$week_html = '<div class="mec-calendar-d-top"><div class="mec-previous-month mec-load-week mec-color" href="#"><i class="mec-sl-angle-left"></i></div><div class="mec-next-month mec-load-week mec-color" href="#"><i class="mec-sl-angle-right"></i></div><h3 class="mec-current-week">'.sprintf(esc_html__('Week %s', 'modern-events-calendar-lite' ), '<span>'.(isset($this->week_of_days[$this->today]) ? $this->week_of_days[$this->today] : 1).'</span>').'</h3></div>';
 
 $month_html = '<div class="mec-weeks-container mec-calendar-d-table">'.MEC_kses::element($weeks).'</div>
 <div class="mec-week-events-container">'.MEC_kses::full($date_events).'</div>';
@@ -107,26 +107,34 @@ if($sed_method == 'new') $sed_method = '0';
 $javascript = '<script>
 jQuery(document).ready(function()
 {
-    jQuery("#mec_timetable_month_'.esc_js($this->id).'_'.date('Ym', $current_month_time).'").mecTimeTable(
+    var mec_interval = setInterval(function()
     {
-        id: "'.esc_js($this->id).'",
-        today: "'.date('Ymd', strtotime($this->start_date)).'",
-        week: "'.esc_js($this->week_of_days[$this->active_date]).'",
-        month_id: "'.date('Ym', $current_month_time).'",
-        active_day: "'.date('Ymd', strtotime($this->active_date)).'",
-        month_navigator: '.($this->next_previous_button ? 1 : 0).',
-        changeWeekElement: "#mec_skin_'.esc_js($this->id).' .mec-load-week",
-        atts: "'.http_build_query(array('atts' => $this->atts), '', '&').'",
-        ajax_url: "'.admin_url('admin-ajax.php', NULL).'",
-        sed_method: "'.esc_js($sed_method).'",
-        image_popup: "'.esc_js($this->image_popup).'",
-        sf:
+        // Not Visible
+        if(!jQuery("#mec_skin_'.esc_js($this->id).'").is(":visible")) return;
+        
+        jQuery("#mec_timetable_month_'.esc_js($this->id).'_'.date('Ym', $current_month_time).'").mecTimeTable(
         {
-            container: "'.($this->sf_status ? '#mec_search_form_'.esc_js($this->id) : '').'",
-            reset: '.($this->sf_reset_button ? 1 : 0).',
-            refine: '.($this->sf_refine ? 1 : 0).',
-        },
-    });
+            id: "'.esc_js($this->id).'",
+            today: "'.date('Ymd', strtotime($this->start_date)).'",
+            week: "'.esc_js($this->week_of_days[$this->active_date]).'",
+            month_id: "'.date('Ym', $current_month_time).'",
+            active_day: "'.date('Ymd', strtotime($this->active_date)).'",
+            month_navigator: '.($this->next_previous_button ? 1 : 0).',
+            changeWeekElement: "#mec_skin_'.esc_js($this->id).' .mec-load-week",
+            atts: "'.http_build_query(array('atts' => $this->atts), '', '&').'",
+            ajax_url: "'.admin_url('admin-ajax.php', NULL).'",
+            sed_method: "'.esc_js($sed_method).'",
+            image_popup: "'.esc_js($this->image_popup).'",
+            sf:
+            {
+                container: "'.($this->sf_status ? '#mec_search_form_'.esc_js($this->id) : '').'",
+                reset: '.($this->sf_reset_button ? 1 : 0).',
+                refine: '.($this->sf_refine ? 1 : 0).',
+            },
+        });
+        
+        clearInterval(mec_interval);
+    }, 500);
 });
 </script>';
 

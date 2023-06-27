@@ -138,7 +138,7 @@ $reason_for_cancellation = isset($this->skin_options['reason_for_cancellation'])
                             ?>
                             <div class="mec-event-content">
                                 <?php $soldout = $this->main->get_flags($event); ?>
-                                <h4 class="mec-event-title"><?php echo MEC_kses::element($this->display_link($event)); ?><?php echo MEC_kses::element($this->display_custom_data($event)); ?><?php echo MEC_kses::element($soldout); ?> <?php do_action('mec_shortcode_virtual_badge', $event->data->ID ); ?> <?php echo MEC_kses::element($event_color); ?></h4>
+                                <h4 class="mec-event-title"><?php echo MEC_kses::element($this->display_link($event)); ?><?php echo MEC_kses::embed($this->display_custom_data($event)); ?><?php echo MEC_kses::element($soldout); ?> <?php do_action('mec_shortcode_virtual_badge', $event->data->ID ); ?> <?php echo MEC_kses::element($event_color); ?></h4>
                                 <?php echo MEC_kses::element($this->main->get_normal_labels($event, $display_label).$this->main->display_cancellation_reason($event, $reason_for_cancellation)); ?>
                                 <?php echo MEC_kses::element($this->display_categories($event)); ?>
                                 <?php echo MEC_kses::element($this->display_organizers($event)); ?>
@@ -147,7 +147,7 @@ $reason_for_cancellation = isset($this->skin_options['reason_for_cancellation'])
                                 </div>
                             </div>
                             <div class="mec-event-footer">
-                                <?php echo MEC_kses::element($this->display_link($event, ((is_array($event->data->tickets) and count($event->data->tickets) and !strpos($soldout, '%%soldout%%') and !$this->booking_button and !$this->main->is_expired($event)) ? $this->main->m('register_button', esc_html__('REGISTER', 'modern-events-calendar-lite')) : $this->main->m('view_detail', esc_html__('View Detail', 'modern-events-calendar-lite'))), 'mec-booking-button')); ?>
+                                <?php echo MEC_kses::element($this->display_link($event, ((is_array($event->data->tickets) and count($event->data->tickets) and !strpos($soldout, '%%soldout%%') and !$this->booking_button and !$this->main->is_expired($event)) ? $this->main->m('register_button', esc_html__('REGISTER', 'modern-events-calendar-lite' )) : $this->main->m('view_detail', esc_html__('View Detail', 'modern-events-calendar-lite' ))), 'mec-booking-button')); ?>
                                 <?php echo MEC_kses::form($this->booking_button($event)); ?>
                                 <?php do_action('mec_masonry_button', $event); ?>
                             </div>

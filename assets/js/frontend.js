@@ -24,6 +24,12 @@ var mecSingleEventDisplayer =
                             sitekey: mecdata.recapcha_key
                         });
                     }
+
+                    // Event Gallery
+                    mec_init_event_gallery();
+
+                    // Number Spinner
+                    mec_init_number_spinner();
                 }, 1000);
 
                 if(image_popup != 0)
@@ -32,14 +38,12 @@ var mecSingleEventDisplayer =
                     {
                         jQuery('.featherlight-content .mec-events-content a img').each(function()
                         {
-                            jQuery(this).closest('a').attr('data-featherlight', 'image');
+                            if(jQuery(this).attr('src') === jQuery(this).closest('a').attr('href'))
+                            {
+                                jQuery(this).closest('a').attr('data-featherlight', 'image');
+                            }
                         });
                     }
-                }
-                else
-                {
-                    jQuery('.featherlight-content .mec-events-content a img').remove();
-                    jQuery('.featherlight-content .mec-events-content img').remove();
                 }
 
                 if(typeof mecdata.enableSingleFluent != 'undefined' && mecdata.enableSingleFluent) mecFluentSinglePage();
@@ -82,33 +86,34 @@ var mec_search_callbacks = [];
         var $attribute = $('#mec_sf_attribute_' + settings.id);
         var $custom_fields = $('.mec-custom-event-field');
         var $reset = $("#mec_search_form_" + settings.id + '_reset');
+        var $event_status = $(".mec_sf_event_status_" + settings.id );
         var last_field;
 
         // Trigger
         trigger();
 
-        $custom_fields.on('change', function(e) {
+        $custom_fields.off('change').on('change', function(e) {
             last_field = $(this).data('field-id');
             search();
         });
 
-        $s.on('change', function (e) {
+        $s.off('change').on('change', function (e) {
             last_field = 's';
             search();
         });
 
-        $address.on('change', function (e) {
+        $address.off('change').on('change', function (e) {
             last_field = 'address';
             search();
         });
 
-        $event_cost_min.on('change', function (e) {
+        $event_cost_min.off('change').on('change', function (e) {
             last_field = 'cost-min';
             $event_cost_max.attr('min', $(this).val());
             search();
         });
 
-        $event_cost_max.on('change', function (e) {
+        $event_cost_max.off('change').on('change', function (e) {
             last_field = 'cost-max';
             $event_cost_min.attr('max', $(this).val());
             search();
@@ -148,7 +153,7 @@ var mec_search_callbacks = [];
         var $year = $("#mec_sf_year_" + settings.id);
         var $month_or_year = $("#mec_sf_month_" + settings.id + ', ' + "#mec_sf_year_" + settings.id);
 
-        $month_or_year.on('change', function (e) {
+        $month_or_year.off('change').on('change', function (e) {
             last_field = 'date-dropdown';
 
             var mec_month_val = $month.val();
@@ -157,29 +162,36 @@ var mec_search_callbacks = [];
             if ((mec_month_val !== 'none' && mec_year_val !== 'none') || ((mec_month_val === 'none' && mec_year_val === 'none'))) search();
         });
 
-        $date_end.on('change', function () {
+        $date_end.off('change').on('change', function () {
             last_field = 'date-end';
             search();
         });
 
-        $event_type.on('change', function (e) {
+        $event_type.off('change').on('change', function (e) {
             last_field = 'event-type';
             search();
         });
 
-        $event_type_2.on('change', function (e) {
+        $event_type_2.off('change').on('change', function (e) {
             last_field = 'event-type-2';
             search();
         });
 
-        $attribute.on('change', function (e) {
+        $attribute.off('change').on('change', function (e) {
             last_field = 'attribute';
             search();
         });
 
+        if ($event_status.length > 0) {
+            $event_status.off('change').on('change', function (e) {
+                last_field = 'event_status';
+                search();
+            });
+        }
+
         if (settings.fields && settings.fields.length > 0) {
             for (var k in settings.fields) {
-                $("#mec_sf_" + settings.fields[k] + '_' + settings.id).on('change', function (e) {
+                $("#mec_sf_" + settings.fields[k] + '_' + settings.id).off('change').on('change', function (e) {
                     search();
                 });
             }
@@ -187,7 +199,7 @@ var mec_search_callbacks = [];
 
         // Reset
         if ($reset.length) {
-            $reset.on('click', function (e) {
+            $reset.off('click').on('click', function (e) {
                 reset();
             });
         }
@@ -236,8 +248,7 @@ var mec_search_callbacks = [];
             });
 
             var fields = get_fields();
-            $.each(fields,function(i,field){
-
+            $.each(fields, function(i, field) {
                 $("#mec_sf_"+ field +"_" + settings.id).off('change').on('change', function (e) {
                     last_field = field;
                     search();
@@ -255,16 +266,13 @@ var mec_search_callbacks = [];
 
             var s = $s.length ? $s.val() : '';
             var address = $address.length ? $address.val() : '';
-            var location = $location.length ? $location.val() : '';
-            var organizer = $organizer.length ? $organizer.val() : '';
-            var speaker = $speaker.length ? $speaker.val() : '';
             var tag = $tag.length ? $tag.val() : '';
-            var label = $label.length ? $label.val() : '';
             var month = $month.length ? $month.val() : '';
             var year = $year.length ? $year.val() : '';
             var event_type = $event_type.length ? $event_type.val() : '';
             var event_type_2 = $event_type_2.length ? $event_type_2.val() : '';
             var attribute = $attribute.length ? $attribute.val() : '';
+            var event_status = $event_status.filter(':checked').length ? $event_status.filter(':checked').val() : 'all';
 
             var start = $date_start.length ? $date_start.val() : '';
             var end = $date_end.length ? $date_end.val() : '';
@@ -283,7 +291,54 @@ var mec_search_callbacks = [];
                 });
                 category = category.join(',');
             }
+            else if ($category.prop('tagName') && $category.prop('tagName').toLowerCase() === 'ul') {
+                category = [];
+                $category.find($('input[type=checkbox]:checked')).each(function () {
+                    category.push( $(this).val() );
+                });
+                category = category.join(',');
+            }
             else category = $category.length ? $category.val() : '';
+
+            var location;
+            if ($location.prop('tagName') && $location.prop('tagName').toLowerCase() === 'ul') {
+                location = [];
+                $location.find($('input[type=checkbox]:checked')).each(function () {
+                    location.push( $(this).val() );
+                });
+                location = location.join(',');
+            }
+            else location = $location.length ? $location.val() : '';
+
+            var organizer;
+            if ($organizer.prop('tagName') && $organizer.prop('tagName').toLowerCase() === 'ul') {
+                organizer = [];
+                $organizer.find($('input[type=checkbox]:checked')).each(function () {
+                    organizer.push( $(this).val() );
+                });
+                organizer = organizer.join(',');
+            }
+            else organizer = $organizer.length ? $organizer.val() : '';
+
+            var speaker;
+            if ($speaker.prop('tagName') && $speaker.prop('tagName').toLowerCase() === 'ul') {
+                speaker = [];
+                $speaker.find($('input[type=checkbox]:checked')).each(function () {
+                    speaker.push( $(this).val() );
+                });
+                speaker = speaker.join(',');
+            }
+            else speaker = $speaker.length ? $speaker.val() : '';
+
+            var label;
+            if ($label.prop('tagName') && $label.prop('tagName').toLowerCase() === 'ul') {
+                label = [];
+                $label.find($('input[type=checkbox]:checked')).each(function () {
+                    label.push( $(this).val() );
+                });
+                label = label.join(',');
+            }
+            else label = $label.length ? $label.val() : '';
 
             if (year === 'none' && month === 'none') {
                 year = '';
@@ -303,7 +358,7 @@ var mec_search_callbacks = [];
             }
 
             // Search Parameters
-            var sf = 'sf[s]=' + s + '&sf[address]=' + address + '&sf[cost-min]=' + cost_min + '&sf[cost-max]=' + cost_max + '&sf[time-start]=' + time_start + '&sf[time-end]=' + time_end + '&sf[month]=' + month + '&sf[year]=' + year + '&sf[start]=' + start + '&sf[end]=' + end + '&sf[category]=' + category + '&sf[location]=' + location + '&sf[organizer]=' + organizer + '&sf[speaker]=' + speaker + '&sf[tag]=' + tag + '&sf[label]=' + label + '&sf[event_type]=' + event_type + '&sf[event_type_2]=' + event_type_2 + '&sf[attribute]=' + attribute + addation_attr;
+            var sf = 'sf[s]=' + s + '&sf[address]=' + address + '&sf[cost-min]=' + cost_min + '&sf[cost-max]=' + cost_max + '&sf[time-start]=' + time_start + '&sf[time-end]=' + time_end + '&sf[month]=' + month + '&sf[year]=' + year + '&sf[start]=' + start + '&sf[end]=' + end + '&sf[category]=' + category + '&sf[location]=' + location + '&sf[organizer]=' + organizer + '&sf[speaker]=' + speaker + '&sf[tag]=' + tag + '&sf[label]=' + label + '&sf[event_type]=' + event_type + '&sf[event_type_2]=' + event_type_2 + '&sf[event_status]=' + event_status + '&sf[attribute]=' + attribute + addation_attr;
 
             // Event Fields
             $custom_fields.each(function()
@@ -353,17 +408,42 @@ var mec_search_callbacks = [];
                 });
                 $category.find('select').select2();
             }
-            else if ($category.length) {
-
-                $category.val(null);
-                if(jQuery().niceSelect) jQuery('.mec-fluent-wrap').find('.mec-filter-content').find('select').niceSelect('update');
+            else if ($category.length && $category.prop('tagName') && $category.prop('tagName').toLowerCase() === 'ul') {
+                $category.find($('input[type=checkbox]:checked')).each(function () {
+                    $(this).prop('checked', false);
+                });
             }
+            else if ($category.length) $category.val(null);
 
-            if ($location.length) $location.val(null);
-            if ($organizer.length) $organizer.val(null);
-            if ($speaker.length) $speaker.val(null);
+            if ($location.length && $location.prop('tagName') && $location.prop('tagName').toLowerCase() === 'ul') {
+                $location.find($('input[type=checkbox]:checked')).each(function () {
+                    $(this).prop('checked', false);
+                });
+            }
+            else if ($location.length) $location.val(null);
+
+            if ($organizer.length && $organizer.prop('tagName') && $organizer.prop('tagName').toLowerCase() === 'ul') {
+                $organizer.find($('input[type=checkbox]:checked')).each(function () {
+                    $(this).prop('checked', false);
+                });
+            }
+            else if ($organizer.length) $organizer.val(null);
+
+            if ($speaker.length && $speaker.prop('tagName') && $speaker.prop('tagName').toLowerCase() === 'ul') {
+                $speaker.find($('input[type=checkbox]:checked')).each(function () {
+                    $(this).prop('checked', false);
+                });
+            }
+            else if ($speaker.length) $speaker.val(null);
+
+            if ($label.length && $label.prop('tagName') && $label.prop('tagName').toLowerCase() === 'ul') {
+                $label.find($('input[type=checkbox]:checked')).each(function () {
+                    $(this).prop('checked', false);
+                });
+            }
+            else if ($label.length) $label.val(null);
+
             if ($tag.length) $tag.val(null);
-            if ($label.length) $label.val(null);
             if ($s.length) $s.val(null);
             if ($address.length) $address.val(null);
             if ($month.length) $month.val(null);
@@ -374,6 +454,11 @@ var mec_search_callbacks = [];
             if ($date_end.length) $date_end.val(null);
             if ($time_start.length) $time_start.val(null);
             if ($time_end.length) $time_end.val(null);
+            if ($event_status.length)
+            {
+                $event_status.prop('checked', false);
+                $event_status.filter('[value="all"]').prop('checked', true);
+            }
 
             var fields = get_fields();
             $.each(fields,function(i,field)
@@ -387,6 +472,11 @@ var mec_search_callbacks = [];
                     }
                 }
             });
+
+            if(jQuery().niceSelect){
+
+                jQuery('.mec-fluent-wrap').find('.mec-filter-content').find('select:not([multiple])').niceSelect('update');
+            }
 
             // Search Again
             setTimeout(function () {
@@ -404,24 +494,45 @@ var mec_search_callbacks = [];
 
             var category_type;
             if ($category.length && $category.prop('tagName') && $category.prop('tagName').toLowerCase() === 'div') category_type = 'checkboxes';
+            else if ($category.length && $category.prop('tagName') && $category.prop('tagName').toLowerCase() === 'ul') category_type = 'simple-checkboxes';
             else if ($category.length) category_type = 'dropdown';
+
+            var location_type;
+            if ($location.length && $location.prop('tagName') && $location.prop('tagName').toLowerCase() === 'ul') location_type = 'simple-checkboxes';
+            else if ($location.length) location_type = 'dropdown';
+
+            var organizer_type;
+            if ($organizer.length && $organizer.prop('tagName') && $organizer.prop('tagName').toLowerCase() === 'ul') organizer_type = 'simple-checkboxes';
+            else if ($organizer.length) organizer_type = 'dropdown';
+
+            var speaker_type;
+            if ($speaker.length && $speaker.prop('tagName') && $speaker.prop('tagName').toLowerCase() === 'ul') speaker_type = 'simple-checkboxes';
+            else if ($organizer.length) speaker_type = 'dropdown';
+
+            var label_type;
+            if ($label.length && $label.prop('tagName') && $label.prop('tagName').toLowerCase() === 'ul') label_type = 'simple-checkboxes';
+            else if ($label.length) label_type = 'dropdown';
 
             $.ajax(
             {
                 url: settings.ajax_url,
-                data: "action=mec_refine_search_items&" + sf + '&last_field=' + last_field + '&category_type=' + category_type + '&id=' + settings.id,
+                data: "action=mec_refine_search_items&" + sf + '&last_field=' + last_field + '&category_type=' + category_type + '&location_type=' + location_type + '&organizer_type=' + organizer_type + '&speaker_type=' + speaker_type + '&label_type=' + label_type + '&id=' + settings.id,
                 dataType: "json",
                 type: "post",
                 success: function (response) {
                     // Categories
                     if (typeof response.categories !== 'undefined' && response.categories !== '') {
+                        // Multi Select
+                        if ($category.length && category_type === 'checkboxes') {
+                            $category.html(response.categories);
+                        }
                         // Checkboxes
-                        if ($category.length && $category.prop('tagName') && $category.prop('tagName').toLowerCase() === 'div') {
+                        else if ($category.length && category_type === 'simple-checkboxes') {
                             $category.html(response.categories);
                         }
                         // Dropdown
                         else if ($category.length) {
-                            $category.replaceWith(response.categories)
+                            $category.replaceWith(response.categories);
                         }
 
                         // Categories Search bar
@@ -430,27 +541,55 @@ var mec_search_callbacks = [];
 
                     // Locations
                     if (typeof response.locations !== 'undefined' && response.locations !== '') {
-                        $location.replaceWith(response.locations)
+                        // Checkboxes
+                        if ($location.length && location_type === 'simple-checkboxes') {
+                            $location.html(response.locations);
+                        }
+                        // Dropdown
+                        else if ($location.length) {
+                            $location.replaceWith(response.locations);
+                        }
                     }
 
                     // Organizers
                     if (typeof response.organizers !== 'undefined' && response.organizers !== '') {
-                        $organizer.replaceWith(response.organizers)
+                        // Checkboxes
+                        if ($organizer.length && organizer_type === 'simple-checkboxes') {
+                            $organizer.html(response.organizers);
+                        }
+                        // Dropdown
+                        else if ($organizer.length) {
+                            $organizer.replaceWith(response.organizers);
+                        }
                     }
 
                     // Speakers
                     if (typeof response.speakers !== 'undefined' && response.speakers !== '') {
-                        $speaker.replaceWith(response.speakers)
+                        // Checkboxes
+                        if ($speaker.length && speaker_type === 'simple-checkboxes') {
+                            $speaker.html(response.speakers);
+                        }
+                        // Dropdown
+                        else if ($speaker.length) {
+                            $speaker.replaceWith(response.speakers);
+                        }
                     }
 
                     // Labels
                     if (typeof response.labels !== 'undefined' && response.labels !== '') {
-                        $label.replaceWith(response.labels)
+                        // Checkboxes
+                        if ($label.length && label_type === 'simple-checkboxes') {
+                            $label.html(response.labels);
+                        }
+                        // Dropdown
+                        else if ($label.length) {
+                            $label.replaceWith(response.labels);
+                        }
                     }
 
                     // Tags
                     if (typeof response.tags !== 'undefined' && response.tags !== '') {
-                        $tag.replaceWith(response.tags)
+                        $tag.replaceWith(response.tags);
                     }
 
                     // Trigger
@@ -486,7 +625,6 @@ jQuery(document).ready(function ($) {
     jQuery(".mec-search-form.mec-totalcal-box").find(".mec-date-search").parent().find(".mec-time-picker-search").addClass("with-mec-date-search");
     jQuery(".mec-search-form.mec-totalcal-box").find(".mec-time-picker-search").parent().find(".mec-date-search").addClass("with-mec-time-picker");
 
-
     jQuery('#mec-gCalendar-wrap .openMonthFilter').on('click', function(e){
         jQuery(this).toggleClass('open');
     });
@@ -494,13 +632,6 @@ jQuery(document).ready(function ($) {
     jQuery('body').on('click', function(e){
         jQuery('#mec-gCalendar-wrap .openMonthFilter').removeClass('open');
     });
-
-
-    /** Input Spinner > Booking Form > Ticket List */
-    /* append buttons */
-    jQuery('<a href="#" class="minus dis">-</a>').insertBefore(".mec-booking .mec-event-tickets-list .mec-ticket-style-row input[type=number]");
-    jQuery('<a href="#" class="plus">+</a>').insertAfter(".mec-booking .mec-event-tickets-list .mec-ticket-style-row input[type=number]");
-    jQuery(".mec-booking .mec-event-tickets-list input[type=number]").addClass('in-num');
 
     mec_init_number_spinner();
 });
@@ -559,6 +690,8 @@ jQuery(window).on('load', function()
         // Set onclick Listeners
         setListeners();
 
+        $(document).trigger('mec_full_calendar_before_init', $("#mec_full_calendar_container_" + settings.id));
+
         mecFluentCurrentTimePosition();
         mecFluentCustomScrollbar();
 
@@ -566,7 +699,7 @@ jQuery(window).on('load', function()
 
         function setListeners() {
             // Search Widget
-            if (settings.sf.container !== '') {
+            if ( settings.sf.container !== '' && false == $(settings.sf.container).hasClass('mec-skin-search-init') ) {
                 sf = $(settings.sf.container).mecSearchForm({
                     id: settings.id,
                     refine: settings.sf.refine,
@@ -574,9 +707,14 @@ jQuery(window).on('load', function()
                     atts: settings.atts,
                     callback: function (atts) {
                         settings.atts = atts;
-                        search();
+                        if( false == $("#mec_skin_" + settings.id).hasClass('mec-fluent-wrap') && false == $("#mec_skin_" + settings.id).hasClass('mec-liquid-wrap') ){
+
+                            search();
+                        }
                     }
                 });
+
+                $(settings.sf.container).addClass('mec-skin-search-init');
             }
 
             // Add the onclick event
@@ -645,6 +783,9 @@ jQuery(window).on('load', function()
                 data: "action=mec_full_calendar_switch_skin&skin=" + skin + "&" + settings.atts + "&apply_sf_date=1&sed=" + settings.sed_method,
                 type: "post",
                 success: function (response) {
+
+                    jQuery(document).trigger( 'mec_before_load_skin_success', [$("#mec_full_calendar_container_" + settings.id), settings.id] );
+
                     $("#mec_full_calendar_container_" + settings.id).html(response);
 
                     // Remove loader
@@ -730,7 +871,7 @@ jQuery(window).on('load', function()
         });
 
         // Search Widget
-        if (settings.sf.container !== '') {
+        if ( settings.sf.container !== '' ) {
             sf = $(settings.sf.container).mecSearchForm({
                 id: settings.id,
                 refine: settings.sf.refine,
@@ -745,6 +886,8 @@ jQuery(window).on('load', function()
                     search(active_year);
                 }
             });
+
+            $(settings.sf.container).addClass('mec-skin-search-init');
         }
 
         function initYearNavigator() {
@@ -788,6 +931,8 @@ jQuery(window).on('load', function()
 
                     mecFluentYearlyUI(settings.id, active_year);
                     mecFluentCustomScrollbar();
+
+                    $(document).trigger('mec_search_init',['yearly_view',settings,response]);
 
                 },
                 error: function () { }
@@ -1035,7 +1180,7 @@ jQuery(window).on('load', function()
         setListeners();
 
         // Search Widget
-        if (settings.sf.container !== '') {
+        if ( settings.sf.container !== '' ) {
             sf = $(settings.sf.container).mecSearchForm({
                 id: settings.id,
                 refine: settings.sf.refine,
@@ -1046,6 +1191,8 @@ jQuery(window).on('load', function()
                     search(active_year, active_month);
                 }
             });
+
+            $(settings.sf.container).addClass('mec-skin-search-init');
         }
 
         function initMonthNavigator() {
@@ -1100,6 +1247,8 @@ jQuery(window).on('load', function()
 
                     // Remove loading Class
                     $('.mec-modal-result').removeClass("mec-month-navigator-loading");
+
+                    $(document).trigger('mec_search_init',['monthly_view',settings,response]);
 
                 },
                 error: function () { }
@@ -1364,7 +1513,7 @@ jQuery(window).on('load', function()
         active_month = settings.current_month;
 
         // Search Widget
-        if (settings.sf.container !== '') {
+        if ( settings.sf.container !== '' ) {
             $(settings.sf.container).mecSearchForm({
                 id: settings.id,
                 refine: settings.sf.refine,
@@ -1375,6 +1524,8 @@ jQuery(window).on('load', function()
                     search(active_year, active_month, active_week);
                 }
             });
+
+            $(settings.sf.container).addClass('mec-skin-search-init');
         }
 
         // Set The Week
@@ -1514,6 +1665,8 @@ jQuery(window).on('load', function()
                     // Set active week
                     setThisWeek(response.week_id, true);
                     mecFluentCustomScrollbar();
+
+                    $(document).trigger('mec_search_init',['weekly_view',settings,response]);
                 },
                 error: function () { }
             });
@@ -1664,7 +1817,7 @@ jQuery(window).on('load', function()
         mecFocusDay(settings);
 
         // Search Widget
-        if (settings.sf.container !== '') {
+        if ( settings.sf.container !== '' ) {
             $(settings.sf.container).mecSearchForm({
                 id: settings.id,
                 refine: settings.sf.refine,
@@ -1675,6 +1828,8 @@ jQuery(window).on('load', function()
                     search(active_year, active_month, active_day);
                 }
             });
+
+            $(settings.sf.container).addClass('mec-skin-search-init');
         }
 
         function setListeners() {
@@ -1732,7 +1887,7 @@ jQuery(window).on('load', function()
         }
 
         function initDaysSlider(month_id, day_id) {
-            // Set Global Month Id
+            // Set Global Month ID
             mec_g_month_id = month_id;
 
             // Check RTL website
@@ -1744,7 +1899,7 @@ jQuery(window).on('load', function()
                 responsiveClass: true,
                 responsive: {
                     0: {
-                        items: owl.closest('.mec-fluent-wrap').length > 0 ? 3 : 2,
+                        items: owl.closest('.mec-fluent-wrap,.mec-liquid-wrap').length > 0 ? 3 : 2,
                     },
                     479: {
                         items: 4,
@@ -1767,6 +1922,8 @@ jQuery(window).on('load', function()
                 rtl: owl_rtl,
             });
 
+            $(document).trigger('mec_daily_slider_init', [owl, owl_rtl]);
+
             // Custom Navigation Events
             $("#mec_daily_view_month_" + settings.id + "_" + month_id + " .mec-table-d-next").click(function (e) {
                 e.preventDefault();
@@ -1784,6 +1941,8 @@ jQuery(window).on('load', function()
             var today_int = parseInt(today_str);
 
             owl.trigger('owl.goTo', [today_int]);
+
+            owl.removeClass('owl-hidden');
         }
 
         function search(year, month, day) {
@@ -1821,6 +1980,8 @@ jQuery(window).on('load', function()
                     // Focus First Active Day
                     mecFocusDay(settings);
                     mecFluentCustomScrollbar();
+
+                    $(document).trigger('mec_search_init',['daily_view',settings,response]);
                 },
                 error: function () { }
             });
@@ -1955,7 +2116,7 @@ jQuery(window).on('load', function()
         }, options);
 
         // Search Widget
-        if (settings.sf.container !== '') {
+        if ( settings.sf.container !== '' ) {
             $(settings.sf.container).mecSearchForm({
                 id: settings.id,
                 refine: settings.sf.refine,
@@ -1966,6 +2127,8 @@ jQuery(window).on('load', function()
                     search(active_year, active_month, active_week, active_day);
                 }
             });
+
+            $(settings.sf.container).addClass('mec-skin-search-init');
         }
 
         // Set The Week
@@ -2125,6 +2288,8 @@ jQuery(window).on('load', function()
                     mec_focus_week(settings.id, 'timetable');
 
                     mecFluentCustomScrollbar();
+
+                    $(document).trigger('mec_search_init',['timetable',settings,response]);
                 },
                 error: function () { }
             });
@@ -2229,7 +2394,7 @@ jQuery(window).on('load', function()
         }, options);
 
         // Search Widget
-        if (settings.sf.container !== '') {
+        if ( settings.sf.container !== '' ) {
             $(settings.sf.container).mecSearchForm({
                 id: settings.id,
                 refine: settings.sf.refine,
@@ -2240,6 +2405,8 @@ jQuery(window).on('load', function()
                     search();
                 }
             });
+
+            $(settings.sf.container).addClass('mec-skin-search-init');
         }
 
         // Set Listeners
@@ -2273,6 +2440,8 @@ jQuery(window).on('load', function()
 
                     // Set Listeners
                     setListeners();
+
+                    $(document).trigger('mec_search_init',['weeklyprogram',settings,response]);
                 },
                 error: function () { }
             });
@@ -2317,7 +2486,13 @@ jQuery(window).on('load', function()
             end_date: '',
             offset: 0,
             start_date: '',
+            pagination: '0',
+            infinite_locked: false,
         }, options);
+
+        let history = [];
+        const $next = $('#mec-nextprev-wrap-' + settings.id + ' .mec-nextprev-next-button');
+        const $prev = $('#mec-nextprev-wrap-' + settings.id + ' .mec-nextprev-prev-button');
 
         // Set onclick Listeners
         setListeners();
@@ -2437,24 +2612,139 @@ jQuery(window).on('load', function()
         }
 
         function setListeners() {
+            $("#mec_skin_" + settings.id + " .mec-events-masonry-cats > a").click(function () {
+                var mec_load_more_btn = $("#mec_skin_" + settings.id + " .mec-load-more-button");
+                var mec_filter_value = $(this).data('filter').replace('.mec-t', '');
+
+                if (mec_load_more_btn.hasClass('mec-load-more-loading')) mec_load_more_btn.removeClass('mec-load-more-loading');
+                if (mec_load_more_btn.hasClass("mec-hidden-" + mec_filter_value)) mec_load_more_btn.addClass("mec-util-hidden");
+                else mec_load_more_btn.removeClass("mec-util-hidden");
+            });
+
+            // Load More
+            $("#mec_skin_" + settings.id + " .mec-load-more-button").on("click", function () {
+                loadMore();
+            });
+
+            // Scroll
+            if(settings.pagination === 'scroll') {
+                $(window).on("scroll", function (event) {
+                    var $target = $("#mec_skin_" + settings.id + " .mec-load-more-wrap");
+
+                    var finished = $target.data('page-finished');
+                    if(finished) return;
+
+                    var hT = $target.offset().top,
+                        hH = $target.outerHeight(),
+                        wH = $(window).height(),
+                        wS = $(this).scrollTop();
+
+                    if (wS + 100 > hT + hH - wH && !settings.infinite_locked) {
+                        settings.infinite_locked = true;
+                        $target.addClass('mec-load-more-scroll-loading');
+                        loadMore();
+                    }
+                });
+            }
+
+            // Next Prev Pagination
+            if(settings.pagination === 'nextprev')
+            {
+                // Events Wrapper
+                const $EW = $("#mec_skin_" + settings.id + " .mec-event-masonry");
+
+                let next_disabled = false;
+
+                // Previous Button
+                $prev.on('click', function()
+                {
+                    if(history.length)
+                    {
+                        let page = history.pop();
+
+                        var oldItems = $EW.find('.mec-masonry-item-wrap');
+                        $EW.isotope('remove', oldItems);
+
+                        // Display Events
+                        var newItems = $('<div>'+page.html+'</div>').find('.mec-masonry-item-wrap');
+                        newItems.each(function (index) {
+                            $EW.isotope()
+                                .append(newItems[index])
+                                .isotope('appended', newItems[index]);
+                        });
+
+                        // Update the variables
+                        settings.end_date = page.end_date;
+                        settings.offset = page.offset;
+                        settings.current_month_divider = page.current_month_divider;
+
+                        // Display Next Button
+                        $next.removeClass('mec-util-hidden');
+                    }
+
+                    // Hide Previous Button
+                    if(!history.length) $prev.addClass('mec-util-hidden');
+                });
+
+                // Next Button
+                $next.on('click', function(e)
+                {
+                    // Prevent Redirect
+                    e.preventDefault();
+
+                    // Currently Disabled
+                    if(next_disabled) return;
+
+                    // Disable Button
+                    next_disabled = true;
+
+                    // Add Loading Style
+                    $EW.addClass('mec-loading-events');
+
+                    // Push to History
+                    history.push({
+                        end_date: settings.end_date,
+                        offset: settings.offset,
+                        current_month_divider: settings.current_month_divider,
+                        html: $EW.html()
+                    });
+
+                    loadMore(function(response)
+                    {
+                        // Display New Events
+                        if(response.count)
+                        {
+                            var oldItems = $EW.find('.mec-masonry-item-wrap');
+                            $EW.isotope('remove', oldItems);
+
+                            var newItems = $(response.html).find('.mec-masonry-item-wrap');
+                            newItems.each(function (index) {
+                                $EW.isotope()
+                                    .append(newItems[index])
+                                    .isotope('appended', newItems[index]);
+                            });
+                        }
+                        // Remove Last Page
+                        else history.pop();
+
+                        // Enable Button
+                        next_disabled = false;
+
+                        // Remove Loading Style
+                        $EW.removeClass('mec-loading-events');
+
+                        // Display Previous Button
+                        if(history.length) $prev.removeClass('mec-util-hidden');
+                        // Hide Next Button
+                        if(response.count === 0 || (typeof response.has_more_event !== 'undefined' && !response.has_more_event)) $next.addClass('mec-util-hidden');
+                    });
+                });
+            }
+
             if (settings.sed_method != '0') {
                 sed();
             }
-
         }
-
-        $("#mec_skin_" + settings.id + " .mec-events-masonry-cats > a").click(function () {
-            var mec_load_more_btn = $("#mec_skin_" + settings.id + " .mec-load-more-button");
-            var mec_filter_value = $(this).data('filter').replace('.mec-t', '');
-
-            if (mec_load_more_btn.hasClass('mec-load-more-loading')) mec_load_more_btn.removeClass('mec-load-more-loading');
-            if (mec_load_more_btn.hasClass("mec-hidden-" + mec_filter_value)) mec_load_more_btn.addClass("mec-util-hidden");
-            else mec_load_more_btn.removeClass("mec-util-hidden");
-        });
-
-        $("#mec_skin_" + settings.id + " .mec-load-more-button").on("click", function () {
-            loadMore();
-        });
 
         function sed() {
             // Single Event Display
@@ -2479,7 +2769,7 @@ jQuery(window).on('load', function()
             });
         }
 
-        function loadMore() {
+        function loadMore(callback) {
             // Add loading Class
             $("#mec_skin_" + settings.id + " .mec-load-more-button").addClass("mec-load-more-loading");
             var mec_cat_elem = $('#mec_skin_' + settings.id).find('.mec-masonry-cat-selected');
@@ -2492,27 +2782,35 @@ jQuery(window).on('load', function()
                 dataType: "json",
                 type: "post",
                 success: function (response) {
-                    if (response.count == "0") {
+                    if (response.count === 0) {
                         // Remove loading Class
-                        $("#mec_skin_" + settings.id + " .mec-load-more-button").removeClass("mec-load-more-loading");
+                        $("#mec_skin_" + settings.id + " .mec-load-more-button").removeClass("mec-load-more-loading").addClass("mec-util-hidden mec-hidden-" + mec_filter_value);
 
-                        // Hide load more button
-                        $("#mec_skin_" + settings.id + " .mec-load-more-button").addClass("mec-util-hidden mec-hidden-" + mec_filter_value);
+                        // Release Lock of Infinite Scroll
+                        settings.infinite_locked = false;
+                        $("#mec_skin_" + settings.id + " .mec-load-more-wrap").data('page-finished', true).removeClass('mec-load-more-scroll-loading');
+
+                        // Run Callback
+                        if(typeof callback === 'function') callback(response);
                     } else {
                         // Show load more button
                         if (typeof response.has_more_event === 'undefined' || (typeof response.has_more_event !== 'undefined' && response.has_more_event)) $("#mec_skin_" + settings.id + " .mec-load-more-button").removeClass("mec-util-hidden");
                         else $("#mec_skin_" + settings.id + " .mec-load-more-button").addClass("mec-util-hidden");
 
+                        // Run Callback
+                        if(typeof callback === 'function') callback(response);
                         // Append Items
-                        var node = $("#mec_skin_" + settings.id + " .mec-event-masonry");
-                        var markup = '',
-                            newItems = $(response.html).find('.mec-masonry-item-wrap');
+                        else
+                        {
+                            var node = $("#mec_skin_" + settings.id + " .mec-event-masonry");
+                            var newItems = $(response.html).find('.mec-masonry-item-wrap');
 
-                        newItems.each(function (index) {
-                            node.isotope()
-                                .append(newItems[index])
-                                .isotope('appended', newItems[index]);
-                        });
+                            newItems.each(function (index) {
+                                node.isotope()
+                                    .append(newItems[index])
+                                    .isotope('appended', newItems[index]);
+                            });
+                        }
 
                         // Remove loading Class
                         $("#mec_skin_" + settings.id + " .mec-load-more-button").removeClass("mec-load-more-loading");
@@ -2525,6 +2823,12 @@ jQuery(window).on('load', function()
                         if (settings.sed_method != '0') {
                             sed();
                         }
+
+                        // Release Lock of Infinite Scroll
+                        settings.infinite_locked = false;
+                        $("#mec_skin_" + settings.id + " .mec-load-more-wrap").removeClass('mec-load-more-scroll-loading');
+
+                        $(document).trigger('mec_load_more_init',['masonry',settings]);
                     }
                 },
                 error: function () { }
@@ -2546,17 +2850,23 @@ jQuery(window).on('load', function()
             current_month_divider: '',
             end_date: '',
             offset: 0,
-            limit: 0
+            limit: 0,
+            pagination: '0',
+            infinite_locked: false,
         }, options);
+
+        var sf;
+
+        let history = [];
+        const $next = $('#mec-nextprev-wrap-' + settings.id + ' .mec-nextprev-next-button');
+        const $prev = $('#mec-nextprev-wrap-' + settings.id + ' .mec-nextprev-prev-button');
 
         // Set onclick Listeners
         setListeners();
 
-        var sf;
-
         function setListeners() {
             // Search Widget
-            if (settings.sf.container !== '') {
+            if ( settings.sf.container !== '' ) {
                 sf = $(settings.sf.container).mecSearchForm({
                     id: settings.id,
                     refine: settings.sf.refine,
@@ -2567,11 +2877,111 @@ jQuery(window).on('load', function()
                         search();
                     }
                 });
+
+                $(settings.sf.container).addClass('mec-skin-search-init');
             }
 
+            // Load More
             $("#mec_skin_" + settings.id + " .mec-load-more-button").on("click", function () {
                 loadMore();
             });
+
+            // Scroll
+            if(settings.pagination === 'scroll') {
+                $(window).on("scroll", function (event) {
+                    var $target = $("#mec_skin_" + settings.id + " .mec-load-more-wrap");
+
+                    var finished = $target.data('page-finished');
+                    if(finished) return;
+
+                    var hT = $target.offset().top,
+                        hH = $target.outerHeight(),
+                        wH = $(window).height(),
+                        wS = $(this).scrollTop();
+
+                    if (wS + 100 > hT + hH - wH && !settings.infinite_locked) {
+                        settings.infinite_locked = true;
+                        $target.addClass('mec-load-more-scroll-loading');
+                        loadMore();
+                    }
+                });
+            }
+
+            // Next Prev Pagination
+            if(settings.pagination === 'nextprev')
+            {
+                // Events Wrapper
+                const $EW = $("#mec_skin_events_" + settings.id);
+
+                let next_disabled = false;
+
+                // Previous Button
+                $prev.on('click', function()
+                {
+                    if(history.length)
+                    {
+                        let page = history.pop();
+
+                        // Display Events
+                        $EW.html(page.html);
+
+                        // Update the variables
+                        settings.end_date = page.end_date;
+                        settings.offset = page.offset;
+                        settings.current_month_divider = page.current_month_divider;
+
+                        // Display Next Button
+                        $next.removeClass('mec-util-hidden');
+                    }
+
+                    // Hide Previous Button
+                    if(!history.length) $prev.addClass('mec-util-hidden');
+                });
+
+                // Next Button
+                $next.on('click', function(e)
+                {
+                    // Prevent Redirect
+                    e.preventDefault();
+
+                    // Currently Disabled
+                    if(next_disabled) return;
+
+                    // Disable Button
+                    next_disabled = true;
+
+                    // Add Loading Style
+                    $EW.addClass('mec-loading-events');
+
+                    // Push to History
+                    history.push({
+                        end_date: settings.end_date,
+                        offset: settings.offset,
+                        current_month_divider: settings.current_month_divider,
+                        html: $EW.html()
+                    });
+
+                    loadMore(function(response)
+                    {
+                        // Display New Events
+                        if(response.count) $EW.html(response.html);
+                        // Remove Last Page
+                        else history.pop();
+
+                        // Enable Button
+                        next_disabled = false;
+
+                        // Remove Loading Style
+                        $EW.removeClass('mec-loading-events');
+
+                        // Display Previous Button
+                        if(history.length) $prev.removeClass('mec-util-hidden');
+
+                        // Hide Next Button
+                        if(response.count === 0 || (typeof response.has_more_event !== 'undefined' && !response.has_more_event)) $next.addClass('mec-util-hidden');
+                    });
+                });
+            }
 
             // Accordion Toggle
             if (settings.style === 'accordion') {
@@ -2646,6 +3056,8 @@ jQuery(window).on('load', function()
 
                 if(typeof window['mec_init_gmap' + unique_id] === 'function') window['mec_init_gmap' + unique_id]();
             });
+
+            $(document).trigger('mec_skin_accordion_init', settings );
         }
 
         function sed() {
@@ -2681,7 +3093,7 @@ jQuery(window).on('load', function()
             });
         }
 
-        function loadMore() {
+        function loadMore(callback) {
             // Add loading Class
             $("#mec_skin_" + settings.id + " .mec-load-more-button").addClass("mec-load-more-loading");
 
@@ -2691,19 +3103,28 @@ jQuery(window).on('load', function()
                 dataType: "json",
                 type: "post",
                 success: function (response) {
-                    if (response.count == '0') {
+                    if (response.count === 0) {
                         // Remove loading Class
                         $("#mec_skin_" + settings.id + " .mec-load-more-button").removeClass("mec-load-more-loading");
 
-                        // Hide load more button
-                        $("#mec_skin_" + settings.id + " .mec-load-more-button").addClass("mec-util-hidden");
+                        // Release Lock of Infinite Scroll
+                        settings.infinite_locked = false;
+                        $("#mec_skin_" + settings.id + " .mec-load-more-wrap").removeClass('mec-load-more-scroll-loading');
+
+                        // Hide Pagination
+                        mec_toggle_shortcode_pagination(settings.id, 'hide');
+
+                        // Run Callback
+                        if(typeof callback === 'function') callback(response);
                     } else {
                         // Show load more button
-                        if (typeof response.has_more_event === 'undefined' || (typeof response.has_more_event !== 'undefined' && response.has_more_event)) $("#mec_skin_" + settings.id + " .mec-load-more-button").removeClass("mec-util-hidden");
-                        else $("#mec_skin_" + settings.id + " .mec-load-more-button").addClass("mec-util-hidden");
+                        if (typeof response.has_more_event === 'undefined' || (typeof response.has_more_event !== 'undefined' && response.has_more_event)) mec_toggle_shortcode_pagination(settings.id, 'show');
+                        else mec_toggle_shortcode_pagination(settings.id, 'hide');
 
+                        // Run Callback
+                        if(typeof callback === 'function') callback(response);
                         // Append Items
-                        $("#mec_skin_events_" + settings.id).append(response.html);
+                        else $("#mec_skin_events_" + settings.id).append(response.html);
 
                         // Remove loading Class
                         $("#mec_skin_" + settings.id + " .mec-load-more-button").removeClass("mec-load-more-loading");
@@ -2724,9 +3145,15 @@ jQuery(window).on('load', function()
 
                             accordion();
                         }
+
+                        // Release Lock of Infinite Scroll
+                        settings.infinite_locked = false;
+                        $("#mec_skin_" + settings.id + " .mec-load-more-wrap").removeClass('mec-load-more-scroll-loading');
                     }
+
+                    $(document).trigger('mec_load_more_init',['list',settings]);
                 },
-                error: function () { }
+                error: function() {}
             });
         }
 
@@ -2746,6 +3173,8 @@ jQuery(window).on('load', function()
             $loading_element.addClass('mec-month-navigator-loading');
 
             jQuery("#gmap-data").val("");
+            history = [];
+            $prev.addClass('mec-util-hidden');
 
             $.ajax({
                 url: settings.ajax_url,
@@ -2753,7 +3182,7 @@ jQuery(window).on('load', function()
                 dataType: "json",
                 type: "post",
                 success: function (response) {
-                    if (response.count == "0") {
+                    if (response.count === 0) {
                         // Append Items
                         $("#mec_skin_events_" + settings.id).html('');
 
@@ -2763,8 +3192,8 @@ jQuery(window).on('load', function()
                         // Hide Map
                         $('.mec-skin-map-container').addClass("mec-util-hidden");
 
-                        // Hide it
-                        $("#mec_skin_" + settings.id + " .mec-load-more-button").addClass("mec-util-hidden");
+                        // Hide pagination
+                        mec_toggle_shortcode_pagination(settings.id, 'hide');
 
                         // Show no event message
                         $("#mec_skin_no_events_" + settings.id).removeClass("mec-util-hidden");
@@ -2779,9 +3208,9 @@ jQuery(window).on('load', function()
                         $('.mec-skin-map-container').removeClass("mec-util-hidden");
 
                         // Show load more button
-                        if (response.count >= settings.limit) $("#mec_skin_" + settings.id + " .mec-load-more-button").removeClass("mec-util-hidden");
+                        if (response.count >= settings.limit) mec_toggle_shortcode_pagination(settings.id, 'show');
                         // Hide load more button
-                        else $("#mec_skin_" + settings.id + " .mec-load-more-button").addClass("mec-util-hidden");
+                        else mec_toggle_shortcode_pagination(settings.id, 'hide');
 
                         // Update the variables
                         settings.end_date = response.end_date;
@@ -2800,6 +3229,8 @@ jQuery(window).on('load', function()
                             accordion();
                         }
                     }
+
+                    $(document).trigger('mec_search_init',['list',settings,response]);
                 },
                 error: function () { }
             });
@@ -2821,16 +3252,22 @@ jQuery(window).on('load', function()
             end_date: '',
             offset: 0,
             start_date: '',
+            pagination: '0',
+            infinite_locked: false,
         }, options);
+
+        var sf;
+
+        let history = [];
+        const $next = $('#mec-nextprev-wrap-' + settings.id + ' .mec-nextprev-next-button');
+        const $prev = $('#mec-nextprev-wrap-' + settings.id + ' .mec-nextprev-prev-button');
 
         // Set onclick Listeners
         setListeners();
 
-        var sf;
-
         function setListeners() {
             // Search Widget
-            if (settings.sf.container !== '') {
+            if ( settings.sf.container !== '' ) {
                 sf = $(settings.sf.container).mecSearchForm({
                     id: settings.id,
                     refine: settings.sf.refine,
@@ -2841,11 +3278,110 @@ jQuery(window).on('load', function()
                         search();
                     }
                 });
+
+                $(settings.sf.container).addClass('mec-skin-search-init');
             }
 
+            // Load More
             $("#mec_skin_" + settings.id + " .mec-load-more-button").on("click", function () {
                 loadMore();
             });
+
+            // Scroll
+            if(settings.pagination === 'scroll') {
+                $(window).on("scroll", function (event) {
+                    var $target = $("#mec_skin_" + settings.id + " .mec-load-more-wrap");
+
+                    var finished = $target.data('page-finished');
+                    if(finished) return;
+
+                    var hT = $target.offset().top,
+                        hH = $target.outerHeight(),
+                        wH = $(window).height(),
+                        wS = $(this).scrollTop();
+
+                    if (wS + 100 > hT + hH - wH && !settings.infinite_locked) {
+                        settings.infinite_locked = true;
+                        $target.addClass('mec-load-more-scroll-loading');
+                        loadMore();
+                    }
+                });
+            }
+
+            // Next Prev Pagination
+            if(settings.pagination === 'nextprev')
+            {
+                // Events Wrapper
+                const $EW = $("#mec_skin_events_" + settings.id);
+
+                let next_disabled = false;
+
+                // Previous Button
+                $prev.on('click', function()
+                {
+                    if(history.length)
+                    {
+                        let page = history.pop();
+
+                        // Display Events
+                        $EW.html(page.html);
+
+                        // Update the variables
+                        settings.end_date = page.end_date;
+                        settings.offset = page.offset;
+                        settings.current_month_divider = page.current_month_divider;
+
+                        // Display Next Button
+                        $next.removeClass('mec-util-hidden');
+                    }
+
+                    // Hide Previous Button
+                    if(!history.length) $prev.addClass('mec-util-hidden');
+                });
+
+                // Next Button
+                $next.on('click', function(e)
+                {
+                    // Prevent Redirect
+                    e.preventDefault();
+
+                    // Currently Disabled
+                    if(next_disabled) return;
+
+                    // Disable Button
+                    next_disabled = true;
+
+                    // Add Loading Style
+                    $EW.addClass('mec-loading-events');
+
+                    // Push to History
+                    history.push({
+                        end_date: settings.end_date,
+                        offset: settings.offset,
+                        current_month_divider: settings.current_month_divider,
+                        html: $EW.html()
+                    });
+
+                    loadMore(function(response)
+                    {
+                        // Display New Events
+                        if(response.count) $EW.html(response.html);
+                        // Remove Last Page
+                        else history.pop();
+
+                        // Enable Button
+                        next_disabled = false;
+
+                        // Remove Loading Style
+                        $EW.removeClass('mec-loading-events');
+
+                        // Display Previous Button
+                        if(history.length) $prev.removeClass('mec-util-hidden');
+                        // Hide Next Button
+                        if(response.count === 0 || (typeof response.has_more_event !== 'undefined' && !response.has_more_event)) $next.addClass('mec-util-hidden');
+                    });
+                });
+            }
 
             // Single Event Method
             if (settings.sed_method != '0') {
@@ -2885,7 +3421,7 @@ jQuery(window).on('load', function()
             });
         }
 
-        function loadMore() {
+        function loadMore(callback) {
             // Add loading Class
             $("#mec_skin_" + settings.id + " .mec-load-more-button").addClass("mec-load-more-loading");
 
@@ -2895,19 +3431,25 @@ jQuery(window).on('load', function()
                 dataType: "json",
                 type: "post",
                 success: function (response) {
-                    if (response.count == "0") {
+                    if (response.count === 0) {
                         // Remove loading Class
-                        $("#mec_skin_" + settings.id + " .mec-load-more-button").removeClass("mec-load-more-loading");
+                        $("#mec_skin_" + settings.id + " .mec-load-more-button").removeClass("mec-load-more-loading").addClass("mec-util-hidden");
 
-                        // Hide load more button
-                        $("#mec_skin_" + settings.id + " .mec-load-more-button").addClass("mec-util-hidden");
+                        // Release Lock of Infinite Scroll
+                        settings.infinite_locked = false;
+                        $("#mec_skin_" + settings.id + " .mec-load-more-wrap").data('page-finished', true).removeClass('mec-load-more-scroll-loading');
+
+                        // Run Callback
+                        if(typeof callback === 'function') callback(response);
                     } else {
                         // Show load more button
                         if (typeof response.has_more_event === 'undefined' || (typeof response.has_more_event !== 'undefined' && response.has_more_event)) $("#mec_skin_" + settings.id + " .mec-load-more-button").removeClass("mec-util-hidden");
                         else $("#mec_skin_" + settings.id + " .mec-load-more-button").addClass("mec-util-hidden");
 
+                        // Run Callback
+                        if(typeof callback === 'function') callback(response);
                         // Append Items
-                        $("#mec_skin_events_" + settings.id).append(response.html);
+                        else $("#mec_skin_events_" + settings.id).append(response.html);
 
                         // Remove loading Class
                         $("#mec_skin_" + settings.id + " .mec-load-more-button").removeClass("mec-load-more-loading");
@@ -2920,7 +3462,13 @@ jQuery(window).on('load', function()
                         if (settings.sed_method != '0') {
                             sed();
                         }
+
+                        // Release Lock of Infinite Scroll
+                        settings.infinite_locked = false;
+                        $("#mec_skin_" + settings.id + " .mec-load-more-wrap").removeClass('mec-load-more-scroll-loading');
                     }
+
+                    $(document).trigger('mec_load_more_init',['grid',settings]);
                 },
                 error: function () { }
             });
@@ -2941,7 +3489,7 @@ jQuery(window).on('load', function()
                 dataType: "json",
                 type: "post",
                 success: function (response) {
-                    if (response.count == "0") {
+                    if (response.count === 0) {
                         // Append Items
                         $("#mec_skin_events_" + settings.id).html('');
 
@@ -2980,6 +3528,8 @@ jQuery(window).on('load', function()
                             sed();
                         }
                     }
+
+                    $(document).trigger('mec_search_init',['grid',settings,response]);
                 },
                 error: function () { }
             });
@@ -3001,6 +3551,8 @@ jQuery(window).on('load', function()
             end_date: '',
             offset: 0,
             start_date: '',
+            pagination: '0',
+            infinite_locked: false,
         }, options);
 
         // Set onclick Listeners
@@ -3010,7 +3562,7 @@ jQuery(window).on('load', function()
 
         function setListeners() {
             // Search Widget
-            if (settings.sf.container !== '') {
+            if ( settings.sf.container !== '' ) {
                 sf = $(settings.sf.container).mecSearchForm({
                     id: settings.id,
                     refine: settings.sf.refine,
@@ -3021,11 +3573,35 @@ jQuery(window).on('load', function()
                         search();
                     }
                 });
+
+                $(settings.sf.container).addClass('mec-skin-search-init');
             }
 
+            // Load More
             $("#mec_skin_" + settings.id + " .mec-load-more-button").on("click", function () {
                 loadMore();
             });
+
+            // Scroll
+            if(settings.pagination === 'scroll') {
+                $(window).on("scroll", function (event) {
+                    var $target = $("#mec_skin_" + settings.id + " .mec-load-more-wrap");
+
+                    var finished = $target.data('page-finished');
+                    if(finished) return;
+
+                    var hT = $target.offset().top,
+                        hH = $target.outerHeight(),
+                        wH = $(window).height(),
+                        wS = $(this).scrollTop();
+
+                    if (wS + 100 > hT + hH - wH && !settings.infinite_locked) {
+                        settings.infinite_locked = true;
+                        $target.addClass('mec-load-more-scroll-loading');
+                        loadMore();
+                    }
+                });
+            }
 
             // Single Event Method
             if (settings.sed_method != '0') {
@@ -3075,12 +3651,13 @@ jQuery(window).on('load', function()
                 dataType: "json",
                 type: "post",
                 success: function (response) {
-                    if (response.count == "0") {
+                    if (response.count === 0) {
                         // Remove loading Class
-                        $("#mec_skin_" + settings.id + " .mec-load-more-button").removeClass("mec-load-more-loading");
+                        $("#mec_skin_" + settings.id + " .mec-load-more-button").removeClass("mec-load-more-loading").addClass("mec-util-hidden");
 
-                        // Hide load more button
-                        $("#mec_skin_" + settings.id + " .mec-load-more-button").addClass("mec-util-hidden");
+                        // Release Lock of Infinite Scroll
+                        settings.infinite_locked = false;
+                        $("#mec_skin_" + settings.id + " .mec-load-more-wrap").data('page-finished', true).removeClass('mec-load-more-scroll-loading');
                     } else {
                         // Show load more button
                         if (typeof response.has_more_event === 'undefined' || (typeof response.has_more_event !== 'undefined' && response.has_more_event)) $("#mec_skin_" + settings.id + " .mec-load-more-button").removeClass("mec-util-hidden");
@@ -3124,7 +3701,14 @@ jQuery(window).on('load', function()
                         if (settings.sed_method != '0') {
                             sed();
                         }
+
+                        // Release Lock of Infinite Scroll
+                        settings.infinite_locked = false;
+                        $("#mec_skin_" + settings.id + " .mec-load-more-wrap").removeClass('mec-load-more-scroll-loading');
+
                     }
+
+                    $(document).trigger('mec_load_more_init',['custom',settings]);
                 },
                 error: function () { }
             });
@@ -3145,7 +3729,7 @@ jQuery(window).on('load', function()
                 dataType: "json",
                 type: "post",
                 success: function (response) {
-                    if (response.count == "0") {
+                    if (response.count === 0) {
                         // Append Items
                         $("#mec_skin_events_" + settings.id).html('');
 
@@ -3184,6 +3768,8 @@ jQuery(window).on('load', function()
                             sed();
                         }
                     }
+
+                    $(document).trigger('mec_search_init',['custom',settings,response]);
                 },
                 error: function () { }
             });
@@ -3205,16 +3791,22 @@ jQuery(window).on('load', function()
             end_date: '',
             offset: 0,
             start_date: '',
+            pagination: '0',
+            infinite_locked: false,
         }, options);
+
+        var sf;
+
+        let history = [];
+        const $next = $('#mec-nextprev-wrap-' + settings.id + ' .mec-nextprev-next-button');
+        const $prev = $('#mec-nextprev-wrap-' + settings.id + ' .mec-nextprev-prev-button');
 
         // Set onclick Listeners
         setListeners();
 
-        var sf;
-
         function setListeners() {
             // Search Widget
-            if (settings.sf.container !== '') {
+            if ( settings.sf.container !== '' ) {
                 sf = $(settings.sf.container).mecSearchForm({
                     id: settings.id,
                     refine: settings.sf.refine,
@@ -3225,11 +3817,110 @@ jQuery(window).on('load', function()
                         search();
                     }
                 });
+
+                $(settings.sf.container).addClass('mec-skin-search-init');
             }
 
+            // Load More
             $("#mec_skin_" + settings.id + " .mec-load-more-button").on("click", function () {
                 loadMore();
             });
+
+            // Scroll
+            if(settings.pagination === 'scroll') {
+                $(window).on("scroll", function (event) {
+                    var $target = $("#mec_skin_" + settings.id + " .mec-load-more-wrap");
+
+                    var finished = $target.data('page-finished');
+                    if(finished) return;
+
+                    var hT = $target.offset().top,
+                        hH = $target.outerHeight(),
+                        wH = $(window).height(),
+                        wS = $(this).scrollTop();
+
+                    if (wS + 100 > hT + hH - wH && !settings.infinite_locked) {
+                        settings.infinite_locked = true;
+                        $target.addClass('mec-load-more-scroll-loading');
+                        loadMore();
+                    }
+                });
+            }
+
+            // Next Prev Pagination
+            if(settings.pagination === 'nextprev')
+            {
+                // Events Wrapper
+                const $EW = $("#mec_skin_events_" + settings.id);
+
+                let next_disabled = false;
+
+                // Previous Button
+                $prev.on('click', function()
+                {
+                    if(history.length)
+                    {
+                        let page = history.pop();
+
+                        // Display Events
+                        $EW.html(page.html);
+
+                        // Update the variables
+                        settings.end_date = page.end_date;
+                        settings.offset = page.offset;
+                        settings.current_month_divider = page.current_month_divider;
+
+                        // Display Next Button
+                        $next.removeClass('mec-util-hidden');
+                    }
+
+                    // Hide Previous Button
+                    if(!history.length) $prev.addClass('mec-util-hidden');
+                });
+
+                // Next Button
+                $next.on('click', function(e)
+                {
+                    // Prevent Redirect
+                    e.preventDefault();
+
+                    // Currently Disabled
+                    if(next_disabled) return;
+
+                    // Disable Button
+                    next_disabled = true;
+
+                    // Add Loading Style
+                    $EW.addClass('mec-loading-events');
+
+                    // Push to History
+                    history.push({
+                        end_date: settings.end_date,
+                        offset: settings.offset,
+                        current_month_divider: settings.current_month_divider,
+                        html: $EW.html()
+                    });
+
+                    loadMore(function(response)
+                    {
+                        // Display New Events
+                        if(response.count) $EW.html(response.html);
+                        // Remove Last Page
+                        else history.pop();
+
+                        // Enable Button
+                        next_disabled = false;
+
+                        // Remove Loading Style
+                        $EW.removeClass('mec-loading-events');
+
+                        // Display Previous Button
+                        if(history.length) $prev.removeClass('mec-util-hidden');
+                        // Hide Next Button
+                        if(response.count === 0 || (typeof response.has_more_event !== 'undefined' && !response.has_more_event)) $next.addClass('mec-util-hidden');
+                    });
+                });
+            }
 
             // Single Event Method
             if (settings.sed_method != '0') {
@@ -3269,7 +3960,7 @@ jQuery(window).on('load', function()
             });
         }
 
-        function loadMore() {
+        function loadMore(callback) {
             // Add loading Class
             $("#mec_skin_" + settings.id + " .mec-load-more-button").addClass("mec-load-more-loading");
 
@@ -3279,19 +3970,25 @@ jQuery(window).on('load', function()
                 dataType: "json",
                 type: "post",
                 success: function (response) {
-                    if (response.count == "0") {
+                    if (response.count === 0) {
                         // Remove loading Class
-                        $("#mec_skin_" + settings.id + " .mec-load-more-button").removeClass("mec-load-more-loading");
+                        $("#mec_skin_" + settings.id + " .mec-load-more-button").removeClass("mec-load-more-loading").addClass("mec-util-hidden");
 
-                        // Hide load more button
-                        $("#mec_skin_" + settings.id + " .mec-load-more-button").addClass("mec-util-hidden");
+                        // Release Lock of Infinite Scroll
+                        settings.infinite_locked = false;
+                        $("#mec_skin_" + settings.id + " .mec-load-more-wrap").data('page-finished', true).removeClass('mec-load-more-scroll-loading');
+
+                        // Run Callback
+                        if(typeof callback === 'function') callback(response);
                     } else {
                         // Show load more button
                         if (typeof response.has_more_event === 'undefined' || (typeof response.has_more_event !== 'undefined' && response.has_more_event)) $("#mec_skin_" + settings.id + " .mec-load-more-button").removeClass("mec-util-hidden");
                         else $("#mec_skin_" + settings.id + " .mec-load-more-button").addClass("mec-util-hidden");
 
+                        // Run Callback
+                        if(typeof callback === 'function') callback(response);
                         // Append Items
-                        $("#mec_skin_events_" + settings.id).append(response.html);
+                        else $("#mec_skin_events_" + settings.id).append(response.html);
 
                         // Remove loading Class
                         $("#mec_skin_" + settings.id + " .mec-load-more-button").removeClass("mec-load-more-loading");
@@ -3305,7 +4002,12 @@ jQuery(window).on('load', function()
                             sed();
                         }
 
+                        // Release Lock of Infinite Scroll
+                        settings.infinite_locked = false;
+                        $("#mec_skin_" + settings.id + " .mec-load-more-wrap").removeClass('mec-load-more-scroll-loading');
                     }
+
+                    $(document).trigger('mec_load_more_init',['timeline',settings]);
                 },
                 error: function () { }
             });
@@ -3325,7 +4027,7 @@ jQuery(window).on('load', function()
                 dataType: "json",
                 type: "post",
                 success: function (response) {
-                    if (response.count == "0") {
+                    if (response.count === 0) {
                         // Append Items
                         $("#mec_skin_events_" + settings.id).html('');
 
@@ -3364,6 +4066,8 @@ jQuery(window).on('load', function()
                             sed();
                         }
                     }
+
+                    $(document).trigger('mec_search_init',['timeline',settings,response]);
                 },
                 error: function () { }
             });
@@ -3385,16 +4089,22 @@ jQuery(window).on('load', function()
             current_month_divider: '',
             end_date: '',
             offset: 0,
+            pagination: '0',
+            infinite_locked: false,
         }, options);
+
+        var sf;
+
+        let history = [];
+        const $next = $('#mec-nextprev-wrap-' + settings.id + ' .mec-nextprev-next-button');
+        const $prev = $('#mec-nextprev-wrap-' + settings.id + ' .mec-nextprev-prev-button');
 
         // Set onclick Listeners
         setListeners();
 
-        var sf;
-
         function setListeners() {
             // Search Widget
-            if (settings.sf.container !== '') {
+            if ( settings.sf.container !== '' ) {
                 sf = $(settings.sf.container).mecSearchForm({
                     id: settings.id,
                     refine: settings.sf.refine,
@@ -3405,11 +4115,110 @@ jQuery(window).on('load', function()
                         search();
                     }
                 });
+
+                $(settings.sf.container).addClass('mec-skin-search-init');
             }
 
+            // Load More
             $("#mec_skin_" + settings.id + " .mec-load-more-button").on("click", function () {
                 loadMore();
             });
+
+            // Scroll
+            if(settings.pagination === 'scroll') {
+                $(window).on("scroll", function (event) {
+                    var $target = $("#mec_skin_" + settings.id + " .mec-load-more-wrap");
+
+                    var finished = $target.data('page-finished');
+                    if(finished) return;
+
+                    var hT = $target.offset().top,
+                        hH = $target.outerHeight(),
+                        wH = $(window).height(),
+                        wS = $(this).scrollTop();
+
+                    if (wS + 100 > hT + hH - wH && !settings.infinite_locked) {
+                        settings.infinite_locked = true;
+                        $target.addClass('mec-load-more-scroll-loading');
+                        loadMore();
+                    }
+                });
+            }
+
+            // Next Prev Pagination
+            if(settings.pagination === 'nextprev')
+            {
+                // Events Wrapper
+                const $EW = $("#mec_skin_events_" + settings.id + " .mec-events-agenda-container");
+
+                let next_disabled = false;
+
+                // Previous Button
+                $prev.on('click', function()
+                {
+                    if(history.length)
+                    {
+                        let page = history.pop();
+
+                        // Display Events
+                        $EW.html(page.html);
+
+                        // Update the variables
+                        settings.end_date = page.end_date;
+                        settings.offset = page.offset;
+                        settings.current_month_divider = page.current_month_divider;
+
+                        // Display Next Button
+                        $next.removeClass('mec-util-hidden');
+                    }
+
+                    // Hide Previous Button
+                    if(!history.length) $prev.addClass('mec-util-hidden');
+                });
+
+                // Next Button
+                $next.on('click', function(e)
+                {
+                    // Prevent Redirect
+                    e.preventDefault();
+
+                    // Currently Disabled
+                    if(next_disabled) return;
+
+                    // Disable Button
+                    next_disabled = true;
+
+                    // Add Loading Style
+                    $EW.addClass('mec-loading-events');
+
+                    // Push to History
+                    history.push({
+                        end_date: settings.end_date,
+                        offset: settings.offset,
+                        current_month_divider: settings.current_month_divider,
+                        html: $EW.html()
+                    });
+
+                    loadMore(function(response)
+                    {
+                        // Display New Events
+                        if(response.count) $EW.html(response.html);
+                        // Remove Last Page
+                        else history.pop();
+
+                        // Enable Button
+                        next_disabled = false;
+
+                        // Remove Loading Style
+                        $EW.removeClass('mec-loading-events');
+
+                        // Display Previous Button
+                        if(history.length) $prev.removeClass('mec-util-hidden');
+                        // Hide Next Button
+                        if(response.count === 0 || (typeof response.has_more_event !== 'undefined' && !response.has_more_event)) $next.addClass('mec-util-hidden');
+                    });
+                });
+            }
 
             // Single Event Method
             if (settings.sed_method != '0') {
@@ -3440,7 +4249,7 @@ jQuery(window).on('load', function()
             });
         }
 
-        function loadMore() {
+        function loadMore(callback) {
             // Add loading Class
             $("#mec_skin_" + settings.id + " .mec-load-more-button").addClass("mec-load-more-loading");
 
@@ -3450,19 +4259,25 @@ jQuery(window).on('load', function()
                 dataType: "json",
                 type: "post",
                 success: function (response) {
-                    if (response.count == "0") {
+                    if (response.count === 0) {
                         // Remove loading Class
-                        $("#mec_skin_" + settings.id + " .mec-load-more-button").removeClass("mec-load-more-loading");
+                        $("#mec_skin_" + settings.id + " .mec-load-more-button").removeClass("mec-load-more-loading").addClass("mec-util-hidden");
 
-                        // Hide load more button
-                        $("#mec_skin_" + settings.id + " .mec-load-more-button").addClass("mec-util-hidden");
+                        // Release Lock of Infinite Scroll
+                        settings.infinite_locked = false;
+                        $("#mec_skin_" + settings.id + " .mec-load-more-wrap").data('page-finished', true).removeClass('mec-load-more-scroll-loading');
+
+                        // Run Callback
+                        if(typeof callback === 'function') callback(response);
                     } else {
                         // Show load more button
                         if (typeof response.has_more_event === 'undefined' || (typeof response.has_more_event !== 'undefined' && response.has_more_event)) $("#mec_skin_" + settings.id + " .mec-load-more-button").removeClass("mec-util-hidden");
                         else $("#mec_skin_" + settings.id + " .mec-load-more-button").addClass("mec-util-hidden");
 
+                        // Run Callback
+                        if(typeof callback === 'function') callback(response);
                         // Append Items
-                        $("#mec_skin_events_" + settings.id + " .mec-events-agenda-container").append(response.html);
+                        else $("#mec_skin_events_" + settings.id + " .mec-events-agenda-container").append(response.html);
 
                         // Remove loading Class
                         $("#mec_skin_" + settings.id + " .mec-load-more-button").removeClass("mec-load-more-loading");
@@ -3477,7 +4292,13 @@ jQuery(window).on('load', function()
                             sed();
                         }
                         mecFluentCustomScrollbar();
+
+                        // Release Lock of Infinite Scroll
+                        settings.infinite_locked = false;
+                        $("#mec_skin_" + settings.id + " .mec-load-more-wrap").removeClass('mec-load-more-scroll-loading');
                     }
+
+                    $(document).trigger('mec_load_more_init',['agenda',settings]);
                 },
                 error: function () { }
             });
@@ -3498,7 +4319,7 @@ jQuery(window).on('load', function()
                 dataType: "json",
                 type: "post",
                 success: function (response) {
-                    if (response.count == "0") {
+                    if (response.count === 0) {
                         // Append Items
                         $("#mec_skin_events_" + settings.id + " .mec-events-agenda-container").html('');
 
@@ -3533,6 +4354,8 @@ jQuery(window).on('load', function()
                         }
                     }
                     mecFluentCustomScrollbar();
+
+                    $(document).trigger('mec_search_init',['agenda',settings,response]);
                 },
                 error: function () { }
             });
@@ -3768,15 +4591,14 @@ jQuery(window).on('load', function()
         var settings = $.extend({
             // These are the defaults.
             date: null,
-            format: null,
-            interval: 1000
+            format: null
         }, options);
 
         var callback = callBack;
         var selector = $(this);
 
         startCountdown();
-        var interval = setInterval(startCountdown, settings.interval);
+        var interval = setInterval(startCountdown, 1000);
 
         function startCountdown() {
             var eventDate = Date.parse(settings.date) / 1000;
@@ -3848,7 +4670,9 @@ jQuery(window).on('load', function()
             active_month: {},
             next_month: {},
             sf: {},
-            ajax_url: ''
+            ajax_url: '',
+            pagination: '0',
+            infinite_locked: false,
         }, options);
 
         // Initialize Month Navigator
@@ -3860,22 +4684,28 @@ jQuery(window).on('load', function()
         active_month = settings.active_month.month;
         active_year = settings.active_month.year;
 
+        let history = [];
+        const $next = $('#mec-nextprev-wrap-' + settings.id + ' .mec-nextprev-next-button');
+        const $prev = $('#mec-nextprev-wrap-' + settings.id + ' .mec-nextprev-prev-button');
+
         // Set onclick Listeners
         setListeners();
 
         // Search Widget
-        if (settings.sf.container !== '') {
-            sf = $(settings.sf.container).mecSearchForm(
-                {
-                    id: settings.id,
-                    refine: settings.sf.refine,
-                    ajax_url: settings.ajax_url,
-                    atts: settings.atts,
-                    callback: function (atts) {
-                        settings.atts = atts;
-                        search(active_year, active_month);
-                    }
-                });
+        if ( settings.sf.container !== '' ) {
+            $(settings.sf.container).mecSearchForm(
+            {
+                id: settings.id,
+                refine: settings.sf.refine,
+                ajax_url: settings.ajax_url,
+                atts: settings.atts,
+                callback: function (atts) {
+                    settings.atts = atts;
+                    search(active_year, active_month);
+                }
+            });
+
+            $(settings.sf.container).addClass('mec-skin-search-init');
         }
 
         function initMonthNavigator() {
@@ -3937,6 +4767,8 @@ jQuery(window).on('load', function()
 
                         // Remove loading Class
                         $('.mec-modal-result').removeClass("mec-month-navigator-loading");
+
+                        $(document).trigger('mec_search_init',['tile',settings,response]);
                     },
                     error: function () { }
                 });
@@ -4025,9 +4857,106 @@ jQuery(window).on('load', function()
         var sf;
 
         function setListeners() {
+            // Load More
             $("#mec_skin_" + settings.id + " .mec-load-more-button").off("click").on("click", function () {
                 loadMore();
             });
+
+            // Scroll
+            if(settings.pagination === 'scroll') {
+                $(window).on("scroll", function (event) {
+                    var $target = $("#mec_skin_" + settings.id + " .mec-load-more-wrap");
+
+                    var finished = $target.data('page-finished');
+                    if(finished) return;
+
+                    var hT = $target.offset().top,
+                        hH = $target.outerHeight(),
+                        wH = $(window).height(),
+                        wS = $(this).scrollTop();
+
+                    if (wS + 100 > hT + hH - wH && !settings.infinite_locked) {
+                        settings.infinite_locked = true;
+                        $target.addClass('mec-load-more-scroll-loading');
+                        loadMore();
+                    }
+                });
+            }
+
+            // Next Prev Pagination
+            if(settings.pagination === 'nextprev')
+            {
+                // Events Wrapper
+                const $EW = $("#mec_skin_events_" + settings.id);
+
+                let next_disabled = false;
+
+                // Previous Button
+                $prev.on('click', function()
+                {
+                    if(history.length)
+                    {
+                        let page = history.pop();
+
+                        // Display Events
+                        $EW.html(page.html);
+
+                        // Update the variables
+                        settings.end_date = page.end_date;
+                        settings.offset = page.offset;
+                        settings.current_month_divider = page.current_month_divider;
+
+                        // Display Next Button
+                        $next.removeClass('mec-util-hidden');
+                    }
+
+                    // Hide Previous Button
+                    if(!history.length) $prev.addClass('mec-util-hidden');
+                });
+
+                // Next Button
+                $next.on('click', function(e)
+                {
+                    // Prevent Redirect
+                    e.preventDefault();
+
+                    // Currently Disabled
+                    if(next_disabled) return;
+
+                    // Disable Button
+                    next_disabled = true;
+
+                    // Add Loading Style
+                    $EW.addClass('mec-loading-events');
+
+                    // Push to History
+                    history.push({
+                        end_date: settings.end_date,
+                        offset: settings.offset,
+                        current_month_divider: settings.current_month_divider,
+                        html: $EW.html()
+                    });
+
+                    loadMore(function(response)
+                    {
+                        // Display New Events
+                        if(response.count) $EW.html(response.html);
+                        // Remove Last Page
+                        else history.pop();
+
+                        // Enable Button
+                        next_disabled = false;
+
+                        // Remove Loading Style
+                        $EW.removeClass('mec-loading-events');
+
+                        // Display Previous Button
+                        if(history.length) $prev.removeClass('mec-util-hidden');
+                        // Hide Next Button
+                        if(response.count === 0 || (typeof response.has_more_event !== 'undefined' && !response.has_more_event)) $next.addClass('mec-util-hidden');
+                    });
+                });
+            }
 
             $("#mec_skin_" + settings.id + " article").off("click").on("click", function (e) {
                 // Link Clicked
@@ -4069,16 +4998,16 @@ jQuery(window).on('load', function()
 
         function sed() {
             // Single Event Display
-            $("#mec_skin_" + settings.id + " .mec-event-content").off('click').on('click', function (e) {
+            $("#mec_skin_" + settings.id + " .mec-event-content .mec-tile-into-content-link,#mec_skin_" + settings.id + " .mec-event-content .mec-event-title a").off('click').on('click', function (e) {
 
-                var sed_method = $(this).parent().data('target');
+                var sed_method = $(this).closest('.mec-event-article.mec-tile-item').data('target');
                 if ('_blank' === sed_method) {
                     return;
                 }
                 e.preventDefault();
-                var href = $(this).parent().data('href');
+                var href = $(this).closest('.mec-event-article.mec-tile-item').data('href');
 
-                var id = $(this).find('.mec-event-title a').data('event-id');
+                var id = $(this).closest('.mec-event-article.mec-tile-item').find('.mec-event-title a').data('event-id');
                 var occurrence = get_parameter_by_name('occurrence', href);
                 var time = get_parameter_by_name('time', href);
 
@@ -4090,7 +5019,7 @@ jQuery(window).on('load', function()
             });
         }
 
-        function loadMore() {
+        function loadMore(callback) {
             // Load More Button
             var $load_more_button = $("#mec_skin_" + settings.id + " .mec-load-more-button");
 
@@ -4110,14 +5039,23 @@ jQuery(window).on('load', function()
 
                             // Hide load more button
                             $load_more_button.addClass("mec-util-hidden");
+
+                            // Release Lock of Infinite Scroll
+                            settings.infinite_locked = false;
+                            $("#mec_skin_" + settings.id + " .mec-load-more-wrap").data('page-finished', true).removeClass('mec-load-more-scroll-loading');
+
+                            // Run Callback
+                            if(typeof callback === 'function') callback(response);
                         }
                         else {
                             // Show load more button
                             if (typeof response.has_more_event === 'undefined' || (typeof response.has_more_event !== 'undefined' && response.has_more_event)) $load_more_button.removeClass("mec-util-hidden");
                             else $load_more_button.addClass("mec-util-hidden");
 
+                            // Run Callback
+                            if(typeof callback === 'function') callback(response);
                             // Append Items
-                            $("#mec_skin_events_" + settings.id).append(response.html);
+                            else $("#mec_skin_events_" + settings.id).append(response.html);
 
                             // Remove loading Class
                             $load_more_button.removeClass("mec-load-more-loading");
@@ -4131,7 +5069,13 @@ jQuery(window).on('load', function()
                             if (settings.sed_method != '0') {
                                 sed();
                             }
+
+                            // Release Lock of Infinite Scroll
+                            settings.infinite_locked = false;
+                            $("#mec_skin_" + settings.id + " .mec-load-more-wrap").removeClass('mec-load-more-scroll-loading');
                         }
+
+                        $(document).trigger('mec_load_more_init',['tile',settings]);
                     },
                     error: function () { }
                 });
@@ -4319,17 +5263,24 @@ function mec_focus_week(id, skin) {
                 if (target.length) {
                     var scrollTopVal = target.offset().top - 30;
 
-                    $('html, body').animate({
-                        scrollTop: scrollTopVal
-                    }, 600);
+                    if($('body[class^="mec-events-template"]').length > 0 ) {
+                        $('html, body').animate({
+                            scrollTop: scrollTopVal
+                        }, 600);
 
-                    return false;
+                        return false;
+
+                    } else {
+
+                        return true;
+
+                    }
                 }
             }
         });
 
         // Load Information widget under title in mobile/tablet
-        if ($('.single-mec-events .mec-single-event:not(".mec-single-modern")').length > 0) {
+        if ($('.single-mec-events .mec-single-event:not(.mec-single-modern)').length > 0) {
             if ($('.single-mec-events .mec-event-info-desktop.mec-event-meta.mec-color-before.mec-frontbox').length > 0) {
                 var html = $('.single-mec-events .mec-event-info-desktop.mec-event-meta.mec-color-before.mec-frontbox')[0].outerHTML;
                 if (Math.max(document.documentElement.clientWidth, window.innerWidth || 0) < 960) {
@@ -4338,6 +5289,13 @@ function mec_focus_week(id, skin) {
                 }
             }
         }
+
+        // FAQ
+        $('.mec-faq-toggle-icon').on('click', function()
+        {
+            console.log("Clicked", $(this), $(this).parent());
+            $(this).parent().toggleClass('close');
+        });
     });
 })(jQuery);
 
@@ -4481,7 +5439,6 @@ function mec_book_form_back_btn_click(context, unique_id) {
     jQuery('#mec_booking_message' + unique_id).hide();
     if (id == "mec-book-form-back-btn-step-2") {
         var mec_form_data_step_1 = jQuery('body').data('mec-book-form-data-step-1');
-        console.log(mec_form_data_step_1);
 
         jQuery('#mec_booking' + unique_id).html(jQuery('body').data('mec-book-form-step-1'));
         jQuery.each(mec_form_data_step_1, function(index, object_item)
@@ -4736,6 +5693,9 @@ function mecFluentNiceSelect() {
 }
 
 function mecFluentCustomScrollbar(y) {
+
+    jQuery(document).trigger( 'mec_custom_scrollbar_init', [y] );
+
     if (jQuery('.mec-fluent-wrap').length < 0) {
         return;
     }
@@ -4939,6 +5899,8 @@ function mecFluentYearlyUI(eventID, yearID) {
                         mecFluentCustomScrollbar();
                         initLoadMore('#mec_list_view_month_' + settings.id + '_' + response.current_month.id);
                     }
+
+                    $(document).trigger('mec_load_more_init',['list',settings]);
                 },
                 error: function () { }
             });
@@ -4956,7 +5918,7 @@ function mecFluentYearlyUI(eventID, yearID) {
         active_year = initYear = settings.active_month.year;
 
         // Search Widget
-        if (settings.sf.container !== '') {
+        if ( settings.sf.container !== '' ) {
             sf = $(settings.sf.container).mecSearchForm({
                 id: settings.id,
                 refine: settings.sf.refine,
@@ -4967,6 +5929,8 @@ function mecFluentYearlyUI(eventID, yearID) {
                     search(active_year, active_month);
                 }
             });
+
+            $(settings.sf.container).addClass('mec-skin-search-init');
         }
 
         // Single Event Method
@@ -4994,8 +5958,7 @@ function mecFluentYearlyUI(eventID, yearID) {
 
         function updateQueryStringParameter(uri, key, val) {
             return uri
-                .replace(RegExp("([?&]" + key + "(?=[=&#]|$)[^#&]*|(?=#|$))"), "&" + key + "=" + encodeURIComponent(val))
-                .replace(/^([^?&]+)&/, "$1?");
+                .replace(RegExp("([?&]" + key + "(?=[=&#]|$)[^#&]*|(?=#|$))"), "&" + key + "=" + encodeURIComponent(val));
         }
 
         function search(year, month) {
@@ -5038,6 +6001,8 @@ function mecFluentYearlyUI(eventID, yearID) {
                     mecFluentCustomScrollbar();
 
                     $(document).trigger('mec_search_process_end', {r:response, settings_id: settings.id});
+
+                    $(document).trigger('mec_search_init',['list',settings,response]);
                 },
                 error: function () { }
             });
@@ -5218,6 +6183,8 @@ function mecFluentYearlyUI(eventID, yearID) {
                         mecFluentCustomScrollbar();
                         initLoadMore('#mec_grid_view_month_' + settings.id + '_' + response.current_month.id);
                     }
+
+                    $(document).trigger('mec_load_more_init',['grid',settings]);
                 },
                 error: function () { }
             });
@@ -5235,7 +6202,7 @@ function mecFluentYearlyUI(eventID, yearID) {
         active_year = initYear = settings.active_month.year;
 
         // Search Widget
-        if (settings.sf.container !== '') {
+        if ( settings.sf.container !== '' ) {
             sf = $(settings.sf.container).mecSearchForm({
                 id: settings.id,
                 refine: settings.sf.refine,
@@ -5246,6 +6213,8 @@ function mecFluentYearlyUI(eventID, yearID) {
                     search(active_year, active_month);
                 }
             });
+
+            $(settings.sf.container).addClass('mec-skin-search-init');
         }
 
         // Single Event Method
@@ -5273,8 +6242,7 @@ function mecFluentYearlyUI(eventID, yearID) {
 
         function updateQueryStringParameter(uri, key, val) {
             return uri
-                .replace(RegExp("([?&]" + key + "(?=[=&#]|$)[^#&]*|(?=#|$))"), "&" + key + "=" + encodeURIComponent(val))
-                .replace(/^([^?&]+)&/, "$1?");
+                .replace(RegExp("([?&]" + key + "(?=[=&#]|$)[^#&]*|(?=#|$))"), "&" + key + "=" + encodeURIComponent(val));
         }
 
         function search(year, month) {
@@ -5315,6 +6283,8 @@ function mecFluentYearlyUI(eventID, yearID) {
                     $('.mec-modal-result').removeClass("mec-month-navigator-loading");
 
                     mecFluentCustomScrollbar();
+
+                    $(document).trigger('mec_search_init',['grid',settings,response]);
                 },
                 error: function () { }
             });
@@ -5492,7 +6462,7 @@ function mecFluentYearlyUI(eventID, yearID) {
                 success: function(response)
                 {
                     // HTML
-                    $('#mec_booking_calendar_wrapper' + settings.id).html(response.html);
+                    $('#mec_booking_calendar_wrapper' + settings.id + ' .mec-select-date-calendar-container').html(response.html);
 
                     // Hide Message
                     $('#mec_book_form' + settings.id + ' .mec-ticket-unavailable-spots').addClass('mec-util-hidden');
@@ -5527,6 +6497,10 @@ function mecFluentYearlyUI(eventID, yearID) {
                 // Set Data
                 var timestamp = $(this).data('timestamp');
                 $('#mec_book_form_date' + settings.id).val(timestamp).trigger('change');
+
+                // Set Formatted Date
+                var formatted_date = $(this).data('formatted-date');
+                $("#mec_booking_calendar_wrapper" + settings.id + " .mec-select-date-calendar-formatted-date").html(formatted_date);
             });
 
             // Add the onclick event on calendar date
@@ -5543,6 +6517,10 @@ function mecFluentYearlyUI(eventID, yearID) {
                 // Set Data
                 var timestamp = $(this).data('timestamp');
                 $('#mec_book_form_date' + settings.id).val(timestamp).trigger('change');
+
+                // Set Formatted Date
+                var formatted_date = $(this).data('formatted-date');
+                $("#mec_booking_calendar_wrapper" + settings.id + " .mec-select-date-calendar-formatted-date").html(formatted_date);
             });
 
             // If day has some time slot
@@ -5591,6 +6569,49 @@ function mecFluentYearlyUI(eventID, yearID) {
                     $selected_datetime.parent().addClass("multiple-time");
                     $selected_datetime.addClass("mec-active").trigger('click');
                 }
+            }
+
+            // Dropdown Toggle
+            $("#mec_booking_calendar_wrapper" + settings.id + " .mec-select-date-calendar-dropdown").off('click').on('click', function()
+            {
+                var $up = $("#mec_booking_calendar_wrapper" + settings.id + " .mec-select-date-calendar-icons-up");
+                var $down = $("#mec_booking_calendar_wrapper" + settings.id + " .mec-select-date-calendar-icons-down");
+                var $calendar = $("#mec_booking_calendar_wrapper" + settings.id + " .mec-select-date-calendar-container");
+
+                var $current = $(this).find($('.mec-select-date-calendar-icons span:not(.mec-util-hidden)'));
+                if($current.hasClass('mec-select-date-calendar-icons-up'))
+                {
+                    $up.addClass('mec-util-hidden');
+                    $down.removeClass('mec-util-hidden');
+                    $calendar.removeClass('mec-util-hidden');
+
+                    setTimeout(function()
+                    {
+                        $('body').off('click').on('click', mec_calendar_close_calendar_on_body_click);
+                    }, 100);
+                }
+                else
+                {
+                    $up.removeClass('mec-util-hidden');
+                    $down.addClass('mec-util-hidden');
+                    $calendar.addClass('mec-util-hidden');
+                }
+            });
+
+            function mec_calendar_close_calendar_on_body_click(e)
+            {
+                var $up = $("#mec_booking_calendar_wrapper" + settings.id + " .mec-select-date-calendar-icons-up");
+                var $down = $("#mec_booking_calendar_wrapper" + settings.id + " .mec-select-date-calendar-icons-down");
+                var $calendar = $("#mec_booking_calendar_wrapper" + settings.id + " .mec-select-date-calendar-container");
+
+                // Click was inside calendar
+                if($(e.target).closest($calendar).length > 0) return false;
+
+                $up.removeClass('mec-util-hidden');
+                $down.addClass('mec-util-hidden');
+                $calendar.addClass('mec-util-hidden');
+
+                $('body').off('click', mec_calendar_close_calendar_on_body_click);
             }
         }
     };
@@ -5800,7 +6821,11 @@ function mecFluentYearlyUI(eventID, yearID) {
 }(jQuery));
 
 // Booking Shortcode Scripts
-jQuery(document).ready(function () {
+jQuery(document).ready(function()
+{
+    // Event Gallery
+    mec_init_event_gallery();
+
     if (jQuery('.mec-booking-shortcode').length < 0) {
         return;
     }
@@ -5811,11 +6836,124 @@ jQuery(document).ready(function () {
 
     // General Calendar
     if ( jQuery("#gCalendarMonthFilterButton").length > 0 ) {
-        jQuery("#gCalendarMonthFilterButton").datepicker({
+        jQuery("#gCalendarMonthFilterButton").monthPicker({
             format: "yyyy-mm",
             viewMode: "months",
             minViewMode: "months"
         })
-        jQuery("#gCalendarMonthFilterButton").datepicker('hide')
+        jQuery("#gCalendarMonthFilterButton").monthPicker('hide')
     }
 });
+
+function mec_init_event_gallery()
+{
+    // Event Gallery
+    jQuery('.mec-event-gallery-wrapper').each(function()
+    {
+        let $gallery = jQuery(this);
+
+        $gallery.find(jQuery('.mec-event-gallery-list li')).on('click', function()
+        {
+            let $image = jQuery(this).find(jQuery('img'));
+            let src = $image.data('full-src');
+            let alt = $image.attr('alt');
+
+            jQuery('.mec-event-gallery-image img')
+                .fadeTo(200, 0.8)
+                .attr('src', src)
+                .attr('alt', alt)
+                .fadeTo(200, 1);
+        });
+    });
+}
+
+function mec_toggle_shortcode_pagination(shortcode_id, method)
+{
+    if(method === 'show')
+    {
+        jQuery("#mec_skin_" + shortcode_id + " .mec-load-more-button").removeClass("mec-util-hidden");
+        jQuery('#mec-nextprev-wrap-' + shortcode_id + ' .mec-nextprev-next-button').removeClass("mec-util-hidden");
+    }
+    else
+    {
+        jQuery("#mec_skin_" + shortcode_id + " .mec-load-more-button").addClass("mec-util-hidden");
+        jQuery('#mec-nextprev-wrap-' + shortcode_id + ' .mec-nextprev-next-button').addClass("mec-util-hidden");
+        jQuery('#mec-nextprev-wrap-' + shortcode_id + ' .mec-nextprev-hide-button').addClass("mec-util-hidden");
+    }
+}
+
+// MEC COUNTDOWN MODULE
+(function ($) {
+    $.fn.mecProgressBar = function () {
+        let $bar = $(this).find($('progress'));
+        let value = parseInt($bar.attr('value'));
+        const max = parseInt($bar.attr('max'));
+
+        var passed = 0;
+        var remained = 0;
+        var passed_days;
+        var passed_hours;
+        var passed_minutes;
+        var passed_seconds;
+        var remained_days;
+        var remained_hours;
+        var remained_minutes;
+        var remained_seconds;
+
+        var $time_passed = $(this).find($('.mec-progress-bar-time-passed'));
+        var $time_remained = $(this).find($('.mec-progress-bar-time-remained'));
+
+        startProgress();
+        var interval = setInterval(startProgress, 1000);
+
+        function startProgress() {
+            if(value >= max) {
+                clearInterval(interval);
+                return;
+            }
+            value += 1;
+            $bar.attr('value', value);
+
+            let passed_str = '';
+            let remained_str = '';
+
+            passed = value;
+            remained = max - passed;
+
+            passed_days = Math.floor(passed / 86400);
+            passed -= passed_days * 86400;
+
+            passed_hours = Math.floor(passed / 3600);
+            passed -= passed_hours * 3600;
+
+            passed_minutes = Math.floor(passed / 60);
+            passed -= passed_minutes * 60;
+
+            passed_seconds = passed;
+
+            remained_days = Math.floor(remained / 86400);
+            remained -= remained_days * 86400;
+
+            remained_hours = Math.floor(remained / 3600);
+            remained -= remained_hours * 3600;
+
+            remained_minutes = Math.floor(remained / 60);
+            remained -= remained_minutes * 60;
+
+            remained_seconds = remained;
+
+            if(passed_days > 0) passed_str += (passed_days < 10 ? '0' : '') + passed_days + ':';
+            if(passed_days > 0 || passed_hours > 0) passed_str += (passed_hours < 10 ? '0' : '') + passed_hours + ':';
+            passed_str += (passed_minutes < 10 ? '0' : '') + passed_minutes + ':';
+            passed_str += (passed_seconds < 10 ? '0' : '') + passed_seconds;
+
+            if(remained_days > 0) remained_str += (remained_days < 10 ? '0' : '') + remained_days + ':';
+            if(remained_days > 0 || remained_hours > 0) remained_str += (remained_hours < 10 ? '0' : '') + remained_hours + ':';
+            remained_str += (remained_minutes < 10 ? '0' : '') + remained_minutes + ':';
+            remained_str += (remained_seconds < 10 ? '0' : '') + remained_seconds;
+
+            $time_passed.html(passed_str);
+            $time_remained.html(remained_str);
+        }
+    };
+}(jQuery));

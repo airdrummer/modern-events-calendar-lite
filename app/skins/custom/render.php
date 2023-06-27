@@ -90,7 +90,7 @@ if(isset($map_eventss) and !empty($map_eventss))
     $map_javascript = '<script>
     jQuery(document).ready(function()
     {
-        var jsonPush = gmapSkin('.json_encode($this->render->markers($map_eventss)).');
+        var jsonPush = gmapSkin('.json_encode($this->render->markers($map_eventss, $this->style)).');
         jQuery("#mec_googlemap_canvas'.esc_js($this->id).'").mecGoogleMaps(
         {
             id: "'.esc_js($this->id).'",

@@ -6,24 +6,33 @@ function mec_fes_upload_featured_image() {
 
     jQuery("#mec_fes_thumbnail_error").html("").addClass("mec-util-hidden");
 
+    // Submit Button
+    const $button = jQuery('.mec-fes-sub-button');
+
+    // Disable Button
+    $button.prop('disabled', true);
+
     jQuery.ajax({
-            url: mecdata.ajax_url,
-            type: "POST",
-            data: fd,
-            dataType: "json",
-            processData: false,
-            contentType: false
-        })
-        .done(function (data) {
-            if (data.success) {
-                jQuery("#mec_fes_thumbnail").val(data.data.url);
-                jQuery("#mec_featured_image_file").val("");
-                jQuery("#mec_fes_thumbnail_img").html("<img src=\"" + data.data.url + "\" />");
-                jQuery("#mec_fes_remove_image_button").removeClass("mec-util-hidden");
-            } else {
-                jQuery("#mec_fes_thumbnail_error").html(data.message).removeClass("mec-util-hidden");
-            }
-        });
+        url: mecdata.ajax_url,
+        type: "POST",
+        data: fd,
+        dataType: "json",
+        processData: false,
+        contentType: false
+    })
+    .done(function (data) {
+        // Enable Button
+        $button.prop('disabled', false);
+
+        if (data.success) {
+            jQuery("#mec_fes_thumbnail").val(data.data.url);
+            jQuery("#mec_featured_image_file").val("");
+            jQuery("#mec_fes_thumbnail_img").html("<img src=\"" + data.data.url + "\" />");
+            jQuery("#mec_fes_remove_image_button").removeClass("mec-util-hidden");
+        } else {
+            jQuery("#mec_fes_thumbnail_error").html(data.message).removeClass("mec-util-hidden");
+        }
+    });
 
     return false;
 }
@@ -35,20 +44,29 @@ function mec_fes_upload_location_thumbnail() {
     fd.append("_wpnonce", mecdata.fes_upload_nonce);
     fd.append("file", jQuery("#mec_fes_location_thumbnail_file").prop("files")[0]);
 
+    // Submit Button
+    const $button = jQuery('.mec-fes-sub-button');
+
+    // Disable Button
+    $button.prop('disabled', true);
+
     jQuery.ajax({
-            url: mecdata.ajax_url,
-            type: "POST",
-            data: fd,
-            dataType: "json",
-            processData: false,
-            contentType: false
-        })
-        .done(function (data) {
-            jQuery("#mec_fes_location_thumbnail").val(data.data.url);
-            jQuery("#mec_fes_location_thumbnail_file").val("");
-            jQuery("#mec_fes_location_thumbnail_img").html("<img src=\"" + data.data.url + "\" />");
-            jQuery("#mec_fes_location_remove_image_button").removeClass("mec-util-hidden");
-        });
+        url: mecdata.ajax_url,
+        type: "POST",
+        data: fd,
+        dataType: "json",
+        processData: false,
+        contentType: false
+    })
+    .done(function (data) {
+        // Enable Button
+        $button.prop('disabled', false);
+
+        jQuery("#mec_fes_location_thumbnail").val(data.data.url);
+        jQuery("#mec_fes_location_thumbnail_file").val("");
+        jQuery("#mec_fes_location_thumbnail_img").html("<img src=\"" + data.data.url + "\" />");
+        jQuery("#mec_fes_location_remove_image_button").removeClass("mec-util-hidden");
+    });
 
     return false;
 }
@@ -60,20 +78,29 @@ function mec_fes_upload_organizer_thumbnail() {
     fd.append("_wpnonce", mecdata.fes_upload_nonce);
     fd.append("file", jQuery("#mec_fes_organizer_thumbnail_file").prop("files")[0]);
 
+    // Submit Button
+    const $button = jQuery('.mec-fes-sub-button');
+
+    // Disable Button
+    $button.prop('disabled', true);
+
     jQuery.ajax({
-            url: mecdata.ajax_url,
-            type: "POST",
-            data: fd,
-            dataType: "json",
-            processData: false,
-            contentType: false
-        })
-        .done(function (data) {
-            jQuery("#mec_fes_organizer_thumbnail").val(data.data.url);
-            jQuery("#mec_fes_organizer_thumbnail_file").val("");
-            jQuery("#mec_fes_organizer_thumbnail_img").html("<img src=\"" + data.data.url + "\" />");
-            jQuery("#mec_fes_organizer_remove_image_button").removeClass("mec-util-hidden");
-        });
+        url: mecdata.ajax_url,
+        type: "POST",
+        data: fd,
+        dataType: "json",
+        processData: false,
+        contentType: false
+    })
+    .done(function (data) {
+        // Enable Button
+        $button.prop('disabled', false);
+
+        jQuery("#mec_fes_organizer_thumbnail").val(data.data.url);
+        jQuery("#mec_fes_organizer_thumbnail_file").val("");
+        jQuery("#mec_fes_organizer_thumbnail_img").html("<img src=\"" + data.data.url + "\" />");
+        jQuery("#mec_fes_organizer_remove_image_button").removeClass("mec-util-hidden");
+    });
 
     return false;
 }

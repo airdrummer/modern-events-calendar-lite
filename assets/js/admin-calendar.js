@@ -20,27 +20,25 @@
             ajax_url: '',
         }, options);
 
-        // Wrapper
-        var $wrapper = $("#mec_skin_" + settings.id);
-
         // Initialize Month Navigator
-        if(settings.month_navigator) initMonthNavigator();
+        if(settings.month_navigator)
+        {
+            // Add Loading Wrapper
+            jQuery('.mec-wrap').append('<div class="mec-modal-result"></div>');
 
-        // Add Loading Wrapper
-        jQuery('.mec-wrap').append('<div class="mec-modal-result"></div>');
+            active_month = settings.active_month.month;
+            active_year = settings.active_month.year;
 
-        active_month = settings.active_month.month;
-        active_year = settings.active_month.year;
+            setTimeout(initMonthNavigator, 1000);
+        }
 
         function initMonthNavigator()
         {
-            var $loadMonth = $('.mec-load-month');
-
             // Remove the onclick event
-            $wrapper.find($loadMonth).off('click');
+            $("#mec_skin_" + settings.id + ' .mec-load-month').off('click');
 
             // Add onclick event
-            $wrapper.find($loadMonth).on('click', function()
+            $("#mec_skin_" + settings.id + ' .mec-load-month').on('click', function()
             {
                 var year = $(this).data('mec-year');
                 var month = $(this).data('mec-month');

@@ -87,3 +87,6 @@ ALTER TABLE `#__mec_bookings` ADD INDEX (`user_id`);
 
 ALTER TABLE `#__mec_dates` ADD `status` VARCHAR(20) NOT NULL DEFAULT 'publish' AFTER `tend`;
 ALTER TABLE `#__mec_bookings` CHANGE `ticket_ids` `ticket_ids` VARCHAR(655) NOT NULL;
+
+ALTER TABLE `#__mec_dates` ADD `public` INT(4) UNSIGNED NOT NULL DEFAULT 1 AFTER `tend`;
+ALTER TABLE `#__mec_bookings` ADD `seats` INT(10) UNSIGNED NOT NULL DEFAULT 0 AFTER `ticket_ids`;

@@ -73,28 +73,36 @@ if($sed_method == 'new') $sed_method = '0';
 $javascript = '<script>
 jQuery(document).ready(function()
 {
-    jQuery("#mec_daily_view_month_'.esc_js($this->id).'_'.date('Ym', $current_month_time).'").mecDailyView(
+    var mec_interval = setInterval(function()
     {
-        id: "'.esc_js($this->id).'",
-        today: "'.date('Ymd', strtotime($this->active_day)).'",
-        month_id: "'.date('Ym', $current_month_time).'",
-        year: "'.date('Y', $current_month_time).'",
-        month: "'.date('m', $current_month_time).'",
-        day: "'.date('d', strtotime($this->active_day)).'",
-        events_label: "'.esc_attr__('Events', 'modern-events-calendar-lite').'",
-        event_label: "'.esc_attr__('Event', 'modern-events-calendar-lite').'",
-        month_navigator: '.($this->next_previous_button ? 1 : 0).',
-        atts: "'.http_build_query(array('atts' => $this->atts), '', '&').'",
-        ajax_url: "'.admin_url('admin-ajax.php', NULL).'",
-        sed_method: "'.esc_js($sed_method).'",
-        image_popup: "'.esc_js($this->image_popup).'",
-        sf:
+        // Not Visible
+        if(!jQuery("#mec_skin_'.esc_js($this->id).'").is(":visible")) return;
+        
+        jQuery("#mec_daily_view_month_'.esc_js($this->id).'_'.date('Ym', $current_month_time).'").mecDailyView(
         {
-            container: "'.($this->sf_status ? '#mec_search_form_'.esc_js($this->id) : '').'",
-            reset: '.($this->sf_reset_button ? 1 : 0).',
-            refine: '.($this->sf_refine ? 1 : 0).',
-        },
-    });
+            id: "'.esc_js($this->id).'",
+            today: "'.date('Ymd', strtotime($this->active_day)).'",
+            month_id: "'.date('Ym', $current_month_time).'",
+            year: "'.date('Y', $current_month_time).'",
+            month: "'.date('m', $current_month_time).'",
+            day: "'.date('d', strtotime($this->active_day)).'",
+            events_label: "'.esc_attr__('Events', 'modern-events-calendar-lite' ).'",
+            event_label: "'.esc_attr__('Event', 'modern-events-calendar-lite' ).'",
+            month_navigator: '.($this->next_previous_button ? 1 : 0).',
+            atts: "'.http_build_query(array('atts' => $this->atts), '', '&').'",
+            ajax_url: "'.admin_url('admin-ajax.php', NULL).'",
+            sed_method: "'.esc_js($sed_method).'",
+            image_popup: "'.esc_js($this->image_popup).'",
+            sf:
+            {
+                container: "'.($this->sf_status ? '#mec_search_form_'.esc_js($this->id) : '').'",
+                reset: '.($this->sf_reset_button ? 1 : 0).',
+                refine: '.($this->sf_refine ? 1 : 0).',
+            },
+        });
+        
+        clearInterval(mec_interval);
+    }, 500);
 });
 </script>';
 
@@ -131,5 +139,7 @@ do_action('mec_daily_skin_head');
             </div>
         </div>
     </div>
+
+    <?php echo $this->display_credit_url(); ?>
 
 </div>

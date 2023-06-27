@@ -9,7 +9,10 @@ $hide_canceleds = (isset($atts['hide-canceleds']) and $atts['hide-canceleds']) ?
 $upcomings = (isset($atts['show-upcomings']) and $atts['show-upcomings']) ? true : false;
 
 // Date & Time Format
-$datetime_format = get_option('date_format').' '.get_option('time_format');
+$datetime_format = apply_filters(
+    'mec_profile_datetime_format',
+    get_option('date_format').' '.get_option('time_format')
+);
 
 // MEC Render
 $render = $this->getRender();
@@ -50,41 +53,42 @@ $id = 1;
     <table class="mec-profile-bookings">
         <tr>
             <td>
-                <?php esc_html_e('#' , 'modern-events-calendar-lite'); ?>
+                <?php esc_html_e('#' , 'modern-events-calendar-lite' ); ?>
             </td>
             <td>
-                <?php esc_html_e('Event' , 'modern-events-calendar-lite'); ?>
+                <?php esc_html_e('Event' , 'modern-events-calendar-lite' ); ?>
             </td>
             <td>
-                <?php esc_html_e('Date' , 'modern-events-calendar-lite'); ?>
+                <?php esc_html_e('Date' , 'modern-events-calendar-lite' ); ?>
             </td>
             <td>
-                <?php esc_html_e('Status' , 'modern-events-calendar-lite'); ?>
+                <?php esc_html_e('Status' , 'modern-events-calendar-lite' ); ?>
             </td>
             <td>
-                <?php esc_html_e('Attendees' , 'modern-events-calendar-lite'); ?>
+                <?php esc_html_e('Attendees' , 'modern-events-calendar-lite' ); ?>
             </td>
             <td>
-                <?php esc_html_e('Invoice' , 'modern-events-calendar-lite'); ?>
+                <?php esc_html_e('Invoice' , 'modern-events-calendar-lite' ); ?>
             </td>
             <td>
-                <?php esc_html_e('Map' , 'modern-events-calendar-lite'); ?>
+                <?php esc_html_e('Map' , 'modern-events-calendar-lite' ); ?>
             </td>
             <?php do_action( 'mec_profile_event_detail_header' ); ?>
             <td>
-                <?php esc_html_e('Cancel' , 'modern-events-calendar-lite'); ?>
+                <?php esc_html_e('Cancel' , 'modern-events-calendar-lite' ); ?>
             </td>
         </tr>
         <?php while($query->have_posts()): $query->the_post();
             $ID = get_the_ID();
-            $book_id = $ID;
             $transaction_id = $this->book->get_transaction_id_book_id($ID);
             $event_id = get_post_meta($ID, 'mec_event_id', true);
             $ticket_ids = get_post_meta($ID, 'mec_ticket_id', true);
 
             $confirmed = get_post_meta($ID, 'mec_confirmed', true);
+            $verified = get_post_meta($ID, 'mec_verified', true);
 
-            if($confirmed == '1') $status_class = 'mec-book-confirmed';
+            if($verified == '-1') $status_class = 'mec-book-rejected';
+            elseif($confirmed == '1') $status_class = 'mec-book-confirmed';
             elseif($confirmed == '-1') $status_class = 'mec-book-rejected';
             else $status_class = 'mec-book-pending';
 
@@ -122,7 +126,7 @@ $id = 1;
             </td>
             <td>
                 <?php if(!isset($event->ID) or !isset($event->title)) : ?>
-                <span class="mec-event-title"><?php esc_html_e('N/A', 'modern-events-calendar-lite'); ?></span>
+                <span class="mec-event-title"><?php esc_html_e('N/A', 'modern-events-calendar-lite' ); ?></span>
                 <?php else : ?>
                 <a class="mec-event-title" href="<?php echo esc_url(get_the_permalink($event->ID)); ?>"><?php echo esc_html($event->title); ?></a>
                 <?php do_action('mec_profile_event_title', $event, $transaction); ?>
@@ -130,30 +134,20 @@ $id = 1;
             </td>
             <td>
                  <span class="mec-event-date">
-                    <div class="mec-tooltip">
-                        <div class="box">
-                            <?php if(count($all_dates)): ?>
-                            <span>
-                                <?php foreach($all_dates as $all_date): $all_date_ex = explode(':', $all_date); ?>
-                                <?php echo trim(date($datetime_format, $all_date_ex[0]).' - '.date($datetime_format, $all_date_ex[1]), '- '); ?><br>
-                                <?php endforeach; ?>
-                            </span>
-                            <?php else: ?>
-                            <?php echo trim(date($datetime_format, $start_time).' - '.date($datetime_format, $end_time), '- '); ?>
-                            <?php endif; ?>
-                        </div>
-                        <i class="mec-sl-calendar"></i>
-                    </div>
+                    <?php if(count($all_dates)): ?>
+                    <span>
+                        <?php foreach($all_dates as $all_date): $all_date_ex = explode(':', $all_date); ?>
+                        <?php echo trim(date($datetime_format, $all_date_ex[0]).' - '.date($datetime_format, $all_date_ex[1]), '- '); ?><br>
+                        <?php endforeach; ?>
+                    </span>
+                    <?php else: ?>
+                    <?php echo trim(date($datetime_format, $start_time).' - '.date($datetime_format, $end_time), '- '); ?>
+                    <?php endif; ?>
                 </span>
             </td>
             <td>
                 <span class="mec-event-status <?php echo esc_attr($status_class); ?>">
-                    <div class="mec-tooltip">
-                        <div class="box">
-                            <?php echo esc_html($this->main->get_confirmation_label($confirmed)); ?>
-                        </div>
-                        <i class="mec-sl-layers"></i>
-                    </div>
+                    <?php echo $verified == -1 ? esc_html($this->main->get_verification_label($verified)) : esc_html($this->main->get_confirmation_label($confirmed)); ?>
                 </span>
             </td>
             <td>
@@ -181,7 +175,7 @@ $id = 1;
                     <?php endif; ?>
                 </span>
             </td>
-            <?php do_action( 'mec_profile_event_detail', $event->ID, $book_id, $event ); ?>
+            <?php do_action('mec_profile_event_detail', $event->ID, $ID, $event); ?>
             <td>
                 <?php $mec_verified = get_post_meta($ID, 'mec_verified', true); ?>
                 <span class="mec-profile-bookings-cancelation">
@@ -197,19 +191,19 @@ $id = 1;
             <div class="mec-booking-attendees-wrapper">
                 <div class="mec-booking-attendees-head">
                     <span class="mec-booking-attendee-id">
-                        <?php esc_html_e('#' , 'modern-events-calendar-lite'); ?>
+                        <?php esc_html_e('#' , 'modern-events-calendar-lite' ); ?>
                     </span>
                     <span class="mec-booking-attendee-name">
-                        <?php esc_html_e('Name' , 'modern-events-calendar-lite'); ?>
+                        <?php esc_html_e('Name' , 'modern-events-calendar-lite' ); ?>
                     </span>
                     <span class="mec-booking-attendee-email">
-                        <?php esc_html_e('Email' , 'modern-events-calendar-lite'); ?>
+                        <?php esc_html_e('Email' , 'modern-events-calendar-lite' ); ?>
                     </span>
                     <span class="mec-booking-attendee-ticket">
-                        <?php esc_html_e('Ticket' , 'modern-events-calendar-lite'); ?>
+                        <?php esc_html_e('Ticket' , 'modern-events-calendar-lite' ); ?>
                     </span>
                     <span class="mec-booking-attendee-ticket-variations">
-                        <?php esc_html_e('Variations' , 'modern-events-calendar-lite'); ?>
+                        <?php esc_html_e('Variations' , 'modern-events-calendar-lite' ); ?>
                     </span>
                 </div>
                 <?php
@@ -258,7 +252,7 @@ $id = 1;
         <?php $id++; endwhile; wp_reset_postdata(); // Restore original Post Data ?>
     </table>
     <?php else: ?>
-    <p><?php echo esc_html__('No bookings found!', 'modern-events-calendar-lite'); ?></p>
+    <p><?php echo esc_html__('No bookings found!', 'modern-events-calendar-lite' ); ?></p>
     <?php endif; ?>
 </div>
 <script>

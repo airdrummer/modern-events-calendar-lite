@@ -83,6 +83,8 @@ class MEC_kses extends MEC_base
 
     public static function full($html)
     {
+        if(is_null($html)) return '';
+
         if(is_null(self::$allowed_html_full))
         {
             $allowed = wp_kses_allowed_html('post');
@@ -95,6 +97,8 @@ class MEC_kses extends MEC_base
 
     public static function page($html)
     {
+        if(is_null($html)) return '';
+
         if(is_null(self::$allowed_html_page))
         {
             $allowed = wp_kses_allowed_html('post');
@@ -106,6 +110,8 @@ class MEC_kses extends MEC_base
 
     public static function form($html)
     {
+        if(is_null($html)) return '';
+
         if(is_null(self::$allowed_html_form))
         {
             $allowed = wp_kses_allowed_html('post');
@@ -117,6 +123,8 @@ class MEC_kses extends MEC_base
 
     public static function element($html)
     {
+        if(is_null($html)) return '';
+
         if(is_null(self::$allowed_html_element))
         {
             $allowed = wp_kses_allowed_html('post');
@@ -133,6 +141,8 @@ class MEC_kses extends MEC_base
      */
     public static function rich($html)
     {
+        if(is_null($html)) return '';
+
         if(is_null(self::$allowed_html_rich))
         {
             $allowed = wp_kses_allowed_html('post');
@@ -149,6 +159,8 @@ class MEC_kses extends MEC_base
      */
     public static function embed($html)
     {
+        if(is_null($html)) return '';
+
         if(is_null(self::$allowed_html_embed))
         {
             self::$allowed_html_embed = apply_filters('mec_kses_tags', array(), 'embed');
@@ -168,6 +180,7 @@ class MEC_kses extends MEC_base
             'li',
             'a',
             'button',
+            'progress',
             'dt',
             'dl',
         ) as $tag)
@@ -195,7 +208,7 @@ class MEC_kses extends MEC_base
             if(!isset($tags['canvas'])) $tags['canvas'] = self::$allowed_attrs;
         }
 
-        if(in_array($context, array('full')))
+        if($context === 'full')
         {
             if(!isset($tags['script'])) $tags['script'] = self::$allowed_attrs;
             if(!isset($tags['style'])) $tags['style'] = self::$allowed_attrs;

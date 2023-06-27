@@ -40,10 +40,7 @@ class MEC_bookingRecord extends MEC_base
         // Get Booking by ID
         if(is_numeric($booking)) $booking = get_post($booking);
 
-        if( !$booking || !is_a( $booking, '\WP_Post' ) ){
-
-            return [];
-        }
+        if(!$booking || !is_a($booking, '\WP_Post')) return [];
 
         $user_id = $booking->post_author;
         $verified = get_post_meta($booking->ID, 'mec_verified', true);
@@ -51,6 +48,20 @@ class MEC_bookingRecord extends MEC_base
         $event_id = get_post_meta($booking->ID, 'mec_event_id', true);
         $ticket_ids = get_post_meta($booking->ID, 'mec_ticket_id', true);
         $transaction_id = get_post_meta($booking->ID, 'mec_transaction_id', true);
+
+        $event_tickets = get_post_meta($event_id, 'mec_tickets', true);
+        if(!is_array($event_tickets)) $event_tickets = [];
+
+        $seats = 0;
+        $booked_ticket_ids = explode(',', trim($ticket_ids, ', '));
+        foreach($booked_ticket_ids as $booked_ticket_id)
+        {
+            $booked_ticket_id = (int) trim($booked_ticket_id);
+            $data = (isset($event_tickets[$booked_ticket_id]) and is_array($event_tickets[$booked_ticket_id])) ? $event_tickets[$booked_ticket_id] : [];
+
+            $ticket_seats = (isset($data['seats']) and is_numeric($data['seats'])) ? (int) $data['seats'] : 1;
+            $seats += $ticket_seats;
+        }
 
         $booking_options = get_post_meta($event_id, 'mec_booking', true);
         $all_occurrences = (isset($booking_options['bookings_all_occurrences']) ? $booking_options['bookings_all_occurrences'] : 0);
@@ -76,7 +87,7 @@ class MEC_bookingRecord extends MEC_base
             if($exists) continue;
 
             // Insert
-            $query = "INSERT INTO `#__mec_bookings` (`booking_id`,`user_id`,`transaction_id`,`event_id`,`ticket_ids`,`status`,`confirmed`,`verified`,`all_occurrences`,`date`,`timestamp`) VALUES ('".esc_sql($booking->ID)."','".esc_sql($user_id)."','".esc_sql($transaction_id)."','".esc_sql($event_id)."','".esc_sql($ticket_ids)."','".$booking->post_status."','".esc_sql($confirmed)."','".esc_sql($verified)."','".esc_sql($all_occurrences)."','".date('Y-n-d H:i:s', $timestamp)."','".esc_sql($timestamp)."');";
+            $query = "INSERT INTO `#__mec_bookings` (`booking_id`,`user_id`,`transaction_id`,`event_id`,`ticket_ids`,`seats`,`status`,`confirmed`,`verified`,`all_occurrences`,`date`,`timestamp`) VALUES ('".esc_sql($booking->ID)."','".esc_sql($user_id)."','".esc_sql($transaction_id)."','".esc_sql($event_id)."','".esc_sql($ticket_ids)."','".esc_sql($seats)."','".$booking->post_status."','".esc_sql($confirmed)."','".esc_sql($verified)."','".esc_sql($all_occurrences)."','".date('Y-n-d H:i:s', $timestamp)."','".esc_sql($timestamp)."');";
             $ids[] = $this->db->q($query, 'INSERT');
         }
 

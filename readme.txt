@@ -3,8 +3,8 @@ Contributors: webnus
 Donate link: https://webnus.net
 Tags: Event, Events, Calendar, Booking, Schedule, Organizer, Venue
 Requires at least: 4.0.0
-Tested up to: 6.0
-Stable tag: 6.6.5
+Tested up to: 6.2.2
+Stable tag: 6.10.1
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -472,6 +472,250 @@ You can see [plugin documentation](https://webnus.net/dox/modern-events-calendar
 43. WordPress Event Calendar - Daily view(Fluent View Layouts Addon)
 
 == Changelog ==
+= 6.10.1 – 1 June 2023 =
+- Added: Ability to download the debug log file.
+- Improved: The iCal feed.
+- Improved: PayPal standard by adding invoice description.
+- Fixed: Issue in map skin.
+- Fixed: Issue in booking edit menu regarding displaying dates.
+- Fixed: Issue in FAQ feature.
+- Fixed: Some PHP issues.
+- Fixed: Issue about the event cost feature in lite version.
+- Fixed: Issue in displaying organizers in shortcodes.
+
+= 6.10.0 – 22 May 2023 =
+- Added: Remaining time label.
+- Added: Event Trailer URL.
+- Added: Option to change booking date selection method per event.
+- Added: Variations to the stripe payment metadata.
+- Added: Reset occurrence button to the next event module.
+- Added: RTL languages support for General Calendar view
+- Fixed: Issue in booking required fields.
+- Fixed: Translation issue.
+- Fixed: Some accessibility issues.
+- Fixed: Issue in MailPoet integration.
+- Fixed: Issue in quick edit of events.
+- Fixed: Issue in displaying occurrence price in booking module.
+- Fixed: Issue in location name placeholder in notifications.
+- Fixed: Some minor issues in styling
+
+= 6.9.5 – 15 May 2023 =
+⁃ Added ability to create random test events.
+⁃ Added FAQ feature.
+- Fixed: Some minor issues
+
+= 6.9.0 – 26 April 2023 =
+- Added: SMS Integration with Twilio API.
+- Added: Option to automatically trash expired events after certain amount of time.
+- Added: Option to automatically remove expired events after certain amount of time.
+- Added: Event location to the booking export files.
+- Added: Ability to change the currency in translated events.
+- Added: Ability to change the MEC messages per language.
+- Improved: Security.
+- Improved: Accessibility of search module.
+- Improved: The single sidebar widget.
+- Fixed: PHP notices.
+- Fixed: Issues in MEC_profile shortcode.
+- Fixed: Issues in exporting events to Google Calendar.
+- Fixed: Issues in displaying search terms while displaying ongoing events.
+- Fixed: Issue while using Divi theme.
+- Fixed: Issue in displaying number of sold tickets in admin event manager page.
+- Fixed: Issue in general calendar skin.
+
+= 6.8.30 – 8 April 2023 =
+- Added: Location, category, and organizer filter options to the iCal feed to filter the feeds and also create unlimited number of feeds.
+- Added: Sync to the start and end date pickers in Add / Edit event menu and Frontend Event Submission.
+- Added: Debug message to fix a potential timezone selection issue.
+- Added: System Information section to the support menu.
+- Improved: The featured image upload in Frontend Event Submission to disable the submission button while uploading.
+- Improved: The WooCommerce as Payment System product creation.
+- Fixed: Issue in Frontend Event Submission pagination.
+- Fixed: Content issue in simple style of monthly skin.
+- Fixed: Filter by event issue on booking management page.
+- Fixed: Date selection issue in booking module.
+- Fixed: Some location issues in map skin and map module.
+- Fixed: Issue with progress bar.
+- Fixed: Issue in general calendar.
+- Fixed: Displaying issue on showing event content when the content is created by Elementor plugin.
+
+= 6.8.25 – 15 March 2023 =
+- Added: Sponsors to the default filter options of shortcode builder.
+- Added: Option to display credit URL in shortcodes.
+- Added: Ability to edit the custom dates.
+- Added: Upcoming View to the event management of admin.
+- Improved: Displaying event dates in booking module.
+- Improved: Form validation in booking module.
+- Fixed: Issue in scroll pagination method.
+- Fixed: Integration issue with Paid Membership Pro plugin.
+- Fixed: Issue in the popup mode of booking module.
+- Fixed: Issue in back button of booking module.
+- Fixed: Issue in search module regarding excluded terms.
+- Fixed: Issue in displaying social links of additional organizers.
+- Fixed: Some issues related to the PHP 8.1
+- Fixed: Some minor issue in styling
+
+= 6.8.21 – 1 March 2023 =
+- Fixed: Fatal error issue
+
+= 6.8.20 – 1 March 2023 =
+- Added: Next / Previous pagination method.
+- Added: Option to disable auto month rotation in search requests.
+- Added: Option to restrict the user access to “Frontend Event Submission” based on user role.
+- Added: Bulk option to move bookings from one date to another date.
+- Improved: SQL files.
+- Fixed: Issue in advanced repeat mode.
+- Fixed: Issue in full calendar skin.
+- Fixed: Load more issue in masonry skin.
+- Fixed: Issue in storing locations.
+- Fixed: Issue in total booking limit field.
+- Fixed: Issue in single event modal regarding booking module.
+
+= 6.8.15 – 8 February 2023 =
+- Added: Ability to cancel a certain occurrence using the “Edit Per Occurrence” feature.
+- Added: Opening hour field to the location system.
+- Added: Attendee name and ticket back to the form step of booking module.
+- Added: Display ongoing option to some skins.
+- Added: Ability to upload images using WordPress media library in gallery module when the user has appropriate access.
+- Improved: Billing information of stripe payment gateway.
+- Improved: The title of archive pages.
+- Improved: Edit Per Occurrence feature.
+- Improved: The HTML structure of minimal style of list skin.
+- Fixed: Issue in booking module of ongoing events.
+- Fixed: Issue in gallery module when loaded in modal window.
+- Fixed: Issue in advanced repeating events.
+- Fixed: Issue in displaying details page of ongoing events.
+- Fixed: Issue in displaying events in category pages.
+- Fixed: Issue in field data mapping after booking.
+- Fixed: Some issue in WC payment gateway.
+- Fixed: Some issues regarding PHP8.
+- Fixed: Some issues in countdown skin.
+- Fixed: Issue in displaying filter options in shortcodes.
+- Fixed: Issue in importing events using .ics format.
+- Fixed: Filtering issue when filtering by month and year dropdown.
+- Fixed: Many PHP 8 issues.
+- Fixed: Issue in refund process.
+
+= 6.8.10 – 12 January 2023 =
+- Added: Infinite scroll pagination option.
+- Added: Some options to the Frontend Event Submission feature to make the location and event dates mandatory.
+- Added: New GDPR compliant captcha driver.
+- Added: Maximum date option for the full calendar skin.
+- Added: Option to duplicate the short-codes.
+- Added: Option to display the organizer in monthly skin.
+- Added: Express calendar method for date selection in booking module.
+- Improved: Performance of event gallery module.
+- Improved: UX of calendar method of date selection in the interface of booking module.
+- Improved: Security of keys / passwords stored in the MEC settings by adding toggle display button.
+- Improved: Admin notifications.
+- Fixed: Issue in booking module when coupon codes are disabled.
+- Fixed: Some issues in booking process.
+
+= 6.8.5 – 26 December 2022 =
+- Added: Checkboxes search method for category, location, organizer, label and speaker fields.
+- Added: Filter for MEC email template.
+- Added: Option to improve learn dash integration.
+- Added: Option to enable/disable Other Locations feature in frontend event submission.
+- Improved: The frontend event submission for excerpt field.
+- Improved: The notification placeholders.
+- Improved: The booking field mapping to the user fields.
+- Fixed: Issue in displaying ongoing events when event or shortcode is set to display only one occurrence.
+- Fixed: Issue in displaying total price after discount.
+- Fixed: Issue in Use WooCommerce as Payment System gateway.
+- Fixed: Issue in monthly skin and expired events.
+- Fixed: Issue in popup method of displaying event details page.
+- Fixed: Issue in email reminder.
+- Fixed: Issue in loading shortcodes in popups using page builders plugins.
+
+= 6.8.2 – 11 December 2022 =
+- Fixed: Some minor issue in styling
+
+= 6.8.1 – 10 December 2022 =
+- Updated: Deutsch language - Thanks to Rico Michael.
+- Fixed: Booking in RTL mode
+- Fixed: Booking in modal style
+
+= 6.8.0 – 10 December 2022 =
+- Added: Partial payment option. (Deposite System)
+- Added: Option in list and grid skins to display the event cost.
+- Fixed: Issue in displaying sold-out message when the total limit is zero.
+- Fixed: Issue in sorting events.
+- Fixed: Issue in loading events in Load More button.
+- Fixed: Issue in general calendar skin in certain languages.
+
+= 6.7.3 – 30 November 2022 =
+- Added: Backend calendar to manage the events.
+- Added: Option to force payment steps when bookings are free.
+- Added: Option to hide event status on the standard style of list skin.
+- Added: Ability to auto-populate ACF fields of WC products from ACF fields of event in the pay by WooCommerce system.
+- Updated: French language - Thanks to Michael Berthoud.
+- Fixed: Issue with applying discount by coupon codes.
+- Fixed: Issue with displaying booking module when total limit is set to zero.
+- Fixed: Issue with displaying uploaded files.
+- Fixed: Multilingual issues with stripe gateway.
+- Fixed: Issue with Pay by WooCommerce system.
+
+= 6.7.0 – 12 November 2022 =
+- Added: Progress bar module.
+- Added: Event gallery image module.
+- Added: Feature to apply 100 percent coupons to all fees.
+- Refactored: Structure and html output of booking module.
+- Improved: Design of standard style of list skin.
+- Improved: Learn dash integration.
+- Improved: Search module to hide the organizer, location, etc that don’t have future events.
+- Fixed: Issue when editing booking in the backend.
+- Fixed: Issues in ical feed.
+- Fixed: Issues when WordPress time format is an empty string.
+- Fixed: Issue in MEC settings wizard.
+
+= 6.6.12 – 18 October 2022 =
+- Added: Sample CSV file to the CSV booking import.
+- Added: Ability to define family tickets.
+- Added: Ability to add icons for custom event fields.
+- Added: Sofort, iDeal and many more payment systems using new Stripe gateway.
+- Improved: The additional organizers module.
+- Improved: The free booking process.
+- Refactored: Stripe Payment Gateway.
+- Fixed: Issue in displaying cancellation reason in clean style of timetable skin.
+- Fixed: Issue in cancellation of bookings by adding a confirmation step to the cancellation process.
+- Fixed: Issue in booking reminder feature.
+- Fixed: Issue in event finished notification.
+- Fixed: Issue in import / export feature.
+- Fixed: Issue in displaying expired events in backend.
+- Fixed: Issue in capability of import / export feature.
+- Fixed: Issue in displaying dates of events in booking edit page.
+- Fixed: Issue regarding importing invalid ics files.
+- Fixed: Issue on saving date format options per language.
+- Fixed: Issue in importing advanced repeat events from Google Calendar.
+
+= 6.6.10 – 20 September 2022 =
+- Added: Ability to disable Add Organizer feature in Frontend Event Submission
+- Added: Ability to disable Add Location feature in Frontend Event Submission
+- Improved: The booking price details by splitting the total ticket price into different prices per date and adding the number of tickets for each booked date
+- Improved: The registration button by hiding it when the event is expired
+- Fixed: Issue in displaying event custom fields when embed code is used
+- Fixed: Issue in importing all-day events in ics format
+
+= 6.6.9 – 13 September 2022 =
+- Improved: The date display when single widget is enabled
+- Fixed: Daylight saving time
+- Fixed: Issue in agreement field of Frontend Event Submission
+- Fixed: Issue in general calendar regarding the All-day events
+- Fixed: Issue in general calendar when event end time is hidden
+- Fixed: Issue in general calendar when the whole event time is hidden
+- Fixed: Conflict with other plugins
+
+= 6.6.8 – 6 September 2022 =
+- Added: Option to change details style per event.
+- Added: Ability to translate expired and ongoing words from messages panel.
+- Added: Shortcode element to avada builder.
+- Added: Feature to exclude categories, locations, and organizers from shortcode builder.
+- Improved: The Google calendar export.
+- Fixed: Issue when links are disabled in simple style of monthly skin.
+- Fixed: Issue in displaying dates regarding day light saving.
+- Fixed: Issue in cronjob commands.
+- Fixed: Issue in cost field of Frontend Event Submission.
+- Fixed: Issue in date format of Google map light boxes.
+
 = 6.6.6 – 24 August 2022 =
 - Added: Visual Crossing provider to the weather module.
 - Added: Option to the iCal feed to display only upcoming events.

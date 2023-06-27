@@ -33,35 +33,33 @@ class MEC_skin_general_calendar extends MEC_skins
     {
         $this->factory->action('wp_ajax_mec_general_calendar_load_month', array($this, 'load_month'));
         $this->factory->action('wp_ajax_nopriv_mec_general_calendar_load_month', array($this, 'load_month'));
-        $this->factory->action( 'rest_api_init', array($this, 'mec_general_calendar_get_events_api'));
+        $this->factory->action('rest_api_init', array($this, 'mec_general_calendar_get_events_api'));
     }
 
     public function mec_general_calendar_get_events_api()
     {
         register_rest_route( 'mec/v1', '/events', array(
             'methods' => 'GET',
-            'callback' => array($this,'get_general_calendar_events'),
+            'callback' => array($this, 'get_general_calendar_events'),
             'permission_callback' => '__return_true',
         ));
     }
 
-    public function switch_language( $locale ){
-
+    public function switch_language( $locale )
+    {
         $language = false;
-        if( function_exists('PLL') ){
 
-            $language =  PLL()->curlang->locale;
-        }
-
-        if( $language ){
-
-            switch_to_locale( $language );
-        }
+        if(function_exists('PLL')) $language =  PLL()->curlang->locale;
+        if($language) switch_to_locale($language);
     }
 
+    /**
+     * @param WP_REST_Request $request
+     * @return array
+     */
     public function get_general_calendar_events($request)
     {
-        //Params
+        // Params
         $startParam = $request->get_param('startParam');
         $endParam = $request->get_param('endParam');
         $categories = $request->get_param('categories') ? $request->get_param('categories') : NULL;
@@ -88,9 +86,9 @@ class MEC_skin_general_calendar extends MEC_skins
         $filter_tag = $request->get_param('filter_tag') ? explode(',', $request->get_param('filter_tag')) : NULL;
         $filter_author = $request->get_param('filter_author') ? explode(',', $request->get_param('filter_author')) : NULL;
         $locale = $request->get_param('locale') ;
-        $language = $request->get_param('lang') ;
+        $type_event = $request->get_param('type_event') ;
 
-        $this->switch_language( $locale );
+        $this->switch_language($locale);
 
         // Attributes
         $atts = array(
@@ -108,28 +106,50 @@ class MEC_skin_general_calendar extends MEC_skins
         $this->initialize($atts);
 
         // Fetch the events
-        $upcoming_events = $this->get_events($startParam, $endParam,$categories,$multiCategories,$location,$organizer,$speaker,$label,$tag,$cost_min,$cost_max,$is_category_page,$cat_id,$show_only_one_occurrence,$filter_category,$filter_location,$filter_organizer,$filter_label,$filter_tag,$filter_author,$locale);
+        $upcoming_events = $this->get_events(
+            $startParam,
+            $endParam,
+            $categories,
+            $multiCategories,
+            $location,
+            $organizer,
+            $speaker,
+            $label,
+            $tag,
+            $cost_min,
+            $cost_max,
+            $is_category_page,
+            $cat_id,
+            $show_only_one_occurrence,
+            $filter_category,
+            $filter_location,
+            $filter_organizer,
+            $filter_label,
+            $filter_tag,
+            $filter_author,
+            $locale,
+            $type_event
+        );
+
         $localtime = isset($this->skin_options['include_local_time']) ? $this->skin_options['include_local_time'] : false;
         $events = [];
-        foreach($upcoming_events as $date => $content)
+        foreach($upcoming_events as $content)
         {
             $event_a = [];
-            foreach($content as $array_id => $event)
+            foreach($content as $event)
             {
                 $loc = '';
-                if (isset($event->data->locations) && !empty($event->data->locations)):
-                    foreach($event->data->locations as $location ) {
-                        if ($location['address']) $loc = $location['address'];
-                    }
-                endif;
-                $labels = '';
-                if (isset($event->data->labels) && !empty($event->data->labels) && $display_label) {
-                    foreach($event->data->labels as $label)
-                    {
-                        $labels .= '<span class="mec-general-calendar-label" style="background-color:'.esc_attr($label['color']).';">' . trim($label['name']) . '</span>';
-                    }
+                if(isset($event->data->locations) && !empty($event->data->locations))
+                {
+                    foreach($event->data->locations as $location) if($location['address']) $loc = $location['address'];
                 }
-                $location_id = $this->main->get_master_location_id($event);
+
+                $labels = '';
+                if(isset($event->data->labels) && !empty($event->data->labels) && $display_label)
+                {
+                    foreach($event->data->labels as $label) $labels .= '<span class="mec-general-calendar-label" style="background-color:'.esc_attr($label['color']).';">' . trim($label['name']) . '</span>';
+                }
+
                 $event_title = $event->data->title;
                 $event_link = $this->main->get_event_date_permalink($event, $event->date['start']['date']);
                 $event_color = '#'.$event->data->color;
@@ -140,45 +160,44 @@ class MEC_skin_general_calendar extends MEC_skins
                 $event_date_end_str = $event->date['end']['timestamp'];
                 $event_image = $event->data->featured_image['full'];
                 $gridsquare = get_the_post_thumbnail($event->data->ID, 'gridsquare' , array('data-mec-postid' => $event->data->ID));
-                $event_a['id']=  $event->data->ID;
-                $event_a['title']= html_entity_decode($event_title);
-                $event_a['start']= $event_date_start;
-                $event_a['end']= $event_date_end;
-                $event_a['startStr']= $event_date_start_str;
-                $event_a['endStr']= $event_date_end_str;
-                $event_a['image']= $event_image;
-                $event_a['url']= $event_link;
-                $event_a['backgroundColor']= $event_color;
-                $event_a['borderColor']= $event_color;
-                $event_a['description']= $event_content;
-                $event_a['localtime']= $localtime;
-                $event_a['location']= $loc;
-                $event_a['start_date']= date_i18n( get_option( 'date_format' ), $event_date_start_str );
-                // $event_a['start_time']= $event->date['start']['hour'] ? $event->date['start']['hour'] . ':' . $event->date['start']['minutes'] . ' ' . $event->date['start']['ampm'] : (strlen($event->data->meta['mec_date']['start']['hour']) != 1 ? $event->data->meta['mec_date']['start']['hour'] : '0' . $event->data->meta['mec_date']['start']['hour']) . ':' . (strlen($event->data->meta['mec_date']['start']['minutes']) != 1 ? $event->data->meta['mec_date']['start']['minutes'] : '0' . $event->data->meta['mec_date']['start']['minutes']) . ' ' . $event->data->meta['mec_date']['start']['ampm'];
-                $event_a['start_time']= date_i18n( get_option( 'time_format' ), $event_date_start_str );
-                $event_a['end_date']= date_i18n( get_option( 'date_format' ), $event_date_end_str );
-                // $event_a['end_time']= $event->date['end']['hour'] ? $event->date['end']['hour'] . ':' . $event->date['end']['minutes'] . ' ' . $event->date['end']['ampm'] : (strlen($event->data->meta['mec_date']['end']['hour']) != 1 ? $event->data->meta['mec_date']['end']['hour'] : '0' . $event->data->meta['mec_date']['end']['hour']) . ':' . (strlen($event->data->meta['mec_date']['end']['minutes']) != 1 ? $event->data->meta['mec_date']['end']['minutes'] : '0' . $event->data->meta['mec_date']['end']['minutes']) . ' ' . $event->data->meta['mec_date']['end']['ampm'];
-                $event_a['end_time']=  date_i18n( get_option( 'time_format' ), $event_date_end_str );
-                $event_a['startDateStr']= strtotime($event_a['start_date']);
-                $event_a['endDateStr']= strtotime($event_a['end_date']);
-                $event_a['startDay']= date_i18n( "l", $event_date_start_str );
-                $event_a['labels'] = $labels;
-                $event_a['reason_for_cancellation']= $this->main->display_cancellation_reason($event, $reason_for_cancellation);
-                $event_a['locaTimeHtml']= ($local_time == '1' ? $this->main->module('local-time.type2', array('event' => $event)) : '');
-                $event_a['gridsquare']= $gridsquare;
+                $event_time = $event->data->time;
 
-                // $event_a['allDay'] = $event->data->meta['mec_allday'] == '1' ? true : false;
-                array_push($events,$event_a);
+                $event_a['id'] = $event->data->ID;
+                $event_a['title'] = html_entity_decode($event_title);
+                $event_a['start'] = $event_date_start;
+                $event_a['end'] = $event_date_end;
+                $event_a['startStr'] = $event_date_start_str;
+                $event_a['endStr'] = $event_date_end_str;
+                $event_a['image'] = $event_image;
+                $event_a['url'] = $event_link;
+                $event_a['backgroundColor'] = $event_color;
+                $event_a['borderColor'] = $event_color;
+                $event_a['description'] = $event_content;
+                $event_a['localtime'] = $localtime;
+                $event_a['location'] = $loc;
+                $event_a['start_date'] = date_i18n(get_option('date_format'), $event_date_start_str);
+                $event_a['start_time'] = $event_time['start'];
+                $event_a['end_date'] = date_i18n(get_option('date_format'), $event_date_end_str);
+                $event_a['end_time'] = $event_time['end'];
+                $event_a['startDateStr'] = strtotime($event_a['start_date']);
+                $event_a['endDateStr'] = strtotime($event_a['end_date']);
+                $event_a['startDay'] = date_i18n("l", $event_date_start_str);
+                $event_a['labels'] = $labels;
+                $event_a['reason_for_cancellation'] = $this->main->display_cancellation_reason($event, $reason_for_cancellation);
+                $event_a['locaTimeHtml'] = ($local_time == '1' ? $this->main->module('local-time.type2', array('event' => $event)) : '');
+                $event_a['gridsquare'] = $gridsquare;
+
+                $event_a = apply_filters('mec_general_calendar_event_data', $event_a, $event);
+                $events[] = $event_a;
             }
         }
-        $result = array_values(
+
+        return array_values(
             array_reduce($events, function($r, $a){
                 if (!isset($r[$a['id'] . $a['endStr']])) $r[$a['id'] . $a['endStr']] = $a;
                 return $r;
             }, [])
         );
-
-        return $result;
     }
 
     /**
@@ -219,7 +238,7 @@ class MEC_skin_general_calendar extends MEC_skins
         $this->next_previous_button = isset($this->skin_options['next_previous_button']) ? $this->skin_options['next_previous_button'] : true;
 
         // Display All Events
-        $this->display_all = ((in_array($this->style, array('clean', 'modern')) and isset($this->skin_options['display_all'])) ? (boolean) $this->skin_options['display_all'] : false);
+        $this->display_all = (((in_array($this->style, array('clean', 'modern')) and isset($this->skin_options['display_all']))) && $this->skin_options['display_all']);
 
         // Override the style if the style forced by us in a widget etc
         if(isset($this->atts['style']) and trim($this->atts['style']) != '') $this->style = $this->atts['style'];
@@ -244,16 +263,16 @@ class MEC_skin_general_calendar extends MEC_skins
         $this->image_popup = isset($this->skin_options['image_popup']) ? $this->skin_options['image_popup'] : '0';
 
         // From Widget
-        $this->widget = (isset($this->atts['widget']) and trim($this->atts['widget'])) ? true : false;
+        $this->widget = (isset($this->atts['widget']) and trim($this->atts['widget']));
 
         // From Full Calendar
-        $this->from_full_calendar = (isset($this->skin_options['from_fc']) and trim($this->skin_options['from_fc'])) ? true : false;
+        $this->from_full_calendar = (isset($this->skin_options['from_fc']) and trim($this->skin_options['from_fc']));
 
         // Display Price
-        $this->display_price = (isset($this->skin_options['display_price']) and trim($this->skin_options['display_price'])) ? true : false;
+        $this->display_price = (isset($this->skin_options['display_price']) and trim($this->skin_options['display_price']));
 
         // Detailed Time
-        $this->display_detailed_time = (isset($this->skin_options['detailed_time']) and trim($this->skin_options['detailed_time'])) ? true : false;
+        $this->display_detailed_time = (isset($this->skin_options['detailed_time']) and trim($this->skin_options['detailed_time']));
 
         // Init MEC
         $this->args['mec-init'] = true;
@@ -288,7 +307,7 @@ class MEC_skin_general_calendar extends MEC_skins
         $this->args['paged'] = $this->paged;
 
         // Sort Options
-        $this->args['orderby'] = 'meta_value_num';
+        $this->args['orderby'] = 'mec_start_day_seconds ID';
         $this->args['order'] = 'ASC';
         $this->args['meta_key'] = 'mec_start_day_seconds';
 
@@ -320,14 +339,38 @@ class MEC_skin_general_calendar extends MEC_skins
     }
 
     /**
+     * /**
      * Search and returns the filtered events
      * @author Webnus <info@webnus.net>
+     * @param $start
+     * @param $end
+     * @param null $categories
+     * @param null $multiCategories
+     * @param null $location
+     * @param null $organizer
+     * @param null $speaker
+     * @param null $label
+     * @param null $tag
+     * @param null $cost_min
+     * @param null $cost_max
+     * @param null $is_category_page
+     * @param null $cat_id
+     * @param null $show_only_one_occurrence
+     * @param null $filter_category
+     * @param null $filter_location
+     * @param null $filter_organizer
+     * @param null $filter_label
+     * @param null $filter_tag
+     * @param null $filter_author
+     * @param string $locale
+     * @param null $type_event
      * @return array of objects
      */
-    public function get_events($start,$end,$categories = null,$multiCategories = null,$location = null,$organizer = null,$speaker = null,$label = null,$tag = null,$cost_min = null,$cost_max = null,$is_category_page = null,$cat_id = null,$show_only_one_occurrence = null,$filter_category = null,$filter_location = null,$filter_organizer = null,$filter_label = null,$filter_tag = null,$filter_author = null, $locale = 'en')
+    public function get_events($start, $end, $categories = null, $multiCategories = null, $location = null, $organizer = null, $speaker = null, $label = null, $tag = null, $cost_min = null, $cost_max = null, $is_category_page = null, $cat_id = null, $show_only_one_occurrence = null, $filter_category = null, $filter_location = null, $filter_organizer = null, $filter_label = null, $filter_tag = null, $filter_author = null, $locale = 'en',$type_event = null)
     {
         $start = date('Y-m-d', strtotime($start));
         $end = date('Y-m-d', strtotime($end));
+
         if($this->show_only_expired_events)
         {
             $start = date('Y-m-d H:i:s', current_time('timestamp', 0));
@@ -486,6 +529,14 @@ class MEC_skin_general_calendar extends MEC_skins
             );
         }
 
+        if (!is_null($type_event) && $type_event != 'undefined'&& $type_event != 'all'){
+            $meta_query[] = array(
+                'key'     => 'mec_event_status',
+                'value'   => $type_event,
+                'compare' => '=',
+            );
+        }
+
         $this->args['tax_query'] = $tax_query;
         $this->args['meta_query'] = $meta_query;
         $this->args['tag'] = $mec_tag_query;
@@ -509,7 +560,7 @@ class MEC_skin_general_calendar extends MEC_skins
             if(!is_array($IDs) or (is_array($IDs) and !count($IDs))) continue;
 
             // Check Finish Date
-            if(isset($this->maximum_date) and strtotime($date) > strtotime($this->maximum_date)) break;
+            if(isset($this->maximum_date) and trim($this->maximum_date) and strtotime($date) > strtotime($this->maximum_date)) break;
 
             // Include Available Events
             $this->args['post__in'] = $IDs;
@@ -532,6 +583,7 @@ class MEC_skin_general_calendar extends MEC_skins
             // The Query
             $this->args['posts_per_page'] = 1000;
             $this->args = apply_filters('mec_skin_query_args', $this->args, $this);
+
             $query = new WP_Query($this->args);
             if($query->have_posts())
             {
@@ -566,7 +618,7 @@ class MEC_skin_general_calendar extends MEC_skins
 
                         $data->date = array
                         (
-                            'start' => array('date' => $date),
+                            'start' => array('date' => $this->main->get_start_of_multiple_days($ID, $date)),
                             'end' => array('date' => $this->main->get_end_date($date, $rendered))
                         );
                         $d[] = $this->render->after_render($data, $this, $i);
@@ -646,8 +698,3 @@ class MEC_skin_general_calendar extends MEC_skins
         return array(date('Y', $time), date('m', $time), date('d', $time));
     }
 }
-
-// add_action('init',function(){
-
-//     wp_die(date_i18n('Y-M-d'));
-// });

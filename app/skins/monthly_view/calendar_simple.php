@@ -3,6 +3,8 @@
 defined('MECEXEC') or die();
 
 /** @var MEC_skin_monthly_view $this */
+/** @var int $month */
+/** @var int $year */
 
 // table headings
 $headings = $this->main->get_weekday_abbr_labels();
@@ -12,8 +14,8 @@ echo '<dl class="mec-calendar-table-head"><dt class="mec-calendar-day-head">'.im
 $week_start = $this->main->get_first_day_of_week();
 
 // Single Event Display Method
-$target_set = isset($this->skin_options['sed_method']) ? $this->skin_options['sed_method'] : false;
-$target_url = ($target_set == 'new') ? 'target="_blank"' : '';
+$sed_method = isset($this->skin_options['sed_method']) ? $this->skin_options['sed_method'] : false;
+$target_url = ($sed_method === 'new') ? 'target="_blank"' : '';
 
 $this->localtime = isset($this->skin_options['include_local_time']) ? $this->skin_options['include_local_time'] : false;
 $display_label = isset($this->skin_options['display_label']) ? $this->skin_options['display_label'] : false;
@@ -79,25 +81,29 @@ elseif($week_start == 5) // Friday
                     // Event Content
                     if(!$this->cache->has($event->data->ID.'_content'))
                     {
-                        $event_content = ((isset($event->data->content) and trim($event->data->content) != '') ? mb_substr(strip_tags($event->data->content, '<style>'), 0, 320) : '');
+                        if(get_post_meta($event->data->ID, '_elementor_edit_mode', true)) $event_content = \Elementor\Plugin::instance()->frontend->get_builder_content_for_display($event->data->ID);
+                        else $event_content = ((isset($event->data->content) and trim($event->data->content) != '') ? mb_substr(strip_tags($event->data->content, '<style>'), 0, 320) : '');
+
                         $this->cache->set($event->data->ID.'_content', $event_content);
                     }
                     else $event_content = $this->cache->get($event->data->ID.'_content');
 
-                    echo '<div class="'.((isset($event->data->meta['event_past']) and trim($event->data->meta['event_past'])) ? 'mec-past-event ' : '').'ended-relative simple-skin-ended">';
-                    echo '<a class="mec-monthly-tooltip event-single-link-simple" data-tooltip-content="#mec-tooltip-'.esc_attr($event_unique.'-'.$day_id).'" data-event-id="'.esc_attr($event->data->ID).'" href="'.esc_url($this->main->get_event_date_permalink($event, $event->date['start']['date'])).'" '.$target_url.'>';
+                    echo '<div class="'.($this->main->is_expired($event) ? 'mec-past-event ' : '').'ended-relative simple-skin-ended">';
+                    if($sed_method !== 'no') echo '<a class="mec-monthly-tooltip event-single-link-simple" data-tooltip-content="#mec-tooltip-'.esc_attr($event_unique.'-'.$day_id).'" data-event-id="'.esc_attr($event->data->ID).'" href="'.esc_url($this->main->get_event_date_permalink($event, $event->date['start']['date'])).'" '.$target_url.'>';
                     echo '<h4 class="mec-event-title">'.esc_html($event->data->title).'</h4>'.MEC_kses::element($this->main->get_normal_labels($event, $display_label).$this->main->display_cancellation_reason($event, $reason_for_cancellation));
                     do_action('mec_shortcode_virtual_badge', $event->data->ID);
-                    echo '</a>';
+                    if($sed_method !== 'no') echo '</a>';
                     echo '</div>';
 
-                    $tooltip_content = '';
-                    $tooltip_content .= !empty($event->data->title) ? '<div class="mec-tooltip-event-title">'.esc_html($event->data->title).'</div>' : '';
+                    $tooltip_content = !empty($event->data->title) ? '<div class="mec-tooltip-event-title">' . esc_html($event->data->title) . '</div>' : '';
 
                     if($this->display_detailed_time and $this->main->is_multipleday_occurrence($event)) $tooltip_content .= '<div class="mec-event-detailed-time mec-tooltip-event-time mec-color"><i class="mec-sl-clock-o"></i> '.MEC_kses::element($this->display_detailed_time($event)).'</div>';
                     elseif(trim($start_time)) $tooltip_content .= '<div class="mec-tooltip-event-time"><i class="mec-sl-clock-o"></i> '.esc_html($start_time.(trim($end_time) ? ' - '.$end_time : '')).'</div>';
 
                     $tooltip_content .= $this->display_cost($event);
+                    $tooltip_content .= '<div class="mec-event-detail">
+                        '.MEC_kses::element($this->display_organizers($event)).'
+                    </div>';
 
                     $tooltip_content .= (!empty($event->data->thumbnails['thumbnail']) || !empty($event->data->content)) ? '<div class="mec-tooltip-event-content">' : '';
                     $tooltip_content .= !empty($event->data->thumbnails['thumbnail']) ? '<div class="mec-tooltip-event-featured">'.MEC_kses::element($event->data->thumbnails['thumbnail']).'</div>' : '';

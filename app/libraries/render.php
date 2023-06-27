@@ -81,7 +81,7 @@ class MEC_render extends MEC_base
         if($skin_path != $skin and $this->file->exists($skin_path)) $path = $skin_path;
         if(!$this->file->exists($path))
         {
-            return esc_html__('Skin controller does not exist.', 'modern-events-calendar-lite');
+            return esc_html__('Skin controller does not exist.', 'modern-events-calendar-lite' );
         }
 
         include_once $path;
@@ -94,9 +94,28 @@ class MEC_render extends MEC_base
         // Initialize the skin
         $SKO->initialize($atts);
 
-        // Fetch the events
-        $atts['content_json']  = $SKO->fetch();
         $atts['content_html']  = $SKO->output();
+
+        if( 'full_calendar' == $skin ) {
+
+            $default_atts = $SKO->prepare_skin_options( $skin, $atts );
+            $default_view = $default_atts['default_view'] ?? 'list';
+
+            $skin_class_name = 'MEC_skin_'.$default_view;
+
+            // Create Skin Object Class
+            $default_SKO = new $skin_class_name();
+
+            // Initialize the skin
+            $default_SKO->initialize($default_atts);
+
+            // Fetch the events
+            $atts['content_json'] = $default_SKO->fetch();
+        }else{
+
+            // Fetch the events
+            $atts['content_json'] = $SKO->fetch();
+        }
 
         return $atts;
     }
@@ -334,6 +353,27 @@ class MEC_render extends MEC_base
         return $this->skin($skin, $atts);
     }
 
+    public function get_skins() {
+
+        $skins = array(
+            'monthly_view',
+            'full_calendar',
+            'yearly_view',
+            'weekly_view',
+            'daily_view',
+            'timetable',
+            'masonry',
+            'list',
+            'grid',
+            'agenda',
+            'map',
+            'general_calendar',
+            'custom'
+        );
+
+        return $skins;
+    }
+
     /**
      * Do the default archive skin and returns its output
      * @author Webnus <info@webnus.net>
@@ -342,6 +382,17 @@ class MEC_render extends MEC_base
      */
     public function vdefault($atts = array())
     {
+
+        $skins = $this->get_skins();
+        foreach( $skins as $skin ) {
+
+            $skin_style = (isset($this->settings[$skin . '_archive_skin']) and trim($this->settings[$skin . '_archive_skin']) != '') ? $this->settings[$skin . '_archive_skin'] : null;
+            if( !empty( $skin_style ) ) {
+
+                $atts['sk-options'][ $skin ]['style'] = $skin_style;
+            }
+        }
+
         $monthly_skin = (isset($this->settings['monthly_view_archive_skin']) and trim($this->settings['monthly_view_archive_skin']) != '') ? $this->settings['monthly_view_archive_skin'] : 'clean';
         $list_skin = (isset($this->settings['list_archive_skin']) and trim($this->settings['list_archive_skin']) != '') ? $this->settings['list_archive_skin'] : 'standard';
         $grid_skin = (isset($this->settings['grid_archive_skin']) and trim($this->settings['grid_archive_skin']) != '') ? $this->settings['grid_archive_skin'] : 'classic';
@@ -401,6 +452,16 @@ class MEC_render extends MEC_base
     {
         // Skin
         $skin = (isset($this->settings['default_skin_category']) and trim($this->settings['default_skin_category']) != '') ? $this->settings['default_skin_category'] : 'list';
+
+        $skins = $this->get_skins();
+        foreach($skins as $sk)
+        {
+            $skin_style = (isset($this->settings[$sk . '_archive_skin']) and trim($this->settings[$sk . '_archive_skin']) != '') ? $this->settings[$sk . '_archive_skin'] : null;
+            if(!empty($skin_style))
+            {
+                $atts['sk-options'][ $sk ]['style'] = $skin_style;
+            }
+        }
 
         // Show Only Expired Events
         if(isset($this->settings['category_events_method']) and $this->settings['category_events_method'] == 2) $atts['show_only_past_events'] = 1;
@@ -466,7 +527,7 @@ class MEC_render extends MEC_base
         if($skin_path != $skin and $this->file->exists($skin_path)) $path = $skin_path;
         if(!$this->file->exists($path))
         {
-            return esc_html__('Skin controller does not exist.', 'modern-events-calendar-lite');
+            return esc_html__('Skin controller does not exist.', 'modern-events-calendar-lite' );
         }
 
         include_once $path;
@@ -498,10 +559,11 @@ class MEC_render extends MEC_base
 
     /**
      * Renders and returns all event data
-     * @author Webnus <info@webnus.net>
      * @param int $post_id
      * @param string $content
      * @return \stdClass
+     * @throws Exception
+     * @author Webnus <info@webnus.net>
      */
     public function data($post_id, $content = NULL)
     {
@@ -553,7 +615,7 @@ class MEC_render extends MEC_base
         elseif($allday)
         {
             $data->time = array(
-                'start'=>$this->main->m('all_day', esc_html__('All Day' , 'modern-events-calendar-lite')),
+                'start'=>$this->main->m('all_day', esc_html__('All Day' , 'modern-events-calendar-lite' )),
                 'end'=>'',
                 'start_raw'=>$start_time,
                 'end_raw'=>$end_time,
@@ -581,7 +643,7 @@ class MEC_render extends MEC_base
         if(count($meta_hourly_schedules) and !isset($meta_hourly_schedules[$first_key]['schedules']))
         {
             $hourly_schedules[] = array(
-                'title' => esc_html__('Day 1', 'modern-events-calendar-lite'),
+                'title' => esc_html__('Day 1', 'modern-events-calendar-lite' ),
                 'schedules'=>$meta_hourly_schedules
             );
         }
@@ -602,7 +664,7 @@ class MEC_render extends MEC_base
         }
 
         $data->tickets = $new_tickets;
-        $data->color = isset($meta['mec_color']) ? $meta['mec_color'] : '';
+        $data->color = $meta['mec_color'] ?? '';
         $data->permalink = ((isset($meta['mec_read_more']) and filter_var($meta['mec_read_more'], FILTER_VALIDATE_URL)) ? $meta['mec_read_more'] : get_post_permalink($post_id));
 
         // Thumbnails
@@ -659,7 +721,7 @@ class MEC_render extends MEC_base
             elseif($term->taxonomy == 'mec_organizer') $data->organizers[$term->term_id] = array('id'=>$term->term_id, 'name'=>$term->name, 'tel'=>get_metadata('term', $term->term_id, 'tel', true), 'email'=>get_metadata('term', $term->term_id, 'email', true), 'url'=>get_metadata('term', $term->term_id, 'url', true), 'page_label'=>get_metadata('term', $term->term_id, 'page_label', true), 'thumbnail'=>get_metadata('term', $term->term_id, 'thumbnail', true));
             elseif($term->taxonomy == 'mec_location')
             {
-                $locations = array('id'=>$term->term_id, 'name'=>$term->name, 'address'=>get_metadata('term', $term->term_id, 'address', true), 'latitude'=>get_metadata('term', $term->term_id, 'latitude', true), 'longitude'=>get_metadata('term', $term->term_id, 'longitude', true), 'url'=>get_metadata('term', $term->term_id, 'url', true), 'thumbnail'=>get_metadata('term', $term->term_id, 'thumbnail', true));
+                $locations = array('id'=>$term->term_id, 'name'=>$term->name, 'address'=>get_metadata('term', $term->term_id, 'address', true), 'opening_hour'=>get_metadata('term', $term->term_id, 'opening_hour', true), 'latitude'=>get_metadata('term', $term->term_id, 'latitude', true), 'longitude'=>get_metadata('term', $term->term_id, 'longitude', true), 'url'=>get_metadata('term', $term->term_id, 'url', true), 'thumbnail'=>get_metadata('term', $term->term_id, 'thumbnail', true));
                 $data->locations[$term->term_id] = apply_filters('mec_map_load_location_terms', $locations, $term);
             }
             elseif($term->taxonomy == 'mec_category')
@@ -707,12 +769,13 @@ class MEC_render extends MEC_base
         foreach($fields as $f => $field)
         {
             if(!is_numeric($f)) continue;
+            if(!isset($field['label'])) continue;
 
-            $field_value = isset($fields_data[$f]) ? (is_array($fields_data[$f]) ? implode(', ', $fields_data[$f]) : $fields_data[$f]) : NULL;
+            $field_value = isset($fields_data[$f]) ? (is_array($fields_data[$f]) ? implode(', ', $fields_data[$f]) : $fields_data[$f]) : '';
             $data->fields[] = array(
                 'id' => $f,
-                'type' => (isset($field['type']) ? $field['type'] : NULL),
-                'label' => (isset($field['label']) ? esc_html__(stripslashes($field['label']), 'modern-events-calendar-lite') : ''),
+                'type' => ($field['type'] ?? NULL),
+                'label' => esc_html__(stripslashes($field['label']), 'modern-events-calendar-lite' ),
                 'value' => stripslashes($field_value),
             );
         }
@@ -759,8 +822,8 @@ class MEC_render extends MEC_base
             // Time is already available
             if(isset($event->date['start']['hour']))
             {
-                $hide_time = isset($event->data->meta['mec_hide_time']) ? $event->data->meta['mec_hide_time'] : 0;
-                $hide_end_time = isset($event->data->meta['mec_hide_end_time']) ? $event->data->meta['mec_hide_end_time'] : 0;
+                $hide_time = $event->data->meta['mec_hide_time'] ?? 0;
+                $hide_end_time = $event->data->meta['mec_hide_end_time'] ?? 0;
 
                 $s_hour = $event->date['start']['hour'];
                 if(strtoupper($event->date['start']['ampm']) == 'AM' and $s_hour == '0') $s_hour = 12;
@@ -777,10 +840,10 @@ class MEC_render extends MEC_base
                 $st = $this->main->get_time($start_timestamp);
                 $et = $this->main->get_time($end_timestamp);
 
-                $allday = isset($event->data->meta['mec_allday']) ? $event->data->meta['mec_allday'] : 0;
+                $allday = $event->data->meta['mec_allday'] ?? 0;
                 if($allday)
                 {
-                    $st = $this->main->m('all_day', esc_html__('All Day' , 'modern-events-calendar-lite'));
+                    $st = $this->main->m('all_day', esc_html__('All Day' , 'modern-events-calendar-lite' ));
                     $et = '';
                 }
 
@@ -803,7 +866,7 @@ class MEC_render extends MEC_base
                 {
                     $original_start_date = $event->data->meta['mec_start_date'];
                     $p_start_date = $event->date['start']['date'];
-                    $allday = isset($event->data->meta['mec_allday']) ? $event->data->meta['mec_allday'] : 0;
+                    $allday = $event->data->meta['mec_allday'] ?? 0;
 
                     // Do not change the hour if it is the first serie of the event
                     if(!($original_start_date == $p_start_date and $serie == 1))
@@ -817,8 +880,8 @@ class MEC_render extends MEC_base
                         foreach($periods as $period)
                         {
                             $ex = explode(':', $period);
-                            $s_date = isset($ex[0]) ? $ex[0] : false;
-                            $e_date = isset($ex[1]) ? $ex[1] : false;
+                            $s_date = $ex[0] ?? false;
+                            $e_date = $ex[1] ?? false;
 
                             if(!$s_date || ($p_start_date!== $s_date && 'all_days' !== $multiple_day_show_method)) continue;
 
@@ -856,13 +919,13 @@ class MEC_render extends MEC_base
                             foreach($periods as $period)
                             {
                                 $ex = explode(':', $period);
-                                $s_date = isset($ex[0]) ? $ex[0] : '';
-                                $e_date = isset($ex[1]) ? $ex[1] : '';
+                                $s_date = $ex[0] ?? '';
+                                $e_date = $ex[1] ?? '';
 
                                 if(!$s_date or !$e_date) continue;
 
-                                $s_time = isset($ex[2]) ? $ex[2] : '';
-                                $e_time = isset($ex[3]) ? $ex[3] : '';
+                                $s_time = $ex[2] ?? '';
+                                $e_time = $ex[3] ?? '';
 
                                 $pos = strpos($s_time, '-');
                                 if($pos !== false) $s_time = substr_replace($s_time, ':', $pos, 1);
@@ -980,9 +1043,9 @@ class MEC_render extends MEC_base
             // Improve Time for Multiple Day Events
             if($cache->has($key) or ($event->date['start']['date'] !== $event->date['end']['date'] and !$midnight))
             {
-                $allday = isset($event->data->meta['mec_allday']) ? $event->data->meta['mec_allday'] : 0;
-                $hide_time = isset($event->data->meta['mec_hide_time']) ? $event->data->meta['mec_hide_time'] : 0;
-                $hide_end_time = isset($event->data->meta['mec_hide_end_time']) ? $event->data->meta['mec_hide_end_time'] : 0;
+                $allday = $event->data->meta['mec_allday'] ?? 0;
+                $hide_time = $event->data->meta['mec_hide_time'] ?? 0;
+                $hide_end_time = $event->data->meta['mec_hide_end_time'] ?? 0;
 
                 // Get From Cache (Last Day)
                 if($cache->has($key) and $event->date['start']['date'] === $event->date['end']['date'])
@@ -1025,7 +1088,7 @@ class MEC_render extends MEC_base
                 }
                 elseif($allday)
                 {
-                    $event->data->time['start'] = $this->main->m('all_day', esc_html__('All Day' , 'modern-events-calendar-lite'));
+                    $event->data->time['start'] = $this->main->m('all_day', esc_html__('All Day' , 'modern-events-calendar-lite' ));
                     $event->data->time['end'] = '';
                 }
                 else
@@ -1041,8 +1104,8 @@ class MEC_render extends MEC_base
 
     public function add_time_to_event(&$event, $start_datetime, $end_datetime, $allday = false)
     {
-        $hide_time = isset($event->data->meta['mec_hide_time']) ? $event->data->meta['mec_hide_time'] : 0;
-        $hide_end_time = isset($event->data->meta['mec_hide_end_time']) ? $event->data->meta['mec_hide_end_time'] : 0;
+        $hide_time = $event->data->meta['mec_hide_time'] ?? 0;
+        $hide_end_time = $event->data->meta['mec_hide_end_time'] ?? 0;
 
         $start_timestamp = strtotime($start_datetime);
         $end_timestamp = strtotime($end_datetime);
@@ -1052,7 +1115,7 @@ class MEC_render extends MEC_base
 
         if($allday)
         {
-            $st = $this->main->m('all_day', esc_html__('All Day' , 'modern-events-calendar-lite'));
+            $st = $this->main->m('all_day', esc_html__('All Day' , 'modern-events-calendar-lite' ));
             $et = '';
         }
 
@@ -1073,9 +1136,9 @@ class MEC_render extends MEC_base
      * @param object $event
      * @param int $maximum
      * @param string $today
-     * @return object|array
+     * @return array
      */
-    public function dates($event_id, $event = NULL, $maximum = 6, $today = NULL)
+    public function dates($event_id, $event = NULL, $maximum = 6, $today = '')
     {
         if(!trim($today)) $today = date('Y-m-d');
 
@@ -1091,8 +1154,9 @@ class MEC_render extends MEC_base
             $event->mec = $this->db->select("SELECT * FROM `#__mec_events` WHERE `post_id`='$event_id'", "loadObject");
         }
 
-        $start_date = isset($event->meta['mec_date']['start']) ? $event->meta['mec_date']['start'] : array();
-        $end_date = isset($event->meta['mec_date']['end']) ? $event->meta['mec_date']['end'] : array();
+        $start_date = $event->meta['mec_date']['start'] ?? array();
+        $end_date = $event->meta['mec_date']['end'] ?? array();
+        $first_occurrence = $event->meta['mec_start_date'] ?? $today;
 
         // Return empty array if date is not valid
         if(!isset($start_date['date']) or (isset($start_date['date']) and !strtotime($start_date['date']))) return $dates;
@@ -1100,8 +1164,8 @@ class MEC_render extends MEC_base
         // Return empty array if mec data is not exists on mec_events table
         if(!isset($event->mec->end)) return $dates;
 
-        $allday = isset($event->meta['mec_allday']) ? $event->meta['mec_allday'] : 0;
-        $hide_time = isset($event->meta['mec_hide_time']) ? $event->meta['mec_hide_time'] : 0;
+        $allday = $event->meta['mec_allday'] ?? 0;
+        $hide_time = $event->meta['mec_hide_time'] ?? 0;
 
         $event_period = $this->main->date_diff($start_date['date'], $end_date['date']);
         $event_period_days = $event_period ? $event_period->days : 0;
@@ -1152,7 +1216,11 @@ class MEC_render extends MEC_base
                 else $remained_days_to_next_repeat = $repeat_interval - fmod($passed_days, $repeat_interval);
 
                 $start_date = date('Y-m-d', strtotime('+'.$remained_days_to_next_repeat.' Days', strtotime($today)));
-                if(!$this->main->is_past($finish_date['date'], $start_date) and !in_array($start_date, $exceptional_days)) $dates[] = $this->add_timestamps(array(
+                if(
+                    !$this->main->is_date_after($finish_date['date'], $start_date) &&
+                    $this->main->is_date_after($first_occurrence, $start_date, true) &&
+                    !in_array($start_date, $exceptional_days)
+                ) $dates[] = $this->add_timestamps(array(
                     'start'=>array('date'=>$start_date, 'hour'=>$event->meta['mec_date']['start']['hour'], 'minutes'=>$event->meta['mec_date']['start']['minutes'], 'ampm'=>$event->meta['mec_date']['start']['ampm']),
                     'end'=>array('date'=>date('Y-m-d', strtotime('+'.$event_period_days.' Days', strtotime($start_date))), 'hour'=>$event->meta['mec_date']['end']['hour'], 'minutes'=>$event->meta['mec_date']['end']['minutes'], 'ampm'=>$event->meta['mec_date']['end']['ampm']),
                     'allday'=>$allday,
@@ -1160,9 +1228,12 @@ class MEC_render extends MEC_base
                     'past'=>0
                 ));
 
-                for($i=2; $i<=$maximum; $i++)
+                for($i = 2; $i <= $maximum; $i++)
                 {
                     $start_date = date('Y-m-d', strtotime('+'.$repeat_interval.' Days', strtotime($start_date)));
+
+                    // Event Not Started
+                    if(!$this->main->is_date_after($first_occurrence, $start_date, true)) continue;
 
                     // Event finished
                     if($this->main->is_past($finish_date['date'], $start_date)) break;
@@ -1251,7 +1322,7 @@ class MEC_render extends MEC_base
                     $ampm = isset($event->meta['mec_date']['end']['ampm']) ? strtoupper($event->meta['mec_date']['end']['ampm']) : 'PM';
 
                     // Fix for 31st, 30th, 29th of some months
-                    while(!checkdate($month, $day, $year)) $day--;
+                    while(!checkdate((int) $month, (int) $day, (int) $year)) $day--;
 
                     $start_date = $year.'-'.$month.'-'.$day;
                     $end_time = $hour.':'.$minutes.' '.$ampm;
@@ -1515,6 +1586,9 @@ class MEC_render extends MEC_base
                 $start = date('Y-m-d', strtotime("{$levels[$index]} {$d[0]} of next month", strtotime($date)));
                 $end = date('Y-m-d', strtotime("+{$event_period_days} Days", strtotime($start)));
 
+                // Occurence equals to the main start date
+                if($start === $start_date['date']) continue;
+
                 // When ends repeat date set
                 if($mode == 'render' and $this->main->is_past($finish_date, $start)) continue;
 
@@ -1608,11 +1682,14 @@ class MEC_render extends MEC_base
      * Render markers
      * @author Webnus <info@webnus.net>
      * @param array $events
+     * @param string $skin_style
      * @return array
      */
-    public function markers($events)
+    public function markers($events, $skin_style = 'classic')
     {
         $date_format = (isset($this->settings['google_maps_date_format1']) and trim($this->settings['google_maps_date_format1'])) ? $this->settings['google_maps_date_format1'] : 'M d Y';
+
+        $requested_location_id = isset($_REQUEST['sf'], $_REQUEST['sf']['location']) ? $_REQUEST['sf']['location'] : null;
 
         $markers = array();
         foreach($events as $event)
@@ -1620,13 +1697,42 @@ class MEC_render extends MEC_base
             if(!is_object($event)) continue;
             if(!isset($event->data->locations) or (isset($event->data->locations) and !is_array($event->data->locations))) continue;
 
-            foreach($event->data->locations as $location)
+            $locations = [];
+
+            $main_location_id = get_post_meta($event->ID, 'mec_location_id', true);
+            if(isset($event->date, $event->date['start'], $event->date['start']['timestamp'])) $main_location_id = MEC_feature_occurrences::param($event->ID, $event->date['start']['timestamp'], 'location_id', $main_location_id);
+
+            $main_location_id = apply_filters('wpml_object_id', $main_location_id, 'mec_location', true);
+
+            if($main_location_id && $main_location_id > 1) $locations[] = $main_location_id;
+
+            $additional_location_ids = get_post_meta($event->ID, 'mec_additional_location_ids', true);
+            if(!is_array($additional_location_ids)) $additional_location_ids = [];
+
+            $locations = array_merge($locations, $additional_location_ids);
+            $locations = array_unique($locations);
+
+            if($requested_location_id && !is_array($requested_location_id))
             {
-                $latitude = isset($location['latitude']) ? $location['latitude'] : '';
-                $longitude = isset($location['longitude']) ? $location['longitude'] : '';
+                if($main_location_id !== $requested_location_id && !in_array($requested_location_id, $additional_location_ids)) continue;
+                $locations = [$requested_location_id];
+            }
+
+            // No Locations
+            if(!count($locations)) continue;
+
+            foreach($locations as $location_id)
+            {
+                $location_id = (int) $location_id;
+
+                $latitude = get_term_meta($location_id, 'latitude', true);
+                $longitude = get_term_meta($location_id, 'longitude', true);
 
                 // No latitude/Longitude
                 if(trim($latitude) == '' or trim($longitude) == '') continue;
+
+                $location = get_term($location_id);
+                $name = $location->name ?? '';
 
                 $latitude = floatval($latitude);
                 $longitude = floatval($longitude);
@@ -1637,16 +1743,16 @@ class MEC_render extends MEC_base
                     $markers[$key] = array(
                         'latitude'=>$latitude,
                         'longitude'=>$longitude,
-                        'name'=>((isset($location['name']) and trim($location['name'])) ? $location['name'] : ''),
-                        'address'=>((isset($location['address']) and trim($location['address'])) ? $location['address'] : ''),
+                        'name'=>$name,
+                        'address'=>get_term_meta($location_id, 'address', true),
                         'event_ids'=>array($event->data->ID),
-                        'lightbox'=>$this->main->get_marker_lightbox($event, $date_format),
+                        'lightbox'=>$this->main->get_marker_lightbox($event, $date_format, $skin_style),
                     );
                 }
                 else
                 {
                     $markers[$key]['event_ids'][] = $event->data->ID;
-                    $markers[$key]['lightbox'] .= $this->main->get_marker_lightbox($event, $date_format);
+                    $markers[$key]['lightbox'] .= $this->main->get_marker_lightbox($event, $date_format, $skin_style);
                 }
             }
         }

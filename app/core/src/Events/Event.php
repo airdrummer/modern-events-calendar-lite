@@ -31,8 +31,17 @@ class Event extends PostBase {
 	public function get_datetime() {
 
 		$date = $this->get_data( 'date' );
+		$is_allday = (bool)$this->get_meta( 'mec_allday' );
 
 		if ( ! is_null( $date ) ) {
+
+			if( $is_allday ) {
+
+				$start_date = $date['start']['date'];
+				$end_date = $date['end']['date'];
+				$date['start']['timestamp'] = strtotime( "{$start_date} 00:01" );
+				$date['end']['timestamp'] = strtotime( "{$end_date} 23:59" );
+			}
 
 			return $date;
 		}
@@ -67,7 +76,14 @@ class Event extends PostBase {
 				'ampm'    => $ampm ? $ampm : '',
 			);
 
-			$datetime['datetime'] = "{$date} {$datetime['hours']}:{$datetime['minutes']} {$datetime['ampm']}";
+			if( !$is_allday ) {
+
+				$datetime['datetime'] = "{$date} {$datetime['hours']}:{$datetime['minutes']} {$datetime['ampm']}";
+			}else{
+
+				$time = 'start' === $type ? '00:01' : '23:59';
+				$datetime['datetime'] = "{$date} $time";
+			}
 			$datetime['timestamp'] = strtotime($datetime['datetime']);
 			$datetimes[ $type ]    = $datetime;
 		}
@@ -182,7 +198,7 @@ class Event extends PostBase {
 	 *
 	 * @return string
 	 */
-	public function get_permalink( $start_timestamp = '', $replace_read_more_link = true, $single_date_method = '' ){
+	public function get_permalink( $start_timestamp = '', $replace_read_more_link = true, $single_date_method = null ){
 
 		if( $replace_read_more_link ){
 
@@ -200,7 +216,7 @@ class Event extends PostBase {
 
 		$url = isset( $this->data['data']->permalink ) ? $this->data['data']->permalink : get_the_permalink( $this->get_id() );
 
-		if( !( empty( $single_date_method ) || 'next' === $single_date_method ) ) {
+		if( !empty( $single_date_method ) && 'referred' === $single_date_method ) {
 
 			if( empty( $start_timestamp ) ){
 

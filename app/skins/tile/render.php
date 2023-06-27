@@ -43,16 +43,18 @@ $map_events = array();
 
                 // MEC Schema
                 do_action('mec_schema', $event);
+                $date_format_clean_1 = apply_filters( 'mec_skin_tile_date_format_1', $this->date_format_clean_1 );
+                $date_format_clean_2 = apply_filters( 'mec_skin_tile_date_format_2', $this->date_format_clean_2 );
                 ?>
                     <article <?php if($method != 'no'): ?> data-href="<?php echo esc_url($this->main->get_event_date_permalink($event, $event->date['start']['date'])); ?>" data-target="<?php echo ($method == 'new' ? 'blank' : ($method ? $method : '')); ?>"<?php endif; ?> <?php echo 'style="background:' . esc_attr($event_color) . $background_image. '"'; ?> class="<?php echo ((isset($event->data->meta['event_past']) and trim($event->data->meta['event_past'])) ? 'mec-past-event' : ''); ?> <?php echo ($method == 'no' ? 'mec-no-pointer' : ''); ?> mec-event-article mec-tile-item <?php echo esc_attr($me_class); ?> mec-clear <?php echo esc_attr($this->get_event_classes($event)); ?> <?php echo esc_attr($custom_data_class); ?>">
                         <?php do_action('mec_skin_tile_view', $event); ?>
                         <?php echo MEC_kses::element($this->get_label_captions($event)); ?>
                         <div class="event-tile-view-head clearfix">
                             <?php if(isset($this->settings['multiple_day_show_method']) && $this->settings['multiple_day_show_method'] == 'all_days'): ?>
-                                <div class="mec-event-date"><?php echo esc_html($this->main->date_i18n($this->date_format_clean_1, strtotime($event->date['start']['date']))); ?></div>
-                                <div class="mec-event-month"><?php echo esc_html($this->main->date_i18n($this->date_format_clean_2, strtotime($event->date['start']['date']))); ?></div>
+                                <div class="mec-event-date"><?php echo esc_html($this->main->date_i18n($date_format_clean_1, strtotime($event->date['start']['date']))); ?></div>
+                                <div class="mec-event-month"><?php echo esc_html($this->main->date_i18n($date_format_clean_2, strtotime($event->date['start']['date']))); ?></div>
                             <?php else: ?>
-                                <div class="mec-event-month"><?php echo MEC_kses::element($this->main->dateify($event, $this->date_format_clean_1 .' '. $this->date_format_clean_2)); ?></div>
+                                <div class="mec-event-month"><?php echo MEC_kses::element($this->main->dateify($event, $date_format_clean_1 .' '. $date_format_clean_2)); ?></div>
                             <?php endif; ?>
                             <div class="mec-event-time"><i class="mec-sl-clock"></i><?php echo esc_html($start_time); ?></div>
                         </div>
@@ -66,7 +68,7 @@ $map_events = array();
                                     <?php echo MEC_kses::element($this->display_cost($event)); ?>
                                 </div>
                                 <?php echo MEC_kses::element($this->main->get_normal_labels($event, $display_label).$this->main->display_cancellation_reason($event, $reason_for_cancellation)); ?><?php do_action('mec_shortcode_virtual_badge', $event->data->ID ); ?>
-                                <h4 class="mec-event-title"><?php echo MEC_kses::element($this->display_link($event)); ?><?php echo MEC_kses::element($this->display_custom_data($event)); ?><?php echo MEC_kses::element($this->main->get_flags($event)); ?></h4>
+                                <h4 class="mec-event-title"><?php echo MEC_kses::element($this->display_link($event)); ?><?php echo MEC_kses::embed($this->display_custom_data($event)); ?><?php echo MEC_kses::element($this->main->get_flags($event)); ?></h4>
                                 <?php echo MEC_kses::form($this->booking_button($event)); ?>
                             </div>
                         </div>

@@ -49,9 +49,14 @@ class MEC_transaction extends MEC_base
         return (isset($this->transaction['discount']) ? $this->transaction['discount'] : NULL);
     }
 
-    public function get_payable()
+    public function get_price()
     {
         return (isset($this->transaction['price']) ? $this->transaction['price'] : 0);
+    }
+
+    public function get_payable()
+    {
+        return (isset($this->transaction['payable']) ? $this->transaction['payable'] : 0);
     }
 
     public function get_price_html()
@@ -177,7 +182,7 @@ class MEC_transaction extends MEC_base
         {
             $times = explode(':', $timestamp);
 
-            $html .= '<li>'.sprintf(esc_html__('%s to %s', 'modern-events-calendar-lite'), $this->main->date_i18n($date_format.' '.$time_format, $times[0]), $this->main->date_i18n($date_format.' '.$time_format, $times[1])).'</li>';
+            $html .= '<li>'.sprintf(esc_html__('%s to %s', 'modern-events-calendar-lite' ), $this->main->date_i18n($date_format.' '.$time_format, $times[0]), $this->main->date_i18n($date_format.' '.$time_format, $times[1])).'</li>';
         }
 
         $html .= '</ul>';
@@ -192,5 +197,22 @@ class MEC_transaction extends MEC_base
     public function get_price_details()
     {
         return ((isset($this->transaction['price_details']) and is_array($this->transaction['price_details'])) ? $this->transaction['price_details'] : array());
+    }
+
+    public function get_price_details_html()
+    {
+        $price_details = $this->get_price_details();
+
+        $html  = '<ul class="mec-checkout-price-details">';
+        foreach($price_details['details'] as $detail)
+        {
+            $html .= '<li class="mec-checkout-price-detail mec-checkout-price-detail-type '.sanitize_html_class($detail['type']).'">
+                <span class="mec-checkout-price-detail-description">'.esc_html($detail['description']).'</span>
+                <span class="mec-checkout-price-detail-amount">'.MEC_kses::element($this->main->render_price($detail['amount'], $this->get_event_id())).'</span>
+            </li>';
+        }
+
+        $html .= '</ul>';
+        return $html;
     }
 }

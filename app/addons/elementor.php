@@ -26,11 +26,11 @@ class MEC_addon_elementor extends MEC_base
     {
         // MEC Factory class
         $this->factory = $this->getFactory();
-        
+
         // MEC Main class
         $this->main = $this->getMain();
     }
-    
+
     /**
      * Initialize the Elementor addon
      * @author Webnus <info@webnus.net>
@@ -44,7 +44,7 @@ class MEC_addon_elementor extends MEC_base
 
         add_action( 'elementor/preview/enqueue_styles', function() {
             wp_enqueue_style( 'mec-elementor-owl-carousel-css', plugins_url( '../../assets/packages/owl-carousel/owl.carousel.min.css', __FILE__ ), array() );
-            wp_enqueue_style( 'mec-elementor-frontend-css',     plugins_url( '../../assets/css/frontend.css', __FILE__ ), array() );
+            wp_enqueue_style( 'mec-frontend-style',     plugins_url( '../../assets/css/frontend.min.css', __FILE__ ), array() );
         });
 
 		add_action('elementor/editor/after_enqueue_scripts', function() {
@@ -64,7 +64,7 @@ class MEC_addon_elementor extends MEC_base
         require_once MEC_ABSPATH.'app/addons/elementor/shortcode.php';
         \Elementor\Plugin::instance()->widgets_manager->register(new \Elementor\MEC_addon_elementor_shortcode());
     }
-    
+
     /**
      * Register the addon in Elementor
      * @author Webnus <info@webnus.net>

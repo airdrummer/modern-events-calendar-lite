@@ -25,20 +25,28 @@ if(isset($this->atts['return_items']) and $this->atts['return_items'])
 $javascript = '<script>
 jQuery(document).ready(function()
 {
-    jQuery("#mec_skin_'.esc_js($this->id).'").mecWeeklyProgram(
+    var mec_interval = setInterval(function()
     {
-        id: "'.esc_js($this->id).'",
-        ajax_url: "'.admin_url('admin-ajax.php', NULL).'",
-        atts: "'.http_build_query(array('atts' => $this->atts), '', '&').'",
-        sed_method: "'.esc_js($this->sed_method).'",
-        image_popup: "'.esc_js($this->image_popup).'",
-        sf:
+        // Not Visible
+        if(!jQuery("#mec_skin_'.esc_js($this->id).'").is(":visible")) return;
+        
+        jQuery("#mec_skin_'.esc_js($this->id).'").mecWeeklyProgram(
         {
-            container: "'.($this->sf_status ? '#mec_search_form_'.esc_js($this->id) : '').'",
-            reset: '.($this->sf_reset_button ? 1 : 0).',
-            refine: '.($this->sf_refine ? 1 : 0).',
-        },
-    });
+            id: "'.esc_js($this->id).'",
+            ajax_url: "'.admin_url('admin-ajax.php', NULL).'",
+            atts: "'.http_build_query(array('atts' => $this->atts), '', '&').'",
+            sed_method: "'.esc_js($this->sed_method).'",
+            image_popup: "'.esc_js($this->image_popup).'",
+            sf:
+            {
+                container: "'.($this->sf_status ? '#mec_search_form_'.esc_js($this->id) : '').'",
+                reset: '.($this->sf_reset_button ? 1 : 0).',
+                refine: '.($this->sf_refine ? 1 : 0).',
+            },
+        });
+        
+        clearInterval(mec_interval);
+    }, 500);
 });
 </script>';
 

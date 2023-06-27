@@ -49,6 +49,7 @@ FormBuilder::enqueue();
                     array(
                         'time_format' => isset($this->settings['time_format']) ? $this->settings['time_format'] : 12,
                         'datepicker_format' => (isset($this->settings['datepicker_format']) and trim($this->settings['datepicker_format'])) ? $this->settings['datepicker_format'] : 'Y-m-d',
+                        'required' => (isset($this->settings['fes_required_dates']) and $this->settings['fes_required_dates']) ? true : false,
                     )
                 );
 
@@ -60,6 +61,16 @@ FormBuilder::enqueue();
                 if(isset($this->settings['countdown_status']) and $this->settings['countdown_status'] and (!isset($this->settings['fes_section_countdown_method']) or (isset($this->settings['fes_section_countdown_method']) and $this->settings['fes_section_countdown_method']))){
 
                     FormBuilder::countdown_status( $post, array() );
+                }
+
+                if(isset($this->settings['style_per_event']) and $this->settings['style_per_event'] and isset($this->settings['fes_section_style_per_event']) and $this->settings['fes_section_style_per_event']){
+
+                    FormBuilder::style_per_event( $post, array() );
+                }
+
+                if(isset($this->settings['trailer_url_status']) and $this->settings['trailer_url_status'] and isset($this->settings['fes_section_trailer_url']) and $this->settings['fes_section_trailer_url']){
+
+                    FormBuilder::trailer_url( $post, array() );
                 }
 
                 if(!isset($this->settings['fes_section_shortcode_visibility']) or (isset($this->settings['fes_section_shortcode_visibility']) and $this->settings['fes_section_shortcode_visibility'])){
@@ -175,8 +186,8 @@ FormBuilder::enqueue();
                     FormBuilder::agreement(
                         $post,
                         array(
-                            'agreement_page' => isset($this->settings['fes_agreement_page']) and $this->settings['fes_agreement_page'] ? $this->settings['fes_agreement_page'] : false,
-                            'checked' => isset($this->settings['fes_agreement_checked']) and $this->settings['fes_agreement_checked'] ? true : false,
+                            'agreement_page' => (isset($this->settings['fes_agreement_page']) and $this->settings['fes_agreement_page']) ? $this->settings['fes_agreement_page'] : false,
+                            'checked' => (isset($this->settings['fes_agreement_checked']) and $this->settings['fes_agreement_checked']) ? true : false,
                         )
                     );
                 }

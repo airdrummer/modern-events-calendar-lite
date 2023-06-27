@@ -2,8 +2,8 @@
 
 namespace MEC\SingleBuilder;
 
-use MEC\SingleBuilder\Widgets\WidgetBase;
 use MEC\Singleton;
+use MEC\SingleBuilder\Widgets\WidgetBase;
 
 class SingleBuilder extends Singleton {
 
@@ -40,6 +40,11 @@ class SingleBuilder extends Singleton {
             case 'thumbnail':
 
                 $html = Widgets\FeaturedImage\FeaturedImage::getInstance()->output( $event_id, $atts );
+
+                break;
+            case 'event-gallery':
+
+                $html = Widgets\EventGallery\EventGallery::getInstance()->output( $event_id, $atts );
 
                 break;
 
@@ -177,6 +182,11 @@ class SingleBuilder extends Singleton {
             case 'event-speakers':
 
                 $html = Widgets\EventSpeakers\EventSpeakers::getInstance()->output( $event_id, $atts );
+
+                break;
+            case 'event-sponsors':
+
+                $html = Widgets\EventSponsors\EventSponsors::getInstance()->output( $event_id, $atts );
 
                 break;
             case 'event-tags':

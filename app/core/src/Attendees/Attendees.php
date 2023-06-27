@@ -63,6 +63,8 @@ class Attendees extends Singleton{
                         }
                     }
                 break;
+
+
             }
         }
 
@@ -207,6 +209,8 @@ class Attendees extends Singleton{
         $occurrence = isset($attendee['occurrence']) ? (int)$attendee['occurrence'] : 0;
         $attendee['email'] =  isset($attendee['email']) ? sanitize_email($attendee['email']) : 0;
         $email = $attendee['email'];
+        $first_name = isset($attendee['first_name']) ? sanitize_text_field( $attendee['first_name']) : '';
+        $last_name = isset($attendee['last_name']) ? sanitize_text_field( $attendee['last_name']) : '';
 
         if( !$post_id || !$event_id || !$occurrence || !$email ){
 
@@ -214,7 +218,7 @@ class Attendees extends Singleton{
         }
 
         $attendee['data'] = isset($attendee['data']) ? serialize($attendee['data']) : '';
-        $existed = $this->is_existed( $post_id, $event_id, $occurrence, $email );
+        $existed = $this->is_existed( $post_id, $event_id, $occurrence, $email, $first_name, $last_name );
 
         if( !$existed ){
 
@@ -248,13 +252,15 @@ class Attendees extends Singleton{
         return $attendees;
     }
 
-    public function is_existed( $post_id, $event_id, $occurrence, $email ){
+    public function is_existed( $post_id, $event_id, $occurrence, $email, $first_name, $last_name ){
 
         $conditions = [
             'post_id' => $post_id,
             'event_id' => $event_id,
             'occurrence' => $occurrence,
             'email' => $email,
+            'first_name' => $first_name,
+            'last_name' => $last_name,
         ];
 
         $r = $this->_get_attendees($conditions);
@@ -279,6 +285,8 @@ class Attendees extends Singleton{
         foreach( $attendees as $attendee ){
 
             $email = isset($attendee['email']) ? sanitize_email($attendee['email']) : 0;
+            $first_name = isset($attendee['first_name']) ? sanitize_text_field( $attendee['first_name'] ) : '';
+            $last_name = isset($attendee['last_name']) ? sanitize_text_field( $attendee['last_name'] ) : '';
             if(!$email){
 
                 continue;
@@ -294,14 +302,16 @@ class Attendees extends Singleton{
             $attendee['data'] = $data;
             $attendee['count'] = 1;
 
-            if(isset($new_attendees[$email])){
 
-                $new_attendees[$email]['count']++;
+            $na_key = "{$email}-{$first_name}-{$last_name}";
+            if(isset($new_attendees[ $na_key ])){
+
+                $new_attendees[ $na_key ]['count']++;
 
                 continue;
             }
 
-            $new_attendees[$email] = $attendee;
+            $new_attendees[ $na_key ] = $attendee;
         }
 
         foreach( $new_attendees as $attendee ){
@@ -316,6 +326,20 @@ class Attendees extends Singleton{
         return $success;
     }
 
+    public function remove_other_attendees( $post_id, $event_id, $occurrence ) {
+
+        global $wpdb;
+        $sql = $wpdb->prepare(
+            "DELETE FROM `%1s` where `post_id` = %2s && ( `event_id` != %3s || `occurrence` != %4s )",
+            $this->tbl,
+            $post_id,
+            $event_id,
+            $occurrence
+        );
+
+        $wpdb->query( $sql );
+    }
+
     public function update_attendees( $post_id, $event_id, $occurrence, $attendees ){
 
         if( !$post_id || !$event_id || !$occurrence || !is_array($attendees) ){
@@ -323,14 +347,37 @@ class Attendees extends Singleton{
             return false;
         }
 
+        $this->remove_other_attendees( $post_id, $event_id, $occurrence );
+
         $saved_attendees = $this->get_attendees( $post_id, $event_id, $occurrence, false );
+        $saved_attendees_keys = array();
+        foreach( $saved_attendees as $saved_attendee ) {
 
-        $saved_emails = array_column($saved_attendees,'email','attendee_id');
-        $emails = array_column($attendees,'email');
+            $email = isset($saved_attendee['email']) ? sanitize_email($saved_attendee['email']) : 0;
+            $first_name = isset($saved_attendee['first_name']) ? sanitize_text_field( $saved_attendee['first_name'] ) : '';
+            $last_name = isset($saved_attendee['last_name']) ? sanitize_text_field( $saved_attendee['last_name'] ) : '';
+            $attendee_id = $saved_attendee['attendee_id'] ?? 0;
 
-        foreach( $saved_emails as $attendee_id => $saved_email ){
+            $sa_key = "{$email}-{$first_name}-{$last_name}";
 
-            if( false === array_search( $saved_email, $emails ) ){
+            $saved_attendees_keys[ $attendee_id ] = $sa_key;
+        }
+
+        foreach( $attendees as $_a_key => $attendee ) {
+
+            $email = isset($attendee['email']) ? sanitize_email($attendee['email']) : 0;
+            $first_name = isset($attendee['first_name']) ? sanitize_text_field( $attendee['first_name'] ) : '';
+            $last_name = isset($attendee['last_name']) ? sanitize_text_field( $attendee['last_name'] ) : '';
+
+            $a_key = "{$email}-{$first_name}-{$last_name}";
+
+            $attendees_keys[ $_a_key ] = $a_key;
+        }
+
+        foreach( $saved_attendees_keys as $attendee_id => $attendee_key ){
+
+            $saved_attendee_id = array_search( $attendee_key, $attendees_keys );
+            if( false === $saved_attendee_id ){
 
                 $conditions = [
                     'attendee_id' => $attendee_id,

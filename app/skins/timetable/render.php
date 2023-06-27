@@ -52,7 +52,7 @@ else $set_dark = '';
                 </span>
                 <span class="mec-timetable-event-span mec-timetable-event-title">
                     <?php echo MEC_kses::element($this->display_link($event)); ?><?php echo MEC_kses::element($this->main->get_flags($event).$event_color.$this->main->get_normal_labels($event, $display_label).$this->main->display_cancellation_reason($event, $reason_for_cancellation)); ?>
-                    <?php echo MEC_kses::element($this->display_custom_data($event)); ?>
+                    <?php echo MEC_kses::embed($this->display_custom_data($event)); ?>
                     <?php echo MEC_kses::element($this->get_label_captions($event,'mec-fc-style')); ?>
                     <?php if($this->localtime) echo MEC_kses::full($this->main->module('local-time.type3', array('event' => $event))); ?>
                 </span>
@@ -76,7 +76,7 @@ else $set_dark = '';
 
     <?php elseif(!isset($has_events[$week])): $has_events[$week] = 'printed'; ?>
     <div class="mec-timetable-events-list mec-weekly-view-date-events mec-util-hidden mec-calendar-day-events mec-clear mec-weekly-view-week-<?php echo esc_attr($this->id); ?>-<?php echo date('Ym', strtotime($date)).$week; ?> mec_weekly_view_date_events<?php echo esc_attr($this->id); ?>_<?php echo date('Ymd', strtotime($date)); ?>" id="mec_weekly_view_date_events<?php echo esc_attr($this->id); ?>_<?php echo date('Ymd', strtotime($date)); ?>" data-week-number="<?php echo esc_attr($week); ?>">
-        <article class="mec-event-article"><h4 class="mec-event-title"><?php esc_html_e('No Events', 'modern-events-calendar-lite'); ?></h4><div class="mec-event-detail"></div></article>
+        <article class="mec-event-article"><h4 class="mec-event-title"><?php esc_html_e('No Events', 'modern-events-calendar-lite' ); ?></h4><div class="mec-event-detail"></div></article>
     </div>
     <?php endif; ?>
     <?php endforeach; ?>
@@ -108,7 +108,9 @@ else $set_dark = '';
             <div class="mec-timetable-t2-content">
                 <h4 class="mec-event-title">
                     <?php echo MEC_kses::element($this->display_link($event)); ?>
-                    <?php echo MEC_kses::element($this->display_custom_data($event)); ?>
+                    <?php echo MEC_kses::element($this->main->get_normal_labels($event, $display_label)); ?>
+                    <?php echo MEC_kses::element($this->main->display_cancellation_reason($event, $reason_for_cancellation)); ?>
+                    <?php echo MEC_kses::embed($this->display_custom_data($event)); ?>
                     <?php echo MEC_kses::element($this->main->get_flags($event)); ?>
                 </h4>
                 <?php echo MEC_kses::element($this->get_label_captions($event,'mec-fc-style')); ?>
@@ -143,7 +145,7 @@ else $set_dark = '';
     <table>
         <thead>
             <tr>
-                <td><?php esc_html_e('Time/Date', 'modern-events-calendar-lite'); ?></td>
+                <td><?php esc_html_e('Time/Date', 'modern-events-calendar-lite' ); ?></td>
                 <?php foreach($this->events as $date=>$events): ?>
                 <td><?php echo esc_html($this->main->date_i18n('l', strtotime($date))); ?></td>
                 <?php endforeach; ?>
@@ -158,7 +160,7 @@ else $set_dark = '';
                         <td colspan="1" style="vertical-align:top;text-align: center;">
                             <?php foreach($events as $event): ?>
                                 <?php if($event->data->meta['mec_date']['start']['hour'] == $i) echo MEC_kses::element($this->display_link($event, NULL, NULL, 'style="background: #'.esc_attr($event->data->meta['mec_color']).'"')); ?>
-                                <?php echo MEC_kses::element($this->display_custom_data($event)); ?>
+                                <?php echo MEC_kses::embed($this->display_custom_data($event)); ?>
                             <?php endforeach; ?>
                         </td>
                         <?php else: ?>

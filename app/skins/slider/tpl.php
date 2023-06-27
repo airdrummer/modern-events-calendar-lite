@@ -50,8 +50,9 @@ do_action('mec_slider_skin_head');
     </div>
     <?php else: ?>
     <div class="mec-skin-slider-events-container" id="mec_skin_events_<?php echo esc_attr($this->id); ?>">
-        <?php esc_html_e('No event found!', 'modern-events-calendar-lite'); ?>
+        <?php esc_html_e('No event found!', 'modern-events-calendar-lite' ); ?>
     </div>
     <?php endif; ?>
 
+    <?php echo $this->display_credit_url(); ?>
 </div>

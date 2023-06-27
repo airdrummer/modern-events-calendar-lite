@@ -18,20 +18,22 @@ $sed_method = '';
 if(isset($this->skin_options['sed_method']) and !empty($this->skin_options['sed_method'])) $sed_method = ($this->skin_options['sed_method']  == 'new') ? '_blank' : ($this->skin_options['sed_method']  == '0' ? '_self' : $this->skin_options['sed_method']);
 
 // Shortcode Filters
-$filter_category = get_post_meta($this->id, 'category', true) ?  get_post_meta($this->id, 'category', true) : '';
-$filter_location = get_post_meta($this->id, 'location', true) ?  get_post_meta($this->id, 'location', true) : '';
-$filter_organizer = get_post_meta($this->id, 'organizer', true) ?  get_post_meta($this->id, 'organizer', true) : '';
-$filter_label = get_post_meta($this->id, 'label', true)  ?  get_post_meta($this->id, 'label', true) : '';
-$filter_tag = get_post_meta($this->id, 'tag', true)  ?  get_post_meta($this->id, 'tag', true) : '';
-$filter_author = get_post_meta($this->id, 'author', true)  ?  get_post_meta($this->id, 'author', true) : '';
+$filter_category = get_post_meta($this->id, 'category', true) ? get_post_meta($this->id, 'category', true) : '';
+$filter_location = get_post_meta($this->id, 'location', true) ? get_post_meta($this->id, 'location', true) : '';
+$filter_organizer = get_post_meta($this->id, 'organizer', true) ? get_post_meta($this->id, 'organizer', true) : '';
+$filter_label = get_post_meta($this->id, 'label', true) ? get_post_meta($this->id, 'label', true) : '';
+$filter_tag = get_post_meta($this->id, 'tag', true) ? get_post_meta($this->id, 'tag', true) : '';
+$filter_author = get_post_meta($this->id, 'author', true) ? get_post_meta($this->id, 'author', true) : '';
 $show_past_events = (isset($this->atts['show_past_events']) ? $this->atts['show_past_events'] : '0');
 $show_only_past_events = (isset($this->atts['show_only_past_events']) ? $this->atts['show_only_past_events'] : '0');
 $show_only_one_occurrence = (isset($this->atts['show_only_one_occurrence']) && $this->atts['show_only_one_occurrence'] != '0')  ?  '1' : '0';
-$mec_tax_input = (isset($this->atts['mec_tax_input']) && $this->atts['mec_tax_input'] != '0')  ?  $this->atts['mec_tax_input'] : '';
+$mec_tax_input = (isset($this->atts['mec_tax_input']) && $this->atts['mec_tax_input'] != '0') ? $this->atts['mec_tax_input'] : '';
 
 // WordPress Options
 $lang = !empty(substr(get_locale(), 0, strpos(get_locale(), "_"))) ? substr(get_locale(), 0, strpos(get_locale(), "_")) : get_locale();
-
+$direction = is_rtl() ? 'rtl' : 'ltr';
+$border_direction = is_rtl() ? 'border-right-width' : 'border-left-width';
+$border_direction_style = is_rtl() ? 'border-left-style' : 'border-right-style';
 $is_category_page = is_tax('mec_category');
 $cat_id = '';
 if($is_category_page)
@@ -46,15 +48,34 @@ if(!function_exists('mec_general_calendar_find_event'))
 	// Search Options
 	function mec_general_calendar_find_event($sf_options, $find_filter)
     {
-		if($find_filter == 'find' and is_array($sf_options))
+		if($find_filter === 'find' and is_array($sf_options))
 		{
-			if(($sf_options['category']['type'] != '0' && !is_null($sf_options['category']['type'])) || ($sf_options['location']['type'] != '0' && !is_null($sf_options['location']['type'])) || ($sf_options['organizer']['type'] != '0' && !is_null($sf_options['organizer']['type'])) || ($sf_options['speaker']['type'] != '0' && !is_null($sf_options['speaker']['type'])) || ($sf_options['tag']['type'] != '0' && !is_null($sf_options['tag']['type'])) || ($sf_options['label']['type'] != '0' && !is_null($sf_options['label']['type'])) || ($sf_options['event_cost']['type'] != '0' && !is_null($sf_options['event_cost']['type'])) || ($sf_options['text_search']['type'] != '0' && !is_null($sf_options['text_search']['type'])) || ($sf_options['address_search']['type'] != '0' && !is_null($sf_options['address_search']['type']))) return true;
+			if(
+                (isset($sf_options['category']) && $sf_options['category']['type'] != '0' && !is_null($sf_options['category']['type'])) ||
+                (isset($sf_options['location']) && $sf_options['location']['type'] != '0' && !is_null($sf_options['location']['type'])) ||
+                (isset($sf_options['organizer']) && $sf_options['organizer']['type'] != '0' && !is_null($sf_options['organizer']['type'])) ||
+                (isset($sf_options['speaker']) && $sf_options['speaker']['type'] != '0' && !is_null($sf_options['speaker']['type'])) ||
+                (isset($sf_options['tag']) && $sf_options['tag']['type'] != '0' && !is_null($sf_options['tag']['type'])) ||
+                (isset($sf_options['label']) && $sf_options['label']['type'] != '0' && !is_null($sf_options['label']['type'])) ||
+                (isset($sf_options['event_cost']) && $sf_options['event_cost']['type'] != '0' && !is_null($sf_options['event_cost']['type'])) ||
+                (isset($sf_options['text_search']) && $sf_options['text_search']['type'] != '0' && !is_null($sf_options['text_search']['type'])) ||
+                (isset($sf_options['address_search']) && $sf_options['address_search']['type'] != '0' && !is_null($sf_options['address_search']['type']))
+            ) return true;
 			else return false;
 		}
 
-		if($find_filter == 'filter' and is_array($sf_options))
+		if($find_filter === 'filter' and is_array($sf_options))
 		{
-			if(($sf_options['category']['type'] != '0' && !is_null($sf_options['category']['type'])) || ($sf_options['location']['type'] != '0' && !is_null($sf_options['location']['type'])) || ($sf_options['organizer']['type'] != '0' && !is_null($sf_options['organizer']['type'])) || ($sf_options['speaker']['type'] != '0' && !is_null($sf_options['speaker']['type'])) || ($sf_options['tag']['type'] != '0' && !is_null($sf_options['tag']['type'])) || ($sf_options['label']['type'] != '0' && !is_null($sf_options['label']['type'])) || ($sf_options['event_cost']['type'] != '0' && !is_null($sf_options['event_cost']['type'])) || ($sf_options['address_search']['type'] != '0' && !is_null($sf_options['address_search']['type']))) return true;
+			if(
+                (isset($sf_options['category']) && $sf_options['category']['type'] != '0' && !is_null($sf_options['category']['type'])) ||
+                (isset($sf_options['location']) && $sf_options['location']['type'] != '0' && !is_null($sf_options['location']['type'])) ||
+                (isset($sf_options['organizer']) && $sf_options['organizer']['type'] != '0' && !is_null($sf_options['organizer']['type'])) ||
+                (isset($sf_options['speaker']) && $sf_options['speaker']['type'] != '0' && !is_null($sf_options['speaker']['type'])) ||
+                (isset($sf_options['tag']) && $sf_options['tag']['type'] != '0' && !is_null($sf_options['tag']['type'])) ||
+                (isset($sf_options['label']) && $sf_options['label']['type'] != '0' && !is_null($sf_options['label']['type'])) ||
+                (isset($sf_options['event_cost']) && $sf_options['event_cost']['type'] != '0' && !is_null($sf_options['event_cost']['type'])) ||
+                (isset($sf_options['address_search']) && $sf_options['address_search']['type'] != '0' && !is_null($sf_options['address_search']['type']))
+            ) return true;
 			else return false;
 		}
 
@@ -77,11 +98,12 @@ wp_enqueue_script('mec-nice-select', $this->main->asset('js/jquery.nice-select.m
 		echo ((is_array($this->sf_options) and $this->sf_options['label']['type'] != '0') ? MEC_kses::form($this->sf_search_field('label', array('type' => $this->sf_options['label']['type']))) : '');
 		echo ((is_array($this->sf_options) and $this->sf_options['address_search']['type'] != '0') ? MEC_kses::form($this->sf_search_field('address_search', array('type' => $this->sf_options['address_search']['type']))) : '');
 		echo ((is_array($this->sf_options) and $this->sf_options['event_cost']['type'] != '0') ? MEC_kses::form($this->sf_search_field('event_cost', array('type' => $this->sf_options['event_cost']['type']))) : '');
-		echo ($this->sf_reset_button ? '<div class="mec-search-reset-button"><button class="button mec-button" id="mec_search_form_'.esc_attr($this->id).'_reset" type="button">'.esc_html__('Reset', 'modern-events-calendar-lite').'</button></div>' : '');
+		echo ($this->sf_reset_button ? '<div class="mec-search-reset-button"><button class="button mec-button" id="mec_search_form_'.esc_attr($this->id).'_reset" type="button">'.esc_html__('Reset', 'modern-events-calendar-lite' ).'</button></div>' : '');
 		?>
 		</div>
 	</div>
 </div>
+<?php echo $this->display_credit_url(); ?>
 <style>.nice-select{color: #838383;-webkit-tap-highlight-color:transparent;background-color:#fff;border:solid 1px #E3E4E5;box-sizing:border-box;clear:both;cursor:pointer;display:block;float:left;font-family:inherit;font-size:12px;font-weight:400;height:42px;line-height:40px;outline:0;padding-left:18px;padding-right:30px;position:relative;text-align:left!important;-webkit-transition:all .2s ease-in-out;transition:all .2s ease-in-out;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;white-space:nowrap;width: 100%;border-radius: 0 3px 3px 0;height: 40px;}.nice-select:hover{border-color:#dbdbdb}.nice-select:after{border-bottom: 1px solid #c1c2c3; border-right: 1px solid #c1c2c3; width: 8px; height: 8px; margin-top: -5px; right: 15px;content:'';display:block;pointer-events:none;position:absolute;top:50%;-webkit-transform-origin:66% 66%;-ms-transform-origin:66% 66%;transform-origin:66% 66%;-webkit-transform:rotate(45deg);-ms-transform:rotate(45deg);transform:rotate(45deg);-webkit-transition:all .15s ease-in-out;transition:all .15s ease-in-out}.nice-select.open:after{-webkit-transform:rotate(-135deg);-ms-transform:rotate(-135deg);transform:rotate(-135deg)}.nice-select.open .list{opacity:1;pointer-events:auto;-webkit-transform:scale(1) translateY(0);-ms-transform:scale(1) translateY(0);transform:scale(1) translateY(0)}.nice-select.disabled{border-color:#ededed;color:#999;pointer-events:none}.nice-select.disabled:after{border-color:#ccc}.nice-select.wide{width:100%}.nice-select.wide .list{left:0!important;right:0!important}.nice-select.right{float:right}.nice-select.right .list{left:auto;right:0}.nice-select.small{font-size:12px;height:36px;line-height:34px}.nice-select.small:after{height:4px;width:4px}.nice-select.small .option{line-height:34px;min-height:34px}.nice-select .list{width: 100%;background-color:#fff;border-radius:0 0 3px 3px;box-shadow:0 0 0 1px rgba(68,68,68,.11);box-sizing:border-box;margin-top:4px;opacity:0;overflow:hidden;padding:0;pointer-events:none;position:absolute;top:100%;left:0;-webkit-transform-origin:50% 0;-ms-transform-origin:50% 0;transform-origin:50% 0;-webkit-transform:scale(.75) translateY(-21px);-ms-transform:scale(.75) translateY(-21px);transform:scale(.75) translateY(-21px);-webkit-transition:all .2s cubic-bezier(.5,0,0,1.25),opacity .15s ease-out;transition:all .2s cubic-bezier(.5,0,0,1.25),opacity .15s ease-out;z-index:9}.nice-select .list:hover .option:not(:hover){background-color:transparent!important}.nice-select .option{ cursor: pointer; font-weight: 400;line-height: 1.2;list-style: none;min-height: 30px;outline: 0;padding: 10px 6px 10px 18px;text-align: left;-webkit-transition: all .2s;transition: all .2s;font-size: 14px;letter-spacing: -0.1px;white-space: break-spaces;}.nice-select .option.focus,.nice-select .option.selected.focus,.nice-select .option:hover{background-color:#f6f6f6}.nice-select .option.selected{font-weight:700}.nice-select .option.disabled{background-color:transparent;color:#999;cursor:default}.no-csspointerevents .nice-select .list{display:none}.no-csspointerevents .nice-select.open .list{display:block}</style>
 <?php
 $javascript = '<script>
@@ -95,6 +117,7 @@ $javascript = '<script>
 			businessHours: false,
 			height: "auto",
 			eventLimit: false,
+			direction: "'. $direction .'",
 			locale: "'. esc_js($lang) .'",
 			lang: "'. esc_js($lang) .'",
 	';
@@ -102,7 +125,7 @@ if (mec_general_calendar_find_event($this->sf_options, 'find')) :
 $javascript .='
 			customButtons: {
 				findEvents: {
-					text: "'. esc_html__('Find Events', 'modern-events-calendar-lite') .'",
+					text: "'. esc_html__('Find Events', 'modern-events-calendar-lite' ) .'",
 					click: function() {
 						jQuery(".mec-gCalendar-filters").css("display" , "none")
 						var eventSource = [];
@@ -152,7 +175,7 @@ $javascript .='
 if (mec_general_calendar_find_event($this->sf_options, 'filter')) :
 $javascript .='
 				filterEvents: {
-					text: "'. esc_html__('Filter', 'modern-events-calendar-lite') .'",
+					text: "'. esc_html__('Filter', 'modern-events-calendar-lite' ) .'",
 					click: function() {
 						jQuery(".mec-gCalendar-filters").fadeToggle( "fast", "linear" );
 					}
@@ -181,7 +204,7 @@ endif;
 $javascript .='
             },
 			buttonText: {
-                today: "'. esc_html__('Today', 'modern-events-calendar-lite') .'"
+                today: "'. esc_html__('Today', 'modern-events-calendar-lite' ) .'"
             },
 			eventDidMount: function(info) {
 				var searchField = jQuery(".mec-gCalendar-search-text");
@@ -205,10 +228,10 @@ $javascript .='
     			jQuery(info.el).css("font-size", "12px");
     			jQuery(info.el).css("font-weight", "400");
     			jQuery(info.el).css("border-radius", "0");
-    			jQuery(info.el).css("border-right", "none");
     			jQuery(info.el).css("border-top", "none");
     			jQuery(info.el).css("border-bottom", "none");
-    			jQuery(info.el).css("border-left-width", "3px");
+    			jQuery(info.el).css("'.$border_direction.'", "3px");
+    			jQuery(info.el).css("'.$border_direction_style.'", "none");
     			jQuery(info.el).css("background-color", "#fff");
     			jQuery(info.el).css("border-color", borderColor);
     			jQuery(info.el).css("white-space", "normal");
@@ -252,6 +275,7 @@ $javascript .='
 				});
 				';
 endif;
+$title_and_location_pattern = apply_filters( 'mec_skin_general_calendar_title_and_location_structure', 'Title + Location' );
 $javascript .='
 				jQuery(".fc-daygrid-event-harness").mouseleave(function(e) {
 					jQuery(".mec-gCalendar-tooltip").remove();
@@ -271,7 +295,7 @@ $javascript .='
 				"<div class=\"mec-gCalendar-tooltip-date\">" +
 					"<div class=\"mec-gCalendar-tooltip-date-text\">" + dateText + "</div>" +
 					"<div class=\"mec-gCalendar-tooltip-date-time\">" + dateTime + "</div>" +
-			    "</div>" + Title + Location +
+			    "</div>" + '. $title_and_location_pattern .' +
 				"</div>";
 				if ( jQuery(info.el).parent().find(".mec-gCalendar-tooltip").length < 1 ) jQuery(info.el).parent().append(tooltip);
 				';
@@ -355,7 +379,7 @@ $javascript .= '
 		// Search Bar Filter
 if (is_array($this->sf_options) and $this->sf_options['text_search']['type'] != '0') :
 $javascript .='
-			jQuery( "<div class=\"mec-gCalendar-search-text-wrap\"><i class=\"mec-sl-magnifier\"></i><input type=\"text\" class=\"mec-gCalendar-search-text\" placeholder=\"'. ((is_array($this->sf_options) and $this->sf_options['text_search']['placeholder']) ? esc_html__($this->sf_options['text_search']['placeholder']) : esc_html__('Search for events', 'modern-events-calendar-lite')) .'\" /></div>" ).insertBefore( ".fc-header-toolbar .fc-toolbar-chunk:last-child .fc-button-group" );
+			jQuery( "<div class=\"mec-gCalendar-search-text-wrap\"><i class=\"mec-sl-magnifier\"></i><input type=\"text\" class=\"mec-gCalendar-search-text\" placeholder=\"'. ((is_array($this->sf_options) and $this->sf_options['text_search']['placeholder']) ? esc_html__($this->sf_options['text_search']['placeholder']) : esc_html__('Search for events', 'modern-events-calendar-lite' )) .'\" /></div>" ).insertBefore( ".fc-header-toolbar .fc-toolbar-chunk:last-child .fc-button-group" );
 
 			jQuery(".mec-gCalendar-search-text").keypress(function(event){
 				var keycode = (event.keyCode ? event.keyCode : event.which);
@@ -375,7 +399,7 @@ $javascript .='
 			let ye = new Intl.DateTimeFormat("en", { year: "numeric" }).format(s);
 			let mo = new Intl.DateTimeFormat("en", { month: "2-digit" }).format(s);
 			let da = new Intl.DateTimeFormat("en", { day: "2-digit" }).format(s);
-			jQuery("#gCalendarMonthFilterButton").datepicker("hide");
+			jQuery("#gCalendarMonthFilterButton").monthPicker("hide");
 			calendar.gotoDate(`${ye}-${mo}-${da}`)
 		})
 		setTimeout(function(){ jQuery(".datepicker").appendTo(".gCalendarMonthFilterButton"); }, 1000);
@@ -486,6 +510,6 @@ endif;
 $javascript .='
 	});
 </script>';
+
 $factory = new MEC_factory();
 $factory->params('footer', $javascript);
-?>

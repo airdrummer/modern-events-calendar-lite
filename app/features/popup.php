@@ -92,7 +92,7 @@ class MEC_feature_popup extends MEC_base
                 'start_date' => '',
                 'maximum_date_range' => '',
                 'include_events_times' => 0,
-                'load_more_button' => 1,
+                'pagination_method' => 'loadmore',
                 'month_divider' => 1,
                 'map_on_top' => 0,
                 'set_geolocation' => 0,
@@ -104,7 +104,7 @@ class MEC_feature_popup extends MEC_base
                 'start_date' => '',
                 'maximum_date_range' => '',
                 'count' => 3,
-                'load_more_button' => 1,
+                'pagination_method' => 'loadmore',
                 'map_on_top' => 0,
                 'set_geolocation' => 0,
             ),
@@ -114,7 +114,7 @@ class MEC_feature_popup extends MEC_base
                 'start_date' => '',
                 'maximum_date_range' => '',
                 'month_divider' => 1,
-                'load_more_button' => 1,
+                'pagination_method' => 'loadmore',
             ),
             'full_calendar' => array(
                 'start_date_type' => 'start_current_month',
@@ -172,7 +172,7 @@ class MEC_feature_popup extends MEC_base
                 'filter_by' => '',
                 'fit_to_row' => 0,
                 'masonry_like_grid' => 0,
-                'load_more_button' => 1,
+                'pagination_method' => 'loadmore',
             ),
             'cover' => array(
                 'style' => $style,
@@ -202,7 +202,7 @@ class MEC_feature_popup extends MEC_base
                 'start_date_type' => 'today',
                 'start_date' => '',
                 'maximum_date_range' => '',
-                'load_more_button' => 1,
+                'pagination_method' => 'loadmore',
                 'month_divider' => 0,
             ),
             'tile' => array(
@@ -306,7 +306,7 @@ class MEC_feature_popup extends MEC_base
         else
         {
             $address = (isset($mec['location']['address']) and trim($mec['location']['address'])) ? sanitize_text_field($mec['location']['address']) : '';
-            $name = (isset($mec['location']['name']) and trim($mec['location']['name'])) ? sanitize_text_field($mec['location']['name']) : (trim($address) ? $address : esc_html__('Location Name', 'modern-events-calendar-lite'));
+            $name = (isset($mec['location']['name']) and trim($mec['location']['name'])) ? sanitize_text_field($mec['location']['name']) : (trim($address) ? $address : esc_html__('Location Name', 'modern-events-calendar-lite' ));
 
             $term = get_term_by('name', $name, 'mec_location');
 
@@ -365,7 +365,7 @@ class MEC_feature_popup extends MEC_base
         }
         else
         {
-            $name = (isset($mec['organizer']['name']) and trim($mec['organizer']['name'])) ? sanitize_text_field($mec['organizer']['name']) : esc_html__('Organizer Name', 'modern-events-calendar-lite');
+            $name = (isset($mec['organizer']['name']) and trim($mec['organizer']['name'])) ? sanitize_text_field($mec['organizer']['name']) : esc_html__('Organizer Name', 'modern-events-calendar-lite' );
 
             $term = get_term_by('name', $name, 'mec_organizer');
 

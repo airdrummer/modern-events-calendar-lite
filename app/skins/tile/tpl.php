@@ -70,33 +70,42 @@ if($sed_method == 'new') $sed_method = '0';
 $javascript = '<script>
 jQuery(document).ready(function()
 {
-    jQuery("#mec_tile_month_'.esc_js($this->id).'_'.date('Ym', $current_month_time).'").mecTileView(
+    var mec_interval = setInterval(function()
     {
-        id: "'.esc_js($this->id).'",
-        start_date: "'.esc_js($this->start_date).'",
-        end_date: "'.esc_js($this->end_date).'",
-		offset: "'.esc_js($this->next_offset).'",
-		limit: "'.esc_js($this->limit).'",
-		load_method: "'.esc_js($this->load_method).'",
-        today: "'.date('Ymd', strtotime($this->active_day)).'",
-        month_id: "'.date('Ym', $current_month_time).'",
-        active_month: {year: "'.date('Y', strtotime($this->start_date)).'", month: "'.date('m', strtotime($this->start_date)).'"},
-        next_month: {year: "'.date('Y', $_1month_after).'", month: "'.date('m', $_1month_after).'"},
-        events_label: "'.esc_attr__('Events', 'modern-events-calendar-lite').'",
-        event_label: "'.esc_attr__('Event', 'modern-events-calendar-lite').'",
-        month_navigator: '.($this->next_previous_button ? 1 : 0).',
-        atts: "'.http_build_query(array('atts' => $this->atts), '', '&').'",
-        style: "'.(isset($this->skin_options['style']) ? $this->skin_options['style'] : NULL).'",
-        ajax_url: "'.admin_url('admin-ajax.php', NULL).'",
-        sed_method: "'.esc_js($sed_method).'",
-        image_popup: "'.esc_js($this->image_popup).'",
-        sf:
+        // Not Visible
+        if(!jQuery("#mec_skin_'.esc_js($this->id).'").is(":visible")) return;
+        
+        jQuery("#mec_tile_month_'.esc_js($this->id).'_'.date('Ym', $current_month_time).'").mecTileView(
         {
-            container: "'.($this->sf_status ? '#mec_search_form_'.esc_js($this->id) : '').'",
-            reset: '.($this->sf_reset_button ? 1 : 0).',
-            refine: '.($this->sf_refine ? 1 : 0).',
-        }
-    });
+            id: "'.esc_js($this->id).'",
+            start_date: "'.esc_js($this->start_date).'",
+            end_date: "'.esc_js($this->end_date).'",
+            offset: "'.esc_js($this->next_offset).'",
+            limit: "'.esc_js($this->limit).'",
+            pagination: "'.$this->pagination.'",
+            load_method: "'.esc_js($this->load_method).'",
+            today: "'.date('Ymd', strtotime($this->active_day)).'",
+            month_id: "'.date('Ym', $current_month_time).'",
+            active_month: {year: "'.date('Y', strtotime($this->start_date)).'", month: "'.date('m', strtotime($this->start_date)).'"},
+            next_month: {year: "'.date('Y', $_1month_after).'", month: "'.date('m', $_1month_after).'"},
+            events_label: "'.esc_attr__('Events', 'modern-events-calendar-lite' ).'",
+            event_label: "'.esc_attr__('Event', 'modern-events-calendar-lite' ).'",
+            month_navigator: '.($this->next_previous_button ? 1 : 0).',
+            atts: "'.http_build_query(array('atts' => $this->atts), '', '&').'",
+            style: "'.(isset($this->skin_options['style']) ? $this->skin_options['style'] : NULL).'",
+            ajax_url: "'.admin_url('admin-ajax.php', NULL).'",
+            sed_method: "'.esc_js($sed_method).'",
+            image_popup: "'.esc_js($this->image_popup).'",
+            sf:
+            {
+                container: "'.($this->sf_status ? '#mec_search_form_'.esc_js($this->id) : '').'",
+                reset: '.($this->sf_reset_button ? 1 : 0).',
+                refine: '.($this->sf_refine ? 1 : 0).',
+            }
+        });
+        
+        clearInterval(mec_interval);
+    }, 500);
 });
 </script>';
 
@@ -136,11 +145,11 @@ do_action('mec_tile_head');
                     <?php endif; ?>
                 </div>
 
-                <?php if($this->load_method === 'list' and $this->load_more_button and $this->found >= $this->limit): ?>
-                <div class="mec-load-more-wrap"><div tabindex="0" onkeydown="if(event.keyCode==13){jQuery(this).trigger('click');}" class="mec-load-more-button <?php echo ($this->has_more_events ? '' : 'mec-util-hidden'); ?>"><?php echo esc_html__('Load More', 'modern-events-calendar-lite'); ?></div></div>
-                <?php endif; ?>
+                <?php if($this->load_method === 'list') echo $this->get_pagination_bar(); ?>
             </div>
         </div>
     </div>
+
+    <?php echo $this->display_credit_url(); ?>
 
 </div>

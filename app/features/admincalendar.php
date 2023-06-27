@@ -28,7 +28,7 @@ class MEC_feature_admincalendar extends MEC_base
         $this->settings = $this->main->get_settings();
 
         // Admin Calendar Status
-        $this->status = (isset($_GET['admincalendar']) and (boolean) sanitize_text_field($_GET['admincalendar']));
+        $this->status = (isset($_GET['adminview']) and $_GET['adminview'] === 'calendar');
     }
 
     /**
@@ -37,9 +37,6 @@ class MEC_feature_admincalendar extends MEC_base
      */
     public function init()
     {
-        // Temporary
-        return;
-
         // Disabled?
         if(!isset($this->settings['admin_calendar']) or (isset($this->settings['admin_calendar']) and !$this->settings['admin_calendar'])) return;
 
@@ -67,8 +64,8 @@ class MEC_feature_admincalendar extends MEC_base
                 <script>
                 jQuery(document).ready(function($)
                 {
-                    $('hr.wp-header-end').before('<a href="<?php echo esc_url($this->main->remove_qs_var('admincalendar')); ?>" class="add-new-h2"><?php esc_html_e('Classic View', 'modern-events-calendar-lite'); ?></a>');
-                    $('#posts-filter').before(`<div><?php echo MEC_kses::full($HTML); ?></div>`);
+                    $('hr.wp-header-end').before('<a href="<?php echo esc_url($this->main->remove_qs_var('adminview')); ?>" class="add-new-h2"><?php esc_html_e('Classic View', 'modern-events-calendar-lite' ); ?></a>');
+                    $('#posts-filter').before(`<div><?php echo $HTML; ?></div>`);
                 });
                 </script>
                 <?php
@@ -82,7 +79,7 @@ class MEC_feature_admincalendar extends MEC_base
                 <script>
                 jQuery(document).ready(function($)
                 {
-                    $('hr.wp-header-end').before('<a href="<?php echo esc_url($this->main->add_qs_vars(array('admincalendar'=>1))); ?>" class="add-new-h2"><?php esc_html_e('Calendar View', 'modern-events-calendar-lite'); ?></a>');
+                    $('hr.wp-header-end').before('<a href="<?php echo esc_url($this->main->add_qs_vars(array('adminview'=>'calendar'))); ?>" class="add-new-h2"><?php esc_html_e('Calendar View', 'modern-events-calendar-lite' ); ?></a>');
                 });
                 </script>
                 <?php
@@ -95,7 +92,7 @@ class MEC_feature_admincalendar extends MEC_base
         // JavaScript
         wp_enqueue_script('mec-admin-calendar-script', $this->main->asset('js/admin-calendar.js'), array('jquery'), $this->main->get_version());
 
-        // Styles
+        // Style
         wp_enqueue_style('mec-admin-calendar-style', $this->main->asset('css/admin-calendar.min.css'), array('mec-backend-style'), $this->main->get_version());
     }
 }

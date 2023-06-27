@@ -285,4 +285,26 @@ abstract class MEC_base extends MEC
     {
         return MEC::getInstance('app.libraries.cart');
     }
+
+    /**
+     * Returns Partial Payment instance
+     * @final
+     * @author Webnus <info@webnus.net>
+     * @return MEC_partial instance
+     */
+    final public function getPartialPayment()
+    {
+        return MEC::getInstance('app.libraries.partial');
+    }
+
+    /**
+     * Returns Captcha instance
+     * @final
+     * @author Webnus <info@webnus.net>
+     * @return MEC_captcha instance
+     */
+    final public function getCaptcha()
+    {
+        return MEC::getInstance('app.libraries.captcha');
+    }
 }

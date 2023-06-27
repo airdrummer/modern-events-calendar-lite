@@ -108,14 +108,16 @@ class MEC_walker extends Walker
      * @param string  $output   Used to append additional content (passed by reference).
      * @param WP_Term $category The current term object.
      * @param int     $depth    Depth of the term in reference to parents. Default 0.
-     * @param array   $args     An array of arguments. @see wp_terms_checklist()
+     * @param array   $args     An array of arguments.
+     * @see wp_terms_checklist()
      */
     public function end_el(&$output, $category, $depth = 0, $args = array())
     {
         $output .= "";
     }
 
-        public function display_element( $element, &$children_elements, $max_depth, $depth, $args, &$output ) {
+    public function display_element( $element, &$children_elements, $max_depth, $depth, $args, &$output )
+    {
         if ( ! $element ) {
             return;
         }
@@ -129,15 +131,14 @@ class MEC_walker extends Walker
             $args[0]['has_children'] = $this->has_children; // Back-compat.
         }
 
-
-
         $this->start_el( $output, $element, $depth, ...array_values( $args ) );
 
         // End this element.
         $this->end_el( $output, $element, $depth, ...array_values( $args ) );
     }
 
-    public function walk( $elements, $max_depth, ...$args ) {
+    public function walk( $elements, $max_depth, ...$args )
+    {
         $output = '<select multiple="multiple">';
         // Invalid parameter or nothing to walk.
         if ( $max_depth < -1 || empty( $elements ) ) {

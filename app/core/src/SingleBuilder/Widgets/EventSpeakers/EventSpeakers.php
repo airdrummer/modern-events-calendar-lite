@@ -34,8 +34,8 @@ class EventSpeakers extends WidgetBase {
 		if ( true === $this->is_editor_mode && ( empty($speakers) || (!isset($settings['speakers_status']) || !$settings['speakers_status']) ) ) {
 
 			$html = '<div class="mec-content-notification"><p>'
-					.'<span>'. esc_html__('This widget is displayed if speaker is set. In order for the widget in this page to be displayed correctly, please set speaker for your last event.', 'modern-events-calendar-lite').'</span>'
-					. '<a href="https://webnus.net/dox/modern-events-calendar/speaker/" target="_blank">' . esc_html__('How to set speaker', 'modern-events-calendar-lite') . ' </a>'
+					.'<span>'. esc_html__('This widget is displayed if speaker is set. In order for the widget in this page to be displayed correctly, please set speaker for your last event.', 'modern-events-calendar-lite' ).'</span>'
+					. '<a href="https://webnus.net/dox/modern-events-calendar/speaker/" target="_blank">' . esc_html__('How to set speaker', 'modern-events-calendar-lite' ) . ' </a>'
 				.'</p></div>';
 		} elseif ( true === $this->is_editor_mode && isset($settings['speakers_status']) && $settings['speakers_status'] ) {
 
@@ -48,10 +48,12 @@ class EventSpeakers extends WidgetBase {
 				?>
 				<script>
 					// Fix modal speaker in some themes
-					jQuery( ".mec-speaker-avatar a" ).click(function(e) {
+					jQuery( ".mec-speaker-avatar a, .mec-schedule-speakers a" ).click(function(e) {
 						e.preventDefault();
 						var id =  jQuery(this).attr('href');
 						lity(id);
+
+						return false;
 					});
 					// Fix modal booking in some themes
 					function openBookingModal(){
@@ -60,6 +62,8 @@ class EventSpeakers extends WidgetBase {
 							var book_id =  jQuery(this).attr('href');
 							Lity.close();
 							lity(book_id);
+
+							return false;
 						});
 					}
 				</script>

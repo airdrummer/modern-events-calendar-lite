@@ -65,29 +65,37 @@ if($sed_method == 'new') $sed_method = '0';
 $javascript = '<script>
 jQuery(document).ready(function()
 {
-    jQuery("#mec_monthly_view_month_'.esc_js($this->id).'_'.date('Ym', $current_month_time).'").mecMonthlyView(
+    var mec_interval = setInterval(function()
     {
-        id: "'.esc_js($this->id).'",
-        today: "'.date('Ymd', strtotime($this->active_day)).'",
-        display_all: "'.($this->display_all ? 1 : 0).'",
-        month_id: "'.date('Ym', $current_month_time).'",
-        active_month: {year: "'.date('Y', strtotime($this->start_date)).'", month: "'.date('m', strtotime($this->start_date)).'"},
-        next_month: {year: "'.date('Y', $_1month_after).'", month: "'.date('m', $_1month_after).'"},
-        events_label: "'.esc_attr__('Events', 'modern-events-calendar-lite').'",
-        event_label: "'.esc_attr__('Event', 'modern-events-calendar-lite').'",
-        month_navigator: '.($this->next_previous_button ? 1 : 0).',
-        atts: "'.http_build_query(array('atts' => $this->atts), '', '&').'",
-        style: "'.(isset($this->skin_options['style']) ? $this->skin_options['style'] : NULL).'",
-        ajax_url: "'.admin_url('admin-ajax.php', NULL).'",
-        sed_method: "'.esc_js($sed_method).'",
-        image_popup: "'.esc_js($this->image_popup).'",
-        sf:
+        // Not Visible
+        if(!jQuery("#mec_skin_'.esc_js($this->id).'").is(":visible")) return;
+        
+        jQuery("#mec_monthly_view_month_'.esc_js($this->id).'_'.date('Ym', $current_month_time).'").mecMonthlyView(
         {
-            container: "'.($this->sf_status ? '#mec_search_form_'.esc_js($this->id) : '').'",
-            reset: '.($this->sf_reset_button ? 1 : 0).',
-            refine: '.($this->sf_refine ? 1 : 0).',
-        },
-    });
+            id: "'.esc_js($this->id).'",
+            today: "'.date('Ymd', strtotime($this->active_day)).'",
+            display_all: "'.($this->display_all ? 1 : 0).'",
+            month_id: "'.date('Ym', $current_month_time).'",
+            active_month: {year: "'.date('Y', strtotime($this->start_date)).'", month: "'.date('m', strtotime($this->start_date)).'"},
+            next_month: {year: "'.date('Y', $_1month_after).'", month: "'.date('m', $_1month_after).'"},
+            events_label: "'.esc_attr__('Events', 'modern-events-calendar-lite' ).'",
+            event_label: "'.esc_attr__('Event', 'modern-events-calendar-lite' ).'",
+            month_navigator: '.($this->next_previous_button ? 1 : 0).',
+            atts: "'.http_build_query(array('atts' => $this->atts), '', '&').'",
+            style: "'.(isset($this->skin_options['style']) ? $this->skin_options['style'] : NULL).'",
+            ajax_url: "'.admin_url('admin-ajax.php', NULL).'",
+            sed_method: "'.esc_js($sed_method).'",
+            image_popup: "'.esc_js($this->image_popup).'",
+            sf:
+            {
+                container: "'.($this->sf_status ? '#mec_search_form_'.esc_js($this->id) : '').'",
+                reset: '.($this->sf_reset_button ? 1 : 0).',
+                refine: '.($this->sf_refine ? 1 : 0).',
+            },
+        });
+        
+        clearInterval(mec_interval);
+    }, 500);
 });
 </script>';
 
@@ -102,9 +110,9 @@ $dark_mode = (isset($styling['dark_mode']) ? $styling['dark_mode'] : '');
 if($dark_mode == 1) $set_dark = 'mec-dark-mode';
 else $set_dark = '';
 
-if($this->style == 'classic' || $this->style == 'novel' || $this->style == 'simple' )
+if($this->style == 'classic' || $this->style == 'novel' || $this->style == 'simple' || $this->style == 'admin')
 {
-    $cal_style        = 'mec-box-calendar mec-event-calendar-classic mec-event-container-'.$this->style;
+    $cal_style        = 'mec-box-calendar mec-event-calendar-classic mec-event-container-'.$this->style.($this->style === 'admin' ? ' mec-event-container-simple' : '');
     $div_start_topsec = $div_end_topsec = $events_side = $div_footer = '';
 }
 else
@@ -138,9 +146,11 @@ do_action('mec_monthly_skin_head');
                 <div class="mec-month-container mec-month-container-selected" id="mec_monthly_view_month_<?php echo esc_attr($this->id); ?>_<?php echo date('Ym', $current_month_time); ?>" data-month-id="<?php echo date('Ym', $current_month_time); ?>"><?php echo MEC_kses::full($month_html); ?></div>
             </div>
 
-            <?php do_action( 'mec_monthly_calendar_after_table', $this, $navigator_html, $current_month_time ); ?>
+            <?php do_action('mec_monthly_calendar_after_table', $this, $navigator_html, $current_month_time); ?>
         </div>
         <?php echo MEC_kses::full($events_side . $div_end_topsec . $div_footer); ?>
     </div>
+
+    <?php echo $this->display_credit_url(); ?>
 
 </div>

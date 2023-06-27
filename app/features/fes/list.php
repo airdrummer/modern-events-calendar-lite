@@ -8,7 +8,7 @@ defined('MECEXEC') or die();
 $limit = 20;
 
 // Current Page
-$paged = (get_query_var('paged')) ? absint(get_query_var('paged')) : 1;
+$paged = get_query_var('paged') ? absint(get_query_var('paged')) : 1;
 
 // Query Args
 $args = array(
@@ -28,7 +28,7 @@ $query = new WP_Query($args);
 $date_format = get_option('date_format');
 
 // Display Date
-$display_date = (isset($this->settings['fes_display_date_in_list']) ? (boolean) $this->settings['fes_display_date_in_list'] : false);
+$display_date = (isset($this->settings['fes_display_date_in_list']) && $this->settings['fes_display_date_in_list']);
 
 // Generating javascript code of countdown module
 $javascript = '<script>
@@ -43,7 +43,7 @@ jQuery(document).ready(function()
         {
             jQuery(this).data("confirmed", "1");
             jQuery(this).addClass("mec-fes-waiting");
-            jQuery(this).text("'.esc_attr__('Click again to remove!', 'modern-events-calendar-lite').'");
+            jQuery(this).text("'.esc_attr__('Click again to remove!', 'modern-events-calendar-lite' ).'");
 
             return false;
         }
@@ -86,7 +86,7 @@ $this->factory->params('footer', $javascript);
 <div class="mec-fes-list">
     <?php if($query->have_posts()): ?>
     <div class="mec-fes-list-top-actions">
-        <a href="<?php echo esc_url($this->link_add_event()); ?>"><?php echo esc_html__('Add new', 'modern-events-calendar-lite'); ?></a>
+        <a href="<?php echo esc_url($this->link_add_event()); ?>"><?php echo esc_html__('Add new', 'modern-events-calendar-lite' ); ?></a>
     </div>
     <?php do_action('mec_fes_list'); ?>
     <ul>
@@ -111,12 +111,12 @@ $this->factory->params('footer', $javascript);
                 $event_status = get_post_status(get_the_ID());
                 if(isset($event_status) and strtolower($event_status) == 'publish'):
             ?>
-            <span class="mec-fes-event-export"><a href="#mec-fes-export-wrapper-<?php echo get_the_ID(); ?>" data-lity><div class="wn-p-t-right"><div class="wn-p-t-text-content"><?php echo esc_html__('Download Attendees', 'modern-events-calendar-lite'); ?></div><i></i></div></a></span>
+            <span class="mec-fes-event-export"><a href="#mec-fes-export-wrapper-<?php echo get_the_ID(); ?>" data-lity><div class="wn-p-t-right"><div class="wn-p-t-text-content"><?php echo esc_html__('Download Attendees', 'modern-events-calendar-lite' ); ?></div><i></i></div></a></span>
             <?php endif; ?>
 
-            <span class="mec-fes-event-view"><a href="<?php the_permalink(); ?>"><div class="wn-p-t-right"><div class="wn-p-t-text-content"><?php echo esc_html__('View Event', 'modern-events-calendar-lite'); ?></div><i></i></div></a></span>
+            <span class="mec-fes-event-view"><a href="<?php the_permalink(); ?>"><div class="wn-p-t-right"><div class="wn-p-t-text-content"><?php echo esc_html__('View Event', 'modern-events-calendar-lite' ); ?></div><i></i></div></a></span>
             <?php if(current_user_can('delete_post', get_the_ID())): ?>
-            <span class="mec-fes-event-remove" data-confirmed="0" data-id="<?php echo get_the_ID(); ?>"><div class="wn-p-t-right"><div class="wn-p-t-text-content"><?php echo esc_html__('Remove Event', 'modern-events-calendar-lite'); ?></div><i></i></div></span>
+            <span class="mec-fes-event-remove" data-confirmed="0" data-id="<?php echo get_the_ID(); ?>"><div class="wn-p-t-right"><div class="wn-p-t-text-content"><?php echo esc_html__('Remove Event', 'modern-events-calendar-lite' ); ?></div><i></i></div></span>
             <?php endif; ?>
             <span class="mec-fes-event-view mec-event-status <?php echo esc_attr($status['status_class']); ?>"><?php echo esc_html($status['label']); ?></span>
             <div class="mec-fes-export-wrapper mec-modal-wrap lity-hide" id="mec-fes-export-wrapper-<?php echo get_the_ID(); ?>" data-event-id="<?php echo get_the_ID(); ?>">
@@ -151,17 +151,17 @@ $this->factory->params('footer', $javascript);
                     <?php endif; ?>
                 </div>
                 <div class="mec-fes-btn-export">
-                    <span class="mec-event-export-csv"><?php esc_html_e('CSV', 'modern-events-calendar-lite'); ?></span>
-                    <span class="mec-event-export-excel"><?php esc_html_e('MS EXCEL', 'modern-events-calendar-lite'); ?></span>
+                    <span class="mec-event-export-csv"><?php esc_html_e('CSV', 'modern-events-calendar-lite' ); ?></span>
+                    <span class="mec-event-export-excel"><?php esc_html_e('MS EXCEL', 'modern-events-calendar-lite' ); ?></span>
                 </div>
             </div>
         </li>
         <?php endwhile; wp_reset_postdata(); // Restore original Post Data ?>
     </ul>
         <div class="pagination mec-pagination">
-            <?php echo paginate_links(array(
-                'base' => esc_url(get_pagenum_link($limit)).'%_%',
-                'format' => '?paged=%#%',
+            <?php $big = 999999999; echo paginate_links(array(
+                'base' => str_replace($big, '%#%', esc_url(get_pagenum_link($big))),
+                'format' => 'paged=%#%',
                 'current' => max(1, get_query_var('paged')),
                 'total' => $query->max_num_pages,
                 'type' => 'list',
@@ -169,6 +169,6 @@ $this->factory->params('footer', $javascript);
             )); ?>
         </div>
     <?php else: ?>
-    <p><?php echo sprintf(esc_html__('No events found! %s', 'modern-events-calendar-lite'), '<a href="'.esc_url($this->link_add_event()).'">'.esc_html__('Add new', 'modern-events-calendar-lite').'</a>'); ?></p>
+    <p><?php echo sprintf(esc_html__('No events found! %s', 'modern-events-calendar-lite' ), '<a href="'.esc_url($this->link_add_event()).'">'.esc_html__('Add new', 'modern-events-calendar-lite' ).'</a>'); ?></p>
     <?php endif; ?>
 </div>

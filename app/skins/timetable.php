@@ -142,7 +142,7 @@ class MEC_skin_timetable extends MEC_skins
         $this->args['paged'] = $this->paged;
 
         // Sort Options
-        $this->args['orderby'] = 'meta_value_num';
+        $this->args['orderby'] = 'mec_start_day_seconds ID';
         $this->args['order'] = 'ASC';
         $this->args['meta_key'] = 'mec_start_day_seconds';
 
@@ -168,6 +168,21 @@ class MEC_skin_timetable extends MEC_skins
 
         // We will extend the end date in the loop
         $this->end_date = $this->start_date;
+
+        // Show Ongoing Events
+        $this->show_ongoing_events = (isset($this->atts['show_only_ongoing_events']) and trim($this->atts['show_only_ongoing_events'])) ? '1' : '0';
+        if($this->show_ongoing_events)
+        {
+            $this->args['mec-show-ongoing-events'] = $this->show_ongoing_events;
+            if((strpos($this->style, 'fluent') === false && strpos($this->style, 'liquid') === false))
+            {
+                $this->maximum_date = $this->start_date;
+            }
+        }
+
+        // Include Ongoing Events
+        $this->include_ongoing_events = (isset($this->atts['show_ongoing_events']) and trim($this->atts['show_ongoing_events'])) ? '1' : '0';
+        if($this->include_ongoing_events) $this->args['mec-include-ongoing-events'] = $this->include_ongoing_events;
 
         $this->weeks = $this->main->split_to_weeks($this->start_date, date('Y-m-t', strtotime($this->start_date)));
 
@@ -236,7 +251,7 @@ class MEC_skin_timetable extends MEC_skins
         foreach($dates as $date=>$IDs)
         {
             // Check Finish Date
-            if(isset($this->maximum_date) and strtotime($date) > strtotime($this->maximum_date)) break;
+            if(isset($this->maximum_date) and trim($this->maximum_date) and strtotime($date) > strtotime($this->maximum_date)) break;
 
             // Extending the end date
             $this->end_date = $date;

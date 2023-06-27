@@ -201,7 +201,7 @@ class MEC_parser extends MEC_base
         // only run it once
         remove_filter('mec_archive_title', array($this, 'archive_title'));
 
-        return $this->main->get_archive_title();
+        return $this->main->get_archive_title(false);
     }
     
     /**

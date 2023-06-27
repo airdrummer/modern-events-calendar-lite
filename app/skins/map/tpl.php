@@ -6,17 +6,17 @@ defined('MECEXEC') or die();
 
 // MEC Settings
 $settings = $this->main->get_settings();
-$settings['view_mode'] = isset($this->atts['location_view_mode']) ? $this->atts['location_view_mode'] : 'normal';
-$settings['map'] = isset($settings['default_maps_view']) ? $settings['default_maps_view'] : 'google';
+$settings['view_mode'] = $this->atts['location_view_mode'] ?? 'normal';
+$settings['map'] = $settings['default_maps_view'] ?? 'google';
 
 // Return the data if called by AJAX
 if(isset($this->atts['return_items']) and $this->atts['return_items'])
 {
-    echo json_encode(array('markers' => $this->render->markers($this->events)));
+    echo json_encode(array('markers' => $this->render->markers($this->events, $this->style)));
     exit;
 }
 
-$events_data = $this->render->markers($this->events);
+$events_data = $this->render->markers($this->events, $this->style);
 if(count($this->events))
 {
     // Include Map Assets such as JS and CSS libraries
@@ -70,15 +70,15 @@ do_action('mec_map_skin_head');
         <?php do_action('mec_map_inner_element_tools', $settings); ?>
     </div>
     <?php else: ?>
-    <p class="mec-error"><?php esc_html_e('No events found!', 'modern-events-calendar-lite'); ?></p>
+    <p class="mec-error"><?php esc_html_e('No events found!', 'modern-events-calendar-lite' ); ?></p>
     <?php endif; ?>
 
 </div>
 <?php else: ?>
-<div class="mec-wrap">
+<div class="mec-wrap mec-skin-map-container">
     <div class="row">
         <div class="col-sm-12">
-            <div class="mec-skin-map-container <?php echo esc_attr($this->html_class); ?>" id="mec_skin_<?php echo esc_attr($this->id); ?>">
+            <div class="<?php echo esc_attr($this->html_class); ?>" id="mec_skin_<?php echo esc_attr($this->id); ?>">
                 <?php if($this->sf_status) echo MEC_kses::full($this->sf_search_form()); ?>
             </div>
         </div>
@@ -90,10 +90,11 @@ do_action('mec_map_skin_head');
                     <?php do_action('mec_map_inner_element_tools', $settings); ?>
                 </div>
             <?php else: ?>
-                <p class="mec-error"><?php esc_html_e('No events found!', 'modern-events-calendar-lite'); ?></p>
+                <p class="mec-error"><?php esc_html_e('No events found!', 'modern-events-calendar-lite' ); ?></p>
             <?php endif; ?>
         </div>
         <div class="col-sm-5" id="mec-map-skin-side-<?php echo esc_attr($this->id); ?>"></div>
     </div>
 </div>
 <?php endif; ?>
+<?php echo $this->display_credit_url();

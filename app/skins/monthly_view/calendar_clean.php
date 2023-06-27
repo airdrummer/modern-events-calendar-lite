@@ -43,7 +43,7 @@ elseif($week_start == 5) // Friday
 }
 
 $events_str = '';
-if($this->display_all) $events_str .= '<h3 class="mec-table-side-title">'.esc_html__('Events', 'modern-events-calendar-lite').'</h3>';
+if($this->display_all) $events_str .= '<h3 class="mec-table-side-title">'.esc_html__('Events', 'modern-events-calendar-lite' ).'</h3>';
 
 $date_format = get_option('date_format');
 ?>
@@ -105,7 +105,7 @@ $date_format = get_option('date_format');
                     // MEC Schema
                     do_action('mec_schema', $event);
 
-                    $events_str .= '<article class="'.((isset($event->data->meta['event_past']) and trim($event->data->meta['event_past'])) ? 'mec-past-event ' : '').'mec-event-article '.esc_attr($this->get_event_classes($event)).'">';
+                    $events_str .= '<article class="'.($this->main->is_expired($event) ? 'mec-past-event ' : '').'mec-event-article '.esc_attr($this->get_event_classes($event)).'">';
                     $events_str .= '<div class="mec-event-image">'.MEC_kses::element($event->data->thumbnails['thumblist']).'</div>';
                     $events_str .= $this->get_label_captions($event);
 
@@ -125,9 +125,12 @@ $date_format = get_option('date_format');
                     $events_str .= apply_filters('mec_calendar_clean_after_title', '', $event->ID, $event);
 
                     if($this->localtime) $events_str .= MEC_kses::full($this->main->module('local-time.type3', array('event' => $event)));
-                    $events_str .= '<div class="mec-event-detail"><div class="mec-event-loc-place">'.(isset($location['name']) ? esc_html($location['name']) : '').'</div></div>';
+                    $events_str .= '<div class="mec-event-detail">
+                        <div class="mec-event-loc-place">'.(isset($location['name']) ? esc_html($location['name']) : '').'</div>
+                        '.MEC_kses::element($this->display_organizers($event)).'
+                    </div>';
                     $events_str .= MEC_kses::element($this->booking_button($event));
-                    $events_str .= MEC_kses::element($this->display_custom_data($event));
+                    $events_str .= MEC_kses::embed($this->display_custom_data($event));
                     $events_str .= MEC_kses::element($this->display_cost($event));
 
                     if(has_filter('monthly_event_right_box')) $events_filter = apply_filters('monthly_event_right_box', $events_str, $event);
@@ -199,7 +202,7 @@ $date_format = get_option('date_format');
                     // MEC Schema
                     do_action('mec_schema', $event);
 
-                    $events_str .= '<article class="'.((isset($event->data->meta['event_past']) and trim($event->data->meta['event_past'])) ? 'mec-past-event ' : '').'mec-event-article '.esc_attr($this->get_event_classes($event)).'">';
+                    $events_str .= '<article class="'.($this->main->is_expired($event) ? 'mec-past-event ' : '').'mec-event-article '.esc_attr($this->get_event_classes($event)).'">';
                     $content_style = !empty($event->data->thumbnails['thumblist']) ? 'width: calc(100% - 86px)' : 'width: 100%';
                     $events_str .= '<div class="mec-event-image">'.MEC_kses::element($event->data->thumbnails['thumblist']).'</div><div class="mec-monthly-contents" style="'. $content_style .'">';
                     $events_str .= MEC_kses::element($this->get_label_captions($event));
@@ -220,9 +223,12 @@ $date_format = get_option('date_format');
                     $events_str .= apply_filters('mec_calendar_clean_after_title', '', $event->ID, $event);
 
                     if($this->localtime) $events_str .= MEC_kses::full($this->main->module('local-time.type3', array('event' => $event)));
-                    $events_str .= '<div class="mec-event-detail"><div class="mec-event-loc-place">'.esc_html((isset($location['name']) ? $location['name'] : '')).'</div></div>';
+                    $events_str .= '<div class="mec-event-detail">
+                        <div class="mec-event-loc-place">'.esc_html((isset($location['name']) ? $location['name'] : '')).'</div>
+                        '.MEC_kses::element($this->display_organizers($event)).'
+                    </div>';
                     $events_str .= MEC_kses::element($this->booking_button($event));
-                    $events_str .= MEC_kses::element($this->display_custom_data($event));
+                    $events_str .= MEC_kses::embed($this->display_custom_data($event));
                     $events_str .= MEC_kses::element($this->display_cost($event));
 
                     if(has_filter('monthly_event_right_box')) $events_filter = apply_filters('monthly_event_right_box', $events_str, $event);
@@ -241,7 +247,7 @@ $date_format = get_option('date_format');
                 {
                     $events_str .= '<div class="mec-calendar-events-sec" id="mec-calendar-events-sec-'.esc_attr($this->id.'-'.$day_id).'" data-mec-cell="'.esc_attr($day_id).'" '.((trim($selected_day) != '' or $this->display_all) ? ' style="display: block;"' : '').'>'.MEC_kses::element($this->day_label($time));
                     $events_str .= '<article class="mec-event-article">';
-                    $events_str .= '<div class="mec-event-detail">'.esc_html__('No Events', 'modern-events-calendar-lite').'</div>';
+                    $events_str .= '<div class="mec-event-detail">'.esc_html__('No Events', 'modern-events-calendar-lite' ).'</div>';
                     $events_str .= '</article>';
                     $events_str .= '</div>';
                 }
@@ -298,31 +304,22 @@ $date_format = get_option('date_format');
 
                         $start_datetime =  isset($event->date['start']) && !empty($event->date['start']) ? $event->date['start'] : array();
                         $end_datetime = isset($event->date['end']) && !empty($event->date['end']) ? $event->date['end'] : array();
-                        $start_timestamp = isset( $start_datetime['timestamp'] ) ? $start_datetime['timestamp'] : ( isset( $start_datetime['date'] ) ? strtotime( $start_datetime['date'] ) : '' );
+                        $start_timestamp = isset($start_datetime['timestamp']) ? $start_datetime['timestamp'] : (isset($start_datetime['date']) ? strtotime($start_datetime['date']) : '');
 
                         $multiple_day_show_method = \MEC\Settings\Settings::getInstance()->get_settings('multiple_day_show_method');
-                        if( 'first_day_listgrid' === $multiple_day_show_method ){
 
-                            $date_label = $this->main->date_label( $start_datetime, $end_datetime, $date_format );
-                        }else{
-
-                            $date_label = $this->main->date_i18n( $date_format, $start_timestamp );
-                        }
+                        if('first_day_listgrid' === $multiple_day_show_method) $date_label = $this->main->date_label($start_datetime, $end_datetime, $date_format);
+                        else $date_label = $this->main->date_i18n($date_format, $start_timestamp);
 
                         $midnight_event = $this->main->is_midnight_event($event);
 
-                        if($midnight_event){
-
-                            $event_date = $this->main->dateify( $event, $date_format );
-                        }else{
-
-                            $event_date = $date_label;
-                        }
+                        if($midnight_event) $event_date = $this->main->dateify($event, $date_format);
+                        else $event_date = $date_label;
 
                         // MEC Schema
                         do_action('mec_schema', $event);
 
-                        $events_str .= '<article class="'.((isset($event->data->meta['event_past']) and trim($event->data->meta['event_past'])) ? 'mec-past-event ' : '').'mec-event-article '.esc_attr($this->get_event_classes($event)).'">';
+                        $events_str .= '<article class="'.($this->main->is_expired($event) ? 'mec-past-event ' : '').'mec-event-article '.esc_attr($this->get_event_classes($event)).'">';
                         $events_str .= '<div class="mec-event-image">'.MEC_kses::element($event->data->thumbnails['thumblist']).'</div>';
                         $events_str .= MEC_kses::element($this->get_label_captions($event));
 
@@ -343,9 +340,12 @@ $date_format = get_option('date_format');
                         $events_str .= apply_filters('mec_calendar_clean_after_title', '', $event->ID, $event);
 
                         if($this->localtime) $events_str .= MEC_kses::full($this->main->module('local-time.type3', array('event' => $event)));
-                        $events_str .= '<div class="mec-event-detail"><div class="mec-event-loc-place">'.esc_html((isset($location['name']) ? $location['name'] : '')).'</div></div>';
+                        $events_str .= '<div class="mec-event-detail">
+                            <div class="mec-event-loc-place">'.esc_html((isset($location['name']) ? $location['name'] : '')).'</div>
+                            '.MEC_kses::element($this->display_organizers($event)).'
+                        </div>';
                         $events_str .= MEC_kses::element($this->booking_button($event));
-                        $events_str .= MEC_kses::element($this->display_custom_data($event));
+                        $events_str .= MEC_kses::embed($this->display_custom_data($event));
                         $events_str .= MEC_kses::element($this->display_cost($event));
 
                         if(has_filter('monthly_event_right_box')) $events_filter = apply_filters('monthly_event_right_box', $events_str, $event);

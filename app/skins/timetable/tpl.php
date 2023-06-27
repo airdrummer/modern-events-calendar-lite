@@ -10,3 +10,5 @@ do_action('mec_timetable_skin_head');
 if($this->style == 'clean') include MEC::import('app.skins.timetable.clean', true, true);
 elseif($this->style == 'classic') include MEC::import('app.skins.timetable.classic', true, true);
 else include MEC::import('app.skins.timetable.modern', true, true);
+
+echo $this->display_credit_url();

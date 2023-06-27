@@ -15,7 +15,6 @@ $week_start = $this->main->get_first_day_of_week();
 $target_set = false;
 $target_url = 'target="_blank"';
 
-$this->localtime = false;
 $display_label = false;
 $reason_for_cancellation = false;
 
@@ -67,7 +66,7 @@ elseif($week_start == 5) // Friday
             // Print events
             if(isset($events[$today]) and count($events[$today]))
             {
-                echo '<dt class="mec-calendar-day '.esc_attr($selected_day).'" data-mec-cell="'.esc_attr($day_id).'" data-day="'.esc_attr($list_day).'" data-month="'.date('Ym', $time).'"><div class="'.esc_attr($selected_day_date).'">';
+                echo '<dt class="mec-calendar-day '.esc_attr($selected_day).'" data-mec-cell="'.esc_attr($day_id).'" data-day="'.esc_attr($list_day).'" data-month="'.date('Ym', $time).'"><div class="'.esc_attr($selected_day_date).'">'.apply_filters('mec_filter_list_day_value', $list_day, $today, $this).'</div>';
                 foreach($events[$today] as $event)
                 {
                     $start_time = (isset($event->data->time) ? $event->data->time['start'] : '');
@@ -75,7 +74,7 @@ elseif($week_start == 5) // Friday
 
                     $event_unique = (isset($event->data->time) ? $event->data->ID.$event->data->time['start_timestamp'] : $event->data->ID);
 
-                    echo '<div class="'.((isset($event->data->meta['event_past']) and trim($event->data->meta['event_past'])) ? 'mec-past-event ' : '').'ended-relative simple-skin-ended">';
+                    echo '<div class="'.($this->main->is_expired($event) ? 'mec-past-event ' : '').'ended-relative simple-skin-ended">';
                     echo '<a class="mec-monthly-tooltip event-single-link-simple" data-tooltip-content="#mec-tooltip-'.esc_attr($event_unique.'-'.$day_id).'" data-event-id="'.esc_attr($event->data->ID).'" href="'.esc_url(get_edit_post_link($event->ID)).'" '.$target_url.'>';
                     echo '<h4 class="mec-event-title">'.esc_html($event->data->title).'</h4>'.MEC_kses::element($this->main->get_normal_labels($event, $display_label).$this->main->display_cancellation_reason($event, $reason_for_cancellation));
                     do_action('mec_shortcode_virtual_badge', $event->data->ID);

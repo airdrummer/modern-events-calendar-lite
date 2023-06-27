@@ -45,6 +45,8 @@ class MEC_skin_available_spot extends MEC_skins
         $this->atts = $atts;
         $this->skin_options = (isset($this->atts['sk-options']) and isset($this->atts['sk-options'][$this->skin])) ? $this->atts['sk-options'][$this->skin] : array();
 
+        $this->style = isset($this->skin_options['style']) ? $this->skin_options['style'] : 'classic';
+
         // Date Formats
         $this->date_format1 = (isset($this->skin_options['date_format1']) and trim($this->skin_options['date_format1'])) ? $this->skin_options['date_format1'] : 'j';
         $this->date_format2 = (isset($this->skin_options['date_format2']) and trim($this->skin_options['date_format2'])) ? $this->skin_options['date_format2'] : 'F';

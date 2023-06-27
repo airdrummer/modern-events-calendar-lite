@@ -72,7 +72,7 @@ class MEC_addon_PMP extends MEC_base
         if(!defined('PMPRO_VERSION')) return;
 
         // Register
-        add_meta_box('pmpro_page_meta', esc_html__('Require Membership', 'modern-events-calendar-lite'), 'pmpro_page_meta', $this->main->get_main_post_type(), 'side', 'high');
+        add_meta_box('pmpro_page_meta', esc_html__('Require Membership', 'modern-events-calendar-lite' ), 'pmpro_page_meta', $this->main->get_main_post_type(), 'side', 'high');
     }
 
     public function check($status, $event_id)
@@ -106,14 +106,14 @@ class MEC_addon_PMP extends MEC_base
         $event_id = $event->ID;
         if(!$event_id) return $abort;
 
+        // Event Categories
+        $categories = (isset($event->data) and isset($event->data->categories) and is_array($event->data->categories)) ? $event->data->categories : [];
+
+        // Event has no category
+        if(!count($categories)) return $abort;
+
         // User ID
         $user_id = get_current_user_id();
-
-        // Guest User
-        if(!$user_id) return '<div class="warning-msg">'.sprintf(esc_html__('Please %s first to continue.', 'modern-events-calendar-lite'), '<a href="'.wp_login_url($this->main->get_full_url()).'">'.esc_html__('login', 'modern-events-calendar-lite').'</a>').'</div>';
-
-        // Event Categories
-        $categories = (isset($event->data) and isset($event->data->categories) and is_array($event->data->categories)) ? $event->data->categories : array();
 
         // Booking Restriction Options
         $options = ((isset($this->settings['pmp_booking']) and is_array($this->settings['pmp_booking'])) ? $this->settings['pmp_booking'] : array());

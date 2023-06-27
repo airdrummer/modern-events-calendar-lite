@@ -74,7 +74,7 @@ class MEC_addon_learndash extends MEC_base
         if(!count($courses)) return;
         ?>
         <div class="mec-form-row">
-            <label for="mec_tickets_<?php echo esc_attr($key); ?>_ld_course"><?php esc_html_e('LearnDash Course', 'modern-events-calendar-lite'); ?></label>
+            <label for="mec_tickets_<?php echo esc_attr($key); ?>_ld_course"><?php esc_html_e('LearnDash Course', 'modern-events-calendar-lite' ); ?></label>
             <select name="mec[tickets][<?php echo esc_attr($key); ?>][ld_course]" id="mec_tickets_<?php echo esc_attr($key); ?>_ld_course">
                 <option>-----</option>
                 <?php foreach($courses as $course_id => $course_name): ?>
@@ -95,9 +95,12 @@ class MEC_addon_learndash extends MEC_base
 
     public function get_courses()
     {
-        $courses = array();
+        $courses = [];
 
-        $posts = get_posts(array('post_type' => 'sfwd-courses', 'posts_per_page' => -1));
+        $args = ['post_type' => 'sfwd-courses', 'posts_per_page' => -1];
+        if(!current_user_can('manage_options') and isset($this->settings['ld_course_access']) and $this->settings['ld_course_access'] === 'user') $args['author'] = get_current_user_id();
+
+        $posts = get_posts($args);
         if($posts) foreach($posts as $post) $courses[$post->ID] = $post->post_title;
 
         return $courses;
@@ -108,26 +111,40 @@ class MEC_addon_learndash extends MEC_base
         // LearnDash is not installed
         if(!defined('LEARNDASH_VERSION')) return;
 
-        $user = $this->getUser()->booking($book_id);
+        // MEC User
+        $u = $this->getUser();
 
         $event_id = get_post_meta($book_id, 'mec_event_id', true);
         $ticket_ids = explode(',', get_post_meta($book_id, 'mec_ticket_id', true));
 
+        $attendees = get_post_meta($book_id, 'mec_attendees', true);
+        if(!is_array($attendees)) $attendees = array();
+
         $tickets = get_post_meta($event_id, 'mec_tickets', true);
 
-        $courses = array();
-        foreach($tickets as $ticket_id => $ticket)
+        foreach($attendees as $key => $attendee)
         {
+            if($key === 'attachments') continue;
+            if(!isset($attendee['id'])) continue;
+
+            $ticket_id = $attendee['id'];
+
             if(!is_numeric($ticket_id)) continue;
             if(!in_array($ticket_id, $ticket_ids)) continue;
+            if(!isset($tickets[$ticket_id])) continue;
 
-            $courses[] = $ticket['ld_course'];
-        }
+            $ticket = $tickets[$ticket_id];
 
-        // Associate Courses
-        foreach($courses as $course_id)
-        {
-            ld_update_course_access($user->ID, $course_id, false);
+            // Course ID
+            $course_id = $ticket['ld_course'];
+
+            // User ID
+            $user_id = $u->register($attendee, [
+                'event_id' => $event_id,
+            ]);
+
+            // Associate Course
+            ld_update_course_access($user_id, $course_id, false);
         }
     }
 

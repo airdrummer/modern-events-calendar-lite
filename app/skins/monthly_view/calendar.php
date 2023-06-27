@@ -78,7 +78,7 @@ $events_str = '';
                     // MEC Schema
                     do_action('mec_schema', $event);
 
-                    $events_str .= '<article class="'.((isset($event->data->meta['event_past']) and trim($event->data->meta['event_past'])) ? 'mec-past-event ' : '').'ended-relative mec-event-article '.esc_attr($this->get_event_classes($event)).'">';
+                    $events_str .= '<article class="'.($this->main->is_expired($event) ? 'mec-past-event ' : '').'ended-relative mec-event-article '.esc_attr($this->get_event_classes($event)).'">';
                     $events_str .= '<div class="mec-event-image">'.MEC_kses::element($event->data->thumbnails['thumbnail']).'</div>';
                     $events_str .= MEC_kses::element($this->get_label_captions($event));
 
@@ -91,9 +91,12 @@ $events_str = '';
                     $events_str .='</h4>';
 
                     if($this->localtime) $events_str .= MEC_kses::full($this->main->module('local-time.type3', array('event' => $event)));
-                    $events_str .= '<div class="mec-event-detail"><div class="mec-event-loc-place">'.(isset($location['name']) ? esc_html($location['name']) : '').'</div></div>';
+                    $events_str .= '<div class="mec-event-detail">
+                        <div class="mec-event-loc-place">'.(isset($location['name']) ? esc_html($location['name']) : '').'</div>
+                        '.MEC_kses::element($this->display_organizers($event)).'
+                    </div>';
                     $events_str .= MEC_kses::element($this->booking_button($event));
-                    $events_str .= MEC_kses::element($this->display_custom_data($event));
+                    $events_str .= MEC_kses::embed($this->display_custom_data($event));
                     $events_str .= '</article>';
                 }
 
@@ -139,7 +142,7 @@ $events_str = '';
                     // MEC Schema
                     do_action('mec_schema', $event);
 
-                    $events_str .= '<article class="'.((isset($event->data->meta['event_past']) and trim($event->data->meta['event_past'])) ? 'mec-past-event ' : '').'ended-relative mec-event-article '.esc_attr($this->get_event_classes($event)).'">';
+                    $events_str .= '<article class="'.($this->main->is_expired($event) ? 'mec-past-event ' : '').'ended-relative mec-event-article '.esc_attr($this->get_event_classes($event)).'">';
                     $events_str .= '<div class="mec-event-image">'.MEC_kses::element($event->data->thumbnails['thumbnail']).'</div>';
                     $events_str .= MEC_kses::element($this->get_label_captions($event));
 
@@ -152,7 +155,10 @@ $events_str = '';
                     $events_str .='</h4>';
 
                     if($this->localtime) $events_str .= MEC_kses::full($this->main->module('local-time.type3', array('event' => $event)));
-                    $events_str .= '<div class="mec-event-detail"><div class="mec-event-loc-place">'.(isset($location['name']) ? esc_html($location['name']) : '').'</div></div>';
+                    $events_str .= '<div class="mec-event-detail">
+                        <div class="mec-event-loc-place">'.(isset($location['name']) ? esc_html($location['name']) : '').'</div>
+                        '.MEC_kses::element($this->display_organizers($event)).'
+                    </div>';
                     $events_str .= MEC_kses::full($this->booking_button($event));
                     $events_str .= MEC_kses::full($this->display_custom_data($event));
                     $events_str .= '</article>';
@@ -166,7 +172,7 @@ $events_str = '';
 
                 $events_str .= '<div '.(trim($selected_day) != '' ? 'id="mec-active-current"' : '').' class="mec-calendar-events-sec" data-mec-cell="'.esc_attr($day_id).'">'.MEC_kses::element($this->day_label($time));
                 $events_str .= '<article class="mec-event-article">';
-                $events_str .= '<div class="mec-event-detail">'.esc_html__('No Events', 'modern-events-calendar-lite').'</div>';
+                $events_str .= '<div class="mec-event-detail">'.esc_html__('No Events', 'modern-events-calendar-lite' ).'</div>';
                 $events_str .= '</article>';
                 $events_str .= '</div>';
             }
@@ -227,7 +233,7 @@ $events_str = '';
                         // MEC Schema
                         do_action('mec_schema', $event);
 
-                        $events_str .= '<article class="'.((isset($event->data->meta['event_past']) and trim($event->data->meta['event_past'])) ? 'mec-past-event ' : '').'ended-relative mec-event-article '.esc_attr($this->get_event_classes($event)).'">';
+                        $events_str .= '<article class="'.($this->main->is_expired($event) ? 'mec-past-event ' : '').'ended-relative mec-event-article '.esc_attr($this->get_event_classes($event)).'">';
                         $events_str .= '<div class="mec-event-image">'.MEC_kses::element($event->data->thumbnails['thumbnail']).'</div>';
                         $events_str .= MEC_kses::element($this->get_label_captions($event));
 
@@ -240,7 +246,10 @@ $events_str = '';
                         $events_str .='</h4>';
 
                         if($this->localtime) $events_str .= MEC_kses::full($this->main->module('local-time.type3', array('event' => $event)));
-                        $events_str .= '<div class="mec-event-detail"><div class="mec-event-loc-place">'.(isset($location['name']) ? esc_html($location['name']) : '').'</div></div>';
+                        $events_str .= '<div class="mec-event-detail">
+                            <div class="mec-event-loc-place">'.(isset($location['name']) ? esc_html($location['name']) : '').'</div>
+                            '.MEC_kses::element($this->display_organizers($event)).'
+                        </div>';
                         $events_str .= MEC_kses::full($this->booking_button($event));
                         $events_str .= MEC_kses::full($this->display_custom_data($event));
                         $events_str .= '</article>';

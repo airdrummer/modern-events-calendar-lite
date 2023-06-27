@@ -45,11 +45,11 @@ $reason_for_cancellation = isset($this->skin_options['reason_for_cancellation'])
                 <?php echo MEC_kses::element($this->display_organizers($event)); ?>
                 <?php echo MEC_kses::element($this->display_cost($event)); ?>
                 <?php echo MEC_kses::form($this->booking_button($event)); ?>
-                <?php echo MEC_kses::element($this->display_custom_data($event)); ?>
+                <?php echo MEC_kses::embed($this->display_custom_data($event)); ?>
             </article>
         <?php endforeach; ?>
         <?php else: ?>
-            <article class="mec-event-article"><div class="mec-daily-view-no-event mec-no-event"><?php esc_html_e('No event', 'modern-events-calendar-lite'); ?></div></article>
+            <article class="mec-event-article"><div class="mec-daily-view-no-event mec-no-event"><?php esc_html_e('No event', 'modern-events-calendar-lite' ); ?></div></article>
         <?php endif; ?>
     </li>
     <?php endforeach; ?>

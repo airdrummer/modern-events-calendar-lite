@@ -66,17 +66,18 @@ $reason_for_cancellation = isset($this->skin_options['reason_for_cancellation'])
                             <?php echo MEC_kses::form($this->booking_button($event)); ?>
                             <?php if($this->localtime) echo MEC_kses::full($this->main->module('local-time.type2', array('event' => $event))); ?>
                         </span>
-                        <?php echo MEC_kses::element($this->display_custom_data($event)); ?>
+                        <?php echo MEC_kses::embed($this->display_custom_data($event)); ?>
                         <?php echo MEC_kses::element($this->get_label_captions($event, 'mec-fc-style')); ?>
                     </div>
                 <?php endif; ?>
             <?php } ?>
         </div>
+        <div class="clearfix"></div>
     </div>
     <?php endforeach; ?>
     <span class="mec-yearly-max" data-count="<?php echo esc_attr($count); ?>"></span>
 
     <?php if($count > 20): ?>
-    <div class="mec-load-more-wrap"><div tabindex="0" onkeydown="if(event.keyCode==13){jQuery(this).trigger('click');}" class="mec-load-more-button"><?php echo esc_html__('Load More', 'modern-events-calendar-lite'); ?></div></div>
+    <div class="mec-load-more-wrap"><div tabindex="0" onkeydown="if(event.keyCode==13){jQuery(this).trigger('click');}" class="mec-load-more-button"><?php echo esc_html__('Load More', 'modern-events-calendar-lite' ); ?></div></div>
     <?php endif; ?>
 </div>

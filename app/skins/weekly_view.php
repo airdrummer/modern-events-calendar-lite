@@ -44,6 +44,8 @@ class MEC_skin_weekly_view extends MEC_skins
         // Skin Options
         $this->skin_options = (isset($this->atts['sk-options']) and isset($this->atts['sk-options'][$this->skin])) ? $this->atts['sk-options'][$this->skin] : array();
 
+        $this->style = isset($this->skin_options['style']) ? $this->skin_options['style'] : 'classic';
+
         // Search Form Options
         $this->sf_options = (isset($this->atts['sf-options']) and isset($this->atts['sf-options'][$this->skin])) ? $this->atts['sf-options'][$this->skin] : array();
 
@@ -82,16 +84,16 @@ class MEC_skin_weekly_view extends MEC_skins
         $this->display_label = isset($this->skin_options['display_label']) ? $this->skin_options['display_label'] : false;
 
         // From Widget
-        $this->widget = (isset($this->atts['widget']) and trim($this->atts['widget'])) ? true : false;
+        $this->widget = isset($this->atts['widget']) && trim($this->atts['widget']);
 
         // From Full Calendar
-        $this->from_full_calendar = (isset($this->skin_options['from_fc']) and trim($this->skin_options['from_fc'])) ? true : false;
+        $this->from_full_calendar = isset($this->skin_options['from_fc']) && trim($this->skin_options['from_fc']);
 
         // Display Price
-        $this->display_price = (isset($this->skin_options['display_price']) and trim($this->skin_options['display_price'])) ? true : false;
+        $this->display_price = isset($this->skin_options['display_price']) && trim($this->skin_options['display_price']);
 
         // Detailed Time
-        $this->display_detailed_time = (isset($this->skin_options['detailed_time']) and trim($this->skin_options['detailed_time'])) ? true : false;
+        $this->display_detailed_time = isset($this->skin_options['detailed_time']) && trim($this->skin_options['detailed_time']);
 
         // Init MEC
         $this->args['mec-init'] = true;
@@ -126,7 +128,7 @@ class MEC_skin_weekly_view extends MEC_skins
         $this->args['paged'] = $this->paged;
 
         // Sort Options
-        $this->args['orderby'] = 'meta_value_num';
+        $this->args['orderby'] = 'mec_start_day_seconds ID';
         $this->args['order'] = 'ASC';
         $this->args['meta_key'] = 'mec_start_day_seconds';
 
@@ -146,10 +148,18 @@ class MEC_skin_weekly_view extends MEC_skins
         $this->start_date = $this->year.'-'.$this->month.'-01';
 
         // Set the maximum date in current month
-        if($this->show_only_expired_events) $this->maximum_date = date('Y-m-d H:i:s', current_time('timestamp', 0));
+        if($this->show_only_expired_events) $this->maximum_date = date('Y-m-d H:i:s', current_time('timestamp'));
 
         // We will extend the end date in the loop
         $this->end_date = $this->start_date;
+
+        // Show Ongoing Events
+        $this->show_ongoing_events = (isset($this->atts['show_only_ongoing_events']) and trim($this->atts['show_only_ongoing_events'])) ? '1' : '0';
+        if($this->show_ongoing_events) $this->args['mec-show-ongoing-events'] = $this->show_ongoing_events;
+
+        // Include Ongoing Events
+        $this->include_ongoing_events = (isset($this->atts['show_ongoing_events']) and trim($this->atts['show_ongoing_events'])) ? '1' : '0';
+        if($this->include_ongoing_events) $this->args['mec-include-ongoing-events'] = $this->include_ongoing_events;
 
         $this->weeks = $this->main->split_to_weeks($this->start_date, date('Y-m-t', strtotime($this->start_date)));
 
@@ -157,6 +167,9 @@ class MEC_skin_weekly_view extends MEC_skins
         foreach($this->weeks as $week_number=>$week) foreach($week as $day) $this->week_of_days[$day] = $week_number;
 
         $this->maximum_dates = isset($this->atts['maximum_dates']) ? $this->atts['maximum_dates'] : 1;
+
+        // Auto Month Rotation
+        $this->auto_month_rotation = !isset($this->settings['auto_month_rotation']) || $this->settings['auto_month_rotation'];
 
         do_action('mec-weekly-initialize-end', $this);
     }
@@ -170,13 +183,13 @@ class MEC_skin_weekly_view extends MEC_skins
     {
         if($this->show_only_expired_events)
         {
-            $start =  date('Y-m-d H:i:s', current_time('timestamp', 0));
+            $start =  date('Y-m-d H:i:s', current_time('timestamp'));
             $end = $this->main->array_key_first($this->week_of_days);
         }
         else
         {
             $start = $this->main->array_key_first($this->week_of_days);
-            $end = $this->maximum_date ? $this->maximum_date : $this->main->array_key_last($this->week_of_days);
+            $end = $this->maximum_date ?: $this->main->array_key_last($this->week_of_days);
         }
 
         // Date Events
@@ -204,7 +217,7 @@ class MEC_skin_weekly_view extends MEC_skins
         foreach($dates as $date=>$IDs)
         {
             // Check Finish Date
-            if(isset($this->maximum_date) and strtotime($date) > strtotime($this->maximum_date))
+            if(isset($this->maximum_date) and trim($this->maximum_date) and strtotime($date) > strtotime($this->maximum_date))
             {
                 $events[$date] = array();
                 continue;
@@ -348,7 +361,7 @@ class MEC_skin_weekly_view extends MEC_skins
         $apply_sf_date = isset($_REQUEST['apply_sf_date']) ? sanitize_text_field($_REQUEST['apply_sf_date']) : 1;
         $atts = $this->sf_apply(((isset($_REQUEST['atts']) and is_array($_REQUEST['atts'])) ? $this->main->sanitize_deep_array($_REQUEST['atts']) : array()), $this->sf, $apply_sf_date);
 
-        $navigator_click = isset($_REQUEST['navigator_click']) ? (bool) sanitize_text_field($_REQUEST['navigator_click']) : false;
+        $navigator_click = isset($_REQUEST['navigator_click']) && sanitize_text_field($_REQUEST['navigator_click']);
 
         // Initialize the skin
         $this->initialize($atts);
@@ -391,7 +404,7 @@ class MEC_skin_weekly_view extends MEC_skins
             $this->week_of_days = array();
             foreach($this->weeks as $week_number=>$week) foreach($week as $day) $this->week_of_days[$day] = $week_number;
 
-            // Some times some months have 6 weeks but next month has 5 or even 4 weeks
+            // Sometimes some months have 6 weeks but next month has 5 or even 4 weeks
             if(!isset($this->weeks[$this->week])) $this->week = $this->week-1;
             if(!isset($this->weeks[$this->week])) $this->week = $this->week-1;
 
@@ -406,6 +419,9 @@ class MEC_skin_weekly_view extends MEC_skins
             // Break the loop if not resault
             if($break) break;
             if($navigator_click) break;
+
+            // Auto Rotation is Disabled
+            if(!$this->auto_month_rotation) break;
 
             $c++;
         }

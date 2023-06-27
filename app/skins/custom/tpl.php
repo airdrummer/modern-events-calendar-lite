@@ -29,6 +29,7 @@ jQuery(document).ready(function()
         end_date: "'.esc_js($this->end_date).'",
 		offset: "'.esc_js($this->next_offset).'",
 		limit: "'.esc_js($this->limit).'",
+		pagination: "'.$this->pagination.'",
         atts: "'.http_build_query(array('atts' => $this->atts), '', '&').'",
         ajax_url: "'.admin_url('admin-ajax.php', NULL).'",
         sed_method: "'.esc_js($sed_method).'",
@@ -70,16 +71,15 @@ do_action('mec_custom_skin_head');
         <?php echo MEC_kses::full($items_html); ?>
     </div>
     <div class="mec-skin-custom-no-events-container mec-util-hidden" id="mec_skin_no_events_<?php echo esc_attr($this->id); ?>">
-        <?php esc_html_e('No event found!', 'modern-events-calendar-lite'); ?>
+        <?php esc_html_e('No event found!', 'modern-events-calendar-lite' ); ?>
     </div>
     <?php else: ?>
     <div class="mec-skin-custom-events-container" id="mec_skin_events_<?php echo esc_attr($this->id); ?>">
-        <?php esc_html_e('No event found!', 'modern-events-calendar-lite'); ?>
+        <?php esc_html_e('No event found!', 'modern-events-calendar-lite' ); ?>
     </div>
     <?php endif; ?>
 
-    <?php if($this->load_more_button and $this->found >= $this->limit): ?>
-    <div class="mec-load-more-wrap"><div tabindex="0" onkeydown="if(event.keyCode==13){jQuery(this).trigger('click');}" class="mec-load-more-button <?php echo ($this->has_more_events ? '' : 'mec-util-hidden'); ?>"><?php echo esc_html__('Load More', 'modern-events-calendar-lite'); ?></div></div>
-    <?php endif; ?>
+    <?php echo $this->get_pagination_bar(); ?>
 
 </div>
+<?php echo $this->display_credit_url();

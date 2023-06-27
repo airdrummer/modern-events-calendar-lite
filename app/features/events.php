@@ -97,14 +97,15 @@ class MEC_feature_events extends MEC_base
         }
 
         // Show Booking meta box only if booking module is enabled
-        $booking_status = (isset($this->settings['booking_status']) and $this->settings['booking_status']) ? true : false;
+        $booking_status = (isset($this->settings['booking_status']) and $this->settings['booking_status']);
         if($booking_status)
         {
             $this->factory->action('mec_metabox_booking', array($this, 'meta_box_booking_options'), 5);
-            $this->factory->action('mec_metabox_booking', array($this, 'meta_box_tickets'), 10);
+            $this->factory->action('mec_metabox_booking', array($this, 'meta_box_tickets'));
             $this->factory->action('mec_metabox_booking', array($this, 'meta_box_regform'), 20);
-            $this->factory->action('mec_metabox_booking', array($this, 'meta_box_attendees'), 22.5);
-            $this->factory->action('wp_ajax_mec_event_bookings', array($this, 'mec_event_bookings'), 22.5);
+            $this->factory->action('mec_metabox_booking', array($this, 'meta_box_attendees'), 22);
+            $this->factory->action('wp_ajax_mec_event_bookings', array($this, 'mec_event_bookings'), 23);
+            $this->factory->action('wp_ajax_mec_move_bookings', array($this, 'mec_move_bookings'), 24);
 
             if(!isset($this->settings['fes_section_booking']) or (isset($this->settings['fes_section_booking']) and $this->settings['fes_section_booking']))
             {
@@ -118,7 +119,7 @@ class MEC_feature_events extends MEC_base
                 if(!isset($this->settings['fes_section_reg_form']) or (isset($this->settings['fes_section_reg_form']) and $this->settings['fes_section_reg_form'])) $this->factory->action('mec_fes_metabox_details', array($this, 'meta_box_regform'), 45);
 
                 // Attendees for FES
-                if(!isset($this->settings['fes_section_booking_att']) or (isset($this->settings['fes_section_booking_att']) and $this->settings['fes_section_booking_att'])) $this->factory->action('mec_fes_metabox_details', array($this, 'meta_box_attendees'), 47.5);
+                if(!isset($this->settings['fes_section_booking_att']) or (isset($this->settings['fes_section_booking_att']) and $this->settings['fes_section_booking_att'])) $this->factory->action('mec_fes_metabox_details', array($this, 'meta_box_attendees'), 48);
             }
         }
 
@@ -176,6 +177,33 @@ class MEC_feature_events extends MEC_base
             $this->factory->filter('get_post_metadata', array($this, 'set_fallback_image_id'), 10, 4);
             $this->factory->filter('post_thumbnail_html', array($this, 'show_fallback_image'), 20, 5);
         }
+
+        // Event Gallery
+        if(isset($this->settings['event_gallery_status']) and $this->settings['event_gallery_status'])
+        {
+            // AJAX
+            $this->factory->action('wp_ajax_mec_event_gallery_image_upload', array($this, 'gallery_image_upload'));
+
+            $this->factory->action('mec_metabox_details', array($this, 'meta_box_event_gallery'), 16);
+
+            // Event Gallery for FES
+            if(!isset($this->settings['fes_section_event_gallery']) or (isset($this->settings['fes_section_event_gallery']) and $this->settings['fes_section_event_gallery']))
+            {
+                $this->factory->action('mec_fes_metabox_details', array($this, 'meta_box_event_gallery'), 32);
+            }
+        }
+
+        // Timezone Notice
+        $timezone_string = get_option('timezone_string');
+        if(trim($timezone_string) === '')
+        {
+            add_action('admin_notices', function()
+            {
+                echo '<div class="notice notice-warning is-dismissible">
+                    <p>'.esc_html__('It is advisable to utilize a geographic timezone, such as "America/Los_Angeles" instead of a UTC timezone offset, like "UTC+0," while using The Modern Events Calendar. The latter may cause issues when importing events or with Daylight Saving Time.', 'modern-events-calendar-lite' ).'</p>
+                </div>';
+            });
+        }
     }
 
     /**
@@ -192,15 +220,15 @@ class MEC_feature_events extends MEC_base
             $this->PT,
             array(
                 'labels' => array(
-                    'name' => esc_html__('Events', 'modern-events-calendar-lite'),
-                    'singular_name' => esc_html__('Event', 'modern-events-calendar-lite'),
-                    'add_new' => esc_html__('Add Event', 'modern-events-calendar-lite'),
-                    'add_new_item' => esc_html__('Add New Event', 'modern-events-calendar-lite'),
-                    'not_found' => esc_html__('No events found!', 'modern-events-calendar-lite'),
-                    'all_items' => esc_html__('All Events', 'modern-events-calendar-lite'),
-                    'edit_item' => esc_html__('Edit Event', 'modern-events-calendar-lite'),
-                    'view_item' => esc_html__('View Event', 'modern-events-calendar-lite'),
-                    'not_found_in_trash' => esc_html__('No events found in Trash!', 'modern-events-calendar-lite'),
+                    'name' => esc_html__('Events', 'modern-events-calendar-lite' ),
+                    'singular_name' => esc_html__('Event', 'modern-events-calendar-lite' ),
+                    'add_new' => esc_html__('Add Event', 'modern-events-calendar-lite' ),
+                    'add_new_item' => esc_html__('Add New Event', 'modern-events-calendar-lite' ),
+                    'not_found' => esc_html__('No events found!', 'modern-events-calendar-lite' ),
+                    'all_items' => esc_html__('All Events', 'modern-events-calendar-lite' ),
+                    'edit_item' => esc_html__('Edit Event', 'modern-events-calendar-lite' ),
+                    'view_item' => esc_html__('View Event', 'modern-events-calendar-lite' ),
+                    'not_found_in_trash' => esc_html__('No events found in Trash!', 'modern-events-calendar-lite' ),
                 ),
                 'public' => true,
                 'has_archive' => ($this->main->get_archive_status() ? true : false),
@@ -218,8 +246,8 @@ class MEC_feature_events extends MEC_base
             )
         );
 
-        $singular_label = $this->main->m('taxonomy_category', esc_html__('Category', 'modern-events-calendar-lite'));
-        $plural_label = $this->main->m('taxonomy_categories', esc_html__('Categories', 'modern-events-calendar-lite'));
+        $singular_label = $this->main->m('taxonomy_category', esc_html__('Category', 'modern-events-calendar-lite' ));
+        $plural_label = $this->main->m('taxonomy_categories', esc_html__('Categories', 'modern-events-calendar-lite' ));
 
         register_taxonomy(
             'mec_category',
@@ -229,14 +257,14 @@ class MEC_feature_events extends MEC_base
                 'labels' => array(
                     'name' => $plural_label,
                     'singular_name' => $singular_label,
-                    'all_items' => sprintf(esc_html__('All %s', 'modern-events-calendar-lite'), $plural_label),
-                    'edit_item' => sprintf(esc_html__('Edit %s', 'modern-events-calendar-lite'), $singular_label),
-                    'view_item' => sprintf(esc_html__('View %s', 'modern-events-calendar-lite'), $singular_label),
-                    'update_item' => sprintf(esc_html__('Update %s', 'modern-events-calendar-lite'), $singular_label),
-                    'add_new_item' => sprintf(esc_html__('Add New %s', 'modern-events-calendar-lite'), $singular_label),
-                    'new_item_name' => sprintf(esc_html__('New %s Name', 'modern-events-calendar-lite'), $singular_label),
-                    'popular_items' => sprintf(esc_html__('Popular %s', 'modern-events-calendar-lite'), $plural_label),
-                    'search_items' => sprintf(esc_html__('Search %s', 'modern-events-calendar-lite'), $plural_label),
+                    'all_items' => sprintf(esc_html__('All %s', 'modern-events-calendar-lite' ), $plural_label),
+                    'edit_item' => sprintf(esc_html__('Edit %s', 'modern-events-calendar-lite' ), $singular_label),
+                    'view_item' => sprintf(esc_html__('View %s', 'modern-events-calendar-lite' ), $singular_label),
+                    'update_item' => sprintf(esc_html__('Update %s', 'modern-events-calendar-lite' ), $singular_label),
+                    'add_new_item' => sprintf(esc_html__('Add New %s', 'modern-events-calendar-lite' ), $singular_label),
+                    'new_item_name' => sprintf(esc_html__('New %s Name', 'modern-events-calendar-lite' ), $singular_label),
+                    'popular_items' => sprintf(esc_html__('Popular %s', 'modern-events-calendar-lite' ), $plural_label),
+                    'search_items' => sprintf(esc_html__('Search %s', 'modern-events-calendar-lite' ), $plural_label),
                 ),
                 'public' => true,
                 'show_ui' => true,
@@ -263,23 +291,23 @@ class MEC_feature_events extends MEC_base
         $fallback = (isset($this->settings['fallback_featured_image_status']) and $this->settings['fallback_featured_image_status']);
         ?>
         <div class="form-field">
-            <label for="mec_cat_icon"><?php esc_html_e('Category Icon', 'modern-events-calendar-lite'); ?></label>
+            <label for="mec_cat_icon"><?php esc_html_e('Category Icon', 'modern-events-calendar-lite' ); ?></label>
             <input type="hidden" name="mec_cat_icon" id="mec_cat_icon" value=""/>
             <a href="<?php echo esc_url($this->main->asset('icon.html')); ?>?&width=680&height=450&inlineId=my-content-id"
-               class="thickbox mec_category_icon button"><?php echo esc_html__('Select icon', 'modern-events-calendar-lite'); ?></a>
+               class="thickbox mec_category_icon button"><?php echo esc_html__('Select icon', 'modern-events-calendar-lite' ); ?></a>
         </div>
         <div class="form-field">
-            <label for="mec_cat_color"><?php esc_html_e('Color', 'modern-events-calendar-lite'); ?></label>
+            <label for="mec_cat_color"><?php esc_html_e('Color', 'modern-events-calendar-lite' ); ?></label>
             <input type="text" name="mec_cat_color" id="mec_cat_color" class="mec-color-picker" />
-            <p class="description"><?php esc_html_e('Optional category color', 'modern-events-calendar-lite'); ?></p>
+            <p class="description"><?php esc_html_e('Optional category color', 'modern-events-calendar-lite' ); ?></p>
         </div>
         <?php if($fallback): ?>
         <div class="form-field">
-            <label for="mec_thumbnail_button"><?php esc_html_e('Fallback Image', 'modern-events-calendar-lite'); ?></label>
+            <label for="mec_thumbnail_button"><?php esc_html_e('Fallback Image', 'modern-events-calendar-lite' ); ?></label>
             <div id="mec_thumbnail_img"></div>
             <input type="hidden" name="fallback" id="mec_thumbnail" value="" />
-            <button type="button" class="mec_upload_image_button button" id="mec_thumbnail_button"><?php echo esc_html__('Upload/Add image', 'modern-events-calendar-lite'); ?></button>
-            <button type="button" class="mec_remove_image_button button mec-util-hidden"><?php echo esc_html__('Remove image', 'modern-events-calendar-lite'); ?></button>
+            <button type="button" class="mec_upload_image_button button" id="mec_thumbnail_button"><?php echo esc_html__('Upload/Add image', 'modern-events-calendar-lite' ); ?></button>
+            <button type="button" class="mec_remove_image_button button mec-util-hidden"><?php echo esc_html__('Remove image', 'modern-events-calendar-lite' ); ?></button>
         </div>
         <?php endif; ?>
         <?php
@@ -308,12 +336,12 @@ class MEC_feature_events extends MEC_base
         ?>
         <tr class="form-field">
             <th scope="row" >
-                <label for="mec_cat_icon"><?php esc_html_e('Category Icon', 'modern-events-calendar-lite'); ?></label>
+                <label for="mec_cat_icon"><?php esc_html_e('Category Icon', 'modern-events-calendar-lite' ); ?></label>
             </th>
             <td>
                 <input type="hidden" name="mec_cat_icon" id="mec_cat_icon" value="<?php echo esc_attr($icon); ?>"/>
                 <a href="<?php echo esc_url($this->main->asset('icon.html')); ?>?&width=680&height=450&inlineId=my-content-id"
-                   class="thickbox mec_category_icon button"><?php echo esc_html__('Select icon', 'modern-events-calendar-lite'); ?></a>
+                   class="thickbox mec_category_icon button"><?php echo esc_html__('Select icon', 'modern-events-calendar-lite' ); ?></a>
                 <?php if (isset($icon)) : ?>
                     <div class="mec-webnus-icon"><i class="<?php echo esc_attr($icon); ?> mec-color"></i></div>
                 <?php endif; ?>
@@ -321,23 +349,23 @@ class MEC_feature_events extends MEC_base
         </tr>
         <tr class="form-field">
             <th scope="row" >
-                <label for="mec_cat_color"><?php esc_html_e('Color', 'modern-events-calendar-lite'); ?></label>
+                <label for="mec_cat_color"><?php esc_html_e('Color', 'modern-events-calendar-lite' ); ?></label>
             </th>
             <td>
                 <input type="text" name="mec_cat_color" id="mec_cat_color" value="<?php echo esc_attr($color); ?>" data-default-color="<?php echo esc_attr($color); ?>" class="mec-color-picker" />
-                <p class="description"><?php esc_html_e('Optional category color', 'modern-events-calendar-lite'); ?></p>
+                <p class="description"><?php esc_html_e('Optional category color', 'modern-events-calendar-lite' ); ?></p>
             </td>
         </tr>
         <?php if($fallback): ?>
         <tr class="form-field">
             <th scope="row" >
-                <label for="mec_thumbnail_button"><?php esc_html_e('Fallback Image', 'modern-events-calendar-lite'); ?></label>
+                <label for="mec_thumbnail_button"><?php esc_html_e('Fallback Image', 'modern-events-calendar-lite' ); ?></label>
             </th>
             <td>
                 <div id="mec_thumbnail_img"><?php if(trim($fallback_image) != '') echo '<img src="'.esc_url($fallback_image).'" />'; ?></div>
                 <input type="hidden" name="fallback" id="mec_thumbnail" value="<?php echo esc_attr($fallback_image); ?>" />
-                <button type="button" class="mec_upload_image_button button" id="mec_thumbnail_button"><?php echo esc_html__('Upload/Add image', 'modern-events-calendar-lite'); ?></button>
-                <button type="button" class="mec_remove_image_button button <?php echo (!trim($fallback_image) ? 'mec-util-hidden' : ''); ?>"><?php echo esc_html__('Remove image', 'modern-events-calendar-lite'); ?></button>
+                <button type="button" class="mec_upload_image_button button" id="mec_thumbnail_button"><?php echo esc_html__('Upload/Add image', 'modern-events-calendar-lite' ); ?></button>
+                <button type="button" class="mec_remove_image_button button <?php echo (!trim($fallback_image) ? 'mec-util-hidden' : ''); ?>"><?php echo esc_html__('Remove image', 'modern-events-calendar-lite' ); ?></button>
             </td>
         </tr>
         <?php endif; ?>
@@ -392,12 +420,12 @@ class MEC_feature_events extends MEC_base
      */
     public function register_meta_boxes()
     {
-        add_meta_box('mec_metabox_details', esc_html__('Event Details', 'modern-events-calendar-lite'), array($this, 'meta_box_details'), $this->main->get_main_post_type(), 'normal', 'high');
+        add_meta_box('mec_metabox_details', esc_html__('Event Details', 'modern-events-calendar-lite' ), array($this, 'meta_box_details'), $this->main->get_main_post_type(), 'normal', 'high');
 
         // Show Booking meta box onnly if booking module is enabled
         if($this->getPRO() and isset($this->settings['booking_status']) and $this->settings['booking_status'])
         {
-            add_meta_box('mec_metabox_booking', esc_html__('Booking', 'modern-events-calendar-lite'), array($this, 'meta_box_booking'), $this->main->get_main_post_type(), 'normal', 'high');
+            add_meta_box('mec_metabox_booking', esc_html__('Booking', 'modern-events-calendar-lite' ), array($this, 'meta_box_booking'), $this->main->get_main_post_type(), 'normal', 'high');
         }
     }
 
@@ -423,19 +451,20 @@ class MEC_feature_events extends MEC_base
                 <?php
                 $activated = '';
                 $tabs = array(
-                    esc_html__('FES Details', 'modern-events-calendar-lite') => 'mec_meta_box_fes_form',
-                    esc_html__('Date And Time', 'modern-events-calendar-lite') => 'mec_meta_box_date_form',
-                    esc_html__('Event Repeating', 'modern-events-calendar-lite') => 'mec_meta_box_repeat_form',
-                    esc_html__('Event Data', 'modern-events-calendar-lite') => 'mec-event-data',
-                    esc_html__('Exceptional Days', 'modern-events-calendar-lite') => 'mec-exceptional-days',
-                    esc_html__('Hourly Schedule', 'modern-events-calendar-lite') => 'mec-hourly-schedule',
-                    esc_html__('Location/Venue', 'modern-events-calendar-lite') => 'mec-location',
-                    esc_html__('Links', 'modern-events-calendar-lite') => 'mec-read-more',
-                    esc_html__('Organizer', 'modern-events-calendar-lite') => 'mec-organizer',
-                    esc_html__('Cost', 'modern-events-calendar-lite') => 'mec-cost',
-                    esc_html__('SEO Schema / Event Status', 'modern-events-calendar-lite') => 'mec-schema',
-                    esc_html__('Notifications', 'modern-events-calendar-lite') => 'mec-notifications',
-                    esc_html__('Public Download', 'modern-events-calendar-lite') => 'mec-public-download-module-file',
+                    esc_html__('FES Details', 'modern-events-calendar-lite' ) => 'mec_meta_box_fes_form',
+                    esc_html__('Date And Time', 'modern-events-calendar-lite' ) => 'mec_meta_box_date_form',
+                    esc_html__('Event Repeating', 'modern-events-calendar-lite' ) => 'mec_meta_box_repeat_form',
+                    esc_html__('Event Data', 'modern-events-calendar-lite' ) => 'mec-event-data',
+                    esc_html__('Exceptional Days', 'modern-events-calendar-lite' ) => 'mec-exceptional-days',
+                    esc_html__('Hourly Schedule', 'modern-events-calendar-lite' ) => 'mec-hourly-schedule',
+                    esc_html__('Location/Venue', 'modern-events-calendar-lite' ) => 'mec-location',
+                    esc_html__('Links', 'modern-events-calendar-lite' ) => 'mec-read-more',
+                    esc_html__('Organizer', 'modern-events-calendar-lite' ) => 'mec-organizer',
+                    esc_html__('Cost', 'modern-events-calendar-lite' ) => 'mec-cost',
+                    esc_html__('SEO Schema / Event Status', 'modern-events-calendar-lite' ) => 'mec-schema',
+                    esc_html__('Notifications', 'modern-events-calendar-lite' ) => 'mec-notifications',
+                    esc_html__('Public Download', 'modern-events-calendar-lite' ) => 'mec-public-download-module-file',
+                    esc_html__('Event Gallery', 'modern-events-calendar-lite' ) => 'mec-event-gallery',
                 );
 
                 $single_event_meta_title = apply_filters('mec-single-event-meta-title', $tabs, $activated, $post);
@@ -460,6 +489,10 @@ class MEC_feature_events extends MEC_base
                     elseif($link_address == 'mec-public-download-module-file')
                     {
                         if(isset($this->settings['public_download_module']) and $this->settings['public_download_module']) echo '<a class="mec-add-event-tabs-link" data-href="'.esc_attr($link_address).'" href="#">'.esc_html($link_name).'</a>';
+                    }
+                    elseif($link_address == 'mec-event-gallery')
+                    {
+                        if(isset($this->settings['event_gallery_status']) and $this->settings['event_gallery_status']) echo '<a class="mec-add-event-tabs-link" data-href="'.esc_attr($link_address).'" href="#">'.esc_html($link_name).'</a>';
                     }
                     else
                     {
@@ -588,6 +621,14 @@ class MEC_feature_events extends MEC_base
         $countdown_method = get_post_meta($post->ID, 'mec_countdown_method', true);
         if(trim($countdown_method) == '') $countdown_method = 'global';
 
+        $style_per_event = get_post_meta($post->ID, 'mec_style_per_event', true);
+        if(trim($style_per_event) == '') $style_per_event = 'global';
+
+        $trailer_url_status = isset($this->settings['trailer_url_status']) && $this->settings['trailer_url_status'];
+
+        $trailer_url = get_post_meta($post->ID, 'mec_trailer_url', true);
+        $trailer_title = get_post_meta($post->ID, 'mec_trailer_title', true);
+
         // Public Event
         $public = get_post_meta($post->ID, 'mec_public', true);
         if(trim($public) === '') $public = 1;
@@ -598,15 +639,15 @@ class MEC_feature_events extends MEC_base
             <?php endif; ?>
             <?php if($note_visibility and trim($note)): ?>
                 <div class="mec-event-note">
-                    <h4><?php esc_html_e('Note for reviewer', 'modern-events-calendar-lite'); ?></h4>
+                    <h4><?php esc_html_e('Note for reviewer', 'modern-events-calendar-lite' ); ?></h4>
                     <p><?php echo esc_html($note); ?></p>
                 </div>
             <?php endif; ?>
             <?php if(trim($fes_guest_email) and trim($fes_guest_name)): ?>
                 <div class="mec-guest-data">
-                    <h4><?php esc_html_e('Guest Data', 'modern-events-calendar-lite'); ?></h4>
-                    <p><strong><?php esc_html_e('Name', 'modern-events-calendar-lite'); ?>:</strong> <?php echo esc_html($fes_guest_name); ?></p>
-                    <p><strong><?php esc_html_e('Email', 'modern-events-calendar-lite'); ?>:</strong> <?php echo esc_html($fes_guest_email); ?></p>
+                    <h4><?php esc_html_e('Guest Data', 'modern-events-calendar-lite' ); ?></h4>
+                    <p><strong><?php esc_html_e('Name', 'modern-events-calendar-lite' ); ?>:</strong> <?php echo esc_html($fes_guest_name); ?></p>
+                    <p><strong><?php esc_html_e('Email', 'modern-events-calendar-lite' ); ?>:</strong> <?php echo esc_html($fes_guest_email); ?></p>
                 </div>
             <?php endif; ?>
             <?php if(($note_visibility and trim($note)) || (trim($fes_guest_email) and trim($fes_guest_name))): ?>
@@ -615,18 +656,18 @@ class MEC_feature_events extends MEC_base
             <?php do_action('start_mec_custom_fields', $post); ?>
 
             <?php if($imported_from_google): ?>
-            <p class="info-msg"><?php esc_html_e("This event is imported from Google calendar so if you modify it, it would overwrite in the next import from Google.", 'modern-events-calendar-lite'); ?></p>
+            <p class="info-msg"><?php esc_html_e("This event is imported from Google calendar so if you modify it, it would overwrite in the next import from Google.", 'modern-events-calendar-lite' ); ?></p>
             <?php endif; ?>
 
             <div id="mec_meta_box_date_form" class="mec-event-tab-content">
-                <h4><?php esc_html_e('Date and Time', 'modern-events-calendar-lite'); ?></h4>
+                <h4><?php esc_html_e('Date and Time', 'modern-events-calendar-lite' ); ?></h4>
                 <div class="mec-title">
                     <span class="mec-dashicons dashicons dashicons-calendar-alt"></span>
-                    <label for="mec_start_date"><?php esc_html_e('Start Date', 'modern-events-calendar-lite'); ?></label>
+                    <label for="mec_start_date"><?php esc_html_e('Start Date', 'modern-events-calendar-lite' ); ?></label>
                 </div>
                 <div class="mec-form-row">
                     <div class="mec-col-4">
-                        <input type="text" name="mec[date][start][date]" id="mec_start_date" value="<?php echo esc_attr($this->main->standardize_format($start_date, $datepicker_format)); ?>" placeholder="<?php esc_html_e('Start Date', 'modern-events-calendar-lite'); ?>" autocomplete="off"/>
+                        <input type="text" name="mec[date][start][date]" id="mec_start_date" data-end="#mec_end_date" value="<?php echo esc_attr($this->main->standardize_format($start_date, $datepicker_format)); ?>" placeholder="<?php esc_html_e('Start Date', 'modern-events-calendar-lite' ); ?>" autocomplete="off"/>
                     </div>
                     <div class="mec-col-6 mec-time-picker <?php echo ($allday == 1) ? 'mec-util-hidden' : ''; ?>">
                         <?php $this->main->timepicker(array(
@@ -642,11 +683,11 @@ class MEC_feature_events extends MEC_base
                 </div>
                 <div class="mec-title">
                     <span class="mec-dashicons dashicons dashicons-calendar-alt"></span>
-                    <label for="mec_end_date"><?php esc_html_e('End Date', 'modern-events-calendar-lite'); ?></label>
+                    <label for="mec_end_date"><?php esc_html_e('End Date', 'modern-events-calendar-lite' ); ?></label>
                 </div>
                 <div class="mec-form-row">
                     <div class="mec-col-4">
-                        <input type="text" name="mec[date][end][date]" id="mec_end_date" value="<?php echo esc_attr($this->main->standardize_format($end_date, $datepicker_format)); ?>" placeholder="<?php esc_html_e('End Date', 'modern-events-calendar-lite'); ?>" autocomplete="off"/>
+                        <input type="text" name="mec[date][end][date]" id="mec_end_date" data-start="#mec_start_date" value="<?php echo esc_attr($this->main->standardize_format($end_date, $datepicker_format)); ?>" placeholder="<?php esc_html_e('End Date', 'modern-events-calendar-lite' ); ?>" autocomplete="off"/>
                     </div>
                     <div class="mec-col-6 mec-time-picker <?php echo ($allday == 1) ? 'mec-util-hidden' : ''; ?>">
                         <?php $this->main->timepicker(array(
@@ -669,7 +710,7 @@ class MEC_feature_events extends MEC_base
                         ?>
                             type="checkbox" name="mec[date][allday]" id="mec_allday" value="1"
                             onchange="jQuery('.mec-time-picker, .mec-time-picker-label').toggle(); jQuery('#mec_add_in_days').data('allday', (jQuery(this).is(':checked') ? 1 : 0));"/><label
-                            for="mec_allday"><?php esc_html_e('All-day Event', 'modern-events-calendar-lite'); ?></label>
+                            for="mec_allday"><?php esc_html_e('All-day Event', 'modern-events-calendar-lite' ); ?></label>
                 </div>
                 <div class="mec-form-row">
                     <input
@@ -679,7 +720,7 @@ class MEC_feature_events extends MEC_base
                         }
                         ?>
                             type="checkbox" name="mec[date][hide_time]" id="mec_hide_time" value="1"/><label
-                            for="mec_hide_time"><?php esc_html_e('Hide Event Time', 'modern-events-calendar-lite'); ?></label>
+                            for="mec_hide_time"><?php esc_html_e('Hide Event Time', 'modern-events-calendar-lite' ); ?></label>
                 </div>
                 <div class="mec-form-row">
                     <input
@@ -689,19 +730,19 @@ class MEC_feature_events extends MEC_base
                         }
                         ?>
                             type="checkbox" name="mec[date][hide_end_time]" id="mec_hide_end_time" value="1"/><label
-                            for="mec_hide_end_time"><?php esc_html_e('Hide Event End Time', 'modern-events-calendar-lite'); ?></label>
+                            for="mec_hide_end_time"><?php esc_html_e('Hide Event End Time', 'modern-events-calendar-lite' ); ?></label>
                 </div>
                 <div class="mec-form-row">
                     <div class="mec-col-4">
                         <input type="text" class="" name="mec[date][comment]" id="mec_comment"
-                               placeholder="<?php esc_html_e('Notes on the time', 'modern-events-calendar-lite'); ?>"
+                               placeholder="<?php esc_html_e('Notes on the time', 'modern-events-calendar-lite' ); ?>"
                                value="<?php echo esc_attr($comment); ?>"/>
                         <span class="mec-tooltip">
 							<div class="box top">
-								<h5 class="title"><?php esc_html_e('Notes on the time', 'modern-events-calendar-lite'); ?></h5>
-								<div class="content"><p><?php esc_attr_e('It appears next to the event time on the Single Event Page. You can enter notes such as the timezone name in this field.', 'modern-events-calendar-lite'); ?>
+								<h5 class="title"><?php esc_html_e('Notes on the time', 'modern-events-calendar-lite' ); ?></h5>
+								<div class="content"><p><?php esc_attr_e('It appears next to the event time on the Single Event Page. You can enter notes such as the timezone name in this field.', 'modern-events-calendar-lite' ); ?>
                                         <a href="https://webnus.net/dox/modern-events-calendar/add-event/"
-                                           target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
+                                           target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite' ); ?></a></p></div>
 							</div>
 							<i title="" class="dashicons-before dashicons-editor-help"></i>
 						</span>
@@ -711,7 +752,7 @@ class MEC_feature_events extends MEC_base
                 <?php if(isset($this->settings['tz_per_event']) and $this->settings['tz_per_event']): ?>
                 <div class="mec-form-row mec-timezone-event">
                     <div class="mec-title">
-                        <label for="mec_event_timezone"><?php esc_html_e('Timezone', 'modern-events-calendar-lite'); ?></label>
+                        <label for="mec_event_timezone"><?php esc_html_e('Timezone', 'modern-events-calendar-lite' ); ?></label>
                     </div>
                     <div class="mec-form-row">
                         <div class="mec-col-4">
@@ -725,31 +766,62 @@ class MEC_feature_events extends MEC_base
                 <?php endif; ?>
 
                 <?php if(isset($this->settings['countdown_status']) and $this->settings['countdown_status']): ?>
-                <h4><?php esc_html_e('Countdown Method', 'modern-events-calendar-lite'); ?></h4>
+                <h4><?php esc_html_e('Countdown Method', 'modern-events-calendar-lite' ); ?></h4>
                 <div class="mec-form-row">
                     <div class="mec-col-4">
-                        <select name="mec[countdown_method]" id="mec_countdown_method" title="<?php esc_attr_e('Countdown Method', 'modern-events-calendar-lite'); ?>">
-                            <option value="global" <?php if('global' == $countdown_method) echo 'selected="selected"'; ?>><?php esc_html_e('Inherit from global options', 'modern-events-calendar-lite'); ?></option>
-                            <option value="start" <?php if('start' == $countdown_method) echo 'selected="selected"'; ?>><?php esc_html_e('Count to Event Start', 'modern-events-calendar-lite'); ?></option>
-                            <option value="end" <?php if('end' == $countdown_method) echo 'selected="selected"'; ?>><?php esc_html_e('Count to Event End', 'modern-events-calendar-lite'); ?></option>
+                        <select name="mec[countdown_method]" id="mec_countdown_method" title="<?php esc_attr_e('Countdown Method', 'modern-events-calendar-lite' ); ?>">
+                            <option value="global" <?php if('global' == $countdown_method) echo 'selected="selected"'; ?>><?php esc_html_e('Inherit from global options', 'modern-events-calendar-lite' ); ?></option>
+                            <option value="start" <?php if('start' == $countdown_method) echo 'selected="selected"'; ?>><?php esc_html_e('Count to Event Start', 'modern-events-calendar-lite' ); ?></option>
+                            <option value="end" <?php if('end' == $countdown_method) echo 'selected="selected"'; ?>><?php esc_html_e('Count to Event End', 'modern-events-calendar-lite' ); ?></option>
                         </select>
                     </div>
                 </div>
                 <?php endif; ?>
 
-                <h4><?php esc_html_e('Visibility', 'modern-events-calendar-lite'); ?></h4>
+                <?php if(isset($this->settings['style_per_event']) and $this->settings['style_per_event']): ?>
+                <h4><?php esc_html_e('Details Page Style', 'modern-events-calendar-lite' ); ?></h4>
                 <div class="mec-form-row">
                     <div class="mec-col-4">
-                        <select name="mec[public]" id="mec_public" title="<?php esc_attr_e('Event Visibility', 'modern-events-calendar-lite'); ?>">
-                            <option value="1" <?php if('1' == $public) echo 'selected="selected"'; ?>><?php esc_html_e('Show on Shortcodes', 'modern-events-calendar-lite'); ?></option>
-                            <option value="0" <?php if('0' == $public) echo 'selected="selected"'; ?>><?php esc_html_e('Hide on Shortcodes', 'modern-events-calendar-lite'); ?></option>
+                        <select name="mec[style_per_event]" id="mec_style_per_event" title="<?php esc_attr_e('Event Style', 'modern-events-calendar-lite' ); ?>">
+                            <option value="global"><?php esc_html_e('Inherit from global options', 'modern-events-calendar-lite' ); ?></option>
+                            <option value="default" <?php echo $style_per_event === 'default' ? 'selected="selected"' : ''; ?>><?php esc_html_e('Default Style', 'modern-events-calendar-lite' ); ?></option>
+                            <option value="modern" <?php echo $style_per_event === 'modern' ? 'selected="selected"' : ''; ?>><?php esc_html_e('Modern Style', 'modern-events-calendar-lite' ); ?></option>
+                            <?php do_action('mec_single_style', array('style_per_event' => $style_per_event), 'style_per_event'); ?>
+                            <?php if(is_plugin_active( 'mec-single-builder/mec-single-builder.php')): ?>
+                                <option value="builder" <?php echo $style_per_event === 'builder' ? 'selected="selected"' : ''; ?>><?php esc_html_e('Elementor Single Builder', 'modern-events-calendar-lite' ); ?></option>
+                            <?php endif; ?>
+                        </select>
+                    </div>
+                </div>
+                <?php endif; ?>
+
+                <?php if($trailer_url_status): ?>
+                <h4><?php esc_html_e('Trailer URL', 'modern-events-calendar-lite' ); ?></h4>
+                <div class="mec-form-row">
+                    <div class="mec-col-6">
+                        <input name="mec[trailer_url]" id="mec_trailer_url" title="<?php esc_attr_e('Trailer URL', 'modern-events-calendar-lite' ); ?>" type="url" value="<?php echo trim($trailer_url) ? esc_url($trailer_url) : ''; ?>" class="widefat" placeholder="http://">
+                    </div>
+                </div>
+                <div class="mec-form-row">
+                    <div class="mec-col-6">
+                        <input name="mec[trailer_title]" id="mec_trailer_title" title="<?php esc_attr_e('Trailer Title', 'modern-events-calendar-lite' ); ?>" type="text" value="<?php echo esc_attr($trailer_title); ?>" class="widefat" placeholder="<?php esc_attr_e('Trailer Title', 'modern-events-calendar-lite' ); ?>">
+                    </div>
+                </div>
+                <?php endif; ?>
+
+                <h4><?php esc_html_e('Visibility', 'modern-events-calendar-lite' ); ?></h4>
+                <div class="mec-form-row">
+                    <div class="mec-col-4">
+                        <select name="mec[public]" id="mec_public" title="<?php esc_attr_e('Event Visibility', 'modern-events-calendar-lite' ); ?>">
+                            <option value="1" <?php if('1' == $public) echo 'selected="selected"'; ?>><?php esc_html_e('Show on Shortcodes', 'modern-events-calendar-lite' ); ?></option>
+                            <option value="0" <?php if('0' == $public) echo 'selected="selected"'; ?>><?php esc_html_e('Hide on Shortcodes', 'modern-events-calendar-lite' ); ?></option>
                         </select>
                     </div>
                 </div>
 
             </div>
             <div id="mec_meta_box_repeat_form" class="mec-event-tab-content">
-                <h4><?php esc_html_e('Repeating', 'modern-events-calendar-lite'); ?></h4>
+                <h4><?php esc_html_e('Repeating', 'modern-events-calendar-lite' ); ?></h4>
                 <div class="mec-form-row">
                     <input
                         <?php
@@ -758,11 +830,11 @@ class MEC_feature_events extends MEC_base
                         }
                         ?>
                             type="checkbox" name="mec[date][repeat][status]" id="mec_repeat" value="1"/><label
-                            for="mec_repeat"><?php esc_html_e('Event Repeating (Recurring events)', 'modern-events-calendar-lite'); ?></label>
+                            for="mec_repeat"><?php esc_html_e('Event Repeating (Recurring events)', 'modern-events-calendar-lite' ); ?></label>
                 </div>
                 <div class="mec-form-repeating-event-row">
                     <div class="mec-form-row">
-                        <label class="mec-col-3" for="mec_repeat_type"><?php esc_html_e('Repeats', 'modern-events-calendar-lite'); ?></label>
+                        <label class="mec-col-3" for="mec_repeat_type"><?php esc_html_e('Repeats', 'modern-events-calendar-lite' ); ?></label>
                         <select class="mec-col-2" name="mec[date][repeat][type]" id="mec_repeat_type">
                             <option
                                 <?php
@@ -770,74 +842,74 @@ class MEC_feature_events extends MEC_base
                                     echo 'selected="selected"';
                                 }
                                 ?>
-                                    value="daily"><?php esc_html_e('Daily', 'modern-events-calendar-lite'); ?></option>
+                                    value="daily"><?php esc_html_e('Daily', 'modern-events-calendar-lite' ); ?></option>
                             <option
                                 <?php
                                 if ($repeat_type == 'weekday') {
                                     echo 'selected="selected"';
                                 }
                                 ?>
-                                    value="weekday"><?php esc_html_e('Every Weekday', 'modern-events-calendar-lite'); ?></option>
+                                    value="weekday"><?php esc_html_e('Every Weekday', 'modern-events-calendar-lite' ); ?></option>
                             <option
                                 <?php
                                 if ($repeat_type == 'weekend') {
                                     echo 'selected="selected"';
                                 }
                                 ?>
-                                    value="weekend"><?php esc_html_e('Every Weekend', 'modern-events-calendar-lite'); ?></option>
+                                    value="weekend"><?php esc_html_e('Every Weekend', 'modern-events-calendar-lite' ); ?></option>
                             <option
                                 <?php
                                 if ($repeat_type == 'certain_weekdays') {
                                     echo 'selected="selected"';
                                 }
                                 ?>
-                                    value="certain_weekdays"><?php esc_html_e('Certain Weekdays', 'modern-events-calendar-lite'); ?></option>
+                                    value="certain_weekdays"><?php esc_html_e('Certain Weekdays', 'modern-events-calendar-lite' ); ?></option>
                             <option
                                 <?php
                                 if ($repeat_type == 'weekly') {
                                     echo 'selected="selected"';
                                 }
                                 ?>
-                                    value="weekly"><?php esc_html_e('Weekly', 'modern-events-calendar-lite'); ?></option>
+                                    value="weekly"><?php esc_html_e('Weekly', 'modern-events-calendar-lite' ); ?></option>
                             <option
                                 <?php
                                 if ($repeat_type == 'monthly') {
                                     echo 'selected="selected"';
                                 }
                                 ?>
-                                    value="monthly"><?php esc_html_e('Monthly', 'modern-events-calendar-lite'); ?></option>
+                                    value="monthly"><?php esc_html_e('Monthly', 'modern-events-calendar-lite' ); ?></option>
                             <option
                                 <?php
                                 if ($repeat_type == 'yearly') {
                                     echo 'selected="selected"';
                                 }
                                 ?>
-                                    value="yearly"><?php esc_html_e('Yearly', 'modern-events-calendar-lite'); ?></option>
+                                    value="yearly"><?php esc_html_e('Yearly', 'modern-events-calendar-lite' ); ?></option>
                             <option
                                 <?php
                                 if ($repeat_type == 'custom_days') {
                                     echo 'selected="selected"';
                                 }
                                 ?>
-                                    value="custom_days"><?php esc_html_e('Custom Days', 'modern-events-calendar-lite'); ?></option>
+                                    value="custom_days"><?php esc_html_e('Custom Days', 'modern-events-calendar-lite' ); ?></option>
                             <option
                                 <?php
                                 if ($repeat_type == 'advanced') {
                                     echo 'selected="selected"';
                                 }
                                 ?>
-                                    value="advanced"><?php esc_html_e('Advanced', 'modern-events-calendar-lite'); ?></option>
+                                    value="advanced"><?php esc_html_e('Advanced', 'modern-events-calendar-lite' ); ?></option>
                         </select>
                     </div>
                     <div class="mec-form-row" id="mec_repeat_interval_container">
                         <label class="mec-col-3"
-                               for="mec_repeat_interval"><?php esc_html_e('Repeat Interval', 'modern-events-calendar-lite'); ?></label>
+                               for="mec_repeat_interval"><?php esc_html_e('Repeat Interval', 'modern-events-calendar-lite' ); ?></label>
                         <input class="mec-col-2" type="text" name="mec[date][repeat][interval]" id="mec_repeat_interval"
-                               placeholder="<?php esc_html_e('Repeat interval', 'modern-events-calendar-lite'); ?>"
+                               placeholder="<?php esc_html_e('Repeat interval', 'modern-events-calendar-lite' ); ?>"
                                value="<?php echo($repeat_type == 'weekly' ? ($repeat_interval / 7) : $repeat_interval); ?>"/>
                     </div>
                     <div class="mec-form-row" id="mec_repeat_certain_weekdays_container">
-                        <label class="mec-col-3"><?php esc_html_e('Week Days', 'modern-events-calendar-lite'); ?></label>
+                        <label class="mec-col-3"><?php esc_html_e('Week Days', 'modern-events-calendar-lite' ); ?></label>
                         <?php
                             $weekdays = $this->main->get_weekday_i18n_labels();
                             foreach($weekdays as $weekday):
@@ -854,13 +926,13 @@ class MEC_feature_events extends MEC_base
                                 <?php if(!$this->getPRO()): ?>
                                 <div class="mec-form-row">
                                     <div class="mec-col-12">
-                                        <p class="description"><?php esc_html_e("To add multiple occurrences per day you need Pro version of Modern Events Calendar.", 'modern-events-calendar-lite'); ?></p>
+                                        <p class="description"><?php esc_html_e("To add multiple occurrences per day you need Pro version of Modern Events Calendar.", 'modern-events-calendar-lite' ); ?></p>
                                     </div>
                                 </div>
                                 <?php endif; ?>
-                                <div class="mec-form-row">
+                                <div class="mec-form-row mec-in-days-add-mode" id="mec-in-days-form">
                                     <div class="mec-col-4">
-                                        <input type="text" id="mec_exceptions_in_days_start_date" value="" placeholder="<?php esc_html_e('Start', 'modern-events-calendar-lite'); ?>" title="<?php esc_html_e('Start', 'modern-events-calendar-lite'); ?>" class="mec_date_picker_dynamic_format widefat" autocomplete="off"/>
+                                        <input type="text" id="mec_exceptions_in_days_start_date" value="" placeholder="<?php esc_html_e('Start', 'modern-events-calendar-lite' ); ?>" title="<?php esc_html_e('Start', 'modern-events-calendar-lite' ); ?>" class="mec_date_picker_dynamic_format widefat" autocomplete="off"/>
                                     </div>
                                     <div class="mec-col-3 mec-time-picker <?php echo ($allday == 1) ? 'mec-util-hidden' : ''; ?>">
                                         <?php $this->main->timepicker(array(
@@ -874,14 +946,16 @@ class MEC_feature_events extends MEC_base
                                         )); ?>
                                     </div>
                                     <div class="mec-col-5">
-                                        <button class="button" type="button" id="mec_add_in_days" data-allday="<?php echo esc_attr($allday); ?>"><?php esc_html_e('Add', 'modern-events-calendar-lite'); ?></button>
+                                        <button class="button" type="button" id="mec_add_in_days" data-allday="<?php echo esc_attr($allday); ?>"><?php esc_html_e('Add', 'modern-events-calendar-lite' ); ?></button>
+                                        <button class="button" type="button" id="mec_edit_in_days" data-allday="<?php echo esc_attr($allday); ?>"><?php esc_html_e('Update', 'modern-events-calendar-lite' ); ?></button>
+                                        <button class="button" type="button" id="mec_cancel_in_days"><?php esc_html_e('Cancel', 'modern-events-calendar-lite' ); ?></button>
                                         <span class="mec-tooltip">
                                             <div class="box top">
-                                                <h5 class="title"><?php esc_html_e('Custom Days Repeating', 'modern-events-calendar-lite'); ?></h5>
+                                                <h5 class="title"><?php esc_html_e('Custom Days Repeating', 'modern-events-calendar-lite' ); ?></h5>
                                                 <div class="content">
                                                     <p>
-                                                        <?php esc_attr_e('Add certain days to event occurrences. If you have a single day event, start and end dates should be the same, If you have a multi-day event, the interval between the start and end dates must match the initial date.', 'modern-events-calendar-lite'); ?>
-                                                        <a href="https://webnus.net/dox/modern-events-calendar/date-and-time/" target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a>
+                                                        <?php esc_attr_e('Add certain days to event occurrences. If you have a single day event, start and end dates should be the same, If you have a multi-day event, the interval between the start and end dates must match the initial date.', 'modern-events-calendar-lite' ); ?>
+                                                        <a href="https://webnus.net/dox/modern-events-calendar/date-and-time/" target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite' ); ?></a>
                                                     </p>
                                                 </div>
                                             </div>
@@ -891,7 +965,7 @@ class MEC_feature_events extends MEC_base
                                 </div>
                                 <div class="mec-form-row">
                                     <div class="mec-col-4">
-                                        <input type="text" id="mec_exceptions_in_days_end_date" value="" placeholder="<?php esc_html_e('End', 'modern-events-calendar-lite'); ?>" title="<?php esc_html_e('End', 'modern-events-calendar-lite'); ?>" class="mec_date_picker_dynamic_format" autocomplete="off"/>
+                                        <input type="text" id="mec_exceptions_in_days_end_date" value="" placeholder="<?php esc_html_e('End', 'modern-events-calendar-lite' ); ?>" title="<?php esc_html_e('End', 'modern-events-calendar-lite' ); ?>" class="mec_date_picker_dynamic_format" autocomplete="off"/>
                                     </div>
                                     <div class="mec-col-8 mec-time-picker <?php echo ($allday == 1) ? 'mec-util-hidden' : ''; ?>">
                                         <?php $this->main->timepicker(array(
@@ -950,7 +1024,7 @@ class MEC_feature_events extends MEC_base
                                 ?>
                                 <div class="mec-form-row" id="mec_in_days_row<?php echo esc_attr($i); ?>">
                                     <input type="hidden" name="mec[in_days][<?php echo esc_attr($i); ?>]" value="<?php echo esc_attr($in_day); ?>"/>
-                                    <span class="mec-in-days-day"><?php echo MEC_kses::element($in_day_label); ?></span>
+                                    <span class="mec-in-days-day" onclick="mec_in_days_edit(<?php echo esc_attr($i); ?>);" title="<?php echo esc_attr__('Click to edit', 'modern-events-calendar-lite' ); ?>"><?php echo MEC_kses::element($in_day_label); ?></span>
                                     <span class="mec-not-in-days-remove" onclick="mec_in_days_remove(<?php echo esc_attr($i); ?>);">x</span>
                                 </div>
                             <?php $i++; endforeach; ?>
@@ -959,7 +1033,7 @@ class MEC_feature_events extends MEC_base
                         <div class="mec-util-hidden" id="mec_new_in_days_raw">
                             <div class="mec-form-row" id="mec_in_days_row:i:">
                                 <input type="hidden" name="mec[in_days][:i:]" value=":val:"/>
-                                <span class="mec-in-days-day">:label:</span>
+                                <span class="mec-in-days-day" onclick="mec_in_days_edit(:i:);" title="<?php echo esc_attr__('Click to edit', 'modern-events-calendar-lite' ); ?>">:label:</span>
                                 <span class="mec-not-in-days-remove" onclick="mec_in_days_remove(:i:);">x</span>
                             </div>
                         </div>
@@ -968,210 +1042,210 @@ class MEC_feature_events extends MEC_base
                         <div class="mec-form-row">
                             <ul>
 								<li>
-									<?php esc_html_e('First', 'modern-events-calendar-lite'); ?>
+									<?php esc_html_e('First', 'modern-events-calendar-lite' ); ?>
 								</li>
 								<ul>
 									<?php $day_1th = $this->main->advanced_repeating_sort_day($this->main->get_first_day_of_week(), 1); ?>
 									<li class="<?php $this->main->mec_active($advanced_days, "{$day_1th}.1"); ?>">
-										<?php esc_html_e($day_1th, 'modern-events-calendar-lite'); ?>
+										<?php esc_html_e($day_1th, 'modern-events-calendar-lite' ); ?>
 										<span class="key"><?php echo esc_html($day_1th); ?>.1-</span>
 									</li>
 									<?php $day_2th = $this->main->advanced_repeating_sort_day($this->main->get_first_day_of_week(), 2); ?>
 									<li class="<?php $this->main->mec_active($advanced_days, "{$day_2th}.1"); ?>">
-										<?php esc_html_e($day_2th, 'modern-events-calendar-lite'); ?>
+										<?php esc_html_e($day_2th, 'modern-events-calendar-lite' ); ?>
 										<span class="key"><?php echo esc_html($day_2th); ?>.1-</span>
 									</li>
 									<?php $day_3th = $this->main->advanced_repeating_sort_day($this->main->get_first_day_of_week(), 3); ?>
 									<li class="<?php $this->main->mec_active($advanced_days, "{$day_3th}.1"); ?>">
-										<?php esc_html_e($day_3th, 'modern-events-calendar-lite'); ?>
+										<?php esc_html_e($day_3th, 'modern-events-calendar-lite' ); ?>
 										<span class="key"><?php echo esc_html($day_3th); ?>.1-</span>
 									</li>
 									<?php $day_4th = $this->main->advanced_repeating_sort_day($this->main->get_first_day_of_week(), 4); ?>
 									<li class="<?php $this->main->mec_active($advanced_days, "{$day_4th}.1"); ?>">
-										<?php esc_html_e($day_4th, 'modern-events-calendar-lite'); ?>
+										<?php esc_html_e($day_4th, 'modern-events-calendar-lite' ); ?>
 										<span class="key"><?php echo esc_html($day_4th); ?>.1-</span>
 									</li>
 									<?php $day_5th = $this->main->advanced_repeating_sort_day($this->main->get_first_day_of_week(), 5); ?>
 									<li class="<?php $this->main->mec_active($advanced_days, "{$day_5th}.1"); ?>">
-										<?php esc_html_e($day_5th, 'modern-events-calendar-lite'); ?>
+										<?php esc_html_e($day_5th, 'modern-events-calendar-lite' ); ?>
 										<span class="key"><?php echo esc_html($day_5th); ?>.1-</span>
 									</li>
 									<?php $day_6th = $this->main->advanced_repeating_sort_day($this->main->get_first_day_of_week(), 6); ?>
 									<li class="<?php $this->main->mec_active($advanced_days, "{$day_6th}.1"); ?>">
-										<?php esc_html_e($day_6th, 'modern-events-calendar-lite'); ?>
+										<?php esc_html_e($day_6th, 'modern-events-calendar-lite' ); ?>
 										<span class="key"><?php echo esc_html($day_6th); ?>.1-</span>
 									</li>
 									<?php $day_7th = $this->main->advanced_repeating_sort_day($this->main->get_first_day_of_week(), 7); ?>
 									<li class="<?php $this->main->mec_active($advanced_days, "{$day_7th}.1"); ?>">
-										<?php esc_html_e($day_7th, 'modern-events-calendar-lite'); ?>
+										<?php esc_html_e($day_7th, 'modern-events-calendar-lite' ); ?>
 										<span class="key"><?php echo esc_html($day_7th); ?>.1-</span>
 									</li>
 								</ul>
 							</ul>
                             <ul>
 								<li>
-									<?php esc_html_e('Second', 'modern-events-calendar-lite'); ?>
+									<?php esc_html_e('Second', 'modern-events-calendar-lite' ); ?>
 								</li>
 								<ul>
 									<?php $day_1th = $this->main->advanced_repeating_sort_day($this->main->get_first_day_of_week(), 1); ?>
 									<li class="<?php $this->main->mec_active($advanced_days, "{$day_1th}.2"); ?>">
-										<?php esc_html_e($day_1th, 'modern-events-calendar-lite'); ?>
+										<?php esc_html_e($day_1th, 'modern-events-calendar-lite' ); ?>
 										<span class="key"><?php echo esc_html($day_1th); ?>.2-</span>
 									</li>
 									<?php $day_2th = $this->main->advanced_repeating_sort_day($this->main->get_first_day_of_week(), 2); ?>
 									<li class="<?php $this->main->mec_active($advanced_days, "{$day_2th}.2"); ?>">
-										<?php esc_html_e($day_2th, 'modern-events-calendar-lite'); ?>
+										<?php esc_html_e($day_2th, 'modern-events-calendar-lite' ); ?>
 										<span class="key"><?php echo esc_html($day_2th); ?>.2-</span>
 									</li>
 									<?php $day_3th = $this->main->advanced_repeating_sort_day($this->main->get_first_day_of_week(), 3); ?>
 									<li class="<?php $this->main->mec_active($advanced_days, "{$day_3th}.2"); ?>">
-										<?php esc_html_e($day_3th, 'modern-events-calendar-lite'); ?>
+										<?php esc_html_e($day_3th, 'modern-events-calendar-lite' ); ?>
 										<span class="key"><?php echo esc_html($day_3th); ?>.2-</span>
 									</li>
 									<?php $day_4th = $this->main->advanced_repeating_sort_day($this->main->get_first_day_of_week(), 4); ?>
 									<li class="<?php $this->main->mec_active($advanced_days, "{$day_4th}.2"); ?>">
-										<?php esc_html_e($day_4th, 'modern-events-calendar-lite'); ?>
+										<?php esc_html_e($day_4th, 'modern-events-calendar-lite' ); ?>
 										<span class="key"><?php echo esc_html($day_4th); ?>.2-</span>
 									</li>
 									<?php $day_5th = $this->main->advanced_repeating_sort_day($this->main->get_first_day_of_week(), 5); ?>
 									<li class="<?php $this->main->mec_active($advanced_days, "{$day_5th}.2"); ?>">
-										<?php esc_html_e($day_5th, 'modern-events-calendar-lite'); ?>
+										<?php esc_html_e($day_5th, 'modern-events-calendar-lite' ); ?>
 										<span class="key"><?php echo esc_html($day_5th); ?>.2-</span>
 									</li>
 									<?php $day_6th = $this->main->advanced_repeating_sort_day($this->main->get_first_day_of_week(), 6); ?>
 									<li class="<?php $this->main->mec_active($advanced_days, "{$day_6th}.2"); ?>">
-										<?php esc_html_e($day_6th, 'modern-events-calendar-lite'); ?>
+										<?php esc_html_e($day_6th, 'modern-events-calendar-lite' ); ?>
 										<span class="key"><?php echo esc_html($day_6th); ?>.2-</span>
 									</li>
 									<?php $day_7th = $this->main->advanced_repeating_sort_day($this->main->get_first_day_of_week(), 7); ?>
 									<li class="<?php $this->main->mec_active($advanced_days, "{$day_7th}.2"); ?>">
-										<?php esc_html_e($day_7th, 'modern-events-calendar-lite'); ?>
+										<?php esc_html_e($day_7th, 'modern-events-calendar-lite' ); ?>
 										<span class="key"><?php echo esc_html($day_7th); ?>.2-</span>
 									</li>
 								</ul>
 							</ul>
                             <ul>
 								<li>
-									<?php esc_html_e('Third', 'modern-events-calendar-lite'); ?>
+									<?php esc_html_e('Third', 'modern-events-calendar-lite' ); ?>
 								</li>
 								<ul>
 									<?php $day_1th = $this->main->advanced_repeating_sort_day($this->main->get_first_day_of_week(), 1); ?>
 									<li class="<?php $this->main->mec_active($advanced_days, "{$day_1th}.3"); ?>">
-										<?php esc_html_e($day_1th, 'modern-events-calendar-lite'); ?>
+										<?php esc_html_e($day_1th, 'modern-events-calendar-lite' ); ?>
 										<span class="key"><?php echo esc_html($day_1th); ?>.3-</span>
 									</li>
 									<?php $day_2th = $this->main->advanced_repeating_sort_day($this->main->get_first_day_of_week(), 2); ?>
 									<li class="<?php $this->main->mec_active($advanced_days, "{$day_2th}.3"); ?>">
-										<?php esc_html_e($day_2th, 'modern-events-calendar-lite'); ?>
+										<?php esc_html_e($day_2th, 'modern-events-calendar-lite' ); ?>
 										<span class="key"><?php echo esc_html($day_2th); ?>.3-</span>
 									</li>
 									<?php $day_3th = $this->main->advanced_repeating_sort_day($this->main->get_first_day_of_week(), 3); ?>
 									<li class="<?php $this->main->mec_active($advanced_days, "{$day_3th}.3"); ?>">
-										<?php esc_html_e($day_3th, 'modern-events-calendar-lite'); ?>
+										<?php esc_html_e($day_3th, 'modern-events-calendar-lite' ); ?>
 										<span class="key"><?php echo esc_html($day_3th); ?>.3-</span>
 									</li>
 									<?php $day_4th = $this->main->advanced_repeating_sort_day($this->main->get_first_day_of_week(), 4); ?>
 									<li class="<?php $this->main->mec_active($advanced_days, "{$day_4th}.3"); ?>">
-										<?php esc_html_e($day_4th, 'modern-events-calendar-lite'); ?>
+										<?php esc_html_e($day_4th, 'modern-events-calendar-lite' ); ?>
 										<span class="key"><?php echo esc_html($day_4th); ?>.3-</span>
 									</li>
 									<?php $day_5th = $this->main->advanced_repeating_sort_day($this->main->get_first_day_of_week(), 5); ?>
 									<li class="<?php $this->main->mec_active($advanced_days, "{$day_5th}.3"); ?>">
-										<?php esc_html_e($day_5th, 'modern-events-calendar-lite'); ?>
+										<?php esc_html_e($day_5th, 'modern-events-calendar-lite' ); ?>
 										<span class="key"><?php echo esc_html($day_5th); ?>.3-</span>
 									</li>
 									<?php $day_6th = $this->main->advanced_repeating_sort_day($this->main->get_first_day_of_week(), 6); ?>
 									<li class="<?php $this->main->mec_active($advanced_days, "{$day_6th}.3"); ?>">
-										<?php esc_html_e($day_6th, 'modern-events-calendar-lite'); ?>
+										<?php esc_html_e($day_6th, 'modern-events-calendar-lite' ); ?>
 										<span class="key"><?php echo esc_html($day_6th); ?>.3-</span>
 									</li>
 									<?php $day_7th = $this->main->advanced_repeating_sort_day($this->main->get_first_day_of_week(), 7); ?>
 									<li class="<?php $this->main->mec_active($advanced_days, "{$day_7th}.3"); ?>">
-										<?php esc_html_e($day_7th, 'modern-events-calendar-lite'); ?>
+										<?php esc_html_e($day_7th, 'modern-events-calendar-lite' ); ?>
 										<span class="key"><?php echo esc_html($day_7th); ?>.3-</span>
 									</li>
 								</ul>
 							</ul>
                             <ul>
 								<li>
-									<?php esc_html_e('Fourth', 'modern-events-calendar-lite'); ?>
+									<?php esc_html_e('Fourth', 'modern-events-calendar-lite' ); ?>
 								</li>
 								<ul>
 									<?php $day_1th = $this->main->advanced_repeating_sort_day($this->main->get_first_day_of_week(), 1); ?>
 									<li class="<?php $this->main->mec_active($advanced_days, "{$day_1th}.4"); ?>">
-										<?php esc_html_e($day_1th, 'modern-events-calendar-lite'); ?>
+										<?php esc_html_e($day_1th, 'modern-events-calendar-lite' ); ?>
 										<span class="key"><?php echo esc_html($day_1th); ?>.4-</span>
 									</li>
 									<?php $day_2th = $this->main->advanced_repeating_sort_day($this->main->get_first_day_of_week(), 2); ?>
 									<li class="<?php $this->main->mec_active($advanced_days, "{$day_2th}.4"); ?>">
-										<?php esc_html_e($day_2th, 'modern-events-calendar-lite'); ?>
+										<?php esc_html_e($day_2th, 'modern-events-calendar-lite' ); ?>
 										<span class="key"><?php echo esc_html($day_2th); ?>.4-</span>
 									</li>
 									<?php $day_3th = $this->main->advanced_repeating_sort_day($this->main->get_first_day_of_week(), 3); ?>
 									<li class="<?php $this->main->mec_active($advanced_days, "{$day_3th}.4"); ?>">
-										<?php esc_html_e($day_3th, 'modern-events-calendar-lite'); ?>
+										<?php esc_html_e($day_3th, 'modern-events-calendar-lite' ); ?>
 										<span class="key"><?php echo esc_html($day_3th); ?>.4-</span>
 									</li>
 									<?php $day_4th = $this->main->advanced_repeating_sort_day($this->main->get_first_day_of_week(), 4); ?>
 									<li class="<?php $this->main->mec_active($advanced_days, "{$day_4th}.4"); ?>">
-										<?php esc_html_e($day_4th, 'modern-events-calendar-lite'); ?>
+										<?php esc_html_e($day_4th, 'modern-events-calendar-lite' ); ?>
 										<span class="key"><?php echo esc_html($day_4th); ?>.4-</span>
 									</li>
 									<?php $day_5th = $this->main->advanced_repeating_sort_day($this->main->get_first_day_of_week(), 5); ?>
 									<li class="<?php $this->main->mec_active($advanced_days, "{$day_5th}.4"); ?>">
-										<?php esc_html_e($day_5th, 'modern-events-calendar-lite'); ?>
+										<?php esc_html_e($day_5th, 'modern-events-calendar-lite' ); ?>
 										<span class="key"><?php echo esc_html($day_5th); ?>.4-</span>
 									</li>
 									<?php $day_6th = $this->main->advanced_repeating_sort_day($this->main->get_first_day_of_week(), 6); ?>
 									<li class="<?php $this->main->mec_active($advanced_days, "{$day_6th}.4"); ?>">
-										<?php esc_html_e($day_6th, 'modern-events-calendar-lite'); ?>
+										<?php esc_html_e($day_6th, 'modern-events-calendar-lite' ); ?>
 										<span class="key"><?php echo esc_html($day_6th); ?>.4-</span>
 									</li>
 									<?php $day_7th = $this->main->advanced_repeating_sort_day($this->main->get_first_day_of_week(), 7); ?>
 									<li class="<?php $this->main->mec_active($advanced_days, "{$day_7th}.4"); ?>">
-										<?php esc_html_e($day_7th, 'modern-events-calendar-lite'); ?>
+										<?php esc_html_e($day_7th, 'modern-events-calendar-lite' ); ?>
 										<span class="key"><?php echo esc_html($day_7th); ?>.4-</span>
 									</li>
 								</ul>
 							</ul>
                 			<ul>
 								<li>
-									<?php esc_html_e('Last', 'modern-events-calendar-lite'); ?>
+									<?php esc_html_e('Last', 'modern-events-calendar-lite' ); ?>
 								</li>
 								<ul>
 									<?php $day_1th = $this->main->advanced_repeating_sort_day($this->main->get_first_day_of_week(), 1); ?>
 									<li class="<?php $this->main->mec_active($advanced_days, "{$day_1th}.l"); ?>">
-										<?php esc_html_e($day_1th, 'modern-events-calendar-lite'); ?>
+										<?php esc_html_e($day_1th, 'modern-events-calendar-lite' ); ?>
 										<span class="key"><?php echo esc_html($day_1th); ?>.l-</span>
 									</li>
 									<?php $day_2th = $this->main->advanced_repeating_sort_day($this->main->get_first_day_of_week(), 2); ?>
 									<li class="<?php $this->main->mec_active($advanced_days, "{$day_2th}.l"); ?>">
-										<?php esc_html_e($day_2th, 'modern-events-calendar-lite'); ?>
+										<?php esc_html_e($day_2th, 'modern-events-calendar-lite' ); ?>
 										<span class="key"><?php echo esc_html($day_2th); ?>.l-</span>
 									</li>
 									<?php $day_3th = $this->main->advanced_repeating_sort_day($this->main->get_first_day_of_week(), 3); ?>
 									<li class="<?php $this->main->mec_active($advanced_days, "{$day_3th}.l"); ?>">
-										<?php esc_html_e($day_3th, 'modern-events-calendar-lite'); ?>
+										<?php esc_html_e($day_3th, 'modern-events-calendar-lite' ); ?>
 										<span class="key"><?php echo esc_html($day_3th); ?>.l-</span>
 									</li>
 									<?php $day_4th = $this->main->advanced_repeating_sort_day($this->main->get_first_day_of_week(), 4); ?>
 									<li class="<?php $this->main->mec_active($advanced_days, "{$day_4th}.l"); ?>">
-										<?php esc_html_e($day_4th, 'modern-events-calendar-lite'); ?>
+										<?php esc_html_e($day_4th, 'modern-events-calendar-lite' ); ?>
 										<span class="key"><?php echo esc_html($day_4th); ?>.l-</span>
 									</li>
 									<?php $day_5th = $this->main->advanced_repeating_sort_day($this->main->get_first_day_of_week(), 5); ?>
 									<li class="<?php $this->main->mec_active($advanced_days, "{$day_5th}.l"); ?>">
-										<?php esc_html_e($day_5th, 'modern-events-calendar-lite'); ?>
+										<?php esc_html_e($day_5th, 'modern-events-calendar-lite' ); ?>
 										<span class="key"><?php echo esc_html($day_5th); ?>.l-</span>
 									</li>
 									<?php $day_6th = $this->main->advanced_repeating_sort_day($this->main->get_first_day_of_week(), 6); ?>
 									<li class="<?php $this->main->mec_active($advanced_days, "{$day_6th}.l"); ?>">
-										<?php esc_html_e($day_6th, 'modern-events-calendar-lite'); ?>
+										<?php esc_html_e($day_6th, 'modern-events-calendar-lite' ); ?>
 										<span class="key"><?php echo esc_html($day_6th); ?>.l-</span>
 									</li>
 									<?php $day_7th = $this->main->advanced_repeating_sort_day($this->main->get_first_day_of_week(), 7); ?>
 									<li class="<?php $this->main->mec_active($advanced_days, "{$day_7th}.l"); ?>">
-										<?php esc_html_e($day_7th, 'modern-events-calendar-lite'); ?>
+										<?php esc_html_e($day_7th, 'modern-events-calendar-lite' ); ?>
 										<span class="key"><?php echo esc_html($day_7th); ?>.l-</span>
 									</li>
 								</ul>
@@ -1183,7 +1257,7 @@ class MEC_feature_events extends MEC_base
                     <div id="mec_end_wrapper">
                         <div class="mec-form-row">
                             <label for="mec_repeat_ends_never">
-                                <h4 class="mec-title"><?php esc_html_e('Ends Repeat', 'modern-events-calendar-lite'); ?></h4>
+                                <h4 class="mec-title"><?php esc_html_e('Ends Repeat', 'modern-events-calendar-lite' ); ?></h4>
                             </label>
                         </div>
                         <div class="mec-form-row">
@@ -1195,7 +1269,7 @@ class MEC_feature_events extends MEC_base
                                 ?>
                                     type="radio" value="never" name="mec[date][repeat][end]"
                                     id="mec_repeat_ends_never"/>
-                            <label for="mec_repeat_ends_never"><?php esc_html_e('Never', 'modern-events-calendar-lite'); ?></label>
+                            <label for="mec_repeat_ends_never"><?php esc_html_e('Never', 'modern-events-calendar-lite' ); ?></label>
                         </div>
                         <div class="mec-form-row">
                             <div class="mec-col-3">
@@ -1207,7 +1281,7 @@ class MEC_feature_events extends MEC_base
                                     ?>
                                         type="radio" value="date" name="mec[date][repeat][end]"
                                         id="mec_repeat_ends_date"/>
-                                <label for="mec_repeat_ends_date"><?php esc_html_e('On', 'modern-events-calendar-lite'); ?></label>
+                                <label for="mec_repeat_ends_date"><?php esc_html_e('On', 'modern-events-calendar-lite' ); ?></label>
                             </div>
                             <input class="mec-col-2" type="text" name="mec[date][repeat][end_at_date]"
                                    id="mec_date_repeat_end_at_date" autocomplete="off"
@@ -1223,18 +1297,18 @@ class MEC_feature_events extends MEC_base
                                     ?>
                                         type="radio" value="occurrences" name="mec[date][repeat][end]"
                                         id="mec_repeat_ends_occurrences"/>
-                                <label for="mec_repeat_ends_occurrences"><?php esc_html_e('After', 'modern-events-calendar-lite'); ?></label>
+                                <label for="mec_repeat_ends_occurrences"><?php esc_html_e('After', 'modern-events-calendar-lite' ); ?></label>
                             </div>
                             <input class="mec-col-2" type="text" name="mec[date][repeat][end_at_occurrences]"
                                    id="mec_date_repeat_end_at_occurrences" autocomplete="off"
-                                   placeholder="<?php esc_html_e('Occurrences times', 'modern-events-calendar-lite'); ?>"
+                                   placeholder="<?php esc_html_e('Occurrences times', 'modern-events-calendar-lite' ); ?>"
                                    value="<?php echo esc_attr(($repeat_end_at_occurrences + 1)); ?>"/>
                             <span class="mec-tooltip">
 								<div class="box top">
-									<h5 class="title"><?php esc_html_e('Occurrences times', 'modern-events-calendar-lite'); ?></h5>
-									<div class="content"><p><?php esc_attr_e('The event repeats will stop after certain number of occurences. For example if you set this option 10, the event will have 10 occurrences.', 'modern-events-calendar-lite'); ?>
+									<h5 class="title"><?php esc_html_e('Occurrences times', 'modern-events-calendar-lite' ); ?></h5>
+									<div class="content"><p><?php esc_attr_e('The event repeats will stop after certain number of occurences. For example if you set this option 10, the event will have 10 occurrences.', 'modern-events-calendar-lite' ); ?>
                                             <a href="https://webnus.net/dox/modern-events-calendar/date-and-time/"
-                                               target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
+                                               target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite' ); ?></a></p></div>
 								</div>
 								<i title="" class="dashicons-before dashicons-editor-help"></i>
 							</span>
@@ -1248,7 +1322,7 @@ class MEC_feature_events extends MEC_base
                             }
                             ?>
                                 type="checkbox" name="mec[date][one_occurrence]" id="mec-one-occurrence" value="1"/><label
-                                for="mec-one-occurrence"><?php esc_html_e('Show only one occurrence of this event', 'modern-events-calendar-lite'); ?></label>
+                                for="mec-one-occurrence"><?php esc_html_e('Show only one occurrence of this event', 'modern-events-calendar-lite' ); ?></label>
                     </div>
                 </div>
             </div>
@@ -1277,30 +1351,32 @@ class MEC_feature_events extends MEC_base
         $current_currency = (isset($currency['currency']) ? $currency['currency'] : (isset($this->settings['currency']) ? $this->settings['currency'] : 'USD'));
         ?>
         <div class="mec-meta-box-fields mec-event-tab-content" id="mec-cost">
-            <h4><?php echo esc_html($this->main->m('event_cost', esc_html__('Event Cost', 'modern-events-calendar-lite'))); ?></h4>
+            <h4><?php echo esc_html($this->main->m('event_cost', esc_html__('Event Cost', 'modern-events-calendar-lite' ))); ?></h4>
             <div id="mec_meta_box_cost_form" class="<?php echo ($cost_auto_calculate ? 'mec-util-hidden' : ''); ?>">
                 <div class="mec-form-row">
                     <?php if(apply_filters('mec_event_cost_custom_field_status', false)): ?>
                         <?php do_action('mec_event_cost_custom_field', $cost, $type, 'mec[cost]'); ?>
                     <?php else: ?>
-                        <input type="<?php echo ($type === 'alphabetic' ? 'text' : 'number'); ?>" <?php echo ($type === 'numeric' ? 'min="0" step="any"' : ''); ?> class="mec-col-3" name="mec[cost]" id="mec_cost" value="<?php echo esc_attr($cost); ?>" title="<?php esc_html_e('Cost', 'modern-events-calendar-lite'); ?>" placeholder="<?php esc_html_e('Cost', 'modern-events-calendar-lite'); ?>"/>
+                        <input type="<?php echo ($type === 'alphabetic' ? 'text' : 'number'); ?>" <?php echo ($type === 'numeric' ? 'min="0" step="any"' : ''); ?> class="mec-col-3" name="mec[cost]" id="mec_cost" value="<?php echo esc_attr($cost); ?>" title="<?php esc_html_e('Cost', 'modern-events-calendar-lite' ); ?>" placeholder="<?php esc_html_e('Cost', 'modern-events-calendar-lite' ); ?>"/>
                     <?php endif; ?>
                 </div>
             </div>
+            <?php if($this->getPRO()): ?>
             <div class="mec-form-row">
                 <div class="mec-col-12">
                     <label for="mec_cost_auto_calculate">
                         <input type="hidden" name="mec[cost_auto_calculate]" value="0" />
                         <input type="checkbox" name="mec[cost_auto_calculate]" id="mec_cost_auto_calculate" <?php echo ($cost_auto_calculate == 1) ? 'checked="checked"' : ''; ?> value="1" onchange="jQuery('#mec_meta_box_cost_form').toggleClass('mec-util-hidden');">
-                        <?php esc_html_e('Show the minimum price based on tickets', 'modern-events-calendar-lite'); ?>
+                        <?php esc_html_e('Show the minimum price based on tickets', 'modern-events-calendar-lite' ); ?>
                     </label>
                 </div>
             </div>
+            <?php endif; ?>
 
             <?php if($currency_per_event): ?>
-            <h4><?php echo esc_html__('Currency Options', 'modern-events-calendar-lite'); ?></h4>
+            <h4><?php echo esc_html__('Currency Options', 'modern-events-calendar-lite' ); ?></h4>
             <div class="mec-form-row">
-                <label class="mec-col-2" for="mec_currency_currency"><?php esc_html_e('Currency', 'modern-events-calendar-lite'); ?></label>
+                <label class="mec-col-2" for="mec_currency_currency"><?php esc_html_e('Currency', 'modern-events-calendar-lite' ); ?></label>
                 <div class="mec-col-4">
                     <select name="mec[currency][currency]" id="mec_currency_currency">
                         <?php foreach($currencies as $c=>$currency_name): ?>
@@ -1310,43 +1386,43 @@ class MEC_feature_events extends MEC_base
                 </div>
             </div>
             <div class="mec-form-row">
-                <label class="mec-col-2" for="mec_currency_currency_symptom"><?php esc_html_e('Currency Sign', 'modern-events-calendar-lite'); ?></label>
+                <label class="mec-col-2" for="mec_currency_currency_symptom"><?php esc_html_e('Currency Sign', 'modern-events-calendar-lite' ); ?></label>
                 <div class="mec-col-4">
                     <input type="text" name="mec[currency][currency_symptom]" id="mec_currency_currency_symptom" value="<?php echo (isset($currency['currency_symptom']) ? esc_attr($currency['currency_symptom']) : ''); ?>" />
                     <span class="mec-tooltip">
                         <div class="box left">
-                            <h5 class="title"><?php esc_html_e('Currency Sign', 'modern-events-calendar-lite'); ?></h5>
-                            <div class="content"><p><?php esc_attr_e("Default value will be \"currency\" if you leave it empty.", 'modern-events-calendar-lite'); ?><a href="https://webnus.net/dox/modern-events-calendar/currency-options/" target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
+                            <h5 class="title"><?php esc_html_e('Currency Sign', 'modern-events-calendar-lite' ); ?></h5>
+                            <div class="content"><p><?php esc_attr_e("Default value will be \"currency\" if you leave it empty.", 'modern-events-calendar-lite' ); ?><a href="https://webnus.net/dox/modern-events-calendar/currency-options/" target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite' ); ?></a></p></div>
                         </div>
                         <i title="" class="dashicons-before dashicons-editor-help"></i>
                     </span>
                 </div>
             </div>
             <div class="mec-form-row">
-                <label class="mec-col-2" for="mec_currency_currency_sign"><?php esc_html_e('Currency Position', 'modern-events-calendar-lite'); ?></label>
+                <label class="mec-col-2" for="mec_currency_currency_sign"><?php esc_html_e('Currency Position', 'modern-events-calendar-lite' ); ?></label>
                 <div class="mec-col-4">
                     <select name="mec[currency][currency_sign]" id="mec_currency_currency_sign">
-                        <option value="before" <?php echo ((isset($currency['currency_sign']) and $currency['currency_sign'] == 'before') ? 'selected="selected"' : ''); ?>><?php esc_html_e('$10 (Before)', 'modern-events-calendar-lite'); ?></option>
-                        <option value="before_space" <?php echo ((isset($currency['currency_sign']) and $currency['currency_sign'] == 'before_space') ? 'selected="selected"' : ''); ?>><?php esc_html_e('$ 10 (Before with Space)', 'modern-events-calendar-lite'); ?></option>
-                        <option value="after" <?php echo ((isset($currency['currency_sign']) and $currency['currency_sign'] == 'after') ? 'selected="selected"' : ''); ?>><?php esc_html_e('10$ (After)', 'modern-events-calendar-lite'); ?></option>
-                        <option value="after_space" <?php echo ((isset($currency['currency_sign']) and $currency['currency_sign'] == 'after_space') ? 'selected="selected"' : ''); ?>><?php esc_html_e('10 $ (After with Space)', 'modern-events-calendar-lite'); ?></option>
+                        <option value="before" <?php echo ((isset($currency['currency_sign']) and $currency['currency_sign'] == 'before') ? 'selected="selected"' : ''); ?>><?php esc_html_e('$10 (Before)', 'modern-events-calendar-lite' ); ?></option>
+                        <option value="before_space" <?php echo ((isset($currency['currency_sign']) and $currency['currency_sign'] == 'before_space') ? 'selected="selected"' : ''); ?>><?php esc_html_e('$ 10 (Before with Space)', 'modern-events-calendar-lite' ); ?></option>
+                        <option value="after" <?php echo ((isset($currency['currency_sign']) and $currency['currency_sign'] == 'after') ? 'selected="selected"' : ''); ?>><?php esc_html_e('10$ (After)', 'modern-events-calendar-lite' ); ?></option>
+                        <option value="after_space" <?php echo ((isset($currency['currency_sign']) and $currency['currency_sign'] == 'after_space') ? 'selected="selected"' : ''); ?>><?php esc_html_e('10 $ (After with Space)', 'modern-events-calendar-lite' ); ?></option>
                     </select>
                 </div>
             </div>
             <div class="mec-form-row">
-                <label class="mec-col-2" for="mec_currency_thousand_separator"><?php esc_html_e('Thousand Separator', 'modern-events-calendar-lite'); ?></label>
+                <label class="mec-col-2" for="mec_currency_thousand_separator"><?php esc_html_e('Thousand Separator', 'modern-events-calendar-lite' ); ?></label>
                 <div class="mec-col-4">
                     <input type="text" name="mec[currency][thousand_separator]" id="mec_currency_thousand_separator" value="<?php echo (isset($currency['thousand_separator']) ? esc_attr($currency['thousand_separator']) : ','); ?>" />
                 </div>
             </div>
             <div class="mec-form-row">
-                <label class="mec-col-2" for="mec_currency_decimal_separator"><?php esc_html_e('Decimal Separator', 'modern-events-calendar-lite'); ?></label>
+                <label class="mec-col-2" for="mec_currency_decimal_separator"><?php esc_html_e('Decimal Separator', 'modern-events-calendar-lite' ); ?></label>
                 <div class="mec-col-4">
                     <input type="text" name="mec[currency][decimal_separator]" id="mec_currency_decimal_separator" value="<?php echo (isset($currency['decimal_separator']) ? esc_attr($currency['decimal_separator']) : '.'); ?>" />
                 </div>
             </div>
             <div class="mec-form-row">
-                <label class="mec-col-2" for="mec_currency_decimals"><?php esc_html_e('Decimals', 'modern-events-calendar-lite'); ?></label>
+                <label class="mec-col-2" for="mec_currency_decimals"><?php esc_html_e('Decimals', 'modern-events-calendar-lite' ); ?></label>
                 <div class="mec-col-4">
                     <input type="number" name="mec[currency][currency_decimals]" id="mec_currency_decimals" value="<?php echo (isset($currency['currency_decimals']) ? esc_attr((int)$currency['currency_decimals']) : '2'); ?>" />
                 </div>
@@ -1356,7 +1432,7 @@ class MEC_feature_events extends MEC_base
                     <label for="mec_currency_decimal_separator_status">
                         <input type="hidden" name="mec[currency][decimal_separator_status]" value="1" />
                         <input type="checkbox" name="mec[currency][decimal_separator_status]" id="mec_currency_decimal_separator_status" <?php echo ((isset($currency['decimal_separator_status']) and $currency['decimal_separator_status'] == '0') ? 'checked="checked"' : ''); ?> value="0" />
-                        <?php esc_html_e('No decimal', 'modern-events-calendar-lite'); ?>
+                        <?php esc_html_e('No decimal', 'modern-events-calendar-lite' ); ?>
                     </label>
                 </div>
             </div>
@@ -1382,26 +1458,26 @@ class MEC_feature_events extends MEC_base
         $not_in_days = trim($not_in_days_str) ? explode(',', $not_in_days_str) : array();
         ?>
         <div class="mec-meta-box-fields mec-event-tab-content mec-fes-exceptional-days" id="mec-exceptional-days">
-            <h4><?php esc_html_e('Exceptional Days (Exclude Dates)', 'modern-events-calendar-lite'); ?></h4>
+            <h4><?php esc_html_e('Exceptional Days (Exclude Dates)', 'modern-events-calendar-lite' ); ?></h4>
             <div id="mec_meta_box_exceptions_form">
 
                 <div id="mec_exceptions_not_in_days_container">
                     <div class="mec-title">
                         <span class="mec-dashicons dashicons dashicons-calendar-alt"></span>
-                        <label for="mec_exceptions_not_in_days_date"><?php esc_html_e('Exclude certain days', 'modern-events-calendar-lite'); ?></label>
+                        <label for="mec_exceptions_not_in_days_date"><?php esc_html_e('Exclude certain days', 'modern-events-calendar-lite' ); ?></label>
                     </div>
                     <div class="mec-form-row">
                         <div class="mec-col-12">
                             <input type="text" id="mec_exceptions_not_in_days_date" value=""
-                                   placeholder="<?php esc_html_e('Date', 'modern-events-calendar-lite'); ?>" class="mec_date_picker_dynamic_format" autocomplete="off"/>
+                                   placeholder="<?php esc_html_e('Date', 'modern-events-calendar-lite' ); ?>" class="mec_date_picker_dynamic_format" autocomplete="off"/>
                             <button class="button" type="button"
-                                    id="mec_add_not_in_days"><?php esc_html_e('Add', 'modern-events-calendar-lite'); ?></button>
+                                    id="mec_add_not_in_days"><?php esc_html_e('Add', 'modern-events-calendar-lite' ); ?></button>
                             <span class="mec-tooltip">
 								<div class="box top">
-									<h5 class="title"><?php esc_html_e('Exclude certain days', 'modern-events-calendar-lite'); ?></h5>
-									<div class="content"><p><?php esc_attr_e('Exclude certain days from event occurrence dates. Please note that you can exclude only single day occurrences and you cannot exclude one day from multiple day occurrences.', 'modern-events-calendar-lite'); ?>
+									<h5 class="title"><?php esc_html_e('Exclude certain days', 'modern-events-calendar-lite' ); ?></h5>
+									<div class="content"><p><?php esc_attr_e('Exclude certain days from event occurrence dates. Please note that you can exclude only single day occurrences and you cannot exclude one day from multiple day occurrences.', 'modern-events-calendar-lite' ); ?>
                                             <a href="https://webnus.net/dox/modern-events-calendar/exceptional-days/"
-                                               target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
+                                               target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite' ); ?></a></p></div>
 								</div>
 								<i title="" class="dashicons-before dashicons-editor-help"></i>
 							</span>
@@ -1446,9 +1522,20 @@ class MEC_feature_events extends MEC_base
      * @author Webnus <info@webnus.net>
      * @param object $post
      */
-    public function meta_box_hourly_schedule($post){
-
+    public function meta_box_hourly_schedule($post)
+    {
         FormBuilder::hourly_schedule( $post );
+    }
+
+    /**
+     * Display Event Gallery form in the Add/Edit event page
+     *
+     * @author Webnus <info@webnus.net>
+     * @param object $post
+     */
+    public function meta_box_event_gallery($post)
+    {
+        FormBuilder::event_gallery( $post );
     }
 
     /**
@@ -1465,44 +1552,44 @@ class MEC_feature_events extends MEC_base
         $more_info_target = get_post_meta($post->ID, 'mec_more_info_target', true);
         ?>
         <div class="mec-meta-box-fields mec-event-tab-content mec-fes-event-links" id="mec-read-more">
-            <h4><?php esc_html_e('Event Links', 'modern-events-calendar-lite'); ?></h4>
+            <h4><?php esc_html_e('Event Links', 'modern-events-calendar-lite' ); ?></h4>
             <div class="mec-form-row">
                 <label class="mec-col-2"
-                       for="mec_read_more_link"><?php echo esc_html($this->main->m('read_more_link', esc_html__('Event Link', 'modern-events-calendar-lite'))); ?></label>
+                       for="mec_read_more_link"><?php echo esc_html($this->main->m('read_more_link', esc_html__('Event Link', 'modern-events-calendar-lite' ))); ?></label>
                 <input class="mec-col-7" type="text" name="mec[read_more]" id="mec_read_more_link"
                        value="<?php echo esc_attr($read_more); ?>"
-                       placeholder="<?php esc_html_e('eg. http://yoursite.com/your-event', 'modern-events-calendar-lite'); ?>"/>
+                       placeholder="<?php esc_html_e('eg. http://yoursite.com/your-event', 'modern-events-calendar-lite' ); ?>"/>
                                        <?php do_action('extra_event_link', $post->ID); ?>
 
                 <span class="mec-tooltip">
 					<div class="box top">
-						<h5 class="title"><?php esc_html_e('Event Link', 'modern-events-calendar-lite'); ?></h5>
-						<div class="content"><p><?php esc_attr_e('The value of this option will be replaced by the single event page link on shortcodes. Insert full link including http(s):// - Also, if you use an advertising URL, you can use the URL Shortener.', 'modern-events-calendar-lite'); ?>
+						<h5 class="title"><?php esc_html_e('Event Link', 'modern-events-calendar-lite' ); ?></h5>
+						<div class="content"><p><?php esc_attr_e('The value of this option will be replaced by the single event page link on shortcodes. Insert full link including http(s):// - Also, if you use an advertising URL, you can use the URL Shortener.', 'modern-events-calendar-lite' ); ?>
                                 <a href="https://bit.ly/"
-                                   target="_blank"><?php esc_html_e('URL Shortener', 'modern-events-calendar-lite'); ?></a></p></div>
+                                   target="_blank"><?php esc_html_e('URL Shortener', 'modern-events-calendar-lite' ); ?></a></p></div>
 					</div>
 					<i title="" class="dashicons-before dashicons-editor-help"></i>
 				</span>
             </div>
             <div class="mec-form-row">
                 <label class="mec-col-2"
-                       for="mec_more_info_link"><?php echo esc_html($this->main->m('more_info_link', esc_html__('More Info', 'modern-events-calendar-lite'))); ?></label>
+                       for="mec_more_info_link"><?php echo esc_html($this->main->m('more_info_link', esc_html__('More Info', 'modern-events-calendar-lite' ))); ?></label>
                 <input class="mec-col-3" type="text" name="mec[more_info]" id="mec_more_info_link"
                        value="<?php echo esc_attr($more_info); ?>"
-                       placeholder="<?php esc_html_e('eg. http://yoursite.com/your-event', 'modern-events-calendar-lite'); ?>"/>
+                       placeholder="<?php esc_html_e('eg. http://yoursite.com/your-event', 'modern-events-calendar-lite' ); ?>"/>
                 <input class="mec-col-2" type="text" name="mec[more_info_title]" id="mec_more_info_title"
                        value="<?php echo esc_attr($more_info_title); ?>"
-                       placeholder="<?php esc_html_e('More Information', 'modern-events-calendar-lite'); ?>"/>
+                       placeholder="<?php esc_html_e('More Information', 'modern-events-calendar-lite' ); ?>"/>
                 <select class="mec-col-2" name="mec[more_info_target]" id="mec_more_info_target">
-                    <option value="_self" <?php echo($more_info_target == '_self' ? 'selected="selected"' : ''); ?>><?php esc_html_e('Current Window', 'modern-events-calendar-lite'); ?></option>
-                    <option value="_blank" <?php echo($more_info_target == '_blank' ? 'selected="selected"' : ''); ?>><?php esc_html_e('New Window', 'modern-events-calendar-lite'); ?></option>
+                    <option value="_self" <?php echo($more_info_target == '_self' ? 'selected="selected"' : ''); ?>><?php esc_html_e('Current Window', 'modern-events-calendar-lite' ); ?></option>
+                    <option value="_blank" <?php echo($more_info_target == '_blank' ? 'selected="selected"' : ''); ?>><?php esc_html_e('New Window', 'modern-events-calendar-lite' ); ?></option>
                 </select>
                 <span class="mec-tooltip">
 					<div class="box top">
-						<h5 class="title"><?php esc_html_e('More Info', 'modern-events-calendar-lite'); ?></h5>
-						<div class="content"><p><?php esc_attr_e('This link will appear on the single event page. Insert full link including http(s)://', 'modern-events-calendar-lite'); ?>
+						<h5 class="title"><?php esc_html_e('More Info', 'modern-events-calendar-lite' ); ?></h5>
+						<div class="content"><p><?php esc_attr_e('This link will appear on the single event page. Insert full link including http(s)://', 'modern-events-calendar-lite' ); ?>
                                 <a href="https://webnus.net/dox/modern-events-calendar/add-event/"
-                                   target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
+                                   target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite' ); ?></a></p></div>
 					</div>
 					<i title="" class="dashicons-before dashicons-editor-help"></i>
 				</span>
@@ -1523,26 +1610,26 @@ class MEC_feature_events extends MEC_base
     ?>
         <div class="mec-add-booking-tabs-wrap">
             <div class="mec-add-booking-tabs-left">
-                <a class="mec-add-booking-tabs-link mec-tab-active" data-href="mec_meta_box_booking_options_form_1" href="#"><?php echo esc_html__('Booking Options', 'modern-events-calendar-lite'); ?></a>
-                <a class="mec-add-booking-tabs-link" data-href="mec_meta_box_booking_options_form_2" href="#"><?php echo esc_html__('Total User Booking Limits', 'modern-events-calendar-lite'); ?></a>
-                <a class="mec-add-booking-tabs-link" data-href="mec-tickets" href="#"><?php echo esc_html__('Tickets', 'modern-events-calendar-lite'); ?></a>
+                <a class="mec-add-booking-tabs-link mec-tab-active" data-href="mec_meta_box_booking_options_form_1" href="#"><?php echo esc_html__('Booking Options', 'modern-events-calendar-lite' ); ?></a>
+                <a class="mec-add-booking-tabs-link" data-href="mec_meta_box_booking_options_form_2" href="#"><?php echo esc_html__('Total User Booking Limits', 'modern-events-calendar-lite' ); ?></a>
+                <a class="mec-add-booking-tabs-link" data-href="mec-tickets" href="#"><?php echo esc_html__('Tickets', 'modern-events-calendar-lite' ); ?></a>
                 <?php if(isset($this->settings['taxes_fees_status']) and $this->settings['taxes_fees_status']): ?>
-                <a class="mec-add-booking-tabs-link" data-href="mec-fees" href="#"><?php echo esc_html__('Fees', 'modern-events-calendar-lite'); ?></a>
+                <a class="mec-add-booking-tabs-link" data-href="mec-fees" href="#"><?php echo esc_html__('Fees', 'modern-events-calendar-lite' ); ?></a>
                 <?php endif; ?>
                 <?php if(isset($this->settings['ticket_variations_status']) and $this->settings['ticket_variations_status']): ?>
-                <a class="mec-add-booking-tabs-link" data-href="mec-ticket-variations" href="#"><?php echo esc_html__('Ticket Variations / Options', 'modern-events-calendar-lite'); ?></a>
+                <a class="mec-add-booking-tabs-link" data-href="mec-ticket-variations" href="#"><?php echo esc_html__('Ticket Variations / Options', 'modern-events-calendar-lite' ); ?></a>
                 <?php endif; ?>
-                <a class="mec-add-booking-tabs-link" data-href="mec-reg-fields" href="#"><?php echo esc_html__('Booking Form', 'modern-events-calendar-lite'); ?></a>
+                <a class="mec-add-booking-tabs-link" data-href="mec-reg-fields" href="#"><?php echo esc_html__('Booking Form', 'modern-events-calendar-lite' ); ?></a>
                 <?php if(isset($gateway_settings['op_status']) && $gateway_settings['op_status'] == 1): ?>
-                <a class="mec-add-booking-tabs-link" data-href="mec_meta_box_op_form" href="#"><?php echo esc_html__('Organizer Payment', 'modern-events-calendar-lite'); ?></a>
+                <a class="mec-add-booking-tabs-link" data-href="mec_meta_box_op_form" href="#"><?php echo esc_html__('Organizer Payment', 'modern-events-calendar-lite' ); ?></a>
                 <?php endif; ?>
                 <?php if(isset($this->settings['downloadable_file_status']) and $this->settings['downloadable_file_status']): ?>
-                <a class="mec-add-booking-tabs-link" data-href="mec-downloadable-file" href="#"><?php echo esc_html__('Downloadable File', 'modern-events-calendar-lite'); ?></a>
+                <a class="mec-add-booking-tabs-link" data-href="mec-downloadable-file" href="#"><?php echo esc_html__('Downloadable File', 'modern-events-calendar-lite' ); ?></a>
                 <?php endif; ?>
                 <?php if(isset($gateway_settings['gateways_per_event']) and $gateway_settings['gateways_per_event']): ?>
-                <a class="mec-add-booking-tabs-link" data-href="mec_meta_box_booking_options_form_gateways_per_event" href="#"><?php echo esc_html__('Payment Gateways', 'modern-events-calendar-lite'); ?></a>
+                <a class="mec-add-booking-tabs-link" data-href="mec_meta_box_booking_options_form_gateways_per_event" href="#"><?php echo esc_html__('Payment Gateways', 'modern-events-calendar-lite' ); ?></a>
                 <?php endif; ?>
-                <a class="mec-add-booking-tabs-link" data-href="mec_meta_box_booking_options_form_attendees" href="#"><?php echo esc_html__('Bookings', 'modern-events-calendar-lite'); ?></a>
+                <a class="mec-add-booking-tabs-link" data-href="mec_meta_box_booking_options_form_attendees" href="#"><?php echo esc_html__('Bookings', 'modern-events-calendar-lite' ); ?></a>
                 <?php do_action('add_event_booking_sections_left_menu'); ?>
             </div>
             <div class="mec-add-booking-tabs-right">
@@ -1576,6 +1663,7 @@ class MEC_feature_events extends MEC_base
         if(!is_array($booking_options)) $booking_options = array();
 
         $fes_booking_tbl = (!isset($this->settings['fes_section_booking_tbl']) or (isset($this->settings['fes_section_booking_tbl']) and $this->settings['fes_section_booking_tbl']));
+        $fes_booking_dspe = (!isset($this->settings['fes_section_booking_dspe']) or (isset($this->settings['fes_section_booking_dspe']) and $this->settings['fes_section_booking_dspe']));
         $fes_booking_mtpb = (!isset($this->settings['fes_section_booking_mtpb']) or (isset($this->settings['fes_section_booking_mtpb']) and $this->settings['fes_section_booking_mtpb']));
         $fes_booking_dpur = (!isset($this->settings['fes_section_booking_dpur']) or (isset($this->settings['fes_section_booking_dpur']) and $this->settings['fes_section_booking_dpur']));
         $fes_booking_bao = (!isset($this->settings['fes_section_booking_bao']) or (isset($this->settings['fes_section_booking_bao']) and $this->settings['fes_section_booking_bao']));
@@ -1585,15 +1673,23 @@ class MEC_feature_events extends MEC_base
         $fes_booking_typ = (!isset($this->settings['fes_section_booking_typ']) or (isset($this->settings['fes_section_booking_typ']) and $this->settings['fes_section_booking_typ']));
         $fes_booking_bbl = (!isset($this->settings['fes_section_booking_bbl']) or (isset($this->settings['fes_section_booking_bbl']) and $this->settings['fes_section_booking_bbl']));
         $fes_booking_tubl = (!isset($this->settings['fes_section_booking_tubl']) or (isset($this->settings['fes_section_booking_tubl']) and $this->settings['fes_section_booking_tubl']));
+
+        $partial_payment = $this->getPartialPayment();
+        $fes_booking_pp = $partial_payment->is_fes_pp_section_enabled();
         ?>
         <div id="mec-booking">
-            <?php if(!$FES or ($FES and ($fes_booking_tbl or $fes_booking_mtpb or $fes_booking_dpur or $fes_booking_bao or $fes_booking_io or $fes_booking_aa or $fes_booking_lftp or $fes_booking_typ or $fes_booking_bbl))): ?>
+            <?php if(!$FES or ($FES and ($fes_booking_tbl or $fes_booking_mtpb or $fes_booking_dpur or $fes_booking_bao or $fes_booking_io or $fes_booking_aa or $fes_booking_lftp or $fes_booking_typ or $fes_booking_bbl or $fes_booking_pp))): ?>
             <div class="mec-booking-tab-content mec-tab-active mec-fes-booking-options" id="mec_meta_box_booking_options_form_1">
 
                 <?php
                 if(!$FES or ($FES and $fes_booking_tbl)){
 
                     FormBuilder::total_booking_limit( $post );
+                }
+
+                if(isset($this->settings['booking_date_selection_per_event']) and $this->settings['booking_date_selection_per_event'] and (!$FES or ($FES and $fes_booking_dspe))){
+
+                    FormBuilder::booking_date_selection( $post );
                 }
 
                 if(!$FES or ($FES and $fes_booking_mtpb)){
@@ -1634,6 +1730,11 @@ class MEC_feature_events extends MEC_base
                 if(!$FES or ($FES and $fes_booking_bbl)){
 
                     FormBuilder::booking_button_label( $post );
+                }
+
+                if(!$FES or ($FES and $fes_booking_pp)){
+
+                    FormBuilder::booking_partial_payment( $post );
                 }
 
                 ?>
@@ -1872,6 +1973,9 @@ class MEC_feature_events extends MEC_base
         $comment = isset($date['comment']) ? sanitize_text_field($date['comment']) : '';
         $timezone = (isset($_mec['timezone']) and trim($_mec['timezone']) != '') ? sanitize_text_field($_mec['timezone']) : 'global';
         $countdown_method = (isset($_mec['countdown_method']) and trim($_mec['countdown_method']) != '') ? sanitize_text_field($_mec['countdown_method']) : 'global';
+        $style_per_event = (isset($_mec['style_per_event']) and trim($_mec['style_per_event']) != '') ? sanitize_text_field($_mec['style_per_event']) : 'global';
+        $trailer_url = (isset($_mec['trailer_url']) and trim($_mec['trailer_url']) != '') ? sanitize_url($_mec['trailer_url']) : '';
+        $trailer_title = isset($_mec['trailer_title']) ? sanitize_text_field($_mec['trailer_title']) : '';
         $public = (isset($_mec['public']) and trim($_mec['public']) != '') ? sanitize_text_field($_mec['public']) : 1;
 
         // Set start time and end time if event is all day
@@ -1941,6 +2045,9 @@ class MEC_feature_events extends MEC_base
         update_post_meta($post_id, 'mec_comment', $comment);
         update_post_meta($post_id, 'mec_timezone', $timezone);
         update_post_meta($post_id, 'mec_countdown_method', $countdown_method);
+        update_post_meta($post_id, 'mec_style_per_event', $style_per_event);
+        update_post_meta($post_id, 'mec_trailer_url', $trailer_url);
+        update_post_meta($post_id, 'mec_trailer_title', $trailer_title);
         update_post_meta($post_id, 'mec_public', $public);
 
         do_action('update_custom_post_meta', $date, $post_id);
@@ -2083,7 +2190,7 @@ class MEC_feature_events extends MEC_base
 
             // Get finish date
             $event_info = array('start' => $date['start'], 'end' => $date['end']);
-            $dates = $this->render->generate_advanced_days($advanced, $event_info, $repeat_end_at_occurrences +1, $start_date, 'events');
+            $dates = $this->render->generate_advanced_days($advanced, $event_info, $repeat_end_at_occurrences, $start_date, 'events');
 
             $period_date = $this->main->date_diff($start_date, end($dates)['end']['date']);
             $plus_date = '+' . $period_date->days . ' Days';
@@ -2223,8 +2330,7 @@ class MEC_feature_events extends MEC_base
         update_post_meta($post_id, 'mec_not_in_days', $not_in_days);
 
         // Repeat End Date
-        if($repeat_end == 'never') $repeat_end_date = '0000-00-00';
-        elseif($repeat_end == 'date') $repeat_end_date = $repeat_end_at_date;
+        if($repeat_end == 'date') $repeat_end_date = $repeat_end_at_date;
         elseif($repeat_end == 'occurrences')
         {
             if($plus_date) $repeat_end_date = date('Y-m-d', strtotime($plus_date, strtotime($end_date)));
@@ -2423,6 +2529,10 @@ class MEC_feature_events extends MEC_base
             update_post_meta($post_id, 'mec_public_dl_description', $public_dl_description);
         }
 
+        // Event Gallery
+        $gallery = (isset($_mec['event_gallery']) and is_array($_mec['event_gallery'])) ? $_mec['event_gallery'] : [];
+        update_post_meta($post_id, 'mec_event_gallery', $gallery);
+
         // Notifications
         if(isset($_mec['notifications']))
         {
@@ -2501,8 +2611,8 @@ class MEC_feature_events extends MEC_base
         $screen = get_current_screen();
         if($which === 'top' and $screen->post_type === $this->PT)
         {
-            echo '<a href="'.esc_url(admin_url('edit.php?post_type='.$this->PT.'&mec-expired=1')).'" class="button">'.esc_html__('Expired Events', 'modern-events-calendar-lite').'</a>';
-            echo '&nbsp;<a href="'.esc_url(admin_url('edit.php?post_type='.$this->PT.'&mec-upcoming=1')).'" class="button">'.esc_html__('Upcoming Events', 'modern-events-calendar-lite').'</a>';
+            echo '<a href="'.esc_url(admin_url('edit.php?post_type='.$this->PT.'&mec-expired=1')).'" class="button">'.esc_html__('Expired Events', 'modern-events-calendar-lite' ).'</a>';
+            echo '&nbsp;<a href="'.esc_url(admin_url('edit.php?post_type='.$this->PT.'&mec-upcoming=1')).'" class="button">'.esc_html__('Upcoming Events', 'modern-events-calendar-lite' ).'</a>';
         }
     }
 
@@ -2519,14 +2629,14 @@ class MEC_feature_events extends MEC_base
 
         $datepicker_format = 'Y-m-d';
         $start_date = isset( $_GET['mec_start_date'] ) ? $_GET['mec_start_date'] : '';
-        echo '<input type="text" name="mec_start_date" id="mec_start_date" value="' . esc_attr($this->main->standardize_format($start_date, $datepicker_format)) .'" placeholder="' . esc_attr__('Start Date', 'modern-events-calendar-lite') . '" autocomplete="off"/>';
+        echo '<input type="text" name="mec_start_date" id="mec_start_date" value="' . esc_attr($this->main->standardize_format($start_date, $datepicker_format)) .'" placeholder="' . esc_attr__('Start Date', 'modern-events-calendar-lite' ) . '" autocomplete="off"/>';
 
         $taxonomy = 'mec_label';
         if(wp_count_terms($taxonomy))
         {
             wp_dropdown_categories(
                 array(
-                    'show_option_all' => sprintf(esc_html__('Show all %s', 'modern-events-calendar-lite'), $this->main->m('taxonomy_labels', esc_html__('labels', 'modern-events-calendar-lite'))),
+                    'show_option_all' => sprintf(esc_html__('Show all %s', 'modern-events-calendar-lite' ), $this->main->m('taxonomy_labels', esc_html__('labels', 'modern-events-calendar-lite' ))),
                     'taxonomy' => $taxonomy,
                     'name' => $taxonomy,
                     'value_field' => 'slug',
@@ -2544,7 +2654,7 @@ class MEC_feature_events extends MEC_base
         {
             wp_dropdown_categories(
                 array(
-                    'show_option_all' => sprintf(esc_html__('Show all %s', 'modern-events-calendar-lite'), $this->main->m('taxonomy_locations', esc_html__('locations', 'modern-events-calendar-lite'))),
+                    'show_option_all' => sprintf(esc_html__('Show all %s', 'modern-events-calendar-lite' ), $this->main->m('taxonomy_locations', esc_html__('locations', 'modern-events-calendar-lite' ))),
                     'taxonomy' => $taxonomy,
                     'name' => $taxonomy,
                     'value_field' => 'slug',
@@ -2562,7 +2672,7 @@ class MEC_feature_events extends MEC_base
         {
             wp_dropdown_categories(
                 array(
-                    'show_option_all' => sprintf(esc_html__('Show all %s', 'modern-events-calendar-lite'), $this->main->m('taxonomy_organizers', esc_html__('organizers', 'modern-events-calendar-lite'))),
+                    'show_option_all' => sprintf(esc_html__('Show all %s', 'modern-events-calendar-lite' ), $this->main->m('taxonomy_organizers', esc_html__('organizers', 'modern-events-calendar-lite' ))),
                     'taxonomy' => $taxonomy,
                     'name' => $taxonomy,
                     'value_field' => 'slug',
@@ -2580,7 +2690,7 @@ class MEC_feature_events extends MEC_base
         {
             wp_dropdown_categories(
                 array(
-                    'show_option_all' => sprintf(esc_html__('Show all %s', 'modern-events-calendar-lite'), $this->main->m('taxonomy_categorys', esc_html__('Categories', 'modern-events-calendar-lite'))),
+                    'show_option_all' => sprintf(esc_html__('Show all %s', 'modern-events-calendar-lite' ), $this->main->m('taxonomy_categorys', esc_html__('Categories', 'modern-events-calendar-lite' ))),
                     'taxonomy' => $taxonomy,
                     'name' => $taxonomy,
                     'value_field' => 'slug',
@@ -2596,7 +2706,7 @@ class MEC_feature_events extends MEC_base
         // Lightbox
         echo '
             <div id="mec_manage_events_lightbox" class="lity-hide">
-                <div class="mec-attendees-list-head">'. esc_html__('Attendees List', 'modern-events-calendar-lite') .'</div>
+                <div class="mec-attendees-list-head">'. esc_html__('Attendees List', 'modern-events-calendar-lite' ) .'</div>
                 <div class="mec-attendees-list-wrap">
                     <div class="mec-attendees-list-left">
                         <div class="mec-attendees-list-left-menu mec-owl-carousel mec-owl-theme">
@@ -2623,17 +2733,17 @@ class MEC_feature_events extends MEC_base
         unset($columns['date']);
         unset($columns['tags']);
 
-        $columns['title'] = esc_html__('Title', 'modern-events-calendar-lite');
-        $columns['category'] = esc_html__('Category', 'modern-events-calendar-lite');
-        $columns['location'] = $this->main->m('taxonomy_location', esc_html__('Location', 'modern-events-calendar-lite'));
-        $columns['organizer'] = $this->main->m('taxonomy_organizer', esc_html__('Organizer', 'modern-events-calendar-lite'));
-        $columns['start_date'] = esc_html__('Start Date', 'modern-events-calendar-lite');
-        $columns['end_date'] = esc_html__('End Date', 'modern-events-calendar-lite');
+        $columns['title'] = esc_html__('Title', 'modern-events-calendar-lite' );
+        $columns['category'] = esc_html__('Category', 'modern-events-calendar-lite' );
+        $columns['location'] = $this->main->m('taxonomy_location', esc_html__('Location', 'modern-events-calendar-lite' ));
+        $columns['organizer'] = $this->main->m('taxonomy_organizer', esc_html__('Organizer', 'modern-events-calendar-lite' ));
+        $columns['start_date'] = esc_html__('Start Date', 'modern-events-calendar-lite' );
+        $columns['end_date'] = esc_html__('End Date', 'modern-events-calendar-lite' );
 
         // Sold Tickets
-        if($this->getPRO() and (isset($this->settings['booking_status']) and $this->settings['booking_status'])) $columns['sold_tickets'] = esc_html__('Sold Tickets', 'modern-events-calendar-lite');
+        if($this->getPRO() and (isset($this->settings['booking_status']) and $this->settings['booking_status'])) $columns['sold_tickets'] = esc_html__('Sold Tickets', 'modern-events-calendar-lite' );
 
-        $columns['repeat'] = esc_html__('Repeat', 'modern-events-calendar-lite');
+        $columns['repeat'] = esc_html__('Repeat', 'modern-events-calendar-lite' );
         return $columns;
     }
 
@@ -2727,37 +2837,11 @@ class MEC_feature_events extends MEC_base
         $expired = (isset($_REQUEST['mec-expired']) ? sanitize_text_field($_REQUEST['mec-expired']) : 0);
         if($expired)
         {
-            $meta_query[] = array(
-                'relation' => 'AND',
-                array(
-                    'relation' => 'OR',
-                    array(
-                        'key' => 'mec_end_date',
-                        'value' => current_time('Y-m-d'),
-                        'compare' => '<',
-                        'type' => 'DATE',
-                    ),
-                    array(
-                        'relation' => 'AND',
-                        array(
-                            'key' => 'mec_end_date',
-                            'value' => current_time('Y-m-d'),
-                            'compare' => '=',
-                            'type' => 'DATE',
-                        ),
-                        array(
-                            'key' => 'mec_end_day_seconds',
-                            'value' => $this->main->time_to_seconds(current_time('H'), current_time('i'), current_time('s')),
-                            'compare' => '<=',
-                            'type' => 'NUMERIC',
-                        )
-                    )
-                ),
-                array(
-                    'key' => 'mec_repeat_status',
-                    'value' => '0',
-                )
-            );
+            $today = current_time('Y-m-d');
+            $today_seconds = $this->main->time_to_seconds(current_time('H'), current_time('i'), current_time('s'));
+
+            $expired_ids = $this->db->select("SELECT post_id FROM `#__mec_events` WHERE `end` != '0000-00-00' AND `end` < '".$today."' OR (`end` = '".$today."' AND `time_end` <= '".$today_seconds."')", 'loadColumn');
+            $query->set('post__in', $expired_ids);
 
             if(!trim($orderby)) $orderby = 'end_date';
             if(!trim($order)) $order = 'asc';
@@ -2833,26 +2917,26 @@ class MEC_feature_events extends MEC_base
             ?>
             <script>
                 jQuery(document).ready(function () {
-                    jQuery('<option>').val('ical-export').text('<?php echo esc_html__('iCal / Outlook Export', 'modern-events-calendar-lite'); ?>').appendTo("select[name='action']");
-                    jQuery('<option>').val('ical-export').text('<?php echo esc_html__('iCal / Outlook Export', 'modern-events-calendar-lite'); ?>').appendTo("select[name='action2']");
+                    jQuery('<option>').val('ical-export').text('<?php echo esc_html__('iCal / Outlook Export', 'modern-events-calendar-lite' ); ?>').appendTo("select[name='action']");
+                    jQuery('<option>').val('ical-export').text('<?php echo esc_html__('iCal / Outlook Export', 'modern-events-calendar-lite' ); ?>').appendTo("select[name='action2']");
 
-                    jQuery('<option>').val('csv-export').text('<?php echo esc_html__('CSV Export', 'modern-events-calendar-lite'); ?>').appendTo("select[name='action']");
-                    jQuery('<option>').val('csv-export').text('<?php echo esc_html__('CSV Export', 'modern-events-calendar-lite'); ?>').appendTo("select[name='action2']");
+                    jQuery('<option>').val('csv-export').text('<?php echo esc_html__('CSV Export', 'modern-events-calendar-lite' ); ?>').appendTo("select[name='action']");
+                    jQuery('<option>').val('csv-export').text('<?php echo esc_html__('CSV Export', 'modern-events-calendar-lite' ); ?>').appendTo("select[name='action2']");
 
-                    jQuery('<option>').val('g-cal-csv-export').text('<?php echo esc_html__('Google Cal. CSV Export', 'modern-events-calendar-lite'); ?>').appendTo("select[name='action']");
-                    jQuery('<option>').val('g-cal-csv-export').text('<?php echo esc_html__('Google Cal. CSV Export', 'modern-events-calendar-lite'); ?>').appendTo("select[name='action2']");
+                    jQuery('<option>').val('g-cal-csv-export').text('<?php echo esc_html__('Google Cal. CSV Export', 'modern-events-calendar-lite' ); ?>').appendTo("select[name='action']");
+                    jQuery('<option>').val('g-cal-csv-export').text('<?php echo esc_html__('Google Cal. CSV Export', 'modern-events-calendar-lite' ); ?>').appendTo("select[name='action2']");
 
-                    jQuery('<option>').val('ms-excel-export').text('<?php echo esc_html__('MS Excel Export', 'modern-events-calendar-lite'); ?>').appendTo("select[name='action']");
-                    jQuery('<option>').val('ms-excel-export').text('<?php echo esc_html__('MS Excel Export', 'modern-events-calendar-lite'); ?>').appendTo("select[name='action2']");
+                    jQuery('<option>').val('ms-excel-export').text('<?php echo esc_html__('MS Excel Export', 'modern-events-calendar-lite' ); ?>').appendTo("select[name='action']");
+                    jQuery('<option>').val('ms-excel-export').text('<?php echo esc_html__('MS Excel Export', 'modern-events-calendar-lite' ); ?>').appendTo("select[name='action2']");
 
-                    jQuery('<option>').val('xml-export').text('<?php echo esc_html__('XML Export', 'modern-events-calendar-lite'); ?>').appendTo("select[name='action']");
-                    jQuery('<option>').val('xml-export').text('<?php echo esc_html__('XML Export', 'modern-events-calendar-lite'); ?>').appendTo("select[name='action2']");
+                    jQuery('<option>').val('xml-export').text('<?php echo esc_html__('XML Export', 'modern-events-calendar-lite' ); ?>').appendTo("select[name='action']");
+                    jQuery('<option>').val('xml-export').text('<?php echo esc_html__('XML Export', 'modern-events-calendar-lite' ); ?>').appendTo("select[name='action2']");
 
-                    jQuery('<option>').val('json-export').text('<?php echo esc_html__('JSON Export', 'modern-events-calendar-lite'); ?>').appendTo("select[name='action']");
-                    jQuery('<option>').val('json-export').text('<?php echo esc_html__('JSON Export', 'modern-events-calendar-lite'); ?>').appendTo("select[name='action2']");
+                    jQuery('<option>').val('json-export').text('<?php echo esc_html__('JSON Export', 'modern-events-calendar-lite' ); ?>').appendTo("select[name='action']");
+                    jQuery('<option>').val('json-export').text('<?php echo esc_html__('JSON Export', 'modern-events-calendar-lite' ); ?>').appendTo("select[name='action2']");
 
-                    jQuery('<option>').val('duplicate').text('<?php echo esc_html__('Duplicate', 'modern-events-calendar-lite'); ?>').appendTo("select[name='action']");
-                    jQuery('<option>').val('duplicate').text('<?php echo esc_html__('Duplicate', 'modern-events-calendar-lite'); ?>').appendTo("select[name='action2']");
+                    jQuery('<option>').val('duplicate').text('<?php echo esc_html__('Duplicate', 'modern-events-calendar-lite' ); ?>').appendTo("select[name='action']");
+                    jQuery('<option>').val('duplicate').text('<?php echo esc_html__('Duplicate', 'modern-events-calendar-lite' ); ?>').appendTo("select[name='action2']");
                 });
             </script>
             <?php
@@ -2975,28 +3059,28 @@ class MEC_feature_events extends MEC_base
         else $post_ids = (isset($_GET['post']) and is_array($_GET['post']) and count($_GET['post'])) ? array_map('sanitize_text_field', wp_unslash($_GET['post'])) : array();
 
         $columns = array(
-            esc_html__('ID', 'modern-events-calendar-lite'),
-            esc_html__('Title', 'modern-events-calendar-lite'),
-            esc_html__('Description', 'modern-events-calendar-lite'),
-            esc_html__('Start Date', 'modern-events-calendar-lite'),
-            esc_html__('Start Time', 'modern-events-calendar-lite'),
-            esc_html__('End Date', 'modern-events-calendar-lite'),
-            esc_html__('End Time', 'modern-events-calendar-lite'),
-            esc_html__('Link', 'modern-events-calendar-lite'),
-            $this->main->m('taxonomy_location', esc_html__('Location', 'modern-events-calendar-lite')),
-            esc_html__('Address', 'modern-events-calendar-lite'),
-            $this->main->m('taxonomy_organizer', esc_html__('Organizer', 'modern-events-calendar-lite')),
-            sprintf(esc_html__('%s Tel', 'modern-events-calendar-lite'), $this->main->m('taxonomy_organizer', esc_html__('Organizer', 'modern-events-calendar-lite'))),
-            sprintf(esc_html__('%s Email', 'modern-events-calendar-lite'), $this->main->m('taxonomy_organizer', esc_html__('Organizer', 'modern-events-calendar-lite'))),
-            $this->main->m('event_cost', esc_html__('Event Cost', 'modern-events-calendar-lite')),
-            esc_html__('Featured Image', 'modern-events-calendar-lite'),
-            esc_html__('Labels', 'modern-events-calendar-lite'),
-            esc_html__('Categories', 'modern-events-calendar-lite'),
-            esc_html__('Tags', 'modern-events-calendar-lite'),
+            esc_html__('ID', 'modern-events-calendar-lite' ),
+            esc_html__('Title', 'modern-events-calendar-lite' ),
+            esc_html__('Description', 'modern-events-calendar-lite' ),
+            esc_html__('Start Date', 'modern-events-calendar-lite' ),
+            esc_html__('Start Time', 'modern-events-calendar-lite' ),
+            esc_html__('End Date', 'modern-events-calendar-lite' ),
+            esc_html__('End Time', 'modern-events-calendar-lite' ),
+            esc_html__('Link', 'modern-events-calendar-lite' ),
+            $this->main->m('taxonomy_location', esc_html__('Location', 'modern-events-calendar-lite' )),
+            esc_html__('Address', 'modern-events-calendar-lite' ),
+            $this->main->m('taxonomy_organizer', esc_html__('Organizer', 'modern-events-calendar-lite' )),
+            sprintf(esc_html__('%s Tel', 'modern-events-calendar-lite' ), $this->main->m('taxonomy_organizer', esc_html__('Organizer', 'modern-events-calendar-lite' ))),
+            sprintf(esc_html__('%s Email', 'modern-events-calendar-lite' ), $this->main->m('taxonomy_organizer', esc_html__('Organizer', 'modern-events-calendar-lite' ))),
+            $this->main->m('event_cost', esc_html__('Event Cost', 'modern-events-calendar-lite' )),
+            esc_html__('Featured Image', 'modern-events-calendar-lite' ),
+            esc_html__('Labels', 'modern-events-calendar-lite' ),
+            esc_html__('Categories', 'modern-events-calendar-lite' ),
+            esc_html__('Tags', 'modern-events-calendar-lite' ),
         );
 
         // Speakers
-        if(isset($this->settings['speakers_status']) and $this->settings['speakers_status']) $columns[] = esc_html__('Speakers', 'modern-events-calendar-lite');
+        if(isset($this->settings['speakers_status']) and $this->settings['speakers_status']) $columns[] = esc_html__('Speakers', 'modern-events-calendar-lite' );
 
         // Event Fields
         $fields = $this->main->get_event_fields();
@@ -3024,7 +3108,10 @@ class MEC_feature_events extends MEC_base
 
             $data = $render->data($post_id);
             $dates = $render->dates($post_id, $data);
-            $date = $dates[0];
+            $date = isset($dates[0]) ? $dates[0] : array();
+
+            // No Date
+            if(!count($date)) continue;
 
             $location = isset($data->locations[$data->meta['mec_location_id']]) ? $data->locations[$data->meta['mec_location_id']] : array();
             $organizer = isset($data->organizers[$data->meta['mec_organizer_id']]) ? $data->organizers[$data->meta['mec_organizer_id']] : array();
@@ -3169,11 +3256,11 @@ class MEC_feature_events extends MEC_base
         if(current_user_can('edit_post', $post->ID))
         {
             // Duplicate Button
-            $actions['mec-duplicate'] = '<a href="'.esc_url($this->main->add_qs_vars(array('mec-action'=>'duplicate-event', 'id'=>$post->ID))).'">'.esc_html__('Duplicate', 'modern-events-calendar-lite').'</a>';
+            $actions['mec-duplicate'] = '<a href="'.esc_url($this->main->add_qs_vars(array('mec-action'=>'duplicate-event', 'id'=>$post->ID))).'">'.esc_html__('Duplicate', 'modern-events-calendar-lite' ).'</a>';
         }
 
         // Booking Button
-        if($this->getPRO() and current_user_can('edit_others_posts') and isset($this->settings['booking_status']) and $this->settings['booking_status']) $actions['mec-bookings'] = '<a href="'.esc_url($this->main->add_qs_vars(array('post_type'=>$this->main->get_book_post_type(), 'mec_event_id'=>$post->ID), trim($this->main->URL('admin'), '/ ').'/edit.php')).'">'.esc_html__('Bookings', 'modern-events-calendar-lite').'</a>';
+        if($this->getPRO() and current_user_can('edit_others_posts') and isset($this->settings['booking_status']) and $this->settings['booking_status']) $actions['mec-bookings'] = '<a href="'.esc_url($this->main->add_qs_vars(array('post_type'=>$this->main->get_book_post_type(), 'mec_event_id'=>$post->ID), trim($this->main->URL('admin'), '/ ').'/edit.php')).'">'.esc_html__('Bookings', 'modern-events-calendar-lite' ).'</a>';
 
         return $actions;
     }
@@ -3330,16 +3417,16 @@ class MEC_feature_events extends MEC_base
                     <span><input type="checkbox" id="mec-send-email-check-all" onchange="mec_send_email_check_all(this);" /></span>
                 </div>
                 <div class="w-col-xs-3 name">
-                    <span>'.esc_html__('Name', 'modern-events-calendar-lite').'</span>
+                    <span>'.esc_html__('Name', 'modern-events-calendar-lite' ).'</span>
                 </div>
                 <div class="w-col-xs-3 email">
-                    <span>'.esc_html__('Email', 'modern-events-calendar-lite').'</span>
+                    <span>'.esc_html__('Email', 'modern-events-calendar-lite' ).'</span>
                 </div>
                 <div class="w-col-xs-3 ticket">
-                    <span>'.esc_html($this->main->m('ticket', esc_html__('Ticket', 'modern-events-calendar-lite'))).'</span>
+                    <span>'.esc_html($this->main->m('ticket', esc_html__('Ticket', 'modern-events-calendar-lite' ))).'</span>
                 </div>
                 <div class="w-col-xs-2">
-                    <span>'.esc_html__('Variations', 'modern-events-calendar-lite').'</span>
+                    <span>'.esc_html__('Variations', 'modern-events-calendar-lite' ).'</span>
                 </div>';
 
             $html = apply_filters('mec_attendees_list_header_html', $html, $id, $occurrence);
@@ -3351,10 +3438,10 @@ class MEC_feature_events extends MEC_base
                 $key++;
 
                 $html .= '<div class="w-clearfix mec-attendees-content">';
-                $html .= '<div class="w-col-xs-1"><input type="checkbox" onchange="mec_send_email_check(this);" /><span class="mec-util-hidden mec-send-email-attendee-info">'.esc_html($attendee['name'].':.:'.$attendee['email']).',</span></div>';
+                $html .= '<div class="w-col-xs-1"><input type="checkbox" data-book_attendee_key="'. $attendee['book_id'] . '-' . $attendee['key'] .'" onchange="mec_send_email_check(this);" /><span class="mec-util-hidden mec-send-email-attendee-info">'.esc_html($attendee['name'].':.:'.$attendee['email']).',</span></div>';
                 $html .= '<div class="w-col-xs-3 name">' . get_avatar($attendee['email']) .$attendee['name'].'</div>';
                 $html .= '<div class="w-col-xs-3 email">'.esc_html($attendee['email']).'</div>';
-                $html .= '<div class="w-col-xs-3 ticket">'.((isset($attendee['id']) and isset($tickets[$attendee['id']]['name'])) ? $tickets[$attendee['id']]['name'] : esc_html__('Unknown', 'modern-events-calendar-lite')).'</div>';
+                $html .= '<div class="w-col-xs-3 ticket">'.((isset($attendee['id']) and isset($tickets[$attendee['id']]['name'])) ? $tickets[$attendee['id']]['name'] : esc_html__('Unknown', 'modern-events-calendar-lite' )).'</div>';
 
                 $variations = '<div class="w-col-xs-2">';
                 if(isset($attendee['variations']) and is_array($attendee['variations']) and count($attendee['variations']))
@@ -3382,11 +3469,11 @@ class MEC_feature_events extends MEC_base
                 $index++;
             }
 
-            $email_button = '<p>'.esc_html__('If you want to send an email, first select your attendees and then click in the button below, please.', 'modern-events-calendar-lite').'</p><button data-id="'.esc_attr($id).'" onclick="mec_submit_event_email('.esc_attr($id).');">'.esc_html__('Send Email', 'modern-events-calendar-lite').'</button>';
+            $email_button = '<p>'.esc_html__('If you want to send an email, first select your attendees and then click in the button below, please.', 'modern-events-calendar-lite' ).'</p><button data-id="'.esc_attr($id).'" onclick="mec_submit_event_email('.esc_attr($id).');">'.esc_html__('Send Email', 'modern-events-calendar-lite' ).'</button>';
         }
         else
         {
-            $html .= '<p>'.esc_html__("No Attendees Found!", 'modern-events-calendar-lite').'</p>';
+            $html .= '<p>'.esc_html__("No Attendees Found!", 'modern-events-calendar-lite' ).'</p>';
             $email_button = '';
         }
 
@@ -3622,26 +3709,22 @@ class MEC_feature_events extends MEC_base
         {
             $html .= '<div class="w-clearfix">
                 <div class="w-col-xs-3 name">
-                    <span>'.esc_html__('Title', 'modern-events-calendar-lite').'</span>
+                    <span>'.esc_html__('Title', 'modern-events-calendar-lite' ).'</span>
                 </div>
                 <div class="w-col-xs-3 email">
-                    <span>'.esc_html__('Attendees', 'modern-events-calendar-lite').'</span>
+                    <span>'.esc_html__('Attendees', 'modern-events-calendar-lite' ).'</span>
                 </div>
                 <div class="w-col-xs-3 ticket">
-                    <span>'.esc_html__('Transaction ID', 'modern-events-calendar-lite').'</span>
+                    <span>'.esc_html__('Transaction ID', 'modern-events-calendar-lite' ).'</span>
                 </div>
                 <div class="w-col-xs-3">
-                    <span>'.esc_html__('Price', 'modern-events-calendar-lite').'</span>
+                    <span>'.esc_html__('Price', 'modern-events-calendar-lite' ).'</span>
                 </div>
             </div>';
 
             /** @var WP_Post $booking */
-
-            $index = $key = 0;
             foreach($bookings as $booking)
             {
-                $key++;
-
                 $attendees = $book->get_attendees($booking->ID);
 
                 $attendees = apply_filters('mec_filter_event_bookings', $attendees, $booking->ID, $p_occurrence);
@@ -3674,11 +3757,11 @@ class MEC_feature_events extends MEC_base
                 $price = get_post_meta($booking->ID, 'mec_price', true);
                 $event_id = get_post_meta($booking->ID, 'mec_event_id', true);
 
-                $price_html = $this->main->render_price(($price ? $price : 0), $event_id);
+                $price_html = $this->main->render_price(($price ?: 0), $event_id);
                 $price_html .= ' ('.get_post_meta($booking->ID, 'mec_gateway_label', true).')';
 
                 $all_dates = get_post_meta($booking->ID, 'mec_all_dates', true);
-                if(is_array($all_dates) and count($all_dates) > 1) $price_html .= ' '.sprintf(esc_html__('for %s dates', 'modern-events-calendar-lite'), count($all_dates));
+                if(is_array($all_dates) and count($all_dates) > 1) $price_html .= ' '.sprintf(esc_html__('for %s dates', 'modern-events-calendar-lite' ), count($all_dates));
 
                 $html .= '<div class="w-clearfix">';
                 $html .= '<div class="w-col-xs-3">'.($backend ? '<a href="'.get_edit_post_link($booking->ID).'" target="_blank">'.esc_html($booking->post_title).'</a>' : esc_html($booking->post_title)).'</div>';
@@ -3686,18 +3769,152 @@ class MEC_feature_events extends MEC_base
                 $html .= '<div class="w-col-xs-3">'.esc_html($transaction_id).'</div>';
                 $html .= '<div class="w-col-xs-3">'.MEC_kses::element($price_html).'</div>';
                 $html .= '</div>';
-
-                $index++;
             }
         }
         else
         {
-            $html .= '<p class="mec-not-found">'.esc_html__("No Bookings Found!", 'modern-events-calendar-lite').'</p>';
+            $html .= '<p class="mec-not-found">'.esc_html__("No Bookings Found!", 'modern-events-calendar-lite' ).'</p>';
         }
 
         $html = apply_filters('mec_event_bookings_report', $html, $bookings, $id, $backend, $occurrence, $total_attendees);
 
         echo json_encode(array('html' => $html));
         exit;
+    }
+
+    public function gallery_image_upload()
+    {
+        // Check if our nonce is set.
+        if(!isset($_POST['_wpnonce'])) $this->main->response(array('success'=>0, 'code'=>'NONCE_MISSING'));
+
+        // Verify that the nonce is valid.
+        if(!wp_verify_nonce(sanitize_text_field($_POST['_wpnonce']), 'mec_event_gallery_image_upload')) $this->main->response(array('success'=>0, 'code'=>'NONCE_IS_INVALID'));
+
+        $images = (isset($_FILES['images']) and is_array($_FILES['images'])) ? $_FILES['images'] : [];
+
+        // No file
+        if(!count($images)) $this->main->response(array('success'=>0, 'code'=>'NO_FILE', 'message'=>esc_html__('Please upload an image.', 'modern-events-calendar-lite' )));
+
+        // Include the functions
+        if(!function_exists('wp_handle_upload'))
+        {
+            require_once ABSPATH.'wp-admin/includes/file.php';
+            require_once(ABSPATH.'wp-admin/includes/image.php');
+        }
+
+        // Upload Restrictions
+        $max_file_size = isset($this->settings['fes_max_file_size']) ? (int) ($this->settings['fes_max_file_size'] * 1000) : (5000 * 1000);
+        $allowed = array('jpeg', 'jpg', 'png', 'gif');
+
+        $success = 0;
+        $data = [];
+
+        $count = count($images['name']);
+        for($i = 0; $i < $count; $i++)
+        {
+            $image = array(
+                'name' => $images['name'][$i],
+                'type' => $images['type'][$i],
+                'tmp_name' => $images['tmp_name'][$i],
+                'error' => $images['error'][$i],
+                'size' => $images['size'][$i],
+            );
+
+            $ex = explode('.', $image['name']);
+            $extension = end($ex);
+
+            // Invalid Extension
+            if(!in_array(strtolower($extension), $allowed)) continue;
+
+            // Invalid Size
+            if($image['size'] > $max_file_size) continue;
+
+            $uploaded = wp_handle_upload($image, array('test_form' => false));
+
+            if($uploaded and !isset($uploaded['error']))
+            {
+                $success = 1;
+                $attachment = array(
+                    'post_mime_type' => $uploaded['type'],
+                    'post_title' => '',
+                    'post_content' => '',
+                    'post_status' => 'inherit'
+                );
+
+                // Add as Attachment
+                $attachment_id = wp_insert_attachment($attachment, $uploaded['file']);
+
+                // Update Metadata
+                wp_update_attachment_metadata($attachment_id, wp_generate_attachment_metadata($attachment_id, $uploaded['file']));
+
+                $data[] = array(
+                    'id' => $attachment_id,
+                    'url' => $uploaded['url']
+                );
+            }
+        }
+
+        $message = $success ? esc_html__('The images are uploaded!', 'modern-events-calendar-lite' ) : esc_html__('An error occurred!', 'modern-events-calendar-lite' );
+
+        $this->main->response(array('success'=>$success, 'message'=>$message, 'data'=>$data));
+    }
+
+    public function mec_move_bookings()
+    {
+        // Check if our nonce is set.
+        if(!isset($_POST['_wpnonce'])) $this->main->response(['success'=>0, 'code'=>'NONCE_MISSING']);
+
+        // Verify that the nonce is valid.
+        if(!wp_verify_nonce(sanitize_text_field($_POST['_wpnonce']), 'mec_move_bookings')) $this->main->response(['success'=>0, 'code'=>'NONCE_IS_INVALID']);
+
+        $event_id = isset($_POST['id']) ? (int) sanitize_text_field($_POST['id']) : 0;
+        $from = isset($_POST['from']) ? (int) sanitize_text_field($_POST['from']) : 0;
+        $to_start = isset($_POST['to']) ? (int) sanitize_text_field($_POST['to']) : 0;
+        $to_end = (int) $this->db->select("SELECT `tend` FROM `#__mec_dates` WHERE `post_id`='".esc_sql($event_id)."' AND `tstart`='".esc_sql($to_start)."'", 'loadResult');
+
+        if(!$event_id or !$from or !$to_start or !$to_end) $this->main->response(['success' => 0, 'code' => 'MISS_INFORMATION']);
+
+        // Booking Library
+        $book = $this->getBook();
+
+        $bookings = $this->main->get_bookings($event_id, $from);
+        foreach($bookings as $booking)
+        {
+            $to_start_datetime = wp_date('Y-m-d H:i:s', $to_start);
+
+            // Update Booking Post
+            wp_update_post([
+                'ID' => $booking->ID,
+                'post_date' => $to_start_datetime,
+                'post_date_gmt' => get_gmt_from_date($to_start_datetime)
+            ]);
+
+            // Update Booking Meta
+            foreach([
+                'mec_date' => $to_start.':'.$to_end,
+                'mec_attention_time' => $to_start.':'.$to_end,
+                'mec_attention_time_start' => $to_start,
+                'mec_attention_time_end' => $to_end,
+            ] as $key => $value) update_post_meta($booking->ID, $key, $value);
+
+            // Update Transaction
+            $transaction_id = get_post_meta($booking->ID, 'mec_transaction_id', true);
+            $transaction = $book->get_transaction($transaction_id);
+
+            if(isset($transaction['timestamps']) and is_array($transaction['timestamps']))
+            {
+                $k = array_search($transaction['date'], $transaction['timestamps']);
+                if($k !== false) $transaction['timestamps'][$k] = $to_start.':'.$to_end;
+            }
+
+            $transaction['date'] = $to_start.':'.$to_end;
+            $book->update_transaction($transaction_id, $transaction);
+
+            // Update booking Record
+            $this->db->q("UPDATE `#__mec_bookings` SET `timestamp`='".esc_sql($to_start)."', `date`='".esc_sql($to_start_datetime)."' WHERE `booking_id`='".esc_sql($booking->ID)."' AND `event_id`='".esc_sql($event_id)."' AND `timestamp`='".esc_sql($from)."'");
+        }
+
+        $message = '<p class="mec-success">'.sprintf(esc_html__('%s bookings moved to new date', 'modern-events-calendar-lite' ), count($bookings)).'</p>';
+        $this->main->response(['success' => 1, 'message' => $message]);
     }
 }

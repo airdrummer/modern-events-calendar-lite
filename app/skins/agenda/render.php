@@ -61,11 +61,12 @@ $reason_for_cancellation = isset($this->skin_options['reason_for_cancellation'])
                             <?php echo MEC_kses::form($this->booking_button($event)); ?>
                             <?php if($this->localtime) echo MEC_kses::full($this->main->module('local-time.type2', array('event' => $event))); ?>
                         </span>
-                        <?php echo MEC_kses::element($this->display_custom_data($event)); ?>
+                        <?php echo MEC_kses::embed($this->display_custom_data($event)); ?>
                         <?php do_action('mec_agenda_skin_attribute', $organizer, $location); ?>
                     </div>
                 <?php endif; ?>
             <?php } ?>
         </div>
+        <div class="clearfix"></div>
     </div>
 <?php endforeach;

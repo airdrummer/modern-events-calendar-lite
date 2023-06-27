@@ -72,7 +72,7 @@ class SendEmail{
 
         $subject = $this->get_notification_settings( 'subject' );
 
-        return !is_null($subject) ? esc_html__($subject, 'modern-events-calendar-lite') : $default;
+        return !is_null($subject) ? esc_html__($subject, 'modern-events-calendar-lite' ) : $default;
     }
 
     public function get_content( $default = '' ){
@@ -99,6 +99,13 @@ class SendEmail{
     public function get_send_to_organizer_status(){
 
         $status = $this->get_notification_settings( 'send_to_organizer' );
+
+        return (bool)$status ;
+    }
+
+    public function get_send_to_event_author_status(){
+
+        $status = $this->get_notification_settings( 'send_to_author' );
 
         return (bool)$status ;
     }
@@ -150,6 +157,20 @@ class SendEmail{
 
         $organizer_id = get_post_meta($this->event_id, 'mec_organizer_id', true);
         $email = get_term_meta($organizer_id, 'email', true);
+
+        return trim($email) ? $email : false;
+    }
+
+    public function get_event_author_email(){
+
+        $email = '';
+        $event = get_post( $this->event_id );
+        $author_id = isset( $event->post_author ) ? $event->post_author : 0;
+        $user = $author_id ? get_user_by( 'id', $author_id ) : false;
+        if( is_a( $user, '\WP_User' ) ) {
+
+            $email = isset( $user->user_email ) ? $user->user_email : '';
+        }
 
         return trim($email) ? $email : false;
     }
@@ -213,6 +234,15 @@ class SendEmail{
             if(!empty($organizer_email)){
 
                 $users_or_emails[] = $organizer_email;
+            }
+        }
+
+        if($this->get_send_to_event_author_status()){
+
+            $author_email = $this->get_event_author_email();
+            if(!empty($author_email)){
+
+                $users_or_emails[] = $author_email;
             }
         }
 
@@ -384,7 +414,7 @@ class SendEmail{
         foreach($speaker_id as $speaker) $speaker_name[] = isset($speaker->name) ? $speaker->name : null;
 
         $content = str_replace('%%event_speaker_name%%', (isset($speaker_name) ? implode(', ', $speaker_name): ''), $content);
-        $content = str_replace('%%event_location_name%%', (isset($location->name) ? $location->name : ''), $content);
+        $content = str_replace('%%event_location_name%%', (isset($location->name) ? $location->name : get_term_meta($location_id, 'address', true)), $content);
         $content = str_replace('%%event_location_address%%', get_term_meta($location_id, 'address', true), $content);
 
         $additional_locations_name = '';

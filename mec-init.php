@@ -56,6 +56,7 @@ class MEC
     public function init()
     {
         // Import MEC Factory, This file will do the rest
+        /** @var MEC_factory $factory */
         $factory = MEC::getInstance('app.libraries.factory');
 
         // Deactivate MEC Lite when Pro is installed
@@ -88,6 +89,9 @@ class MEC
 
         // Register MEC Widget
         $factory->action('widgets_init', array($factory, 'load_widgets'));
+
+        // MEC Active Theme Body Class
+        $factory->action('body_class', array($factory, 'mec_active_theme_body_class'));
 
         // MEC Body Class
         $factory->action('body_class', array($factory, 'mec_body_class'));
@@ -131,7 +135,7 @@ class MEC
     public static function getInstance($file, $class_name = '')
     {
         /** Generate class name if not provided **/
-        if(!trim($class_name))
+        if(is_null($class_name) or (is_string($class_name) and !trim($class_name)))
         {
             $ex = explode('.', $file);
             $file_name = end($ex);
@@ -236,7 +240,7 @@ class MEC
         else
         {
             // Get current locale
-            $locale = apply_filters('plugin_locale', get_locale(), 'modern-events-calendar-lite');
+            $locale = apply_filters('plugin_locale', get_locale(), 'modern-events-calendar-lite' );
             
             // WordPress language directory /wp-content/languages/mec-en_US.mo
             $language_filepath = WP_LANG_DIR.DS.'mec-'.$locale.'.mo';

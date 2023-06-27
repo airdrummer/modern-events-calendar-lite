@@ -77,6 +77,9 @@ class MEC_skin_tile extends MEC_skins
         // Show "Load More" button or not
         $this->load_more_button = isset($this->skin_options['load_more_button']) ? $this->skin_options['load_more_button'] : true;
 
+        // Pagination
+        $this->pagination = isset($this->skin_options['pagination']) ? $this->skin_options['pagination'] : (!$this->load_more_button ? '0' : 'loadmore');
+
         // Set the ID
         if(!isset($this->atts['id'])) $this->atts['id'] = $this->id;
 
@@ -107,13 +110,13 @@ class MEC_skin_tile extends MEC_skins
         $this->image_popup = isset($this->skin_options['image_popup']) ? $this->skin_options['image_popup'] : '0';
 
         // From Widget
-        $this->widget = (isset($this->atts['widget']) and trim($this->atts['widget'])) ? true : false;
+        $this->widget = (isset($this->atts['widget']) and trim($this->atts['widget']));
 
         // From Full Calendar
-        $this->from_full_calendar = (isset($this->skin_options['from_fc']) and trim($this->skin_options['from_fc'])) ? true : false;
+        $this->from_full_calendar = (isset($this->skin_options['from_fc']) and trim($this->skin_options['from_fc']));
 
         // Display Price
-        $this->display_price = (isset($this->skin_options['display_price']) and trim($this->skin_options['display_price'])) ? true : false;
+        $this->display_price = (isset($this->skin_options['display_price']) and trim($this->skin_options['display_price']));
 
         // The count in row
         $this->count = isset($this->skin_options['count']) ? $this->skin_options['count'] : '3';
@@ -151,7 +154,7 @@ class MEC_skin_tile extends MEC_skins
         $this->args['paged'] = $this->paged;
 
         // Sort Options
-        $this->args['orderby'] = 'meta_value_num';
+        $this->args['orderby'] = 'mec_start_day_seconds ID';
         $this->args['order'] = 'ASC';
         $this->args['meta_key'] = 'mec_start_day_seconds';
 
@@ -172,6 +175,24 @@ class MEC_skin_tile extends MEC_skins
 
         // We will extend the end date in the loop
         $this->end_date = $this->start_date;
+
+        // Show Ongoing Events
+        $this->show_ongoing_events = (isset($this->atts['show_only_ongoing_events']) and trim($this->atts['show_only_ongoing_events'])) ? '1' : '0';
+        if($this->show_ongoing_events)
+        {
+            $this->args['mec-show-ongoing-events'] = $this->show_ongoing_events;
+            if((strpos($this->style, 'fluent') === false && strpos($this->style, 'liquid') === false))
+            {
+                $this->maximum_date = $this->start_date;
+            }
+        }
+
+        // Include Ongoing Events
+        $this->include_ongoing_events = (isset($this->atts['show_ongoing_events']) and trim($this->atts['show_ongoing_events'])) ? '1' : '0';
+        if($this->include_ongoing_events) $this->args['mec-include-ongoing-events'] = $this->include_ongoing_events;
+
+        // Auto Month Rotation
+        $this->auto_month_rotation = !isset($this->settings['auto_month_rotation']) || $this->settings['auto_month_rotation'];
     }
 
     /**
@@ -183,7 +204,7 @@ class MEC_skin_tile extends MEC_skins
     {
         if($this->show_only_expired_events)
         {
-            $start = date('Y-m-d H:i:s', current_time('timestamp', 0));
+            $start = date('Y-m-d H:i:s', current_time('timestamp'));
             $end = $this->start_date;
         }
         else
@@ -209,7 +230,7 @@ class MEC_skin_tile extends MEC_skins
         foreach($dates as $date=>$IDs)
         {
             // No Event
-            if(!is_array($IDs) or (is_array($IDs) and !count($IDs))) continue;
+            if(!is_array($IDs) or !count($IDs)) continue;
 
             // Include Available Events
             $this->args['post__in'] = array_unique($IDs);
@@ -347,6 +368,15 @@ class MEC_skin_tile extends MEC_skins
             if(strtotime($date) > strtotime($yesterday)) $date = $yesterday;
         }
 
+        // MEC Next Page
+        if(isset($_REQUEST['mec_next_page']) and trim($_REQUEST['mec_next_page']))
+        {
+            $ex = explode(':', $_REQUEST['mec_next_page']);
+
+            if(strtotime($ex[0])) $date = $ex[0];
+            if(isset($ex[1])) $this->offset = $ex[1];
+        }
+
         $time = strtotime($date);
         return array(date('Y', $time), date('m', $time), date('d', $time));
     }
@@ -362,7 +392,7 @@ class MEC_skin_tile extends MEC_skins
         $apply_sf_date = isset($_REQUEST['apply_sf_date']) ? sanitize_text_field($_REQUEST['apply_sf_date']) : 1;
         $atts = $this->sf_apply(((isset($_REQUEST['atts']) and is_array($_REQUEST['atts'])) ? $this->main->sanitize_deep_array($_REQUEST['atts']) : array()), $this->sf, $apply_sf_date);
 
-        $navigator_click = isset($_REQUEST['navigator_click']) ? (bool) sanitize_text_field($_REQUEST['navigator_click']) : false;
+        $navigator_click = isset($_REQUEST['navigator_click']) && sanitize_text_field($_REQUEST['navigator_click']);
 
         // Initialize the skin
         $this->initialize($atts);
@@ -404,7 +434,7 @@ class MEC_skin_tile extends MEC_skins
                 $this->active_day = $this->year.'-'.$this->month.'-'.$day;
 
                 // If date is not valid then use the first day of month
-                if(!$this->main->validate_date($this->active_day, 'Y-m-d')) $this->active_day = $this->year.'-'.$this->month.'-01';
+                if(!$this->main->validate_date($this->active_day)) $this->active_day = $this->year.'-'.$this->month.'-01';
             }
 
             // We will extend the end date in the loop
@@ -426,6 +456,9 @@ class MEC_skin_tile extends MEC_skins
             // Set active day to current day if not resault
             if(count($this->events)) $this->active_day = key($this->events);
             if($navigator_click) break;
+
+            // Auto Rotation is Disabled
+            if(!$this->auto_month_rotation) break;
 
             $c++;
         }
@@ -458,7 +491,8 @@ class MEC_skin_tile extends MEC_skins
         $this->offset = isset($_REQUEST['mec_offset']) ? sanitize_text_field($_REQUEST['mec_offset']) : 0;
 
         // Apply Maximum Date
-        if($apply_sf_date == 1 and isset($this->sf) and isset($this->sf['month']) and trim($this->sf['month'])) $this->maximum_date = date('Y-m-t', strtotime($this->start_date));
+        $month = (isset($this->sf) && isset($this->sf['month']) && trim($this->sf['month'])) ? $this->sf['month'] : (isset($_REQUEST['mec_month']) ? $_REQUEST['mec_month'] : '');
+        if($apply_sf_date == 1 and trim($month)) $this->maximum_date = date('Y-m-t', strtotime($this->start_date));
 
         // Return the events
         $this->atts['return_only_items'] = true;

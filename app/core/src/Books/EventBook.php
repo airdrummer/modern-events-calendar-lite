@@ -78,6 +78,24 @@ class EventBook extends Singleton {
 		return $bookings_limit;
 	}
 
+	/**
+     * Total User Booking Limit return int | "-1" unlimited
+     *
+     * @param int $event_id
+     * @return int
+     */
+	public function get_user_total_booking_limit($event_id){
+
+		$booking_options = $this->get_booking_options($event_id);
+		$bookings_limit = isset($booking_options['bookings_user_limit']) && (int)$booking_options['bookings_user_limit'] ? (int)$booking_options['bookings_user_limit'] : -1;
+		if(isset($booking_options['bookings_user_limit_unlimited']) && $booking_options['bookings_user_limit_unlimited']){
+
+			$bookings_limit = -1;
+		}
+
+		return $bookings_limit;
+	}
+
     public function get_user_books( $event_id ){
 
         if ( ! is_user_logged_in() ) {
