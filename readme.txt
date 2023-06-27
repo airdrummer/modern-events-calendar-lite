@@ -4,7 +4,7 @@ Donate link: https://webnus.net
 Tags: Event, Events, Calendar, Booking, Schedule, Organizer, Venue
 Requires at least: 4.0.0
 Tested up to: 6.2.2
-Stable tag: 6.10.1
+Stable tag: 6.10.5
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -472,6 +472,17 @@ You can see [plugin documentation](https://webnus.net/dox/modern-events-calendar
 43. WordPress Event Calendar - Daily view(Fluent View Layouts Addon)
 
 == Changelog ==
+= 6.10.5 – 14 June 2023 =
+- Added: Event banner feature.
+- Added: Ability to use WordPress Media window for uploading images in FES when current user has access to media.
+- Added: Feature to set related events manually per each event.
+- Fixed: Issue in displaying all organizers when organizers are changed per occurrence.
+- Fixed: Issue regarding MEC profile shortcode.
+- Fixed: Issue in importing ics files.
+- Fixed: Issue in required radio files.
+- Fixed: Styling issue on list view modern skin social buttons.
+- Fixed: Some PHP notices.
+
 = 6.10.1 – 1 June 2023 =
 - Added: Ability to download the debug log file.
 - Improved: The iCal feed.

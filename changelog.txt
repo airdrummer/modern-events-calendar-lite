@@ -1,4 +1,15 @@
-﻿v 6.10.1 – 1 June 2023
+﻿v 6.10.5 – 14 June 2023
+- Added: Event banner feature.
+- Added: Ability to use WordPress Media window for uploading images in FES when current user has access to media.
+- Added: Feature to set related events manually per each event.
+- Fixed: Issue in displaying all organizers when organizers are changed per occurrence.
+- Fixed: Issue regarding MEC profile shortcode.
+- Fixed: Issue in importing ics files.
+- Fixed: Issue in required radio files.
+- Fixed: Styling issue on list view modern skin social buttons.
+- Fixed: Some PHP notices.
+
+v 6.10.1 – 1 June 2023
 - Added: Ability to download the debug log file.
 - Improved: The iCal feed.
 - Improved: PayPal standard by adding invoice description.
