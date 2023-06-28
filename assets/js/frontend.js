@@ -4599,15 +4599,16 @@ jQuery(window).on('load', function()
         var selector = $(this);
 
         startCountdown();
-        var interval = setInterval(startCountdown, settings.interval);
+        var intervalID = setInterval(startCountdown, settings.interval);
 
         function startCountdown() {
-            var eventDate = Date.parse(settings.date) / 1000;
+            var eventDate   = Date.parse(settings.date) / 1000;
             var currentDate = Math.floor($.now() / 1000);
 
-            if (eventDate <= currentDate) {
+            if (eventDate <= currentDate)
+            {
                 callback.call(this);
-                clearInterval(interval);
+                clearInterval(intervalID);
             }
 
             var seconds = eventDate - currentDate;
@@ -4621,23 +4622,23 @@ jQuery(window).on('load', function()
             var minutes = Math.floor(seconds / 60);
             seconds -= minutes * 60;
 
-            if (days == 1) selector.find(".mec-timeRefDays").text(mecdata.day);
-            else selector.find(".mec-timeRefDays").text(mecdata.days);
-
-            if (hours == 1) selector.find(".mec-timeRefHours").text(mecdata.hour);
-            else selector.find(".mec-timeRefHours").text(mecdata.hours);
-
-            if (minutes == 1) selector.find(".mec-timeRefMinutes").text(mecdata.minute);
-            else selector.find(".mec-timeRefMinutes").text(mecdata.minutes);
-
-            if (seconds == 1) selector.find(".mec-timeRefSeconds").text(mecdata.second);
-            else selector.find(".mec-timeRefSeconds").text(mecdata.seconds);
-
+            selector.find(".mec-timeRefDays").text((days == 1 
+            										? mecdata.day
+            										: mecdata.days));
+            selector.find(".mec-timeRefHours").text((hours == 1
+            										? mecdata.hour
+            										: mecdata.hours));
+			selector.find(".mec-timeRefMinutes").text((minutes == 1
+            										? mecdata.minute
+            										: mecdata.minutes));
+            selector.find(".mec-timeRefSeconds").text((seconds == 1
+													? mecdata.second
+													: mecdata.seconds));
             if (settings.format === "on") {
-                days = (String(days).length >= 2) ? days : "0" + days;
-                hours = (String(hours).length >= 2) ? hours : "0" + hours;
-                minutes = (String(minutes).length >= 2) ? minutes : "0" + minutes;
-                seconds = (String(seconds).length >= 2) ? seconds : "0" + seconds;
+                days    = padStart(2, String(days));
+                hours   = padStart(2, String(hours));
+                minutes = padStart(2, String(minutes));
+                seconds = padStart(2, String(seconds)):
             }
 
             if (!isNaN(eventDate)) {
@@ -4646,7 +4647,7 @@ jQuery(window).on('load', function()
                 selector.find(".mec-minutes").text(minutes);
                 selector.find(".mec-seconds").text(seconds);
             } else {
-                clearInterval(interval);
+                clearInterval(intervalID);
             }
         }
     };
@@ -6905,11 +6906,11 @@ function mec_toggle_shortcode_pagination(shortcode_id, method)
         var $time_remained = $(this).find($('.mec-progress-bar-time-remained'));
 
         startProgress();
-        var interval = setInterval(startProgress, 1000);
+        var intervalID = setInterval(startProgress, 1000);
 
         function startProgress() {
             if(value >= max) {
-                clearInterval(interval);
+                clearInterval(intervalID);
                 return;
             }
             value += 1;
