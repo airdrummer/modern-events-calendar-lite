@@ -717,6 +717,10 @@ jQuery(window).on('load', function()
                 $(settings.sf.container).addClass('mec-skin-search-init');
             }
 
+            $('.mec-subscribe-to-calendar-btn').on('click', function() {
+                $(this).parent().find('>.mec-subscribe-to-calendar-items').toggle();
+            });
+            
             // Add the onclick event
             $("#mec_skin_" + settings.id + " .mec-totalcal-box .mec-totalcal-view span:not(.mec-fluent-more-views-icon):not(.mec-fluent-more-views-content)").on('click', function (e) {
                 e.preventDefault();
@@ -1016,6 +1020,10 @@ jQuery(window).on('load', function()
                 sed();
             }
 
+            $('.mec-subscribe-to-calendar-btn').on('click', function() {
+                $(this).parent().find('>.mec-subscribe-to-calendar-items').toggle();
+            });
+            
             // Yearly view
             $("#mec_skin_" + settings.id + " .mec-has-event a").on('click', function (e) {
                 e.preventDefault();
@@ -1391,6 +1399,10 @@ jQuery(window).on('load', function()
                 }
             });
 
+            $('.mec-subscribe-to-calendar-btn').on('click', function() {
+                $(this).parent().find('>.mec-subscribe-to-calendar-items').toggle();
+            });
+
             mec_tooltip();
 
             // Single Event Method
@@ -1575,6 +1587,10 @@ jQuery(window).on('load', function()
                 }
             });
 
+            $('.mec-subscribe-to-calendar-btn').on('click', function() {
+                $(this).parent().find('>.mec-subscribe-to-calendar-items').toggle();
+            });
+            
             // Single Event Method
             if (settings.sed_method != '0') {
                 sed();
@@ -1837,6 +1853,10 @@ jQuery(window).on('load', function()
                 var today = $(this).data('day-id');
                 setToday(today);
                 mecFluentCustomScrollbar();
+            });
+
+            $('.mec-subscribe-to-calendar-btn').on('click', function() {
+                $(this).parent().find('>.mec-subscribe-to-calendar-items').toggle();
             });
 
             // Single Event Method
@@ -5291,7 +5311,7 @@ function mec_focus_week(id, skin) {
         }
 
         // FAQ
-        $('.mec-faq-toggle-icon').on('click', function()
+        $(document).on('click', '.mec-faq-toggle-icon', function()
         {
             console.log("Clicked", $(this), $(this).parent());
             $(this).parent().toggleClass('close');

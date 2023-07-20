@@ -1680,16 +1680,11 @@ class FormBuilder extends Singleton {
         <div class="mec-meta-box-fields mec-event-tab-content mec-fes-related-events" id="mec-event-related-events">
             <h4><?php esc_html_e('Related Events', 'modern-events-calendar-lite'); ?></h4>
             <div id="mec_meta_box_related_events_options">
-                <ul>
-                    <?php foreach($all_events as $all_event_id): if($all_event_id == $post->ID) continue; $title = get_post($all_event_id)->post_title; ?>
-                    <li>
-                        <label>
-                            <input type="checkbox" name="mec[related_events][]" value="<?php echo esc_attr($all_event_id); ?>" <?php echo in_array($all_event_id, $related_events) ? 'checked="checked"' : ''; ?> />
-                            <?php echo esc_html($title); ?>
-                        </label>
-                    </li>
-                    <?php endforeach; ?>
-                </ul>
+                <select id="mec_related_events" class="mec-related_events-dropdown-select2" name="mec[related_events][]" multiple="multiple">
+                <?php foreach($all_events as $all_event_id): if($all_event_id == $post->ID) continue; $title = get_post($all_event_id)->post_title; ?>
+                    <option value="<?php echo esc_attr($all_event_id); ?>" <?php echo in_array($all_event_id, $related_events) ? 'selected="selected"' : ''; ?>><?php echo esc_html($title); ?></option>
+                <?php endforeach; ?>
+                </select>
             </div>
         </div>
         <?php
@@ -1701,8 +1696,9 @@ class FormBuilder extends Singleton {
         if(!is_array($banner_options)) $banner_options = [];
 
         $mec_banner_status = isset($banner_options['status']) && $banner_options['status'];
-        $mec_banner_color = isset($banner_options['color']) ? $banner_options['color'] : '';
-        $mec_banner_image = isset($banner_options['image']) ? $banner_options['image'] : '';
+        $mec_banner_color = $banner_options['color'] ?? '';
+        $mec_banner_image = $banner_options['image'] ?? '';
+        $mec_banner_featured_image = $banner_options['use_featured_image'] ?? 0;
         ?>
         <div class="mec-meta-box-fields mec-event-tab-content mec-fes-event-banner" id="mec-event-banner">
             <h4><?php esc_html_e('Event Banner', 'modern-events-calendar-lite'); ?></h4>
@@ -1717,7 +1713,14 @@ class FormBuilder extends Singleton {
                     <label for="mec_banner_color"><?php esc_html_e("Background Color", 'modern-events-calendar-lite'); ?></label>
                     <input type="<?php echo is_admin() ? 'text' : 'color'; ?>" name="mec[banner][color]" class="mec-color-picker" value="<?php echo esc_attr($mec_banner_color); ?>" id="mec_banner_color" />
                 </div>
-                <div class="mec-form-row mec-thumbnail-row">
+                <div class="mec-form-row">
+                    <input type="hidden" name="mec[banner][use_featured_image]" value="0">
+                    <label>
+                        <input type="checkbox" name="mec[banner][use_featured_image]" value="1" onchange="jQuery('#mec_event_banner_thumbnail_options').toggleClass('w-hidden');" <?php echo $mec_banner_featured_image ? 'checked' : ''; ?>>
+                        <?php esc_html_e('Use featured image as banner image', 'modern-events-calendar-lite'); ?>
+                    </label>
+                </div>
+                <div class="mec-form-row mec-thumbnail-row <?php echo $mec_banner_featured_image ? 'w-hidden' : ''; ?>" id="mec_event_banner_thumbnail_options">
                     <div id="mec_banner_thumbnail_img">
                         <?php echo (trim($mec_banner_image) ? '<img src="'.esc_attr($mec_banner_image).'" style="max-width: 100%;" />' : ''); ?>
                     </div>

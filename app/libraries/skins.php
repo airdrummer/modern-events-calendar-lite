@@ -239,6 +239,7 @@ class MEC_skins extends MEC_base
         if( 'single' === $this->skin ){
 
             $single_style = isset($settings['single_single_style']) ? $settings['single_single_style'] : '';
+            $single_style = apply_filters( 'mec_filter_single_style', $single_style );
             $filtered_path = apply_filters('mec_get_skin_tpl_path', $this->skin, $single_style, $path);
         }else{
 
@@ -2394,5 +2395,35 @@ class MEC_skins extends MEC_base
 
         // Powered By Feature
         return '<div class="mec-credit-url">'.sprintf(esc_html__('Powered by %s', 'modern-events-calendar-lite'), '<a href="https://webnus.net/modern-events-calendar/" rel="nofollow noopener sponsored" target="_blank">Modern Events Calendar</a>').'</div>';
+    }
+
+    /**
+     * Subscribe + To Calendar
+     *
+     * @return string
+     */
+    public function subscribe_to_calendar()
+    {
+        if($this->from_full_calendar) return '';
+
+        $status = isset($this->settings['ical_feed_subscribe_to_calendar']) && $this->settings['ical_feed_subscribe_to_calendar'];
+        if(!$status) return '';
+
+        $base_url =  trim($this->main->URL('site'), '/ ');
+
+        $webcal_base_url =  str_replace(array('http://', 'https://'), 'webcal://', $base_url);
+        $webcal_feed_url = $webcal_base_url . '/?mec-ical-feed=1';
+
+        $feed_url = $base_url . '/?mec-ical-feed=1';
+        $outlook = 'owa?path=/calendar/action/compose&rru=addsubscription&url=' . $feed_url . '&name=' .  get_bloginfo('name') . ' ' . get_the_title($this->id);
+
+        return '<div class="mec-subscribe-to-calendar-container">
+        <button class="mec-subscribe-to-calendar-btn">' . __('Add to calendar', 'modern-events-calendar-lite') . '</button>
+        <div class="mec-subscribe-to-calendar-items" style="display: none">' . 
+        '<a href="https://www.google.com/calendar/render?cid=' . $webcal_feed_url . '">' . __('Google Calendar', 'modern-events-calendar-lite') . '</a>' .
+        '<a href="' . $webcal_feed_url . '">' . __('iCalendar', 'modern-events-calendar-lite') . '</a>' .
+        '<a href="https://outlook.office.com/' . $outlook . '">' . __('Outlook 365', 'modern-events-calendar-lite') . '</a>' .
+        '<a href="https://outlook.live.com/' . $outlook . '">' .__('Outlook Live', 'modern-events-calendar-lite'). '</a>' . 
+        '<a href="' . $feed_url . '">' . __('Export .ics file', 'modern-events-calendar-lite') . '</a></div></div>';
     }
 }

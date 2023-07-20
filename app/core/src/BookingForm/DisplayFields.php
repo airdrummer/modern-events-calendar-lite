@@ -304,7 +304,7 @@ class DisplayFields {
 
 					case 'p':
 
-						$input_html = '<p>' . do_shortcode( stripslashes( $field['content'] ) ) . '</p>';
+						$input_html = '<p>' . do_shortcode( stripslashes( $field['content'] ?? '' ) ) . '</p>';
 
 						break;
 				}
@@ -321,6 +321,13 @@ class DisplayFields {
 				echo $is_dashboard ? '<div class="mec-col-2">'.\MEC_kses::form($input_html).'</div>' : \MEC_kses::form($input_html);
 				?>
 			</li>
+
+			<?php
+			if( $single_row ){
+
+				echo '<span class="clearfix"></span>';
+			}
+			?>
 		<?php endforeach;
 
 	}

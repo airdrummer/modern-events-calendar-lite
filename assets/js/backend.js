@@ -262,6 +262,13 @@ jQuery(document).ready(function($)
     jQuery(".mec-additional-organizers select").select2();
     jQuery("#mec_organizer_id").select2();
 
+    // Related Events Select2
+    jQuery(".mec-related_events-dropdown-select2").select2(
+        {
+            closeOnSelect: false,
+        }
+    );
+
     // Add shortcode select2
     jQuery(".mec-create-shortcode-tab-content select").select2();
 

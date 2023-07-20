@@ -3734,6 +3734,7 @@ class MEC_main extends MEC_base
 
     /**
      * Generates ical output
+     * @throws Exception
      * @author Webnus <info@webnus.net>
      */
     public function ical()
@@ -3823,12 +3824,13 @@ class MEC_main extends MEC_base
 
     /**
      * Returns iCal export for one event
-     * @author Webnus <info@webnus.net>
      * @param int $event_id
      * @param string $occurrence
      * @param string $occurrence_time
      * @param bool $start_from_beginning
      * @return string
+     * @throws Exception
+     * @author Webnus <info@webnus.net>
      */
     public function ical_single($event_id, $occurrence = '', $occurrence_time = '', $start_from_beginning = false)
     {
@@ -3853,7 +3855,10 @@ class MEC_main extends MEC_base
             // Event Dates
             $dates = $this->get_event_next_occurrences($event, $occurrence, 2, $occurrence_time);
 
-            $date = isset($dates[0]) ? $dates[0] : array();
+            $date = $dates[0] ?? array();
+
+            if($date['start']['hour'] == '0' && $date['start']['ampm'] == 'AM') $date['start']['hour'] = 12;
+            if($date['end']['hour'] == '0' && $date['end']['ampm'] == 'AM') $date['end']['hour'] = 12;
 
             $start_time_string = isset($date['start']) ? sprintf("%02d", $date['start']['hour']).':'.sprintf("%02d", $date['start']['minutes']).' '.$date['start']['ampm'] : '';
             $end_time_string = isset($date['end']) ? sprintf("%02d", $date['end']['hour']).':'.sprintf("%02d", $date['end']['minutes']).' '.$date['end']['ampm'] : '';
@@ -3910,7 +3915,7 @@ class MEC_main extends MEC_base
 
         // Organizer
         $organizer_id = $this->get_master_organizer_id($event->ID, $start_time);
-        $organizer = isset($event->organizers[$organizer_id]) ? $event->organizers[$organizer_id] : array();
+        $organizer = $event->organizers[$organizer_id] ?? array();
         $organizer_name = (isset($organizer['name']) and trim($organizer['name'])) ? $organizer['name'] : NULL;
         $organizer_email = (isset($organizer['email']) and trim($organizer['email'])) ? $organizer['email'] : NULL;
 
@@ -3927,7 +3932,7 @@ class MEC_main extends MEC_base
 
         // Location
         $location_id = $this->get_master_location_id($event->ID, $start_time);
-        $location = isset($event->locations[$location_id]) ? $event->locations[$location_id] : array();
+        $location = $event->locations[$location_id] ?? array();
         $address = ((isset($location['address']) and trim($location['address'])) ? $location['address'] : (isset($location['name']) ? $location['name'] : ''));
 
         if(trim($address) != '') $ical .= "LOCATION:".$address.$crlf;
@@ -4000,7 +4005,7 @@ class MEC_main extends MEC_base
 
         // Organizer
         $organizer_id = $this->get_master_organizer_id($event->ID, $start_time);
-        $organizer = isset($event->organizers[$organizer_id]) ? $event->organizers[$organizer_id] : array();
+        $organizer = $event->organizers[$organizer_id] ?? array();
         $organizer_name = (isset($organizer['name']) and trim($organizer['name'])) ? $organizer['name'] : NULL;
         $organizer_email = (isset($organizer['email']) and trim($organizer['email'])) ? $organizer['email'] : NULL;
 
@@ -4017,7 +4022,7 @@ class MEC_main extends MEC_base
 
         // Location
         $location_id = $this->get_master_location_id($event->ID, $start_time);
-        $location = isset($event->locations[$location_id]) ? $event->locations[$location_id] : array();
+        $location = $event->locations[$location_id] ?? array();
         $address = ((isset($location['address']) and trim($location['address'])) ? $location['address'] : (isset($location['name']) ? $location['name'] : ''));
 
         if(trim($address) != '') $ical .= "LOCATION:".$address.$crlf;
@@ -4055,11 +4060,11 @@ class MEC_main extends MEC_base
         $render = $this->getRender();
         $event = $render->data($event_id);
 
-        $start_time = (isset($timestamps[0]) ? $timestamps[0] : strtotime(get_the_date($book_id)));
-        $end_time = (isset($timestamps[1]) ? $timestamps[1] : strtotime(get_the_date($book_id)));
+        $start_time = ($timestamps[0] ?? strtotime(get_the_date($book_id)));
+        $end_time = ($timestamps[1] ?? strtotime(get_the_date($book_id)));
 
         $location_id = $this->get_master_location_id($event->ID, $start_time);
-        $location = isset($event->locations[$location_id]) ? $event->locations[$location_id] : array();
+        $location = $event->locations[$location_id] ?? array();
         $address = (isset($location['address']) and trim($location['address'])) ? $location['address'] : (isset($location['name']) ? $location['name'] : '');
 
         $gmt_offset_seconds = $this->get_gmt_offset_seconds($start_time, $event);
@@ -5403,7 +5408,7 @@ class MEC_main extends MEC_base
             $timezone = new DateTimeZone($this->get_timezone($event));
 
             // Convert to Date
-            if(is_numeric($date)) $date = date('Y-m-d', $date);
+            if(is_numeric($date)) $date = date('Y-m-d H:i:s', $date);
 
             $target = new DateTime($date, $timezone);
             return $timezone->getOffset($target);

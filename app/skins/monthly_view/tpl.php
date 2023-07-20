@@ -151,6 +151,8 @@ do_action('mec_monthly_skin_head');
         <?php echo MEC_kses::full($events_side . $div_end_topsec . $div_footer); ?>
     </div>
 
+    <?php echo $this->subscribe_to_calendar(); ?>
+    
     <?php echo $this->display_credit_url(); ?>
 
 </div>

@@ -52,29 +52,30 @@ class MEC_single_widget extends WP_Widget
         // General Settings
         $settings = $main->get_settings();
 
-        $layout = (isset($settings['single_single_style']) ? $settings['single_single_style'] : 'modern');
+        $layout = ($settings['single_single_style'] ?? 'modern');
         echo MEC_kses::full($this->get_layout_output($layout, $settings));
 	}
 
     public function get_layout_output($layout, $settings)
     {
-        $single = (isset($GLOBALS['mec-widget-single']) ? $GLOBALS['mec-widget-single'] : NULL);
-        $event = (isset($GLOBALS['mec-widget-event']) ? $GLOBALS['mec-widget-event'] : NULL);
+        $single = $GLOBALS['mec-widget-single'] ?? NULL;
+        $event = $GLOBALS['mec-widget-event'] ?? NULL;
 
         if(!$single or !$event) return NULL;
 
-        $occurrence = (isset($GLOBALS['mec-widget-occurrence']) ? $GLOBALS['mec-widget-occurrence'] : NULL);
-        $occurrence_full = (isset($GLOBALS['mec-widget-occurrence_full']) ? $GLOBALS['mec-widget-occurrence_full'] : NULL);
-        $occurrence_end_date = (isset($GLOBALS['mec-widget-occurrence_end_date']) ? $GLOBALS['mec-widget-occurrence_end_date'] : NULL);
-        $occurrence_end_full = (isset($GLOBALS['mec-widget-occurrence_end_full']) ? $GLOBALS['mec-widget-occurrence_end_full'] : NULL);
-        $cost = (isset($GLOBALS['mec-widget-cost']) ? $GLOBALS['mec-widget-cost'] : NULL);
-        $more_info = (isset($GLOBALS['mec-widget-more_info']) ? $GLOBALS['mec-widget-more_info'] : NULL);
-        $location_id = (isset($GLOBALS['mec-widget-location_id']) ? $GLOBALS['mec-widget-location_id'] : NULL);
-        $location = (isset($GLOBALS['mec-widget-location']) ? $GLOBALS['mec-widget-location'] : NULL);
-        $organizer_id = (isset($GLOBALS['mec-widget-organizer_id']) ? $GLOBALS['mec-widget-organizer_id'] : NULL);
-        $organizer = (isset($GLOBALS['mec-widget-organizer']) ? $GLOBALS['mec-widget-organizer'] : NULL);
-        $more_info_target = (isset($GLOBALS['mec-widget-more_info_target']) ? $GLOBALS['mec-widget-more_info_target'] : NULL);
-        $more_info_title = (isset($GLOBALS['mec-widget-more_info_title']) ? $GLOBALS['mec-widget-more_info_title'] : NULL);
+        $occurrence = $GLOBALS['mec-widget-occurrence'] ?? NULL;
+        $occurrence_full = $GLOBALS['mec-widget-occurrence_full'] ?? NULL;
+        $occurrence_end_date = $GLOBALS['mec-widget-occurrence_end_date'] ?? NULL;
+        $occurrence_end_full = $GLOBALS['mec-widget-occurrence_end_full'] ?? NULL;
+        $cost = $GLOBALS['mec-widget-cost'] ?? NULL;
+        $more_info = $GLOBALS['mec-widget-more_info'] ?? NULL;
+        $location_id = $GLOBALS['mec-widget-location_id'] ?? NULL;
+        $location = $GLOBALS['mec-widget-location'] ?? NULL;
+        $organizer_id = $GLOBALS['mec-widget-organizer_id'] ?? NULL;
+        $organizer = $GLOBALS['mec-widget-organizer'] ?? NULL;
+        $more_info_target = $GLOBALS['mec-widget-more_info_target'] ?? NULL;
+        $more_info_title = $GLOBALS['mec-widget-more_info_title'] ?? NULL;
+        $banner_module = $GLOBALS['mec-banner_module'] ?? 0;
 
         $path = MEC::import('app.widgets.single.'.$layout, true, true);
 

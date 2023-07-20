@@ -70,7 +70,7 @@
     border-radius: 2px;
     box-shadow: 0 2px 1px rgba(0 ,0 ,0 , 8%);
 }
-
+/* 
 .mec-custom-form-box .button,
 .mec-custom-form-box a.button:not(.owl-dot),
 .mec-custom-form-box button:not(.owl-dot):not(.gm-control-active),
@@ -97,7 +97,7 @@
     -webkit-transition: all .21s ease;
     -moz-transition: all .21s ease;
     transition: all .21s ease;
-}
+} */
 
 .mec-custom-form-box input[type=checkbox],
 .mec-custom-form-box .mec-form-row input[type=checkbox],

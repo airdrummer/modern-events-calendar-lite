@@ -705,7 +705,7 @@ class MEC_feature_events extends MEC_base
                     </div>
                     <div class="mec-col-6 mec-time-picker <?php echo ($allday == 1) ? 'mec-util-hidden' : ''; ?>">
                         <?php $this->main->timepicker(array(
-                            'method' => (isset($this->settings['time_format']) ? $this->settings['time_format'] : 12),
+                            'method' => $this->settings['time_format'] ?? 12,
                             'time_hour' => $start_time_hour,
                             'time_minutes' => $start_time_minutes,
                             'time_ampm' => $start_time_ampm,
@@ -725,7 +725,7 @@ class MEC_feature_events extends MEC_base
                     </div>
                     <div class="mec-col-6 mec-time-picker <?php echo ($allday == 1) ? 'mec-util-hidden' : ''; ?>">
                         <?php $this->main->timepicker(array(
-                            'method' => (isset($this->settings['time_format']) ? $this->settings['time_format'] : 12),
+                            'method' => $this->settings['time_format'] ?? 12,
                             'time_hour' => $end_time_hour,
                             'time_minutes' => $end_time_minutes,
                             'time_ampm' => $end_time_ampm,
@@ -1995,7 +1995,8 @@ class MEC_feature_events extends MEC_base
                 $start_time_hour -= 12;
                 $start_time_ampm = 'PM';
             }
-            elseif($start_time_hour == 0)
+
+            if($start_time_hour == 0)
             {
                 $start_time_hour = 12;
                 $start_time_ampm = 'AM';
@@ -2008,7 +2009,8 @@ class MEC_feature_events extends MEC_base
                 $end_time_hour -= 12;
                 $end_time_ampm = 'PM';
             }
-            elseif($end_time_hour == 0)
+
+            if($end_time_hour == 0)
             {
                 $end_time_hour = 12;
                 $end_time_ampm = 'AM';
@@ -2047,8 +2049,8 @@ class MEC_feature_events extends MEC_base
         }
 
         // Repeat Options
-        $repeat = isset($date['repeat']) ? $date['repeat'] : array();
-        $certain_weekdays = isset($repeat['certain_weekdays']) ? $repeat['certain_weekdays'] : array();
+        $repeat = $date['repeat'] ?? array();
+        $certain_weekdays = $repeat['certain_weekdays'] ?? array();
 
         $repeat_status = isset($repeat['status']) ? 1 : 0;
         $repeat_type = ($repeat_status and isset($repeat['type'])) ? $repeat['type'] : '';

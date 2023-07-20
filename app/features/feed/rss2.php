@@ -32,7 +32,7 @@ do_action('rss_tag_pre', 'rss2');
 	<sy:updateFrequency><?php echo apply_filters('rss_update_frequency', 1); ?></sy:updateFrequency>
 	<?php do_action('rss2_head'); ?>
     
-    <?php foreach($this->events as $date=>$events): foreach($events as $event): ?>
+    <?php foreach($this->events as $date=>$events): foreach($events as $event): $GLOBALS['post'] = get_post($event->ID) ?>
     <?php
         $timezone = $this->main->get_timezone($event);
         $tz = ($timezone ? new DateTimeZone($timezone) : NULL);

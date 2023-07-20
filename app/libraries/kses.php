@@ -220,6 +220,7 @@ class MEC_kses extends MEC_base
     public static function styles($styles)
     {
         $styles[] = 'display';
+        $styles[] = 'opacity';
 
         return $styles;
     }

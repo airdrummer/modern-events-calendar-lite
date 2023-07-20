@@ -15,6 +15,7 @@ use MEC\SingleBuilder\Widgets\EventOrganizers\EventOrganizers;
 /** @var int $location_id */
 /** @var array $organizer */
 /** @var int $organizer_id */
+/** @var boolean $banner_module */
 
 if($this->is_enabled('event_orgnizer') || $this->is_enabled('register_btn')): ?>
     <div class="mec-event-meta mec-color-before mec-frontbox <?php echo ((!$single->main->can_show_booking_module($event) and in_array($organizer_id, array('0', '1')) and !$more_info) ? 'mec-util-hidden' : ''); ?>">
@@ -99,7 +100,7 @@ if($this->is_enabled('event_orgnizer') || $this->is_enabled('register_btn')): ?>
 
         <?php
         // Event Location
-        if($location_id and count($location) and $this->is_enabled('event_location'))
+        if(!$banner_module and $location_id and count($location) and $this->is_enabled('event_location'))
         {
             $single->display_location_widget($event); // Show Location Widget
             $single->show_other_locations($event); // Show Additional Locations

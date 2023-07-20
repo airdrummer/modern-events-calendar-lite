@@ -1,10 +1,10 @@
 <?php
 
-namespace MEC\SingleBuilder\Widgets\SimpleHeader;
+namespace MEC\SingleBuilder\Widgets\EventTrailerUrl;
 
 use MEC\SingleBuilder\Widgets\WidgetBase;
 
-class SimpleHeader extends WidgetBase {
+class EventTrailerUrl extends WidgetBase {
 
 	/**
 	 *  Get HTML Output
@@ -16,8 +16,6 @@ class SimpleHeader extends WidgetBase {
 	 */
 	public function output( $event_id = 0, $atts = array() ){
 
-		$html_tag = $atts['html_tag'] ?? 'h1';
-
 		if( !$event_id ){
 
 			$event_id = $this->get_event_id();
@@ -27,9 +25,12 @@ class SimpleHeader extends WidgetBase {
 			return '';
 		}
 
-		$html = '<' . $html_tag . ' class="mec-single-title">'
-			.get_the_title($event_id).
-		'</' . $html_tag . '>';
+		$single         = new \MEC_skin_single();
+		$event_detail = $this->get_event_detail($event_id);
+
+		$html = '<div class="mec-single-trailer-url">'
+			. $single->display_trailer_url( $event_detail ) .
+		'</div>';
 
 		return $html;
 	}

@@ -15,50 +15,15 @@ use MEC\SingleBuilder\Widgets\EventOrganizers\EventOrganizers;
 /** @var int $location_id */
 /** @var array $organizer */
 /** @var int $organizer_id */
+/** @var boolean $banner_module */
 
 if($this->is_enabled('data_time') || $this->is_enabled('local_time') || $this->is_enabled('event_cost') || $this->is_enabled('more_info') || $this->is_enabled('event_label') || $this->is_enabled('event_location') || $this->is_enabled('event_categories') || $this->is_enabled('event_orgnizer') || $this->is_enabled('register_btn')): ?>
     <div class="mec-event-info-desktop mec-event-meta mec-color-before mec-frontbox">
         <?php
         // Event Date and Time
-        if(isset($event->data->meta['mec_date']['start']) and !empty($event->data->meta['mec_date']['start']) and $this->is_enabled('data_time'))
+        if(!$banner_module and isset($event->data->meta['mec_date']['start']) and !empty($event->data->meta['mec_date']['start']) and $this->is_enabled('data_time'))
         {
-            $midnight_event = $single->main->is_midnight_event($event);
-            ?>
-            <div class="mec-single-event-date">
-                <i class="mec-sl-calendar"></i>
-                <h3 class="mec-date"><?php esc_html_e('Date', 'modern-events-calendar-lite'); ?></h3>
-                <dl>
-                    <?php if($midnight_event): ?>
-                        <dd><abbr class="mec-events-abbr"><?php echo MEC_kses::element($single->main->dateify($event, $single->date_format1)); ?></abbr></dd>
-                    <?php else: ?>
-                        <dd><abbr class="mec-events-abbr"><?php echo MEC_kses::element($single->main->date_label($occurrence_full, $occurrence_end_full, $single->date_format1, ' - ', true, 0, $event)); ?></abbr></dd>
-                    <?php endif; ?>
-                </dl>
-                <?php echo MEC_kses::element($single->main->holding_status($event)); ?>
-            </div>
-
-            <?php do_action( 'mec_single_after_event_date', $event ) ?>
-
-            <?php
-            if(isset($event->data->meta['mec_hide_time']) and $event->data->meta['mec_hide_time'] == '0')
-            {
-                $time_comment = isset($event->data->meta['mec_comment']) ? $event->data->meta['mec_comment'] : '';
-                $allday = isset($event->data->meta['mec_allday']) ? $event->data->meta['mec_allday'] : 0;
-                ?>
-                <div class="mec-single-event-time">
-                    <i class="mec-sl-clock " style=""></i>
-                    <h3 class="mec-time"><?php esc_html_e('Time', 'modern-events-calendar-lite'); ?></h3>
-                    <i class="mec-time-comment"><?php echo (isset($time_comment) ? esc_html($time_comment) : ''); ?></i>
-                    <dl>
-                        <?php if($allday == '0' and isset($event->data->time) and trim($event->data->time['start'])): ?>
-                            <dd><abbr class="mec-events-abbr"><?php echo esc_html($event->data->time['start']); ?><?php echo esc_html(trim($event->data->time['end']) ? ' - '.esc_html($event->data->time['end']) : ''); ?></abbr></dd>
-                        <?php else: ?>
-                            <dd><abbr class="mec-events-abbr"><?php echo esc_html($single->main->m('all_day', esc_html__('All Day' , 'modern-events-calendar-lite'))); ?></abbr></dd>
-                        <?php endif; ?>
-                    </dl>
-                </div>
-                <?php
-            }
+            $single->display_datetime_widget($event, $occurrence_full, $occurrence_end_full);
         }
 
         // Local Time Module
@@ -97,17 +62,7 @@ if($this->is_enabled('data_time') || $this->is_enabled('local_time') || $this->i
         // Event labels
         if(isset($event->data->labels) and !empty($event->data->labels) and $this->is_enabled('event_label'))
         {
-            $mec_items = count($event->data->labels);
-            $mec_i = 0; ?>
-            <div class="mec-single-event-label">
-                <i class="mec-fa-bookmark-o"></i>
-                <h3 class="mec-cost"><?php echo esc_html($single->main->m('taxonomy_labels', esc_html__('Labels', 'modern-events-calendar-lite'))); ?></h3>
-                <?php foreach($event->data->labels as $labels=>$label) :
-                    $seperator = (++$mec_i === $mec_items ) ? '' : ',';
-                    echo '<dl><dd style="color:' . esc_attr($label['color']) . '">' . esc_html($label["name"] . $seperator) . '</dd></dl>';
-                endforeach; ?>
-            </div>
-            <?php
+            $single->display_labels_widget($event);
         }
         ?>
 
@@ -117,7 +72,7 @@ if($this->is_enabled('data_time') || $this->is_enabled('local_time') || $this->i
 
         <?php
         // Event Location
-        if($location_id and count($location) and $this->is_enabled('event_location'))
+        if(!$banner_module and $location_id and count($location) and $this->is_enabled('event_location'))
         {
             $single->display_location_widget($event); // Show Location Widget
             $single->show_other_locations($event); // Show Additional Locations

@@ -144,6 +144,9 @@ class MEC_feature_feed extends MEC_base
         return $excerpt;
     }
 
+    /**
+     * @throws Exception
+     */
     public function ical()
     {
         $ical_feed = (isset($_GET['mec-ical-feed']) and sanitize_text_field($_GET['mec-ical-feed']));

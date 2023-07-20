@@ -10,6 +10,7 @@ defined('MECEXEC') or die();
 /** @var string $uniqueid **/
 /** @var bool $display_progress_bar **/
 /** @var array $tickets **/
+/** @var array $all_dates **/
 
 $event_id = $event->ID;
 $requested_event_id = $event->requested_id ?? $event_id;
@@ -20,7 +21,15 @@ $bfixed_fields = \MEC\Base::get_main()->get_bfixed_fields($event_id, $translated
 $custom_view_fields = apply_filters('mec_have_custom_view_fields', false, $bfixed_fields, 'booking_fixed_fields', $event_id);
 if( !$custom_view_fields ) {
 
-    \MEC\BookingForm\Attendees::output( $event, $date, $tickets, $reg_fields, $bfixed_fields, $uniqueid );
+    \MEC\BookingForm\Attendees::output(
+        $event,
+        $date,
+        $tickets,
+        $reg_fields,
+        $bfixed_fields,
+        $uniqueid,
+        $all_dates
+    );
 }else{
 
     do_action(

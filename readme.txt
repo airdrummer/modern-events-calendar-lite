@@ -472,6 +472,23 @@ You can see [plugin documentation](https://webnus.net/dox/modern-events-calendar
 43. WordPress Event Calendar - Daily view(Fluent View Layouts Addon)
 
 == Changelog ==
+= 6.11.0 – 20 July 2023 =
+- Added: Subscribe to Calendar feature
+- Improved: Event banner feature
+- Improved: Related events
+- Fixed: Import recurring events from TEC plugin
+- Fixed: Issue in filtering events in full calendar when descending order is enabled for list and grid
+- Fixed: Two issues in lite version regarding displaying credit message and load more button in backend
+- Fixed: Issue in RSS feed regarding event featured image
+- Fixed: Issue in FAQ module in modal method
+- Fixed: Issue in multiple date bookings
+- Fixed: Issue regarding security captcha in modal windows
+- Fixed: Issue in sending event date & times to Google calendar and including in ical
+- Fixed: Issue in getting UTC offset
+- Fixed: MEC Profile responsive issue
+- Fixed: Timetable - Clean skin responsive issue
+- Fixed: Minor styling issues
+
 = 6.10.5 – 14 June 2023 =
 - Added: Event banner feature.
 - Added: Ability to use WordPress Media window for uploading images in FES when current user has access to media.

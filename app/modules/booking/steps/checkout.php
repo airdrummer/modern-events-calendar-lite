@@ -70,10 +70,10 @@ $paid_booking = !$free_booking;
 
     <?php if($display_progress_bar): ?>
         <ul class="mec-booking-progress-bar">
-            <li class="mec-booking-progress-bar-date-and-ticket mec-active"><?php esc_html_e('Date & Ticket', 'modern-events-calendar-lite'); ?></li>
-            <li class="mec-booking-progress-bar-attendee-info mec-active"><?php esc_html_e('Attendee Info', 'modern-events-calendar-lite'); ?></li>
-            <li class="mec-booking-progress-bar-payment mec-active"><?php esc_html_e('Payment', 'modern-events-calendar-lite'); ?></li>
-            <li class="mec-booking-progress-bar-complete"><?php esc_html_e('Complete', 'modern-events-calendar-lite'); ?></li>
+            <li class="mec-booking-progress-bar-date-and-ticket mec-active"><span class="progress-index"><?php esc_html_e('1', 'modern-events-calendar-lite'); ?></span><?php esc_html_e('Select Ticket', 'modern-events-calendar-lite'); ?></li>
+            <li class="mec-booking-progress-bar-attendee-info mec-active"><span class="progress-index"><?php esc_html_e('2', 'modern-events-calendar-lite'); ?></span><?php esc_html_e('Attendees', 'modern-events-calendar-lite'); ?></li>
+            <li class="mec-booking-progress-bar-payment mec-active"><span class="progress-index"><?php esc_html_e('3', 'modern-events-calendar-lite'); ?></span><?php esc_html_e('Payment', 'modern-events-calendar-lite'); ?></li>
+            <li class="mec-booking-progress-bar-complete"><span class="progress-index"><?php esc_html_e('4', 'modern-events-calendar-lite'); ?></span><?php esc_html_e('Confirmation', 'modern-events-calendar-lite'); ?></li>
         </ul>
     <?php else: ?>
         <h4><?php esc_html_e('Checkout', 'modern-events-calendar-lite'); ?></h4>

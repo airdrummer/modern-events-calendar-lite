@@ -183,4 +183,5 @@ do_action('mec_full_skin_head');
         <?php echo MEC_kses::full($this->load_skin($this->default_view)); ?>
     </div>
 
+    <?php echo $this->subscribe_to_calendar(); ?>
 </div>

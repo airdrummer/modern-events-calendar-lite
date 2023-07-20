@@ -279,7 +279,7 @@ class MEC_skin_grid extends MEC_skins
         {
             $apply_sf_date = isset($_REQUEST['apply_sf_date']) ? sanitize_text_field($_REQUEST['apply_sf_date']) : 0;
             $month = (isset($this->sf) && isset($this->sf['month']) && trim($this->sf['month'])) ? $this->sf['month'] : (isset($_REQUEST['mec_month']) ? $_REQUEST['mec_month'] : '');
-            if($apply_sf_date == 1 and trim($month)) $this->maximum_date = date('Y-m-t', strtotime($this->start_date));
+            if($apply_sf_date == 1 and trim($month) and $this->order_method === 'ASC') $this->maximum_date = date('Y-m-t', strtotime($this->start_date));
         }
 
         // Found Events
@@ -545,7 +545,7 @@ class MEC_skin_grid extends MEC_skins
 
         // Apply Maximum Date
         $month = (isset($this->sf) && isset($this->sf['month']) && trim($this->sf['month'])) ? $this->sf['month'] : (isset($_REQUEST['mec_month']) ? $_REQUEST['mec_month'] : '');
-        if($apply_sf_date == 1 and trim($month)) $this->maximum_date = date('Y-m-t', strtotime($this->start_date));
+        if($apply_sf_date == 1 and trim($month) and $this->order_method === 'ASC') $this->maximum_date = date('Y-m-t', strtotime($this->start_date));
 
         // Return the events
         $this->atts['return_items'] = true;

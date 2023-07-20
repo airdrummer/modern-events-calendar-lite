@@ -646,7 +646,8 @@ class Transaction {
 		$gateway = $this->get_gateway();
 		$gateway_options = $this->get_gateway_options();
 
-		$can_use_mec_fees = $disabled_fees_for_gateway;
+		$can_use_mec_fees = !$disabled_fees_for_gateway;
+		$can_use_woo_fees = false;
 
 		switch( $gateway ) {
 
@@ -658,12 +659,6 @@ class Transaction {
 				$can_use_woo_fees = $use_wc_taxes;
 				$can_use_mec_fees = ( !$disabled_fees_for_gateway && $use_mec_taxes );
 				break;
-			default:
-
-				$can_use_mec_fees = $disabled_fees_for_gateway;
-				$can_use_woo_fees = false;
-				break;
-
 		}
 
 		if( $can_use_mec_fees ) {
@@ -688,9 +683,8 @@ class Transaction {
 			return $fee_details;
 		}
 
-		$tickets_amount = $ticket['tickets_amount'] ?? 0;
 		$tickets_count = $ticket['count'] ?? 1;
-		$variations_amount = $ticket['variations_amount'] ?? 0;
+		$tickets_and_variations_amount_with_discount = $ticket['tickets_and_variations_amount_with_discount'] ?? 0;
 
 		$fees = $this->get_event_fees();
 
@@ -708,7 +702,7 @@ class Transaction {
 					break;
 				case 'percent': // per ticket
 
-					$fee_amount = ( ( $tickets_amount + $variations_amount ) * $fee['amount'] ) / 100;
+					$fee_amount = ( $tickets_and_variations_amount_with_discount * $fee['amount'] ) / 100;
 					break;
 				case 'amount': // per ticket
 
@@ -1062,6 +1056,19 @@ class Transaction {
 
 		foreach( $tickets as $k => $ticket ) {
 
+			$discounts = $this->get_ticket_discounts_details( $ticket, $total_tickets_amount_with_variations );
+			$discounts_amount = array_sum(
+				array_column( $discounts, 'amount' )
+			);
+
+			if( $ticket['tickets_amount_with_variations'] < $discounts_amount ) {
+
+				$discounts_amount = $ticket['tickets_amount_with_variations'];
+			}
+			$ticket['discounts_amount'] = $discounts_amount;
+			$ticket['discounts_details'] = $discounts;
+			$ticket['tickets_and_variations_amount_with_discount'] = $ticket['tickets_amount_with_variations'] - $discounts_amount;
+
 			$fees = $this->get_ticket_fees_details( $ticket, $total_tickets_count, $total_tickets_dates );
 
 			$fees_amount = 0;
@@ -1084,19 +1091,6 @@ class Transaction {
 			$ticket['fees_per_ticket_amount'] = $fees_per_ticket_amount;
 			$ticket['fees_amount'] = $fees_amount;
 			$ticket['fees_details'] = $fees;
-
-
-			$discounts = $this->get_ticket_discounts_details( $ticket, $total_tickets_amount_with_variations );
-			$discounts_amount = array_sum(
-				array_column( $discounts, 'amount' )
-			);
-
-			if( $ticket['tickets_amount_with_variations'] < $discounts_amount ) {
-
-				$discounts_amount = $ticket['tickets_amount_with_variations'];
-			}
-			$ticket['discounts_amount'] = $discounts_amount;
-			$ticket['discounts_details'] = $discounts;
 
 			$tickets[ $k ] = $ticket;
 		}

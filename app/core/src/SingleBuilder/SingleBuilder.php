@@ -219,6 +219,17 @@ class SingleBuilder extends Singleton {
                 $html = Widgets\EventVirtual\EventVirtual::getInstance()->output( $event_id, $atts );
 
                 break;
+            case 'event-faq':
+
+                $html = Widgets\FAQ\FAQ::getInstance()->output( $event_id, $atts );
+
+                break;
+            case 'event-trailer-url':
+
+                $html = Widgets\EventTrailerUrl\EventTrailerUrl::getInstance()->output( $event_id, $atts );
+
+                break;
+
         }
 
         return $html;

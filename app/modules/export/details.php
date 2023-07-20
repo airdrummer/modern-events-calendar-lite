@@ -40,6 +40,9 @@ $end_hour_temp = isset($event->date['end']['hour']) ? $event->date['end']['hour'
 $end_minutes_temp = isset($event->date['end']['minutes']) ? $event->date['end']['minutes'] : NULL;
 $end_ampm_temp = isset($event->date['end']['ampm']) ? $event->date['end']['ampm'] : NULL;
 
+if($start_hour_temp == 0 && $start_ampm_temp == 'AM') $start_hour_temp = '12';
+if($end_hour_temp == 0 && $end_ampm_temp == 'AM') $end_hour_temp = '12';
+
 if((is_null($start_date_temp) or is_null($start_hour_temp) or is_null($start_minutes_temp) or is_null($start_ampm_temp) or is_null($end_date_temp) or is_null($end_hour_temp) or is_null($end_minutes_temp) or is_null($end_ampm_temp)) and !trim($occurrence))
 {
     return;
@@ -59,7 +62,6 @@ if($allday)
     if(trim($occurrence_end_date)) $occurrence_end_date = date('Y-m-d', strtotime('+1 day', strtotime($occurrence_end_date)));
     $end_date_temp = date('Y-m-d', strtotime('+1 day', strtotime($end_date_temp)));
 }
-
 $start_time = strtotime((trim($occurrence) ? $occurrence : $start_date_temp).' '.sprintf("%02d", $start_hour_temp).':'.sprintf("%02d", $start_minutes_temp).' '.$start_ampm_temp);
 $end_time = strtotime((trim($occurrence_end_date) ? $occurrence_end_date : $end_date_temp).' '.sprintf("%02d", $end_hour_temp).':'.sprintf("%02d", $end_minutes_temp).' '.$end_ampm_temp);
 $gmt_offset_seconds = $this->get_gmt_offset_seconds($start_time, $event);

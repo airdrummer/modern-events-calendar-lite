@@ -86,7 +86,7 @@ class MEC_captcha extends MEC_base
         if($client === self::GOOGLE)
         {
             return '<div class="mec-form-row mec-google-recaptcha">
-                <div class="g-recaptcha" data-sitekey="'.esc_attr($this->settings['google_recaptcha_sitekey']).'"></div>
+                <div id="g-recaptcha" class="g-recaptcha" data-sitekey="'.esc_attr($this->settings['google_recaptcha_sitekey']).'"></div>
             </div>';
         }
         elseif($client === self::MTCAPTCHA)

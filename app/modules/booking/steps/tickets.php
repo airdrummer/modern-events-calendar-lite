@@ -119,13 +119,13 @@ wp_enqueue_script('mec-nice-select', $this->asset('js/jquery.nice-select.min.js'
 
     <?php if($display_progress_bar and (!$WC_status or $WC_booking_form)): ?>
         <ul class="mec-booking-progress-bar">
-            <li class="mec-booking-progress-bar-date-and-ticket mec-active"><?php esc_html_e('Date & Ticket', 'modern-events-calendar-lite'); ?></li>
-            <li class="mec-booking-progress-bar-attendee-info"><?php esc_html_e('Attendee Info', 'modern-events-calendar-lite'); ?></li>
+            <li class="mec-booking-progress-bar-date-and-ticket mec-active"><span class="progress-index"><?php esc_html_e('1', 'modern-events-calendar-lite'); ?></span><?php esc_html_e('Select Ticket', 'modern-events-calendar-lite'); ?></li>
+            <li class="mec-booking-progress-bar-attendee-info"><span class="progress-index"><?php esc_html_e('2', 'modern-events-calendar-lite'); ?></span><?php esc_html_e('Attendees', 'modern-events-calendar-lite'); ?></li>
             <?php if($WC_status): ?>
-                <li class="mec-booking-progress-bar-payment"><?php esc_html_e('Checkout', 'modern-events-calendar-lite'); ?></li>
+                <li class="mec-booking-progress-bar-payment"><span class="progress-index"><?php esc_html_e('3', 'modern-events-calendar-lite'); ?></span><?php esc_html_e('Checkout', 'modern-events-calendar-lite'); ?></li>
             <?php else: ?>
-                <li class="mec-booking-progress-bar-payment"><?php esc_html_e('Payment', 'modern-events-calendar-lite'); ?></li>
-                <li class="mec-booking-progress-bar-complete"><?php esc_html_e('Complete', 'modern-events-calendar-lite'); ?></li>
+                <li class="mec-booking-progress-bar-payment"><span class="progress-index"><?php esc_html_e('3', 'modern-events-calendar-lite'); ?></span><?php esc_html_e('Payment', 'modern-events-calendar-lite'); ?></li>
+                <li class="mec-booking-progress-bar-complete"><span class="progress-index"><?php esc_html_e('4', 'modern-events-calendar-lite'); ?></span><?php esc_html_e('Confirmation', 'modern-events-calendar-lite'); ?></li>
             <?php endif; ?>
         </ul>
     <?php else: ?>

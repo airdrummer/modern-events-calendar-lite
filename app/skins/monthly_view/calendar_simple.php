@@ -81,7 +81,7 @@ elseif($week_start == 5) // Friday
                     // Event Content
                     if(!$this->cache->has($event->data->ID.'_content'))
                     {
-                        if(get_post_meta($event->data->ID, '_elementor_edit_mode', true)) $event_content = \Elementor\Plugin::instance()->frontend->get_builder_content_for_display($event->data->ID);
+                        if(get_post_meta($event->data->ID, '_elementor_edit_mode', true) && class_exists('\Elementor\Plugin')) $event_content = \Elementor\Plugin::instance()->frontend->get_builder_content_for_display($event->data->ID);
                         else $event_content = ((isset($event->data->content) and trim($event->data->content) != '') ? mb_substr(strip_tags($event->data->content, '<style>'), 0, 320) : '');
 
                         $this->cache->set($event->data->ID.'_content', $event_content);

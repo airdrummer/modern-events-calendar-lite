@@ -352,6 +352,15 @@ $mec_categories = get_terms(array(
                                     </div>
                                 </div>
                                 <div class="mec-form-row">
+                                    <label class="mec-col-3" for="mec_settings_ical_feed_subscribe_to_calendar"><?php esc_html_e('Subscribe + To Calendar', 'modern-events-calendar-lite'); ?></label>
+                                    <div class="mec-col-9">
+                                        <label>
+                                            <input type="hidden" name="mec[settings][ical_feed_subscribe_to_calendar]" value="0" />
+                                            <input value="1" type="checkbox" name="mec[settings][ical_feed_subscribe_to_calendar]" id="mec_settings_ical_feed_subscribe_to_calendar" <?php if(isset($settings['ical_feed_subscribe_to_calendar']) and $settings['ical_feed_subscribe_to_calendar']) echo 'checked="checked"'; ?> /> <?php esc_html_e('Enable', 'modern-events-calendar-lite'); ?>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="mec-form-row">
                                     <label class="mec-col-12"><?php esc_html_e('Filtered Feeds', 'modern-events-calendar-lite'); ?></label>
                                 </div>
                                 <div class="mec-form-row">

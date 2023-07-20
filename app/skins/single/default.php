@@ -25,7 +25,7 @@ $rank_math_options = '';
 include_once(ABSPATH . 'wp-admin/includes/plugin.php');
 if(is_plugin_active('schema-markup-rich-snippets/schema-markup-rich-snippets.php')) $rank_math_options = get_post_meta(get_the_ID(), 'rank_math_rich_snippet', true);
 
-$bookings_limit_for_users = isset($booking_options['bookings_limit_for_users']) ? $booking_options['bookings_limit_for_users'] : 0;
+$bookings_limit_for_users = $booking_options['bookings_limit_for_users'] ?? 0;
 
 $more_info = (isset($event->data->meta['mec_more_info']) and trim($event->data->meta['mec_more_info']) and $event->data->meta['mec_more_info'] != 'http://') ? $event->data->meta['mec_more_info'] : '';
 if(isset($event->date) and isset($event->date['start']) and isset($event->date['start']['timestamp'])) $more_info = MEC_feature_occurrences::param($event->ID, $event->date['start']['timestamp'], 'more_info', $more_info);
@@ -42,32 +42,41 @@ $location = ($location_id ? $this->main->get_location_data($location_id) : array
 $organizer_id = $this->main->get_master_organizer_id($event);
 $organizer = ($organizer_id ? $this->main->get_organizer_data($organizer_id) : array());
 
-$sticky_sidebar = isset($settings['sticky_sidebar']) ? $settings['sticky_sidebar'] : '';
+$sticky_sidebar = $settings['sticky_sidebar'] ?? '';
 if($sticky_sidebar == 1) $sticky_sidebar = 'mec-sticky';
+
+// Banner Image
+$banner_module = $this->can_display_banner_module($event);
 ?>
 <div class="mec-wrap <?php echo esc_attr($event_colorskin); ?> clearfix <?php echo esc_attr($this->html_class); ?>" id="mec_skin_<?php echo esc_attr($this->uniqueid); ?>">
+
+    <?php if($banner_module) echo MEC_kses::element($this->display_banner_module($event, $occurrence_full, $occurrence_end_full)); ?>
 	<?php do_action('mec_top_single_event', get_the_ID()); ?>
 	<article class="row mec-single-event <?php echo esc_attr($sticky_sidebar); ?>">
 
 		<!-- start breadcrumbs -->
 		<?php
-		$breadcrumbs_settings = isset($settings['breadcrumbs']) ? $settings['breadcrumbs'] : ''; if($breadcrumbs_settings == '1'): ?>
+		$breadcrumbs_settings = $settings['breadcrumbs'] ?? '';
+        if($breadcrumbs_settings == '1'): ?>
         <div class="mec-breadcrumbs">
             <?php $this->display_breadcrumb_widget(get_the_ID()); ?>
         </div>
 		<?php endif; ?>
 		<!-- end breadcrumbs -->
 
-		<?php echo MEC_kses::element($this->display_banner_module($event)); ?>
-
 		<div class="col-md-8">
+            <?php if(!$banner_module): ?>
 			<div class="mec-events-event-image">
                 <?php echo MEC_kses::element($this->display_image_module($event)); ?>
             </div>
+            <?php endif; ?>
             <?php echo MEC_kses::full($this->main->display_progress_bar($event)); ?>
 			<div class="mec-event-content">
-				<?php echo MEC_kses::element($this->main->display_cancellation_reason($event, $this->display_cancellation_reason)); ?>
-				<h1 class="mec-single-title"><?php the_title(); ?></h1>
+                <?php if(!$banner_module): ?>
+                    <?php echo MEC_kses::element($this->main->display_cancellation_reason($event, $this->display_cancellation_reason)); ?>
+                    <h1 class="mec-single-title"><?php the_title(); ?></h1>
+                <?php endif; ?>
+
 				<div class="mec-single-event-description mec-events-content"><?php the_content(); ?></div>
                 <?php echo MEC_kses::full($this->display_trailer_url($event)); ?>
                 <?php echo MEC_kses::element($this->display_disclaimer($event)); ?>
@@ -100,11 +109,11 @@ if($sticky_sidebar == 1) $sticky_sidebar = 'mec-sticky';
 
 			<!-- Booking Module -->
 			<?php if(!empty($event->date)):
-			   if ( $this->main->is_sold( $event ) and count( $event->dates ) <= 1 ): ?>
+			   if($this->main->is_sold($event) and count($event->dates) <= 1): ?>
 				  <?php
 				  $event_id        = $event->ID;
 				  $dates = (isset($event->dates) ? $event->dates : array($event->date));
-				  $occurrence_time = (isset($dates[0]['start']['timestamp']) ? $dates[0]['start']['timestamp'] : strtotime($dates[0]['start']['date']));
+				  $occurrence_time = ($dates[0]['start']['timestamp'] ?? strtotime($dates[0]['start']['date']));
 				  $tickets         = get_post_meta( $event_id, 'mec_tickets', true );
 				  $book         = $this->getBook();
 				  $availability = $book->get_tickets_availability( $event_id, $occurrence_time );
@@ -115,7 +124,7 @@ if($sticky_sidebar == 1) $sticky_sidebar = 'mec-sticky';
 				  $stop_selling                = '';
 				  foreach ( $tickets as $ticket_id => $ticket ) {
 
-					 $ticket_limit = (isset($availability[$ticket_id]) ? $availability[$ticket_id] : -1);
+					 $ticket_limit = $availability[$ticket_id] ?? -1;
 					 $ticket_name  = isset( $ticket['name'] ) ? '<strong>' . esc_html($ticket['name']) . '</strong>' : '';
 
 					 $key          = 'stop_selling_' . $ticket_id;
@@ -178,43 +187,9 @@ if($sticky_sidebar == 1) $sticky_sidebar = 'mec-sticky';
 				<div class="mec-event-info-desktop mec-event-meta mec-color-before mec-frontbox">
 					<?php
 					// Event Date and Time
-					if(isset($event->data->meta['mec_date']['start']) and !empty($event->data->meta['mec_date']['start']))
+					if(!$banner_module and isset($event->data->meta['mec_date']['start']) and !empty($event->data->meta['mec_date']['start']))
 					{
-						$midnight_event = $this->main->is_midnight_event($event);
-						?>
-						<div class="mec-single-event-date">
-							<i class="mec-sl-calendar"></i>
-							<h3 class="mec-date"><?php esc_html_e('Date', 'modern-events-calendar-lite'); ?></h3>
-							<dl>
-								<?php if($midnight_event): ?>
-									<dd><abbr class="mec-events-abbr"><?php echo MEC_kses::element($this->main->dateify($event, $this->date_format1)); ?></abbr></dd>
-								<?php else: ?>
-									<dd><abbr class="mec-events-abbr"><?php echo MEC_kses::element($this->main->date_label($occurrence_full, $occurrence_end_full, $this->date_format1, ' - ', true, 0, $event)); ?></abbr></dd>
-								<?php endif; ?>
-							</dl>
-							<?php echo MEC_kses::element($this->main->holding_status($event)); ?>
-						</div>
-
-						<?php
-						if(isset($event->data->meta['mec_hide_time']) and $event->data->meta['mec_hide_time'] == '0')
-						{
-							$time_comment = isset($event->data->meta['mec_comment']) ? $event->data->meta['mec_comment'] : '';
-							$allday = isset($event->data->meta['mec_allday']) ? $event->data->meta['mec_allday'] : 0;
-							?>
-							<div class="mec-single-event-time">
-								<i class="mec-sl-clock " style=""></i>
-								<h3 class="mec-time"><?php esc_html_e('Time', 'modern-events-calendar-lite'); ?></h3>
-								<i class="mec-time-comment"><?php echo (isset($time_comment) ? esc_html($time_comment) : ''); ?></i>
-								<dl>
-									<?php if($allday == '0' and isset($event->data->time) and trim($event->data->time['start'])): ?>
-										<dd><abbr class="mec-events-abbr"><?php echo esc_html($event->data->time['start']); ?><?php echo (trim($event->data->time['end']) ? ' - '.esc_html($event->data->time['end']) : ''); ?></abbr></dd>
-									<?php else: ?>
-										<dd><abbr class="mec-events-abbr"><?php echo esc_html($this->main->m('all_day', esc_html__('All Day' , 'modern-events-calendar-lite'))); ?></abbr></dd>
-									<?php endif; ?>
-								</dl>
-							</div>
-							<?php
-						}
+						$this->display_datetime_widget($event, $occurrence_full, $occurrence_end_full);
 					}
 					?>
 
@@ -257,24 +232,13 @@ if($sticky_sidebar == 1) $sticky_sidebar = 'mec-sticky';
 					// Event labels
 					if(isset($event->data->labels) && !empty($event->data->labels))
 					{
-						$mec_items = count($event->data->labels);
-						$mec_i = 0; ?>
-						<div class="mec-single-event-label">
-							<i class="mec-fa-bookmark-o"></i>
-							<h3 class="mec-cost"><?php echo esc_html($this->main->m('taxonomy_labels', esc_html__('Labels', 'modern-events-calendar-lite'))); ?></h3>
-							<?php foreach($event->data->labels as $labels=>$label) :
-								$seperator = (++$mec_i === $mec_items ) ? '' : ',';
-								echo '<dl><dd style="color:' . esc_attr($label['color']) . '">' . esc_html($label["name"] . $seperator) . '</dd></dl>';
-							endforeach; ?>
-						</div>
-						<?php
+                        $this->display_labels_widget($event);
 					}
 					?>
 
-
 					<?php
 					// Event Location
-					if($location_id and count($location))
+					if(!$banner_module and $location_id and count($location))
 					{
 						$this->display_location_widget($event); // Show Location Widget
 						$this->show_other_locations($event); // Show Additional Locations
@@ -298,7 +262,7 @@ if($sticky_sidebar == 1) $sticky_sidebar = 'mec-sticky';
                                 $color_html = '';
                                 if($color) $color_html .= '<span class="mec-event-category-color" style="--background-color: '.esc_attr($color).';background-color: '.esc_attr($color).'">&nbsp;</span>';
 
-                                $icon = (isset($category['icon']) ? $category['icon'] : '');
+                                $icon = $category['icon'] ?? '';
                                 $icon = isset($icon) && $icon != '' ? '<i class="' . esc_attr($icon) . ' mec-color"></i>' : '<i class="mec-fa-angle-right"></i>';
 
 								echo '<dd class="mec-events-event-categories">
@@ -410,7 +374,6 @@ if($sticky_sidebar == 1) $sticky_sidebar = 'mec-sticky';
 			</div>
 		<?php else: ?>
 			<div class="col-md-4">
-
                 <?php
                     $GLOBALS['mec-widget-single'] = $this;
                     $GLOBALS['mec-widget-event'] = $event;
@@ -426,10 +389,10 @@ if($sticky_sidebar == 1) $sticky_sidebar = 'mec-sticky';
                     $GLOBALS['mec-widget-organizer'] = $organizer;
                     $GLOBALS['mec-widget-more_info_target'] = $more_info_target;
                     $GLOBALS['mec-widget-more_info_title'] = $more_info_title;
+                    $GLOBALS['mec-banner_module'] = $banner_module;
                 ?>
 				<!-- Widgets -->
 				<?php dynamic_sidebar('mec-single-sidebar'); ?>
-
 			</div>
 		<?php endif; ?>
 	</article>
@@ -447,9 +410,7 @@ if($rank_math_options != 'event') do_action('mec_schema', $event);
 jQuery(".mec-speaker-avatar a, .mec-schedule-speakers a").on('click', function(e)
 {
     e.preventDefault();
-
-    var id = jQuery(this).attr('href');
-    lity(id);
+    lity(jQuery(this).attr('href'));
 
 	return false;
 });
@@ -460,9 +421,7 @@ jQuery(window).on('load', function()
     jQuery(".mec-booking-button.mec-booking-data-lity").on('click', function(e)
     {
         e.preventDefault();
-
-        var book_id = jQuery(this).attr('href');
-        lity(book_id);
+        lity(jQuery(this).attr('href'));
 
 		return false;
     });

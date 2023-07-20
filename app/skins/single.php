@@ -1309,7 +1309,7 @@ class MEC_skin_single extends MEC_skins
     }
 
     /**
-     * @param object label Widget
+     * @param object $event
      * @return void
      */
     public function display_label_widget($event)
@@ -1323,8 +1323,8 @@ class MEC_skin_single extends MEC_skins
                 <i class="mec-fa-bookmark-o"></i>
                 <h3 class="mec-cost"><?php echo esc_html($this->main->m('taxonomy_labels', esc_html__('Labels', 'modern-events-calendar-lite'))); ?></h3>
                 <?php foreach ($event->data->labels as $labels => $label) :
-                    $seperator = (++$mec_i === $mec_items) ? '' : ',';
-                    echo '<dl><dd style="color:' . esc_attr($label['color']) . '">' . esc_html($label["name"] . $seperator) . '</dd></dl>';
+                    $separator = (++$mec_i === $mec_items) ? '' : ',';
+                    echo '<dl><dd style="color:' . esc_attr($label['color']) . '">' . esc_html($label["name"] . $separator) . '</dd></dl>';
                 endforeach; ?>
             </div>
             <?php
@@ -1906,28 +1906,81 @@ class MEC_skin_single extends MEC_skins
         }
     }
 
-    public function display_banner_module($event, $content = '')
+    public function display_banner_module($event, $occurrence_full, $occurrence_end_full)
+    {
+        // Not enabled
+        if(!$this->can_display_banner_module($event)) return '';
+
+        // Banner Options
+        $banner = isset($event->data, $event->data->meta, $event->data->meta['mec_banner']) ? $event->data->meta['mec_banner'] : [];
+        if(!is_array($banner)) $banner = [];
+
+        $color = $banner['color'] ?? '';
+        $image = $banner['image'] ?? '';
+
+        $featured_image = $banner['use_featured_image'] ?? 0;
+        if($featured_image) $image = (string) get_the_post_thumbnail_url($event->ID, 'full');
+
+        $mode = 'color';
+        $bg = 'background: '.$color;
+
+        if(trim($image))
+        {
+            $bg = 'background: url(\''.$image.'\') no-repeat center; background-size: cover';
+            $mode = trim($color) ? 'color-image' : 'image';
+        }
+
+        $location_id = $this->main->get_master_location_id($event);
+        $location = $location_id ? $this->main->get_location_data($location_id) : [];
+
+        $content = '';
+
+        // Title
+        $content .= '<div class="mec-event-banner-title">';
+        $content .= MEC_kses::element($this->main->display_cancellation_reason($event, $this->display_cancellation_reason));
+        $content .= '<h1 class="mec-single-title">'.get_the_title().'</h1>';
+        $content .= '</div>';
+
+        // Date & Time
+        ob_start();
+        $this->display_datetime_widget($event, $occurrence_full, $occurrence_end_full);
+        $content .= '<div class="mec-event-banner-datetime">'.ob_get_clean().'</div>';
+
+        // Location
+        if($location_id and count($location))
+        {
+            ob_start();
+            $this->display_location_widget($event);
+            $content .= '<div class="mec-event-banner-location">'.ob_get_clean().'</div>';
+        }
+
+        return '<div class="mec-event-banner mec-event-banner-mode-'.esc_attr($mode).'" style="'.$bg.';"> <div class="mec-event-banner-inner">'
+            .$content.
+            '</div>'.
+            ($mode === 'color-image' ? '<div class="mec-event-banner-color" style="background: '.$color.'; opacity: 0.3;"></div>' : '').
+        '</div>';
+    }
+
+    public function can_display_banner_module($event)
     {
         // Not Enabled Globally
-        if(!isset($this->settings['banner_status']) || !$this->settings['banner_status']) return '';
+        if(!isset($this->settings['banner_status']) || !$this->settings['banner_status']) return false;
 
         // Banner Options
         $banner = isset($event->data, $event->data->meta, $event->data->meta['mec_banner']) ? $event->data->meta['mec_banner'] : [];
         if(!is_array($banner)) $banner = [];
 
         // Not Enabled for this Event
-        if(!isset($banner['status']) || !$banner['status']) return '';
+        if(!isset($banner['status']) || !$banner['status']) return false;
 
         $color = $banner['color'] ?? '';
         $image = $banner['image'] ?? '';
+        $use_featured_image = $banner['use_featured_image'] ?? 0;
 
         // No Color and No Image
-        if(trim($color) === '' && trim($image) === '') return '';
+        if(trim($color) === '' && trim($image) === '' && !$use_featured_image) return false;
 
-        $bg = 'background: '.$color;
-        if(trim($image)) $bg .= ' url(\''.$image.'\') no-repeat; background-size: cover';
-
-        return '<div class="mec-event-banner" style="'.$bg.'; min-height: 500px;">'.$content.'</div>';
+        return true;
     }
 
     public function display_faq($event)
@@ -1948,6 +2001,63 @@ class MEC_skin_single extends MEC_skins
                 </li>
                 <?php endforeach; ?>
             </ul>
+        </div>
+        <?php
+    }
+
+    public function display_datetime_widget($event, $occurrence_full, $occurrence_end_full)
+    {
+        $midnight_event = $this->main->is_midnight_event($event);
+        ?>
+        <div class="mec-single-event-date">
+            <i class="mec-sl-calendar"></i>
+            <h3 class="mec-date"><?php esc_html_e('Date', 'modern-events-calendar-lite'); ?></h3>
+            <dl>
+                <?php if($midnight_event): ?>
+                    <dd><abbr class="mec-events-abbr"><?php echo MEC_kses::element($this->main->dateify($event, $this->date_format1)); ?></abbr></dd>
+                <?php else: ?>
+                    <dd><abbr class="mec-events-abbr"><?php echo MEC_kses::element($this->main->date_label($occurrence_full, $occurrence_end_full, $this->date_format1, ' - ', true, 0, $event)); ?></abbr></dd>
+                <?php endif; ?>
+            </dl>
+            <?php echo MEC_kses::element($this->main->holding_status($event)); ?>
+        </div>
+        <?php do_action('mec_single_after_event_date', $event); ?>
+        <?php
+        if(isset($event->data->meta['mec_hide_time']) and $event->data->meta['mec_hide_time'] == '0')
+        {
+            $time_comment = $event->data->meta['mec_comment'] ?? '';
+            $allday = $event->data->meta['mec_allday'] ?? 0;
+            ?>
+            <div class="mec-single-event-time">
+                <i class="mec-sl-clock"></i>
+                <h3 class="mec-time"><?php esc_html_e('Time', 'modern-events-calendar-lite'); ?></h3>
+                <i class="mec-time-comment"><?php echo (isset($time_comment) ? esc_html($time_comment) : ''); ?></i>
+                <dl>
+                    <?php if($allday == '0' and isset($event->data->time) and trim($event->data->time['start'])): ?>
+                        <dd><abbr class="mec-events-abbr"><?php echo esc_html($event->data->time['start']); ?><?php echo (trim($event->data->time['end']) ? ' - '.esc_html($event->data->time['end']) : ''); ?></abbr></dd>
+                    <?php else: ?>
+                        <dd><abbr class="mec-events-abbr"><?php echo esc_html($this->main->m('all_day', esc_html__('All Day' , 'modern-events-calendar-lite'))); ?></abbr></dd>
+                    <?php endif; ?>
+                </dl>
+            </div>
+            <?php
+        }
+    }
+
+    public function display_labels_widget($event)
+    {
+        $mec_items = count($event->data->labels);
+        $mec_i = 0; ?>
+        <div class="mec-single-event-label">
+            <i class="mec-fa-bookmark-o"></i>
+            <h3 class="mec-cost"><?php echo esc_html($this->main->m('taxonomy_labels', esc_html__('Labels', 'modern-events-calendar-lite'))); ?></h3>
+            <?php
+                foreach($event->data->labels as $labels=>$label)
+                {
+                    $separator = (++$mec_i === $mec_items) ? '' : ',';
+                    echo '<dl><dd style="color:' . esc_attr($label['color']) . '">' . esc_html($label["name"] . $separator) . '</dd></dl>';
+                }
+            ?>
         </div>
         <?php
     }

@@ -46,43 +46,7 @@ $cost = $this->main->get_event_cost($event);
             // Event Date and Time
             if(isset($event->data->meta['mec_date']['start']) and !empty($event->data->meta['mec_date']['start']))
             {
-                $midnight_event = $this->main->is_midnight_event($event);
-                ?>
-                <div class="mec-single-event-date">
-                    <i class="mec-sl-calendar"></i>
-                    <h3 class="mec-date"><?php esc_html_e('Date', 'modern-events-calendar-lite'); ?></h3>
-                    <dl>
-                    <?php if($midnight_event): ?>
-                    <dd><abbr class="mec-events-abbr"><?php echo MEC_kses::element($this->main->dateify($event, $this->date_format1)); ?></abbr></dd>
-                    <?php else: ?>
-                    <dd><abbr class="mec-events-abbr"><?php echo MEC_kses::element($this->main->date_label($occurrence_full, $occurrence_end_full, $this->date_format1, ' - ', true, 0, $event)); ?></abbr></dd>
-                    <?php endif; ?>
-                    </dl>
-                    <?php echo MEC_kses::element($this->main->holding_status($event)); ?>
-                </div>
-
-                <?php do_action( 'mec_single_after_event_date', $event ) ?>
-
-                <?php
-                if(isset($event->data->meta['mec_hide_time']) and $event->data->meta['mec_hide_time'] == '0')
-                {
-                    $time_comment = isset($event->data->meta['mec_comment']) ? $event->data->meta['mec_comment'] : '';
-                    $allday = isset($event->data->meta['mec_allday']) ? $event->data->meta['mec_allday'] : 0;
-                    ?>
-                    <div class="mec-single-event-time">
-                        <i class="mec-sl-clock " style=""></i>
-                        <h3 class="mec-time"><?php esc_html_e('Time', 'modern-events-calendar-lite'); ?></h3>
-                        <i class="mec-time-comment"><?php echo (isset($time_comment) ? esc_html($time_comment) : ''); ?></i>
-                        <dl>
-                        <?php if($allday == '0' and isset($event->data->time) and trim($event->data->time['start'])): ?>
-                            <dd><abbr class="mec-events-abbr"><?php echo esc_html($event->data->time['start']); ?><?php echo (trim($event->data->time['end']) ? ' - '.esc_html($event->data->time['end']) : ''); ?></abbr></dd>
-                        <?php else: ?>
-                            <dd><abbr class="mec-events-abbr"><?php echo esc_html($this->main->m('all_day', esc_html__('All Day' , 'modern-events-calendar-lite'))); ?></abbr></dd>
-                        <?php endif; ?>
-                        </dl>
-                    </div>
-                    <?php
-                }
+                $this->display_datetime_widget($event, $occurrence_full, $occurrence_end_full);
             }
             ?>
 
@@ -309,7 +273,7 @@ $cost = $this->main->get_event_cost($event);
             <div class="mec-event-content">
                 <div class="mec-single-event-description mec-events-content">
                     <?php
-                        if(get_post_meta($event->ID, '_elementor_edit_mode', true)) $content = \Elementor\Plugin::instance()->frontend->get_builder_content_for_display($event->ID);
+                        if(get_post_meta($event->ID, '_elementor_edit_mode', true) && class_exists('\Elementor\Plugin')) $content = \Elementor\Plugin::instance()->frontend->get_builder_content_for_display($event->ID);
                         else $content = $this->main->get_post_content($event);
 
                         echo MEC_kses::full($content);

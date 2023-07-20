@@ -233,7 +233,7 @@ class Attendees {
             });');
     }
 
-    public static function output( $event, $date, $tickets, $reg_fields, $bfixed_fields, $uniqueid, $args = array() ){
+    public static function output( $event, $date, $tickets, $reg_fields, $bfixed_fields, $uniqueid, $all_dates, $args = array() ){
 
         if( is_numeric( $event ) ) {
 
@@ -313,7 +313,7 @@ class Attendees {
 
         $display_progress_bar = \MEC\Base::get_main()->can_display_booking_progress_bar($mec_settings);
 
-        $event_tickets = isset($event->data->tickets) ? $event->data->tickets : array();
+        $event_tickets = $event->data->tickets ?? array();
 
         foreach ($tickets as $ticket_id => $count) {
 
@@ -339,13 +339,13 @@ class Attendees {
 
             <?php if( $display_progress_bar ): ?>
                 <ul class="mec-booking-progress-bar">
-                    <li class="mec-booking-progress-bar-date-and-ticket mec-active"><?php esc_html_e('Date & Ticket', 'modern-events-calendar-lite'); ?></li>
-                    <li class="mec-booking-progress-bar-attendee-info mec-active"><?php esc_html_e('Attendee Info', 'modern-events-calendar-lite'); ?></li>
+                    <li class="mec-booking-progress-bar-date-and-ticket mec-active"><span class="progress-index"><?php esc_html_e('1', 'modern-events-calendar-lite'); ?></span><?php esc_html_e('Select Ticket', 'modern-events-calendar-lite'); ?></li>
+                    <li class="mec-booking-progress-bar-attendee-info mec-active"><span class="progress-index"><?php esc_html_e('2', 'modern-events-calendar-lite'); ?></span><?php esc_html_e('Attendees', 'modern-events-calendar-lite'); ?></li>
                     <?php if($WC_status): ?>
-                        <li class="mec-booking-progress-bar-payment"><?php esc_html_e('Checkout', 'modern-events-calendar-lite'); ?></li>
+                        <li class="mec-booking-progress-bar-payment"><span class="progress-index"><?php esc_html_e('3', 'modern-events-calendar-lite'); ?></span><?php esc_html_e('Checkout', 'modern-events-calendar-lite'); ?></li>
                     <?php else: ?>
-                        <li class="mec-booking-progress-bar-payment"><?php esc_html_e('Payment', 'modern-events-calendar-lite'); ?></li>
-                        <li class="mec-booking-progress-bar-complete"><?php esc_html_e('Complete', 'modern-events-calendar-lite'); ?></li>
+                        <li class="mec-booking-progress-bar-payment"><span class="progress-index"><?php esc_html_e('3', 'modern-events-calendar-lite'); ?></span><?php esc_html_e('Payment', 'modern-events-calendar-lite'); ?></li>
+                        <li class="mec-booking-progress-bar-complete"><span class="progress-index"><?php esc_html_e('4', 'modern-events-calendar-lite'); ?></span><?php esc_html_e('Confirmation', 'modern-events-calendar-lite'); ?></li>
                     <?php endif; ?>
                 </ul>
             <?php else: ?>
@@ -472,7 +472,7 @@ class Attendees {
             <input type="hidden" name="uniqueid" value="<?php echo esc_attr($uniqueid); ?>" />
             <input type="hidden" name="step" value="2" />
 
-            <?php do_action('mec_booking_end_form_step_2', $event_id, $tickets, (isset($all_dates) ? $all_dates : NULL), $date); ?>
+            <?php do_action('mec_booking_end_form_step_2', $event_id, $tickets, ($all_dates ?? NULL), $date); ?>
             <?php wp_nonce_field('mec_book_form_' . $event_id); ?>
 
             <div class="mec-book-form-btn-wrap">

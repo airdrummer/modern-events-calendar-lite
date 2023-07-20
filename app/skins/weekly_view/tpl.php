@@ -165,6 +165,7 @@ do_action('mec_weekly_skin_head');
         </div>
     </div>
 
+    <?php echo $this->subscribe_to_calendar(); ?>
     <?php echo $this->display_credit_url(); ?>
 
 </div>
