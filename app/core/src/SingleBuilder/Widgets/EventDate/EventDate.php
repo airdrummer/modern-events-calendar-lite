@@ -43,8 +43,12 @@ class EventDate extends WidgetBase {
 			?>
 			<div class="mec-event-meta">
 				<div class="mec-single-event-date">
-					<i class="mec-sl-calendar"></i>
-					<h3 class="mec-date"><?php esc_html_e('Date', 'modern-events-calendar-lite'); ?></h3>
+					<?php if( isset( $atts['mec_date_show_icon'] ) && $atts['mec_date_show_icon'] ){
+                        echo $this->icons->display('calendar');
+					 } ?>
+					<?php if( isset( $atts['mec_date_show_title'] ) && $atts['mec_date_show_title'] ){ ?>
+						<h3 class="mec-date"><?php esc_html_e('Date', 'modern-events-calendar-lite'); ?></h3>
+					<?php } ?>
 					<dl>
 						<?php if($midnight_event): ?>
 							<dd><abbr class="mec-events-abbr"><?php echo Base::get_main()->dateify( $event_detail, $date_format ); ?></abbr></dd>

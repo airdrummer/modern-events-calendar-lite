@@ -109,7 +109,7 @@ class PluralizationRulesTest extends TestCase
 
     protected function generateTestData($langCodes)
     {
-        $matrix = array();
+        $matrix = [];
         foreach ($langCodes as $langCode) {
             for ($count = 0; $count < 200; ++$count) {
                 $plural = PluralizationRules::get($count, $langCode);

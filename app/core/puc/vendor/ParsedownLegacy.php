@@ -24,7 +24,7 @@ class Parsedown
     function text($text)
     {
         # make sure no definitions are set
-        $this->DefinitionData = array();
+        $this->DefinitionData = [];
 
         # standardize line breaks
         $text = str_replace(array("\r\n", "\r"), "\n", $text);
@@ -793,7 +793,7 @@ class Parsedown
 
         if (strpos($Block['element']['text'], '|') !== false and chop($Line['text'], ' -:|') === '')
         {
-            $alignments = array();
+            $alignments = [];
 
             $divider = $Line['text'];
 
@@ -828,7 +828,7 @@ class Parsedown
 
             # ~
 
-            $HeaderElements = array();
+            $HeaderElements = [];
 
             $header = $Block['element']['text'];
 
@@ -900,7 +900,7 @@ class Parsedown
 
         if ($Line['text'][0] === '|' or strpos($Line['text'], '|'))
         {
-            $Elements = array();
+            $Elements = [];
 
             $row = $Line['text'];
 
@@ -1490,7 +1490,7 @@ class Parsedown
         return $instance;
     }
 
-    private static $instances = array();
+    private static $instances = [];
 
     #
     # Fields

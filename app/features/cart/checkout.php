@@ -13,10 +13,10 @@ $free = $this->cart->is_free($cart);
 $gateways = $this->main->get_gateways();
 $gateway_settings = $this->main->get_gateways_options();
 
-$fees_disabled_gateways = isset( $this->settings['fees_disabled_gateways'] ) && is_array( $this->settings['fees_disabled_gateways'] ) ? $this->settings['fees_disabled_gateways'] : array();
-$total_fees_prices_for_disabled_gateways = array();
+$fees_disabled_gateways = isset( $this->settings['fees_disabled_gateways'] ) && is_array( $this->settings['fees_disabled_gateways'] ) ? $this->settings['fees_disabled_gateways'] : [];
+$total_fees_prices_for_disabled_gateways = [];
 
-$active_gateways = array();
+$active_gateways = [];
 foreach($gateways as $gateway)
 {
     if(!$gateway->enabled()) continue;
@@ -106,11 +106,11 @@ $this->factory->params('footer', $javascript);
 
                 <p id="mec_cart_total_payable">
                     <?php foreach($active_gateways as $gateway): ?>
-                        <span id="mec-checkout-price-wrapper-<?php echo $gateway->id; ?>" class="mec-checkout-price-wrapper mec-util-hidden">
+                        <span id="mec-checkout-price-wrapper-<?php echo $gateway->id; ?>" class="mec-checkout-price-wrapper <?php echo count($active_gateways) > 1 ? 'mec-util-hidden' : ''; ?>">
                             <?php
                                 $price = $this->cart->get_payable($cart);
                                 $price -= $total_fees_prices_for_disabled_gateways[ $gateway->id ];
-                                $price = $price > 0 ? $price : 0;
+                                $price = max($price, 0);
                                 echo MEC_kses::element($this->main->render_price( $price ));
                             ?>
                             </span>

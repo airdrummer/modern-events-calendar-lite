@@ -104,12 +104,12 @@ class Terms {
 				'term_ids' => $term_ids,
 			));
 
-			$terms_data = array();
+			$terms_data = [];
 			foreach( $terms as $term ) {
 
 				$term_id = $term->term_id;
 
-				$term_data = array();
+				$term_data = [];
 				foreach( $columns as $column_id => $column_title ) {
 
 					switch( $column_id ) {
@@ -225,7 +225,7 @@ class Terms {
         }
 
         $field_keys = [];
-        $terms = array();
+        $terms = [];
         if (($h = fopen($target_path, 'r')) !== false) {
 
             $r = 0;
@@ -272,7 +272,7 @@ class Terms {
 
 				$term_id = (int)($term_data['term_id'] ?? 0);
 				$term_name = $term_data['term_name'] ?? '';
-				$args = array();
+				$args = [];
 				foreach( $term_data as $t_id => $t_data ) {
 
 					switch( $t_id ) {

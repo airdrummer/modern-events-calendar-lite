@@ -18,7 +18,7 @@ wp_enqueue_style('mec-lity-style', $this->main->asset('packages/lity/lity.min.cs
 wp_enqueue_script('mec-lity-script', $this->main->asset('packages/lity/lity.min.js'));
 
 $booking_options = get_post_meta(get_the_ID(), 'mec_booking', true);
-if(!is_array($booking_options)) $booking_options = array();
+if(!is_array($booking_options)) $booking_options = [];
 
 // Compatibility with Rank Math
 $rank_math_options = '';
@@ -28,7 +28,9 @@ if(is_plugin_active('schema-markup-rich-snippets/schema-markup-rich-snippets.php
 $more_info = (isset($event->data->meta['mec_more_info']) and trim($event->data->meta['mec_more_info']) and $event->data->meta['mec_more_info'] != 'http://') ? $event->data->meta['mec_more_info'] : '';
 if(isset($event->date) and isset($event->date['start']) and isset($event->date['start']['timestamp'])) $more_info = MEC_feature_occurrences::param($event->ID, $event->date['start']['timestamp'], 'more_info', $more_info);
 
-$more_info_target = MEC_feature_occurrences::param($event->ID, $event->date['start']['timestamp'], 'more_info_target', (isset($event->data->meta['mec_more_info_target']) ? $event->data->meta['mec_more_info_target'] : '_self'));
+$more_info_target = MEC_feature_occurrences::param($event->ID, $event->date['start']['timestamp'], 'more_info_target', $event->data->meta['mec_more_info_target'] ?? '');
+if(!trim($more_info_target) && isset($settings['fes_event_link_target']) && trim($settings['fes_event_link_target'])) $more_info_target = $settings['fes_event_link_target'];
+
 $more_info_title = MEC_feature_occurrences::param($event->ID, $event->date['start']['timestamp'], 'more_info_title', ((isset($event->data->meta['mec_more_info_title']) and trim($event->data->meta['mec_more_info_title'])) ? $event->data->meta['mec_more_info_title'] : esc_html__('Read More', 'modern-events-calendar-lite')));
 
 $location_id = $this->main->get_master_location_id($event);
@@ -94,6 +96,7 @@ $cost = $this->main->get_event_cost($event);
                     $GLOBALS['mec-widget-more_info_target'] = $more_info_target;
                     $GLOBALS['mec-widget-more_info_title'] = $more_info_title;
                     $GLOBALS['mec-banner_module'] = $banner_module;
+                    $GLOBALS['mec-icons'] = $this->icons;
 
                     // Widgets
                     dynamic_sidebar('mec-single-sidebar');
@@ -104,34 +107,32 @@ $cost = $this->main->get_event_cost($event);
 
         </div>
         <div class="col-md-8">
-            <div class="mec-single-event-bar">
+            <div class="mec-single-event-bar <?php if(($banner_module || !isset($event->data->meta['mec_date']['start'])) && !$cost && (!isset($event->data->labels) || !is_array($event->data->labels) || !count($event->data->labels))) echo 'mec-util-hidden'; ?>">
                 <?php
                     // Event Date and Time
                     if(!$banner_module and isset($event->data->meta['mec_date']['start']) and !empty($event->data->meta['mec_date']['start']))
                     {
                         $this->display_datetime_widget($event, $occurrence_full, $occurrence_end_full);
                     }
-                ?>
 
-                <?php
                     if($cost)
                     {
-                        ?>
+                    ?>
                         <div class="mec-event-cost">
-                            <i class="mec-sl-wallet"></i>
+                            <?php echo $this->icons->display('wallet'); ?>
                             <h3 class="mec-cost"><?php echo esc_html($this->main->m('cost', esc_html__('Cost', 'modern-events-calendar-lite'))); ?></h3>
                             <dl><dd class="mec-events-event-cost"><?php echo MEC_kses::element($cost); ?></dd></dl>
                         </div>
-                        <?php
+                    <?php
                     }
-                ?>
-                <?php do_action('print_extra_costs', $event); ?>
-                <?php
-                // Event labels
-                if(isset($event->data->labels) && !empty($event->data->labels))
-                {
-                    $this->display_labels_widget($event);
-                }
+
+                    do_action('print_extra_costs', $event);
+
+                    // Event labels
+                    if(isset($event->data->labels) && !empty($event->data->labels))
+                    {
+                        $this->display_labels_widget($event);
+                    }
                 ?>
             </div>
 
@@ -155,20 +156,20 @@ $cost = $this->main->get_event_cost($event);
             <?php $this->display_faq($event); ?>
 
             <!-- Links Module -->
-            <?php echo MEC_kses::full($this->main->module('links.details', array('event' => $event))); ?>
+            <?php echo MEC_kses::full($this->main->module('links.details', array('event' => $event, 'icons' => $this->icons))); ?>
 
             <!-- Google Maps Module -->
             <div class="mec-events-meta-group mec-events-meta-group-gmap">
-                <?php echo MEC_kses::full($this->main->module('googlemap.details', array('event' => $this->events))); ?>
+                <?php echo MEC_kses::full($this->main->module('googlemap.details', array('event' => $this->events, 'icons' => $this->icons))); ?>
             </div>
 
             <!-- Export Module -->
-            <?php echo MEC_kses::full($this->main->module('export.details', array('event' => $event))); ?>
+            <?php echo MEC_kses::full($this->main->module('export.details', array('event' => $event, 'icons' => $this->icons))); ?>
 
             <!-- Countdown module -->
             <?php if($this->main->can_show_countdown_module($event)): ?>
             <div class="mec-events-meta-group mec-events-meta-group-countdown">
-                <?php echo MEC_kses::full($this->main->module('countdown.details', array('event' => $this->events))); ?>
+                <?php echo MEC_kses::full($this->main->module('countdown.details', array('event' => $this->events, 'icons' => $this->icons))); ?>
             </div>
             <?php endif; ?>
 
@@ -187,7 +188,7 @@ $cost = $this->main->get_event_cost($event);
                     <?php
                         if(isset($settings['booking_user_login']) and $settings['booking_user_login'] == '1' and !is_user_logged_in()) echo do_shortcode('[MEC_login]');
                         elseif(isset($settings['booking_user_login']) and $settings['booking_user_login'] == '0' and !is_user_logged_in() and isset($booking_options['bookings_limit_for_users']) and $booking_options['bookings_limit_for_users'] == '1') echo do_shortcode('[MEC_login]');
-                        else echo MEC_kses::full($this->main->module('booking.default', array('event' => $this->events)));
+                        else echo MEC_kses::full($this->main->module('booking.default', array('event' => $this->events, 'icons' => $this->icons)));
                     ?>
                 </div>
             </div>
@@ -210,7 +211,7 @@ $cost = $this->main->get_event_cost($event);
     if($rank_math_options != 'event') do_action('mec_schema', $event);
 ?>
 <script>
-jQuery(".mec-speaker-avatar a, .mec-schedule-speakers a").on('click', function(e)
+jQuery(".mec-speaker-avatar-dialog a, .mec-schedule-speakers a").on('click', function(e)
 {
     e.preventDefault();
     lity(jQuery(this).attr('href'));

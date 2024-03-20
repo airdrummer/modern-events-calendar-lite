@@ -42,7 +42,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
 
             <!-- List View -->
             <div class="mec-skin-options-container mec-util-hidden" id="mec_list_skin_options_container">
-                <?php $sk_options_list = isset($sk_options['list']) ? $sk_options['list'] : array(); ?>
+                <?php $sk_options_list = isset($sk_options['list']) ? $sk_options['list'] : []; ?>
                 <div class="mec-form-row">
                     <label class="mec-col-4" for="mec_skin_list_style"><?php esc_html_e('Style', 'modern-events-calendar-lite'); ?></label>
                     <select class="mec-col-4 wn-mec-select" name="mec[sk-options][list][style]" id="mec_skin_list_style" onchange="mec_skin_style_changed('list', this.value, this); if(this.value == 'accordion'){ jQuery('.mec-sed-methode-container').hide();jQuery('.mec-toggle-month-divider').show(); }else{ jQuery('.mec-sed-methode-container').show();jQuery('.mec-toggle-month-divider').hide()}">
@@ -269,7 +269,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                 </div>
                 <!-- End Display Categories -->
                 <!-- Start Display Organizer -->
-                <?php echo MEC_kses::form($this->display_organizer_field('list', (isset($sk_options_list['display_organizer']) ? $sk_options_list['display_organizer'] : 0))); ?>
+                <?php if(!isset($this->settings['organizers_status']) || $this->settings['organizers_status']) echo MEC_kses::form($this->display_organizer_field('list', $sk_options_list['display_organizer'] ?? 0)); ?>
                 <!-- End Display Organizer -->
                 <div class="mec-form-row mec-switcher mec-not-list-liquid">
                     <div class="mec-col-4">
@@ -344,7 +344,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
 
             <!-- Grid View -->
             <div class="mec-skin-options-container mec-util-hidden" id="mec_grid_skin_options_container">
-                <?php $sk_options_grid = isset($sk_options['grid']) ? $sk_options['grid'] : array(); ?>
+                <?php $sk_options_grid = isset($sk_options['grid']) ? $sk_options['grid'] : []; ?>
                 <div class="mec-form-row">
                     <label class="mec-col-4" for="mec_skin_grid_style"><?php esc_html_e('Style', 'modern-events-calendar-lite'); ?></label>
                     <select class="mec-col-4 wn-mec-select" name="mec[sk-options][grid][style]" id="mec_skin_grid_style" onchange="mec_skin_style_changed('grid', this.value);">
@@ -597,7 +597,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                 </div>
                 <!-- End Display Categories -->
                 <!-- Start Display Organizer -->
-                <?php echo MEC_kses::form($this->display_organizer_field('grid', (isset($sk_options_grid['display_organizer']) ? $sk_options_grid['display_organizer'] : 0))); ?>
+                <?php if(!isset($this->settings['organizers_status']) || $this->settings['organizers_status']) echo MEC_kses::form($this->display_organizer_field('grid', $sk_options_grid['display_organizer'] ?? 0)); ?>
                 <!-- End Display Organizer -->
                 <div class="mec-form-row mec-switcher mec-not-grid-liquid">
                     <div class="mec-col-4">
@@ -664,7 +664,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                     <div class="info-msg"><?php echo sprintf(esc_html__("%s is required to use this skin.", 'modern-events-calendar-lite'), '<a href="'.esc_url($this->main->get_pro_link()).'" target="_blank">'.esc_html__('Pro version of Modern Events Calendar', 'modern-events-calendar-lite').'</a>'); ?></div>
                 <?php endif; ?>
 
-                <?php $sk_options_agenda = isset($sk_options['agenda']) ? $sk_options['agenda'] : array(); ?>
+                <?php $sk_options_agenda = isset($sk_options['agenda']) ? $sk_options['agenda'] : []; ?>
                 <div class="mec-form-row">
                     <label class="mec-col-4" for="mec_skin_agenda_style"><?php esc_html_e('Style', 'modern-events-calendar-lite'); ?></label>
                     <select class="mec-col-4 wn-mec-select" name="mec[sk-options][agenda][style]" id="mec_skin_agenda_style" onchange="mec_skin_style_changed('agenda', this.value);">
@@ -807,7 +807,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
 
             <!-- Full Calendar -->
             <div class="mec-skin-options-container mec-util-hidden" id="mec_full_calendar_skin_options_container">
-                <?php $sk_options_full_calendar = isset($sk_options['full_calendar']) ? $sk_options['full_calendar'] : array(); ?>
+                <?php $sk_options_full_calendar = isset($sk_options['full_calendar']) ? $sk_options['full_calendar'] : []; ?>
                 <?php do_action('mec_skin_options_full_calendar_init', $sk_options_full_calendar); ?>
                 <div class="mec-form-row">
                     <label class="mec-col-4" for="mec_skin_full_calendar_style"><?php _e('Style', 'mec-liq'); ?></label>
@@ -966,7 +966,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                     <?php
                     $date_format_yearly_1 = 'l';
                     $date_format_yearly_2 = 'F j';
-                    $sk_options_yearly_view = isset($sk_options['yearly_view']) ? $sk_options['yearly_view'] : array();
+                    $sk_options_yearly_view = isset($sk_options['yearly_view']) ? $sk_options['yearly_view'] : [];
 
                     if(isset($sk_options_full_calendar['date_format_yearly_1']) and trim($sk_options_full_calendar['date_format_yearly_1']) != '') $date_format_yearly_1 = trim($sk_options_full_calendar['date_format_yearly_1']);
                     elseif(isset($sk_options_yearly_view['modern_date_format1']) and trim($sk_options_yearly_view['modern_date_format1']) != '') $date_format_yearly_1 = trim($sk_options_yearly_view['modern_date_format1']);
@@ -1118,7 +1118,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                     <div class="info-msg"><?php echo sprintf(esc_html__("%s is required to use this skin.", 'modern-events-calendar-lite'), '<a href="'.esc_url($this->main->get_pro_link()).'" target="_blank">'.esc_html__('Pro version of Modern Events Calendar', 'modern-events-calendar-lite').'</a>'); ?></div>
                 <?php endif; ?>
 
-                <?php $sk_options_yearly_view = isset($sk_options['yearly_view']) ? $sk_options['yearly_view'] : array(); ?>
+                <?php $sk_options_yearly_view = isset($sk_options['yearly_view']) ? $sk_options['yearly_view'] : []; ?>
                 <div class="mec-form-row">
                     <label class="mec-col-4" for="mec_skin_yearly_view_style"><?php esc_html_e('Style', 'modern-events-calendar-lite'); ?></label>
                     <select class="mec-col-4 wn-mec-select" name="mec[sk-options][yearly_view][style]" id="mec_skin_yearly_view_style" onchange="mec_skin_style_changed('yearly_view', this.value);">
@@ -1128,7 +1128,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                 </div>
                 <div class="mec-form-row">
                     <label class="mec-col-4" for="mec_skin_yearly_view_start_date_type"><?php esc_html_e('Start Date', 'modern-events-calendar-lite'); ?></label>
-                    <select class="mec-col-4 wn-mec-select" name="mec[sk-options][yearly_view][start_date_type]" id="mec_skin_yearly_view_start_date_type" onchange="if(this.value == 'date') jQuery('#mec_skin_yearly_view_start_date_container').show(); else jQuery('#mec_skin_yearly_view_start_date_container').hide();">
+                    <select class="mec-col-4 wn-mec-select" name="mec[sk-options][yearly_view][start_date_type]" id="mec_skin_yearly_view_start_date_type" onchange="if(this.value === 'date') jQuery('#mec_skin_yearly_view_start_date_container').show(); else jQuery('#mec_skin_yearly_view_start_date_container').hide();">
                         <option value="start_current_year" <?php if(isset($sk_options_yearly_view['start_date_type']) and $sk_options_yearly_view['start_date_type'] == 'start_current_year') echo 'selected="selected"'; ?>><?php esc_html_e('Start of Current Year', 'modern-events-calendar-lite'); ?></option>
                         <option value="start_next_year" <?php if(isset($sk_options_yearly_view['start_date_type']) and $sk_options_yearly_view['start_date_type'] == 'start_next_year') echo 'selected="selected"'; ?>><?php esc_html_e('Start of Next Year', 'modern-events-calendar-lite'); ?></option>
                         <option value="start_last_year" <?php if(isset($sk_options_yearly_view['start_date_type']) and $sk_options_yearly_view['start_date_type'] == 'start_last_year') echo 'selected="selected"'; ?>><?php esc_html_e('Start of Last Year', 'modern-events-calendar-lite'); ?></option>
@@ -1242,7 +1242,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
 
             <!-- Monthly View -->
             <div class="mec-skin-options-container mec-util-hidden" id="mec_monthly_view_skin_options_container">
-                <?php $sk_options_monthly_view = isset($sk_options['monthly_view']) ? $sk_options['monthly_view'] : array(); ?>
+                <?php $sk_options_monthly_view = isset($sk_options['monthly_view']) ? $sk_options['monthly_view'] : []; ?>
                 <div class="mec-form-row">
                     <label class="mec-col-4" for="mec_skin_monthly_view_style"><?php esc_html_e('Style', 'modern-events-calendar-lite'); ?></label>
                     <select class="mec-col-4 wn-mec-select" name="mec[sk-options][monthly_view][style]" id="mec_skin_monthly_view_style" onchange="mec_skin_style_changed('monthly_view', this.value);">
@@ -1339,7 +1339,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                 </div>
                 <!-- End Display Reason for Cancellation -->
                 <!-- Start Display Organizer -->
-                <?php echo MEC_kses::form($this->display_organizer_field('monthly_view', (isset($sk_options_monthly_view['display_organizer']) ? $sk_options_monthly_view['display_organizer'] : 0))); ?>
+                <?php if(!isset($this->settings['organizers_status']) || $this->settings['organizers_status']) echo MEC_kses::form($this->display_organizer_field('monthly_view', $sk_options_monthly_view['display_organizer'] ?? 0)); ?>
                 <!-- End Display Organizer -->
                 <div class="mec-form-row mec-switcher mec-not-monthly_view-fluent mec-not-monthly_view-liquid">
                     <div class="mec-col-4">
@@ -1385,7 +1385,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                     <div class="info-msg"><?php echo sprintf(esc_html__("%s is required to use this skin.", 'modern-events-calendar-lite'), '<a href="'.esc_url($this->main->get_pro_link()).'" target="_blank">'.esc_html__('Pro version of Modern Events Calendar', 'modern-events-calendar-lite').'</a>'); ?></div>
                 <?php endif; ?>
 
-                <?php $sk_options_map = isset($sk_options['map']) ? $sk_options['map'] : array(); ?>
+                <?php $sk_options_map = isset($sk_options['map']) ? $sk_options['map'] : []; ?>
                 <div class="mec-form-row">
                     <label class="mec-col-4" for="mec_skin_map_style"><?php esc_html_e('Style', 'modern-events-calendar-lite'); ?></label>
                     <select class="mec-col-4 wn-mec-select" name="mec[sk-options][map][style]" id="mec_skin_map_style" onchange="mec_skin_style_changed('map', this.value);">
@@ -1449,7 +1449,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
 
             <!-- Daily View -->
             <div class="mec-skin-options-container mec-util-hidden" id="mec_daily_view_skin_options_container">
-                <?php $sk_options_daily_view = isset($sk_options['daily_view']) ? $sk_options['daily_view'] : array(); ?>
+                <?php $sk_options_daily_view = isset($sk_options['daily_view']) ? $sk_options['daily_view'] : []; ?>
                 <?php do_action('mec_skin_options_daily_init', $sk_options_daily_view); ?>
                 <div class="mec-form-row">
                     <label class="mec-col-4" for="mec_skin_daily_view_style"><?php _e('Style', 'mec-liq'); ?></label>
@@ -1570,18 +1570,18 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                 </div>
                 <!-- End Display Categories -->
                 <!-- Start Display Organizer -->
-                <?php echo MEC_kses::form($this->display_organizer_field('daily_view', (isset($sk_options_daily_view['display_organizer']) ? $sk_options_daily_view['display_organizer'] : 0))); ?>
+                <?php if(!isset($this->settings['organizers_status']) || $this->settings['organizers_status']) echo MEC_kses::form($this->display_organizer_field('daily_view', $sk_options_daily_view['display_organizer'] ?? 0)); ?>
                 <!-- End Display Organizer -->
-                <?php echo MEC_kses::form($this->booking_button_field('daily_view', (isset($sk_options_daily_view['booking_button']) ? $sk_options_daily_view['booking_button'] : 0))); ?>
-                <?php echo MEC_kses::form($this->display_custom_data_field('daily_view', (isset($sk_options_daily_view['custom_data']) ? $sk_options_daily_view['custom_data'] : 0))); ?>
-                <?php echo MEC_kses::form($this->display_detailed_time_field('daily_view', (isset($sk_options_daily_view['detailed_time']) ? $sk_options_daily_view['detailed_time'] : 0))); ?>
-                <?php echo MEC_kses::form($this->sed_method_field('daily_view', (isset($sk_options_daily_view['sed_method']) ? $sk_options_daily_view['sed_method'] : 0), (isset($sk_options_daily_view['image_popup']) ? $sk_options_daily_view['image_popup'] : 0))); ?>
+                <?php echo MEC_kses::form($this->booking_button_field('daily_view', $sk_options_daily_view['booking_button'] ?? 0)); ?>
+                <?php echo MEC_kses::form($this->display_custom_data_field('daily_view', $sk_options_daily_view['custom_data'] ?? 0)); ?>
+                <?php echo MEC_kses::form($this->display_detailed_time_field('daily_view', $sk_options_daily_view['detailed_time'] ?? 0)); ?>
+                <?php echo MEC_kses::form($this->sed_method_field('daily_view', $sk_options_daily_view['sed_method'] ?? 0, $sk_options_daily_view['image_popup'] ?? 0)); ?>
                 <?php do_action('mec_skin_options_daily_view_end', $sk_options_daily_view); ?>
             </div>
 
             <!-- Weekly View -->
             <div class="mec-skin-options-container mec-util-hidden" id="mec_weekly_view_skin_options_container">
-                <?php $sk_options_weekly_view = isset($sk_options['weekly_view']) ? $sk_options['weekly_view'] : array(); ?>
+                <?php $sk_options_weekly_view = $sk_options['weekly_view'] ?? []; ?>
                 <?php do_action('mec_skin_options_weekly_init', $sk_options_weekly_view); ?>
                 <div class="mec-form-row">
                     <label class="mec-col-4" for="mec_skin_weekly_view_style"><?php esc_html_e('Style', 'modern-events-calendar-lite'); ?></label>
@@ -1687,7 +1687,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                 </div>
                 <!-- End Display Categories -->
                 <!-- Start Display Organizer -->
-                <?php echo MEC_kses::form($this->display_organizer_field('weekly_view', (isset($sk_options_weekly_view['display_organizer']) ? $sk_options_weekly_view['display_organizer'] : 0))); ?>
+                <?php if(!isset($this->settings['organizers_status']) || $this->settings['organizers_status']) echo MEC_kses::form($this->display_organizer_field('weekly_view', $sk_options_weekly_view['display_organizer'] ?? 0)); ?>
                 <!-- End Display Organizer -->
                 <div class="mec-form-row mec-switcher">
                     <div class="mec-col-4">
@@ -1714,7 +1714,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                     <div class="info-msg"><?php echo sprintf(esc_html__("%s is required to use this skin.", 'modern-events-calendar-lite'), '<a href="'.esc_url($this->main->get_pro_link()).'" target="_blank">'.esc_html__('Pro version of Modern Events Calendar', 'modern-events-calendar-lite').'</a>'); ?></div>
                 <?php endif; ?>
 
-                <?php $sk_options_timetable = isset($sk_options['timetable']) ? $sk_options['timetable'] : array(); ?>
+                <?php $sk_options_timetable = isset($sk_options['timetable']) ? $sk_options['timetable'] : []; ?>
                 <div class="mec-form-row">
                     <label class="mec-col-4" for="mec_skin_timetable_style"><?php esc_html_e('Style', 'modern-events-calendar-lite'); ?></label>
                     <select class="mec-col-4 wn-mec-select" name="mec[sk-options][timetable][style]" id="mec_skin_timetable_style" onchange="mec_skin_style_changed('timetable', this.value); if(this.value == 'clean' || this.value == 'fluent'){ jQuery('.mec-timetable-clean-style-depended').show(); jQuery('.mec-timetable-classic-style-depended').hide(); jQuery('.mec-timetable-modern-style-depended').hide(); } else if ( this.value == 'classic' ) { jQuery('.mec-timetable-classic-style-depended').show(); jQuery('.mec-timetable-clean-style-depended').show(); jQuery('.mec-timetable-modern-style-depended').hide(); } else { jQuery('.mec-timetable-clean-style-depended').hide(); jQuery('.mec-timetable-classic-style-depended').hide(); jQuery('.mec-timetable-modern-style-depended').show(); }">
@@ -1892,7 +1892,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                     <div class="info-msg"><?php echo sprintf(esc_html__("%s is required to use this skin.", 'modern-events-calendar-lite'), '<a href="'.esc_url($this->main->get_pro_link()).'" target="_blank">'.esc_html__('Pro version of Modern Events Calendar', 'modern-events-calendar-lite').'</a>'); ?></div>
                 <?php endif; ?>
 
-                <?php $sk_options_masonry = isset($sk_options['masonry']) ? $sk_options['masonry'] : array(); ?>
+                <?php $sk_options_masonry = isset($sk_options['masonry']) ? $sk_options['masonry'] : []; ?>
                 <?php do_action('mec_skin_options_masonry_init', $sk_options_masonry); ?>
                 <div class="mec-form-row">
                     <label class="mec-col-4" for="mec_skin_masonry_start_date_type"><?php esc_html_e('Start Date', 'modern-events-calendar-lite'); ?></label>
@@ -2040,7 +2040,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                 </div>
                 <!-- End Display Categories -->
                 <!-- Start Display Organizer -->
-                <?php echo MEC_kses::form($this->display_organizer_field('masonry', (isset($sk_options_masonry['display_organizer']) ? $sk_options_masonry['display_organizer'] : 0))); ?>
+                <?php if(!isset($this->settings['organizers_status']) || $this->settings['organizers_status']) echo MEC_kses::form($this->display_organizer_field('masonry', $sk_options_masonry['display_organizer'] ?? 0)); ?>
                 <!-- End Display Organizer -->
                 <div class="mec-form-row mec-switcher">
                     <div class="mec-col-4">
@@ -2073,7 +2073,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
 
             <!-- Cover -->
             <div class="mec-skin-options-container mec-util-hidden" id="mec_cover_skin_options_container">
-                <?php $sk_options_cover = isset($sk_options['cover']) ? $sk_options['cover'] : array(); ?>
+                <?php $sk_options_cover = isset($sk_options['cover']) ? $sk_options['cover'] : []; ?>
                 <div class="mec-form-row">
                     <label class="mec-col-4" for="mec_skin_cover_style"><?php esc_html_e('Style', 'modern-events-calendar-lite'); ?></label>
                     <select class="mec-col-4 wn-mec-select" name="mec[sk-options][cover][style]" id="mec_skin_cover_style" onchange="mec_skin_style_changed('cover', this.value);">
@@ -2190,7 +2190,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
 
             <!-- CountDown -->
             <div class="mec-skin-options-container mec-util-hidden" id="mec_countdown_skin_options_container">
-                <?php $sk_options_countdown = isset($sk_options['countdown']) ? $sk_options['countdown'] : array(); ?>
+                <?php $sk_options_countdown = isset($sk_options['countdown']) ? $sk_options['countdown'] : []; ?>
                 <div class="mec-form-row">
                     <label class="mec-col-4" for="mec_skin_countdown_style"><?php esc_html_e('Style', 'modern-events-calendar-lite'); ?></label>
                     <select class="mec-col-4 wn-mec-select" name="mec[sk-options][countdown][style]" id="mec_skin_countdown_style" onchange="mec_skin_style_changed('countdown', this.value);">
@@ -2315,7 +2315,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                     <div class="info-msg"><?php echo sprintf(esc_html__("%s is required to use this skin.", 'modern-events-calendar-lite'), '<a href="'.esc_url($this->main->get_pro_link()).'" target="_blank">'.esc_html__('Pro version of Modern Events Calendar', 'modern-events-calendar-lite').'</a>'); ?></div>
                 <?php endif; ?>
 
-                <?php $sk_options_available_spot = isset($sk_options['available_spot']) ? $sk_options['available_spot'] : array(); ?>
+                <?php $sk_options_available_spot = isset($sk_options['available_spot']) ? $sk_options['available_spot'] : []; ?>
                 <div class="mec-form-row">
                     <label class="mec-col-4" for="mec_skin_available_spot_style"><?php esc_html_e('Style', 'modern-events-calendar-lite'); ?></label>
                     <select class="mec-col-4 wn-mec-select" name="mec[sk-options][available_spot][style]" id="mec_skin_available_spot_style" onchange="mec_skin_style_changed('available_spot', this.value);">
@@ -2407,7 +2407,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
 
             <!-- Carousel View -->
             <div class="mec-skin-options-container mec-util-hidden" id="mec_carousel_skin_options_container">
-                <?php $sk_options_carousel = isset($sk_options['carousel']) ? $sk_options['carousel'] : array(); ?>
+                <?php $sk_options_carousel = isset($sk_options['carousel']) ? $sk_options['carousel'] : []; ?>
                 <div class="mec-form-row">
                     <label class="mec-col-4" for="mec_skin_carousel_style"><?php esc_html_e('Style', 'modern-events-calendar-lite'); ?></label>
                     <select class="mec-col-4 wn-mec-select" name="mec[sk-options][carousel][style]" id="mec_skin_carousel_style" onchange="mec_skin_style_changed('carousel', this.value); if(this.value == 'type4'){ jQuery('.mec-carousel-archive-link').show();jQuery('.mec-carousel-head-text').show();} else { jQuery('.mec-carousel-archive-link').hide(); jQuery('.mec-carousel-head-text').hide();  }">
@@ -2623,7 +2623,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
 
             <!-- Slider View -->
             <div class="mec-skin-options-container mec-util-hidden" id="mec_slider_skin_options_container">
-                <?php $sk_options_slider = isset($sk_options['slider']) ? $sk_options['slider'] : array(); ?>
+                <?php $sk_options_slider = isset($sk_options['slider']) ? $sk_options['slider'] : []; ?>
                 <div class="mec-form-row">
                     <label class="mec-col-4" for="mec_skin_slider_style"><?php esc_html_e('Style', 'modern-events-calendar-lite'); ?></label>
                     <select class="mec-col-4 wn-mec-select" name="mec[sk-options][slider][style]" id="mec_skin_slider_style" onchange="mec_skin_style_changed('slider', this.value);">
@@ -2798,7 +2798,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
             <!-- Timeline View -->
             <div class="mec-skin-options-container mec-util-hidden" id="mec_timeline_skin_options_container">
 
-                <?php $sk_options_timeline = isset($sk_options['timeline']) ? $sk_options['timeline'] : array(); ?>
+                <?php $sk_options_timeline = isset($sk_options['timeline']) ? $sk_options['timeline'] : []; ?>
                 <div class="mec-form-row">
                     <label class="mec-col-4" for="mec_skin_timeline_start_date_type"><?php esc_html_e('Start Date', 'modern-events-calendar-lite'); ?></label>
                     <select class="mec-col-4 wn-mec-select" name="mec[sk-options][timeline][start_date_type]" id="mec_skin_timeline_start_date_type" onchange="if(this.value == 'date') jQuery('#mec_skin_timeline_start_date_container').show(); else jQuery('#mec_skin_timeline_start_date_container').hide();">
@@ -2934,7 +2934,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                 </div>
                 <!-- End Display Categories -->
                 <!-- Start Display Organizer -->
-                <?php echo MEC_kses::form($this->display_organizer_field('timeline', (isset($sk_options_timeline['display_organizer']) ? $sk_options_timeline['display_organizer'] : 0))); ?>
+                <?php if(!isset($this->settings['organizers_status']) || $this->settings['organizers_status']) echo MEC_kses::form($this->display_organizer_field('timeline', $sk_options_timeline['display_organizer'] ?? 0)); ?>
                 <!-- End Display Organizer -->
                 <?php echo MEC_kses::form($this->display_pagination_field('timeline', $sk_options_timeline)); ?>
                 <div class="mec-form-row mec-switcher">
@@ -2954,17 +2954,20 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
 
             <!-- Tile View -->
             <div class="mec-skin-options-container mec-util-hidden" id="mec_tile_skin_options_container">
-                <?php $sk_options_tile = isset($sk_options['tile']) ? $sk_options['tile'] : array(); ?>
+                <?php $sk_options_tile = $sk_options['tile'] ?? []; ?>
                 <?php do_action('mec_skin_options_tile_init', $sk_options_tile); ?>
                 <div class="mec-form-row">
                     <label class="mec-col-4" for="mec_skin_tile_start_date_type"><?php esc_html_e('Start Date', 'modern-events-calendar-lite'); ?></label>
                     <select class="mec-col-4 wn-mec-select" name="mec[sk-options][tile][start_date_type]" id="mec_skin_tile_start_date_type" onchange="if(this.value == 'date') jQuery('#mec_skin_tile_start_date_container').show(); else jQuery('#mec_skin_tile_start_date_container').hide();">
+                        <option value="today" <?php if(isset($sk_options_tile['start_date_type']) and $sk_options_tile['start_date_type'] == 'today') echo 'selected="selected"'; ?>><?php esc_html_e('Today', 'modern-events-calendar-lite'); ?></option>
+                        <option value="tomorrow" <?php if(isset($sk_options_tile['start_date_type']) and $sk_options_tile['start_date_type'] == 'tomorrow') echo 'selected="selected"'; ?>><?php esc_html_e('Tomorrow', 'modern-events-calendar-lite'); ?></option>
+                        <option value="yesterday" <?php if(isset($sk_options_tile['start_date_type']) and $sk_options_tile['start_date_type'] == 'yesterday') echo 'selected="selected"'; ?>><?php esc_html_e('Yesterday', 'modern-events-calendar-lite'); ?></option>
                         <option value="start_current_month" <?php if(isset($sk_options_tile['start_date_type']) and $sk_options_tile['start_date_type'] == 'start_current_month') echo 'selected="selected"'; ?>><?php esc_html_e('Start of Current Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="start_next_month" <?php if(isset($sk_options_tile['start_date_type']) and $sk_options_tile['start_date_type'] == 'start_next_month') echo 'selected="selected"'; ?>><?php esc_html_e('Start of Next Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="start_last_month" <?php if(isset($sk_options_tile['start_date_type']) and $sk_options_tile['start_date_type'] == 'start_last_month') echo 'selected="selected"'; ?>><?php esc_html_e('Start of Last Month', 'modern-events-calendar-lite'); ?></option>
                         <option value="date" <?php if(isset($sk_options_tile['start_date_type']) and $sk_options_tile['start_date_type'] == 'date') echo 'selected="selected"'; ?>><?php esc_html_e('On a certain date', 'modern-events-calendar-lite'); ?></option>
                     </select>
-                    <div class="mec-col-4 <?php if(!isset($sk_options_tile['start_date_type']) or (isset($sk_options_tile['start_date_type']) and $sk_options_tile['start_date_type'] != 'date')) echo 'mec-util-hidden'; ?>" id="mec_skin_tile_start_date_container">
+                    <div class="mec-col-4 <?php if(!isset($sk_options_tile['start_date_type']) || $sk_options_tile['start_date_type'] != 'date') echo 'mec-util-hidden'; ?>" id="mec_skin_tile_start_date_container">
                         <input class="mec_date_picker" type="text" name="mec[sk-options][tile][start_date]" id="mec_skin_tile_start_date" placeholder="<?php echo sprintf(esc_html__('eg. %s', 'modern-events-calendar-lite'), date('Y-n-d')); ?>" value="<?php if(isset($sk_options_tile['start_date'])) echo esc_attr($sk_options_tile['start_date']); ?>" />
                     </div>
                 </div>
@@ -3046,7 +3049,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                 </div>
                 <!-- End Display Categories -->
                 <!-- Start Display Organizer -->
-                <?php echo MEC_kses::form($this->display_organizer_field('tile', (isset($sk_options_tile['display_organizer']) ? $sk_options_tile['display_organizer'] : 0))); ?>
+                <?php if(!isset($this->settings['organizers_status']) || $this->settings['organizers_status']) echo MEC_kses::form($this->display_organizer_field('tile', $sk_options_tile['display_organizer'] ?? 0)); ?>
                 <!-- End Display Organizer -->
                 <div class="mec-form-row mec-switcher">
                     <div class="mec-col-4">
@@ -3080,7 +3083,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
 
             <!-- General Calendar -->
             <div class="mec-skin-options-container mec-util-hidden" id="mec_general_calendar_skin_options_container">
-                <?php $sk_options_general_calendar = isset($sk_options['general_calendar']) ? $sk_options['general_calendar'] : array();  ?>
+                <?php $sk_options_general_calendar = isset($sk_options['general_calendar']) ? $sk_options['general_calendar'] : [];  ?>
                 <?php do_action('mec_skin_options_general_calendar_init', $sk_options_general_calendar); ?>
                 <div class="mec-form-row">
                     <label class="mec-col-4" for="mec_skin_general_calendar_start_date_type"><?php esc_html_e('Start Date', 'modern-events-calendar-lite'); ?></label>

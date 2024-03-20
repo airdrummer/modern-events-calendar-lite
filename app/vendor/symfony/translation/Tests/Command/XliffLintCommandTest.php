@@ -147,7 +147,7 @@ XLIFF;
 
     protected function setUp()
     {
-        $this->files = array();
+        $this->files = [];
         @mkdir(sys_get_temp_dir().'/translation-xliff-lint-test');
     }
 

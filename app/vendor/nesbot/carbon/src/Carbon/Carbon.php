@@ -254,7 +254,7 @@ class Carbon extends DateTime implements JsonSerializable
      *
      * @var array
      */
-    protected static $localMacros = array();
+    protected static $localMacros = [];
 
     /**
      * Will UTF8 encoding be used to print localized date/time ?
@@ -3889,7 +3889,7 @@ class Carbon extends DateTime implements JsonSerializable
     public function diffForHumans($other = null, $absolute = false, $short = false, $parts = 1)
     {
         $isNow = $other === null;
-        $interval = array();
+        $interval = [];
 
         $parts = min(6, max(1, (int) $parts));
         $count = 1;

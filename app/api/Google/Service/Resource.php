@@ -130,7 +130,7 @@ class Google_Service_Resource
     }
 
     if (!isset($method['parameters'])) {
-      $method['parameters'] = array();
+      $method['parameters'] = [];
     }
 
     $method['parameters'] = array_merge(
@@ -208,7 +208,7 @@ class Google_Service_Resource
     }
 
     if ($postBody) {
-      $contentTypeHeader = array();
+      $contentTypeHeader = [];
       $contentTypeHeader['content-type'] = 'application/json; charset=UTF-8';
       $httpRequest->setRequestHeaders($contentTypeHeader);
       $httpRequest->setPostBody($postBody);

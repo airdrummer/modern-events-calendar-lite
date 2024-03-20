@@ -53,7 +53,12 @@ class MEC_skin_carousel extends MEC_skins
         $this->atts = $atts;
 
         // Skin Options
-        $this->skin_options = (isset($this->atts['sk-options']) and isset($this->atts['sk-options'][$this->skin])) ? $this->atts['sk-options'][$this->skin] : array();
+        $this->skin_options = (isset($this->atts['sk-options']) and isset($this->atts['sk-options'][$this->skin])) ? $this->atts['sk-options'][$this->skin] : [];
+
+        // Icons
+        $this->icons = $this->main->icons(
+            ($this->getPRO() && isset($this->atts['icons']) && is_array($this->atts['icons'])) ? $this->atts['icons'] : []
+        );
 
         // Date Formats
         $this->date_format_type1_1 = (isset($this->skin_options['type1_date_format1']) and trim($this->skin_options['type1_date_format1'])) ? $this->skin_options['type1_date_format1'] : 'd';
@@ -66,30 +71,30 @@ class MEC_skin_carousel extends MEC_skins
         // Search Form Status
         $this->sf_status = false;
 
-        $this->navigation = isset($this->skin_options['navigation']) ? (bool) $this->skin_options['navigation'] : false;
+        $this->navigation = isset($this->skin_options['navigation']) && $this->skin_options['navigation'];
 
         // Generate an ID for the sking
-        $this->id = isset($this->atts['id']) ? $this->atts['id'] : mt_rand(100, 999);
+        $this->id = $this->atts['id'] ?? mt_rand(100, 999);
 
         // Set the ID
         if(!isset($this->atts['id'])) $this->atts['id'] = $this->id;
 
         // The style
-        $this->style = isset($this->skin_options['style']) ? $this->skin_options['style'] : 'type1';
+        $this->style = $this->skin_options['style'] ?? 'type1';
         if($this->style == 'fluent' and !is_plugin_active('mec-fluent-layouts/mec-fluent-layouts.php')) $this->style = 'type1';
 
         // The archive link
-        $this->archive_link = isset($this->skin_options['archive_link']) ? $this->skin_options['archive_link'] : '';
+        $this->archive_link = $this->skin_options['archive_link'] ?? '';
 
         // The Head text
-        $this->head_text = isset($this->skin_options['head_text']) ? $this->skin_options['head_text'] : '';
+        $this->head_text = $this->skin_options['head_text'] ?? '';
 
         // Auto Play
-        $this->autoplay_status = (!isset($this->skin_options['autoplay_status']) or (isset($this->skin_options['autoplay_status']) and trim($this->skin_options['autoplay_status']))) ? true : false;
+        $this->autoplay_status = !isset($this->skin_options['autoplay_status']) || trim($this->skin_options['autoplay_status']);
         $this->autoplay = (isset($this->skin_options['autoplay']) and trim($this->skin_options['autoplay'])) ? $this->skin_options['autoplay'] : 3000;
 
         // Loop
-        $this->loop = (!isset($this->skin_options['loop_status']) or (isset($this->skin_options['loop_status']) and trim($this->skin_options['loop_status']))) ? true : false;
+        $this->loop = !isset($this->skin_options['loop_status']) || trim($this->skin_options['loop_status']);
 
         // Override the style if the style forced by us in a widget etc
         if(isset($this->atts['style']) and trim($this->atts['style']) != '') $this->style = $this->atts['style'];
@@ -102,32 +107,32 @@ class MEC_skin_carousel extends MEC_skins
         $this->booking_button = isset($this->skin_options['booking_button']) ? (int) $this->skin_options['booking_button'] : 0;
 
         // SED Method
-        $this->sed_method = isset($this->skin_options['sed_method']) ? $this->skin_options['sed_method'] : '0';
+        $this->sed_method = $this->skin_options['sed_method'] ?? '0';
 
         // Image popup
-        $this->image_popup = isset($this->skin_options['image_popup']) ? $this->skin_options['image_popup'] : '0';
+        $this->image_popup = $this->skin_options['image_popup'] ?? '0';
 
         // reason_for_cancellation
-        $this->reason_for_cancellation = isset($this->skin_options['reason_for_cancellation']) ? $this->skin_options['reason_for_cancellation'] : false;
+        $this->reason_for_cancellation = $this->skin_options['reason_for_cancellation'] ?? false;
 
         // Event Times
-        $this->include_events_times = isset($this->skin_options['include_events_times']) ? $this->skin_options['include_events_times'] : false;
-        $this->localtime = isset($this->skin_options['include_local_time']) ? $this->skin_options['include_local_time'] : false;
+        $this->include_events_times = $this->skin_options['include_events_times'] ?? false;
+        $this->localtime = $this->skin_options['include_local_time'] ?? false;
 
         // display_label
-        $this->display_label = isset($this->skin_options['display_label']) ? $this->skin_options['display_label'] : false;
+        $this->display_label = $this->skin_options['display_label'] ?? false;
 
         // From Widget
-        $this->widget = (isset($this->atts['widget']) and trim($this->atts['widget'])) ? true : false;
+        $this->widget = isset($this->atts['widget']) && trim($this->atts['widget']);
         if($this->widget)
         {
             $this->skin_options['count'] = '1';
         }
 
         // The count in row
-        $this->count = isset($this->skin_options['count']) ? $this->skin_options['count'] : '3';
-        $this->count_tablet = isset($this->skin_options['count_tablet']) ? $this->skin_options['count_tablet'] : '2';
-        $this->count_mobile = isset($this->skin_options['count_mobile']) ? $this->skin_options['count_mobile'] : '1';
+        $this->count = $this->skin_options['count'] ?? '3';
+        $this->count_tablet = $this->skin_options['count_tablet'] ?? '2';
+        $this->count_mobile = $this->skin_options['count_mobile'] ?? '1';
 
         // Init MEC
         $this->args['mec-init'] = true;
@@ -153,6 +158,7 @@ class MEC_skin_carousel extends MEC_skins
 
         // Author
         $this->args['author'] = $this->author_query();
+        $this->args['author__not_in'] = $this->author_query_ex();
 
         // Pagination Options
         $this->paged = get_query_var('paged', 1);
@@ -177,7 +183,7 @@ class MEC_skin_carousel extends MEC_skins
         }
 
         // Show Past Events
-        $this->args['mec-past-events'] = isset($this->atts['show_past_events']) ? $this->atts['show_past_events'] : '0';
+        $this->args['mec-past-events'] = $this->atts['show_past_events'] ?? '0';
 
         // Start Date
         $this->start_date = $this->get_start_date();

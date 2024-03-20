@@ -32,7 +32,7 @@ class PucReadmeParser {
 		// === Plugin Name ===
 		// Must be the very first thing.
 		if ( !preg_match('|^===(.*)===|', $file_contents, $_name) )
-			return array(); // require a name
+			return []; // require a name
 		$name = trim($_name[1], '=');
 		$name = $this->sanitize_text( $name );
 
@@ -72,12 +72,12 @@ class PucReadmeParser {
 			foreach ( array_keys($tags) as $t )
 				$tags[$t] = $this->sanitize_text( $tags[$t] );
 		} else {
-			$tags = array();
+			$tags = [];
 		}
 
 
 		// Contributors: markjaquith, mdawaffe, zefrank
-		$contributors = array();
+		$contributors = [];
 		if ( preg_match('|Contributors:(.*)|i', $file_contents, $_contributors) ) {
 			$temp_contributors = preg_split('|,[\s]*|', trim($_contributors[1]));
 			foreach ( array_keys($temp_contributors) as $c ) {
@@ -126,7 +126,7 @@ class PucReadmeParser {
 		// the array alternates from there:  title2, content2, title3, content3... and so forth
 		$_sections = preg_split('/^[\s]*==[\s]*(.+?)[\s]*==/m', $file_contents, -1, PREG_SPLIT_DELIM_CAPTURE|PREG_SPLIT_NO_EMPTY);
 
-		$sections = array();
+		$sections = [];
 		for ( $i=0; $i < count($_sections); $i +=2 ) {
 			$title = $this->sanitize_text( $_sections[$i] );
 			if ( isset($_sections[$i+1]) ) {
@@ -142,7 +142,7 @@ class PucReadmeParser {
 		// Special sections
 		// This is where we nab our special sections, so we can enforce their order and treat them differently, if needed
 		// upgrade_notice is not a section, but parse it like it is for now
-		$final_sections = array();
+		$final_sections = [];
 		foreach ( array('description', 'installation', 'frequently_asked_questions', 'screenshots', 'changelog', 'change_log', 'upgrade_notice') as $special_section ) {
 			if ( isset($sections[$special_section]) ) {
 				$final_sections[$special_section] = $sections[$special_section]['content'];
@@ -153,7 +153,7 @@ class PucReadmeParser {
 			$final_sections['changelog'] = $final_sections['change_log'];
 
 
-		$final_screenshots = array();
+		$final_screenshots = [];
 		if ( isset($final_sections['screenshots']) ) {
 			preg_match_all('|<li>(.*?)</li>|s', $final_sections['screenshots'], $screenshots, PREG_SET_ORDER);
 			if ( $screenshots ) {
@@ -164,7 +164,7 @@ class PucReadmeParser {
 
 		// Parse the upgrade_notice section specially:
 		// 1.0 => blah, 1.1 => fnord
-		$upgrade_notice = array();
+		$upgrade_notice = [];
 		if ( isset($final_sections['upgrade_notice']) ) {
 			$split = preg_split( '#<h4>(.*?)</h4>#', $final_sections['upgrade_notice'], -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY );
 			if ( count($split) >= 2 ) {

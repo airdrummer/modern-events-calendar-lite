@@ -123,7 +123,7 @@ class MEC_feature_wc extends MEC_base
 
             $dates = (is_array($meta->value) ? $meta->value : explode(',', $meta->value));
 
-            $date_values = array();
+            $date_values = [];
             foreach($dates as $date)
             {
                 if(!trim($date)) continue;
@@ -149,11 +149,11 @@ class MEC_feature_wc extends MEC_base
         if(!isset($item['mec_date']) or !trim($item['mec_date'])) return $name;
 
         $date_format = (isset($this->ml_settings['booking_date_format1']) and trim($this->ml_settings['booking_date_format1'])) ? $this->ml_settings['booking_date_format1'] : get_option('date_format');
-        $other_dates = (isset($item['mec_other_dates']) and is_array($item['mec_other_dates'])) ? $item['mec_other_dates'] : array();
+        $other_dates = (isset($item['mec_other_dates']) and is_array($item['mec_other_dates'])) ? $item['mec_other_dates'] : [];
 
         $dates = array_merge(array($item['mec_date']), $other_dates);
 
-        $formatted_dates = array();
+        $formatted_dates = [];
         foreach($dates as $d)
         {
             $timestamps = explode(':', $d);
@@ -187,27 +187,31 @@ class MEC_feature_wc extends MEC_base
         $book = $this->getBook();
 
         $printed = false;
-        $all_items = array();
+        $all_items = [];
         foreach($items as $item)
         {
-            $event_id = ($item['mec_event_id'] ?? NULL);
+            $event_id = $item['mec_event_id'] ?? NULL;
             if(!$event_id) continue;
 
-            $product_id = ($item['product_id'] ?? NULL);
+            $product_id = $item['product_id'] ?? NULL;
             $mec_ticket = get_post_meta($product_id, 'mec_ticket', true);
 
             $ex = explode(':', $mec_ticket);
-            $ticket_id = ($ex[1] ?? NULL);
+            $ticket_id = $ex[1] ?? NULL;
             if(!$ticket_id) continue;
 
-            $quantity = ($item['quantity'] ?? 1);
-
-            $date = ($item['mec_date'] ?? NULL);
+            $date = $item['mec_date'] ?? NULL;
             $timestamps = explode(':', $date);
             $timestamp = $timestamps[0];
 
-            if(!isset($all_items[$event_id])) $all_items[$event_id] = array();
-            if(!isset($all_items[$event_id][$ticket_id])) $all_items[$event_id][$ticket_id] = array();
+            $other_dates = (isset($item['mec_other_dates']) and is_array($item['mec_other_dates'])) ? $item['mec_other_dates'] : [];
+            $all_dates = array_merge([$date], $other_dates);
+
+            $quantity = $item['quantity'] ?? 1;
+            if(count($all_dates) > 1 && $quantity % count($all_dates) === 0) $quantity = $quantity / count($all_dates);
+
+            if(!isset($all_items[$event_id])) $all_items[$event_id] = [];
+            if(!isset($all_items[$event_id][$ticket_id])) $all_items[$event_id][$ticket_id] = [];
 
             if(!isset($all_items[$event_id][$ticket_id][$timestamp])) $all_items[$event_id][$ticket_id][$timestamp] = $quantity;
             else $all_items[$event_id][$ticket_id][$timestamp] += $quantity;

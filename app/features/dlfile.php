@@ -134,7 +134,7 @@ class MEC_feature_dlfile extends MEC_base
         wp_update_attachment_metadata($attach_id, wp_generate_attachment_metadata($attach_id, $upload['file']));
 
         $success = 0;
-        $data = array();
+        $data = [];
 
         if($attach_id and (!isset($upload['error']) or (isset($upload['error']) and !$upload['error'])))
         {
@@ -213,7 +213,7 @@ class MEC_feature_dlfile extends MEC_base
         wp_update_attachment_metadata($attach_id, wp_generate_attachment_metadata($attach_id, $upload['file']));
 
         $success = 0;
-        $data = array();
+        $data = [];
 
         if($attach_id and (!isset($upload['error']) or (isset($upload['error']) and !$upload['error'])))
         {

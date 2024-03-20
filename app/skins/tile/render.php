@@ -10,7 +10,7 @@ $display_label = isset($this->skin_options['display_label']) ? $this->skin_optio
 $reason_for_cancellation = isset($this->skin_options['reason_for_cancellation']) ? $this->skin_options['reason_for_cancellation'] : false;
 
 $method = isset($this->skin_options['sed_method']) ? $this->skin_options['sed_method'] : false;
-$map_events = array();
+$map_events = [];
 ?>
 <div class="mec-wrap <?php echo esc_attr($event_colorskin); ?>">
     <div class="mec-event-tile-view">
@@ -32,7 +32,7 @@ $map_events = array();
 
                 $start_time = (isset($event->data->time) ? $event->data->time['start'] : '');
                 $event_start_date = !empty($event->date['start']['date']) ? $event->date['start']['date'] : '';
-                $event_color = ((isset($event->data->meta['mec_color']) and trim($event->data->meta['mec_color'])) ? '#'.$event->data->meta['mec_color'] : '');
+                $event_color = $this->get_event_color_dot($event, true);
                 $background_image = (isset($event->data->featured_image['tileview']) && trim($event->data->featured_image['tileview'])) ? ' url(\''.trim($event->data->featured_image['tileview']).'\')' : '';
 
                 $mec_data = $this->display_custom_data($event);
@@ -56,7 +56,7 @@ $map_events = array();
                             <?php else: ?>
                                 <div class="mec-event-month"><?php echo MEC_kses::element($this->main->dateify($event, $date_format_clean_1 .' '. $date_format_clean_2)); ?></div>
                             <?php endif; ?>
-                            <div class="mec-event-time"><i class="mec-sl-clock"></i><?php echo esc_html($start_time); ?></div>
+                            <div class="mec-event-time"><?php echo $this->icons->display('clock'); ?><?php echo esc_html($start_time); ?></div>
                         </div>
                         <div class="mec-event-content" data-target="<?php echo ($method == 'new' ? 'blank' : ($method ? $method : '')); ?>" data-event-id="<?php echo esc_attr($event->ID); ?>">
                             <?php if($method != 'no'): ?><a href="<?php echo esc_url($this->main->get_event_date_permalink($event, $event->date['start']['date'])); ?>" target="<?php echo ($method == 'new' ? 'blank' : ($method ? $method : '')); ?>" class="mec-tile-into-content-link"></a><?php endif; ?>
@@ -64,7 +64,7 @@ $map_events = array();
                                 <div class="mec-event-detail">
                                     <?php echo MEC_kses::element($this->display_categories($event)); ?>
                                     <?php echo MEC_kses::element($this->display_organizers($event)); ?>
-                                    <?php echo (isset($location['name']) ? '<span class="mec-event-loc-place"><i class="mec-sl-location-pin"></i>' . esc_html($location['name']) . '</span>' : ''); ?>
+                                    <?php echo (isset($location['name']) ? '<span class="mec-event-loc-place">'.$this->icons->display('location-pin') . esc_html($location['name']) . '</span>' : ''); ?>
                                     <?php echo MEC_kses::element($this->display_cost($event)); ?>
                                 </div>
                                 <?php echo MEC_kses::element($this->main->get_normal_labels($event, $display_label).$this->main->display_cancellation_reason($event, $reason_for_cancellation)); ?><?php do_action('mec_shortcode_virtual_badge', $event->data->ID ); ?>

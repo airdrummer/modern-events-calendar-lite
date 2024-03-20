@@ -5,7 +5,7 @@ defined('MECEXEC') or die();
 $styling = $this->main->get_styling();
 $fonts = include MEC::import('app.features.mec.webfonts.webfonts', true, true);
 
-$google_fonts = array();
+$google_fonts = [];
 $google_fonts['none'] = array(
 	'label'=>esc_html__('Default Font', 'modern-events-calendar-lite'),
 	'variants'=>array('regular'),
@@ -56,7 +56,7 @@ if(is_array($fonts))
                             <h5 class="mec-form-subtitle"><?php esc_html_e('Color Skin', 'modern-events-calendar-lite'); ?></h5>
                             <div class="mec-form-row">
                                 <div class="mec-col-3">
-                                    <span><?php esc_html_e('Predefined Color Skin', 'modern-events-calendar-lite'); ?></span>
+                                    <label><?php esc_html_e('Predefined Color Skin', 'modern-events-calendar-lite'); ?></label>
                                 </div>
                                 <div class="mec-col-9">
                                     <ul class="mec-image-select-wrap">
@@ -102,7 +102,7 @@ if(is_array($fonts))
                             </div>
                             <div class="mec-form-row">
                                 <div class="mec-col-3">
-                                    <span><?php esc_html_e('Custom Color Skin', 'modern-events-calendar-lite'); ?></span>
+                                    <label><?php esc_html_e('Custom Color Skin', 'modern-events-calendar-lite'); ?></label>
                                 </div>
                                 <div class="mec-col-9">
                                     <input type="text" class="wp-color-picker-field" id="mec_settings_color" name="mec[styling][color]" value="<?php echo (isset($styling['color']) ? esc_attr($styling['color']) : ''); ?>" data-default-color="" />
@@ -111,16 +111,17 @@ if(is_array($fonts))
                                     <p><?php esc_attr_e("If you want to select a predefined color skin, you must clear the color of this item", 'modern-events-calendar-lite'); ?></p>
                                 </div>
                             </div>
-
                             <div class="mec-form-row">
                                 <label class="mec-col-3" for="mec_styling_dark_mode"><?php esc_html_e('Dark Mode', 'modern-events-calendar-lite'); ?></label>
                                 <div class="mec-col-9">
-                                    <input type="hidden" name="mec[styling][dark_mode]" value="0" />
-                                    <input value="1" type="checkbox" id="mec_styling_dark_mode" name="mec[styling][dark_mode]" <?php if(isset($styling['dark_mode']) and $styling['dark_mode']) echo 'checked="checked"'; ?> />
+                                    <label id="mec_styling_dark_mode" >                                                
+                                        <input type="hidden" name="mec[styling][dark_mode]" value="0" />
+                                        <input value="1" type="checkbox" id="mec_styling_dark_mode" name="mec[styling][dark_mode]" <?php if(isset($styling['dark_mode']) and $styling['dark_mode']) echo 'checked="checked"'; ?> /><?php esc_html_e('Enable', 'modern-events-calendar-lite'); ?>
+                                    </label>
                                     <span class="mec-tooltip">
                                         <div class="box top">
                                             <h5 class="title"><?php esc_html_e('Dark Mode', 'modern-events-calendar-lite'); ?></h5>
-                                            <div class="content"><p><?php esc_attr_e('Enable this option to turn on the dark mode', 'modern-events-calendar-lite'); ?><a href="https://webnus.net/dox/modern-events-calendar/style-options/" target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
+                                            <div class="content"><p><?php esc_attr_e('Enable this option to turn on the dark mode', 'modern-events-calendar-lite'); ?><a href="https://webnus.net/dox/modern-events-calendar/appearance-settings/#3-_Dark_Mode/" target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
                                         </div>
                                         <i title="" class="dashicons-before dashicons-editor-help"></i>
                                     </span>
@@ -131,7 +132,7 @@ if(is_array($fonts))
                             <h5 class="mec-form-subtitle"><?php esc_html_e('Advanced Color Options (shortcodes)', 'modern-events-calendar-lite'); ?></h5>
                             <div class="mec-form-row">
                                 <div class="mec-col-3">
-                                    <span><?php esc_html_e('Title', 'modern-events-calendar-lite'); ?></span>
+                                    <label><?php esc_html_e('Title', 'modern-events-calendar-lite'); ?></label>
                                 </div>
                                 <div class="mec-col-9">
                                     <input type="text" class="wp-color-picker-field" id="mec_settings_title_color" name="mec[styling][title_color]" value="<?php echo (isset($styling['title_color']) ? esc_attr($styling['title_color']) : ''); ?>" data-default-color="" />
@@ -140,7 +141,7 @@ if(is_array($fonts))
 
                             <div class="mec-form-row">
                                 <div class="mec-col-3">
-                                    <span><?php esc_html_e('Title Hover', 'modern-events-calendar-lite'); ?></span>
+                                    <label><?php esc_html_e('Title Hover', 'modern-events-calendar-lite'); ?></label>
                                 </div>
                                 <div class="mec-col-9">
                                     <input type="text" class="wp-color-picker-field" id="mec_settings_title_color_hover" name="mec[styling][title_color_hover]" value="<?php echo (isset($styling['title_color_hover']) ? esc_attr($styling['title_color_hover']) : ''); ?>" data-default-color="" />
@@ -149,7 +150,7 @@ if(is_array($fonts))
 
                             <div class="mec-form-row">
                                 <div class="mec-col-3">
-                                    <span><?php esc_html_e('Content', 'modern-events-calendar-lite'); ?></span>
+                                    <label><?php esc_html_e('Content', 'modern-events-calendar-lite'); ?></label>
                                 </div>
                                 <div class="mec-col-9">
                                     <input type="text" class="wp-color-picker-field" id="mec_settings_content_color" name="mec[styling][content_color]" value="<?php echo (isset($styling['content_color']) ? esc_attr($styling['content_color']) : ''); ?>" data-default-color="" />
@@ -211,16 +212,17 @@ if(is_array($fonts))
 
                                 </div>
                             </div>
-
                             <div class="mec-form-row">
                                 <label class="mec-col-3" for="mec_styling_disable_gfonts"><?php esc_html_e('Disable Google Fonts', 'modern-events-calendar-lite'); ?></label>
                                 <div class="mec-col-9">
-                                    <input type="hidden" name="mec[styling][disable_gfonts]" value="0" />
-                                    <input value="1" type="checkbox" id="mec_styling_disable_gfonts" name="mec[styling][disable_gfonts]" <?php if(isset($styling['disable_gfonts']) and $styling['disable_gfonts']) echo 'checked="checked"'; ?> />
+                                    <label id="mec_styling_disable_gfonts">
+                                        <input type="hidden" name="mec[styling][disable_gfonts]" value="0" />
+                                        <input value="1" type="checkbox" id="mec_styling_disable_gfonts" name="mec[styling][disable_gfonts]" <?php if(isset($styling['disable_gfonts']) and $styling['disable_gfonts']) echo 'checked="checked"'; ?> /><?php esc_html_e('Disable', 'modern-events-calendar-lite'); ?>
+                                    </label>
                                     <span class="mec-tooltip">
                                         <div class="box top">
                                             <h5 class="title"><?php esc_html_e('Disable Google Fonts', 'modern-events-calendar-lite'); ?></h5>
-                                            <div class="content"><p><?php esc_attr_e('To be GDPR compliant you may need to disable Google fonts. Set "Default Font" value for font family and enable this option.', 'modern-events-calendar-lite'); ?><a href="https://webnus.net/dox/modern-events-calendar/style-options/" target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
+                                            <div class="content"><p><?php esc_attr_e('To be GDPR compliant you may need to disable Google fonts. Set "Default Font" value for font family and enable this option.', 'modern-events-calendar-lite'); ?><a href="https://webnus.net/dox/modern-events-calendar/appearance-settings/#9-_Disable_Google_Fonts/" target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
                                         </div>
                                         <i title="" class="dashicons-before dashicons-editor-help"></i>
                                     </span>
@@ -232,8 +234,10 @@ if(is_array($fonts))
                             <div class="mec-form-row">
                                 <label class="mec-col-3" for="mec_styling_accessibility"><?php esc_html_e('Accessibility', 'modern-events-calendar-lite'); ?></label>
                                 <div class="mec-col-9">
-                                    <input type="hidden" name="mec[styling][accessibility]" value="0" />
-                                    <input value="1" type="checkbox" id="mec_styling_accessibility" name="mec[styling][accessibility]" <?php if(isset($styling['accessibility']) and $styling['accessibility']) echo 'checked="checked"'; ?> />
+                                    <label id="mec_styling_accessibility">                                                
+                                        <input type="hidden" name="mec[styling][accessibility]" value="0" />
+                                        <input value="1" type="checkbox" id="mec_styling_accessibility" name="mec[styling][accessibility]" <?php if(isset($styling['accessibility']) and $styling['accessibility']) echo 'checked="checked"'; ?> /><?php esc_html_e('Enable', 'modern-events-calendar-lite'); ?>
+                                    </label>
                                     <span class="mec-tooltip">
                                         <div class="box top">
                                             <h5 class="title"><?php esc_html_e('Accessibility', 'modern-events-calendar-lite'); ?></h5>
@@ -254,7 +258,7 @@ if(is_array($fonts))
                                     <span class="mec-tooltip">
                                         <div class="box left">
                                             <h5 class="title"><?php esc_html_e('Desktop Normal Screens', 'modern-events-calendar-lite'); ?></h5>
-                                            <div class="content"><p><?php esc_attr_e('You can enter your theme container size in this field to override it for normal screens.', 'modern-events-calendar-lite'); ?><a href="https://webnus.net/dox/modern-events-calendar/style-options/" target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
+                                            <div class="content"><p><?php esc_attr_e('You can enter your theme container size in this field to override it for normal screens.', 'modern-events-calendar-lite'); ?><a href="https://webnus.net/dox/modern-events-calendar/appearance-settings/#11-_Desktop_Normal_Screens/" target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
                                         </div>
                                         <i title="" class="dashicons-before dashicons-editor-help"></i>
                                     </span>
@@ -268,7 +272,7 @@ if(is_array($fonts))
                                     <span class="mec-tooltip">
                                         <div class="box left">
                                             <h5 class="title"><?php esc_html_e('Desktop Large Screens', 'modern-events-calendar-lite'); ?></h5>
-                                            <div class="content"><p><?php esc_attr_e('You can enter your theme container size in this field to override it for large screens.', 'modern-events-calendar-lite'); ?><a href="https://webnus.net/dox/modern-events-calendar/style-options/" target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
+                                            <div class="content"><p><?php esc_attr_e('You can enter your theme container size in this field to override it for large screens.', 'modern-events-calendar-lite'); ?><a href="https://webnus.net/dox/modern-events-calendar/appearance-settings/#12-_Desktop_Large_Screens/" target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
                                         </div>
                                         <i title="" class="dashicons-before dashicons-editor-help"></i>
                                     </span>
@@ -281,7 +285,7 @@ if(is_array($fonts))
 
                             <div class="mec-form-row">
                                 <div class="mec-col-3">
-                                    <span><?php esc_html_e('Frontend Event Submission Color', 'modern-events-calendar-lite'); ?></span>
+                                    <label><?php esc_html_e('Frontend Event Submission Color', 'modern-events-calendar-lite'); ?></label>
                                 </div>
                                 <div class="mec-col-9">
                                     <input type="text" class="wp-color-picker-field" id="mec_settings_fes_color" name="mec[styling][fes_color]" value="<?php echo (isset($styling['fes_color']) ? esc_attr($styling['fes_color']) : ''); ?>" data-default-color="" />
@@ -290,7 +294,7 @@ if(is_array($fonts))
 
                             <div class="mec-form-row">
                                 <div class="mec-col-3">
-                                    <span><?php esc_html_e('Notifications Background', 'modern-events-calendar-lite'); ?></span>
+                                    <label><?php esc_html_e('Notifications Background', 'modern-events-calendar-lite'); ?></label>
                                 </div>
                                 <div class="mec-col-9">
                                     <input type="text" class="wp-color-picker-field" id="mec_settings_notification_bg" name="mec[styling][notification_bg]" value="<?php echo (isset($styling['notification_bg']) ? esc_attr($styling['notification_bg']) : ''); ?>" data-default-color="" />

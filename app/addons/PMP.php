@@ -83,7 +83,7 @@ class MEC_addon_PMP extends MEC_base
         if(function_exists('pmpro_has_membership_access'))
         {
             $response = pmpro_has_membership_access($event_id, NULL, true);
-            $available = (isset($response[0]) ? $response[0] : true);
+            $available = $response[0] ?? true;
 
             if(!$available)
             {
@@ -116,9 +116,9 @@ class MEC_addon_PMP extends MEC_base
         $user_id = get_current_user_id();
 
         // Booking Restriction Options
-        $options = ((isset($this->settings['pmp_booking']) and is_array($this->settings['pmp_booking'])) ? $this->settings['pmp_booking'] : array());
+        $options = isset($this->settings['pmp_booking']) && is_array($this->settings['pmp_booking']) ? $this->settings['pmp_booking'] : [];
 
-        $needed_levels = array();
+        $needed_levels = [];
         foreach($options as $level_id => $cats)
         {
             foreach($categories as $category)

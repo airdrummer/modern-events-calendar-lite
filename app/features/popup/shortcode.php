@@ -17,7 +17,7 @@ if(!isset($post_type)) $post_type = NULL;
 ?>
 <div id="mec_popup_shortcode" class="lity-hide">
     <div class="mec-steps-container">
-        <img src="<?php echo plugin_dir_url(__FILE__ ) . '../../../assets/img/popup/mec-logo.svg'; ?>" />
+        <img src="<?php echo plugin_dir_url(__FILE__ ) . '../../../assets/img/mec-logo-icon.svg'; ?>"  style="width: 50px" />
         <ul>
             <li class="mec-step mec-step-1"><span>1</span></li>
             <li class="mec-step mec-step-2"><span>2</span></li>
@@ -33,7 +33,9 @@ if(!isset($post_type)) $post_type = NULL;
                 <div class="mec-steps-header">
                     <div class="mec-steps-header-userinfo">
                         <?php $user = wp_get_current_user(); ?>
-                        <span class="mec-steps-header-img"><img src="<?php echo esc_url( get_avatar_url( $user->ID ) ); ?>" /></span>
+                        <?php if(get_option('show_avatars')): ?>
+                        <span class="mec-steps-header-img"><img src="<?php echo esc_url(get_avatar_url($user->ID)); ?>" /></span>
+                        <?php endif; ?>
                         <span class="mec-steps-header-name"><?php echo esc_html($user->display_name); ?></span>
                         <span class="mec-steps-header-add-text"><?php esc_html_e('Adding a Shortcode...', 'modern-events-calendar-lite') ?></span>
                     </div>

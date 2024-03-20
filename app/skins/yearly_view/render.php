@@ -16,9 +16,9 @@ for($i = 1; $i <= 12; $i++)
 }
 
 $settings = $this->main->get_settings();
-$this->localtime = isset($this->skin_options['include_local_time']) ? $this->skin_options['include_local_time'] : false;
-$display_label = isset($this->skin_options['display_label']) ? $this->skin_options['display_label'] : false;
-$reason_for_cancellation = isset($this->skin_options['reason_for_cancellation']) ? $this->skin_options['reason_for_cancellation'] : false;
+$this->localtime = $this->skin_options['include_local_time'] ?? false;
+$display_label = $this->skin_options['display_label'] ?? false;
+$reason_for_cancellation = $this->skin_options['reason_for_cancellation'] ?? false;
 ?>
 <div class="mec-yearly-calendar-sec">
     <?php echo MEC_kses::full($months_html); ?>
@@ -29,7 +29,7 @@ $reason_for_cancellation = isset($this->skin_options['reason_for_cancellation'])
     <div class="<?php echo ($count > 20) ? 'mec-events-agenda mec-util-hidden' : 'mec-events-agenda'; ?>">
 
         <div class="mec-agenda-date-wrap" id="mec_yearly_view<?php echo esc_attr($this->id); ?>_<?php echo date('Ymd', strtotime($date)); ?>">
-            <i class="mec-sl-calendar"></i>
+            <?php echo $this->icons->display('calendar'); ?>
             <span class="mec-agenda-day"><?php echo esc_html($this->main->date_i18n($this->date_format_modern_1, strtotime($date))); ?></span>
             <span class="mec-agenda-date"><?php echo esc_html($this->main->date_i18n($this->date_format_modern_2, strtotime($date))); ?></span>
         </div>
@@ -49,7 +49,7 @@ $reason_for_cancellation = isset($this->skin_options['reason_for_cancellation'])
                 ?>
                 <?php if($this->style == 'modern'): ?>
                     <div class="<?php echo (isset($event->data->meta['event_past']) and trim($event->data->meta['event_past'])) ? 'mec-past-event ' : ''; ?>mec-agenda-event <?php echo esc_attr($this->get_event_classes($event)); ?>">
-                        <i class="mec-sl-clock "></i>
+                        <?php echo $this->icons->display('clock'); ?>
                         <span class="mec-agenda-time">
                             <?php
                             if(trim($start_time))

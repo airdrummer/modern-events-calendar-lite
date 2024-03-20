@@ -160,7 +160,7 @@ class MEC_feature_search extends MEC_base
         }
 
         $mec_tag_query = NULL;
-        $mec_queries = array();
+        $mec_queries = [];
 
         if(!empty($_POST['location']))
         {
@@ -206,10 +206,25 @@ class MEC_feature_search extends MEC_base
             );
         }
 
+        // Tag Method
+        $tag_method = $this->settings['tag_method'] ?? 'post_tag';
+
         if(!empty($_POST['tag']))
         {
-            $term = get_term_by('id', sanitize_text_field($_POST['tag']), apply_filters('mec_taxonomy_tag', ''));
-            if($term) $mec_tag_query = $term->slug;
+            if($tag_method === 'post_tag')
+            {
+                $term = get_term_by('id', sanitize_text_field($_POST['tag']), apply_filters('mec_taxonomy_tag', ''));
+                if($term) $mec_tag_query = $term->slug;
+            }
+            else
+            {
+                $mec_queries[] = array(
+                    'taxonomy' => apply_filters('mec_taxonomy_tag', ''),
+                    'field' => 'id',
+                    'terms' => array(sanitize_text_field($_POST['tag'])),
+                    'operator' => 'IN'
+                );
+            }
         }
 
         if(!empty($_POST['label']))
@@ -230,9 +245,10 @@ class MEC_feature_search extends MEC_base
             'post_status' => array('publish'),
         );
 
-        if($mec_tag_query) $args['tag'] = $mec_tag_query;
-        $the_query = new WP_Query($args);
+        if($tag_method === 'post_tag' && $mec_tag_query) $args['tag'] = $mec_tag_query;
 
+        // Query
+        $the_query = new WP_Query($args);
         if($the_query->have_posts())
         {
             while($the_query->have_posts())
@@ -253,8 +269,8 @@ class MEC_feature_search extends MEC_base
 
     /**
      * Search Filter
-     * @param object $query
-     * @return string
+     * @param WP_Query $query
+     * @return WP_Query $query
      */
     public function mec_search_filter($query)
     {
@@ -271,7 +287,7 @@ class MEC_feature_search extends MEC_base
         if((is_array($query->get('post_type')) and !in_array($this->main->get_main_post_type(), $query->get('post_type'))) or (!is_array($query->get('post_type')) and $query->get('post_type') != 'mec-events')) return $query;
 
         $mec_tag_query = NULL;
-        $mec_queries = array();
+        $mec_queries = [];
 
         if(!empty($_GET['location']))
         {
@@ -313,10 +329,25 @@ class MEC_feature_search extends MEC_base
             );
         }
 
+        // Tag Method
+        $tag_method = $this->settings['tag_method'] ?? 'post_tag';
+
         if(!empty($_GET['tag']))
         {
-            $term = get_term_by('id', sanitize_text_field($_GET['tag']), apply_filters('mec_taxonomy_tag', ''));
-            if($term) $mec_tag_query = $term->slug;
+            if($tag_method === 'post_tag')
+            {
+                $term = get_term_by('id', sanitize_text_field($_GET['tag']), apply_filters('mec_taxonomy_tag', ''));
+                if($term) $mec_tag_query = $term->slug;
+            }
+            else
+            {
+                $mec_queries[] = array(
+                    'taxonomy' => apply_filters('mec_taxonomy_tag', ''),
+                    'field' => 'id',
+                    'terms' => array(sanitize_text_field($_GET['tag'])),
+                    'operator' => 'IN'
+                );
+            }
         }
 
         if(!empty($_GET['label']))
@@ -329,8 +360,18 @@ class MEC_feature_search extends MEC_base
             );
         }
 
-        if($mec_tag_query) $query->set('tag', $mec_tag_query);
-        if(count($mec_queries)) $query->set('tax_query', $mec_queries);
+        if($mec_tag_query and $tag_method === 'post_tag') $query->set('tag', $mec_tag_query);
+        else
+        {
+            $query->set('tag', null);
+            $query->set('tag_slug__in', null);
+        }
+
+        if(count($mec_queries))
+        {
+            $query->set('tax_query', $mec_queries);
+            $query->tax_query = $mec_queries;
+        }
 
         return $query;
     }

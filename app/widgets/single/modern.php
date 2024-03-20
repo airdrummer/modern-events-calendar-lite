@@ -4,6 +4,7 @@ use MEC\SingleBuilder\Widgets\EventOrganizers\EventOrganizers;
 
 /** @var MEC_single_widget $this */
 /** @var MEC_skin_single $single */
+/** @var array $settings */
 /** @var stdClass $event */
 /** @var array $occurrence_full */
 /** @var array $occurrence_end_full */
@@ -16,6 +17,7 @@ use MEC\SingleBuilder\Widgets\EventOrganizers\EventOrganizers;
 /** @var array $organizer */
 /** @var int $organizer_id */
 /** @var boolean $banner_module */
+/** @var MEC_icons $icons */
 
 if($this->is_enabled('event_orgnizer') || $this->is_enabled('register_btn')): ?>
     <div class="mec-event-meta mec-color-before mec-frontbox <?php echo ((!$single->main->can_show_booking_module($event) and in_array($organizer_id, array('0', '1')) and !$more_info) ? 'mec-util-hidden' : ''); ?>">
@@ -25,36 +27,46 @@ if($this->is_enabled('event_orgnizer') || $this->is_enabled('register_btn')): ?>
         {
             ?>
             <div class="mec-single-event-organizer">
+                <?php echo $icons->display('home'); ?>
+                <h3 class="mec-events-single-section-title"><?php echo esc_html($single->main->m('taxonomy_organizer', esc_html__('Organizer', 'modern-events-calendar-lite'))); ?></h3>
+
                 <?php if(isset($organizer['thumbnail']) and trim($organizer['thumbnail'])): ?>
                     <img class="mec-img-organizer" src="<?php echo esc_url($organizer['thumbnail']); ?>" alt="<?php echo (isset($organizer['name']) ? esc_attr($organizer['name']) : ''); ?>">
                 <?php endif; ?>
-                <h3 class="mec-events-single-section-title"><?php echo esc_html($single->main->m('taxonomy_organizer', esc_html__('Organizer', 'modern-events-calendar-lite'))); ?></h3>
+
                 <dl>
                     <?php if(isset($organizer['thumbnail'])): ?>
                         <dd class="mec-organizer">
-                            <i class="mec-sl-home"></i>
+                        <?php if( is_plugin_active('mec-advanced-organizer/mec-advanced-organizer.php') && $settings['advanced_organizer']['organizer_enable_link_section_title']??false ): ?>
+                            <a href="<?php echo get_permalink( $settings['advanced_organizer']['single_page'] ).'?fesection=organizer&feparam='.$organizer['id']; ?>" target="<?php echo $settings['advanced_organizer']['organizer_link_target']; ?>">
+                                <?php echo $icons->display('link'); ?>
+                                <h6><?php echo (isset($organizer['name']) ? esc_html($organizer['name']) : ''); ?></h6>
+                            </a>
+                        <?php else: ?>
+                            <?php echo $icons->display('home'); ?>
                             <h6><?php echo (isset($organizer['name']) ? esc_html($organizer['name']) : ''); ?></h6>
+                        <?php endif; ?>
                         </dd>
                     <?php endif;
                     if(isset($organizer['tel']) && !empty($organizer['tel'])): ?>
                         <dd class="mec-organizer-tel">
-                            <i class="mec-sl-phone"></i>
+                            <?php echo $icons->display('phone'); ?>
                             <h6><?php esc_html_e('Phone', 'modern-events-calendar-lite'); ?></h6>
                             <a href="tel:<?php echo esc_attr($organizer['tel']); ?>"><?php echo esc_html($organizer['tel']); ?></a>
                         </dd>
                     <?php endif;
                     if(isset($organizer['email']) && !empty($organizer['email'])): ?>
                         <dd class="mec-organizer-email">
-                            <i class="mec-sl-envelope"></i>
+                            <?php echo $icons->display('envelope'); ?>
                             <h6><?php esc_html_e('Email', 'modern-events-calendar-lite'); ?></h6>
                             <a href="mailto:<?php echo esc_attr($organizer['email']); ?>"><?php echo esc_html($organizer['email']); ?></a>
                         </dd>
                     <?php endif;
                     if(isset($organizer['url']) && !empty($organizer['url'])): ?>
                         <dd class="mec-organizer-url">
-                            <i class="mec-sl-sitemap"></i>
+                            <?php echo $icons->display('sitemap'); ?>
                             <h6><?php esc_html_e('Website', 'modern-events-calendar-lite'); ?></h6>
-                            <span><a href="<?php echo esc_url($organizer['url']); ?>" class="mec-color-hover" target="_blank"><?php echo (isset($organizer['page_label']) and trim($organizer['page_label'])) ? esc_html($organizer['page_label']) : esc_html($organizer['url']); ?></a></span>
+                            <span><a href="<?php echo esc_url($organizer['url']); ?>" class="mec-color-hover" target="<?php echo $settings['advanced_organizer']['organizer_link_target']; ?>"><?php echo (isset($organizer['page_label']) and trim($organizer['page_label'])) ? esc_html($organizer['page_label']) : esc_html($organizer['url']); ?></a></span>
                         </dd>
                     <?php endif;
                     $organizer_description_setting = isset($settings['organizer_description']) ? $settings['organizer_description'] : ''; $organizer_terms = get_the_terms($event->data, 'mec_organizer'); if($organizer_description_setting == '1' and is_array($organizer_terms) and count($organizer_terms)): foreach($organizer_terms as $organizer_term) { if ($organizer_term->term_id == $organizer['id'] ) {  if(isset($organizer_term->description) && !empty($organizer_term->description)): ?>
@@ -87,16 +99,16 @@ if($this->is_enabled('event_orgnizer') || $this->is_enabled('register_btn')): ?>
 <?php endif; ?>
 
 <!-- Speakers Module -->
-<?php if($this->is_enabled('event_speakers')) echo MEC_kses::full($single->main->module('speakers.details', array('event' => $event))); ?>
+<?php if($this->is_enabled('event_speakers')) echo MEC_kses::full($single->main->module('speakers.details', array('event' => $event, 'icons' => $icons))); ?>
 
 <!-- Sponsors Module -->
-<?php if($this->is_enabled('event_sponsors')) echo MEC_kses::full($single->main->module('sponsors.details', array('event' => $event))); ?>
+<?php if($this->is_enabled('event_sponsors')) echo MEC_kses::full($single->main->module('sponsors.details', array('event' => $event, 'icons' => $icons))); ?>
 
 <!-- Local Time Module -->
-<?php if($this->is_enabled('local_time')) echo MEC_kses::full($single->main->module('local-time.details', array('event' => $event))); ?>
+<?php if($this->is_enabled('local_time')) echo MEC_kses::full($single->main->module('local-time.details', array('event' => $event, 'icons' => $icons))); ?>
 
 <?php if($this->is_enabled('event_location') || $this->is_enabled('event_categories') || $this->is_enabled('more_info')): ?>
-    <div class="mec-event-meta mec-color-before mec-frontbox <?php if((!count($location) or !$this->is_enabled('event_location')) and (!isset($event->data->categories) or !is_array($event->data->categories) or !count($event->data->categories) or !$this->is_enabled('event_categories')) and (!$more_info or !$this->is_enabled('more_info'))) echo 'mec-util-hidden'; ?>">
+    <div class="mec-event-meta mec-color-before mec-frontbox <?php if(($banner_module || !count($location) || !$this->is_enabled('event_location')) && (!isset($event->data->categories) || !is_array($event->data->categories) || !count($event->data->categories) || !$this->is_enabled('event_categories')) && (!$more_info || !$this->is_enabled('more_info'))) echo 'mec-util-hidden'; ?>">
 
         <?php
         // Event Location
@@ -113,7 +125,7 @@ if($this->is_enabled('event_orgnizer') || $this->is_enabled('register_btn')): ?>
         {
             ?>
             <div class="mec-single-event-category">
-                <i class="mec-sl-folder"></i>
+                <?php echo $icons->display('folder'); ?>
                 <dt><?php echo esc_html($single->main->m('taxonomy_categories', esc_html__('Category', 'modern-events-calendar-lite'))); ?></dt>
                 <dl>
                 <?php
@@ -124,7 +136,7 @@ if($this->is_enabled('event_orgnizer') || $this->is_enabled('register_btn')): ?>
                     $color_html = '';
                     if($color) $color_html .= '<span class="mec-event-category-color" style="--background-color: '.esc_attr($color).';background-color: '.esc_attr($color).'">&nbsp;</span>';
 
-                    $icon = (isset($category['icon']) ? $category['icon'] : '');
+                    $icon = $category['icon'] ?? '';
                     $icon = isset($icon) && $icon != '' ? '<i class="' . esc_attr($icon) . ' mec-color"></i>' : '<i class="mec-fa-angle-right"></i>';
 
                     echo '<dd class="mec-events-event-categories"><a href="'.get_term_link($category['id'], 'mec_category').'" class="mec-color-hover" rel="tag">' . MEC_kses::element($icon . esc_html($category['name']) . $color_html) . '</a></dd>';
@@ -142,7 +154,7 @@ if($this->is_enabled('event_orgnizer') || $this->is_enabled('register_btn')): ?>
         {
             ?>
             <div class="mec-event-more-info">
-                <i class="mec-sl-info"></i>
+                <?php echo $icons->display('info'); ?>
                 <h3 class="mec-cost"><?php echo esc_html($single->main->m('more_info_link', esc_html__('More Info', 'modern-events-calendar-lite'))); ?></h3>
                 <dl><dd class="mec-events-event-more-info"><a class="mec-more-info-button mec-color-hover" target="<?php echo esc_attr($more_info_target); ?>" href="<?php echo esc_url($more_info); ?>"><?php echo esc_html($more_info_title); ?></a></dd></dl>
             </div>
@@ -154,16 +166,16 @@ if($this->is_enabled('event_orgnizer') || $this->is_enabled('register_btn')): ?>
 <?php endif; ?>
 
 <!-- Attendees List Module -->
-<?php if($this->is_enabled('attende_module')) echo MEC_kses::full($single->main->module('attendees-list.details', array('event' => $event))); ?>
+<?php if($this->is_enabled('attende_module')) echo MEC_kses::full($single->main->module('attendees-list.details', array('event' => $event, 'icons' => $icons))); ?>
 
 <!-- Next Previous Module -->
-<?php if($this->is_enabled('next_module')) echo MEC_kses::full($single->main->module('next-event.details', array('event' => $event))); ?>
+<?php if($this->is_enabled('next_module')) echo MEC_kses::full($single->main->module('next-event.details', array('event' => $event, 'icons' => $icons))); ?>
 
 <!-- Weather Module -->
-<?php if($this->is_enabled('weather_module')) echo MEC_kses::full($single->main->module('weather.details', array('event' => $event))); ?>
+<?php if($this->is_enabled('weather_module')) echo MEC_kses::full($single->main->module('weather.details', array('event' => $event, 'icons' => $icons))); ?>
 
 <!-- QRCode Module -->
-<?php if($this->is_enabled('qrcode_module')) echo MEC_kses::full($single->main->module('qrcode.details', array('event' => $event))); ?>
+<?php if($this->is_enabled('qrcode_module')) echo MEC_kses::full($single->main->module('qrcode.details', array('event' => $event, 'icons' => $icons))); ?>
 
 <!-- Public Download Module -->
 <?php if($this->is_enabled('public_download_module')) $single->display_public_download_module($event); ?>

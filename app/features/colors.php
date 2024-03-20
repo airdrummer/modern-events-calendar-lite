@@ -114,7 +114,7 @@ class MEC_feature_colors extends MEC_base
         if(defined('DOING_AUTOSAVE') and DOING_AUTOSAVE) return;
 
         // Get Modern Events Calendar Data
-        $_mec = isset($_POST['mec']) ? $this->main->sanitize_deep_array($_POST['mec']) : array();
+        $_mec = isset($_POST['mec']) ? $this->main->sanitize_deep_array($_POST['mec']) : [];
         
         $color = isset($_mec['color']) ? trim(sanitize_text_field($_mec['color']), '# ') : '';
         update_post_meta($post_id, 'mec_color', $color);

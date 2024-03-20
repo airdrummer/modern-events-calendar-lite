@@ -4,6 +4,7 @@ namespace MEC\SingleBuilder\Widgets\EventLocations;
 
 use MEC\Base;
 use MEC\SingleBuilder\Widgets\WidgetBase;
+use MEC_kses;
 
 class EventLocations extends WidgetBase {
 
@@ -28,7 +29,7 @@ class EventLocations extends WidgetBase {
 
 		$settings = $this->settings;
 		$event_detail = $this->get_event_detail($event_id);
-		$locations    = isset($event_detail->data->locations) ? $event_detail->data->locations : array();
+		$locations    = isset($event_detail->data->locations) ? $event_detail->data->locations : [];
 		$primary_location_id = \MEC\Base::get_main()->get_master_location_id( $event_detail );
 		$location_term = get_term_by( 'id', $primary_location_id, 'mec_location' );
 
@@ -48,12 +49,14 @@ class EventLocations extends WidgetBase {
 			echo '<div class="mec-event-meta">';
 				?>
 				<div class="mec-single-event-location">
+                    <?php echo $this->icons->display('location-pin');?>
+                    <h3 class="mec-events-single-section-title mec-location"><?php echo Base::get_main()->m('taxonomy_location', esc_html__('Location', 'modern-events-calendar-lite')); ?></h3>
+
 					<?php if ($location['thumbnail']) : ?>
 						<img class="mec-img-location" src="<?php echo esc_url($location['thumbnail']); ?>" alt="<?php echo (isset($location['name']) ? esc_attr($location['name']) : ''); ?>">
 					<?php endif; ?>
-					<i class="mec-sl-location-pin"></i>
-					<h3 class="mec-events-single-section-title mec-location"><?php echo Base::get_main()->m('taxonomy_location', esc_html__('Location', 'modern-events-calendar-lite')); ?></h3>
-					<dd class="author fn org"><?php echo (isset($location['name']) ? esc_html($location['name']) : ''); ?></dd>
+                    <dd class="author fn org"><?php echo MEC_kses::element($this->get_location_html($location)); ?></dd>
+
 					<dd class="location">
 						<address class="mec-events-address"><span class="mec-address"><?php echo (isset($location['address']) ? esc_html($location['address']) : ''); ?></span></address>
 					</dd>
@@ -62,7 +65,7 @@ class EventLocations extends WidgetBase {
 						<dd class="mec-location-url">
 							<i class="mec-sl-sitemap"></i>
 							<h6><?php esc_html_e('Website', 'modern-events-calendar-lite'); ?></h6>
-							<span><a href="<?php echo esc_url($location['url']); ?>" class="mec-color-hover" target="_blank"><?php echo esc_url( $location['url'] ); ?></a></span>
+							<span><a href="<?php echo esc_url($location['url']); ?>" class="mec-color-hover" target="<?php echo $this->settings['advanced_location']['location_link_target']; ?>"><?php echo esc_url( $location['url'] ); ?></a></span>
 						</dd>
 					<?php endif;
 
@@ -83,4 +86,23 @@ class EventLocations extends WidgetBase {
 
 		return $html;
 	}
+
+    public function get_location_html($location)
+    {
+        $location_id = (isset($location['id']) ? $location['id'] : '');
+        $location_name = (isset($location['name']) ? $location['name'] : '');
+
+
+        if(is_plugin_active('mec-advanced-location/mec-advanced-location.php') && $this->settings['advanced_location']['location_enable_link_section_title']??false){
+            $location_link = apply_filters('mec_location_single_page_link', '', $location_id, $location_name, $location);
+        }else{
+//          $location_link = (isset($location['url']) ? $location['url'] : '');
+            return $location_name;
+        }
+
+        if(!empty($location_link)) $location_html ='<i class="mec-sl-link"></i><a href="'.esc_url($location_link).'" target="'.$this->settings['advanced_location']['location_link_target'].'">'.esc_html($location_name).'</a>';
+        else $location_html = $location_name;
+
+        return $location_html;
+    }
 }

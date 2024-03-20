@@ -2,6 +2,8 @@
 /** no direct access **/
 defined('MECEXEC') or die();
 
+/** @var stdClass $event */
+
 // Not enabled in lite version
 if(!$this->getPRO()) return;
 
@@ -9,10 +11,10 @@ if(!$this->getPRO()) return;
 $settings = $this->get_settings();
 
 // The module is disabled
-if(!isset($settings['sponsors_status']) or (isset($settings['sponsors_status']) and !$settings['sponsors_status'])) return;
+if(!isset($settings['sponsors_status']) || !$settings['sponsors_status']) return;
 
 // Event Sponsors
-$sponsors = (isset($event->data->sponsors) and is_array($event->data->sponsors)) ? $event->data->sponsors : array();
+$sponsors = (isset($event->data->sponsors) and is_array($event->data->sponsors)) ? $event->data->sponsors : [];
 
 // No Sponsor
 if(!count($sponsors)) return false;

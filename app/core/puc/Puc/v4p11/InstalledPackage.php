@@ -68,7 +68,7 @@ if ( !class_exists('Puc_v4p11_InstalledPackage', false) ):
 			$content = str_replace("\r", "\n", $content);
 
 			$headers = $this->getHeaderNames();
-			$results = array();
+			$results = [];
 			foreach ($headers as $field => $name) {
 				$success = preg_match('/^[ \t\/*#@]*' . preg_quote($name, '/') . ':(.*)$/mi', $content, $matches);
 

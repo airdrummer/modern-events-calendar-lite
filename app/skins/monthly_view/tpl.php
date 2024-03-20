@@ -59,7 +59,7 @@ if(isset($this->atts['return_items']) and $this->atts['return_items'])
 }
 
 $sed_method = $this->sed_method;
-if($sed_method == 'new') $sed_method = '0';
+if($sed_method === 'new' || is_admin()) $sed_method = '0';
 
 // Generating javascript code tpl
 $javascript = '<script>
@@ -82,7 +82,7 @@ jQuery(document).ready(function()
             event_label: "'.esc_attr__('Event', 'modern-events-calendar-lite').'",
             month_navigator: '.($this->next_previous_button ? 1 : 0).',
             atts: "'.http_build_query(array('atts' => $this->atts), '', '&').'",
-            style: "'.(isset($this->skin_options['style']) ? $this->skin_options['style'] : NULL).'",
+            style: "'.($this->skin_options['style'] ?? NULL).'",
             ajax_url: "'.admin_url('admin-ajax.php', NULL).'",
             sed_method: "'.esc_js($sed_method).'",
             image_popup: "'.esc_js($this->image_popup).'",
@@ -106,7 +106,7 @@ else $this->factory->params('footer', $javascript);
 $styling = $this->main->get_styling();
 $event_colorskin = (isset($styling['mec_colorskin'] ) || isset($styling['color'])) ? 'colorskin-custom' : '';
 
-$dark_mode = (isset($styling['dark_mode']) ? $styling['dark_mode'] : '');
+$dark_mode = ($styling['dark_mode'] ?? '');
 if($dark_mode == 1) $set_dark = 'mec-dark-mode';
 else $set_dark = '';
 
@@ -154,5 +154,6 @@ do_action('mec_monthly_skin_head');
     <?php echo $this->subscribe_to_calendar(); ?>
     
     <?php echo $this->display_credit_url(); ?>
+    <div class="mec-modal-result"></div>
 
 </div>

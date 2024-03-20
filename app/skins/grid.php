@@ -62,13 +62,18 @@ class MEC_skin_grid extends MEC_skins
         $this->atts = $atts;
 
         // Skin Options
-        $this->skin_options = (isset($this->atts['sk-options']) and isset($this->atts['sk-options'][$this->skin])) ? $this->atts['sk-options'][$this->skin] : array();
+        $this->skin_options = (isset($this->atts['sk-options']) and isset($this->atts['sk-options'][$this->skin])) ? $this->atts['sk-options'][$this->skin] : [];
+
+        // Icons
+        $this->icons = $this->main->icons(
+            ($this->getPRO() && isset($this->atts['icons']) && is_array($this->atts['icons'])) ? $this->atts['icons'] : []
+        );
 
         // Next/Previous Month
-        $this->next_previous_button = isset($this->skin_options['next_previous_button']) && $this->skin_options['next_previous_button'] ? true : false;
+        $this->next_previous_button = isset($this->skin_options['next_previous_button']) && $this->skin_options['next_previous_button'];
 
         // The style
-        $this->style = isset($this->skin_options['style']) ? $this->skin_options['style'] : 'modern';
+        $this->style = $this->skin_options['style'] ?? 'modern';
         if($this->style == 'fluent' and !is_plugin_active('mec-fluent-layouts/mec-fluent-layouts.php')) $this->style = 'modern';
 
         // Date Formats
@@ -104,7 +109,7 @@ class MEC_skin_grid extends MEC_skins
         $this->localtime = isset($this->skin_options['include_local_time']) ? $this->skin_options['include_local_time'] : false;
 
         // Search Form Options
-        $this->sf_options = (isset($this->atts['sf-options']) and isset($this->atts['sf-options'][$this->skin])) ? $this->atts['sf-options'][$this->skin] : array();
+        $this->sf_options = (isset($this->atts['sf-options']) and isset($this->atts['sf-options'][$this->skin])) ? $this->atts['sf-options'][$this->skin] : [];
 
         // Search Form Status
         $this->sf_status = isset($this->atts['sf_status']) ? $this->atts['sf_status'] : true;
@@ -144,7 +149,7 @@ class MEC_skin_grid extends MEC_skins
         $this->image_popup = isset($this->skin_options['image_popup']) ? $this->skin_options['image_popup'] : '0';
 
         // From Widget
-        $this->widget = (isset($this->atts['widget']) and trim($this->atts['widget']));
+        $this->widget = isset($this->atts['widget']) && trim($this->atts['widget']);
 		if($this->widget)
         {
 			$this->skin_options['count'] = '1';
@@ -203,6 +208,7 @@ class MEC_skin_grid extends MEC_skins
 
         // Author
         $this->args['author'] = $this->author_query();
+        $this->args['author__not_in'] = $this->author_query_ex();
 
         // Pagination Options
         $this->paged = get_query_var('paged', 1);
@@ -345,8 +351,8 @@ class MEC_skin_grid extends MEC_skins
 
             $i = 0;
             $found = 0;
-            $events = array();
-            $qs = array();
+            $events = [];
+            $qs = [];
 
             foreach($dates as $date=>$IDs)
             {
@@ -391,10 +397,10 @@ class MEC_skin_grid extends MEC_skins
 
                 if($query->have_posts())
                 {
-                    if(!isset($events[$date])) $events[$date] = array();
+                    if(!isset($events[$date])) $events[$date] = [];
 
                     // Day Events
-                    $d = array();
+                    $d = [];
 
                     // The Loop
                     while($query->have_posts())
@@ -426,7 +432,7 @@ class MEC_skin_grid extends MEC_skins
                             // Next Offset
                             $this->next_offset = ($query->post_count-($query->current_post+1)) >= 0 ? ($query->current_post+1)+$this->offset : 0;
 
-                            usort($d, array($this, 'sort_day_events'));
+                            usort($d, [$this, 'sort_day_events']);
                             $events[$date] = $d;
 
                             // Restore original Post Data
@@ -436,7 +442,7 @@ class MEC_skin_grid extends MEC_skins
                         }
                     }
 
-                    usort($d, array($this, 'sort_day_events'));
+                    usort($d, [$this, 'sort_day_events']);
                     $events[$date] = $d;
                 }
 
@@ -512,13 +518,13 @@ class MEC_skin_grid extends MEC_skins
     }
 
     /**
-     * Load more events for AJAX requert
+     * Load more events for AJAX request
      * @author Webnus <info@webnus.net>
      * @return void
      */
     public function load_more()
     {
-        $this->sf = (isset($_REQUEST['sf']) and is_array($_REQUEST['sf'])) ? $this->main->sanitize_deep_array($_REQUEST['sf']) : array();
+        $this->sf = (isset($_REQUEST['sf']) and is_array($_REQUEST['sf'])) ? $this->main->sanitize_deep_array($_REQUEST['sf']) : [];
         $apply_sf_date = isset($_REQUEST['apply_sf_date']) ? sanitize_text_field($_REQUEST['apply_sf_date']) : 1;
         $atts = $this->sf_apply(((isset($_REQUEST['atts']) and is_array($_REQUEST['atts'])) ? $this->main->sanitize_deep_array($_REQUEST['atts']) : array()), $this->sf, $apply_sf_date);
 
@@ -561,13 +567,13 @@ class MEC_skin_grid extends MEC_skins
     }
 
     /**
-    * Load month for AJAX requert / Fluent view
+    * Load month for AJAX request / Fluent view
     * @author Webnus <info@webnus.net>
     * @return void
     */
     public function load_month()
     {
-        $this->sf = (isset($_REQUEST['sf']) and is_array($_REQUEST['sf'])) ? $this->main->sanitize_deep_array($_REQUEST['sf']) : array();
+        $this->sf = (isset($_REQUEST['sf']) and is_array($_REQUEST['sf'])) ? $this->main->sanitize_deep_array($_REQUEST['sf']) : [];
         $apply_sf_date = isset($_REQUEST['apply_sf_date']) ? sanitize_text_field($_REQUEST['apply_sf_date']) : 1;
         $atts = $this->sf_apply(((isset($_REQUEST['atts']) and is_array($_REQUEST['atts'])) ? $this->main->sanitize_deep_array($_REQUEST['atts']) : array()), $this->sf, $apply_sf_date);
 
@@ -625,10 +631,10 @@ class MEC_skin_grid extends MEC_skins
             // Fetch the events
             $this->fetch();
 
-            // Break the loop if not resault
+            // Break the loop if not result
             if($break) break;
 
-            // Set active day to current day if not resault
+            // Set active day to current day if not result
             if(count($this->events)) $this->active_day = key($this->events);
             if($navigator_click) break;
 

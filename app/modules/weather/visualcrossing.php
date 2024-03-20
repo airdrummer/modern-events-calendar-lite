@@ -3,15 +3,19 @@
 defined('MECEXEC') or die();
 
 /** @var MEC_main $this */
+/** @var stdClass $event */
+/** @var string $visualcrossing */
+/** @var float $lat */
+/** @var float $lng */
 
 $occurrence = isset($_GET['occurrence']) ? sanitize_text_field($_GET['occurrence']) : '';
 $date = (trim($occurrence) ? $occurrence : $event->date['start']['date']).' '.sprintf("%02d", $event->date['start']['hour']).':'.sprintf("%02d", $event->date['start']['minutes']).' '.$event->date['start']['ampm'];
 
 $weather = $this->get_weather_visualcrossing($visualcrossing, $lat, $lng, $date);
-$imperial = (isset($settings['weather_module_imperial_units']) and $settings['weather_module_imperial_units']) ? true : false;
+$imperial = (isset($settings['weather_module_imperial_units']) && $settings['weather_module_imperial_units']);
 
 // Weather not found!
-if(!is_array($weather) or (is_array($weather) and !count($weather))) return;
+if(!is_array($weather) || !count($weather)) return;
 ?>
 <div class="mec-weather-details mec-frontbox" id="mec_weather_details">
     <h3 class="mec-weather mec-frontbox-title"><?php esc_html_e('Weather', 'modern-events-calendar-lite'); ?></h3>

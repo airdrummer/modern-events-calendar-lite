@@ -22,7 +22,7 @@ class MEC_search extends MEC_base
     public function refine()
     {
         // Variables
-        $sf = isset($_POST['sf']) ? $this->main->sanitize_deep_array($_POST['sf']) : array();
+        $sf = isset($_POST['sf']) ? $this->main->sanitize_deep_array($_POST['sf']) : [];
         $id = isset($_POST['id']) ? sanitize_text_field($_POST['id']) : '';
         $current_field = isset($_POST['last_field']) ? sanitize_text_field($_POST['last_field']) : '';
         $category_type = isset($_POST['category_type']) ? sanitize_text_field($_POST['category_type']) : 'dropdown';
@@ -30,7 +30,7 @@ class MEC_search extends MEC_base
         $organizer_type = isset($_POST['organizer_type']) ? sanitize_text_field($_POST['organizer_type']) : 'dropdown';
         $speaker_type = isset($_POST['speaker_type']) ? sanitize_text_field($_POST['speaker_type']) : 'dropdown';
         $label_type = isset($_POST['label_type']) ? sanitize_text_field($_POST['label_type']) : 'dropdown';
-        $event_ids = array();
+        $event_ids = [];
 
         // Import
         self::import('app.libraries.walker');
@@ -200,12 +200,12 @@ class MEC_search extends MEC_base
         // Restore Original Post Data
         wp_reset_postdata();
 
-        $categories = array();
-        $locations = array();
-        $organizers = array();
-        $speakers = array();
-        $tags = array();
-        $labels = array();
+        $categories = [];
+        $locations = [];
+        $organizers = [];
+        $speakers = [];
+        $tags = [];
+        $labels = [];
 
         $upcoming_ids = $this->main->get_upcoming_event_ids(strtotime(current_time('Y-m-d')));
         foreach($event_ids as $event_id)
@@ -214,35 +214,35 @@ class MEC_search extends MEC_base
             if(!in_array($event_id, $upcoming_ids)) continue;
 
             $e_categories = wp_get_post_terms($event_id, 'mec_category');
-            if(!is_array($e_categories)) $e_categories = array();
+            if(!is_array($e_categories)) $e_categories = [];
 
             foreach($e_categories as $e_category) $categories[] = $e_category->term_id;
 
             $e_locations = wp_get_post_terms($event_id, 'mec_location');
-            if(!is_array($e_locations)) $e_locations = array();
+            if(!is_array($e_locations)) $e_locations = [];
 
             foreach($e_locations as $e_location) $locations[] = $e_location->term_id;
 
             $e_organizers = wp_get_post_terms($event_id, 'mec_organizer');
-            if(!is_array($e_organizers)) $e_organizers = array();
+            if(!is_array($e_organizers)) $e_organizers = [];
 
             foreach($e_organizers as $e_organizer) $organizers[] = $e_organizer->term_id;
 
             if((isset($this->settings['speakers_status']) and $this->settings['speakers_status']))
             {
                 $e_speakers = wp_get_post_terms($event_id, 'mec_speaker');
-                if(!is_array($e_speakers)) $e_speakers = array();
+                if(!is_array($e_speakers)) $e_speakers = [];
 
                 foreach($e_speakers as $e_speaker) $speakers[] = $e_speaker->term_id;
             }
 
             $e_labels = wp_get_post_terms($event_id, 'mec_label');
-            if(!is_array($e_labels)) $e_labels = array();
+            if(!is_array($e_labels)) $e_labels = [];
 
             foreach($e_labels as $e_label) $labels[] = $e_label->term_id;
 
             $e_tags = wp_get_post_terms($event_id, apply_filters('mec_taxonomy_tag', ''));
-            if(!is_array($e_tags)) $e_tags = array();
+            if(!is_array($e_tags)) $e_tags = [];
 
             foreach($e_tags as $e_tag) $tags[] = $e_tag->term_id;
         }
@@ -285,7 +285,7 @@ class MEC_search extends MEC_base
         }
         elseif($category_type == 'checkboxes' and wp_count_terms(array('taxonomy' => 'mec_category')))
         {
-            $selected = (isset($sf['category']) and trim($sf['category'], ', ')) ? explode(',', trim(sanitize_text_field($sf['category']), ', ')) : array();
+            $selected = (isset($sf['category']) and trim($sf['category'], ', ')) ? explode(',', trim(sanitize_text_field($sf['category']), ', ')) : [];
             $categories_html .= wp_terms_checklist(0, array
             (
                 'echo'=>false,
@@ -301,7 +301,7 @@ class MEC_search extends MEC_base
         }
         elseif($category_type == 'simple-checkboxes' and wp_count_terms(array('taxonomy' => 'mec_category')))
         {
-            $selected = (isset($sf['category']) and trim($sf['category'], ', ')) ? explode(',', trim(sanitize_text_field($sf['category']), ', ')) : array();
+            $selected = (isset($sf['category']) and trim($sf['category'], ', ')) ? explode(',', trim(sanitize_text_field($sf['category']), ', ')) : [];
             foreach($categories as $category_id)
             {
                 $term = get_term($category_id);
@@ -326,7 +326,7 @@ class MEC_search extends MEC_base
                 'hierarchical'=>true,
                 'show_option_none'=>$label,
                 'option_none_value'=>'',
-                'selected'=>(isset($sf['location']) ? $sf['location'] : ''),
+                'selected'=>$sf['location'] ?? '',
                 'orderby'=>'name',
                 'order'=>'ASC',
                 'show_count'=>0,
@@ -335,7 +335,7 @@ class MEC_search extends MEC_base
         }
         elseif($location_type == 'simple-checkboxes' and wp_count_terms(array('taxonomy' => 'mec_location')))
         {
-            $selected = (isset($sf['location']) and trim($sf['location'], ', ')) ? explode(',', trim(sanitize_text_field($sf['location']), ', ')) : array();
+            $selected = (isset($sf['location']) and trim($sf['location'], ', ')) ? explode(',', trim(sanitize_text_field($sf['location']), ', ')) : [];
             foreach($locations as $location_id)
             {
                 $term = get_term($location_id);
@@ -369,7 +369,7 @@ class MEC_search extends MEC_base
         }
         elseif($organizer_type == 'simple-checkboxes' and wp_count_terms(array('taxonomy' => 'mec_organizer')))
         {
-            $selected = (isset($sf['organizer']) and trim($sf['organizer'], ', ')) ? explode(',', trim(sanitize_text_field($sf['organizer']), ', ')) : array();
+            $selected = (isset($sf['organizer']) and trim($sf['organizer'], ', ')) ? explode(',', trim(sanitize_text_field($sf['organizer']), ', ')) : [];
             foreach($organizers as $organizer_id)
             {
                 $term = get_term($organizer_id);
@@ -403,7 +403,7 @@ class MEC_search extends MEC_base
         }
         elseif($speaker_type == 'simple-checkboxes' and wp_count_terms(array('taxonomy' => 'mec_speaker')))
         {
-            $selected = (isset($sf['speaker']) and trim($sf['speaker'], ', ')) ? explode(',', trim(sanitize_text_field($sf['speaker']), ', ')) : array();
+            $selected = (isset($sf['speaker']) and trim($sf['speaker'], ', ')) ? explode(',', trim(sanitize_text_field($sf['speaker']), ', ')) : [];
             foreach($speakers as $speaker_id)
             {
                 $term = get_term($speaker_id);
@@ -457,7 +457,7 @@ class MEC_search extends MEC_base
         }
         elseif($label_type == 'simple-checkboxes' and wp_count_terms(array('taxonomy' => 'mec_label')))
         {
-            $selected = (isset($sf['label']) and trim($sf['label'], ', ')) ? explode(',', trim(sanitize_text_field($sf['label']), ', ')) : array();
+            $selected = (isset($sf['label']) and trim($sf['label'], ', ')) ? explode(',', trim(sanitize_text_field($sf['label']), ', ')) : [];
             foreach($labels as $label_id)
             {
                 $term = get_term($label_id);
@@ -483,7 +483,7 @@ class MEC_search extends MEC_base
 
     public function get_locations_id($address = '')
     {
-        if(!trim($address)) return array();
+        if(!trim($address)) return [];
 
         $address = str_replace(' ', ',', $address);
         $locations = explode(',', $address);

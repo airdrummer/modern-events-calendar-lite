@@ -41,7 +41,7 @@ class MEC_feature_adminupcoming extends MEC_base
         return;
 
         // Disabled?
-        if(!isset($this->settings['admin_upcoming_events']) or (isset($this->settings['admin_upcoming_events']) and !$this->settings['admin_upcoming_events'])) return;
+        if(!isset($this->settings['admin_upcoming_events']) || !$this->settings['admin_upcoming_events']) return;
 
         // Admin Upcoming List
         $this->factory->action('admin_head-edit.php', array($this, 'output'));
@@ -118,8 +118,8 @@ class MEC_feature_adminupcoming extends MEC_base
         $capability = (current_user_can('administrator') ? 'manage_options' : 'mec_bookings');
         if(!current_user_can($capability)) return;
 
-        $event_id = isset($_GET['event_id']) ? $_GET['event_id'] : 0;
-        $occurrence = isset($_GET['occurrence']) ? $_GET['occurrence'] : 0;
+        $event_id = $_GET['event_id'] ?? 0;
+        $occurrence = $_GET['occurrence'] ?? 0;
 
         // Invalid Data
         if(!$event_id or !$occurrence) return;
@@ -130,14 +130,15 @@ class MEC_feature_adminupcoming extends MEC_base
         // No booking
         if(!count($bookings)) return;
 
-        header('Content-Type: text/csv; charset=utf-8');
-        header('Content-Disposition: attachment; filename=bookings-'.md5(time().mt_rand(100, 999)).'.csv');
-
-        $booking_ids = array();
+        $booking_ids = [];
         foreach($bookings as $booking) $booking_ids[] = $booking->ID;
 
+        $filename = 'bookings-' . md5(time() . mt_rand(100, 999)) . '.csv';
+
         $book = new MEC_feature_books();
-        $book->csvexcel($booking_ids);
+        $rows = $book->csvexcel($booking_ids);
+
+        $this->main->generate_download_csv($rows, $filename);
 
         exit;
     }

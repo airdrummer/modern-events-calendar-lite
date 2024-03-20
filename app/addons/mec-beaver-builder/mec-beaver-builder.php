@@ -18,7 +18,7 @@ class mecBeaverBuilderShortcode extends FLBuilderModule {
 }
 
 $calendar_posts = get_posts(array('post_type'=>'mec_calendars', 'posts_per_page'=>'-1'));
-$calendars = array();
+$calendars = [];
 foreach($calendar_posts as $calendar_post) $calendars[$calendar_post->ID] = $calendar_post->post_title;
 FLBuilder::register_module( 'mecBeaverBuilderShortcode', array(
     'my-tab-1'      => array(

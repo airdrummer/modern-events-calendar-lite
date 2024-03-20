@@ -42,18 +42,23 @@ class MEC_skin_weekly_view extends MEC_skins
         $this->atts = $atts;
 
         // Skin Options
-        $this->skin_options = (isset($this->atts['sk-options']) and isset($this->atts['sk-options'][$this->skin])) ? $this->atts['sk-options'][$this->skin] : array();
+        $this->skin_options = (isset($this->atts['sk-options']) and isset($this->atts['sk-options'][$this->skin])) ? $this->atts['sk-options'][$this->skin] : [];
 
-        $this->style = isset($this->skin_options['style']) ? $this->skin_options['style'] : 'classic';
+        // Icons
+        $this->icons = $this->main->icons(
+            ($this->getPRO() && isset($this->atts['icons']) && is_array($this->atts['icons'])) ? $this->atts['icons'] : []
+        );
+
+        $this->style = $this->skin_options['style'] ?? 'classic';
 
         // Search Form Options
-        $this->sf_options = (isset($this->atts['sf-options']) and isset($this->atts['sf-options'][$this->skin])) ? $this->atts['sf-options'][$this->skin] : array();
+        $this->sf_options = (isset($this->atts['sf-options']) and isset($this->atts['sf-options'][$this->skin])) ? $this->atts['sf-options'][$this->skin] : [];
 
         // Search Form Status
-        $this->sf_status = isset($this->atts['sf_status']) ? $this->atts['sf_status'] : true;
-        $this->sf_display_label = isset($this->atts['sf_display_label']) ? $this->atts['sf_display_label'] : false;
-        $this->sf_reset_button = isset($this->atts['sf_reset_button']) ? $this->atts['sf_reset_button'] : false;
-        $this->sf_refine = isset($this->atts['sf_refine']) ? $this->atts['sf_refine'] : false;
+        $this->sf_status = $this->atts['sf_status'] ?? true;
+        $this->sf_display_label = $this->atts['sf_display_label'] ?? false;
+        $this->sf_reset_button = $this->atts['sf_reset_button'] ?? false;
+        $this->sf_refine = $this->atts['sf_refine'] ?? false;
 
         // Generate an ID for the skin
         $this->id = isset($this->atts['id']) ? $this->atts['id'] : mt_rand(100, 999);
@@ -119,6 +124,7 @@ class MEC_skin_weekly_view extends MEC_skins
 
         // Author
         $this->args['author'] = $this->author_query();
+        $this->args['author__not_in'] = $this->author_query_ex();
 
         // Pagination Options
         $this->paged = get_query_var('paged', 1);
@@ -163,7 +169,7 @@ class MEC_skin_weekly_view extends MEC_skins
 
         $this->weeks = $this->main->split_to_weeks($this->start_date, date('Y-m-t', strtotime($this->start_date)));
 
-        $this->week_of_days = array();
+        $this->week_of_days = [];
         foreach($this->weeks as $week_number=>$week) foreach($week as $day) $this->week_of_days[$day] = $week_number;
 
         $this->maximum_dates = isset($this->atts['maximum_dates']) ? $this->atts['maximum_dates'] : 1;
@@ -196,11 +202,11 @@ class MEC_skin_weekly_view extends MEC_skins
         $dates = $this->period($start, $end, true);
 
         $s = $this->start_date;
-        $sorted = array();
+        $sorted = [];
         while(date('m', strtotime($s)) == $this->month)
         {
             if(isset($dates[$s])) $sorted[$s] = $dates[$s];
-            else $sorted[$s] = array();
+            else $sorted[$s] = [];
 
             $s = date('Y-m-d', strtotime('+1 Day', strtotime($s)));
         }
@@ -211,15 +217,15 @@ class MEC_skin_weekly_view extends MEC_skins
         // Limit
         $this->args['posts_per_page'] = $this->limit;
 
-        $events = array();
-        $qs = array();
+        $events = [];
+        $qs = [];
 
         foreach($dates as $date=>$IDs)
         {
             // Check Finish Date
             if(isset($this->maximum_date) and trim($this->maximum_date) and strtotime($date) > strtotime($this->maximum_date))
             {
-                $events[$date] = array();
+                $events[$date] = [];
                 continue;
             }
 
@@ -249,10 +255,10 @@ class MEC_skin_weekly_view extends MEC_skins
 
             if(is_array($IDs) and count($IDs) and $query->have_posts())
             {
-                if(!isset($events[$date])) $events[$date] = array();
+                if(!isset($events[$date])) $events[$date] = [];
 
                 // Day Events
-                $d = array();
+                $d = [];
 
                 // The Loop
                 while($query->have_posts())
@@ -289,12 +295,12 @@ class MEC_skin_weekly_view extends MEC_skins
                     }
                 }
 
-                usort($d, array($this, 'sort_day_events'));
+                usort($d, [$this, 'sort_day_events']);
                 $events[$date] = $d;
             }
             else
             {
-                $events[$date] = array();
+                $events[$date] = [];
             }
 
             // Restore original Post Data
@@ -351,13 +357,13 @@ class MEC_skin_weekly_view extends MEC_skins
     }
 
     /**
-     * Load month for AJAX requert
+     * Load month for AJAX request
      * @author Webnus <info@webnus.net>
      * @return void
      */
     public function load_month()
     {
-        $this->sf = (isset($_REQUEST['sf']) and is_array($_REQUEST['sf'])) ? $this->main->sanitize_deep_array($_REQUEST['sf']) : array();
+        $this->sf = (isset($_REQUEST['sf']) and is_array($_REQUEST['sf'])) ? $this->main->sanitize_deep_array($_REQUEST['sf']) : [];
         $apply_sf_date = isset($_REQUEST['apply_sf_date']) ? sanitize_text_field($_REQUEST['apply_sf_date']) : 1;
         $atts = $this->sf_apply(((isset($_REQUEST['atts']) and is_array($_REQUEST['atts'])) ? $this->main->sanitize_deep_array($_REQUEST['atts']) : array()), $this->sf, $apply_sf_date);
 
@@ -401,7 +407,7 @@ class MEC_skin_weekly_view extends MEC_skins
             $this->weeks = $this->main->split_to_weeks($this->start_date, date('Y-m-t', strtotime($this->start_date)));
 
             // Get week of days
-            $this->week_of_days = array();
+            $this->week_of_days = [];
             foreach($this->weeks as $week_number=>$week) foreach($week as $day) $this->week_of_days[$day] = $week_number;
 
             // Sometimes some months have 6 weeks but next month has 5 or even 4 weeks
@@ -416,7 +422,7 @@ class MEC_skin_weekly_view extends MEC_skins
             // Fetch the events
             $this->fetch();
 
-            // Break the loop if not resault
+            // Break the loop if not result
             if($break) break;
             if($navigator_click) break;
 

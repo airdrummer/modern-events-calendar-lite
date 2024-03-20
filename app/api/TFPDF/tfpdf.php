@@ -83,14 +83,14 @@ function __construct($orientation='P', $unit='mm', $size='A4')
 	$this->page = 0;
 	$this->n = 2;
 	$this->buffer = '';
-	$this->pages = array();
-	$this->PageInfo = array();
-	$this->fonts = array();
-	$this->FontFiles = array();
-	$this->encodings = array();
-	$this->cmaps = array();
-	$this->images = array();
-	$this->links = array();
+	$this->pages = [];
+	$this->PageInfo = [];
+	$this->fonts = [];
+	$this->FontFiles = [];
+	$this->encodings = [];
+	$this->cmaps = [];
+	$this->images = [];
+	$this->links = [];
 	$this->InHeader = false;
 	$this->InFooter = false;
 	$this->lasth = 0;
@@ -2027,7 +2027,7 @@ protected function _putTTfontwidths(&$font, $maxUni) {
 	}
 	else {
 		$rangeid = 0;
-		$range = array();
+		$range = [];
 		$prevcid = -2;
 		$prevwidth = -1;
 		$interval = false;
@@ -2068,7 +2068,7 @@ protected function _putTTfontwidths(&$font, $maxUni) {
 						array_pop($range[$rangeid]);
 						// new range
 						$rangeid = $prevcid;
-						$range[$rangeid] = array();
+						$range[$rangeid] = [];
 						$range[$rangeid][] = $prevwidth;
 						$range[$rangeid][] = $width;
 					}
@@ -2078,7 +2078,7 @@ protected function _putTTfontwidths(&$font, $maxUni) {
 					if ($interval) {
 						// new range
 						$rangeid = $cid;
-						$range[$rangeid] = array();
+						$range[$rangeid] = [];
 						$range[$rangeid][] = $width;
 					}
 					else { $range[$rangeid][] = $width; }
@@ -2086,7 +2086,7 @@ protected function _putTTfontwidths(&$font, $maxUni) {
 				}
 			} else {
 				$rangeid = $cid;
-				$range[$rangeid] = array();
+				$range[$rangeid] = [];
 				$range[$rangeid][] = $width;
 				$interval = false;
 			}
@@ -2347,7 +2347,7 @@ protected function UTF8ToUTF16BE($str, $setbom=true) {
 
 // Converts UTF-8 strings to codepoints array
 protected function UTF8StringToArray($str) {
-   $out = array();
+   $out = [];
    $len = strlen($str);
    for ($i = 0; $i < $len; $i++) {
 	$uni = -1;

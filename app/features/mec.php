@@ -82,40 +82,40 @@ class MEC_feature_mec extends MEC_base
         $this->factory->filter('manage_mec_calendars_posts_columns', array($this, 'filter_columns'));
         $this->factory->action('manage_mec_calendars_posts_custom_column', array($this, 'filter_columns_content'), 10, 2);
 
-        $this->factory->action('save_post', array($this, 'save_calendar'), 10);
+        $this->factory->action('save_post', array($this, 'save_calendar'));
 
         // BuddyPress Integration
-        $this->factory->action('mec_booking_confirmed', array($this->main, 'bp_add_activity'), 10);
-        $this->factory->action('mec_booking_verified', array($this->main, 'bp_add_activity'), 10);
-        $this->factory->action('bp_register_activity_actions', array($this->main, 'bp_register_activity_actions'), 10);
+        $this->factory->action('mec_booking_confirmed', array($this->main, 'bp_add_activity'));
+        $this->factory->action('mec_booking_verified', array($this->main, 'bp_add_activity'));
+        $this->factory->action('bp_register_activity_actions', array($this->main, 'bp_register_activity_actions'));
         $this->factory->action('bp_setup_nav', array($this->main, 'bp_add_profile_menu'));
 
         // Mailchimp Integration
-        $this->factory->action('mec_booking_verified', array($this->main, 'mailchimp_add_subscriber'), 10);
+        $this->factory->action('mec_booking_verified', array($this->main, 'mailchimp_add_subscriber'));
 
         // Campaign Monitor Integration
-        $this->factory->action('mec_booking_verified', array($this->main, 'campaign_monitor_add_subscriber'), 10);
+        $this->factory->action('mec_booking_verified', array($this->main, 'campaign_monitor_add_subscriber'));
 
         // MailerLite Integration
-        $this->factory->action('mec_booking_verified', array($this->main, 'mailerlite_add_subscriber'), 10);
+        $this->factory->action('mec_booking_verified', array($this->main, 'mailerlite_add_subscriber'));
 
         // Constant Contact Integration
-        $this->factory->action('mec_booking_verified', array($this->main, 'constantcontact_add_subscriber'), 10);
+        $this->factory->action('mec_booking_verified', array($this->main, 'constantcontact_add_subscriber'));
 
         // Active Campaign Integration
-        $this->factory->action('mec_booking_verified', array($this->main, 'active_campaign_add_subscriber'), 10);
+        $this->factory->action('mec_booking_verified', array($this->main, 'active_campaign_add_subscriber'));
 
         // AWeber Integration
-        $this->factory->action('mec_booking_verified', array($this->main, 'aweber_add_subscriber'), 10);
+        $this->factory->action('mec_booking_verified', array($this->main, 'aweber_add_subscriber'));
 
         // MailPoet Integration
-        $this->factory->action('mec_booking_verified', array($this->main, 'mailpoet_add_subscriber'), 10);
+        $this->factory->action('mec_booking_verified', array($this->main, 'mailpoet_add_subscriber'));
 
         // Sendfox Integration
-        $this->factory->action('mec_booking_verified', array($this->main, 'sendfox_add_subscriber'), 10);
+        $this->factory->action('mec_booking_verified', array($this->main, 'sendfox_add_subscriber'));
 
         // MEC Notifications
-        $this->factory->action('mec_booking_completed', array($this->notifications, 'email_verification'), 10);
+        $this->factory->action('mec_booking_completed', array($this->notifications, 'email_verification'));
         $this->factory->action('mec_booking_completed', array($this->notifications, 'booking_notification'), 11);
         $this->factory->action('mec_booking_completed', array($this->notifications, 'admin_notification'), 12);
         $this->factory->action('mec_booking_confirmed', array($this->notifications, 'booking_confirmation'), 10, 2);
@@ -132,7 +132,7 @@ class MEC_feature_mec extends MEC_base
         $this->PT = $this->main->get_main_post_type();
 
         // Disable Block Editor
-        $gutenberg_status = (!isset($this->settings['gutenberg']) or (isset($this->settings['gutenberg']) and $this->settings['gutenberg'])) ? true : false;
+        $gutenberg_status = (!isset($this->settings['gutenberg']) || (isset($this->settings['gutenberg']) && $this->settings['gutenberg']));
         if($gutenberg_status)
         {
             $this->factory->filter('gutenberg_can_edit_post_type', array($this, 'gutenberg'), 10, 2);
@@ -156,7 +156,7 @@ class MEC_feature_mec extends MEC_base
         $this->factory->action('wp_ajax_close_cmsg_notification', array($this, 'close_cmsg_notification'));
         $this->factory->action('wp_ajax_close_cmsg_2_notification', array($this, 'close_cmsg_2_notification'));
 
-        // Occurences Dropdown
+        // Occurrences Dropdown
         $this->factory->action('wp_ajax_mec_occurrences_dropdown', array($this, 'dropdown'));
 
         // Close Custom Text Notification
@@ -169,10 +169,10 @@ class MEC_feature_mec extends MEC_base
         $syncSchedule = $this->getSyncSchedule();
         $this->factory->action('mec_syncScheduler', array($syncSchedule, 'sync'));
 
-        // Dashborad Metaboxes
+        // Dashboard Metaboxes
         $this->factory->action('wp_dashboard_setup', array($this, 'dashboard_widgets'));
 
-        // Dashborad Metabox Total Bookingajax
+        // Dashboard Metabox Total Booking ajax
         $this->factory->action('wp_ajax_total-booking-get-reports',array($this, 'dashboard_widget_total_booking_ajax_handler'));
 
         // Custom Capability Map
@@ -182,7 +182,10 @@ class MEC_feature_mec extends MEC_base
         if($this->getPRO()) $this->factory->shortcode('mec-only-booked-users', array($this, 'only_booked_users_content'));
 
         // Assets Per Page
+        if(!function_exists('is_plugin_active')) include_once ABSPATH . 'wp-admin/includes/plugin.php';
+
         $this->factory->filter('mec_include_frontend_assets', array($this, 'assets_per_page'));
+
         if(isset($this->settings['assets_per_page_status']) and $this->settings['assets_per_page_status'])
         {
             $this->factory->action('add_meta_boxes', array($this, 'register_assets_per_page_meta_boxes'), 1);
@@ -209,6 +212,9 @@ class MEC_feature_mec extends MEC_base
 
         // Download Debug Log File
         $this->factory->action('admin_init', [$this, 'download_debug_log_file']);
+
+        // Database Setup
+        $this->factory->action('wp_ajax_mec_maintenance_reinstall', [$this, 'rerun_sql']);
     }
 
     /* Activate License */
@@ -224,12 +230,11 @@ class MEC_feature_mec extends MEC_base
             $options = get_option('mec_options');
             $options['product_name'] = sanitize_text_field($_REQUEST['content']['LicenseTypeJson']);
             $options['purchase_code'] = sanitize_text_field($_REQUEST['content']['PurchaseCodeJson']);
-            $payload = array('message'=> '' , 'status'=> '', 'button_text' => '');
+            $payload = [];
 
-            $verify = NULL;
             $verify = $this->plugin_activation_request($options);
 
-            if($verify and !is_null($verify) and isset($verify->item_link) and !is_null($verify->item_link))
+            if($verify && isset($verify->item_link))
             {
                 $payload['message'] = esc_html__('success');
                 $payload['status'] = true;
@@ -451,10 +456,15 @@ class MEC_feature_mec extends MEC_base
         $post_type = $current_screen->post_type;
 
         // Don't do amything if the post type is not our post type
-        if(!in_array($post_type, array($this->PT, $this->main->get_email_post_type()))) return $parent_file;
+        if(!in_array($post_type, [
+            $this->PT,
+            $this->main->get_email_post_type(),
+            $this->main->get_certificate_post_type()
+        ])) return $parent_file;
 
-        // Email Post Type
-        if($post_type == $this->main->get_email_post_type()) return 'mec-intro';
+        // Other Post Types
+        if($post_type === $this->main->get_email_post_type()) return 'mec-intro';
+        if($post_type === $this->main->get_certificate_post_type()) return 'mec-intro';
 
         // Tag Taxonomy
         $tag_taxonomy = apply_filters('mec_taxonomy_tag', '');
@@ -488,10 +498,15 @@ class MEC_feature_mec extends MEC_base
         $post_type = $current_screen->post_type;
 
         // Don't do amything if the post type is not our post type
-        if(!in_array($post_type, array($this->PT, $this->main->get_email_post_type()))) return $submenu_file;
+        if(!in_array($post_type, [
+            $this->PT,
+            $this->main->get_email_post_type(),
+            $this->main->get_certificate_post_type()
+        ])) return $submenu_file;
 
-        // Email Post Type
-        if($post_type == $this->main->get_email_post_type()) return 'edit.php?post_type=mec-emails';
+        // Other Post Types
+        if($post_type === $this->main->get_email_post_type()) return 'edit.php?post_type='.$post_type;
+        if($post_type === $this->main->get_certificate_post_type()) return 'edit.php?post_type='.$post_type;
 
         // Tag Taxonomy
         $tag_taxonomy = apply_filters('mec_taxonomy_tag', '');
@@ -556,54 +571,67 @@ class MEC_feature_mec extends MEC_base
         remove_menu_page('edit.php?post_type=mec_calendars');
         do_action('before_mec_submenu_action');
 
-        add_submenu_page('mec-intro', esc_html__('Add Event', 'modern-events-calendar-lite'), esc_html__('Add Event', 'modern-events-calendar-lite'), 'edit_posts', 'post-new.php?post_type='.$this->PT);
-        add_submenu_page('mec-intro', esc_html__('Tags', 'modern-events-calendar-lite'), esc_html__('Tags', 'modern-events-calendar-lite'), 'edit_others_posts', 'edit-tags.php?taxonomy='.apply_filters('mec_taxonomy_tag', '').'&post_type='.$this->PT);
-        add_submenu_page('mec-intro', esc_html($this->main->m('taxonomy_categories', esc_html__('Categories', 'modern-events-calendar-lite'))), esc_html($this->main->m('taxonomy_categories', esc_html__('Categories', 'modern-events-calendar-lite'))), 'edit_others_posts', 'edit-tags.php?taxonomy=mec_category&post_type='.$this->PT);
-        add_submenu_page('mec-intro', esc_html($this->main->m('taxonomy_labels', esc_html__('Labels', 'modern-events-calendar-lite'))), esc_html($this->main->m('taxonomy_labels', esc_html__('Labels', 'modern-events-calendar-lite'))), 'edit_others_posts', 'edit-tags.php?taxonomy=mec_label&post_type='.$this->PT);
-        add_submenu_page('mec-intro', esc_html($this->main->m('taxonomy_locations', esc_html__('Locations', 'modern-events-calendar-lite'))), esc_html($this->main->m('taxonomy_locations', esc_html__('Locations', 'modern-events-calendar-lite'))), 'edit_others_posts', 'edit-tags.php?taxonomy=mec_location&post_type='.$this->PT);
-        add_submenu_page('mec-intro', esc_html($this->main->m('taxonomy_organizers', esc_html__('Organizers', 'modern-events-calendar-lite'))), esc_html($this->main->m('taxonomy_organizers', esc_html__('Organizers', 'modern-events-calendar-lite'))), 'edit_others_posts', 'edit-tags.php?taxonomy=mec_organizer&post_type='.$this->PT);
+        add_submenu_page('mec-intro', esc_html__('Add Event', 'modern-events-calendar-lite'), esc_html__('Add Event', 'modern-events-calendar-lite'), apply_filters( 'mec_menu_cap', 'edit_posts', 'add_event' ), 'post-new.php?post_type='.$this->PT);
+        add_submenu_page('mec-intro', esc_html__('Tags', 'modern-events-calendar-lite'), esc_html__('Tags', 'modern-events-calendar-lite'), apply_filters( 'mec_menu_cap', 'edit_others_posts', 'tags' ), 'edit-tags.php?taxonomy='.apply_filters('mec_taxonomy_tag', '').'&post_type='.$this->PT);
+        add_submenu_page('mec-intro', esc_html($this->main->m('taxonomy_categories', esc_html__('Categories', 'modern-events-calendar-lite'))), esc_html($this->main->m('taxonomy_categories', esc_html__('Categories', 'modern-events-calendar-lite'))), apply_filters( 'mec_menu_cap', 'edit_others_posts', 'categories' ), 'edit-tags.php?taxonomy=mec_category&post_type='.$this->PT);
+        add_submenu_page('mec-intro', esc_html($this->main->m('taxonomy_labels', esc_html__('Labels', 'modern-events-calendar-lite'))), esc_html($this->main->m('taxonomy_labels', esc_html__('Labels', 'modern-events-calendar-lite'))), apply_filters( 'mec_menu_cap', 'edit_others_posts', 'labels' ), 'edit-tags.php?taxonomy=mec_label&post_type='.$this->PT);
+        add_submenu_page('mec-intro', esc_html($this->main->m('taxonomy_locations', esc_html__('Locations', 'modern-events-calendar-lite'))), esc_html($this->main->m('taxonomy_locations', esc_html__('Locations', 'modern-events-calendar-lite'))), apply_filters( 'mec_menu_cap', 'edit_others_posts', 'locations' ), 'edit-tags.php?taxonomy=mec_location&post_type='.$this->PT);
+
+        // Organizers Menu
+        if(!isset($this->settings['organizers_status']) || $this->settings['organizers_status'])
+        {
+            add_submenu_page('mec-intro', esc_html($this->main->m('taxonomy_organizers', esc_html__('Organizers', 'modern-events-calendar-lite'))), esc_html($this->main->m('taxonomy_organizers', esc_html__('Organizers', 'modern-events-calendar-lite'))), apply_filters( 'mec_menu_cap', 'edit_others_posts', 'organizers' ), 'edit-tags.php?taxonomy=mec_organizer&post_type='.$this->PT);
+        }
 
         // Speakers Menu
         if(isset($this->settings['speakers_status']) and $this->settings['speakers_status'])
         {
-            add_submenu_page('mec-intro', esc_html($this->main->m('taxonomy_speakers', esc_html__('Speakers', 'modern-events-calendar-lite'))), esc_html($this->main->m('taxonomy_speakers', esc_html__('Speakers', 'modern-events-calendar-lite'))), 'edit_others_posts', 'edit-tags.php?taxonomy=mec_speaker&post_type='.$this->PT);
+            add_submenu_page('mec-intro', esc_html($this->main->m('taxonomy_speakers', esc_html__('Speakers', 'modern-events-calendar-lite'))), esc_html($this->main->m('taxonomy_speakers', esc_html__('Speakers', 'modern-events-calendar-lite'))), apply_filters( 'mec_menu_cap', 'edit_others_posts', 'speakers' ), 'edit-tags.php?taxonomy=mec_speaker&post_type='.$this->PT);
         }
 
         // Sponsors Menu
         if($this->getPRO() and isset($this->settings['sponsors_status']) and $this->settings['sponsors_status'])
         {
-            add_submenu_page('mec-intro', esc_html($this->main->m('taxonomy_sponsors', esc_html__('Sponsors', 'modern-events-calendar-lite'))), esc_html($this->main->m('taxonomy_sponsors', esc_html__('Sponsors', 'modern-events-calendar-lite'))), 'edit_others_posts', 'edit-tags.php?taxonomy=mec_sponsor&post_type='.$this->PT);
+            add_submenu_page('mec-intro', esc_html($this->main->m('taxonomy_sponsors', esc_html__('Sponsors', 'modern-events-calendar-lite'))), esc_html($this->main->m('taxonomy_sponsors', esc_html__('Sponsors', 'modern-events-calendar-lite'))), apply_filters( 'mec_menu_cap', 'edit_others_posts', 'sponsors' ), 'edit-tags.php?taxonomy=mec_sponsor&post_type='.$this->PT);
         }
 
-        $capability = (current_user_can('administrator') ? 'manage_options' : 'mec_shortcodes');
+        $capability = current_user_can('administrator') ? 'manage_options' : 'mec_shortcodes';
+        $capability = apply_filters( 'mec_menu_cap', $capability, 'shortcodes' );
         add_submenu_page('mec-intro', esc_html__('Shortcodes', 'modern-events-calendar-lite'), esc_html__('Shortcodes', 'modern-events-calendar-lite'), $capability, 'edit.php?post_type=mec_calendars');
 
         // Auto Email Menu
-        if(isset($this->settings['auto_emails_module_status']) and $this->settings['auto_emails_module_status'])
+        if($this->getPRO() and isset($this->settings['auto_emails_module_status']) and $this->settings['auto_emails_module_status'])
         {
-            $capability = 'manage_options';
+            $capability = apply_filters( 'mec_menu_cap', 'manage_options', 'emails' );
             add_submenu_page('mec-intro', esc_html__('Emails', 'modern-events-calendar-lite'), esc_html__('Emails', 'modern-events-calendar-lite'), $capability, 'edit.php?post_type=mec-emails');
+        }
+
+        // Certificates Menu
+        if($this->getPRO() and isset($this->settings['certificate_status']) and $this->settings['certificate_status'])
+        {
+            $capability = apply_filters( 'mec_menu_cap', 'manage_options', 'certificate' );
+            add_submenu_page('mec-intro', esc_html__('Certificates', 'modern-events-calendar-lite'), esc_html__('Certificates', 'modern-events-calendar-lite'), $capability, 'edit.php?post_type='.$this->main->get_certificate_post_type());
         }
 
         // Webhooks Menu
         if(isset($this->settings['webhooks_status']) and $this->settings['webhooks_status'])
         {
-            $capability = 'manage_options';
+            $capability = apply_filters( 'mec_menu_cap', 'manage_options', 'webhooks' );
             add_submenu_page('mec-intro', esc_html__('Webhooks', 'modern-events-calendar-lite'), esc_html__('Webhooks', 'modern-events-calendar-lite'), $capability, 'edit.php?post_type=mec-webhooks');
         }
 
         $capability = (current_user_can('administrator') ? 'manage_options' : 'mec_settings');
-        add_submenu_page('mec-intro', esc_html__('MEC - Settings', 'modern-events-calendar-lite'), esc_html__('Settings', 'modern-events-calendar-lite'), $capability, 'MEC-settings', array($this, 'page'));
+        add_submenu_page('mec-intro', esc_html__('MEC - Settings', 'modern-events-calendar-lite'), esc_html__('Settings', 'modern-events-calendar-lite'), apply_filters( 'mec_menu_cap', $capability, 'settings' ), 'MEC-settings', array($this, 'page'));
 
-        add_submenu_page('mec-intro', esc_html__('MEC - Addons', 'modern-events-calendar-lite'), esc_html__('Addons', 'modern-events-calendar-lite'), 'manage_options', 'MEC-addons', array($this, 'addons'));
-        add_submenu_page('mec-intro', esc_html__('MEC - Wizard', 'modern-events-calendar-lite'), esc_html__('Wizard', 'modern-events-calendar-lite'), 'manage_options', 'MEC-wizard', array($this, 'setup_wizard'));
+        add_submenu_page('mec-intro', esc_html__('MEC - Addons', 'modern-events-calendar-lite'), esc_html__('Addons', 'modern-events-calendar-lite'), apply_filters( 'mec_menu_cap', 'manage_options', 'addons' ), 'MEC-addons', array($this, 'addons'));
+        add_submenu_page('mec-intro', esc_html__('MEC - Wizard', 'modern-events-calendar-lite'), esc_html__('Wizard', 'modern-events-calendar-lite'), apply_filters( 'mec_menu_cap', 'manage_options', 'wizard' ), 'MEC-wizard', array($this, 'setup_wizard'));
 
         if(isset($this->settings['booking_status']) and $this->settings['booking_status'])
         {
             add_submenu_page('mec-intro', esc_html__('MEC - Report', 'modern-events-calendar-lite'), esc_html__('Report', 'modern-events-calendar-lite'), 'mec_report', 'MEC-report', array($this, 'report'));
         }
 
-        if(!$this->getPRO()) add_submenu_page('mec-intro', esc_html__('MEC - Go Pro', 'modern-events-calendar-lite'), esc_html__('Go Pro', 'modern-events-calendar-lite'), 'manage_options', 'MEC-go-pro', array($this, 'go_pro'));
+        if(!$this->getPRO()) add_submenu_page('mec-intro', esc_html__('MEC - Go Pro', 'modern-events-calendar-lite'), esc_html__('Go Pro', 'modern-events-calendar-lite'), apply_filters( 'mec_menu_cap', 'manage_options', 'go_pro' ), 'MEC-go-pro', array($this, 'go_pro'));
         do_action('after_mec_submenu_action');
     }
 
@@ -707,6 +735,7 @@ class MEC_feature_mec extends MEC_base
         add_meta_box('mec_calendar_filter', esc_html__('Filter Options', 'modern-events-calendar-lite'), array($this, 'meta_box_filter'), 'mec_calendars', 'normal', 'high');
         add_meta_box('mec_calendar_shortcode', esc_html__('Shortcode', 'modern-events-calendar-lite'), array($this, 'meta_box_shortcode'), 'mec_calendars', 'side');
         add_meta_box('mec_calendar_search_form', esc_html__('Search Form', 'modern-events-calendar-lite'), array($this, 'meta_box_search_form'), 'mec_calendars', 'side');
+        add_meta_box('mec_calendar_icons', esc_html__('Icon Options', 'modern-events-calendar-lite'), [$this, 'meta_box_icons'], 'mec_calendars', 'normal', 'low');
     }
 
     public function action_links($actions, $post)
@@ -759,10 +788,10 @@ class MEC_feature_mec extends MEC_base
         // If this is an autosave, our form has not been submitted, so we don't want to do anything.
         if(defined('DOING_AUTOSAVE') and DOING_AUTOSAVE) return;
 
-        $terms = isset($_POST['mec_tax_input']) ? $this->main->sanitize_deep_array($_POST['mec_tax_input']) : array();
+        $terms = isset($_POST['mec_tax_input']) ? $this->main->sanitize_deep_array($_POST['mec_tax_input']) : [];
 
-        $categories_arr = (isset($terms['mec_category']) and is_array($terms['mec_category'])) ? $terms['mec_category'] : array();
-        $ex_categories_arr = (isset($terms['mec_ex_category']) and is_array($terms['mec_ex_category'])) ? $terms['mec_ex_category'] : array();
+        $categories_arr = (isset($terms['mec_category']) and is_array($terms['mec_category'])) ? $terms['mec_category'] : [];
+        $ex_categories_arr = (isset($terms['mec_ex_category']) and is_array($terms['mec_ex_category'])) ? $terms['mec_ex_category'] : [];
         foreach($ex_categories_arr as $ex_category)
         {
             $f = array_search($ex_category, $categories_arr);
@@ -772,8 +801,8 @@ class MEC_feature_mec extends MEC_base
         $categories = sanitize_text_field(implode(',', $categories_arr));
         $ex_categories = sanitize_text_field(implode(',', $ex_categories_arr));
 
-        $locations_arr = (isset($terms['mec_location']) and is_array($terms['mec_location'])) ? $terms['mec_location'] : array();
-        $ex_locations_arr = (isset($terms['mec_ex_location']) and is_array($terms['mec_ex_location'])) ? $terms['mec_ex_location'] : array();
+        $locations_arr = (isset($terms['mec_location']) and is_array($terms['mec_location'])) ? $terms['mec_location'] : [];
+        $ex_locations_arr = (isset($terms['mec_ex_location']) and is_array($terms['mec_ex_location'])) ? $terms['mec_ex_location'] : [];
         foreach($ex_locations_arr as $ex_location)
         {
             $f = array_search($ex_location, $locations_arr);
@@ -783,8 +812,8 @@ class MEC_feature_mec extends MEC_base
         $locations = sanitize_text_field(implode(',', $locations_arr));
         $ex_locations = sanitize_text_field(implode(',', $ex_locations_arr));
 
-        $organizers_arr = (isset($terms['mec_organizer']) and is_array($terms['mec_organizer'])) ? $terms['mec_organizer'] : array();
-        $ex_organizers_arr = (isset($terms['mec_ex_organizer']) and is_array($terms['mec_ex_organizer'])) ? $terms['mec_ex_organizer'] : array();
+        $organizers_arr = (isset($terms['mec_organizer']) and is_array($terms['mec_organizer'])) ? $terms['mec_organizer'] : [];
+        $ex_organizers_arr = (isset($terms['mec_ex_organizer']) and is_array($terms['mec_ex_organizer'])) ? $terms['mec_ex_organizer'] : [];
         foreach($ex_organizers_arr as $ex_organizer)
         {
             $f = array_search($ex_organizer, $organizers_arr);
@@ -795,19 +824,51 @@ class MEC_feature_mec extends MEC_base
         $ex_organizers = sanitize_text_field(implode(',', $ex_organizers_arr));
 
         $sponsors = (isset($terms['mec_sponsor']) and is_array($terms['mec_sponsor'])) ? sanitize_text_field(implode(',', $terms['mec_sponsor'])) : '';
-        $labels = (isset($terms['mec_label']) and is_array($terms['mec_label'])) ? sanitize_text_field(implode(',', $terms['mec_label'])) : '';
+
+        $labels_arr = (isset($terms['mec_label']) and is_array($terms['mec_label'])) ? $terms['mec_label'] : [];
+        $ex_labels_arr = (isset($terms['mec_ex_labels']) and is_array($terms['mec_ex_labels'])) ? $terms['mec_ex_labels'] : [];
+        foreach($ex_labels_arr as $ex_label)
+        {
+            $f = array_search($ex_label, $labels_arr);
+            if(is_numeric($f)) unset($labels_arr[$f]);
+        }
+
+        $labels = sanitize_text_field(implode(',', $labels_arr));
+        $ex_labels = sanitize_text_field(implode(',', $ex_labels_arr));
+
         $tags = (isset($terms['mec_tag'])) ? explode(',', sanitize_text_field(trim($terms['mec_tag']))) : '';
-        $authors = (isset($terms['mec_author']) and is_array($terms['mec_author'])) ? sanitize_text_field(implode(',', $terms['mec_author'])) : '';
+        $ex_tags = (isset($terms['mec_ex_tags'])) ? explode(',', sanitize_text_field(trim($terms['mec_ex_tags']))) : '';
+
+        $authors_arr = (isset($terms['mec_author']) and is_array($terms['mec_author'])) ? $terms['mec_author'] : [];
+        $ex_authors_arr = (isset($terms['mec_ex_authors']) and is_array($terms['mec_ex_authors'])) ? $terms['mec_ex_authors'] : [];
+
+        foreach($ex_authors_arr as $ex_author)
+        {
+            $f = array_search($ex_author, $authors_arr);
+            if(is_numeric($f)) unset($authors_arr[$f]);
+        }
+
+        $authors = sanitize_text_field(implode(',', $authors_arr));
+        $ex_authors = sanitize_text_field(implode(',', $ex_authors_arr));
 
         // Fix tags
-        if(is_array($tags) and count($tags) == 1 and trim($tags[0]) == '') $tags = array();
+        if(is_array($tags) and count($tags) == 1 and trim($tags[0]) == '') $tags = [];
         if(is_array($tags))
         {
             $tags = array_map('trim', $tags);
             $tags = implode(',', $tags);
         }
 
+        // Fix Ex tags
+        if(is_array($ex_tags) and count($ex_tags) == 1 and trim($ex_tags[0]) == '') $ex_tags = [];
+        if(is_array($ex_tags))
+        {
+            $ex_tags = array_map('trim', $ex_tags);
+            $ex_tags = implode(',', $ex_tags);
+        }
+
         update_post_meta($post_id, 'label', $labels);
+        update_post_meta($post_id, 'ex_label', $ex_labels);
         update_post_meta($post_id, 'category', $categories);
         update_post_meta($post_id, 'ex_category', $ex_categories);
         update_post_meta($post_id, 'location', $locations);
@@ -816,11 +877,17 @@ class MEC_feature_mec extends MEC_base
         update_post_meta($post_id, 'ex_organizer', $ex_organizers);
         update_post_meta($post_id, 'sponsor', $sponsors);
         update_post_meta($post_id, 'tag', $tags);
+        update_post_meta($post_id, 'ex_tag', $ex_tags);
         update_post_meta($post_id, 'author', $authors);
+        update_post_meta($post_id, 'ex_author', $ex_authors);
 
         do_action('mec_shortcode_filters_save', $post_id, $terms );
 
         $mec = (isset($_POST['mec']) ? $this->main->sanitize_deep_array($_POST['mec']) : array());
+
+        // Icons
+        $icons = isset($mec['icons']) && is_array($mec['icons']) ? $mec['icons'] : [];
+        update_post_meta($post_id, 'mec_icons', $icons);
 
         $skin = (isset($mec['skin']) ? sanitize_text_field($mec['skin']) : '');
         $start_date_type = ((isset($mec['sk-options'][$skin]) and isset($mec['sk-options'][$skin]['start_date_type'])) ? sanitize_text_field($mec['sk-options'][$skin]['start_date_type']) : 'today');
@@ -906,6 +973,20 @@ class MEC_feature_mec extends MEC_base
     public function meta_box_skin_options($post)
     {
         $path = MEC::import('app.features.mec.meta_boxes.skin_options', true, true);
+
+        ob_start();
+        include $path;
+        echo MEC_kses::full(ob_get_clean());
+    }
+
+    /**
+     * Show content of icons meta box
+     * @author Webnus <info@webnus.net>
+     * @param object $post
+     */
+    public function meta_box_icons($post)
+    {
+        $path = MEC::import('app.features.mec.meta_boxes.icons', true, true);
 
         ob_start();
         include $path;
@@ -1021,6 +1102,7 @@ class MEC_feature_mec extends MEC_base
         elseif($tab == 'MEC-messages') $this->messages();
         elseif($tab == 'MEC-styling') $this->styling();
         elseif($tab == 'MEC-single') $this->single();
+        elseif($tab == 'MEC-fes') $this->fes();
         elseif($tab == 'MEC-booking') $this->booking();
         elseif($tab == 'MEC-modules') $this->modules();
         elseif($tab == 'MEC-integrations') $this->integrations();
@@ -1080,6 +1162,20 @@ class MEC_feature_mec extends MEC_base
     public function single()
     {
         $path = MEC::import('app.features.mec.single', true, true);
+
+        ob_start();
+        include $path;
+        echo MEC_kses::full(ob_get_clean());
+    }
+
+    /**
+     * Show content of Frontend Event Submission tab
+     * @author Webnus <info@webnus.net>
+     * @return void
+     */
+    public function fes()
+    {
+        $path = MEC::import('app.features.mec.fes', true, true);
 
         ob_start();
         include $path;
@@ -1907,25 +2003,32 @@ class MEC_feature_mec extends MEC_base
 
     public function assets_per_page($status)
     {
+        global $post;
+        $status_per_page = 1;
+        if($post)
+        {
+            $post_types = $this->assets_per_page_post_types();
+
+            if(isset($post->post_type) and in_array($post->post_type, $post_types))
+            {
+                $status_per_page = get_post_meta($post->ID, 'mec_include_assets', true);
+                if(trim($status_per_page) == '') $status_per_page = 0;
+            }
+        }
+
+        if (is_plugin_active('buddyboss-platform/bp-loader.php') &&
+            is_plugin_active('mec-buddyboss/mec-buddyboss.php')) {
+
+            if(isset($post->is_page) && $status_per_page == 0) $status_per_page = 1;
+
+            return (boolean) $status_per_page;
+        }
+
         // Turned Off
         if(!isset($this->settings['assets_per_page_status']) or (isset($this->settings['assets_per_page_status']) and !$this->settings['assets_per_page_status'])) return $status;
         // Turned On
         else
         {
-            global $post;
-
-            $status_per_page = 1;
-            if($post)
-            {
-                $post_types = $this->assets_per_page_post_types();
-
-                if(isset($post->post_type) and in_array($post->post_type, $post_types))
-                {
-                    $status_per_page = get_post_meta($post->ID, 'mec_include_assets', true);
-                    if(trim($status_per_page) == '') $status_per_page = 0;
-                }
-            }
-
             $status = (boolean) $status_per_page;
         }
 
@@ -2027,7 +2130,7 @@ class MEC_feature_mec extends MEC_base
         if(!isset($this->settings['display_event_fields_search']) or (isset($this->settings['display_event_fields_search']) and !$this->settings['display_event_fields_search'])) return '';
 
         $event_fields = $this->main->get_event_fields();
-        $field_options = (isset($options['fields']) and is_array($options['fields']) and count($options['fields'])) ? $options['fields'] : array();
+        $field_options = (isset($options['fields']) and is_array($options['fields']) and count($options['fields'])) ? $options['fields'] : [];
 
         // No Fields
         if(!is_array($event_fields) or (is_array($event_fields) and !count($event_fields))) return '';
@@ -2066,6 +2169,9 @@ class MEC_feature_mec extends MEC_base
         return $fields;
     }
 
+    /**
+     * @return void
+     */
     public function download_debug_log_file()
     {
         if(!isset($_REQUEST['mec-download-log-file']) || !$_REQUEST['mec-download-log-file']) return;
@@ -2084,5 +2190,20 @@ class MEC_feature_mec extends MEC_base
         header('Content-Length: ' . filesize($log_file));
         readfile($log_file);
         exit;
+    }
+
+    /**
+     * @return void
+     */
+    public function rerun_sql()
+    {
+        // Current User is not Permitted
+        if(!current_user_can('manage_options')) return;
+
+        // Create Tables
+        $this->main->create_mec_tables();
+
+        // Response
+        wp_send_json(["success" => 1, 'message' => esc_html__('Database setup is done.')]);
     }
 }

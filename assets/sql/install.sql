@@ -82,3 +82,15 @@ ALTER TABLE `#__mec_bookings` ADD `user_id` INT(10) UNSIGNED NULL DEFAULT NULL A
 ALTER TABLE `#__mec_bookings` ADD INDEX (`user_id`);
 ALTER TABLE `#__mec_bookings` CHANGE `ticket_ids` `ticket_ids` VARCHAR(655) NOT NULL;
 ALTER TABLE `#__mec_bookings` ADD `seats` INT(10) UNSIGNED NOT NULL DEFAULT 0 AFTER `ticket_ids`;
+
+CREATE TABLE IF NOT EXISTS `#__mec_booking_attendees` (
+  `id` int UNSIGNED NOT NULL,
+  `mec_booking_id` int UNSIGNED NOT NULL,
+  `user_id` int UNSIGNED NOT NULL,
+  `ticket_id` int UNSIGNED NOT NULL
+) CHARSET=[:CHARSET:] COLLATE=[:COLLATE:];
+
+ALTER TABLE `#__mec_booking_attendees` ADD PRIMARY KEY (`id`);
+ALTER TABLE `#__mec_booking_attendees` ADD KEY `mec_booking_id` (`mec_booking_id`);
+ALTER TABLE `#__mec_booking_attendees` MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+ALTER TABLE `#__mec_booking_attendees` ADD CONSTRAINT `mec_booking_id` FOREIGN KEY (`mec_booking_id`) REFERENCES `#__mec_bookings`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

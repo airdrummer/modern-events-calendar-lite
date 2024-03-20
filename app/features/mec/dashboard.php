@@ -9,11 +9,11 @@ $current_user = wp_get_current_user();
 
 // user event created
 $count_events = wp_count_posts($this->get_main_post_type());
-$user_post_count = isset($count_events->publish) ? $count_events->publish : '0';
+$user_post_count = $count_events->publish ?? '0';
 
 // user calendar created
 $count_calendars = wp_count_posts('mec_calendars');
-$user_post_count_c = isset($count_calendars->publish) ? $count_calendars->publish : '0';
+$user_post_count_c = $count_calendars->publish ?? '0';
 
 // mec location
 $user_location_count_l = wp_count_terms('mec_location', array(
@@ -21,7 +21,7 @@ $user_location_count_l = wp_count_terms('mec_location', array(
     'parent'=>0
 ));
 
-// mec orgnizer
+// mec organizer
 $user_organizer_count_l = wp_count_terms('mec_organizer', array(
     'hide_empty'=>false,
     'parent'=>0
@@ -46,6 +46,7 @@ if($booking_status) wp_enqueue_script('mec-chartjs-script', $this->asset('js/cha
 $box_support = apply_filters('mec_dashboard_box_support', true);
 $box_stats = apply_filters('mec_dashboard_box_stats', true);
 ?>
+<style>.upcoming-events .mec-credit-url{display: none;}</style>
 <div id="webnus-dashboard" class="wrap about-wrap">
     <div class="welcome-head w-clearfix">
         <div class="w-row">
@@ -56,12 +57,26 @@ $box_stats = apply_filters('mec_dashboard_box_stats', true);
                 </div>
             </div>
             <div class="w-col-sm-3">
-                <?php $styling = $this->get_styling(); $darkadmin_mode = ( isset($styling['dark_mode']) ) ? $styling['dark_mode'] : ''; if ($darkadmin_mode == 1): $darklogo = plugin_dir_url(__FILE__ ) . '../../../assets/img/mec-logo-w2.png'; else: $darklogo = plugin_dir_url(__FILE__ ) . '../../../assets/img/mec-logo-w.png'; endif; ?>
+                <?php $styling = $this->get_styling(); $darkadmin_mode = $styling['dark_mode'] ?? ''; if ($darkadmin_mode == 1): $darklogo = plugin_dir_url(__FILE__ ) . '../../../assets/img/mec-logo-w2.png'; else: $darklogo = plugin_dir_url(__FILE__ ) . '../../../assets/img/mec-logo-w.png'; endif; ?>
                 <img src="<?php echo esc_url($darklogo); ?>" />
                 <span class="w-theme-version"><?php echo esc_html__('Version', 'modern-events-calendar-lite'); ?> <?php echo MEC_VERSION; ?></span>
             </div>
         </div>
     </div>
+    <?php if(!$this->getPRO() && $new_version = $this->is_new_version_available()): ?>
+        <div class="w-row mec-pro-notice mec-new-version-notice">
+            <div class="w-col-sm-12">
+                <div class="info-msg w-box version-info-message mec-intro-section">
+                    <p>
+                        <?php echo sprintf(esc_html__("A new version is available. You're using the %s version but the latest version is %s.", 'modern-events-calendar-lite'), MEC_VERSION, '<strong>'.$new_version.'</strong>'); ?>
+                    </p>
+                    <a class="info-msg-link" href="<?php echo esc_url(admin_url('update-core.php')); ?>">
+                        <?php esc_html_e('UPDATE NOW', 'modern-events-calendar-lite'); ?>
+                    </a>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
     <div class="welcome-content w-clearfix extra">
         <div class="w-row" style="margin-bottom: 30px;">
             <div class="w-col-sm-12">
@@ -92,14 +107,14 @@ $box_stats = apply_filters('mec_dashboard_box_stats', true);
                         {
                             WebFormQueue.add(webformOptions);
                         }
-                        else
+                        else 
                         {
-                            var script = document.createElement("script");
-                            script.src = "https://assets.freshsales.io/assets/webform-6a8bd10d9118645b79d2d3b3a3112e0901bf1beb.js";
+                            var script = document.createElement('script');
+                            script.src = 'https://assets.freshsales.io/assets/webform-f0cf3eb443c5b955735f5da1f73030f6d9b8a3e1.js';
                             script.onload = function(){
-                                WebFormQueue.add(webformOptions);
+                            WebFormQueue.add(webformOptions);
                             };
-                            var webformContainer = document.getElementById("fs-webform-container_"+webformKey);
+                            var webformContainer = document.getElementById('fs-webform-container_'+webformKey);
                             webformContainer.appendChild(script);
                         }
                     })();
@@ -107,7 +122,7 @@ $box_stats = apply_filters('mec_dashboard_box_stats', true);
             </div>
         </div>
         <?php if(!$this->getPRO()): ?>
-        <div class="w-row mec-pro-notice"  style="margin-bottom: 30px;">
+        <div class="w-row mec-pro-notice" style="margin-bottom: 30px;">
             <div class="w-col-sm-12">
                 <div class="info-msg">
                     <p>
@@ -150,7 +165,7 @@ $box_stats = apply_filters('mec_dashboard_box_stats', true);
                         <p><?php esc_html_e('In this short video, you can learn how to make an event and put a calendar on your website. Please watch this 2 minutes video to the end.' , 'modern-events-calendar-lite'); ?></p>
                     </div>
                     <div class="w-box-content mec-intro-section-ifarme">
-                        <iframe width="784" height="441" src="https://www.youtube.com/embed/anSyJfNx_Sk" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        <iframe width="784" height="441" src="https://www.youtube.com/embed/PU-N_GT0OqM?si=3-qnNgh-C0ZbNgHK" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
                     </div>
                     <div class="w-box-content mec-intro-section-links wp-core-ui">
                         <a class="mec-intro-section-link-tag button button-primary button-hero" href="<?php esc_html_e(admin_url( 'post-new.php?post_type=mec-events' )); ?>" target="_blank"><?php esc_html_e('Add New Event' , 'modern-events-calendar-lite'); ?>
@@ -225,7 +240,7 @@ $box_stats = apply_filters('mec_dashboard_box_stats', true);
                                 </div>
                                 <div class="MECLicenseMessage mec-message-hidden">
                                     <?php
-                                    echo esc_html__('Activation failed. Please check your purchase code or license type. Note: Your purchase code should match your licesne type.', 'modern-events-calendar-lite') . '<a style="text-decoration: underline; padding-left: 7px;" href="https://webnus.net/dox/modern-events-calendar/auto-update-issue/" target="_blank">'  . esc_html__('Troubleshooting', 'modern-events-calendar-lite') . '</a>';
+                                    echo esc_html__('Activation failed. Please check your purchase code or license type. Note: Your purchase code should match your licesne type.', 'modern-events-calendar-lite') . '<a style="text-decoration: underline; padding-left: 7px;" href="https://webnus.net/dox/modern-events-calendar/auto-update/" target="_blank">'  . esc_html__('Troubleshooting', 'modern-events-calendar-lite') . '</a>';
                                     ?>
                                 </div>
                             </form>
@@ -300,6 +315,7 @@ $box_stats = apply_filters('mec_dashboard_box_stats', true);
                                     'pagination_method' => '0',
                                     'limit'=>'6',
                                     'month_divider'=>'0',
+                                    'load_more_button'=>false,
                                     'ignore_js'=>true
                                 ))
                             )));
@@ -364,7 +380,7 @@ $box_stats = apply_filters('mec_dashboard_box_stats', true);
         <?php if($booking_status and current_user_can('mec_settings')) echo (new MEC_feature_mec())->widget_total_bookings(); ?>
         <?php endif; ?>
 
-        <?php if($this->getPRO()) echo (new MEC_feature_mec())->widget_print(); ?>
+        <?php if($this->getPRO()) (new MEC_feature_mec())->widget_print(); ?>
 
         <div class="w-row">
             <div class="w-col-sm-12">

@@ -28,7 +28,7 @@ class EventLabels extends WidgetBase {
 
 		$settings = $this->settings;
 		$event_detail = $this->get_event_detail($event_id);
-		$labels    = isset($event_detail->data->labels) ? $event_detail->data->labels : array();
+		$labels    = isset($event_detail->data->labels) ? $event_detail->data->labels : [];
 
 		$html = '';
 		ob_start();
@@ -44,8 +44,12 @@ class EventLabels extends WidgetBase {
 			$mec_items = count($labels);
 			$mec_i = 0; ?>
 			<div class="mec-single-event-label">
-				<i class="mec-fa-bookmark-o"></i>
-				<h3 class="mec-cost"><?php echo Base::get_main()->m('taxonomy_labels', esc_html__('Labels', 'modern-events-calendar-lite')); ?></h3>
+				<?php if( isset( $atts['mec_labels_show_icon'] ) && $atts['mec_labels_show_icon'] ){ ?>
+					<i class="mec-fa-bookmark-o"></i>
+				<?php } ?>
+				<?php if( isset( $atts['mec_labels_show_title'] ) && $atts['mec_labels_show_title'] ){ ?>
+					<h3 class="mec-cost"><?php echo Base::get_main()->m('taxonomy_labels', esc_html__('Labels', 'modern-events-calendar-lite')); ?></h3>
+				<?php } ?>
 				<?php foreach ($labels as $k => $label) :
 					$seperator = (++$mec_i === $mec_items) ? '' : ',';
 					echo '<dd style="color:' . esc_attr( $label['color'] ) . '">' . esc_html($label["name"] . $seperator) . '</dd>';

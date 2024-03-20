@@ -40,7 +40,7 @@ class MEC_feature_login extends MEC_base
         // Verify that the nonce is valid.
         if(!wp_verify_nonce(sanitize_text_field($_POST['mec_login_nonce']), 'mec-ajax-login-nonce')) return;
         
-        $info = array();
+        $info = [];
         $info['user_login'] = sanitize_text_field($_POST['username']);
         $info['user_password'] = sanitize_text_field($_POST['password']);
         $info['remember'] = true;

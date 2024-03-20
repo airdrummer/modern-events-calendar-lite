@@ -11,7 +11,7 @@ if ( !class_exists('Puc_v4p11_Update', false) ):
 		public $slug;
 		public $version;
 		public $download_url;
-		public $translations = array();
+		public $translations = [];
 
 		/**
 		 * @return string[]

@@ -271,7 +271,7 @@ button.mec-wizard-open-popup span {
 .mec-box label {
     width: 116px !important;
     display: inline-block;
-    margin-bottom: 6px;
+    line-height: 28px;
 }
 div#mec_related_events_container_toggle label ,#mec_next_previous_events_container_toggle label{
     display: inline-block;

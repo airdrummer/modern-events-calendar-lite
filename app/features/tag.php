@@ -34,7 +34,7 @@ class MEC_feature_tag extends MEC_base
         // Taxonomy
         $this->taxonomy = (isset($this->settings['tag_method']) ? $this->settings['tag_method'] : 'post_tag');
     }
-    
+
     /**
      * Initialize search feature
      * @author Webnus <info@webnus.net>
@@ -58,9 +58,8 @@ class MEC_feature_tag extends MEC_base
             $singular_label = $this->main->m('taxonomy_tag', esc_html__('Tag', 'modern-events-calendar-lite'));
             $plural_label = $this->main->m('taxonomy_tags', esc_html__('Tags', 'modern-events-calendar-lite'));
 
-            register_taxonomy(
-                'mec_tag',
-                $this->PT,
+            $tag_args = apply_filters(
+                'mec_register_taxonomy_args',
                 array(
                     'label'=>$plural_label,
                     'labels'=>array(
@@ -82,7 +81,13 @@ class MEC_feature_tag extends MEC_base
                     'show_ui'=>true,
                     'show_in_rest'=>true,
                     'hierarchical'=>false,
-                )
+                ),
+                'mec_tag'
+            );
+            register_taxonomy(
+                'mec_tag',
+                $this->PT,
+                $tag_args
             );
 
             register_taxonomy_for_object_type('mec_tag', $this->PT);
@@ -110,7 +115,7 @@ class MEC_feature_tag extends MEC_base
             $old_terms = get_the_terms($event, $old_method);
             if(!is_array($old_terms) or (is_array($old_terms) and !count($old_terms))) continue;
 
-            $new_term_ids = array();
+            $new_term_ids = [];
             foreach($old_terms as $old_term)
             {
                 $term = wp_create_term($old_term->name, $new_method);

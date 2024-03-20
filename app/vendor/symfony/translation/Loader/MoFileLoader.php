@@ -71,7 +71,7 @@ class MoFileLoader extends FileLoader
         // offsetHashes
         $this->readLong($stream, $isBigEndian);
 
-        $messages = array();
+        $messages = [];
 
         for ($i = 0; $i < $count; ++$i) {
             $pluralId = null;
@@ -114,7 +114,7 @@ class MoFileLoader extends FileLoader
             if (is_array($item['translated'])) {
                 $messages[$item['ids']['singular']] = stripcslashes($item['translated'][0]);
                 if (isset($item['ids']['plural'])) {
-                    $plurals = array();
+                    $plurals = [];
                     foreach ($item['translated'] as $plural => $translated) {
                         $plurals[] = sprintf('{%d} %s', $plural, $translated);
                     }

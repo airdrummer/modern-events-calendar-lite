@@ -29,10 +29,10 @@ class MEC_ticketVariations extends MEC_base
 
     public function item($args)
     {
-        $name_prefix = (isset($args['name_prefix']) ? $args['name_prefix'] : 'mec[ticket_variations]');
-        $id_prefix = (isset($args['id_prefix']) ? $args['id_prefix'] : 'ticket_variation');
-        $ticket_variation = (isset($args['value']) ? $args['value'] : array());
-        $i = (isset($args['i']) ? $args['i'] : ':i:');
+        $name_prefix = $args['name_prefix'] ?? 'mec[ticket_variations]';
+        $id_prefix = $args['id_prefix'] ?? 'ticket_variation';
+        $ticket_variation = $args['value'] ?? [];
+        $i = $args['i'] ?? ':i:';
         ?>
         <div class="mec-box mec_ticket_variation_row" id="mec_<?php echo esc_attr($id_prefix); ?>_row<?php echo esc_attr($i); ?>">
             <div class="mec-form-row">
@@ -69,7 +69,7 @@ class MEC_ticketVariations extends MEC_base
                         <i title="" class="dashicons-before dashicons-editor-help"></i>
                     </span>
                 </span>
-                <button class="button mec_remove_ticket_variation_button" type="button" id="mec_remove_<?php echo esc_attr($id_prefix); ?>_button<?php echo esc_attr($i); ?>" onclick="mec_remove_ticket_variation(<?php echo esc_attr($i); ?>, '<?php echo esc_attr($id_prefix); ?>');"><?php esc_html_e('Remove', 'modern-events-calendar-lite'); ?></button>
+                <button class="button mec_remove_ticket_variation_button mec-dash-remove-btn" type="button" id="mec_remove_<?php echo esc_attr($id_prefix); ?>_button<?php echo esc_attr($i); ?>" onclick="mec_remove_ticket_variation(<?php echo esc_attr($i); ?>, '<?php echo esc_attr($id_prefix); ?>');"><?php esc_html_e('Remove', 'modern-events-calendar-lite'); ?></button>
             </div>
         </div>
         <?php

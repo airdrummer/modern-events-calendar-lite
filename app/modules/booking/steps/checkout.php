@@ -20,11 +20,11 @@ $date_ex = explode(':', $date);
 $occurrence = $date_ex[0];
 
 $booking_options = get_post_meta($event_id, 'mec_booking', true);
-if(!is_array($booking_options)) $booking_options = array();
+if(!is_array($booking_options)) $booking_options = [];
 
 $gateway_settings = $this->main->get_gateways_options();
 
-$active_gateways = array();
+$active_gateways = [];
 foreach($gateways as $gateway)
 {
     if(!$gateway->enabled()) continue;
@@ -62,7 +62,7 @@ if($mecFluentEnable)
 
 $first_gateway_id = NULL;
 
-$free_booking = (isset($price_details['total']) and $price_details['total'] == 0);
+$free_booking = isset($price_details['total']) && $price_details['total'] == 0;
 $paid_booking = !$free_booking;
 ?>
 <style>.mec-book-price-detail-type-discount{display: none;}</style>

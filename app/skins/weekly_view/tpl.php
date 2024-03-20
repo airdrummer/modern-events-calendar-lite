@@ -63,9 +63,7 @@ if($this->next_previous_button)
     $navigator_html .= '<h4 class="mec-month-label">'.esc_html($this->main->date_i18n('Y F', $current_month_time)).'</h4>';
 
     // Show next month handler if needed
-    if(!$this->show_only_expired_events or
-       ($this->show_only_expired_events and strtotime(date('Y-m-01', $_1month_after)) <= time())
-    )
+    if(!$this->show_only_expired_events || strtotime(date('Y-m-01', $_1month_after)) <= time())
     {
         $navigator_html .= '<div class="mec-next-month mec-load-month mec-color" data-mec-year="'.date('Y', $_1month_after).'" data-mec-month="'.date('m', $_1month_after).'"><a href="#" class="mec-load-month-link"><i class="mec-sl-angle-right"></i></a></div>';
     }
@@ -136,7 +134,7 @@ else $this->factory->params('footer', $javascript);
 $styling = $this->main->get_styling();
 $event_colorskin = (isset($styling['mec_colorskin'] ) || isset($styling['color'])) ? 'colorskin-custom' : '';
 
-$dark_mode = (isset($styling['dark_mode']) ? $styling['dark_mode'] : '');
+$dark_mode = $styling['dark_mode'] ?? '';
 if($dark_mode == 1) $set_dark = 'mec-dark-mode';
 else $set_dark = '';
 

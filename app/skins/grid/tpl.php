@@ -2,11 +2,13 @@
 /** no direct access **/
 defined('MECEXEC') or die();
 
+/** @var MEC_skin_grid $this */
+
 // Get layout path
 $render_path = $this->get_render_path();
 $styling = $this->main->get_styling();
 
-$dark_mode = (isset($styling['dark_mode']) ? $styling['dark_mode'] : '');
+$dark_mode = $styling['dark_mode'] ?? '';
 if($dark_mode == 1) $set_dark = 'mec-dark-mode';
 else $set_dark = '';
 
@@ -84,11 +86,11 @@ do_action('mec_grid_skin_head');
         <?php echo MEC_kses::full($items_html); ?>
     </div>
     <div class="mec-skin-grid-no-events-container mec-util-hidden" id="mec_skin_no_events_<?php echo esc_attr($this->id); ?>">
-        <?php esc_html_e('No event found!', 'modern-events-calendar-lite'); ?>
+        <?php $this->main->display_not_found_message(); ?>
     </div>
     <?php else: ?>
     <div class="mec-skin-grid-events-container" id="mec_skin_events_<?php echo esc_attr($this->id); ?>">
-        <?php esc_html_e('No event found!', 'modern-events-calendar-lite'); ?>
+        <?php $this->main->display_not_found_message(); ?>
     </div>
     <?php endif; ?>
 

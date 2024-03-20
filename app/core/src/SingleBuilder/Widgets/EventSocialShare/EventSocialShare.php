@@ -53,7 +53,7 @@ class EventSocialShare extends WidgetBase {
 						<div class="mec-links-details">
 							<ul>
 								<?php
-								$social_networks = isset($settings['sn']) && is_array($settings['sn']) ? $settings['sn'] : array();
+								$social_networks = isset($settings['sn']) && is_array($settings['sn']) ? $settings['sn'] : [];
 								foreach ($socials as $social) {
 									$social_id = $social['id'];
 									$is_enabled = isset($social_networks[$social_id]) && !$social_networks[$social_id];

@@ -35,7 +35,7 @@ class CustomForm extends Singleton {
 		}
 
 		$options = Settings::getInstance()->get_options();
-		$fields  = isset( $options[ $group_id ] ) ? $options[ $group_id ] : array();
+		$fields  = isset( $options[ $group_id ] ) ? $options[ $group_id ] : [];
 
 
 		return apply_filters( 'mec_get_custom_form_fields', $fields, $event_id, $form_id, $group_id, $primary_group_id,$translated_event_id );
@@ -52,7 +52,7 @@ class CustomForm extends Singleton {
 		$fields = $this->get_fields( $group_id, $event_id, $translated_event_id );
 
 		if ( !is_array( $fields ) ) {
-			$fields = array();
+			$fields = [];
 		}
 
 		foreach ( $fields as $k => $field ) {

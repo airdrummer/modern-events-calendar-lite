@@ -18,6 +18,9 @@ class MEC_user extends MEC_base
      */
     public $db;
 
+    /**
+     * @var array
+     */
     public $settings;
 
     /**
@@ -38,33 +41,33 @@ class MEC_user extends MEC_base
 
     public function register($attendee, $args)
     {
-        $name = isset($attendee['name']) ? $attendee['name'] : '';
-        $raw = (isset($attendee['reg']) and is_array($attendee['reg'])) ? $attendee['reg'] : array();
+        $name = $attendee['name'] ?? '';
+        $raw = (isset($attendee['reg']) and is_array($attendee['reg'])) ? $attendee['reg'] : [];
 
-        $email = isset($attendee['email']) ? $attendee['email'] : '';
+        $email = $attendee['email'] ?? '';
         if(!filter_var($email, FILTER_VALIDATE_EMAIL)) return false;
 
-        $reg = array();
+        $reg = [];
         foreach($raw as $k => $v) $reg[$k] = (is_array($v) ? $v : stripslashes($v));
 
         $existed_user_id = $this->main->email_exists($email);
 
         // User already exist
-        if($existed_user_id !== false) return $existed_user_id;
+        if($existed_user_id !== false)
+        {
+            // Map Data
+            $event_id = $args['event_id'] ?? 0;
+            if($event_id) $this->save_mapped_data($event_id, $existed_user_id, $reg);
+
+            return $existed_user_id;
+        }
 
         // Update WordPress user first name and last name
-        if(strpos($name, ',') !== false)
-        {
-            $ex = explode(',', $name);
-            $first_name = isset($ex[0]) ? $ex[0] : '';
-            $last_name = '';
-        }
-        else
-        {
-            $ex = explode(' ', $name);
-            $first_name = isset($ex[0]) ? $ex[0] : '';
-            $last_name = '';
-        }
+        if(strpos($name, ',') !== false) $ex = explode(',', $name);
+        else $ex = explode(' ', $name);
+
+        $first_name = $ex[0] ?? '';
+        $last_name = '';
 
         if(isset($ex[1]))
         {
@@ -72,8 +75,11 @@ class MEC_user extends MEC_base
             $last_name = implode(' ', $ex);
         }
 
+        // Register in MEC
+        $MEC_method = isset($args['register_in_mec']) && $args['register_in_mec'];
+
         // Registration is disabled
-        if(isset($this->settings['booking_registration']) and !$this->settings['booking_registration'])
+        if($MEC_method || (isset($this->settings['booking_registration']) && !$this->settings['booking_registration']))
         {
             $existed_user_id = $this->db->select("SELECT `id` FROM `#__mec_users` WHERE `email`='".$this->db->escape($email)."'", 'loadResult');
 
@@ -97,11 +103,16 @@ class MEC_user extends MEC_base
         {
             $username = $email;
             $password = wp_generate_password(12, true, true);
+            $auto = true;
 
             if(isset($args['username']) and trim($args['username'])) $username = $args['username'];
-            if(isset($args['password']) and trim($args['password'])) $password = $args['password'];
+            if(isset($args['password']) and trim($args['password']))
+            {
+                $password = $args['password'];
+                $auto = false;
+            }
 
-            $user_id = $this->main->register_user($username, $email, $password);
+            $user_id = $this->main->register_user($username, $email, $password, $auto);
 
             $user = new stdClass();
             $user->ID = $user_id;
@@ -114,23 +125,8 @@ class MEC_user extends MEC_base
             update_user_meta($user_id, 'nickname', $name);
 
             // Map Data
-            $event_id = (isset($args['event_id']) ? $args['event_id'] : 0);
-            if($event_id)
-            {
-                $reg_fields = $this->main->get_reg_fields($event_id);
-
-                foreach($reg as $reg_id => $reg_value)
-                {
-                    $reg_field = (isset($reg_fields[$reg_id]) ? $reg_fields[$reg_id] : array());
-                    if(isset($reg_field['mapping']) and trim($reg_field['mapping']))
-                    {
-                        $reg_value = maybe_unserialize($reg_value);
-                        $meta_value = is_array($reg_value) ? implode(',', $reg_value) : $reg_value;
-
-                        update_user_meta($user_id, $reg_field['mapping'], $meta_value);
-                    }
-                }
-            }
+            $event_id = $args['event_id'] ?? 0;
+            if($event_id) $this->save_mapped_data($event_id, $user_id, $reg);
 
             // Set the User Role
             $role = (isset($this->settings['booking_user_role']) and trim($this->settings['booking_user_role'])) ? $this->settings['booking_user_role'] : 'subscriber';
@@ -140,6 +136,23 @@ class MEC_user extends MEC_base
         }
 
         return $user_id;
+    }
+
+    public function save_mapped_data($event_id, $user_id, $reg)
+    {
+        $reg_fields = $this->main->get_reg_fields($event_id);
+
+        foreach($reg as $reg_id => $reg_value)
+        {
+            $reg_field = $reg_fields[$reg_id] ?? [];
+            if(isset($reg_field['mapping']) and trim($reg_field['mapping']))
+            {
+                $reg_value = maybe_unserialize($reg_value);
+                $meta_value = is_array($reg_value) ? implode(',', $reg_value) : $reg_value;
+
+                update_user_meta($user_id, $reg_field['mapping'], $meta_value);
+            }
+        }
     }
 
     public function assign($booking_id, $user_id)

@@ -29,15 +29,15 @@ class MEC_eventFields extends MEC_base
 
     public function form($args)
     {
-        if(!isset($this->settings['display_event_fields_backend']) or (isset($this->settings['display_event_fields_backend']) and $this->settings['display_event_fields_backend'] != 1)) return;
+        if(!isset($this->settings['display_event_fields_backend']) || $this->settings['display_event_fields_backend'] != 1) return;
 
-        $post = (isset($args['post']) ? $args['post'] : NULL);
-        $id = (isset($args['id']) ? $args['id'] : 'mec-event-data');
-        $class = (isset($args['class']) ? $args['class'] : 'mec-meta-box-fields mec-event-tab-content');
-        $data = (isset($args['data']) ? $args['data'] : array());
-        $name_prefix = (isset($args['name_prefix']) ? $args['name_prefix'] : 'mec');
-        $id_prefix = (isset($args['id_prefix']) ? $args['id_prefix'] : 'mec_event_fields_');
-        $mandatory_status = (isset($args['mandatory_status']) ? $args['mandatory_status'] : true);
+        $post = $args['post'] ?? NULL;
+        $id = $args['id'] ?? 'mec-event-data';
+        $class = $args['class'] ?? 'mec-meta-box-fields mec-event-tab-content';
+        $data = $args['data'] ?? [];
+        $name_prefix = $args['name_prefix'] ?? 'mec';
+        $id_prefix = $args['id_prefix'] ?? 'mec_event_fields_';
+        $mandatory_status = $args['mandatory_status'] ?? true;
 
         $event_fields = $this->main->get_event_fields();
         ?>
@@ -47,15 +47,15 @@ class MEC_eventFields extends MEC_base
             <?php foreach($event_fields as $j => $event_field): if(!is_numeric($j)) continue; ?>
                 <div class="mec-form-row">
 
-                    <div class="mec-col-2">
+                    <div class="mec-col-4">
                         <?php
                         $event_field_name = isset($event_field['label']) ? strtolower(str_replace([' ',',',':','"',"'"], '_', $event_field['label'])) : '';
-                        $value = isset($data[$j]) ? $data[$j] : NULL;
+                        $value = $data[$j] ?? NULL;
                         ?>
                         <?php if(isset($event_field['label'])): ?><label for="<?php echo esc_attr($id_prefix); ?><?php echo esc_attr($j); ?>"><?php esc_html_e(stripslashes($event_field['label']), 'modern-events-calendar-lite'); ?><?php echo (($mandatory_status and isset($event_field['mandatory']) and $event_field['mandatory']) ? '<span class="wbmec-mandatory">*</span>' : ''); ?></label><?php endif; ?>
                     </div>
 
-                    <div class="mec-col-10">
+                    <div class="mec-col-8">
                         <?php /** Text **/ if($event_field['type'] == 'text'): ?>
                             <input id="<?php echo esc_attr($id_prefix); ?><?php echo esc_attr($j); ?>" type="text" name="<?php echo esc_attr($name_prefix); ?>[fields][<?php echo esc_attr($j); ?>]" value="<?php echo esc_attr($value); ?>" placeholder="<?php esc_attr($event_field_name); ?>" <?php if($mandatory_status and isset($event_field['mandatory']) and $event_field['mandatory']) echo 'required'; ?> />
 
@@ -71,7 +71,7 @@ class MEC_eventFields extends MEC_base
                         <?php /** Tel **/ elseif($event_field['type'] == 'tel'): ?>
                             <input id="<?php echo esc_attr($id_prefix); ?><?php echo esc_attr($j); ?>" oninput="this.value=this.value.replace(/(?![0-9])./gmi,'')" type="tel" name="<?php echo esc_attr($name_prefix); ?>[fields][<?php echo esc_attr($j); ?>]" value="<?php echo esc_attr($value); ?>" placeholder="<?php esc_attr($event_field_name); ?>" <?php if($mandatory_status and isset($event_field['mandatory']) and $event_field['mandatory']) echo 'required'; ?> />
 
-                        <?php /** Textarea **/ elseif($event_field['type'] == 'textarea' and (!isset($event_field['editor']) or (isset($event_field['editor']) and !$event_field['editor']))): ?>
+                        <?php /** Textarea **/ elseif($event_field['type'] == 'textarea' and (!isset($event_field['editor']) || !$event_field['editor'])): ?>
                             <textarea id="<?php echo esc_attr($id_prefix); ?><?php echo esc_attr($j); ?>" name="<?php echo esc_attr($name_prefix); ?>[fields][<?php echo esc_attr($j); ?>]" placeholder="<?php esc_attr($event_field_name); ?>" <?php if($mandatory_status and isset($event_field['mandatory']) and $event_field['mandatory']) echo 'required'; ?>><?php echo esc_textarea($value); ?></textarea>
 
                         <?php /** Textarea (Editor) **/ elseif($event_field['type'] == 'textarea' and (isset($event_field['editor']) and $event_field['editor'])): wp_editor($value, $id_prefix.$j, array(
@@ -116,11 +116,11 @@ class MEC_eventFields extends MEC_base
         <script>
         jQuery(document).ready(function()
         {
-            var requiredCheckboxes = jQuery('#<?php echo esc_attr($id); ?> :checkbox[required]');
+            let requiredCheckboxes = jQuery('#<?php echo esc_attr($id); ?> :checkbox[required]');
             requiredCheckboxes.on('change', function()
             {
-                var checkboxGroup = requiredCheckboxes.filter('[name="' + jQuery(this).attr('name') + '"]');
-                var isChecked = checkboxGroup.is(':checked');
+                let checkboxGroup = requiredCheckboxes.filter('[name="' + jQuery(this).attr('name') + '"]');
+                let isChecked = checkboxGroup.is(':checked');
                 checkboxGroup.prop('required', !isChecked);
             });
 

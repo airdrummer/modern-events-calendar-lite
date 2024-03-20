@@ -496,7 +496,7 @@ if (!class_exists('Services_JSON')) {
                     return null;
 
                 default:
-                    $m = array();
+                    $m = [];
 
                     if (is_numeric($str)) {
                         // Lookie-loo, it's a number
@@ -612,11 +612,11 @@ if (!class_exists('Services_JSON')) {
 
                         if ($str[0] == '[') {
                             $stk = array(SERVICES_JSON_IN_ARR);
-                            $arr = array();
+                            $arr = [];
                         } else {
                             if ($this->use & SERVICES_JSON_LOOSE_TYPE) {
                                 $stk = array(SERVICES_JSON_IN_OBJ);
-                                $obj = array();
+                                $obj = [];
                             } else {
                                 $stk = array(SERVICES_JSON_IN_OBJ);
                                 $obj = new stdClass();
@@ -662,7 +662,7 @@ if (!class_exists('Services_JSON')) {
                                     // out the property name and set an
                                     // element in an associative array,
                                     // for now
-                                    $parts = array();
+                                    $parts = [];
                                     
                                     if (preg_match('/^\s*(["\'].*[^\\\]["\'])\s*:\s*(\S.*),?$/Uis', $slice, $parts)) {
                                         // "name":value pair

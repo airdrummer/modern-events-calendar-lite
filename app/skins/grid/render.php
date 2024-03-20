@@ -7,9 +7,9 @@ defined('MECEXEC') or die();
 $styling = $this->main->get_styling();
 $event_colorskin = (isset($styling['mec_colorskin'] ) || isset($styling['color'])) ? 'colorskin-custom' : '';
 $settings = $this->main->get_settings();
-$display_label = isset($this->skin_options['display_label']) ? $this->skin_options['display_label'] : false;
-$reason_for_cancellation = isset($this->skin_options['reason_for_cancellation']) ? $this->skin_options['reason_for_cancellation'] : false;
-$map_events = array();
+$display_label = $this->skin_options['display_label'] ?? false;
+$reason_for_cancellation = $this->skin_options['reason_for_cancellation'] ?? false;
+$map_events = [];
 
 // colorful
 $colorful_flag = $colorful_class = '';
@@ -74,7 +74,7 @@ if($this->style == 'colorful')
                     <div class="mec-event-month"><?php echo MEC_kses::element($this->main->dateify($event, $this->date_format_modern_1 .' '. $this->date_format_modern_2)); ?></div>
                 <?php endif; ?>
                 <div class="mec-event-detail">
-                    <?php echo (isset($location['name']) ? '<div class="mec-event-loc-place"><i class="mec-sl-location-pin"></i>' . esc_html($location['name']) . '</div>' : ''); ?>
+                    <?php echo (isset($location['name']) ? '<div class="mec-event-loc-place">'.$this->icons->display('location-pin'). esc_html($location['name']) . '</div>' : ''); ?>
                     <?php echo MEC_kses::element($this->display_categories($event)); ?>
                     <?php echo MEC_kses::element($this->display_organizers($event)); ?>
                     <?php echo MEC_kses::element($this->get_label_captions($event)); ?>
@@ -159,7 +159,7 @@ if($this->style == 'colorful')
                 <?php if($this->localtime) echo MEC_kses::full($this->main->module('local-time.type2', array('event' => $event))); ?>
                 <?php if($this->include_events_times) echo MEC_kses::element($this->main->display_time($start_time, $end_time)); ?>
                 <div class="mec-event-detail">
-                    <?php echo (isset($location['name']) ? '<div class="mec-event-loc-place"><i class="mec-sl-location-pin"></i>' . esc_html($location['name']) . '</div>' : ''); ?>
+                    <?php echo (isset($location['name']) ? '<div class="mec-event-loc-place">'.$this->icons->display('location-pin'). esc_html($location['name']) . '</div>' : ''); ?>
                     <?php echo MEC_kses::element($this->display_categories($event)); ?>
                     <?php echo MEC_kses::element($this->display_organizers($event)); ?>
                     <?php echo MEC_kses::element($this->display_cost($event)); ?>
@@ -181,7 +181,7 @@ if($this->style == 'colorful')
                     <?php if($this->include_events_times and trim($start_time)) echo MEC_kses::element($this->main->display_time($start_time, $end_time)); ?>
                 <?php endif; ?>
                 <div class="mec-event-detail">
-                    <?php echo (isset($location['name']) ? '<div class="mec-event-loc-place"><i class="mec-sl-location-pin"></i>' . esc_html($location['name']) . '</div>' : ''); ?>
+                    <?php echo (isset($location['name']) ? '<div class="mec-event-loc-place">'. $this->icons->display('location-pin') . esc_html($location['name']) . '</div>' : ''); ?>
                     <?php echo MEC_kses::element($this->display_categories($event)); ?>
                     <?php echo MEC_kses::element($this->display_organizers($event)); ?>
                     <?php echo MEC_kses::element($this->display_cost($event)); ?>
@@ -221,7 +221,7 @@ if($this->style == 'colorful')
                 <div class="mec-event-image"><?php echo MEC_kses::element($this->display_link($event, $event->data->thumbnails['thumblist'], '')); ?></div>
                 <div class="mec-event-detail-wrap">
                     <?php $soldout = $this->main->get_flags($event); ?>
-                    <h4 class="mec-event-title"><?php echo MEC_kses::element($this->display_link($event)); ?><?php echo MEC_kses::embed($this->display_custom_data($event)); ?><?php echo MEC_kses::element($soldout.$this->main->get_normal_labels($event, $display_label).$this->main->display_cancellation_reason($event, $reason_for_cancellation)); ?><?php do_action('mec_shortcode_virtual_badge', $event->data->ID ); ?></h4>
+                    <h4 class="mec-event-title"><?php echo MEC_kses::element($this->display_link($event)); ?><?php echo MEC_kses::embed($this->display_custom_data($event)); ?><?php echo MEC_kses::element($soldout.$event_color.$this->main->get_normal_labels($event, $display_label).$this->main->display_cancellation_reason($event, $reason_for_cancellation)); ?><?php do_action('mec_shortcode_virtual_badge', $event->data->ID ); ?></h4>
                     <?php if(isset($settings['multiple_day_show_method']) && $settings['multiple_day_show_method'] == 'all_days') : ?>
                         <div class="mec-event-month"><?php echo esc_html($this->main->date_i18n($this->date_format_novel_1, strtotime($event->date['start']['date']))); ?></div>
                     <?php else: ?>

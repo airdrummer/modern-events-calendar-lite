@@ -131,17 +131,6 @@ abstract class MEC_base extends MEC
     }
 
     /**
-     * Returns MEC_envato instance
-     * @final
-     * @author Webnus <info@webnus.net>
-     * @return MEC_envato instance
-     */
-    final public function getEnvato()
-    {
-        return MEC::getInstance('app.libraries.envato');
-    }
-
-    /**
      * Returns QRCode instance
      * @final
      * @author Webnus <info@webnus.net>
@@ -221,14 +210,14 @@ abstract class MEC_base extends MEC
     }
 
     /**
-     * Returns Hourly Schedule instance
+     * Returns Form Builder instance
      * @final
      * @author Webnus <info@webnus.net>
-     * @return MEC_hourlyschedule instance
+     * @return MEC_formBuilder instance
      */
-    final public function getHourlySchedule()
+    final public function getFormBuilder()
     {
-        return MEC::getInstance('app.libraries.hourlyschedule');
+        return MEC::getInstance('app.libraries.formBuilder');
     }
 
     /**
@@ -306,5 +295,24 @@ abstract class MEC_base extends MEC
     final public function getCaptcha()
     {
         return MEC::getInstance('app.libraries.captcha');
+    }
+
+    /**
+     * Returns Tickets instance
+     * @final
+     * @author Webnus <info@webnus.net>
+     * @return MEC_tickets instance
+     */
+    final public function getTickets()
+    {
+        return MEC::getInstance('app.libraries.tickets');
+    }
+
+    /**
+     * @return MEC_meetup
+     */
+    final public function getMeetup()
+    {
+        return MEC::getInstance('app.libraries.meetup');
     }
 }

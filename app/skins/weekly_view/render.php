@@ -4,14 +4,14 @@ defined('MECEXEC') or die();
 
 /** @var MEC_skin_weekly_view $this */
 
-$has_events = array();
+$has_events = [];
 $settings = $this->main->get_settings();
-$this->localtime = isset($this->skin_options['include_local_time']) ? $this->skin_options['include_local_time'] : false;
-$display_label = isset($this->skin_options['display_label']) ? $this->skin_options['display_label'] : false;
-$reason_for_cancellation = isset($this->skin_options['reason_for_cancellation']) ? $this->skin_options['reason_for_cancellation'] : false;
+$this->localtime = $this->skin_options['include_local_time'] ?? false;
+$display_label = $this->skin_options['display_label'] ?? false;
+$reason_for_cancellation = $this->skin_options['reason_for_cancellation'] ?? false;
 ?>
 <ul class="mec-weekly-view-dates-events">
-    <?php foreach($this->events as $date=>$events): $week = isset($this->week_of_days[$date]) ? $this->week_of_days[$date] : NULL; if(is_null($week)) continue; ?>
+    <?php foreach($this->events as $date=>$events): $week = $this->week_of_days[$date] ?? NULL; if(is_null($week)) continue; ?>
     <?php
         if(!isset($has_events[$week]))
         {
@@ -43,9 +43,9 @@ $reason_for_cancellation = isset($this->skin_options['reason_for_cancellation'])
                 <?php echo MEC_kses::element($this->get_label_captions($event)); ?>
 
                 <?php if($this->display_detailed_time and $this->main->is_multipleday_occurrence($event)): ?>
-                <div class="mec-event-detailed-time mec-event-time mec-color"><i class="mec-sl-clock-o"></i> <?php echo MEC_kses::element($this->display_detailed_time($event)); ?></div>
+                <div class="mec-event-detailed-time mec-event-time mec-color"><?php echo $this->icons->display('clock-o'); ?> <?php echo MEC_kses::element($this->display_detailed_time($event)); ?></div>
                 <?php elseif(trim($start_time)): ?>
-                <div class="mec-event-time mec-color"><i class="mec-sl-clock-o"></i> <?php echo esc_html($start_time.(trim($end_time) ? ' - '.$end_time : '')); ?></div>
+                <div class="mec-event-time mec-color"><?php echo $this->icons->display('clock-o'); ?> <?php echo esc_html($start_time.(trim($end_time) ? ' - '.$end_time : '')); ?></div>
                 <?php endif; ?>
 
                 <h4 class="mec-event-title"><?php echo MEC_kses::element($this->display_link($event)); ?><?php echo MEC_kses::embed($this->display_custom_data($event)); ?><?php echo MEC_kses::element($this->main->get_flags($event).$event_color.$this->main->get_normal_labels($event, $display_label).$this->main->display_cancellation_reason($event, $reason_for_cancellation)); ?><?php do_action('mec_shortcode_virtual_badge', $event->data->ID ); ?></h4>

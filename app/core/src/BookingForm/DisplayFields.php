@@ -12,10 +12,10 @@ class DisplayFields {
 			return;
 		}
 
-		$is_editor = isset( $_GET['action'] ) && 'elementor' === $_GET['action'] ? true : false;
-		$is_dashboard = is_admin() && !wp_doing_ajax() && !$is_editor ? true : false;
+		$is_editor = isset( $_GET['action'] ) && 'elementor' === $_GET['action'];
+		$is_dashboard = is_admin() && !wp_doing_ajax() && !$is_editor;
 
-		$lock_prefilled = isset( $settings['lock_prefilled'] ) ? $settings['lock_prefilled'] : false;
+		$lock_prefilled = $settings['lock_prefilled'] ?? false;
 
 		if( 'reg' === $form_type && 'book' === $group_id ){
 
@@ -28,6 +28,9 @@ class DisplayFields {
 			$field_base_name = $group_id . '[' . esc_attr($form_type) . ']';
 		}
 
+		// Main Library
+		$main = \MEC\Base::get_main();
+
 		?>
 		<!-- Custom fields begin -->
 		<?php
@@ -38,16 +41,16 @@ class DisplayFields {
 				continue;
 			}
 
-			$type = isset( $field['type'] ) ? $field['type'] : false;
+			$type = $field['type'] ?? false;
 			if ( false === $type ) {
 				continue;
 			}
 
 			$j          = !is_null($j) ? $j : $f_id;
-			$field_id = isset($field['key']) && !empty($field['key']) ? $field['key'] : $f_id;
+			$field_id = !empty($field['key']) ? $field['key'] : $f_id;
 			$html_id  = 'mec_field_' . $group_id . '_' . $type . '_' . $j;
 			$required = ( ( isset( $field['required'] ) && $field['required'] ) || ( isset( $field['mandatory'] ) && $field['mandatory'] ) ) ? 'required="required"' : '';
-			$field_label = isset($field['label']) ? $field['label'] : null;
+			$field_label = $field['label'] ?? null;
 
 			$field_name = strtolower( str_replace( [
 					' ',
@@ -70,10 +73,10 @@ class DisplayFields {
 				$field['inline'] = 'enable';
 			}
 
-			$classes = array();
+			$classes = [];
 
-			$single_row = isset($field['single_row']) && $field['single_row'] == 'enable' ? true : false;
-			$full_width = isset($field['full_width']) && $field['full_width'] == 'enable' ? true : false;
+			$single_row = isset($field['single_row']) && $field['single_row'] == 'enable';
+			$full_width = isset($field['full_width']) && $field['full_width'] == 'enable';
 
 			if ( isset( $field['inline'] ) && 'enable' === $field['inline'] ) {
 				$classes[] = 'col-md-6';
@@ -108,72 +111,72 @@ class DisplayFields {
 					case 'name':
 						$field_type     = 'text';
 						$field_id       = 'name';
-						$field['label'] = isset( $field['label'] ) ? $field['label'] : esc_html__('Last Name', 'modern-events-calendar-lite');
-						$value      	= $current_user->first_name . ' ' . $current_user->last_name;
-						$has_icon 		= isset( $field['has_icon'] ) ? $field['has_icon'] : true;
+						$field['label'] = $field['label'] ?? esc_html__('Last Name', 'modern-events-calendar-lite');
+						$value      	= trim($current_user->first_name . ' ' . $current_user->last_name);
+						$has_icon 		= $field['has_icon'] ?? true;
 						$icon_content 	= \MEC\Base::get_main()->svg('form/user-icon');
 						break;
 					case 'first_name':
 						$field_type     = 'text';
 						$field_id       = 'first_name';
-						$field['label'] = isset( $field['label'] ) ? $field['label'] : esc_html__('First Name', 'modern-events-calendar-lite');
+						$field['label'] = $field['label'] ?? esc_html__('First Name', 'modern-events-calendar-lite');
 						$value      = $current_user->first_name;
 						break;
 					case 'last_name':
 						$field_type     = 'text';
 						$field_id       = 'last_name';
-						$field['label'] = isset( $field['label'] ) ? $field['label'] : esc_html__('Last Name', 'modern-events-calendar-lite');
+						$field['label'] = $field['label'] ?? esc_html__('Last Name', 'modern-events-calendar-lite');
 						$value      	= $current_user->last_name;
 						break;
 					case 'mec_email':
 						$field_type     = 'email';
 						$field_id       = $type;
-						$field['label'] = isset( $field['label'] ) ? $field['label'] : esc_html__('Email', 'modern-events-calendar-lite');
+						$field['label'] = $field['label'] ?? esc_html__('Email', 'modern-events-calendar-lite');
 						$value          = isset( $current_user->user_email ) ? $current_user->user_email : '';
-						$has_icon 		= isset( $field['has_icon'] ) ? $field['has_icon'] : true;
+						$has_icon 		= $field['has_icon'] ?? true;
 						$icon_content 	= \MEC\Base::get_main()->svg('form/email-icon');
 					case 'email':
 						$field_type     = 'email';
-						$field['label'] = isset( $field['label'] ) ? $field['label'] : 'Email';
-						$value          = isset( $current_user->user_email ) ? $current_user->user_email : '';
+						$field['label'] = $field['label'] ?? 'Email';
+						$value          = $main->get_from_mapped_field($field, ($current_user->user_email ?: ''));
 						break;
 					case 'text':
 						$field_type     = 'text';
-						$field['label'] = isset( $field['label'] ) ? $field['label'] : '';
-						$value          = '';
+						$field['label'] = $field['label'] ?? '';
+						$value         = $main->get_from_mapped_field($field);
 						break;
 					case 'date':
 						$field_type     = 'date';
-						$field['label'] = isset( $field['label'] ) ? $field['label'] : 'Date';
-						$value          = '';
+						$field['label'] = $field['label'] ?? 'Date';
+						$value          = $main->get_from_mapped_field($field);
 						$class          = 'mec-date-picker';
 						$attributes     = ' min="' . esc_attr( date( 'Y-m-d', strtotime( '-100 years' ) ) ) . '" max="' . esc_attr( date( 'Y-m-d', strtotime( '+100 years' ) ) ) . '" onload="mec_add_datepicker()"';
 						break;
 					case 'file':
 						$field_type     = 'file';
-						$field['label'] = isset( $field['label'] ) ? $field['label'] : 'File';
+						$field['label'] = $field['label'] ?? 'File';
 						$value          = '';
 						break;
 					case 'tel':
 						$field_type     = 'tel';
-						$field['label'] = isset( $field['label'] ) ? $field['label'] : 'Tel';
-						$value          = '';
+						$field['label'] = $field['label'] ?? 'Tel';
+						$value         = $main->get_from_mapped_field($field);
 						break;
 					case 'textarea':
 						$field_type     = 'textarea';
-						$field['label'] = isset( $field['label'] ) ? $field['label'] : '';
-						$value          = '';
+						$field['label'] = $field['label'] ?? '';
+						$value         = $main->get_from_mapped_field($field);
 						break;
 					case 'select':
 						$field_type     = 'select';
-						$field['label'] = isset( $field['label'] ) ? $field['label'] : '';
-						$value          = '';
-						$selected       = '';
+						$field['label'] = $field['label'] ?? '';
+						$value         = $main->get_from_mapped_field($field);
+						$selected      = '';
 						break;
 					case 'radio':
 					case 'checkbox':
 						$field_type = $type;
-						$value      = '';
+						$value     = $main->get_from_mapped_field($field);
 						break;
 					case 'agreement':
 
@@ -192,14 +195,14 @@ class DisplayFields {
 				if( 'fixed' === $form_type || ( 'reg' === $form_type && in_array($field_id, $primary_field_ids ,true) ) ){
 
 					$field_id = 'mec_email' === $field_id ? 'email' : $field_id;
-					$value = isset($data[$field_id]) ? $data[$field_id] : $value;
+					$value = $data[$field_id] ?? $value;
 				} else {
 
-					$value = isset($data[$form_type][$field_id]) ? $data[$form_type][$field_id] : $value;
+					$value = $data[$form_type][$field_id] ?? $value;
 				}
 
 				$lock_field = !empty( $value );
-				$lock_field = ( $lock_field && ( $lock_prefilled == 1 or ( $lock_prefilled == 2 and $j == 1 ) ) ) ? 'readonly' : '';
+				$lock_field = ( $lock_field && ( $lock_prefilled == 1 || ( $lock_prefilled == 2 && $j == 0 ) ) ) ? 'readonly' : '';
 
 				if( 'reg' === $form_type && !in_array($primary_field_id,$primary_field_ids,true) )  {
 
@@ -294,8 +297,8 @@ class DisplayFields {
 					case 'agreement':
 
 						$checked = isset( $field['status'] ) ? $field['status'] : 'checked';
-						$input_html = '<label for="' . esc_attr($html_id . $j) . '">'
-							 . '<input type="checkbox" id="' . esc_attr($html_id . $j) . '" name="' . esc_attr( $field_name ) . '" value="1" ' . checked( $checked, 'checked', false ) . ' onchange="mec_agreement_change(this);"/>'
+						$input_html = '<label for="' . esc_attr($html_id . $f_id) . '">'
+							 . '<input type="checkbox" id="' . esc_attr($html_id . $f_id) . '" name="' . esc_attr( $field_name ) . '" value="1" ' . checked( $checked, 'checked', false ) . ' onchange="mec_agreement_change(this);"/>'
 							 . ( $required ? '<span class="wbmec-mandatory">*</span>' : '' )
 							 . sprintf( esc_html__( stripslashes( $field['label'] ), 'modern-events-calendar-lite'), '<a href="' . get_the_permalink( $field['page'] ) . '" target="_blank">' . get_the_title( $field['page'] ) . '</a>' )
 							 . '</label>';

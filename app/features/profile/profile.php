@@ -5,8 +5,8 @@ defined('MECEXEC') or die();
 /** @var MEC_feature_profile $this */
 /** @var array $atts */
 
-$hide_canceleds = (isset($atts['hide-canceleds']) and $atts['hide-canceleds']) ? true : false;
-$upcomings = (isset($atts['show-upcomings']) and $atts['show-upcomings']) ? true : false;
+$hide_canceleds = (isset($atts['hide-canceleds']) and $atts['hide-canceleds']);
+$upcomings = (isset($atts['show-upcomings']) and $atts['show-upcomings']);
 
 // Date & Time Format
 $datetime_format = apply_filters(
@@ -99,7 +99,7 @@ $id = 1;
             $end_time = $timestamps[1];
 
             $booking_options = get_post_meta($event_id, 'mec_booking', true);
-            $bookings_all_occurrences = isset($booking_options['bookings_all_occurrences']) ? $booking_options['bookings_all_occurrences'] : 0;
+            $bookings_all_occurrences = $booking_options['bookings_all_occurrences'] ?? 0;
 
             if($bookings_all_occurrences)
             {
@@ -113,12 +113,12 @@ $id = 1;
 
             // Check If Event Exist
             $db = $this->getDB();
-            $check_event_exist = $db->select("SELECT `ID` FROM `#__posts` WHERE `ID`={$event_id}", 'loadResult');
+            $check_event_exist = $db->select("SELECT `ID` FROM `#__posts` WHERE `ID`=$event_id", 'loadResult');
 
-            $event = trim($check_event_exist) ? $render->data($event_id) : array();
+            $event = trim($check_event_exist) ? $render->data($event_id) : [];
 
             // Multiple Dates
-            $all_dates = (isset($transaction['all_dates']) and is_array($transaction['all_dates'])) ? $transaction['all_dates'] : array();
+            $all_dates = (isset($transaction['all_dates']) and is_array($transaction['all_dates'])) ? $transaction['all_dates'] : [];
         ?>
         <tr id="mec_profile_booking_<?php echo esc_attr($ID); ?>">
             <td>
@@ -156,20 +156,26 @@ $id = 1;
                 </a>
             </td>
             <td>
-                <span class="mec-profile-bookings-view-invoice"><a target="_blank" href="<?php echo esc_url($this->book->get_invoice_link($transaction_id)); ?>"><i class="mec-sl-cloud-download"></i></a></span>
+                <span class="mec-profile-bookings-view-invoice">
+                    <?php if($confirmed === "1"){ ?>
+                        <a target="_blank" href="<?php echo esc_url($this->book->get_invoice_link($transaction_id)); ?>"><i class="mec-sl-cloud-download"></i></a>
+                   <?php } else{ ?>
+                        <span>-</span>
+                    <?php } ?>
+                </span>
             </td>
             <td>
                 <?php
                 if(isset($event->ID))
                 {
                     $location_id = $this->main->get_master_location_id($event);
-                    $location_latitude = isset($event->locations[$location_id]['latitude']) ? $event->locations[$location_id]['latitude'] : NULL;
-                    $location_longitude = isset($event->locations[$location_id]['longitude']) ? $event->locations[$location_id]['longitude'] : NULL;
+                    $location_latitude = $event->locations[$location_id]['latitude'] ?? NULL;
+                    $location_longitude = $event->locations[$location_id]['longitude'] ?? NULL;
                 }
                 ?>
                 <span class="mec-profile-bookings-view-google-map">
                     <?php if((isset($location_latitude) and $location_latitude) and (isset($location_longitude) and $location_longitude)): ?>
-                    <a target="_blank" href="<?php echo "https://www.google.com/maps?q={$location_latitude},{$location_longitude}"; ?>"><i class="mec-sl-map"></i></a>
+                    <a target="_blank" href="<?php echo "https://www.google.com/maps?q=$location_latitude,$location_longitude"; ?>"><i class="mec-sl-map"></i></a>
                     <?php else: ?>
                     <i class="mec-sl-question mec-profile-no-location"></i>
                     <?php endif; ?>
@@ -228,7 +234,7 @@ $id = 1;
                             $ticket_variations = $this->main->ticket_variations((trim($check_event_exist) ? $event_id : NULL), $attendee['id']);
                             foreach($attendee['variations'] as $variation_id=>$variation_count)
                             {
-                                if(!$variation_count or ($variation_count and $variation_count < 0)) continue;
+                                if(!$variation_count or $variation_count < 0) continue;
 
                                 $variation_title = (isset($ticket_variations[$variation_id]) and isset($ticket_variations[$variation_id]['title'])) ? $ticket_variations[$variation_id]['title'] : '';
                                 if(!trim($variation_title)) continue;
@@ -256,10 +262,11 @@ $id = 1;
     <?php endif; ?>
 </div>
 <script>
-jQuery( ".mec-booking-number-of-attendees" ).on('click',function(e)
+jQuery(".mec-booking-number-of-attendees").on('click',function(e)
 {
     e.preventDefault();
-    var attendee_id =  jQuery(this).attr('href');
+
+    let attendee_id =  jQuery(this).attr('href');
     lity(attendee_id);
 });
 </script>

@@ -3,13 +3,14 @@
 defined('MECEXEC') or die();
 
 /** @var MEC_main $this */
+/** @var stdClass $event */
 
 // MEC Settings
 $settings = $this->get_settings();
 $ml_settings = $this->get_ml_settings();
 
 // The module is disabled
-if(!isset($settings['local_time_module_status']) or (isset($settings['local_time_module_status']) and !$settings['local_time_module_status'])) return;
+if(!isset($settings['local_time_module_status']) || !$settings['local_time_module_status']) return;
 
 // Get the visitor Timezone
 $timezone = $this->get_timezone_by_ip();
@@ -39,7 +40,7 @@ $user_end_time = $gmt_end_time + $offset;
 
 $allday = isset($event->data->meta['mec_allday']) ? $event->data->meta['mec_allday'] : 0;
 $hide_time = isset($event->data->meta['mec_hide_time']) ? $event->data->meta['mec_hide_time'] : 0;
-$hide_end_time = isset($event->data->meta['mec_hide_end_time']) ? $event->data->meta['mec_hide_end_time'] : 0;
+$hide_end_time = $this->hide_end_time_status($event->ID);
 ?>
 <div class="mec-localtime-details" id="mec_localtime_details">
     <div class="mec-localtime-wrap">

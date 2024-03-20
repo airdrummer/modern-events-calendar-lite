@@ -7,11 +7,11 @@ defined('MECEXEC') or die();
 $styling = $this->main->get_styling();
 $event = $this->events[0];
 $settings = $this->main->get_settings();
-$this->localtime = isset($this->skin_options['include_local_time']) ? $this->skin_options['include_local_time'] : false;
-$display_label = isset($this->skin_options['display_label']) ? $this->skin_options['display_label'] : false;
-$reason_for_cancellation = isset($this->skin_options['reason_for_cancellation']) ? $this->skin_options['reason_for_cancellation'] : false;
+$this->localtime = $this->skin_options['include_local_time'] ?? false;
+$display_label = $this->skin_options['display_label'] ?? false;
+$reason_for_cancellation = $this->skin_options['reason_for_cancellation'] ?? false;
 
-$dark_mode = (isset($styling['dark_mode']) ? $styling['dark_mode'] : '');
+$dark_mode = $styling['dark_mode'] ?? '';
 if($dark_mode == 1) $set_dark = 'mec-dark-mode';
 else $set_dark = '';
 
@@ -36,18 +36,18 @@ $event_time = '';
 if(isset($event->data->time['start_raw'])) $event_time = $event->data->time['start_raw'];
 else
 {
-    $event_time .= sprintf("%02d", (isset($event->data->meta['mec_date']['start']['hour']) ? $event->data->meta['mec_date']['start']['hour'] : 8)).':';
-    $event_time .= sprintf("%02d", (isset($event->data->meta['mec_date']['start']['minutes']) ? $event->data->meta['mec_date']['start']['minutes'] : 0));
-    $event_time .= (isset($event->data->meta['mec_date']['start']['ampm']) ? $event->data->meta['mec_date']['start']['ampm'] : 'AM');
+    $event_time .= sprintf("%02d", ($event->data->meta['mec_date']['start']['hour'] ?? 8)).':';
+    $event_time .= sprintf("%02d", ($event->data->meta['mec_date']['start']['minutes'] ?? 0));
+    $event_time .= ($event->data->meta['mec_date']['start']['ampm'] ?? 'AM');
 }
 
 $event_etime = '';
 if(isset($event->data->time['end_raw'])) $event_etime = $event->data->time['end_raw'];
 else
 {
-    $event_etime .= sprintf("%02d", (isset($event->data->meta['mec_date']['end']['hour']) ? $event->data->meta['mec_date']['end']['hour'] : 6)).':';
-    $event_etime .= sprintf("%02d", (isset($event->data->meta['mec_date']['end']['minutes']) ? $event->data->meta['mec_date']['end']['minutes'] : 0));
-    $event_etime .= (isset($event->data->meta['mec_date']['end']['ampm']) ? $event->data->meta['mec_date']['end']['ampm'] : 'PM');
+    $event_etime .= sprintf("%02d", ($event->data->meta['mec_date']['end']['hour'] ?? 6)).':';
+    $event_etime .= sprintf("%02d", ($event->data->meta['mec_date']['end']['minutes'] ?? 0));
+    $event_etime .= ($event->data->meta['mec_date']['end']['ampm'] ?? 'PM');
 }
 
 $start_time = date('D M j Y G:i:s', strtotime($start_date.' '.date('H:i:s', strtotime($event_time))));
@@ -63,8 +63,8 @@ $d3 = new DateTime($end_time, $TZO);
 $countdown_method = get_post_meta($event->ID, 'mec_countdown_method', true);
 if(trim($countdown_method) == '') $countdown_method = 'global';
 
-if($countdown_method == 'global') $ongoing = (isset($settings['hide_time_method']) and trim($settings['hide_time_method']) == 'end') ? true : false;
-else $ongoing = ($countdown_method == 'end') ? true : false;
+if($countdown_method == 'global') $ongoing = (isset($settings['hide_time_method']) and trim($settings['hide_time_method']) == 'end');
+else $ongoing = $countdown_method == 'end';
 
 if($ongoing and $d3 < $d2) $ongoing = false;
 

@@ -60,7 +60,7 @@ class MEC_feature_bookingcalendar extends MEC_base
     }
 
     /**
-     * Load month for AJAX requert
+     * Load month for AJAX request
      * @author Webnus <info@webnus.net>
      * @return void
      */
@@ -90,7 +90,7 @@ class MEC_feature_bookingcalendar extends MEC_base
         // Get Event Dates
         $records = $this->getDB()->select("SELECT * FROM `#__mec_dates` WHERE `post_id`='".$event_id."' AND ((`dstart` <= '".$start."' AND `dend` >= '".$end."') OR (`dstart` <= '".$start."' AND `dend` >= '".$start."' AND `dend` <= '".$end."') OR (`dstart` >= '".$start."' AND `dend` <= '".$end."') OR (`dstart` >= '".$start."' AND `dstart` <= '".$end."' AND `dend` >= '".$end."'))", 'loadAssocList');
 
-        $dates = array();
+        $dates = [];
         foreach($records as $record)
         {
             $dates[] = array(
@@ -130,7 +130,7 @@ class MEC_feature_bookingcalendar extends MEC_base
         }
 
         $data->dates = $dates;
-        $data->date = isset($data->dates[0]) ? $data->dates[0] : array();
+        $data->date = isset($data->dates[0]) ? $data->dates[0] : [];
 
         echo json_encode(array('html' => $this->display_calendar($data, $uniqueid, $start)));
         exit;

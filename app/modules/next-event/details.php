@@ -3,18 +3,19 @@
 defined('MECEXEC') or die();
 
 /** @var MEC_main $this */
+/** @var stdClass $event */
 
 // MEC Settings
 $settings = $this->get_settings();
 
 // The module is disabled
-if(!isset($settings['next_event_module_status']) or (isset($settings['next_event_module_status']) and !$settings['next_event_module_status'])) return;
+if(!isset($settings['next_event_module_status']) || !$settings['next_event_module_status']) return;
 
 // Next Event Method
-$method = isset($settings['next_event_module_method']) ? $settings['next_event_module_method'] : 'occurrence';
+$method = $settings['next_event_module_method'] ?? 'occurrence';
 
 // Display Active Occurrence Button
-$active_button = isset($settings['next_event_module_active_button']) ? (bool) $settings['next_event_module_active_button'] : false;
+$active_button = isset($settings['next_event_module_active_button']) && $settings['next_event_module_active_button'];
 
 // Multiple Occurrences
 if($method == 'multiple')
@@ -24,16 +25,16 @@ if($method == 'multiple')
 }
 
 // Date Format
-$date_format1 = isset($settings['next_event_module_date_format1']) ? $settings['next_event_module_date_format1'] : 'M d Y';
+$date_format1 = $settings['next_event_module_date_format1'] ?? 'M d Y';
 
-$date = array();
+$date = [];
 if(!empty($event->date)) $date = $event->date;
 
 $start_date = (isset($date['start']) and isset($date['start']['date'])) ? $date['start']['date'] : date('Y-m-d');
 if(isset($_GET['occurrence']) and trim($_GET['occurrence'])) $start_date = sanitize_text_field($_GET['occurrence']);
 
-$next_date = array();
-$next_time = array();
+$next_date = [];
+$next_time = [];
 
 // Show next occurrence from other events
 if($method == 'event')
@@ -56,9 +57,12 @@ if($method == 'event')
         ),
         'seconds_date'=>$start_date,
         'seconds'=>$this->time_to_seconds($this->to_24hours($start_hour, $start_ampm), $start_minutes),
-        'exclude'=>($method == 'event' ? array($event->ID) : NULL),
+        'exclude'=>array($event->ID),
         'include'=>NULL,
     ));
+
+    $p = get_post($event->ID);
+    setup_postdata($GLOBALS['post'] =& $p);
 
     // Nothing Found!
     if(!isset($next->data)) return false;
@@ -69,7 +73,7 @@ if($method == 'event')
 else
 {
     // Nothing Found!
-    if(!isset($event->dates) or (isset($event->dates) and !is_array($event->dates)) or (isset($event->dates) and is_array($event->dates) and !count($event->dates))) return false;
+    if(!isset($event->dates) || !is_array($event->dates) || !count($event->dates)) return false;
 
     $custom_days = false;
     if(isset($event->data->meta['mec_repeat_type']) and $event->data->meta['mec_repeat_type'] === 'custom_days') $custom_days = true;
@@ -146,7 +150,7 @@ if($midnight_event) $next_date['end']['date'] = date('Y-m-d', strtotime('-1 Day'
             <li>
                 <i class="mec-sl-calendar"></i>
                 <h6><?php esc_html_e('Date', 'modern-events-calendar-lite'); ?></h6>
-                <dl><dd><abbr class="mec-events-abbr"><?php echo MEC_kses::element($this->date_label($next_date['start'], (isset($next_date['end']) ? $next_date['end'] : NULL), $date_format1)); ?></abbr></dd></dl>
+                <dl><dd><abbr class="mec-events-abbr"><?php echo MEC_kses::element($this->date_label($next_date['start'], ($next_date['end'] ?? NULL), $date_format1)); ?></abbr></dd></dl>
             </li>
             <?php if(isset($next->data->time) and trim($next->data->time['start'])): ?>
             <li>

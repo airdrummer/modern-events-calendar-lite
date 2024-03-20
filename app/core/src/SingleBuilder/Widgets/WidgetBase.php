@@ -2,6 +2,7 @@
 
 namespace MEC\SingleBuilder\Widgets;
 
+use MEC;
 use MEC\Singleton;
 use stdClass;
 
@@ -9,11 +10,15 @@ class WidgetBase extends Singleton{
 
 	public $settings;
 	public $is_editor_mode;
+	public $icons;
 
 	public function __construct(){
 
 		$this->settings 	  = $this->get_mec_settings();
 		$this->is_editor_mode = $this->is_editor_mode();
+        $main                 = MEC::getInstance('app.libraries.main');
+        $settings_mec = $main->get_settings();
+        $this->icons 	      = $main->icons($settings_mec['icons'] ?? []);
 	}
 
 	/**

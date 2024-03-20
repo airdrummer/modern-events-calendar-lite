@@ -2,6 +2,7 @@
 
 namespace MEC\SingleBuilder\Widgets\EventTime;
 
+use MEC;
 use MEC\Base;
 use MEC\SingleBuilder\Widgets\WidgetBase;
 
@@ -39,8 +40,12 @@ class EventTime extends WidgetBase {
 					$allday = isset($event_detail->data->meta['mec_allday']) ? $event_detail->data->meta['mec_allday'] : 0;
 					?>
 						<div class="mec-single-event-time">
-							<i class="mec-sl-clock"></i>
-							<h3 class="mec-time"><?php esc_html_e('Time', 'modern-events-calendar-lite'); ?></h3>
+							<?php if( isset( $atts['mec_time_show_icon'] ) && $atts['mec_time_show_icon'] ){ ?>
+                                <?php echo $this->icons->display('clock'); ?>
+							<?php } ?>
+							<?php if( isset( $atts['mec_time_show_title'] ) && $atts['mec_time_show_title'] ){ ?>
+								<h3 class="mec-time"><?php esc_html_e('Time', 'modern-events-calendar-lite'); ?></h3>
+							<?php } ?>
 							<i class="mec-time-comment"><?php echo (isset($time_comment) ? esc_html($time_comment) : ''); ?></i>
 							<dl>
 								<?php if ($allday == '0' and isset($event_detail->data->time) and trim($event_detail->data->time['start'])) : ?>

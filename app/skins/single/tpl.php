@@ -12,10 +12,10 @@ $settings = $this->main->get_settings();
 $occurrence = (isset($event->date['start']['date']) ? $event->date['start']['date'] : (isset($_GET['occurrence']) ? sanitize_text_field($_GET['occurrence']) : ''));
 $occurrence_end_date = (isset($event->date['end']['date']) ? $event->date['end']['date'] : (trim($occurrence) ? $this->main->get_end_date_by_occurrence($event->data->ID, (isset($event->date['start']['date']) ? $event->date['start']['date'] : $occurrence)) : ''));
 
-$occurrence_full = (isset($event->date['start']) and is_array($event->date['start'])) ? $event->date['start'] : array();
+$occurrence_full = (isset($event->date['start']) and is_array($event->date['start'])) ? $event->date['start'] : [];
 if(!count($occurrence_full) and isset($_GET['occurrence'])) $occurrence_full = array('date' => sanitize_text_field($_GET['occurrence']));
 
-$occurrence_end_full = (isset($event->date['end']) and is_array($event->date['end'])) ? $event->date['end'] : array();
+$occurrence_end_full = (isset($event->date['end']) and is_array($event->date['end'])) ? $event->date['end'] : [];
 if(!count($occurrence_end_full) and trim($occurrence)) $occurrence_end_full = array('date' => $this->main->get_end_date_by_occurrence($event->data->ID, $occurrence));
 
 // Event Object

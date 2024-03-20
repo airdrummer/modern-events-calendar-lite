@@ -13,7 +13,6 @@ class MEC_skin_general_calendar extends MEC_skins
      */
     public $skin = 'general_calendar';
     public $activate_first_date = false;
-    public $activate_current_day = true;
     public $display_all = false;
 
     /**
@@ -152,7 +151,7 @@ class MEC_skin_general_calendar extends MEC_skins
 
                 $event_title = $event->data->title;
                 $event_link = $this->main->get_event_date_permalink($event, $event->date['start']['date']);
-                $event_color = '#'.$event->data->color;
+                $event_color = $this->get_event_color_dot($event, true);
                 $event_content = $event->data->content;
                 $event_date_start = $this->main->date_i18n('c', $event->date['start']['timestamp']);
                 $event_date_start_str = $event->date['start']['timestamp'];
@@ -210,16 +209,21 @@ class MEC_skin_general_calendar extends MEC_skins
         $this->atts = $atts;
 
         // Skin Options
-        $this->skin_options = (isset($this->atts['sk-options']) and isset($this->atts['sk-options'][$this->skin])) ? $this->atts['sk-options'][$this->skin] : array();
+        $this->skin_options = (isset($this->atts['sk-options']) and isset($this->atts['sk-options'][$this->skin])) ? $this->atts['sk-options'][$this->skin] : [];
+
+        // Icons
+        $this->icons = $this->main->icons(
+            ($this->getPRO() && isset($this->atts['icons']) && is_array($this->atts['icons'])) ? $this->atts['icons'] : []
+        );
 
         // Search Form Options
-        $this->sf_options = (isset($this->atts['sf-options']) and isset($this->atts['sf-options'][$this->skin])) ? $this->atts['sf-options'][$this->skin] : array();
+        $this->sf_options = (isset($this->atts['sf-options']) and isset($this->atts['sf-options'][$this->skin])) ? $this->atts['sf-options'][$this->skin] : [];
 
         // Search Form Status
-        $this->sf_status = isset($this->atts['sf_status']) ? $this->atts['sf_status'] : true;
-        $this->sf_display_label = isset($this->atts['sf_display_label']) ? $this->atts['sf_display_label'] : false;
-        $this->sf_reset_button = isset($this->atts['sf_reset_button']) ? $this->atts['sf_reset_button'] : false;
-        $this->sf_refine = isset($this->atts['sf_refine']) ? $this->atts['sf_refine'] : false;
+        $this->sf_status = $this->atts['sf_status'] ?? true;
+        $this->sf_display_label = $this->atts['sf_display_label'] ?? false;
+        $this->sf_reset_button = $this->atts['sf_reset_button'] ?? false;
+        $this->sf_refine = $this->atts['sf_refine'] ?? false;
 
         // The events
         $this->events_str = '';
@@ -263,7 +267,7 @@ class MEC_skin_general_calendar extends MEC_skins
         $this->image_popup = isset($this->skin_options['image_popup']) ? $this->skin_options['image_popup'] : '0';
 
         // From Widget
-        $this->widget = (isset($this->atts['widget']) and trim($this->atts['widget']));
+        $this->widget = isset($this->atts['widget']) && trim($this->atts['widget']);
 
         // From Full Calendar
         $this->from_full_calendar = (isset($this->skin_options['from_fc']) and trim($this->skin_options['from_fc']));
@@ -298,6 +302,7 @@ class MEC_skin_general_calendar extends MEC_skins
 
         // Author
         $this->args['author'] = $this->author_query();
+        $this->args['author__not_in'] = $this->author_query_ex();
 
         // Pagination Options
         $this->paged = get_query_var('paged', 1);
@@ -318,18 +323,12 @@ class MEC_skin_general_calendar extends MEC_skins
         if($this->show_only_expired_events) $this->atts['show_past_events'] = '1';
 
         // Show Past Events
-        $this->args['mec-past-events'] = isset($this->atts['show_past_events']) ? $this->atts['show_past_events'] : '0';
+        $this->args['mec-past-events'] = $this->atts['show_past_events'] ?? '0';
 
         // Start Date
         list($this->year, $this->month, $this->day) = $this->get_start_date();
 
-        // Activate Current Day
-        $this->activate_current_day = (!isset($this->skin_options['activate_current_day']) or (isset($this->skin_options['activate_current_day']) and $this->skin_options['activate_current_day']));
-
         $this->start_date = date('Y-m-d', strtotime($this->year.'-'.$this->month.'-'.$this->day));
-        $this->active_day = $this->year.'-'.$this->month.'-'.current_time('d');
-
-        if(!$this->activate_current_day and $this->month != current_time('m')) $this->active_day = $this->start_date;
 
         // We will extend the end date in the loop
         $this->end_date = $this->start_date;
@@ -378,7 +377,7 @@ class MEC_skin_general_calendar extends MEC_skins
 
             $this->weeks = $this->main->split_to_weeks($end, $start);
 
-            $this->week_of_days = array();
+            $this->week_of_days = [];
             foreach($this->weeks as $week_number=>$week) foreach($week as $day) $this->week_of_days[$day] = $week_number;
 
             $end = $this->main->array_key_first($this->week_of_days);
@@ -552,7 +551,7 @@ class MEC_skin_general_calendar extends MEC_skins
 
         $i = 0;
         $found = 0;
-        $events = array();
+        $events = [];
 
         foreach($dates as $date=>$IDs)
         {
@@ -587,10 +586,10 @@ class MEC_skin_general_calendar extends MEC_skins
             $query = new WP_Query($this->args);
             if($query->have_posts())
             {
-                if(!isset($events[$date])) $events[$date] = array();
+                if(!isset($events[$date])) $events[$date] = [];
 
                 // Day Events
-                $d = array();
+                $d = [];
 
                 // The Loop
                 while($query->have_posts())
@@ -631,7 +630,7 @@ class MEC_skin_general_calendar extends MEC_skins
                         // Next Offset
                         $this->next_offset = ($query->post_count-($query->current_post+1)) >= 0 ? ($query->current_post+1)+$this->offset : 0;
 
-                        usort($d, array($this, 'sort_day_events'));
+                        usort($d, [$this, 'sort_day_events']);
                         $events[$date] = $d;
 
                         // Restore original Post Data
@@ -641,7 +640,7 @@ class MEC_skin_general_calendar extends MEC_skins
                     }
                 }
 
-                usort($d, array($this, 'sort_day_events'));
+                usort($d, [$this, 'sort_day_events']);
                 $events[$date] = $d;
             }
 

@@ -9,7 +9,7 @@ defined('MECEXEC') or die();
 class MEC_cache
 {
     protected static $instance = null;
-    protected static $cache = array();
+    protected static $cache = [];
     protected static $enabled = true;
 
     /**
@@ -49,7 +49,7 @@ class MEC_cache
 
     public static function get($key)
     {
-        return (isset(self::$cache[$key]) ? self::$cache[$key] : NULL);
+        return self::$cache[$key] ?? NULL;
     }
 
     public static function delete($key)

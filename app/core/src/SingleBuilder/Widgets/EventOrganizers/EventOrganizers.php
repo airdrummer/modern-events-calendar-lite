@@ -74,7 +74,7 @@ class EventOrganizers extends WidgetBase {
 		$settings = $this->settings;
 		$event_detail = $this->get_event_detail($event_id);
 		$single        = new \MEC_skin_single();
-		$organizers    = isset($event_detail->data->organizers) ? $event_detail->data->organizers : array();
+		$organizers    = isset($event_detail->data->organizers) ? $event_detail->data->organizers : [];
 		$primary_organizer_id = \MEC\Base::get_main()->get_master_organizer_id( $event_detail );
 
 		$html = '';
@@ -92,14 +92,23 @@ class EventOrganizers extends WidgetBase {
 			echo '<div class="mec-event-meta">';
 				?>
 				<div class="mec-single-event-organizer">
+					<i class="mec-sl-home"></i>
+					<h3 class="mec-events-single-section-title"><?php echo Base::get_main()->m('taxonomy_organizer', esc_html__('Organizer', 'modern-events-calendar-lite')); ?></h3>
+
 					<?php if(isset($organizer['thumbnail']) and trim($organizer['thumbnail'])): ?>
 						<img class="mec-img-organizer" src="<?php echo esc_url($organizer['thumbnail']); ?>" alt="<?php echo (isset($organizer['name']) ? esc_attr($organizer['name']) : ''); ?>">
 					<?php endif; ?>
-					<h3 class="mec-events-single-section-title"><?php echo Base::get_main()->m('taxonomy_organizer', esc_html__('Organizer', 'modern-events-calendar-lite')); ?></h3>
 					<?php if(isset($organizer['thumbnail'])): ?>
 						<dd class="mec-organizer">
-							<i class="mec-sl-home"></i>
-							<h6><?php echo (isset($organizer['name']) ? esc_html($organizer['name']) : ''); ?></h6>
+                            <?php if( is_plugin_active('mec-advanced-organizer/mec-advanced-organizer.php') && $settings['advanced_organizer']['organizer_enable_link_section_title']??false ): ?>
+                                <a href="<?php echo get_permalink( $settings['advanced_organizer']['single_page'] ).'?fesection=organizer&feparam='.$organizer['id']; ?>" target="<?php echo $settings['advanced_organizer']['organizer_link_target']; ?>">
+                                    <i class="mec-sl-link"></i>
+                                    <h6><?php echo (isset($organizer['name']) ? esc_html($organizer['name']) : ''); ?></h6>
+                                </a>
+                            <?php else: ?>
+                                <i class="mec-sl-home"></i>
+                                <h6><?php echo (isset($organizer['name']) ? esc_html($organizer['name']) : ''); ?></h6>
+                            <?php endif; ?>
 						</dd>
 					<?php endif;
 					if(isset($organizer['tel']) && !empty($organizer['tel'])): ?>
@@ -120,7 +129,7 @@ class EventOrganizers extends WidgetBase {
 					<dd class="mec-organizer-url">
 						<i class="mec-sl-sitemap"></i>
 						<h6><?php esc_html_e('Website', 'modern-events-calendar-lite'); ?></h6>
-						<span><a href="<?php echo esc_url($organizer['url']); ?>" class="mec-color-hover" target="_blank"><?php echo esc_url( $organizer['url'] ); ?></a></span>
+						<span><a href="<?php echo esc_url($organizer['url']); ?>" class="mec-color-hover" target="<?php echo $settings['advanced_organizer']['organizer_link_target']; ?>"><?php echo esc_url( $organizer['url'] ); ?></a></span>
 					</dd>
 					<?php endif;
 					$organizer_description_setting = isset( $settings['organizer_description'] ) ? $settings['organizer_description'] : ''; $organizer_terms = get_the_terms($event_detail->data, 'mec_organizer');  if($organizer_description_setting == '1'): foreach($organizer_terms as $organizer_term) { if ($organizer_term->term_id == $organizer['id'] ) {  if(isset($organizer_term->description) && !empty($organizer_term->description)): ?>

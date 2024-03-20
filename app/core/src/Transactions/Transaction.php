@@ -185,7 +185,7 @@ class Transaction {
 
 		$data = get_option( $this->transaction_id, array() );
 
-		return is_array( $data ) ? $data : array();
+		return is_array( $data ) ? $data : [];
 	}
 
 	/**
@@ -242,7 +242,7 @@ class Transaction {
 		if( is_null( $this->event_tickets ) ) {
 
 			$event_tickets = get_post_meta( $this->get_event_id(), 'mec_tickets', true );
-			$this->event_tickets = is_array( $event_tickets ) ? $event_tickets : array();
+			$this->event_tickets = is_array( $event_tickets ) ? $event_tickets : [];
 		}
 
 		return $this->event_tickets;
@@ -439,7 +439,7 @@ class Transaction {
 
 	public function get_tickets() {
 
-		return $this->data['tickets'] ?? array();
+		return $this->data['tickets'] ?? [];
 	}
 
 	public function get_coupon() {
@@ -449,16 +449,16 @@ class Transaction {
 
 	public function get_wc_coupons() {
 
-		$coupons = $this->data['wc_coupon'] ?? array();
+		$coupons = $this->data['wc_coupon'] ?? [];
 
 		return is_array( $coupons ) ? $coupons : explode( ',', $coupons );
 	}
 
 	public function get_wc_discounts() {
 
-		$discounts = $this->data['wc_discounts'] ?? array();
+		$discounts = $this->data['wc_discounts'] ?? [];
 
-		return is_array( $discounts ) ? $discounts : array();
+		return is_array( $discounts ) ? $discounts : [];
 	}
 
 	public function get_order_id() {
@@ -478,7 +478,7 @@ class Transaction {
 
 	public function get_fixed_fields() {
 
-		return $this->data['fields'] ?? array();
+		return $this->data['fields'] ?? [];
 	}
 
 	public function is_partial_payment() {
@@ -490,9 +490,9 @@ class Transaction {
 
 	public function get_partial_payment_settings() {
 
-		$settings = $this->data['partial_payment_settings'] ?? array();
+		$settings = $this->data['partial_payment_settings'] ?? [];
 
-		return is_array( $settings ) ? $settings : array();
+		return is_array( $settings ) ? $settings : [];
 	}
 
 
@@ -509,7 +509,7 @@ class Transaction {
 
 	public function get_ticket_variations_details( $ticket ) {
 
-		$variation_details = array();
+		$variation_details = [];
 		if( ! $this->get_ticket_variations_status() ) {
 
 			return $variation_details;
@@ -517,7 +517,7 @@ class Transaction {
 
 		$event_id = $this->get_event_id();
 		$ticket_id = $ticket['id'] ?? 0;
-		$variations = $ticket['variations'] ?? array();
+		$variations = $ticket['variations'] ?? [];
 
 		if( is_array( $variations ) && count( $variations ) ) {
 
@@ -564,13 +564,13 @@ class Transaction {
 
 		$gateway_number = $this->get_gateway_number();
 
-		return $this->gateways_options[ $gateway_number ] ?? array();
+		return $this->gateways_options[ $gateway_number ] ?? [];
 	}
 
 	public function is_disabled_fees_for_gateway() {
 
 		$fees_disabled_gateways = \MEC\Settings\Settings::getInstance()->get_settings( 'fees_disabled_gateways' );
-		$fees_disabled_gateways = is_array( $fees_disabled_gateways ) ? $fees_disabled_gateways : array();
+		$fees_disabled_gateways = is_array( $fees_disabled_gateways ) ? $fees_disabled_gateways : [];
 		$gateway_number = $this->get_gateway_number();
 
 		if( 'MEC_gateway_woocommerce' == $this->get_gateway() ) {
@@ -632,13 +632,13 @@ class Transaction {
 
 	public function get_event_fees() {
 
-		$fees = array();
+		$fees = [];
 		$event_id = $this->get_event_id();
 		$mec_fees = $this->bookClass->get_fees( $event_id );
 
 		if( $this->has_100percent_coupon() && $this->apply_100percent_coupon_to_all_fees() ){
 
-			return array();
+			return [];
 		}
 
 		$disabled_fees_for_gateway = $this->is_disabled_fees_for_gateway();
@@ -677,7 +677,7 @@ class Transaction {
 
 	public function get_ticket_fees_details( $ticket, $total_tickets_count, $total_tickets_dates ) {
 
-		$fee_details = array();
+		$fee_details = [];
 		if( ! $this->get_taxes_fees_status() ) {
 
 			return $fee_details;
@@ -690,28 +690,30 @@ class Transaction {
 
 		foreach( $fees as $key => $fee ) {
 
-			$fee_amount = 0;
 			if(!is_numeric($key)) continue;
+
+            $fee_amount_config = isset($fee['amount']) ? (float) $fee['amount'] : 0;
+			$fee_amount = 0;
 
 			$type = $fee['type'] ?? '';
 			switch( $type ) {
 				case 'amount_per_date':
 
-					$fee_amount = $fee['amount'] * $total_tickets_dates;
-					$fee_amount = $fee_amount / $total_tickets_count;
+					$fee_amount = (float) ($fee_amount_config * $total_tickets_dates);
+					$fee_amount = (float) ($fee_amount / $total_tickets_count);
 					break;
 				case 'percent': // per ticket
 
-					$fee_amount = ( $tickets_and_variations_amount_with_discount * $fee['amount'] ) / 100;
+					$fee_amount = (float) (( $tickets_and_variations_amount_with_discount * $fee_amount_config ) / 100);
 					break;
 				case 'amount': // per ticket
 
-					$fee_amount = $tickets_count * $fee['amount'];
+					$fee_amount = (float) ($tickets_count * $fee_amount_config);
 					break;
 				case 'amount_per_booking':
 
-					$fee_amount = $fee['amount'];
-					$fee_amount = $fee_amount / $total_tickets_count;
+					$fee_amount = (float) $fee_amount_config;
+					$fee_amount = (float) ($fee_amount / $total_tickets_count);
 					break;
 			}
 
@@ -720,15 +722,15 @@ class Transaction {
 
 				$fee_details[ $key ] = array(
 					'fee_key' => $key,
-					'amount'=> $fee_amount,
+					'amount'=> (float) $fee_amount,
 					'description'=>__($fee['title'], 'modern-events-calendar-lite'),
 					'type'=>'fee',
 					'fee_type'=> $fee['type'],
-					'fee_amount'=> $fee['amount']
+					'fee_amount'=> (float) $fee_amount_config
 				);
 			} else {
 
-				$fee_details[ $key ]['amount'] += $fee_amount;
+				$fee_details[ $key ]['amount'] += (float) $fee_amount;
 			}
 		}
 
@@ -737,7 +739,7 @@ class Transaction {
 
 	public function get_ticket_order_discounts_details( $ticket, $total_tickets_amount_with_variations ) {
 
-		$discounts_details = array();
+		$discounts_details = [];
 		$ticket_price = $ticket['ticket_price'] ?? 0;
 		$ticket_variations_amount = $ticket['variations_amount'] ?? 0;
 		$ticket_count = $ticket['count'] ?? 0;
@@ -803,7 +805,7 @@ class Transaction {
 			return $this->get_ticket_order_discounts_details( $ticket, $total_tickets_amount_with_variations );
 		}
 
-		$discounts_details = array();
+		$discounts_details = [];
 		$ticket_price = $ticket['ticket_price'] ?? 0;
 		$ticket_variations_amount = $ticket['variations_amount'] ?? 0;
 		$ticket_count = $ticket['count'] ?? 0;
@@ -812,7 +814,7 @@ class Transaction {
 		$booking_options = get_post_meta( $event_id, 'mec_booking', true );
         if( !is_array( $booking_options ) ) {
 
-			$booking_options = array();
+			$booking_options = [];
 		}
 
 		// User Discount
@@ -821,7 +823,7 @@ class Transaction {
 			// User
 			$user = get_user_by( 'id', $user_id );
 
-			$roles = is_a( $user, '\WP_User' ) && isset( $user->roles ) ? (array)$user->roles : array();
+			$roles = is_a( $user, '\WP_User' ) && isset( $user->roles ) ? (array)$user->roles : [];
 
 			$loggedin_discount = (isset($booking_options['loggedin_discount']) ? $booking_options['loggedin_discount'] : 0);
 			$role_discount = $loggedin_discount;
@@ -932,7 +934,6 @@ class Transaction {
 
 			$cached_data = $this->get_cached_tickets_details();
 			if( $cached_data ) {
-
 				return $cached_data;
 			}
 		}
@@ -940,9 +941,9 @@ class Transaction {
 		$timestamps = $this->get_dates();
 		$event_tickets = $this->get_event_tickets();
 		$saved_tickets = $this->get_tickets();
-		$removed_tickets = $this->data['removed_tickets'] ?? array();
+		$removed_tickets = $this->data['removed_tickets'] ?? [];
 
-		$tickets = array();
+		$tickets = [];
 		$row_id = 0;
 		foreach( $timestamps as $timestamp ) {
 
@@ -994,7 +995,7 @@ class Transaction {
 				);
 
 
-				$ticket_info = $event_tickets[ $ticket_id ] ?? array();
+				$ticket_info = $event_tickets[ $ticket_id ] ?? [];
 
 				$ticket_start_hour = isset($ticket_info['ticket_start_time_hour']) ? $ticket_info['ticket_start_time_hour'] : 8;
 				$ticket_start_minute = isset($ticket_info['ticket_start_time_minute']) ? $ticket_info['ticket_start_time_minute'] : 0;
@@ -1108,7 +1109,7 @@ class Transaction {
 			$tickets = $this->get_all_tickets_details();
 		}
 
-		$_variations_details = array();
+		$_variations_details = [];
 		foreach( $tickets as $ticket ) {
 
 			$_variations_details = array_merge(
@@ -1117,7 +1118,7 @@ class Transaction {
 			);
 		}
 
-		$variations_details = array();
+		$variations_details = [];
 		foreach( $_variations_details as $k => $variation_details ) {
 
 			$variation_key = $variation_details['variation_key'] ?? 0;
@@ -1144,7 +1145,7 @@ class Transaction {
 			$tickets = $this->get_all_tickets_details();
 		}
 
-		$_fees_details = array();
+		$_fees_details = [];
 		foreach( $tickets as $ticket ) {
 
 			$_fees_details = array_merge(
@@ -1153,7 +1154,7 @@ class Transaction {
 			);
 		}
 
-		$fees_details = array();
+		$fees_details = [];
 		foreach( $_fees_details as $k => $fee_details ) {
 
 			$fee_key = $fee_details['fee_key'] ?? 0;
@@ -1189,7 +1190,7 @@ class Transaction {
 			$tickets = $this->get_all_tickets_details();
 		}
 
-		$_discounts_details = array();
+		$_discounts_details = [];
 		foreach( $tickets as $ticket ) {
 
 			$_discounts_details = array_merge(
@@ -1198,7 +1199,7 @@ class Transaction {
 			);
 		}
 
-		$discounts_details = array();
+		$discounts_details = [];
 		foreach( $_discounts_details as $k => $discount_details ) {
 
 			$discount_key = $discount_details['discount_key'] ?? 0;
@@ -1304,7 +1305,7 @@ class Transaction {
 
 		$tickets = $this->get_tickets();
 
-		$ticket_product_ids = $tickets[ $ticket_key ]['product_ids'] ?? array();
+		$ticket_product_ids = $tickets[ $ticket_key ]['product_ids'] ?? [];
 		unset( $ticket_product_ids[ $date ] );
 		$tickets[ $ticket_key ]['product_ids'] = $ticket_product_ids;
 
@@ -1608,7 +1609,7 @@ class Transaction {
 
 	public function get_attendees_info( $filters = array() ) {
 
-		$info = array();
+		$info = [];
 		$tickets_details = $this->get_tickets_details( $filters );
 		foreach( $tickets_details as $ticket_details ) {
 
@@ -1637,7 +1638,7 @@ class Transaction {
 
 	public function validate_for_add_book() {
 
-		$errors = array();
+		$errors = [];
 		$date_format = 'Y-m-d';
 		$event_id = $this->get_event_id();
 		$tickets_details = $this->get_tickets_details();
@@ -1657,7 +1658,7 @@ class Transaction {
 
 			$t_occurrences = explode( ':', $ticket['date'] );
 			$occurrence = $t_occurrences[0];
-			$occurrence_availability = $availability[ $occurrence ] ?? array();
+			$occurrence_availability = $availability[ $occurrence ] ?? [];
 			$ticket_id = $ticket['id'];
 			$ticket_name = $ticket['ticket_name'];
 			$ticket_count = $ticket['count'];
@@ -1764,10 +1765,10 @@ class Transaction {
 			);
         }
 
-        $main_attendee = isset($attendees[0]) ? $attendees[0] : array();
+        $main_attendee = isset($attendees[0]) ? $attendees[0] : [];
         $name          = $main_attendee['name'] ?? '';
         $ticket_ids = '';
-        $attendees_info = array();
+        $attendees_info = [];
 
         foreach ($attendees as $attendee) {
 
@@ -1813,7 +1814,7 @@ class Transaction {
 
 	public function create_products_from_items( $rebuild = false, $update = false ) {
 
-		$product_ids = array();
+		$product_ids = [];
 
 		$saved_data = $this->get_saved_data();
 		$tickets_details = $this->get_tickets_details();
@@ -1836,7 +1837,7 @@ class Transaction {
 		}
 
 
-		$saved_fees_product_ids = $saved_data['fees_product_ids'] ?? array();
+		$saved_fees_product_ids = $saved_data['fees_product_ids'] ?? [];
 		$related_products = $product_ids;
 		$per_ticket_fee_types = array(
 			'percent',
@@ -1849,7 +1850,7 @@ class Transaction {
 				// 'date' => $timestamp,
 			);
 			$fees_details = $this->get_fees_details( $filters );
-			$fees_product_ids = array();
+			$fees_product_ids = [];
 			foreach( $fees_details as $fee_key => $fee_detail ) {
 
 				$fee_type = $fee_detail['fee_type'];
@@ -1886,7 +1887,7 @@ class Transaction {
 
 		$product_type = \MEC\Settings\Settings::getInstance()->get_settings( 'ticket_product_type' );
 		$product_type = $product_type ? $product_type : 'virtual';
-        $is_virtual = ( 'virtual' === $product_type ) ? 'yes' : 'no';
+        $is_virtual = ( 'virtual' === $product_type ) ? true : false;
 		$event_id = $this->get_event_id();
 
 		$meta_input = wp_parse_args(
@@ -1995,7 +1996,7 @@ class Transaction {
 
 		$ticket_sale_price = $this->get_partial_payment_amount( $ticket_sale_price );
 
-		$variations = $ticket_detail['variations_details'] ?? array();
+		$variations = $ticket_detail['variations_details'] ?? [];
 
 		$args = array(
 			'product_title' => __( 'Ticket', 'modern-events-calendar-lite') . ' (' . $ticket_detail['ticket_name'] . ') - ' . $this->transaction_id,
@@ -2175,7 +2176,7 @@ class Transaction {
 				if( isset( $transaction['tickets'][0]['date'] ) ){
 
 					$ticket_date = false;
-					$new_tickets = array();
+					$new_tickets = [];
 					foreach( $transaction['old_tickets'] as $old_ticket ) {
 
 						if( $ticket_date && $ticket_date !== $old_ticket['date'] ) {
@@ -2296,7 +2297,7 @@ class Transaction {
 
 	public function get_mec_coupon_detail( $coupon ) {
 
-		$coupon_details = array();
+		$coupon_details = [];
 		$term = get_term_by( 'name', $coupon, 'mec_coupon' );
 		$coupon_id = isset($term->term_id) ? $term->term_id : 0;
 

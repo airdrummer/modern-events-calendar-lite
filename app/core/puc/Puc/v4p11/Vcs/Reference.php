@@ -14,7 +14,7 @@ if ( !class_exists('Puc_v4p11_Vcs_Reference', false) ):
 	 * @property int|null $downloadCount
 	 */
 	class Puc_v4p11_Vcs_Reference {
-		private $properties = array();
+		private $properties = [];
 
 		public function __construct($properties = array()) {
 			$this->properties = $properties;

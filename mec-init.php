@@ -38,7 +38,7 @@ class MEC
     /**
      * Getting instance. This Class is a singleton class
      * @author Webnus <info@webnus.net>
-     * @return \static
+     * @return static
      */
     public static function instance()
 	{
@@ -66,7 +66,7 @@ class MEC
             if(is_plugin_active('modern-events-calendar/mec.php')) deactivate_plugins('modern-events-calendar-lite/modern-events-calendar-lite.php');
         }
 
-        // Initialize Auto Update Feaature
+        // Initialize Auto Update Feature
         $factory->load_auto_update();
 
         // Registering MEC actions
@@ -105,10 +105,10 @@ class MEC
         // Register MEC Menus
         $factory->action('init', array($factory, 'mec_dyncss'));
 
-        // Include needed assets (CSS, JavaScript etc) in the WordPress backend
+        // Include needed assets (CSS, JavaScript etc.) in the WordPress backend
         $factory->action('admin_enqueue_scripts', array($factory, 'load_backend_assets'), 0);
 
-        // Include needed assets (CSS, JavaScript etc) in the website frontend
+        // Include needed assets (CSS, JavaScript etc.) in the website frontend
         $main = MEC::getInstance('app.libraries.main');
 
         if($main and is_object($main) and method_exists($main, 'get_settings') and $settings = $main->get_settings() and isset($settings['assets_in_footer_status']) and $settings['assets_in_footer_status'] == '1') $factory->action('wp_footer', array($factory, 'load_frontend_assets'), 0);
@@ -125,7 +125,7 @@ class MEC
     }
     
     /**
-     * Getting a instance of a MEC library
+     * Getting an instance of a MEC library
      * @author Webnus <info@webnus.net>
      * @static
      * @param string $file
@@ -187,7 +187,7 @@ class MEC
             // If the theme is a child theme then search the file in child theme
             if(get_template_directory() != get_stylesheet_directory())
             {
-                // Child theme overriden file
+                // Child theme overridden file
                 $child_theme_path = get_stylesheet_directory() .DS. 'webnus' .DS. MEC_DIRNAME .DS. $file;
 
                 /**
@@ -223,7 +223,7 @@ class MEC
             // Get current locale
             $locale = apply_filters('plugin_locale', get_locale(), 'modern-events-calendar-lite');
             
-            // WordPress language directory /wp-content/languages/mec-en_US.mo
+            // WordPress' language directory /wp-content/languages/mec-en_US.mo
             $language_filepath = WP_LANG_DIR.DS.'modern-events-calendar-lite-'.$locale.'.mo';
             
             // If language file exists on WordPress language directory use it
@@ -242,7 +242,7 @@ class MEC
             // Get current locale
             $locale = apply_filters('plugin_locale', get_locale(), 'modern-events-calendar-lite');
             
-            // WordPress language directory /wp-content/languages/mec-en_US.mo
+            // WordPress' language directory /wp-content/languages/mec-en_US.mo
             $language_filepath = WP_LANG_DIR.DS.'mec-'.$locale.'.mo';
             
             // If language file exists on WordPress language directory use it

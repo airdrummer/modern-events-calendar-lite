@@ -16,11 +16,20 @@ global $post;
 if($post and $post->post_type == $this->get_main_post_type()) $translated_event_id = $post->ID;
 else $translated_event_id = $event_id;
 
-$tickets = isset($event->data->tickets) ? $event->data->tickets : array();
+$tickets = isset($event->data->tickets) ? $event->data->tickets : [];
 $dates = isset($event->dates) ? $event->dates : array($event->date);
 
+if(isset($settings['booking_start_from_first_upcoming_date']) && $settings['booking_start_from_first_upcoming_date'])
+{
+    $maximum_dates = isset($settings['booking_maximum_dates']) && trim($settings['booking_maximum_dates']) ? $settings['booking_maximum_dates'] : 12;
+    list($occurrence, $occurrence_time) = $this->get_start_date_to_get_event_dates($event_id, current_time('Y-m-d'));
+
+    $dates = $this->getRender()->dates($event_id, $event->data, $maximum_dates * 3, ($occurrence_time ? date('Y-m-d H:i:s', $occurrence_time) : $occurrence));
+    $dates = $this->adjust_event_dates_for_booking($event, $dates);
+}
+
 $booking_options = get_post_meta($event_id, 'mec_booking', true);
-if(!is_array($booking_options)) $booking_options = array();
+if(!is_array($booking_options)) $booking_options = [];
 
 // WC System
 $WC_status = (isset($settings['wc_status']) and $settings['wc_status'] and class_exists('WooCommerce'));
@@ -28,7 +37,7 @@ $WC_booking_form = (isset($settings['wc_booking_form']) and $settings['wc_bookin
 
 if($ticket_id)
 {
-    $new_tickets = array();
+    $new_tickets = [];
     foreach($tickets as $t_id => $ticket)
     {
         if((int) $t_id === (int) $ticket_id)
@@ -65,7 +74,7 @@ if(isset($booking_options['show_booking_form_interval']) and trim($booking_optio
 
 if($show_booking_form_interval)
 {
-    $filtered_dates = array();
+    $filtered_dates = [];
     foreach($dates as $date)
     {
         $date_diff = $this->date_diff(date('Y-m-d h:i a', current_time('timestamp')), date('Y-m-d h:i a', $date['start']['timestamp']));
@@ -111,8 +120,11 @@ if(isset($settings['booking_date_selection_per_event']) and $settings['booking_d
     $date_selection = $booking_options['bookings_date_selection'];
 }
 
+// Omit End Dates
+$omit_end_dates = isset($settings['booking_omit_end_date']) && $settings['booking_omit_end_date'];
+
 // Modal Booking
-$modal_booking = (isset($_GET['method']) and sanitize_text_field($_GET['method']) === 'mec-booking-modal');
+$modal_booking = isset($_GET['method']) && sanitize_text_field($_GET['method']) === 'mec-booking-modal';
 wp_enqueue_script('mec-nice-select', $this->asset('js/jquery.nice-select.min.js'));
 ?>
 <form id="mec_book_form<?php echo esc_attr($uniqueid); ?>" onsubmit="mec_book_form_submit(event, <?php echo esc_attr($uniqueid); ?>);">
@@ -172,7 +184,7 @@ wp_enqueue_script('mec-nice-select', $this->asset('js/jquery.nice-select.min.js'
         <label><?php esc_html_e('Dates', 'modern-events-calendar-lite'); ?>: </label>
         <div class="mec-booking-dates-checkboxes">
             <?php foreach($dates as $date): ?>
-            <label><input type="checkbox" name="book[date][]" value="<?php echo esc_attr($book->timestamp($date['start'], $date['end'])); ?>" onchange="mec_get_tickets_availability_multiple<?php echo esc_attr($uniqueid); ?>(<?php echo esc_attr($event_id); ?>);">&nbsp;<?php echo strip_tags($this->date_label($date['start'], $date['end'], $date_format, ' - ', false, ($date['allday'] ?? 0))); ?></label>
+            <label><input type="checkbox" name="book[date][]" value="<?php echo esc_attr($book->timestamp($date['start'], $date['end'])); ?>" onchange="mec_get_tickets_availability_multiple<?php echo esc_attr($uniqueid); ?>(<?php echo esc_attr($event_id); ?>);">&nbsp;<?php echo strip_tags($this->date_label($date['start'], $date['end'], $date_format, ' - ', false, ($date['allday'] ?? 0), null, $omit_end_dates)); ?></label>
             <?php endforeach; ?>
         </div>
         <?php else: ?>
@@ -184,7 +196,7 @@ wp_enqueue_script('mec-nice-select', $this->asset('js/jquery.nice-select.min.js'
                     <select class="mec-custom-nice-select" name="book[date]" id="mec_book_form_date<?php echo esc_attr($uniqueid); ?>" onchange="mec_get_tickets_availability<?php echo esc_attr($uniqueid); ?>(<?php echo esc_attr($event_id); ?>, this.value);">
                         <?php foreach($dates as $date): ?>
                         <option value="<?php echo esc_attr($book->timestamp($date['start'], $date['end'])); ?>">
-                            <?php echo strip_tags($this->date_label($date['start'], $date['end'], $date_format, ' - ', false, ($date['allday'] ?? 0))); ?>
+                            <?php echo strip_tags($this->date_label($date['start'], $date['end'], $date_format, ' - ', false, ($date['allday'] ?? 0), null, $omit_end_dates)); ?>
                         </option>
                         <?php endforeach; ?>
                     </select>
@@ -208,14 +220,21 @@ wp_enqueue_script('mec-nice-select', $this->asset('js/jquery.nice-select.min.js'
         <?php foreach($tickets as $ticket_id=>$ticket): ?>
         <?php
             $stop_selling = $availability['stop_selling_' . $ticket_id] ?? false;
+            $not_available = $availability['not_available_' . $ticket_id] ?? false;
 
             $ticket_seats = (isset($ticket['seats']) and is_numeric($ticket['seats'])) ? (int) $ticket['seats'] : 1;
             $ticket_seats = max(1, $ticket_seats);
 
+            $maximum_purchase = null;
+            if(isset($ticket['maximum_ticket']) and $ticket['maximum_ticket'] > 0)
+            {
+                $maximum_purchase = (int) $ticket['maximum_ticket'];
+            }
+
             $ticket_limit = $availability[$ticket_id] ?? -1;
             if($ticket_limit === '0' and count($dates) <= 1) continue;
         ?>
-        <div class="mec-event-ticket mec-event-ticket<?php echo esc_attr($ticket_limit); ?>" id="mec_event_ticket<?php echo esc_attr($ticket_id); ?>">
+        <div class="mec-event-ticket mec-event-ticket<?php echo esc_attr($ticket_limit); ?> <?php echo $not_available ? 'mec-util-hidden' : ''; ?>" id="mec_event_ticket<?php echo esc_attr($ticket_id); ?>">
 
             <div class="mec-ticket-style-row mec-ticket-available-spots <?php echo ($ticket_limit == '0' ? 'mec-util-hidden' : ''); ?>">
                 <div class="mec-ticket-style-row-section-1">
@@ -240,7 +259,7 @@ wp_enqueue_script('mec-nice-select', $this->asset('js/jquery.nice-select.min.js'
                     <?php else: ?>
                     <div class="mec-event-ticket-input-wrapper">
                         <a href="#" class="plus"><?php echo $this->svg('form/up-small-icon'); ?></a>
-                        <input onkeydown="return event.keyCode !== 69" type="number" class="mec-book-ticket-limit in-num" name="book[tickets][<?php echo esc_attr($ticket_id); ?>]" title="<?php esc_attr_e('Count', 'modern-events-calendar-lite'); ?>" placeholder="<?php esc_attr_e('Count', 'modern-events-calendar-lite'); ?>" value="<?php echo esc_attr($default_ticket_number); ?>" min="0" max="<?php echo ($ticket_limit != '-1' ? $ticket_limit : ''); ?>" data-seats="<?php echo esc_attr($ticket_seats); ?>" onchange="mec_check_tickets_availability<?php echo esc_attr($uniqueid); ?>(<?php echo esc_attr($ticket_id); ?>, this.value);" />
+                        <input onkeydown="return event.keyCode !== 69" type="number" class="mec-book-ticket-limit in-num" name="book[tickets][<?php echo esc_attr($ticket_id); ?>]" title="<?php esc_attr_e('Count', 'modern-events-calendar-lite'); ?>" placeholder="<?php esc_attr_e('Count', 'modern-events-calendar-lite'); ?>" value="<?php echo esc_attr($default_ticket_number); ?>" min="0" max="<?php echo ($ticket_limit != '-1' ? ($maximum_purchase ? min($maximum_purchase, $ticket_limit) : $ticket_limit) : ''); ?>" data-seats="<?php echo esc_attr($ticket_seats); ?>" onchange="mec_check_tickets_availability<?php echo esc_attr($uniqueid); ?>(<?php echo esc_attr($ticket_id); ?>, this.value);" />
                         <a href="#" class="minus dis"><?php echo $this->svg('form/down-small-icon'); ?></a>
                     </div>
                     <div class="mec-event-ticket-available"><?php echo sprintf(esc_html__('Available %s: %s', 'modern-events-calendar-lite'), $this->m('tickets', esc_html__('Tickets', 'modern-events-calendar-lite')), (($ticket['unlimited'] and $ticket_limit == '-1') ? '<span>'.esc_html__('Unlimited', 'modern-events-calendar-lite').'</span>' : ($ticket_limit != '-1' ? '<span>'.$ticket_limit.'</span>' : '<span>'.esc_html__('Unlimited', 'modern-events-calendar-lite').'</span>'))); ?></div>
@@ -250,10 +269,10 @@ wp_enqueue_script('mec-nice-select', $this->asset('js/jquery.nice-select.min.js'
             <?php if(isset($ticket['description']) and trim($ticket['description'])): ?><p class="mec-event-ticket-description"><?php echo esc_html__($ticket['description'], 'modern-events-calendar-lite'); ?></p><?php endif; ?>
 
             <?php
-                $str_replace = isset($ticket['name']) ? '<strong>'.esc_html($ticket['name']).'</strong>' : '';
+                $str_replace = isset($ticket['name']) ? '<strong>"'.esc_html($ticket['name']).'"</strong>' : '';
                 $ticket_message_sales = sprintf(esc_html__('The %s ticket sales has ended!', 'modern-events-calendar-lite'), $str_replace);
                 $ticket_message_sold_out = sprintf(esc_html__('The %s ticket is sold out. You can try another ticket or another date.', 'modern-events-calendar-lite'), $str_replace);
-                $ticket_message_sold_out_multiple = sprintf(esc_html__('The %s ticket is sold out for some of dates. You can try another ticket or another date.', 'modern-events-calendar-lite'), $str_replace);
+                $ticket_message_sold_out_multiple = sprintf(esc_html__('The %s ticket is sold out or not available for some of dates. You can try another ticket or another date.', 'modern-events-calendar-lite'), $str_replace);
             ?>
             <?php if(isset($stop_selling) and $stop_selling): ?>
             <div id="mec-ticket-message-<?php echo esc_attr($ticket_id); ?>" class="mec-ticket-unavailable-spots mec-error <?php echo (($ticket_limit != '0' or ($date_selection == 'calendar' and !$modal_booking)) ? 'mec-util-hidden' : ''); ?>">

@@ -97,6 +97,7 @@ class Attendees extends Singleton{
                 $data = maybe_unserialize($row['data']);
 
                 $attendee = [
+                    'post_id' => $row['post_id'],
                     'attendee_id' => $attendee_id,
                     'first_name' => $row['first_name'],
                     'last_name' => $row['last_name'],
@@ -350,7 +351,7 @@ class Attendees extends Singleton{
         $this->remove_other_attendees( $post_id, $event_id, $occurrence );
 
         $saved_attendees = $this->get_attendees( $post_id, $event_id, $occurrence, false );
-        $saved_attendees_keys = array();
+        $saved_attendees_keys = [];
         foreach( $saved_attendees as $saved_attendee ) {
 
             $email = isset($saved_attendee['email']) ? sanitize_email($saved_attendee['email']) : 0;

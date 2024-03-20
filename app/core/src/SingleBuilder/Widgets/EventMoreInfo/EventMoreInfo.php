@@ -55,8 +55,12 @@ class EventMoreInfo extends WidgetBase {
 				<style>.mec-event-more-info h3{display:inline;}</style>
 				<div class="mec-event-meta">
 					<div class="mec-event-more-info">
-						<i class="mec-sl-info"></i>
-						<h3 class="mec-more-info-label"><?php echo Base::get_main()->m('more_info_link', esc_html__('More Info', 'modern-events-calendar-lite')); ?></h3>
+						<?php if( isset( $atts['mec_more_info_show_icon'] ) && $atts['mec_more_info_show_icon'] ){
+                            echo $this->icons->display('info');
+						 } ?>
+						<?php if( isset( $atts['mec_more_info_show_title'] ) && $atts['mec_more_info_show_title'] ){ ?>
+							<h3 class="mec-more-info-label"><?php echo Base::get_main()->m('more_info_link', esc_html__('More Info', 'modern-events-calendar-lite')); ?></h3>
+						<?php } ?>
 						<dd class="mec-events-event-more-info"><a class="mec-more-info-button a mec-color-hover" target="<?php echo esc_attr( $more_info_target ); ?>" href="<?php echo esc_attr( $more_info ); ?>"><?php echo esc_html( $more_info_title ); ?></a></dd>
 					</div>
 				</div>

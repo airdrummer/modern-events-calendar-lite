@@ -274,6 +274,8 @@ var mec_search_callbacks = [];
             var attribute = $attribute.length ? $attribute.val() : '';
             var event_status = $event_status.filter(':checked').length ? $event_status.filter(':checked').val() : 'all';
 
+            if(month === null) month = '';
+
             var start = $date_start.length ? $date_start.val() : '';
             var end = $date_end.length ? $date_end.val() : '';
 
@@ -1220,6 +1222,8 @@ jQuery(window).on('load', function()
         {
             // Modal
             var $modal = jQuery('.mec-modal-result');
+
+            console.log($modal.length);
 
             // Add Loading Class
             if($modal.length === 0) jQuery('.mec-wrap').append('<div class="mec-modal-result"></div>');
@@ -4611,24 +4615,22 @@ jQuery(window).on('load', function()
         var settings = $.extend({
             // These are the defaults.
             date: null,
-            format: null,
-            interval: 1000
+            format: null
         }, options);
 
         var callback = callBack;
         var selector = $(this);
 
         startCountdown();
-        var intervalID = setInterval(startCountdown, settings.interval);
+        var interval = setInterval(startCountdown, 1000);
 
         function startCountdown() {
-            var eventDate   = Date.parse(settings.date) / 1000;
+            var eventDate = Date.parse(settings.date) / 1000;
             var currentDate = Math.floor($.now() / 1000);
 
-            if (eventDate <= currentDate)
-            {
+            if (eventDate <= currentDate) {
                 callback.call(this);
-                clearInterval(intervalID);
+                clearInterval(interval);
             }
 
             var seconds = eventDate - currentDate;
@@ -4642,23 +4644,23 @@ jQuery(window).on('load', function()
             var minutes = Math.floor(seconds / 60);
             seconds -= minutes * 60;
 
-            selector.find(".mec-timeRefDays").text((days == 1 
-            										? mecdata.day
-            										: mecdata.days));
-            selector.find(".mec-timeRefHours").text((hours == 1
-            										? mecdata.hour
-            										: mecdata.hours));
-			selector.find(".mec-timeRefMinutes").text((minutes == 1
-            										? mecdata.minute
-            										: mecdata.minutes));
-            selector.find(".mec-timeRefSeconds").text((seconds == 1
-													? mecdata.second
-													: mecdata.seconds));
+            if (days == 1) selector.find(".mec-timeRefDays").text(mecdata.day);
+            else selector.find(".mec-timeRefDays").text(mecdata.days);
+
+            if (hours == 1) selector.find(".mec-timeRefHours").text(mecdata.hour);
+            else selector.find(".mec-timeRefHours").text(mecdata.hours);
+
+            if (minutes == 1) selector.find(".mec-timeRefMinutes").text(mecdata.minute);
+            else selector.find(".mec-timeRefMinutes").text(mecdata.minutes);
+
+            if (seconds == 1) selector.find(".mec-timeRefSeconds").text(mecdata.second);
+            else selector.find(".mec-timeRefSeconds").text(mecdata.seconds);
+
             if (settings.format === "on") {
-                days    = padStart(2, String(days));
-                hours   = padStart(2, String(hours));
-                minutes = padStart(2, String(minutes));
-                seconds = padStart(2, String(seconds));
+                days = (String(days).length >= 2) ? days : "0" + days;
+                hours = (String(hours).length >= 2) ? hours : "0" + hours;
+                minutes = (String(minutes).length >= 2) ? minutes : "0" + minutes;
+                seconds = (String(seconds).length >= 2) ? seconds : "0" + seconds;
             }
 
             if (!isNaN(eventDate)) {
@@ -4667,7 +4669,7 @@ jQuery(window).on('load', function()
                 selector.find(".mec-minutes").text(minutes);
                 selector.find(".mec-seconds").text(seconds);
             } else {
-                clearInterval(intervalID);
+                clearInterval(interval);
             }
         }
     };
@@ -5401,6 +5403,34 @@ function mec_focus_week(id, skin) {
 
                     $($this).prop("disabled", false).css('cursor', 'pointer');
                 });
+        });
+
+        // FES Sponsor Adding
+        $('#mec_add_sponsor_button').on('click', function () {
+            var $this = this;
+            var content = $($this).parent().find('input');
+            var list = $('#mec-fes-sponsors-list');
+            var key = list.find('.mec-error').length;
+
+            $($this).prop("disabled", true).css('cursor', 'wait');
+            $.post(ajaxurl, {
+                action: "mec_sponsor_adding",
+                content: content.val(),
+                key: key
+            })
+            .done(function (data) {
+                if ($(data).hasClass('mec-error')) {
+                    list.prepend(data);
+                    setTimeout(function () {
+                        $('#mec-sponsor-error-${key}').remove();
+                    }, 1500);
+                } else {
+                    list.html(data);
+                    content.val('');
+                }
+
+                $($this).prop("disabled", false).css('cursor', 'pointer');
+            });
         });
 
         // Check RTL website
@@ -6912,35 +6942,35 @@ function mec_toggle_shortcode_pagination(shortcode_id, method)
         const max = parseInt($bar.attr('max'));
 
         var passed = 0;
-        var remaining = 0;
+        var remained = 0;
         var passed_days;
         var passed_hours;
         var passed_minutes;
         var passed_seconds;
-        var remaining_days;
-        var remaining_hours;
-        var remaining_minutes;
-        var remaining_seconds;
+        var remained_days;
+        var remained_hours;
+        var remained_minutes;
+        var remained_seconds;
 
         var $time_passed = $(this).find($('.mec-progress-bar-time-passed'));
-        var $time_remaining = $(this).find($('.mec-progress-bar-time-remained'));
+        var $time_remained = $(this).find($('.mec-progress-bar-time-remained'));
 
         startProgress();
-        var intervalID = setInterval(startProgress, 1000);
+        var interval = setInterval(startProgress, 1000);
 
         function startProgress() {
             if(value >= max) {
-                clearInterval(intervalID);
+                clearInterval(interval);
                 return;
             }
             value += 1;
             $bar.attr('value', value);
 
             let passed_str = '';
-            let remaining_str = '';
+            let remained_str = '';
 
             passed = value;
-            remaining = max - passed;
+            remained = max - passed;
 
             passed_days = Math.floor(passed / 86400);
             passed -= passed_days * 86400;
@@ -6953,29 +6983,29 @@ function mec_toggle_shortcode_pagination(shortcode_id, method)
 
             passed_seconds = passed;
 
-            remaining_days = Math.floor(remaining / 86400);
-            remaining -= remaining_days * 86400;
+            remained_days = Math.floor(remained / 86400);
+            remained -= remained_days * 86400;
 
-            remaining_hours = Math.floor(remaining / 3600);
-            remaining -= remaining_hours * 3600;
+            remained_hours = Math.floor(remained / 3600);
+            remained -= remained_hours * 3600;
 
-            remaining_minutes = Math.floor(remaining / 60);
-            remaining -= remaining_minutes * 60;
+            remained_minutes = Math.floor(remained / 60);
+            remained -= remained_minutes * 60;
 
-            remaining_seconds = remaining;
+            remained_seconds = remained;
 
-            if(passed_days > 0) passed_str += padStart(2, passed_days) + ':';
-            if(passed_days > 0 || passed_hours > 0) padStart(2, passed_hours) + ':';
-            passed_str += padStart(2, passed_minutes) + ':';
-            passed_str += padStart(2, passed_seconds);
+            if(passed_days > 0) passed_str += (passed_days < 10 ? '0' : '') + passed_days + ':';
+            if(passed_days > 0 || passed_hours > 0) passed_str += (passed_hours < 10 ? '0' : '') + passed_hours + ':';
+            passed_str += (passed_minutes < 10 ? '0' : '') + passed_minutes + ':';
+            passed_str += (passed_seconds < 10 ? '0' : '') + passed_seconds;
 
-            if(remaining_days > 0) remaining_str += padStart(2, remaining_days) + ':';
-            if(remaining_days > 0 || remaining_hours > 0) padStart(2, remaining_hours) + ':';
-            remaining_str += padStart(2, remaining_minutes) + ':';
-            remaining_str += padStart(2, remaining_seconds);
+            if(remained_days > 0) remained_str += (remained_days < 10 ? '0' : '') + remained_days + ':';
+            if(remained_days > 0 || remained_hours > 0) remained_str += (remained_hours < 10 ? '0' : '') + remained_hours + ':';
+            remained_str += (remained_minutes < 10 ? '0' : '') + remained_minutes + ':';
+            remained_str += (remained_seconds < 10 ? '0' : '') + remained_seconds;
 
             $time_passed.html(passed_str);
-            $time_remaining.html(remaining_str);
+            $time_remained.html(remained_str);
         }
     };
 }(jQuery));

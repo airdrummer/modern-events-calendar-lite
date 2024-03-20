@@ -7,11 +7,11 @@ defined('MECEXEC') or die();
 $styling = $this->main->get_styling();
 $event = $this->events[0];
 $settings = $this->main->get_settings();
-$this->localtime = isset($this->skin_options['include_local_time']) ? $this->skin_options['include_local_time'] : false;
-$display_label = isset($this->skin_options['display_label']) ? $this->skin_options['display_label'] : false;
-$reason_for_cancellation = isset($this->skin_options['reason_for_cancellation']) ? $this->skin_options['reason_for_cancellation'] : false;
+$this->localtime = $this->skin_options['include_local_time'] ?? false;
+$display_label = $this->skin_options['display_label'] ?? false;
+$reason_for_cancellation = $this->skin_options['reason_for_cancellation'] ?? false;
 
-$dark_mode = (isset($styling['dark_mode']) ? $styling['dark_mode'] : '');
+$dark_mode = $styling['dark_mode'] ?? '';
 if($dark_mode == 1) $set_dark = 'mec-dark-mode';
 else $set_dark = '';
 
@@ -35,18 +35,18 @@ $event_time = '';
 if(isset($event->data->time['start_raw'])) $event_time = $event->data->time['start_raw'];
 else
 {
-    $event_time .= sprintf("%02d", (isset($event->data->meta['mec_date']['start']['hour']) ? $event->data->meta['mec_date']['start']['hour'] : 8)).':';
-    $event_time .= sprintf("%02d", (isset($event->data->meta['mec_date']['start']['minutes']) ? $event->data->meta['mec_date']['start']['minutes'] : 0));
-    $event_time .= (isset($event->data->meta['mec_date']['start']['ampm']) ? $event->data->meta['mec_date']['start']['ampm'] : 'AM');
+    $event_time .= sprintf("%02d", ($event->data->meta['mec_date']['start']['hour'] ?? 8)).':';
+    $event_time .= sprintf("%02d", ($event->data->meta['mec_date']['start']['minutes'] ?? 0));
+    $event_time .= ($event->data->meta['mec_date']['start']['ampm'] ?? 'AM');
 }
 
 $event_etime = '';
 if(isset($event->data->time['end_raw'])) $event_etime = $event->data->time['end_raw'];
 else
 {
-    $event_etime .= sprintf("%02d", (isset($event->data->meta['mec_date']['end']['hour']) ? $event->data->meta['mec_date']['end']['hour'] : 6)).':';
-    $event_etime .= sprintf("%02d", (isset($event->data->meta['mec_date']['end']['minutes']) ? $event->data->meta['mec_date']['end']['minutes'] : 0));
-    $event_etime .= (isset($event->data->meta['mec_date']['end']['ampm']) ? $event->data->meta['mec_date']['end']['ampm'] : 'PM');
+    $event_etime .= sprintf("%02d", ($event->data->meta['mec_date']['end']['hour'] ?? 6)).':';
+    $event_etime .= sprintf("%02d", ($event->data->meta['mec_date']['end']['minutes'] ?? 0));
+    $event_etime .= ($event->data->meta['mec_date']['end']['ampm'] ?? 'PM');
 }
 
 $event_start_date = !empty($event->date['start']['date']) ? $event->date['start']['date'] : '';
@@ -58,7 +58,7 @@ $d1 = new DateTime($start_time);
 $d2 = new DateTime(current_time("D M j Y G:i:s"));
 $d3 = new DateTime($end_time);
 
-$ongoing = (isset($settings['hide_time_method']) and trim($settings['hide_time_method']) == 'end') ? true : false;
+$ongoing = (isset($settings['hide_time_method']) and trim($settings['hide_time_method']) == 'end');
 
 // Skip if event is expired
 if($ongoing) if($d3 < $d2) $ongoing = false;
@@ -87,7 +87,7 @@ jQuery(document).ready(function()
 if($this->main->is_ajax() or $this->main->preview()) echo MEC_kses::full($javascript);
 else $this->factory->params('footer', $javascript);
 
-$occurrence_time = isset($event->date['start']['timestamp']) ? $event->date['start']['timestamp'] : strtotime($event->date['start']['date']);
+$occurrence_time = $event->date['start']['timestamp'] ?? strtotime($event->date['start']['date']);
 
 $book = $this->getBook();
 $availability = $book->get_tickets_availability($event->data->ID, $occurrence_time);
@@ -171,7 +171,7 @@ do_action('mec_available_spot_skin_head');
                         <div class="mec-av-spot-col6">
                             <?php if(isset($event_location['name'])): ?>
                             <div class="mec-event-location">
-                                <i class="mec-sl-location-pin mec-color"></i>
+                                <?php echo $this->icons->display('location-pin'); ?>
                                 <div class="mec-event-location-det">
                                     <h6 class="mec-location"><?php echo esc_html($event_location['name']); ?></h6>
                                     <?php if(isset($event_location['address']) and trim($event_location['address'])): ?><address class="mec-events-address"><span class="mec-address"><?php echo esc_html($event_location['address']); ?></span></address><?php endif; ?>
@@ -185,7 +185,7 @@ do_action('mec_available_spot_skin_head');
                         <?php echo MEC_kses::element($this->main->get_normal_labels($event, $display_label).$this->main->display_cancellation_reason($event, $reason_for_cancellation)); ?>
                         <?php do_action('mec_shortcode_virtual_badge', $event->data->ID ); ?>
                         <?php
-                            $excerpt = trim($event->data->post->post_excerpt) ? $event->data->post->post_excerpt : '';
+                            $excerpt = get_the_excerpt($event->data->post);
 
                             // Safe Excerpt for UTF-8 Strings
                             if(!trim($excerpt))

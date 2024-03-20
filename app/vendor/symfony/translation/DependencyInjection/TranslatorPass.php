@@ -39,8 +39,8 @@ class TranslatorPass implements CompilerPassInterface
             return;
         }
 
-        $loaders = array();
-        $loaderRefs = array();
+        $loaders = [];
+        $loaderRefs = [];
         foreach ($container->findTaggedServiceIds($this->loaderTag, true) as $id => $attributes) {
             $loaderRefs[$id] = new Reference($id);
             $loaders[$id][] = $attributes[0]['alias'];

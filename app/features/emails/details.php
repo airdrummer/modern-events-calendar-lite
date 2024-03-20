@@ -17,7 +17,7 @@ $all = get_post_meta($post->ID, 'mec_all', true);
 if($all == '') $all = 1;
 
 $events = get_post_meta($post->ID, 'mec_events', true);
-if(!is_array($events)) $events = array();
+if(!is_array($events)) $events = [];
 
 // Upcoming Events
 $upcoming_event_ids = $this->main->get_upcoming_event_ids(NULL, 'publish');

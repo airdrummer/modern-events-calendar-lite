@@ -1,10 +1,163 @@
-v 6.11.1 – 14 June 2023 =
--	countdown fixes	air_drummer@verizon.net
-  fixed: default countdown to start prior to event, to end during event, while allowing override
-  improved: added interval param to countdown.js to reduce annoying page updates
-  improved: countdown displays "starts in" prior to event, "ends in" during event
+﻿v 7.8.0 – 14 March 2024
+- Added: Notice for lite users to update to the newest version
+- Added: Some new filters for better integration with third party developers
+- Improved: Structured data for speakers
+- Fixed: Paragraph issue in event custom data
+- Fixed: Issue in gallery module of frontend submission
+- Fixed: Conflict in elementor
+- Fixed: Issue regarding uploaded files when using WooCommerce payment
+- Fixed: Issue in WordPress quick edit
+- Fixed: Issue in displaying location phone in modals
+- Fixed: Issue in certificate notifications
+- Fixed: Issue in event import from a third party plugin
 
-﻿v 6.11.0 – 20 July 2023
+v 7.7.1 – 9 March 2024
+- Fixed: Download invoice in single booking page
+- Fixed: Addons page
+
+v 7.7.0 – 6 March 2024
+- Added: Option to filter events by excluding tags in shortcode builder
+- Added: Option to filter events by excluding labels in shortcode builder
+- Added: Option to filter events by excluding authors in shortcode builder
+- Added: Three new options as start date of tile skin
+- Added: Option to enable / disable ability to add new sponsors in Frontend Event Submission
+- Added: Option to apply discount codes on fees in addition to ticket prices
+- Improved: Upload media structure by improving the accessibility and security of files uploaded via booking module
+- Improved: Edit link in Frontend Event Submission feature
+- Fixed: Decimal amount issue in PayPal gateway
+- Fixed: Some issues in search widget
+- Fixed: Issue in sending user credentials when auto registration is enabled
+- Fixed: Issue in booking form regarding mandatory username and password fields
+- Fixed: Issue in Lock Pre-filled Fields feature
+- Fixed: Issue in Novel style of grid skin
+- Fixed: Some issues in booking form
+- Fixed: Issue in loading style of monthly skin
+- Fixed: Issue about detecting total days of last month
+- Fixed: Issue in displaying custom fields in shortcakes
+
+v 7.6.0 – 3 February 2024
+- Added: Phone option to the locations
+- Added: Option to display all upcoming occurrences of event in booking module despite of referred date
+- Added: Ticket variation shortcode
+- Added: Ability to define new sponsors in FES
+- Redeveloped: Meetup importer
+- Improved: Events management in FES
+- Improved: The link target option in FES
+- Fixed: Issue in next event module
+- Fixed: Calculation issue in Use WooCommerce as Payment System feature
+- Fixed: Some issues in exporting bookings
+- Fixed: Display cancelation reason issue in agenda skin
+- Fixed: Issue in displaying Subscribe To Calendar feature when ical feed is disabled
+
+v 7.5.1 – 10 January 2024
+- Fixed: Register button for modal booking
+
+v 7.5.0 – 6 January 2024
+- Added: Hourly schedule shortcode
+- Added: Availability dates for tickets
+- Added: Global option for using featured images as banner images
+- Improved: The private_description placeholder of tickets
+- Improved: How Activate First Upcoming Date with Event option works in monthly skins
+- Improved: The structured data
+- Improved: The select2 field
+- Fixed: Issue in PayPal gateway
+- Fixed: Issue in creating daily events with very high length
+- Fixed: Issue in “Thank you page” option of FES
+- Fixed: Issue in displaying event excerpt
+- Fixed: Issue in displaying hourly schedules for occurrences
+- Fixed: Some PHP issues
+- Fixed: Some issues in exporting bookings
+- Fixed: Some issues in display of icons
+- Fixed: Issue in deleting icons using icon picker
+
+v 7.4.0 – 6 December 2023
+- Added: Option to disable the end time display globally
+- Added: Ability to sort the speakers
+- Added: Option to add global exceptional days
+- Added: Ability to change position of hourly schedule plan with drag and drop
+- Added: Ability to browse next / previous dates in the booking form in admin
+- Improved: related events module
+- Improved: compatibility with GDPR plugins
+- Improved: Frontend Event Submission feature by auto recognizing the organizer based on current user
+- Improved: Ical feed
+- Fixed: Issue in bookings with 100% discount coupons
+
+v 7.3.0 – 11 November 2023
+- Added: Advanced icon picker for changing the default icons of single events and shortcodes.
+- Added: Global default tickets feature.
+- Added: Option to omit end dates in the booking module when the start and end dates are equal.
+- Added: Time to the booking date column in the backend booking manager.
+- Improved: Time picker format.
+- Improved: The booking CSV importer.
+- Improved: The avatar display.
+- Improved: Day highlight in the monthly skin.
+- Updated: Sample CSV file.
+- Fixed: Issue in the notifications form.
+- Fixed: A couple of SQL issues.
+- Fixed: Compatibility issue between Frontend Submission and multilingual plugins.
+- Fixed: Some issues when the event banner is enabled.
+- Fixed: Some issues with event colors.
+- Fixed: Some issues with filtering the events.
+
+v 7.2.2 – 20 October 2023
+- Fixed: Issue in displaying bookings in admin
+
+v 7.2.0 – 14 October 2023
+- Added: Certificate builder feature
+- Added: Attendees information to the admin calendar view
+- Added: Option to rerun the database installation
+- Added: Ability to cancel (and refund) all bookings of a certain occurrence while marking that occurrence as canceled.
+- Added: Attendee phone numbers to the admin booking manager
+- Improved: event and booking excel exporters
+- Improved: Booking CSV importer
+- Improved: Date display when an expired event opens directly
+- Improved: Event color system and used category color as fallback color in all cases
+- Improved: Admin calendar view
+- Fixed: Issue in ticket selection in booking module
+- Fixed: Conflict between WP Media and MEC
+- Fixed: Issue regarding event gallery in Frontend Submission
+- Fixed: PHP errors
+- Fixed: Issues about field mapping in booking module
+- Fixed: Issue about displaying ticket price label
+- Fixed: Total cost display issue in MEC Cart
+- Fixed: Issues in notifications
+- Fixed: Integration issues in multilingual websites
+- Fixed: Date filter
+
+v 7.1.0 – 17 September 2023
+- Added: Option to disable organizer feature
+- Added: Category shortcode
+- Improved: The booking edit feature
+- Fixed: Issue in fee / taxes calculation
+- Fixed: some issues in lite version
+- Fixed: Issue in Expired Events page in backend
+- Fixed: Issue regarding event repeating system
+- Fixed: Couple of issues in Frontend Submission about the image upload and management
+
+v 7.0.0 – 20 August 2023
+- Refactored: Settings menu
+- Refactored: Add / Edit event menu in backend
+- Restructured: Event editor fields
+- Updated: Documentation based on new settings
+- Added: New placeholder to print all booking fixed fields
+- Fixed: Issue in reset button of search form
+- Fixed: Issue in multiple date bookings and payment with WooCommerce
+- Fixed: Issue in search bar feature
+- Fixed: Issue in event links in novel style of monthly skin
+- Fixed: Issue in moving bookings to another occurrence
+
+v 6.11.5 – 1 August 2023
+- Added: Ability to cancel and refund bookings from Event Editor.
+- Improved: TEC importer.
+- Improved: Event banner feature.
+- Improved: Integration for event excerpt with some multilingual plugins.
+- Improved: UX of fee module and fixed some issues.
+- Fixed: Some integration issues related to Elementor plugin.
+- Fixed: Some issues in search module.
+- Fixed: Issues related to WooCommerce
+- Fixed: Some minor issues
+
+v 6.11.0 – 20 July 2023
 - Added: Subscribe to Calendar feature
 - Improved: Event banner feature
 - Improved: Related events

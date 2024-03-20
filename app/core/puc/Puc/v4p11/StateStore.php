@@ -110,7 +110,7 @@ if ( !class_exists('Puc_v4p11_StateStore', false) ):
 			if ( isset($this->update, $this->update->translations) ) {
 				return $this->update->translations;
 			}
-			return array();
+			return [];
 		}
 
 		/**

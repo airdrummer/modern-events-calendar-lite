@@ -76,11 +76,12 @@ class MEC_single_widget extends WP_Widget
         $more_info_target = $GLOBALS['mec-widget-more_info_target'] ?? NULL;
         $more_info_title = $GLOBALS['mec-widget-more_info_title'] ?? NULL;
         $banner_module = $GLOBALS['mec-banner_module'] ?? 0;
+        $icons = $GLOBALS['mec-icons'] ?? $single->main->icons();
 
         $path = MEC::import('app.widgets.single.'.$layout, true, true);
 
         ob_start();
-        include file_exists( $path ) ? $path : MEC::import('app.widgets.single.default', true, true);
+        include file_exists($path) ? $path : MEC::import('app.widgets.single.default', true, true);
         return ob_get_clean();
 	}
 
@@ -132,7 +133,7 @@ class MEC_single_widget extends WP_Widget
         $settings = $this->get_settings();
 
         $arr = end($settings);
-        $ids = array();
+        $ids = [];
 
         if(is_array($arr) or is_object($arr))
         {

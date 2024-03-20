@@ -3,14 +3,18 @@
 defined('MECEXEC') or die();
 
 /** @var MEC_main $this */
+/** @var stdClass $event */
+/** @var string $weatherapi */
+/** @var float $lat */
+/** @var float $lng */
 
 $date = current_time('Y-m-d H:i:s');
 
 $weather = $this->get_weather_wa($weatherapi, $lat, $lng, $date);
-$imperial = (isset($settings['weather_module_imperial_units']) and $settings['weather_module_imperial_units']) ? true : false;
+$imperial = (isset($settings['weather_module_imperial_units']) && $settings['weather_module_imperial_units']);
 
 // Weather not found!
-if(!is_array($weather) or (is_array($weather) and !count($weather))) return;
+if(!is_array($weather) || !count($weather)) return;
 ?>
 <div class="mec-weather-details mec-frontbox" id="mec_weather_details">
     <h3 class="mec-weather mec-frontbox-title"><?php esc_html_e('Weather', 'modern-events-calendar-lite'); ?></h3>

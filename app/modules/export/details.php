@@ -3,6 +3,7 @@
 defined('MECEXEC') or die();
 
 /** @var MEC_main $this */
+/** @var stdClass $event */
 
 // MEC Settings
 $settings = $this->get_settings();
@@ -11,7 +12,7 @@ $settings = $this->get_settings();
 if($this->is_expired($event) and isset($settings['export_module_hide_expired']) and $settings['export_module_hide_expired']) return;
 
 // Export module on single page is disabled
-if(!isset($settings['export_module_status']) or (isset($settings['export_module_status']) and !$settings['export_module_status'])) return;
+if(!isset($settings['export_module_status']) || !$settings['export_module_status']) return;
 
 $title = isset($event->data->title) ? $event->data->title : '';
 $location_id = $this->get_master_location_id($event);

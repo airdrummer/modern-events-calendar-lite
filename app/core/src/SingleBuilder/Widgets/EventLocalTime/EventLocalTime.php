@@ -38,7 +38,7 @@ class EventLocalTime extends WidgetBase {
 				.'</p></div>';
 		} else {
 
-			$html = '<div class="mec-event-meta mec-local-time-details mec-frontbox">'
+			$html = '<div class="mec-event-meta mec-local-time-wrapper">'
 				.Base::get_main()->module('local-time.details', array('event'=>$event_detail)) .
 			'</div>';
 		}

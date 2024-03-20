@@ -52,7 +52,7 @@ if(isset($styling['mec_p_fontfamily']) && $styling['mec_p_fontfamily'])
 if((is_array($mec_h_fontfamily_arr) && $mec_h_fontfamily_arr) || (is_array($mec_p_fontfamily_arr) && $mec_p_fontfamily_arr))
 {
 	//Google font
-	$font_families  = array();
+	$font_families  = [];
 	$subsets    	= 'latin,latin-ext';
 	$variant_h		= '';
 	$variant_p		= '';

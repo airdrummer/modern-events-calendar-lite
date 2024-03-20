@@ -41,10 +41,10 @@ class MEC_feature_admincalendar extends MEC_base
         if(!isset($this->settings['admin_calendar']) or (isset($this->settings['admin_calendar']) and !$this->settings['admin_calendar'])) return;
 
         // Admin Calendar
-        $this->factory->action('admin_head-edit.php', array($this, 'output'));
+        $this->factory->action('admin_head-edit.php', [$this, 'output']);
 
         // Assets
-        if($this->status) $this->factory->action('admin_enqueue_scripts', array($this, 'assets'), 0);
+        if($this->status) $this->factory->action('admin_enqueue_scripts', [$this, 'assets'], 0);
     }
 
     public function output()
@@ -56,7 +56,7 @@ class MEC_feature_admincalendar extends MEC_base
 
         if($this->status)
         {
-            $HTML = $this->getRender()->vmonth(array('sk-options' => array('monthly_view' => array('style' => 'admin'))));
+            $HTML = $this->getRender()->vmonth(['sk-options' => ['monthly_view' => ['style' => 'admin']]]);
             $this->factory->params('footer', function() use($HTML)
             {
                 ?>
@@ -79,7 +79,7 @@ class MEC_feature_admincalendar extends MEC_base
                 <script>
                 jQuery(document).ready(function($)
                 {
-                    $('hr.wp-header-end').before('<a href="<?php echo esc_url($this->main->add_qs_vars(array('adminview'=>'calendar'))); ?>" class="add-new-h2"><?php esc_html_e('Calendar View', 'modern-events-calendar-lite'); ?></a>');
+                    $('hr.wp-header-end').before('<a href="<?php echo esc_url($this->main->add_qs_vars(['adminview'=>'calendar'])); ?>" class="add-new-h2"><?php esc_html_e('Calendar View', 'modern-events-calendar-lite'); ?></a>');
                 });
                 </script>
                 <?php
@@ -90,9 +90,9 @@ class MEC_feature_admincalendar extends MEC_base
     public function assets()
     {
         // JavaScript
-        wp_enqueue_script('mec-admin-calendar-script', $this->main->asset('js/admin-calendar.js'), array('jquery'), $this->main->get_version());
+        wp_enqueue_script('mec-admin-calendar-script', $this->main->asset('js/admin-calendar.js'), ['jquery'], $this->main->get_version());
 
         // Style
-        wp_enqueue_style('mec-admin-calendar-style', $this->main->asset('css/admin-calendar.min.css'), array('mec-backend-style'), $this->main->get_version());
+        wp_enqueue_style('mec-admin-calendar-style', $this->main->asset('css/admin-calendar.min.css'), ['mec-backend-style'], $this->main->get_version());
     }
 }

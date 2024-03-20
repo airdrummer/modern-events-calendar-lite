@@ -54,7 +54,7 @@ class SettingsForm extends Singleton {
 
 		$fixed_fields = CustomForm::getInstance()->get_fixed_fields( $group_id );
 		if ( !is_array( $fixed_fields ) ) {
-			$fixed_fields = array();
+			$fixed_fields = [];
 		}
 
 		return $fixed_fields;

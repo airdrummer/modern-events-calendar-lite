@@ -13,7 +13,7 @@ class MEC_cart extends MEC_base
      */
     private $main;
     private $settings;
-    private $ticket_names = array();
+    private $ticket_names = [];
 
     /**
      * Constructor method
@@ -78,11 +78,11 @@ class MEC_cart extends MEC_base
         $cart = get_option('mec_cart_'.$cart_id, NULL);
         if(is_null($cart))
         {
-            $cart = array();
+            $cart = [];
             update_option('mec_cart_'.$cart_id, $cart, false);
         }
 
-        if(!is_array($cart)) $cart = array();
+        if(!is_array($cart)) $cart = [];
         return $cart;
     }
 
@@ -101,7 +101,7 @@ class MEC_cart extends MEC_base
     {
         $cart = get_option('mec_cart_'.$cart_id.'_archived', NULL);
 
-        if(!is_array($cart)) $cart = array();
+        if(!is_array($cart)) $cart = [];
         return $cart;
     }
 
@@ -142,18 +142,18 @@ class MEC_cart extends MEC_base
         $tickets = ((isset($transaction['tickets']) and is_array($transaction['tickets'])) ? $transaction['tickets'] : array());
 
         $event_tickets = get_post_meta($event_id, 'mec_tickets', true);
-        if(!is_array($event_tickets)) $event_tickets = array();
+        if(!is_array($event_tickets)) $event_tickets = [];
 
-        $names = array();
-        foreach($tickets as $tkey => $ticket)
+        $names = [];
+        foreach($tickets as $key => $ticket)
         {
-            if(!is_numeric($tkey)) continue;
+            if(!is_numeric($key)) continue;
 
             $ticket_id = (isset($ticket['id']) and $ticket['id']) ? $ticket['id'] : 0;
             if(!$ticket_id) continue;
 
-            $ticket = isset($event_tickets[$ticket_id]) ? $event_tickets[$ticket_id] : array();
-            $ticket_name = (isset($ticket['name']) ? $ticket['name'] : '');
+            $ticket = $event_tickets[$ticket_id] ?? [];
+            $ticket_name = ($ticket['name'] ?? '');
 
             if(trim($ticket_name)) $names[] = $ticket_name;
         }
@@ -186,7 +186,7 @@ class MEC_cart extends MEC_base
     public function is_free($cart = NULL)
     {
         $payable = $this->get_payable($cart);
-        return ($payable > 0 ? false : true);
+        return !($payable > 0);
     }
 
     public function clear($cart_id)

@@ -31,7 +31,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
     /**
      * @var MessageCatalogueInterface[]
      */
-    protected $catalogues = array();
+    protected $catalogues = [];
 
     /**
      * @var string
@@ -41,17 +41,17 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
     /**
      * @var array
      */
-    private $fallbackLocales = array();
+    private $fallbackLocales = [];
 
     /**
      * @var LoaderInterface[]
      */
-    private $loaders = array();
+    private $loaders = [];
 
     /**
      * @var array
      */
-    private $resources = array();
+    private $resources = [];
 
     /**
      * @var MessageFormatterInterface
@@ -126,7 +126,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
         $this->resources[$locale][] = array($format, $resource, $domain);
 
         if (in_array($locale, $this->fallbackLocales)) {
-            $this->catalogues = array();
+            $this->catalogues = [];
         } else {
             unset($this->catalogues[$locale]);
         }
@@ -159,7 +159,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
     public function setFallbackLocales(array $locales)
     {
         // needed as the fallback locales are linked to the already loaded catalogues
-        $this->catalogues = array();
+        $this->catalogues = [];
 
         foreach ($locales as $locale) {
             $this->assertValidLocale($locale);
@@ -392,7 +392,7 @@ EOF
 
     protected function computeFallbackLocales($locale)
     {
-        $locales = array();
+        $locales = [];
         foreach ($this->fallbackLocales as $fallback) {
             if ($fallback === $locale) {
                 continue;

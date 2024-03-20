@@ -92,7 +92,7 @@ EOF
             throw new RuntimeException(sprintf('File or directory "%s" is not readable.', $filename));
         }
 
-        $filesInfo = array();
+        $filesInfo = [];
         foreach ($this->getFiles($filename) as $file) {
             $filesInfo[] = $this->validate(file_get_contents($file), $file);
         }
@@ -102,7 +102,7 @@ EOF
 
     private function validate($content, $file = null)
     {
-        $errors = array();
+        $errors = [];
 
         // Avoid: Warning DOMDocument::loadXML(): Empty string supplied as input
         if ('' === trim($content)) {

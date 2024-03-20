@@ -13,7 +13,7 @@ $categories = get_terms(array(
     'taxonomy' => 'mec_category',
     'hide_empty' => 0,
 ));
-if(!is_array($categories)) $categories = array();
+if(!is_array($categories)) $categories = [];
 ?>
 <div class="wns-be-container wns-be-container-sticky">
     <div id="wns-be-infobar">
@@ -43,7 +43,7 @@ if(!is_array($categories)) $categories = array();
                                 <div class="mec-form-row">
                                     <label>
                                         <input type="hidden" name="mec[settings][mchimp_status]" value="0" />
-                                        <input onchange="jQuery('#mec_mchimp_status_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][mchimp_status]" <?php if(isset($settings['mchimp_status']) and $settings['mchimp_status']) echo 'checked="checked"'; ?> /> <?php esc_html_e('Enable Mailchimp Integration', 'modern-events-calendar-lite'); ?>
+                                        <input onchange="jQuery('#mec_mchimp_status_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][mchimp_status]" <?php if(isset($settings['mchimp_status']) and $settings['mchimp_status']) echo 'checked="checked"'; ?> /><?php esc_html_e('Enable Mailchimp Integration', 'modern-events-calendar-lite'); ?>
                                     </label>
                                 </div>
                                 <div id="mec_mchimp_status_container_toggle" class="<?php if((isset($settings['mchimp_status']) and !$settings['mchimp_status']) or !isset($settings['mchimp_status'])) echo 'mec-util-hidden'; ?>">
@@ -69,7 +69,7 @@ if(!is_array($categories)) $categories = array();
                                             <span class="mec-tooltip">
                                                 <div class="box left">
                                                     <h5 class="title"><?php esc_html_e('Subscription Status', 'modern-events-calendar-lite'); ?></h5>
-                                                    <div class="content"><p><?php esc_attr_e('Choose "Subscribe by verification," to send an email to the user by Mailchimp for subscription verification.', 'modern-events-calendar-lite'); ?><a href="https://webnus.net/dox/modern-events-calendar/mailchimp-integration/" target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
+                                                    <div class="content"><p><?php esc_attr_e('Choose "Subscribe by verification," to send an email to the user by Mailchimp for subscription verification.', 'modern-events-calendar-lite'); ?><a href="https://webnus.net/dox/modern-events-calendar/mec-integrations/#Subscription_Status/" target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
                                                 </div>
                                                 <i title="" class="dashicons-before dashicons-editor-help"></i>
                                             </span>
@@ -78,7 +78,7 @@ if(!is_array($categories)) $categories = array();
                                     <div class="mec-form-row">
                                         <label>
                                             <input type="hidden" name="mec[settings][mchimp_segment_status]" value="0" />
-                                            <input value="1" type="checkbox" name="mec[settings][mchimp_segment_status]" <?php if(isset($settings['mchimp_segment_status']) and $settings['mchimp_segment_status']) echo 'checked="checked"'; ?> /> <?php esc_html_e('Enable Segment Creation by Event Title and Booking Date', 'modern-events-calendar-lite'); ?>
+                                            <input value="1" type="checkbox" name="mec[settings][mchimp_segment_status]" <?php if(isset($settings['mchimp_segment_status']) and $settings['mchimp_segment_status']) echo 'checked="checked"'; ?> /><?php esc_html_e('Enable Segment Creation by Event Title and Booking Date', 'modern-events-calendar-lite'); ?>
                                         </label>
                                     </div>
                                 </div>
@@ -89,7 +89,7 @@ if(!is_array($categories)) $categories = array();
                                 <div class="mec-form-row">
                                     <label>
                                         <input type="hidden" name="mec[settings][campm_status]" value="0" />
-                                        <input onchange="jQuery('#mec_campm_status_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][campm_status]" <?php if(isset($settings['campm_status']) and $settings['campm_status']) echo 'checked="checked"'; ?> /> <?php esc_html_e('Enable Campaign Monitor Integration', 'modern-events-calendar-lite'); ?>
+                                        <input onchange="jQuery('#mec_campm_status_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][campm_status]" <?php if(isset($settings['campm_status']) and $settings['campm_status']) echo 'checked="checked"'; ?> /><?php esc_html_e('Enable Campaign Monitor Integration', 'modern-events-calendar-lite'); ?>
                                     </label>
                                 </div>
                                 <div id="mec_campm_status_container_toggle" class="<?php if((isset($settings['campm_status']) and !$settings['campm_status']) or !isset($settings['campm_status'])) echo 'mec-util-hidden'; ?>">
@@ -113,7 +113,7 @@ if(!is_array($categories)) $categories = array();
                                 <div class="mec-form-row">
                                     <label>
                                         <input type="hidden" name="mec[settings][mailerlite_status]" value="0" />
-                                        <input onchange="jQuery('#mec_mailerlite_status_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][mailerlite_status]" <?php if(isset($settings['mailerlite_status']) and $settings['mailerlite_status']) echo 'checked="checked"'; ?> /> <?php esc_html_e('Enable MailerLite Integration', 'modern-events-calendar-lite'); ?>
+                                        <input onchange="jQuery('#mec_mailerlite_status_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][mailerlite_status]" <?php if(isset($settings['mailerlite_status']) and $settings['mailerlite_status']) echo 'checked="checked"'; ?> /><?php esc_html_e('Enable MailerLite Integration', 'modern-events-calendar-lite'); ?>
                                     </label>
                                 </div>
                                 <div id="mec_mailerlite_status_container_toggle" class="<?php if((isset($settings['mailerlite_status']) and !$settings['mailerlite_status']) or !isset($settings['mailerlite_status'])) echo 'mec-util-hidden'; ?>">
@@ -137,7 +137,7 @@ if(!is_array($categories)) $categories = array();
                                 <div class="mec-form-row">
                                     <label>
                                         <input type="hidden" name="mec[settings][constantcontact_status]" value="0" />
-                                        <input onchange="jQuery('#mec_constantcontact_status_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][constantcontact_status]" <?php if(isset($settings['constantcontact_status']) and $settings['constantcontact_status']) echo 'checked="checked"'; ?> /> <?php esc_html_e('Enable constantcontact Integration', 'modern-events-calendar-lite'); ?>
+                                        <input onchange="jQuery('#mec_constantcontact_status_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][constantcontact_status]" <?php if(isset($settings['constantcontact_status']) and $settings['constantcontact_status']) echo 'checked="checked"'; ?> /><?php esc_html_e('Enable constantcontact Integration', 'modern-events-calendar-lite'); ?>
                                     </label>
                                 </div>
                                 <div id="mec_constantcontact_status_container_toggle" class="<?php if((isset($settings['constantcontact_status']) and !$settings['constantcontact_status']) or !isset($settings['constantcontact_status'])) echo 'mec-util-hidden'; ?>">
@@ -200,7 +200,7 @@ if(!is_array($categories)) $categories = array();
                                 <div class="mec-form-row">
                                     <label>
                                         <input type="hidden" name="mec[settings][active_campaign_status]" value="0" />
-                                        <input onchange="jQuery('#mec_active_campaign_status_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][active_campaign_status]" <?php if(isset($settings['active_campaign_status']) and $settings['active_campaign_status']) echo 'checked="checked"'; ?> /> <?php esc_html_e('Enable Active Campaign Integration', 'modern-events-calendar-lite'); ?>
+                                        <input onchange="jQuery('#mec_active_campaign_status_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][active_campaign_status]" <?php if(isset($settings['active_campaign_status']) and $settings['active_campaign_status']) echo 'checked="checked"'; ?> /><?php esc_html_e('Enable Active Campaign Integration', 'modern-events-calendar-lite'); ?>
                                     </label>
                                 </div>
                                 <div id="mec_active_campaign_status_container_toggle" class="<?php if((isset($settings['active_campaign_status']) and !$settings['active_campaign_status']) or !isset($settings['active_campaign_status'])) echo 'mec-util-hidden'; ?>">
@@ -230,7 +230,7 @@ if(!is_array($categories)) $categories = array();
                                 <div class="mec-form-row">
                                     <label>
                                         <input type="hidden" name="mec[settings][aweber_status]" value="0" />
-                                        <input onchange="jQuery('#mec_aweber_status_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][aweber_status]" <?php if(isset($settings['aweber_status']) and $settings['aweber_status']) echo 'checked="checked"'; ?> /> <?php esc_html_e('Enable AWeber Integration', 'modern-events-calendar-lite'); ?>
+                                        <input onchange="jQuery('#mec_aweber_status_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][aweber_status]" <?php if(isset($settings['aweber_status']) and $settings['aweber_status']) echo 'checked="checked"'; ?> /><?php esc_html_e('Enable AWeber Integration', 'modern-events-calendar-lite'); ?>
                                     </label>
                                 </div>
                                 <div id="mec_aweber_status_container_toggle" class="<?php if((isset($settings['aweber_status']) and !$settings['aweber_status']) or !isset($settings['aweber_status'])) echo 'mec-util-hidden'; ?>">
@@ -250,7 +250,7 @@ if(!is_array($categories)) $categories = array();
                                 <div class="mec-form-row">
                                     <label>
                                         <input type="hidden" name="mec[settings][mailpoet_status]" value="0" />
-                                        <input onchange="jQuery('#mec_mailpoet_status_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][mailpoet_status]" <?php if(isset($settings['mailpoet_status']) and $settings['mailpoet_status']) echo 'checked="checked"'; ?> /> <?php esc_html_e('Enable MailPoet Integration', 'modern-events-calendar-lite'); ?>
+                                        <input onchange="jQuery('#mec_mailpoet_status_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][mailpoet_status]" <?php if(isset($settings['mailpoet_status']) and $settings['mailpoet_status']) echo 'checked="checked"'; ?> /><?php esc_html_e('Enable MailPoet Integration', 'modern-events-calendar-lite'); ?>
                                     </label>
                                 </div>
                                 <div id="mec_mailpoet_status_container_toggle" class="<?php if((isset($settings['mailpoet_status']) and !$settings['mailpoet_status']) or !isset($settings['mailpoet_status'])) echo 'mec-util-hidden'; ?>">
@@ -276,7 +276,7 @@ if(!is_array($categories)) $categories = array();
                                 <div class="mec-form-row">
                                     <label>
                                         <input type="hidden" name="mec[settings][sendfox_status]" value="0" />
-                                        <input onchange="jQuery('#mec_sendfox_status_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][sendfox_status]" <?php if(isset($settings['sendfox_status']) and $settings['sendfox_status']) echo 'checked="checked"'; ?> /> <?php esc_html_e('Enable Sendfox Integration', 'modern-events-calendar-lite'); ?>
+                                        <input onchange="jQuery('#mec_sendfox_status_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][sendfox_status]" <?php if(isset($settings['sendfox_status']) and $settings['sendfox_status']) echo 'checked="checked"'; ?> /><?php esc_html_e('Enable Sendfox Integration', 'modern-events-calendar-lite'); ?>
                                     </label>
                                 </div>
                                 <div id="mec_sendfox_status_container_toggle" class="<?php if((isset($settings['sendfox_status']) and !$settings['sendfox_status']) or !isset($settings['sendfox_status'])) echo 'mec-util-hidden'; ?>">
@@ -302,14 +302,14 @@ if(!is_array($categories)) $categories = array();
                                 <div class="mec-form-row">
                                     <label>
                                         <input type="hidden" name="mec[settings][bp_status]" value="0" />
-                                        <input onchange="jQuery('#mec_bp_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][bp_status]" <?php if(isset($settings['bp_status']) and $settings['bp_status']) echo 'checked="checked"'; ?> /> <?php esc_html_e('Enable BuddyPress Integration', 'modern-events-calendar-lite'); ?>
+                                        <input onchange="jQuery('#mec_bp_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][bp_status]" <?php if(isset($settings['bp_status']) and $settings['bp_status']) echo 'checked="checked"'; ?> /><?php esc_html_e('Enable BuddyPress Integration', 'modern-events-calendar-lite'); ?>
                                     </label>
                                 </div>
                                 <div id="mec_bp_container_toggle" class="<?php if((isset($settings['bp_status']) and !$settings['bp_status']) or !isset($settings['bp_status'])) echo 'mec-util-hidden'; ?>">
                                     <div class="mec-form-row">
                                         <label>
                                             <input type="hidden" name="mec[settings][bp_attendees_module]" value="0" />
-                                            <input value="1" type="checkbox" name="mec[settings][bp_attendees_module]" <?php if(isset($settings['bp_attendees_module']) and $settings['bp_attendees_module']) echo 'checked="checked"'; ?> /> <?php esc_html_e('Show "Attendees Module" in event details page', 'modern-events-calendar-lite'); ?>
+                                            <input value="1" type="checkbox" name="mec[settings][bp_attendees_module]" <?php if(isset($settings['bp_attendees_module']) and $settings['bp_attendees_module']) echo 'checked="checked"'; ?> /><?php esc_html_e('Show "Attendees Module" in event details page', 'modern-events-calendar-lite'); ?>
                                         </label>
                                     </div>
                                     <div class="mec-form-row">
@@ -321,13 +321,13 @@ if(!is_array($categories)) $categories = array();
                                     <div class="mec-form-row">
                                         <label>
                                             <input type="hidden" name="mec[settings][bp_add_activity]" value="0" />
-                                            <input value="1" type="checkbox" name="mec[settings][bp_add_activity]" <?php if(isset($settings['bp_add_activity']) and $settings['bp_add_activity']) echo 'checked="checked"'; ?> /> <?php esc_html_e('Add booking activity to user profile', 'modern-events-calendar-lite'); ?>
+                                            <input value="1" type="checkbox" name="mec[settings][bp_add_activity]" <?php if(isset($settings['bp_add_activity']) and $settings['bp_add_activity']) echo 'checked="checked"'; ?> /><?php esc_html_e('Add booking activity to user profile', 'modern-events-calendar-lite'); ?>
                                         </label>
                                     </div>
                                     <div class="mec-form-row">
                                         <label>
                                             <input type="hidden" name="mec[settings][bp_profile_menu]" value="0" />
-                                            <input value="1" type="checkbox" name="mec[settings][bp_profile_menu]" <?php if(isset($settings['bp_profile_menu']) and $settings['bp_profile_menu']) echo 'checked="checked"'; ?> /> <?php esc_html_e('Add events menu to user profile', 'modern-events-calendar-lite'); ?>
+                                            <input value="1" type="checkbox" name="mec[settings][bp_profile_menu]" <?php if(isset($settings['bp_profile_menu']) and $settings['bp_profile_menu']) echo 'checked="checked"'; ?> /><?php esc_html_e('Add events menu to user profile', 'modern-events-calendar-lite'); ?>
                                         </label>
                                     </div>
                                 </div>
@@ -335,12 +335,12 @@ if(!is_array($categories)) $categories = array();
                             <div id="learndash_options" class="mec-options-fields">
                                 <h4 class="mec-form-subtitle"><?php esc_html_e('LearnDash', 'modern-events-calendar-lite'); ?></h4>
                                 <div class="mec-form-row">
-                                    <label>
+                                    <label class="mec-col-12">
                                         <input type="hidden" name="mec[settings][ld_status]" value="0" />
-                                        <input onchange="jQuery('#mec_ld_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][ld_status]" <?php if(isset($settings['ld_status']) and $settings['ld_status']) echo 'checked="checked"'; ?> /> <?php esc_html_e('Enable LearnDash Integration', 'modern-events-calendar-lite'); ?>
+                                        <input onchange="jQuery('#mec_ld_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][ld_status]" <?php if(isset($settings['ld_status']) and $settings['ld_status']) echo 'checked="checked"'; ?> /><?php esc_html_e('Enable LearnDash Integration', 'modern-events-calendar-lite'); ?>
                                     </label>
+                                <p class="description"><?php esc_html_e('LearnDash plugin should be installed and activated.', 'modern-events-calendar-lite'); ?></p>                                    
                                 </div>
-                                <p class="description"><?php esc_html_e('LearnDash plugin should be installed and activated.', 'modern-events-calendar-lite'); ?></p>
                                 <div id="mec_ld_container_toggle" class="<?php if((isset($settings['ld_status']) and !$settings['ld_status']) or !isset($settings['ld_status'])) echo 'mec-util-hidden'; ?>">
                                     <div class="mec-form-row">
                                         <label class="mec-col-2" for="mec_ld_enrollment_method"><?php esc_html_e('Enroll After', 'modern-events-calendar-lite'); ?></label>
@@ -372,17 +372,17 @@ if(!is_array($categories)) $categories = array();
                                 </div>
                             </div>
                             <div id="pmp_options" class="mec-options-fields">
-                                <h4 class="mec-form-subtitle"><?php esc_html_e('PaidMembership Pro', 'modern-events-calendar-lite'); ?></h4>
+                                <h4 class="mec-form-subtitle"><?php esc_html_e('Paid Membership Pro', 'modern-events-calendar-lite'); ?></h4>
                                 <div class="mec-form-row">
                                     <label>
                                         <input type="hidden" name="mec[settings][pmp_status]" value="0" />
-                                        <input value="1" type="checkbox" name="mec[settings][pmp_status]" <?php if(isset($settings['pmp_status']) and $settings['pmp_status']) echo 'checked="checked"'; ?> /> <?php esc_html_e('Enable Event Restriction', 'modern-events-calendar-lite'); ?>
+                                        <input value="1" type="checkbox" name="mec[settings][pmp_status]" <?php if(isset($settings['pmp_status']) and $settings['pmp_status']) echo 'checked="checked"'; ?> /><?php esc_html_e('Enable Event Restriction', 'modern-events-calendar-lite'); ?>
                                     </label>
                                 </div>
                                 <div class="mec-form-row">
                                     <label>
                                         <input type="hidden" name="mec[settings][pmp_booking_restriction]" value="0" />
-                                        <input value="1" type="checkbox" name="mec[settings][pmp_booking_restriction]" <?php if(isset($settings['pmp_booking_restriction']) and $settings['pmp_booking_restriction']) echo 'checked="checked"'; ?> onchange="jQuery('#mec_integration_pmp_booking_restriction').toggleClass('mec-util-hidden');" /> <?php esc_html_e('Enable Booking Restriction', 'modern-events-calendar-lite'); ?>
+                                        <input value="1" type="checkbox" name="mec[settings][pmp_booking_restriction]" <?php if(isset($settings['pmp_booking_restriction']) and $settings['pmp_booking_restriction']) echo 'checked="checked"'; ?> onchange="jQuery('#mec_integration_pmp_booking_restriction').toggleClass('mec-util-hidden');" /><?php esc_html_e('Enable Booking Restriction', 'modern-events-calendar-lite'); ?>
                                     </label>
                                 </div>
                                 <div class="mec-form-row <?php if(!isset($settings['pmp_booking_restriction']) or (isset($settings['pmp_booking_restriction']) and !$settings['pmp_booking_restriction'])) echo 'mec-util-hidden'; ?>" id="mec_integration_pmp_booking_restriction">
@@ -405,7 +405,7 @@ if(!is_array($categories)) $categories = array();
                                     </ul>
                                     <?php endif; ?>
                                 </div>
-                                <p class="description"><?php esc_html_e('PaidMembership Pro plugin should be installed and activated.'); ?></p>
+                                <p class="description"><?php esc_html_e('Paid Membership Pro plugin should be installed and activated.'); ?></p>
                             </div>
 
                         <?php endif; ?>

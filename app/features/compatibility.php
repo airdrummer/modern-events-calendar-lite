@@ -28,7 +28,7 @@ class MEC_feature_compatibility extends MEC_base
      * To add HTML Classes to MEC template files
      * @var array
      */
-    public $html_class = array();
+    public $html_class = [];
     
     /**
      * Constructor method

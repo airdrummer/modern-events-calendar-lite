@@ -22,7 +22,7 @@ class EventBook extends Singleton {
 
         if(count($bookings)){
 
-			$unique_attendees = array();
+			$unique_attendees = [];
             foreach($bookings as $booking){
 
                 $attendees = $book->get_attendees($booking->ID);
@@ -134,7 +134,7 @@ class EventBook extends Singleton {
             return $books;
         }
 
-		$books_times = array();
+		$books_times = [];
 		if ( is_array( $books ) ) {
 
 			foreach ( $books as $book_id ) {

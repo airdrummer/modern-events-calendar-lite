@@ -41,22 +41,22 @@ class MEC_transaction extends MEC_base
 
     public function get_total()
     {
-        return (isset($this->transaction['total']) ? $this->transaction['total'] : NULL);
+        return $this->transaction['total'] ?? NULL;
     }
 
     public function get_discount()
     {
-        return (isset($this->transaction['discount']) ? $this->transaction['discount'] : NULL);
+        return $this->transaction['discount'] ?? NULL;
     }
 
     public function get_price()
     {
-        return (isset($this->transaction['price']) ? $this->transaction['price'] : 0);
+        return $this->transaction['price'] ?? 0;
     }
 
     public function get_payable()
     {
-        return (isset($this->transaction['payable']) ? $this->transaction['payable'] : 0);
+        return $this->transaction['payable'] ?? 0;
     }
 
     public function get_price_html()
@@ -75,12 +75,12 @@ class MEC_transaction extends MEC_base
 
     public function is_free()
     {
-        return ($this->get_payable() ? false : true);
+        return !$this->get_payable();
     }
 
     public function get_event_id()
     {
-        return (isset($this->transaction['event_id']) ? $this->transaction['event_id'] : 0);
+        return $this->transaction['event_id'] ?? 0;
     }
 
     public function get_array()
@@ -121,7 +121,7 @@ class MEC_transaction extends MEC_base
     public function get_event_tickets()
     {
         $tickets = get_post_meta($this->get_event_id(), 'mec_tickets', true);
-        if(!is_array($tickets)) $tickets = array();
+        if(!is_array($tickets)) $tickets = [];
 
         return $tickets;
     }
@@ -132,16 +132,16 @@ class MEC_transaction extends MEC_base
         $event_tickets = $this->get_event_tickets();
 
         $tickets = $this->get_tickets();
-        $rendered = array();
+        $rendered = [];
 
         foreach($tickets as $t)
         {
             $ticket_id = $t['id'];
 
-            $ticket = (isset($event_tickets[$ticket_id]) ? $event_tickets[$ticket_id] : array());
+            $ticket = $event_tickets[$ticket_id] ?? [];
             $count = $t['count'];
 
-            if(!isset($rendered[$ticket_id])) $rendered[$ticket_id] = array('count' => 0, 'names' => array());
+            if(!isset($rendered[$ticket_id])) $rendered[$ticket_id] = ['count' => 0, 'names' => []];
 
             $rendered[$ticket_id]['name'] = $ticket['name'];
             $rendered[$ticket_id]['count'] += $count;
@@ -164,8 +164,8 @@ class MEC_transaction extends MEC_base
 
     public function get_dates()
     {
-        $all_dates = ((isset($this->transaction['all_dates']) and is_array($this->transaction['all_dates'])) ? $this->transaction['all_dates'] : array());
-        $date = (isset($this->transaction['date']) ? $this->transaction['date'] : NULL);
+        $all_dates = (isset($this->transaction['all_dates']) and is_array($this->transaction['all_dates'])) ? $this->transaction['all_dates'] : [];
+        $date = $this->transaction['date'] ?? NULL;
 
         return (count($all_dates) ? $all_dates : array($date));
     }
@@ -191,12 +191,12 @@ class MEC_transaction extends MEC_base
 
     public function get_coupon()
     {
-        return (isset($this->transaction['coupon']) ? $this->transaction['coupon'] : NULL);
+        return $this->transaction['coupon'] ?? NULL;
     }
 
     public function get_price_details()
     {
-        return ((isset($this->transaction['price_details']) and is_array($this->transaction['price_details'])) ? $this->transaction['price_details'] : array());
+        return (isset($this->transaction['price_details']) and is_array($this->transaction['price_details'])) ? $this->transaction['price_details'] : [];
     }
 
     public function get_price_details_html()

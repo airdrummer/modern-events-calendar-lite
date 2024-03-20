@@ -102,7 +102,7 @@ else $this->factory->params('footer', $javascript);
 $styling = $this->main->get_styling();
 $event_colorskin = (isset($styling['mec_colorskin']) || isset($styling['color'])) ? 'colorskin-custom' : '';
 
-$dark_mode = (isset($styling['dark_mode']) ? $styling['dark_mode'] : '');
+$dark_mode = $styling['dark_mode'] ?? '';
 if($dark_mode == 1) $set_dark = 'mec-dark-mode';
 else $set_dark = '';
 
@@ -139,7 +139,6 @@ do_action('mec_yearly_skin_head');
     </div>
 
     <?php echo $this->subscribe_to_calendar(); ?>
-
     <?php echo $this->display_credit_url(); ?>
 
 </div>

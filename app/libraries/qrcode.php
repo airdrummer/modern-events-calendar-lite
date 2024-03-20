@@ -153,7 +153,7 @@ class QRtools {
 	//----------------------------------------------------------------------
 	public function tcpdfBarcodeArray($code, $mode = 'QR,L', $tcPdfVersion = '4.5.037')
 	{
-		$barcode_array = array();
+		$barcode_array = [];
 		
 		if (!is_array($mode))
 			$mode = explode(',', $mode);
@@ -169,10 +169,10 @@ class QRtools {
 			
 		$barcode_array['num_rows'] = $size;
 		$barcode_array['num_cols'] = $size;
-		$barcode_array['bcode'] = array();
+		$barcode_array['bcode'] = [];
 			
 		foreach ($qrTab as $line) {
-			$arrAdd = array();
+			$arrAdd = [];
 			foreach(str_split($line) as $char)
 				$arrAdd[] = ($char=='1')?1:0;
 			$barcode_array['bcode'][] = $arrAdd;
@@ -184,7 +184,7 @@ class QRtools {
 	//----------------------------------------------------------------------
 	public function clearCache()
 	{
-		self::$frames = array();
+		self::$frames = [];
 	}
 	
 	//----------------------------------------------------------------------
@@ -242,7 +242,7 @@ class QRtools {
 		$time = ((float)$usec + (float)$sec);
 		
 		if (!isset($GLOBALS['qr_time_bench']))
-			$GLOBALS['qr_time_bench'] = array();
+			$GLOBALS['qr_time_bench'] = [];
 		
 		$GLOBALS['qr_time_bench'][$markerId] = $time;
 	}
@@ -635,7 +635,7 @@ class QRspec {
 	// Frame ---------------------------------------------------------------
 	// Cache of initial frames.
 	 
-	public static $frames = array();
+	public static $frames = [];
 
 	/** --------------------------------------------------------------------
 	 * Put a finder pattern.
@@ -1600,7 +1600,7 @@ class QRinput {
 		
 		if($padlen > 0) {
 			
-			$padbuf = array();
+			$padbuf = [];
 			for($i=0; $i<$padlen; $i++) {
 				$padbuf[$i] = ($i&1)?0x11:0xec;
 			}
@@ -1694,7 +1694,7 @@ class QRinput {
      
 class QRbitstream {
 
-	public $data = array();
+	public $data = [];
 	
 	//----------------------------------------------------------------------
 	public function size()
@@ -1813,7 +1813,7 @@ class QRbitstream {
 		$size = $this->size();
 
 		if($size == 0) {
-			return array();
+			return [];
 		}
 		
 		$data = array_fill(0, (int)(($size + 7) / 8), 0);
@@ -2189,9 +2189,9 @@ class QRrsItem {
 
 	public $mm;                  // Bits per symbol 
 	public $nn;                  // Symbols per block (= (1<<mm)-1) 
-	public $alpha_to = array();  // log lookup table 
-	public $index_of = array();  // Antilog lookup table 
-	public $genpoly = array();   // Generator polynomial 
+	public $alpha_to = [];  // log lookup table 
+	public $index_of = [];  // Antilog lookup table 
+	public $genpoly = [];   // Generator polynomial 
 	public $nroots;              // Number of generator roots = number of parity symbols 
 	public $fcr;                 // First consecutive root, index form 
 	public $prim;                // Primitive element, index form 
@@ -2343,7 +2343,7 @@ class QRrsItem {
 
 class QRrs {
 
-	public static $items = array();
+	public static $items = [];
 	
 	//----------------------------------------------------------------------
 	public static function init_rs($symsize, $gfpoly, $fcr, $prim, $nroots, $pad)
@@ -2399,7 +2399,7 @@ define('N4', 10);
 
 class QRmask {
 
-	public $runLength = array();
+	public $runLength = [];
 	
 	//----------------------------------------------------------------------
 	public function __construct() 
@@ -2484,7 +2484,7 @@ class QRmask {
 	//----------------------------------------------------------------------
 	public function serial($bitFrame)
 	{
-		$codeArr = array();
+		$codeArr = [];
 		
 		foreach ($bitFrame as $line)
 			$codeArr[] = join('', $line);
@@ -2495,7 +2495,7 @@ class QRmask {
 	//----------------------------------------------------------------------
 	public function unserial($code)
 	{
-		$codeArr = array();
+		$codeArr = [];
 		
 		$codeLines = explode("\n", gzuncompress($code));
 		foreach ($codeLines as $line)
@@ -2508,7 +2508,7 @@ class QRmask {
 	public function makeMaskNo($maskNo, $width, $s, &$d, $maskGenOnly = false) 
 	{
 		$b = 0;
-		$bitMask = array();
+		$bitMask = [];
 		
 		$fileName = QR_CACHE_DIR.'mask_'.$maskNo.DIRECTORY_SEPARATOR.'mask_'.$width.'_'.$maskNo.'.dat';
 
@@ -2653,7 +2653,7 @@ class QRmask {
 	{
 		$minDemerit = PHP_INT_MAX;
 		$bestMaskNum = 0;
-		$bestMask = array();
+		$bestMask = [];
 		
 		$checked_masks = array(0,1,2,3,4,5,6,7);
 		
@@ -2720,9 +2720,9 @@ class QRmask {
  
 class QRrsblock {
 	public $dataLength;
-	public $data = array();
+	public $data = [];
 	public $eccLength;
-	public $ecc = array();
+	public $ecc = [];
 	
 	public function __construct($dl, $data, $el, &$ecc, QRrsItem $rs)
 	{
@@ -2739,10 +2739,10 @@ class QRrsblock {
 
 class QRrawcode {
 	public $version;
-	public $datacode = array();
-	public $ecccode = array();
+	public $datacode = [];
+	public $ecccode = [];
 	public $blocks;
-	public $rsblocks = array(); //of RSblock
+	public $rsblocks = []; //of RSblock
 	public $count;
 	public $dataLength;
 	public $eccLength;

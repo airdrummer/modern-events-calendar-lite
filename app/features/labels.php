@@ -26,11 +26,11 @@ class MEC_feature_labels extends MEC_base
     {
         // Import MEC Factory
         $this->factory = $this->getFactory();
-        
+
         // Import MEC Main
         $this->main = $this->getMain();
     }
-    
+
     /**
      * Initialize label feature
      * @author Webnus <info@webnus.net>
@@ -42,15 +42,15 @@ class MEC_feature_labels extends MEC_base
         $this->factory->action('mec_label_add_form_fields', array($this, 'add_form'));
         $this->factory->action('edited_mec_label', array($this, 'save_metadata'));
         $this->factory->action('created_mec_label', array($this, 'save_metadata'));
-        
+
         $this->factory->action('add_meta_boxes', array($this, 'register_meta_boxes'));
-        
+
         $this->factory->filter('manage_edit-mec_label_columns', array($this, 'filter_columns'));
         $this->factory->filter('manage_mec_label_custom_column', array($this, 'filter_columns_content'), 10, 3);
-        
+
         $this->factory->action('save_post', array($this, 'save_event'), 3);
     }
-    
+
     /**
      * Register label taxonomy
      * @author Webnus <info@webnus.net>
@@ -60,9 +60,8 @@ class MEC_feature_labels extends MEC_base
         $singular_label = $this->main->m('taxonomy_label', esc_html__('Label', 'modern-events-calendar-lite'));
         $plural_label = $this->main->m('taxonomy_labels', esc_html__('Labels', 'modern-events-calendar-lite'));
 
-        register_taxonomy(
-            'mec_label',
-            $this->main->get_main_post_type(),
+        $label_args = apply_filters(
+            'mec_register_taxonomy_args',
             array(
                 'label'=>$plural_label,
                 'labels'=>array(
@@ -83,12 +82,18 @@ class MEC_feature_labels extends MEC_base
                 'public'=>false,
                 'show_ui'=>true,
                 'hierarchical'=>false,
-            )
+            ),
+            'mec_label'
         );
-        
+        register_taxonomy(
+            'mec_label',
+            $this->main->get_main_post_type(),
+            $label_args
+        );
+
         register_taxonomy_for_object_type('mec_label', $this->main->get_main_post_type());
     }
-    
+
     /**
      * Show edit form of labels
      * @author Webnus <info@webnus.net>
@@ -124,7 +129,7 @@ class MEC_feature_labels extends MEC_base
         </tr>
     <?php
     }
-    
+
     /**
      * Show add form of labels
      * @author Webnus <info@webnus.net>
@@ -149,7 +154,7 @@ class MEC_feature_labels extends MEC_base
         </div>
     <?php
     }
-    
+
     /**
      * Save label meta data
      * @author Webnus <info@webnus.net>
@@ -166,7 +171,7 @@ class MEC_feature_labels extends MEC_base
         $style = isset($_POST['style']) ? sanitize_text_field($_POST['style']) : '';
         update_term_meta($term_id, 'style', $style);
     }
-    
+
     /**
      * Filter label taxonomy columns
      * @author Webnus <info@webnus.net>
@@ -179,7 +184,7 @@ class MEC_feature_labels extends MEC_base
         unset($columns['slug']);
         unset($columns['description']);
         unset($columns['posts']);
-        
+
         $columns['id'] = esc_html__('ID', 'modern-events-calendar-lite');
         $columns['name'] = esc_html__('Name', 'modern-events-calendar-lite');
         $columns['color'] = esc_html__('Color', 'modern-events-calendar-lite');
@@ -188,7 +193,7 @@ class MEC_feature_labels extends MEC_base
 
         return $columns;
     }
-    
+
     /**
      * Filter content of label taxonomy
      * @author Webnus <info@webnus.net>
@@ -202,12 +207,12 @@ class MEC_feature_labels extends MEC_base
         switch($column_name)
         {
             case 'id':
-                
+
                 $content = $term_id;
                 break;
 
             case 'color':
-                
+
                 $content = '<span class="mec-color" style="background-color: '.get_metadata('term', $term_id, 'color', true).';"></span>';
                 break;
 
@@ -217,7 +222,7 @@ class MEC_feature_labels extends MEC_base
 
         return $content;
     }
-    
+
     /**
      * Register meta box of labels
      * @author Webnus <info@webnus.net>
@@ -226,7 +231,7 @@ class MEC_feature_labels extends MEC_base
     {
         add_meta_box('mec_metabox_label', sprintf(esc_html__('Event %s', 'modern-events-calendar-lite'), $this->main->m('taxonomy_labels', esc_html__('Labels', 'modern-events-calendar-lite'))), array($this, 'meta_box_labels'), $this->main->get_main_post_type(), 'side');
     }
-    
+
     /**
      * Show meta box of labels
      * @author Webnus <info@webnus.net>
@@ -241,9 +246,11 @@ class MEC_feature_labels extends MEC_base
             <div class="mec-form-row">
                 <?php foreach($labels as $label): ?>
                 <div class="mec-label-row">
-                    <input <?php if(in_array($label->term_id, $terms)) echo 'checked="checked"'; ?> name="mec[labels][]" type="checkbox" value="<?php echo esc_attr($label->term_id); ?>" id="mec_label<?php echo esc_attr($label->term_id); ?>" />
-                    <?php do_action('mec_label_to_checkbox_backend', $label, $terms); ?>
-                    <label for="mec_label<?php echo esc_attr($label->term_id); ?>"><?php echo esc_html($label->name); ?></label>
+                    <label for="mec_label<?php echo esc_attr($label->term_id); ?>">
+                        <input <?php if(in_array($label->term_id, $terms)) echo 'checked="checked"'; ?> name="mec[labels][]" type="checkbox" value="<?php echo esc_attr($label->term_id); ?>" id="mec_label<?php echo esc_attr($label->term_id); ?>" />
+                        <?php do_action('mec_label_to_checkbox_backend', $label, $terms); ?>
+                        <?php echo esc_html($label->name); ?>
+                    </label>
                     <span class="mec-color" style="background-color: <?php echo get_term_meta($label->term_id, 'color', true); ?>"></span>
                 </div>
                 <?php endforeach; ?>
@@ -251,7 +258,7 @@ class MEC_feature_labels extends MEC_base
         </div>
     <?php
     }
-    
+
     /**
      * Save label of event
      * @author Webnus <info@webnus.net>
@@ -270,14 +277,14 @@ class MEC_feature_labels extends MEC_base
         if(defined('DOING_AUTOSAVE') and DOING_AUTOSAVE) return;
 
         // Get Modern Events Calendar Data
-        $_mec = isset($_POST['mec']) ? $this->main->sanitize_deep_array($_POST['mec']) : array();
-        
-        $_labels = isset($_mec['labels']) ? (array) $_mec['labels'] : array();
-        
+        $_mec = isset($_POST['mec']) ? $this->main->sanitize_deep_array($_POST['mec']) : [];
+
+        $_labels = isset($_mec['labels']) ? (array) $_mec['labels'] : [];
+
         $_labels = array_map('sanitize_text_field', $_labels);
         $_labels = array_map('intval', $_labels);
         $_labels = array_unique($_labels);
-        
+
         wp_set_object_terms($post_id, $_labels, 'mec_label');
     }
 }

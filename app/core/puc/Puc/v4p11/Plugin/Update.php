@@ -14,7 +14,7 @@ if ( !class_exists('Puc_v4p11_Plugin_Update', false) ):
 		public $upgrade_notice;
 		public $tested;
 		public $requires_php = false;
-		public $icons = array();
+		public $icons = [];
 		public $filename; //Plugin filename relative to the plugins directory.
 
 		protected static $extraFields = array(

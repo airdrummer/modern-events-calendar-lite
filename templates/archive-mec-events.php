@@ -2,6 +2,8 @@
 /** no direct access **/
 defined('MECEXEC') or die();
 
+/** @var MEC_main $main */
+
 $main = MEC::getInstance('app.libraries.main');
 $settings = $main->get_settings();
 
@@ -35,7 +37,7 @@ get_header('mec'); ?>
 
         <?php else: ?>
 
-        <p><?php esc_html_e('No event found!', 'modern-events-calendar-lite'); ?></p>
+        <p><?php $main->display_not_found_message(); ?></p>
 
         <?php endif; ?>
     </section>

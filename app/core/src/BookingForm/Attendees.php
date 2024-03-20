@@ -194,11 +194,6 @@ class Attendees {
                 display: block
             }
 
-            .mec-single-event .mec-events-meta-group-booking ul li {
-				padding-left: 5px;
-    			padding-right: 5px;
-			}
-
 			.mec-single-event .mec-events-meta-group-booking ul.mec-book-tickets-reg-fields-container {
 				margin: 0;
 			}
@@ -212,7 +207,7 @@ class Attendees {
 			}
 
             .mec-single-event .mec-events-meta-group-booking .mec-book-tickets-container .mec-book-ticket-container .mec-ticket-subtotal-wrapper,
-            .mec-single-event .mec-events-meta-group-booking .mec-book-tickets-container .mec-book-ticket-container .mec-ticket-detail {
+            .mec-single-event .mec-events-meta-group-booking .mec-book-tickets-container .mec-book-ticket-container .mec-ticket-detail,.lity-content .mec-events-meta-group-booking .mec-book-tickets-container .mec-book-ticket-container .mec-ticket-detail {
                 display: flex;
                 align-items: center;
                 padding: 0 0 30px 0;
@@ -288,7 +283,7 @@ class Attendees {
 
         // WC System
         $WC_status = (isset($mec_settings['wc_status']) and $mec_settings['wc_status'] and class_exists('WooCommerce'));
-        if($WC_status) $fees = array();
+        if($WC_status) $fees = [];
 
         // MEC Card
         $cart_status = (isset($mec_settings['mec_cart_status']) and $mec_settings['mec_cart_status']);
@@ -299,21 +294,21 @@ class Attendees {
         $has_fees = (bool) count($fees);
 
         $current_user = wp_get_current_user();
-        $first_for_all = (!isset($mec_settings['booking_first_for_all']) or (isset($mec_settings['booking_first_for_all']) and $mec_settings['booking_first_for_all'] == 1));
+        $first_for_all = (!isset($mec_settings['booking_first_for_all']) || $mec_settings['booking_first_for_all'] == 1);
 
         // Username & Password Method
         $booking_register = !((isset($mec_settings['booking_registration']) and !$mec_settings['booking_registration']));
         $booking_userpass = (isset($mec_settings['booking_userpass']) and trim($mec_settings['booking_userpass'])) ? $mec_settings['booking_userpass'] : 'auto';
 
         // Lock Pre-filled Fields
-        $lock_prefilled = (isset($mec_settings['booking_lock_prefilled']) and trim($mec_settings['booking_lock_prefilled']) != '') ? $mec_settings['booking_lock_prefilled'] : 0;
+        $lock_prefilled = isset($mec_settings['booking_lock_prefilled']) && trim($mec_settings['booking_lock_prefilled']) != '' ? $mec_settings['booking_lock_prefilled'] : 0;
 
         // Attendee Counter
         $attendee_counter = (isset($mec_settings['attendee_counter']) and $mec_settings['attendee_counter']) ? $mec_settings['attendee_counter'] : '';
 
         $display_progress_bar = \MEC\Base::get_main()->can_display_booking_progress_bar($mec_settings);
 
-        $event_tickets = $event->data->tickets ?? array();
+        $event_tickets = $event->data->tickets ?? [];
 
         foreach ($tickets as $ticket_id => $count) {
 
@@ -398,23 +393,25 @@ class Attendees {
 
                             <!-- Custom fields -->
                             <ul class="mec-book-tickets-reg-fields-container">
-                                <?php DisplayFields::display_fields( 'book', 'reg', $reg_fields, $j ); ?>
+                                <?php DisplayFields::display_fields( 'book', 'reg', $reg_fields, $j, [
+                                    'lock_prefilled' => $lock_prefilled
+                                ] ); ?>
                             </ul>
 
                             <!-- Ticket Variations -->
                             <?php
                                 $ticket_variations = \MEC\Base::get_main()->ticket_variations($event_id, $ticket_id, $translated_event_id);
 
-                                if($WC_status) $ticket_variations = array();
+                                if($WC_status) $ticket_variations = [];
                                 if(\MEC\Base::get_main()->has_variations_per_ticket($event_id, $ticket_id)) $first_for_all = false;
 
                                 $has_variations = (bool) count($ticket_variations);
                             ?>
-                            <?php if(isset($mec_settings['ticket_variations_status']) and $mec_settings['ticket_variations_status'] and count($ticket_variations)): foreach($ticket_variations as $ticket_variation_id => $ticket_variation): if(!is_numeric($ticket_variation_id) or !isset($ticket_variation['title']) or (isset($ticket_variation['title']) and !trim($ticket_variation['title']))) continue; ?>
+                            <?php if(isset($mec_settings['ticket_variations_status']) and $mec_settings['ticket_variations_status'] and count($ticket_variations)): foreach($ticket_variations as $ticket_variation_id => $ticket_variation): if(!is_numeric($ticket_variation_id) || !isset($ticket_variation['title']) || !trim($ticket_variation['title'])) continue; ?>
                                 <div class="col-md-6 mec-book-ticket-variation-wrapper">
                                     <div class="mec-book-ticket-variation" data-ticket-id="<?php echo esc_attr($j); ?>" data-ticket-variation-id="<?php echo esc_attr($ticket_variation_id); ?>">
                                         <h5><span class="mec-ticket-variation-name"><?php echo esc_html($ticket_variation['title']); ?></span><span class="mec-ticket-variation-price"><?php echo \MEC_kses::element(\MEC\Base::get_main()->render_price($ticket_variation['price'], $requested_event_id)); ?></span></h5>
-                                        <input onkeydown="return event.keyCode !== 69" type="number" min="0" max="<?php echo ((is_numeric($ticket_variation['max']) and $ticket_variation['max']) ? $ticket_variation['max'] : ''); ?>" name="book[tickets][<?php echo esc_attr($j); ?>][variations][<?php echo esc_attr($ticket_variation_id); ?>]" onchange="mec_check_variation_min_max<?php echo esc_attr($uniqueid); ?>(this);">
+                                        <input onkeydown="return event.keyCode !== 69" type="number" value="0" min="0" max="<?php echo ((is_numeric($ticket_variation['max']) and $ticket_variation['max']) ? $ticket_variation['max'] : ''); ?>" name="book[tickets][<?php echo esc_attr($j); ?>][variations][<?php echo esc_attr($ticket_variation_id); ?>]" onchange="mec_check_variation_min_max<?php echo esc_attr($uniqueid); ?>(this);">
                                     </div>
                                 </div>
                             <?php endforeach;
@@ -439,15 +436,15 @@ class Attendees {
             <?php endif; ?>
 
             <?php if($booking_register and $booking_userpass == 'manual' and !is_user_logged_in()): ?>
-            <div class="mec-book-username-password-wrapper">
+            <div class="mec-book-username-password-wrapper" style="padding: 0">
                 <h3><?php esc_html_e('Registration', 'modern-events-calendar-lite'); ?></h3>
                 <ul class="mec-booking-registrtaion-fields">
                     <li>
-                        <label for="mec_book_form_username"><?php esc_html_e('Username', 'modern-events-calendar-lite'); ?></label>
+                        <label for="mec_book_form_username"><?php esc_html_e('Username', 'modern-events-calendar-lite'); ?> <span class="wbmec-mandatory">*</span></label>
                         <input type="text" name="book[username]" id="mec_book_form_username">
                     </li>
                     <li>
-                        <label for="mec_book_form_password"><?php esc_html_e('Password', 'modern-events-calendar-lite'); ?></label>
+                        <label for="mec_book_form_password"><?php esc_html_e('Password', 'modern-events-calendar-lite'); ?> <span class="wbmec-mandatory">*</span></label>
                         <input type="password" name="book[password]" id="mec_book_form_password">
                     </li>
                 </ul>

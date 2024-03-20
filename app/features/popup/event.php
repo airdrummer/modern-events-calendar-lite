@@ -37,19 +37,23 @@ $main_page = isset($_REQUEST['post_type']) ? sanitize_text_field($_REQUEST['post
 $datepicker_format = (isset($settings['datepicker_format']) and trim($settings['datepicker_format'])) ? $settings['datepicker_format'] : 'Y-m-d';
 
 if(!isset($post_type)) $post_type = NULL;
+
+$step = 1;
 ?>
 <div id="mec_popup_event" class="lity-hide">
     <div class="mec-steps-container">
-        <img src="<?php echo plugin_dir_url(__FILE__ ) . '../../../assets/img/popup/mec-logo.svg'; ?>" />
+        <img src="<?php echo plugin_dir_url(__FILE__ ) . '../../../assets/img/mec-logo-icon.svg'; ?>"  style="width: 50px"/>
         <ul>
-            <li class="mec-step mec-step-1"><span>1</span></li>
-            <li class="mec-step mec-step-2"><span>2</span></li>
-            <li class="mec-step mec-step-3"><span>3</span></li>
-            <li class="mec-step mec-step-4"><span>4</span></li>
-            <li class="mec-step mec-step-5"><span>5</span></li>
-            <li class="mec-step mec-step-6"><span>6</span></li>
-            <li class="mec-step mec-step-7"><span>7</span></li>
-            <li class="mec-step mec-step-8"><span>8</span></li>
+            <li class="mec-step mec-step-<?php echo esc_attr($step); ?>"><span><?php echo $step++; ?></span></li>
+            <li class="mec-step mec-step-<?php echo esc_attr($step); ?>"><span><?php echo $step++; ?></span></li>
+            <li class="mec-step mec-step-<?php echo esc_attr($step); ?>"><span><?php echo $step++; ?></span></li>
+            <?php if(!isset($settings['organizers_status']) || $settings['organizers_status']): ?>
+            <li class="mec-step mec-step-<?php echo esc_attr($step); ?>"><span><?php echo $step++; ?></span></li>
+            <?php endif; ?>
+            <li class="mec-step mec-step-<?php echo esc_attr($step); ?>"><span><?php echo $step++; ?></span></li>
+            <li class="mec-step mec-step-<?php echo esc_attr($step); ?>"><span><?php echo $step++; ?></span></li>
+            <li class="mec-step mec-step-<?php echo esc_attr($step); ?>"><span><?php echo $step++; ?></span></li>
+            <li class="mec-step mec-step-<?php echo esc_attr($step); ?>"><span><?php echo $step; $step = 1; ?></span></li>
         </ul>
     </div>
     <div class="mec-steps-panel">
@@ -58,7 +62,9 @@ if(!isset($post_type)) $post_type = NULL;
                 <div class="mec-steps-header">
                     <div class="mec-steps-header-userinfo">
                         <?php $user = wp_get_current_user(); ?>
+                        <?php if(get_option('show_avatars')): ?>
                         <span class="mec-steps-header-img"><img src="<?php echo esc_url(get_avatar_url($user->ID)); ?>" /></span>
+                        <?php endif; ?>
                         <span class="mec-steps-header-name"><?php echo esc_html($user->display_name); ?></span>
                         <span class="mec-steps-header-add-text"><?php esc_html_e('Adding an Event...', 'modern-events-calendar-lite') ?></span>
                     </div>
@@ -66,14 +72,14 @@ if(!isset($post_type)) $post_type = NULL;
                         <a href="<?php echo admin_url('admin.php?page=MEC-settings'); ?>"><i class="mec-sl-settings"></i><?php esc_html_e('Settings', 'modern-events-calendar-lite'); ?></a>
                     </div>
                 </div>
-                <div class="mec-steps-content mec-steps-content-1">
+                <div class="mec-steps-content mec-steps-content-<?php echo $step++; ?>">
                     <?php wp_nonce_field('mec_event_popup', '_mecnonce'); ?>
                     <input type="text" name="mec[title]" placeholder="<?php esc_attr_e('Event Name', 'modern-events-calendar-lite'); ?>" id="mec_event_name">
                     <p class="popup-sh-name-required"><?php esc_html_e('Event name is required', 'modern-events-calendar-lite'); ?></p>
 
                     <?php $feature_colors->meta_box_colors($post); ?>
                 </div>
-                <div class="mec-steps-content mec-steps-content-2">
+                <div class="mec-steps-content mec-steps-content-<?php echo $step++; ?>">
                     <div id="mec_meta_box_date_form">
                         <div class="mec-form-row">
                             <div class="mec-col-4">
@@ -83,7 +89,7 @@ if(!isset($post_type)) $post_type = NULL;
                             </div>
                             <div class="mec-col-6 mec-time-picker <?php echo ($allday == 1) ? 'mec-util-hidden' : ''; ?>">
                             <?php $this->main->timepicker(array(
-                                'method' => (isset($this->settings['time_format']) ? $this->settings['time_format'] : 12),
+                                'method' => $settings['time_format'] ?? 12,
                                 'time_hour' => $start_time_hour,
                                 'time_minutes' => $start_time_minutes,
                                 'time_ampm' => $start_time_ampm,
@@ -101,7 +107,7 @@ if(!isset($post_type)) $post_type = NULL;
                             </div>
                             <div class="mec-col-6 mec-time-picker <?php echo ($allday == 1) ? 'mec-util-hidden' : ''; ?>">
                                 <?php $this->main->timepicker(array(
-                                    'method' => (isset($this->settings['time_format']) ? $this->settings['time_format'] : 12),
+                                    'method' => $settings['time_format'] ?? 12,
                                     'time_hour' => $end_time_hour,
                                     'time_minutes' => $end_time_minutes,
                                     'time_ampm' => $end_time_ampm,
@@ -111,13 +117,15 @@ if(!isset($post_type)) $post_type = NULL;
                             </div>
                         </div>
                         <div class="mec-form-row mec-all-day-event">
-                            <input type="checkbox" name="mec[date][allday]" id="mec_allday" value="1"
-                                   onchange="jQuery('.mec-time-picker').toggle();"/><label
-                                   for="mec_allday"><?php esc_html_e('All-day Event', 'modern-events-calendar-lite'); ?></label>
+                            <label for="mec_allday">
+                                <input type="checkbox" name="mec[date][allday]" id="mec_allday" value="1"
+                                       onchange="jQuery('.mec-time-picker').toggle();"/>
+                                       <?php esc_html_e('All-day Event', 'modern-events-calendar-lite'); ?>
+                            </label>
                         </div>
                     </div>
                 </div>
-                <div class="mec-steps-content mec-steps-content-3">
+                <div class="mec-steps-content mec-steps-content-<?php echo $step++; ?>">
                     <div id="mec-location">
                         <div class="mec-form-row">
                             <select name="mec[location_id]" id="mec_popup_location_id" class="mec_popup_location_id wn-mec-select-popup" title="<?php echo esc_attr__($this->main->m('taxonomy_location', esc_html__('Location', 'modern-events-calendar-lite')), 'modern-events-calendar-lite'); ?>">
@@ -139,7 +147,7 @@ if(!isset($post_type)) $post_type = NULL;
                         <?php if($this->getPRO()): ?>
                         <div class="mec-form-row">
                             <input type="hidden" name="mec[dont_show_map]" value="0" />
-                            <input type="checkbox" id="mec_location_dont_show_map" name="mec[dont_show_map]" value="1" <?php echo ($dont_show_map ? 'checked="checked"' : ''); ?> /><label for="mec_location_dont_show_map"><?php echo esc_html__("Don't show map in single event page", 'modern-events-calendar-lite'); ?></label>
+                            <label for="mec_location_dont_show_map"><input type="checkbox" id="mec_location_dont_show_map" name="mec[dont_show_map]" value="1" <?php echo ($dont_show_map ? 'checked="checked"' : ''); ?> /><?php echo esc_html__("Don't show map in single event page", 'modern-events-calendar-lite'); ?></label>
                         </div>
                         <?php endif; ?>
 
@@ -166,7 +174,8 @@ if(!isset($post_type)) $post_type = NULL;
                         </div>
                     </div>
                 </div>
-                <div class="mec-steps-content mec-steps-content-4">
+                <?php if(!isset($settings['organizers_status']) || $settings['organizers_status']): ?>
+                <div class="mec-steps-content mec-steps-content-<?php echo $step++; ?>">
                     <div id="mec-organizer">
                         <div class="mec-form-row">
                             <select name="mec[organizer_id]" id="mec_popup_organizer_id" class="mec_popup_organizer_id wn-mec-select-popup" title="<?php echo esc_attr__($this->main->m('taxonomy_organizer', esc_html__('Organizer', 'modern-events-calendar-lite')), 'modern-events-calendar-lite'); ?>">
@@ -225,7 +234,8 @@ if(!isset($post_type)) $post_type = NULL;
                         </div>
                     </div>
                 </div>
-                <div class="mec-steps-content mec-steps-content-5">
+                <?php endif; ?>
+                <div class="mec-steps-content mec-steps-content-<?php echo $step++; ?>">
                     <div class="mec-categories-tabs">
                         <ul>
                             <li class="mec-categories-tab-selected" data-type="all"><?php esc_html_e('All Categories', 'modern-events-calendar-lite'); ?></li>
@@ -244,10 +254,10 @@ if(!isset($post_type)) $post_type = NULL;
                         <input type="text" id="mec_popup_new_category" placeholder="Press 'Enter' to add category" style="display: none;">
                     </div>
                 </div>
-                <div class="mec-steps-content mec-steps-content-6">
+                <div class="mec-steps-content mec-steps-content-<?php echo $step++; ?>">
                     <textarea id="mec_popup_content" name="mec[content]" rows="8"></textarea>
                 </div>
-                <div class="mec-steps-content mec-steps-content-7">
+                <div class="mec-steps-content mec-steps-content-<?php echo $step++; ?>">
                     <div class="mec-event-popup-featured-image-wrapper">
                         <div id="mec_event_popup_featured_image_preview"></div>
                         <div class="mec-event-popup-featured-image-button">
@@ -256,10 +266,10 @@ if(!isset($post_type)) $post_type = NULL;
                         </div>
                     </div>
                 </div>
-                <div class="mec-steps-content mec-steps-content-8">
-                    <div class="mec-steps-8-loading"><div class="mec-loader"></div></div>
-                    <div class="mec-steps-8-results">
-                        <div class="mec-steps-8-results-wrap">
+                <div class="mec-steps-content mec-steps-content-<?php echo $step; ?>">
+                    <div class="mec-steps-<?php echo $step; ?>-loading"><div class="mec-loader"></div></div>
+                    <div class="mec-steps-<?php echo $step; ?>-results">
+                        <div class="mec-steps-<?php echo $step; ?>-results-wrap">
                             <img src="<?php echo plugin_dir_url(__FILE__ ) . '../../../assets/img/popup/char.png'; ?>" />
                             <h3><?php esc_html_e('Your Event Has Been Created.', 'modern-events-calendar-lite'); ?></h3>
                             <div class="mec-popup-final-buttons">
@@ -277,9 +287,9 @@ if(!isset($post_type)) $post_type = NULL;
         </div>
     </div>
 </div>
-<?php if(!isset($settings['event_as_popup']) or (isset($settings['event_as_popup']) && $settings['event_as_popup'] == '1') or $wizard_page == "MEC-wizard" ): ?>
+<?php if(!isset($settings['event_as_popup']) or (isset($settings['event_as_popup']) && $settings['event_as_popup'] == '1') or $wizard_page == "MEC-wizard"): ?>
 <?php
-$this->getFactory()->params('footer', function() use($main_page, $wizard_page, $post_type)
+$this->getFactory()->params('footer', function() use($main_page, $wizard_page, $post_type, $settings, $step)
 {
     ?>
     <script>
@@ -348,7 +358,7 @@ $this->getFactory()->params('footer', function() use($main_page, $wizard_page, $
         });
 
         // Lightbox Close
-        <?php if ( $wizard_page != "MEC-wizard" ) { ?>
+        <?php if ( $wizard_page != "MEC-wizard" && !isset($_REQUEST['adminview']) ) { ?>
         jQuery(document).on('lity:close', function(event, instance)
         {
             if(redirect) window.location.href = "<?php echo admin_url('post-new.php?post_type='.$post_type); ?>";
@@ -367,7 +377,7 @@ $this->getFactory()->params('footer', function() use($main_page, $wizard_page, $
         $e_next.on('click', function()
         {
             var new_step = parseInt(current_step)+1;
-            if(new_step > 8) new_step = 8;
+            if(new_step > <?php echo $step; ?>) new_step = <?php echo $step; ?>;
 
             mec_event_step(new_step, 'next');
         });
@@ -570,7 +580,7 @@ $this->getFactory()->params('footer', function() use($main_page, $wizard_page, $
                 $e_name.focus();
             }
             // Init WP Editor
-            else if(step === 6 && !popup_wpeditor)
+            else if(step === <?php echo (!isset($settings['organizers_status']) || $settings['organizers_status']) ? 6 : 5; ?> && !popup_wpeditor)
             {
                 popup_wpeditor = true;
                 wp.editor.initialize('mec_popup_content',
@@ -596,14 +606,14 @@ $this->getFactory()->params('footer', function() use($main_page, $wizard_page, $
             {
                 $e_prev.hide();
             }
-            else if(step === 8)
+            else if(step === <?php echo $step; ?>)
             {
                 $e_prev.hide();
                 $e_next.hide();
             }
 
             // Disable Redirection
-            redirect = (step !== 8);
+            redirect = (step !== <?php echo $step; ?>);
 
             // Steps Bar
             $e_steps.removeClass('mec-step-passed');
@@ -617,14 +627,14 @@ $this->getFactory()->params('footer', function() use($main_page, $wizard_page, $
             jQuery('.mec-steps-content-container').removeClass('mec-steps-content-1 mec-steps-content-2 mec-steps-content-3 mec-steps-content-4 mec-steps-content-5 mec-steps-content-6 mec-steps-content-7 mec-steps-content-8').addClass('mec-steps-content-'+step);
 
             // Save event
-            if(step === 8) return mec_event_save();
+            if(step === <?php echo $step; ?>) return mec_event_save();
         }
 
         function mec_event_save()
         {
             // Show Loading
-            jQuery(".mec-steps-8-loading").show();
-            jQuery(".mec-steps-8-results").hide();
+            jQuery(".mec-steps-<?php echo $step; ?>-loading").show();
+            jQuery(".mec-steps-<?php echo $step; ?>-results").hide();
 
             var form = jQuery("#mec_popup_event_form :input").serialize();
             form += '&mec[content]='+tinyMCE.get('mec_popup_content').getContent();
@@ -642,8 +652,8 @@ $this->getFactory()->params('footer', function() use($main_page, $wizard_page, $
                         var $view = jQuery('.mec-button-view');
                         $view.attr('href', data.link);
 
-                        jQuery(".mec-steps-8-loading").hide();
-                        jQuery(".mec-steps-8-results").show();
+                        jQuery(".mec-steps-<?php echo $step; ?>-loading").hide();
+                        jQuery(".mec-steps-<?php echo $step; ?>-results").show();
                     }
                 },
                 error: function(jqXHR, textStatus, errorThrown)

@@ -2,6 +2,8 @@
 /** no direct access **/
 defined('MECEXEC') or die();
 
+/** @var stdClass $event */
+
 // PRO Version is required
 if(!$this->getPRO()) return;
 

@@ -135,13 +135,9 @@ class MEC_db extends MEC_base
 		{
 			return $database->get_row($query);
 		}
-		elseif(!$return_object)
-		{
-			return $database->get_row($query, ARRAY_A);
-		}
 		else
 		{
-			return $database->get_row($query);
+			return $database->get_row($query, ARRAY_A);
 		}
 	}
 
@@ -152,13 +148,24 @@ class MEC_db extends MEC_base
         $query = "SHOW COLUMNS FROM `#__".$table."`";
         $results = $this->q($query, "select");
 
-        $columns = array();
-        foreach($results as $key=>$result) $columns[] = $result->Field;
+        $columns = [];
+        foreach($results as $result) $columns[] = $result->Field;
 
         if(trim($column) and in_array($column, $columns)) return true;
         elseif(trim($column)) return false;
 
         return $columns;
+    }
+
+    /**
+     * Check if a table exist or not
+     * @param string $table
+     * @return bool
+     */
+    public function exists($table)
+    {
+        $query = "SHOW TABLES LIKE '#__".$table."'";
+        return (bool) $this->select($query, "loadObject");
     }
 	
     /**
@@ -185,9 +192,8 @@ class MEC_db extends MEC_base
         $query = str_replace('#__blogs', $wpdb->base_prefix.'blogs', $query);
 		$query = str_replace('#__', $wpdb->prefix, $query);
 		$query = str_replace('[:CHARSET:]', $charset, $query);
-		$query = str_replace('[:COLLATE:]', $collate, $query);
 
-        return $query;
+		return str_replace('[:COLLATE:]', $collate, $query);
 	}
 
     public function escape($parameter)
@@ -197,7 +203,7 @@ class MEC_db extends MEC_base
 
         if(is_array($parameter))
         {
-            $return_data = array();
+            $return_data = [];
             foreach($parameter as $key=>$value)
             {
                 $return_data[$key] = $this->escape($value);

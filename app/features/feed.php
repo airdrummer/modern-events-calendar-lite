@@ -34,20 +34,20 @@ class MEC_feature_feed extends MEC_base
     {
         // Import MEC Factory
         $this->factory = $this->getFactory();
-        
+
         // Import MEC Main
         $this->main = $this->getMain();
-        
+
         // Import MEC Feed
         $this->feed = $this->getFeed();
-        
+
         // MEC Post Type Name
         $this->PT = $this->main->get_main_post_type();
 
         // General Settings
         $this->settings = $this->main->get_settings();
     }
-    
+
     /**
      * Initialize feed feature
      * @author Webnus <info@webnus.net>
@@ -65,7 +65,7 @@ class MEC_feature_feed extends MEC_base
 
         if(!is_admin()) $this->factory->action('init', array($this, 'ical'), 999);
     }
-    
+
     /**
      * Do the feed
      * @author Webnus <info@webnus.net>
@@ -96,7 +96,7 @@ class MEC_feature_feed extends MEC_base
         }
         else do_feed_rss2($for_comments); // Call default function
     }
-    
+
     /**
      * Returns the events
      * @author Webnus <info@webnus.net>
@@ -117,7 +117,7 @@ class MEC_feature_feed extends MEC_base
         $EO = new MEC_skin_list(); // Events Object
         $EO->initialize($args);
         $EO->search();
-        
+
         return $EO->fetch();
     }
 
@@ -164,7 +164,7 @@ class MEC_feature_feed extends MEC_base
         {
             $events = $this->main->get_events('-1');
 
-            $event_ids = array();
+            $event_ids = [];
             foreach($events as $event) $event_ids[] = $event->ID;
         }
 

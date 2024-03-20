@@ -142,7 +142,7 @@ class MEC_feature_autoemails extends MEC_base
         if(defined('DOING_AUTOSAVE') and DOING_AUTOSAVE) return;
 
         // MEC Data
-        $mec = (isset($_POST['mec']) and is_array($_POST['mec'])) ? $this->main->sanitize_deep_array($_POST['mec']) : array();
+        $mec = (isset($_POST['mec']) and is_array($_POST['mec'])) ? $this->main->sanitize_deep_array($_POST['mec']) : [];
 
         // All Options
         update_post_meta($post_id, 'mec', $mec);
@@ -151,10 +151,10 @@ class MEC_feature_autoemails extends MEC_base
         update_post_meta($post_id, 'mec_type', (isset($mec['type']) ? sanitize_text_field($mec['type']) : 'day'));
         update_post_meta($post_id, 'mec_afterbefore', (isset($mec['afterbefore']) ? sanitize_text_field($mec['afterbefore']) : 'before'));
 
-        $events = (isset($mec['events']) and is_array($mec['events']) and count($mec['events'])) ? array_map('sanitize_text_field', wp_unslash($mec['events'])) : array();
+        $events = (isset($mec['events']) and is_array($mec['events']) and count($mec['events'])) ? array_map('sanitize_text_field', wp_unslash($mec['events'])) : [];
 
         $all = (isset($mec['all']) ? sanitize_text_field($mec['all']) : 1);
-        if($all) $events = array();
+        if($all) $events = [];
 
         update_post_meta($post_id, 'mec_all', $all);
         update_post_meta($post_id, 'mec_events', $events);

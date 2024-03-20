@@ -20,17 +20,10 @@ wp_enqueue_script('mec-lity-script', $this->main->asset('packages/lity/lity.min.
     <div class="welcome-content w-clearfix extra">
     <?php if(current_user_can('read')): ?>
         <?php
-        $data_url = 'https://webnus.net/modern-events-calendar/addons-api/addons-api.json';
-        $args = array(
-            'timeout'     => '5',
-            'redirection' => '5',
-            'httpversion' => '1.0',
-            'blocking'    => true,
-            'headers'     => array(),
-            'cookies'     => array(),
-        );
-        $response = wp_remote_get( $data_url,$args );
-        $body     = wp_remote_retrieve_body( $response );
+        $data_url = 'https://files.webnus.site/addons-api/addons-api.json';
+		if (ini_get('allow_url_fopen')) {
+			$body = @file_get_contents(plugin_dir_path(__FILE__ ).'../../api/addons-api/addons-api.json');
+		}
         $obj = json_decode($body);
         ?>
         <div class="w-row">
@@ -40,16 +33,12 @@ wp_enqueue_script('mec-lity-script', $this->main->asset('packages/lity/lity.min.
                 <div class="w-box addon">
                     <div class="w-box-child mec-addon-box">
                         <div class="mec-addon-box-head">
-                            <?php
-                                $each_addons_url    = 'http://webnus.net/api/v3/updates/?action=get_metadata&slug=' . urlencode($value->slug);
-                                $addons_convert     = ($value->slug) ? @file_get_contents($each_addons_url) : '';
-                                $addons_json        = ($value->slug) ? json_decode($addons_convert, true) : [];
-                            ?>
-                            <div class="mec-addon-box-title"><img src="<?php esc_html_e($value->img); ?>" /><span><?php esc_html_e($value->name); ?></span></div>
+                            <div class="mec-addon-box-title"><img src="<?php echo plugin_dir_url(__FILE__ ).'../../api/addons-api/' . esc_html__($value->img); ?>" /><span><?php esc_html_e($value->name); ?></span></div>
                             <?php if ( $value->comingsoon == 'false' ) : ?> 
-                                <?php if(isset($addons_json['version'])): ?><div class="mec-addon-box-version"><span><?php esc_html_e('Version', 'modern-events-calendar-lite'); ?> <strong><?php esc_html_e($addons_json['version']); ?></strong></span></div><?php endif; ?>
                                 <?php if ( $value->pro == 'true' ) : ?>
                                     <div class="mec-addon-box-pro">Requires Pro Version</div>
+                                <?php else: ?>
+                                    <div class="mec-addon-box-pro-lite">Requires Pro / Lite Version</div>
                                 <?php endif; ?>
                             <?php endif; ?>
                         </div>

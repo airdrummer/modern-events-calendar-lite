@@ -43,7 +43,9 @@ class EventTags extends WidgetBase {
 
 			ob_start();
 				echo '<div class="mec-events-meta-group mec-events-meta-group-tags">';
-					echo '<span class="mec-events-meta-group-tags-label">' . esc_html__( 'Tags: ', 'modern-events-calendar-lite') . '</span>';
+					if( isset( $atts['mec_tags_show_title'] ) && $atts['mec_tags_show_title'] ){
+						echo '<span class="mec-events-meta-group-tags-label">' . esc_html__( 'Tags: ', 'modern-events-calendar-lite') . '</span>';
+					}
 					if ( $tags ) {
 						echo implode(
 							', ',

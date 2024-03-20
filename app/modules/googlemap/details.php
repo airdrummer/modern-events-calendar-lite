@@ -3,6 +3,8 @@
 defined('MECEXEC') or die();
 
 /** @var MEC_Main $this */
+/** @var array $event */
+/** @var MEC_factory $factory */
 
 // PRO Version is required
 if(!$this->getPRO()) return;
@@ -11,10 +13,10 @@ if(!$this->getPRO()) return;
 $settings = $this->get_settings();
 
 // Google Maps on single page is disabled
-if(!isset($settings['google_maps_status']) or (isset($settings['google_maps_status']) and !$settings['google_maps_status'])) return;
+if(!isset($settings['google_maps_status']) || !$settings['google_maps_status']) return;
 
 $event = $event[0];
-$uniqueid = (isset($uniqueid) ? $uniqueid : $event->data->ID);
+$uniqueid = $uniqueid ?? $event->data->ID;
 
 // Map is disabled for this event
 $dont_show_map = ((isset($event->data->meta['mec_dont_show_map']) and is_numeric($event->data->meta['mec_dont_show_map'])) ? $event->data->meta['mec_dont_show_map'] : 0);
@@ -29,9 +31,9 @@ $location_id = $this->get_master_location_id($event);
 $location = ($location_id ? $this->get_location_data($location_id) : array());
 
 // Event location geo point
-$latitude = isset($location['latitude']) ? $location['latitude'] : '';
-$longitude = isset($location['longitude']) ? $location['longitude'] : '';
-$address = isset($location['address']) ? $location['address'] : '';
+$latitude = $location['latitude'] ?? '';
+$longitude = $location['longitude'] ?? '';
+$address = $location['address'] ?? '';
 
 // Try to get the latitude and longitude on the fly
 if(!trim($latitude) or !trim($longitude))
@@ -63,7 +65,7 @@ $event_locations = array_keys((array)$event->data->locations);
 $map_data = new stdClass;
 $map_data->id = $uniqueid;
 $map_data->atts = array(
-    'location_map_zoom' => (isset($settings['google_maps_zoomlevel']) ? $settings['google_maps_zoomlevel'] : 14),
+    'location_map_zoom' => $settings['google_maps_zoomlevel'] ?? 14,
     'location_center_lat' => null,
     'location_center_long' => null,
     'use_orig_map' => true
@@ -89,7 +91,7 @@ jQuery(document).ready(function()
         scrollwheel: '. json_encode( $scrollwheel ? true : false ) .',
         latitude: "'.esc_js($latitude).'",
         longitude: "'.esc_js($longitude).'",
-        autoinit: '.((!isset($auto_init) or (isset($auto_init) and $auto_init)) ? 'true' : 'false').',
+        autoinit: '.((!isset($auto_init) || $auto_init) ? 'true' : 'false').',
         zoom: '.(isset($settings['google_maps_zoomlevel']) ? esc_js($settings['google_maps_zoomlevel']) : 14).',
         icon: "'.esc_js(apply_filters('mec_marker_icon', $this->asset('img/m-04.png'))).'",
         styles: '.((isset($settings['google_maps_style']) and trim($settings['google_maps_style']) != '') ? $this->get_googlemap_style($settings['google_maps_style']) : "''").',

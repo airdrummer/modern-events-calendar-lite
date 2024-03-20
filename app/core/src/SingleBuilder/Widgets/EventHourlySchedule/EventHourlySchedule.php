@@ -28,7 +28,7 @@ class EventHourlySchedule extends WidgetBase {
 
 		$settings = $this->settings;
 		$event_detail = $this->get_event_detail($event_id);
-		$hourly_schedules = isset($event_detail->data->hourly_schedules) && is_array($event_detail->data->hourly_schedules) ? $event_detail->data->hourly_schedules : array();
+		$hourly_schedules = isset($event_detail->data->hourly_schedules) && is_array($event_detail->data->hourly_schedules) ? $event_detail->data->hourly_schedules : [];
 
 		$html = '';
 		if ( true === $this->is_editor_mode && 0 == count($hourly_schedules) ) {

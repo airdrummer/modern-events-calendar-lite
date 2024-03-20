@@ -136,7 +136,7 @@ if ( !class_exists('Puc_v4p11_Plugin_Package', false) ):
 					),
 					E_USER_WARNING
 				);
-				return array();
+				return [];
 			}
 
 			if ( !function_exists('get_plugin_data') ) {

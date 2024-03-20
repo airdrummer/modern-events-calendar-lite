@@ -3,13 +3,14 @@
 defined('MECEXEC') or die();
 
 /** @var MEC_main $this */
+/** @var stdClass $event */
 
 // MEC Settings
 $settings = $this->get_settings();
 $ml_settings = $this->get_ml_settings();
 
 // The module is disabled
-if(!isset($settings['local_time_module_status']) or (isset($settings['local_time_module_status']) and !$settings['local_time_module_status'])) return;
+if(!isset($settings['local_time_module_status']) || !$settings['local_time_module_status']) return;
 
 // Get the visitor Timezone
 $timezone = $this->get_timezone_by_ip();
@@ -37,15 +38,15 @@ if(!isset($MEC_Events_dates_localtime[$MEC_Shortcode_id]) || empty($MEC_Events_d
     $MEC_Events_dates_localtime[$MEC_Shortcode_id] = $MEC_Events_dates;
 }
 
-$dates = array();
+$dates = [];
 if(isset($MEC_Events_dates_localtime[$MEC_Shortcode_id][$event_id]) && is_array($MEC_Events_dates_localtime[$MEC_Shortcode_id][$event_id]))
 {
     $k = $this->array_key_first($MEC_Events_dates_localtime[$MEC_Shortcode_id][$event_id]);
     if(isset($MEC_Events_dates_localtime[$MEC_Shortcode_id][$event_id][$k]))
     {
-        $dates = (isset($MEC_Events_dates_localtime[$MEC_Shortcode_id][$event_id][$k]) ? $MEC_Events_dates_localtime[$MEC_Shortcode_id][$event_id][$k] : NULL);
-        $start_time = isset($dates['start']['time']) ? $dates['start']['time'] : $start_time;
-        $end_time = isset($dates['end']['time']) ? $dates['end']['time'] : $end_time;
+        $dates = $MEC_Events_dates_localtime[$MEC_Shortcode_id][$event_id][$k];
+        $start_time = $dates['start']['time'] ?? $start_time;
+        $end_time = $dates['end']['time'] ?? $end_time;
 
         unset($MEC_Events_dates_localtime[$MEC_Shortcode_id][$event_id][$k]);
     }
@@ -53,7 +54,7 @@ if(isset($MEC_Events_dates_localtime[$MEC_Shortcode_id][$event_id]) && is_array(
 
 $allday = isset($event->data->meta['mec_allday']) ? $event->data->meta['mec_allday'] : 0;
 $hide_time = isset($event->data->meta['mec_hide_time']) ? $event->data->meta['mec_hide_time'] : 0;
-$hide_end_time = isset($event->data->meta['mec_hide_end_time']) ? $event->data->meta['mec_hide_end_time'] : 0;
+$hide_end_time = $this->hide_end_time_status($event->ID);
 
 if($allday)
 {
@@ -61,8 +62,8 @@ if($allday)
     $start_time = '23:59:59';
 }
 
-$start_date = (isset($dates['start']['date']) ? $dates['start']['date'] : $event->date['start']['date']);
-$end_date = (isset($dates['end']['date']) ? $dates['end']['date'] : $event->date['end']['date']);
+$start_date = ($dates['start']['date'] ?? $event->date['start']['date']);
+$end_date = ($dates['end']['date'] ?? $event->date['end']['date']);
 
 $gmt_start_time = strtotime($start_date.' '.$start_time) - $gmt_offset_seconds;
 $gmt_end_time = strtotime($end_date.' '.$end_time) - $gmt_offset_seconds;
@@ -77,7 +78,7 @@ $user_end_time = $gmt_end_time + $offset;
 ?>
 <div class="mec-localtime-details" id="mec_localtime_details">
     <div class="mec-localtime-wrap">
-        <i class="mec-sl-clock"></i>
+        <?php echo ((isset($icons) && $icons) ? $icons->display('clock') : '<i class="mec-sl-clock"></i>'); ?>
         <span class="mec-localtitle"><?php esc_html_e('Local Time:', 'modern-events-calendar-lite'); ?></span>
         <div class="mec-localdate"><?php echo sprintf(esc_html__('%s |', 'modern-events-calendar-lite'), $this->date_label(array('date'=>date('Y-m-d', $user_start_time)), array('date'=>date('Y-m-d', $user_end_time)), $date_format1)); ?></div>
         <?php if(!$hide_time and trim($time_format)): ?>

@@ -2,11 +2,13 @@
 /** no direct access **/
 defined('MECEXEC') or die();
 
-$query = new WP_Query(array(
+$current_event_id = $_GET['event_id'] ?? 0;
+
+$query = new WP_Query([
     'post_type' => $this->main->get_main_post_type(),
     'posts_per_page' => '-1',
-    'post_status' => array('pending', 'draft', 'future', 'publish')
-));
+    'post_status' => ['pending', 'draft', 'future', 'publish']
+]);
 ?>
 <div id="webnus-dashboard" class="wrap about-wrap mec-addons">
     <div class="welcome-head w-clearfix">
@@ -16,7 +18,7 @@ $query = new WP_Query(array(
                 <p><?php echo esc_html__('Using this section, you can see the list of participant attendees by the order of date.', 'modern-events-calendar-lite'); ?></p>
             </div>
             <div class="w-col-sm-3">
-                <?php $styling = $this->main->get_styling(); $darkadmin_mode = isset($styling['dark_mode']) ? $styling['dark_mode'] : ''; if($darkadmin_mode == 1): $darklogo = plugin_dir_url(__FILE__ ) . '../../../assets/img/mec-logo-w2.png'; else: $darklogo = plugin_dir_url(__FILE__ ) . '../../../assets/img/mec-logo-w.png'; endif; ?>
+                <?php $styling = $this->main->get_styling(); $darkadmin_mode = $styling['dark_mode'] ?? ''; if($darkadmin_mode == 1): $darklogo = plugin_dir_url(__FILE__ ) . '../../../assets/img/mec-logo-w2.png'; else: $darklogo = plugin_dir_url(__FILE__ ) . '../../../assets/img/mec-logo-w.png'; endif; ?>
                 <img src="<?php echo esc_url($darklogo); ?>" />
                 <span class="w-theme-version"><?php echo esc_html__('Version', 'modern-events-calendar-lite'); ?> <?php echo MEC_VERSION; ?></span>
             </div>
@@ -42,7 +44,7 @@ $query = new WP_Query(array(
 
                                         $start_date = get_post_meta($ID, 'mec_start_date', true);
 
-                                        echo '<option value="'.esc_attr($ID).'">' . sprintf(esc_html__('%s (from %s)', 'modern-events-calendar-lite'), get_the_title(), date($date_format, strtotime($start_date))) . '</option>';
+                                        echo '<option value="'.esc_attr($ID).'" '.(($current_event_id == $ID) ? 'selected' : '').'>' . sprintf(esc_html__('%s (from %s)', 'modern-events-calendar-lite'), get_the_title(), date($date_format, strtotime($start_date))) . '</option>';
                                     }
                                 }
                             ?>

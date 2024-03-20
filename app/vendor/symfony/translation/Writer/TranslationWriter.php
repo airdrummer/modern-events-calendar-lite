@@ -23,7 +23,7 @@ use Symfony\Component\Translation\Exception\RuntimeException;
  */
 class TranslationWriter implements TranslationWriterInterface
 {
-    private $dumpers = array();
+    private $dumpers = [];
 
     /**
      * Adds a dumper to the writer.

@@ -28,7 +28,7 @@ class EventSpeakers extends WidgetBase {
 
 		$settings = $this->settings;
 		$event_detail = $this->get_event_detail($event_id);
-		$speakers = (isset($event_detail->data->speakers) and is_array($event_detail->data->speakers)) ? $event_detail->data->speakers : array();
+		$speakers = (isset($event_detail->data->speakers) and is_array($event_detail->data->speakers)) ? $event_detail->data->speakers : [];
 
 		$html = '';
 		if ( true === $this->is_editor_mode && ( empty($speakers) || (!isset($settings['speakers_status']) || !$settings['speakers_status']) ) ) {
@@ -48,7 +48,7 @@ class EventSpeakers extends WidgetBase {
 				?>
 				<script>
 					// Fix modal speaker in some themes
-					jQuery( ".mec-speaker-avatar a, .mec-schedule-speakers a" ).click(function(e) {
+					jQuery( ".mec-speaker-avatar-dialog a, .mec-schedule-speakers a" ).click(function(e) {
 						e.preventDefault();
 						var id =  jQuery(this).attr('href');
 						lity(id);

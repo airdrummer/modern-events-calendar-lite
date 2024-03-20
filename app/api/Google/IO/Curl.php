@@ -30,7 +30,7 @@ class Google_IO_Curl extends Google_IO_Abstract
   // cURL hex representation of version 7.30.0
   const NO_QUIRK_VERSION = 0x071E00;
 
-  private $options = array();
+  private $options = [];
 
   /** @var bool $disableProxyWorkaround */
   private $disableProxyWorkaround;
@@ -68,7 +68,7 @@ class Google_IO_Curl extends Google_IO_Abstract
 
     $requestHeaders = $request->getRequestHeaders();
     if ($requestHeaders && is_array($requestHeaders)) {
-      $curlHeaders = array();
+      $curlHeaders = [];
       foreach ($requestHeaders as $k => $v) {
         $curlHeaders[] = "$k: $v";
       }

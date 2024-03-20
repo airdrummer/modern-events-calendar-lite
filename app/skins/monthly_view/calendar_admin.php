@@ -3,6 +3,8 @@
 defined('MECEXEC') or die();
 
 /** @var MEC_skin_monthly_view $this */
+/** @var int $month */
+/** @var int $year */
 
 // table headings
 $headings = $this->main->get_weekday_abbr_labels();
@@ -21,13 +23,12 @@ $reason_for_cancellation = false;
 // days and weeks vars
 $running_day = date('w', mktime(0, 0, 0, $month, 1, $year));
 $days_in_month = date('t', mktime(0, 0, 0, $month, 1, $year));
-$days_in_previous_month = date('t', strtotime('-1 month', strtotime($this->active_day)));
+$days_in_previous_month = $this->main->get_days_in_previous_month($month, $year);
 
 $days_in_this_week = 1;
 $day_counter = 0;
 
-if($week_start == 0) $running_day = $running_day; // Sunday
-elseif($week_start == 1) // Monday
+if($week_start == 1) // Monday
 {
     if($running_day != 0) $running_day = $running_day - 1;
     else $running_day = 6;
@@ -70,16 +71,45 @@ elseif($week_start == 5) // Friday
                 foreach($events[$today] as $event)
                 {
                     $start_time = (isset($event->data->time) ? $event->data->time['start'] : '');
-                    $end_time = (isset($event->data->time) ? $event->data->time['end'] : '');
-
+                    $occurrence = strtotime($today.' '.$start_time);
                     $event_unique = (isset($event->data->time) ? $event->data->ID.$event->data->time['start_timestamp'] : $event->data->ID);
+
+                    $attendees = $this->main->get_event_attendees($event->ID, $occurrence);
+                    $attendees_count = count($attendees);
 
                     echo '<div class="'.($this->main->is_expired($event) ? 'mec-past-event ' : '').'ended-relative simple-skin-ended">';
                     echo '<a class="mec-monthly-tooltip event-single-link-simple" data-tooltip-content="#mec-tooltip-'.esc_attr($event_unique.'-'.$day_id).'" data-event-id="'.esc_attr($event->data->ID).'" href="'.esc_url(get_edit_post_link($event->ID)).'" '.$target_url.'>';
                     echo '<h4 class="mec-event-title">'.esc_html($event->data->title).'</h4>'.MEC_kses::element($this->main->get_normal_labels($event, $display_label).$this->main->display_cancellation_reason($event, $reason_for_cancellation));
                     do_action('mec_shortcode_virtual_badge', $event->data->ID);
                     echo '</a>';
+                    echo '<div id="mec_attendees_'.$event->ID.'_'.$occurrence.'_count" class="mec-admin-calendar-attendees-count">'.sprintf(esc_html__('%s attendees', 'modern-events-calendar-lite'), $attendees_count).'</div>';
+                    echo '<div id="mec_attendees_'.$event->ID.'_'.$occurrence.'_table" class="mec-attendees-table lity-hide">'.$this->main->get_attendees_table($attendees, $event->ID, $occurrence, false).'</div>';
                     echo '</div>';
+
+                    $this->getFactory()->params('footer', function() use($event, $occurrence)
+                    {
+                        ?>
+                        <script>
+                        jQuery(document).ready(function()
+                        {
+                            setTimeout(() => {
+                                jQuery('#mec_attendees_<?php echo $event->ID.'_'.$occurrence; ?>_count').on('click', function(e)
+                                {
+                                    e.preventDefault();
+
+                                    // Open Lightbox
+                                    lity('#mec_attendees_<?php echo $event->ID.'_'.$occurrence; ?>_table');
+                                });
+                            }, 1000);
+
+                            jQuery(document).on('lity:close', function(event, instance)
+                            {
+                                jQuery('body').css('overflow', 'auto');
+                            });
+                        });
+                        </script>
+                        <?php
+                    });
                 }
 
                 echo '</dt>';

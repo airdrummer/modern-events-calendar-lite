@@ -46,6 +46,7 @@ $settings = $this->main->get_settings();
             </div>
             <?php endif; ?>
 
+            <?php if($this->main->getPRO()): ?>
             <hr>
             <div class="mec-export-all-bookings">
                 <h3><?php esc_html_e('Export all bookings to file', 'modern-events-calendar-lite'); ?></h3>
@@ -59,6 +60,7 @@ $settings = $this->main->get_settings();
                 <h3><?php esc_html_e('Export certain bookings', 'modern-events-calendar-lite'); ?></h3>
                 <p class="description"><?php echo sprintf(esc_html__("For exporting bookings, you can use bulk actions in %s page.", 'modern-events-calendar-lite'), '<a href="'.esc_url($this->main->URL('backend')).'edit.php?post_type=mec-books">'.esc_html__('Bookings', 'modern-events-calendar-lite').'</a>'); ?></p>
             </div>
+            <?php endif; ?>
 
             <?php
                 $tab = isset($_GET['tab']) ? sanitize_text_field( $_GET['tab'] ) : '';

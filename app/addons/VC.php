@@ -52,7 +52,7 @@ class MEC_addon_VC extends MEC_base
     {
         $calendar_posts = get_posts(array('post_type'=>'mec_calendars', 'posts_per_page'=>'-1'));
         
-        $calendars = array();
+        $calendars = [];
         foreach($calendar_posts as $calendar_post) $calendars[$calendar_post->post_title] = $calendar_post->ID;
         
         vc_map(array(

@@ -71,7 +71,7 @@ class MEC_feature_popup extends MEC_base
         // Verify that the nonce is valid.
         if(!wp_verify_nonce($wpnonce, 'mec_shortcode_popup')) $this->main->response(array('success'=>0, 'code'=>'NONCE_IS_INVALID'));
 
-        $params = (isset($_POST['shortcode']) and is_array($_POST['shortcode'])) ? $this->main->sanitize_deep_array($_POST['shortcode']) : array();
+        $params = (isset($_POST['shortcode']) and is_array($_POST['shortcode'])) ? $this->main->sanitize_deep_array($_POST['shortcode']) : [];
 
         $skin = isset($params['skin']) ? sanitize_text_field($params['skin']) : 'list';
         $title = isset($params['name']) ? sanitize_text_field($params['name']) : ucwords(str_replace('_', ' ', $skin));
@@ -216,12 +216,12 @@ class MEC_feature_popup extends MEC_base
             ),
         );
 
-        $sk = isset($skin_options[$skin]) ? $skin_options[$skin] : array('style' => $style, 'start_date_type' => 'today', 'start_date' => '');
+        $sk = $skin_options[$skin] ?? ['style' => $style, 'start_date_type' => 'today', 'start_date' => ''];
 
         $sk['sed_method'] = $sed;
         $sk['image_popup'] = 0;
 
-        $sf = array();
+        $sf = [];
         $sf_status = 0;
         $sf_display_label = '';
 
@@ -270,7 +270,7 @@ class MEC_feature_popup extends MEC_base
         // Verify that the nonce is valid.
         if(!wp_verify_nonce($wpnonce, 'mec_event_popup')) $this->main->response(array('success'=>0, 'code'=>'NONCE_IS_INVALID'));
 
-        $mec = (isset($_POST['mec']) and is_array($_POST['mec'])) ? $this->main->sanitize_deep_array($_POST['mec'], 'text', array('content', 'excerpt')) : array();
+        $mec = (isset($_POST['mec']) and is_array($_POST['mec'])) ? $this->main->sanitize_deep_array($_POST['mec'], 'text', array('content', 'excerpt')) : [];
 
         $post_title = isset($mec['title']) ? sanitize_text_field($mec['title']) : '';
         $post_content = isset($mec['content']) ? MEC_kses::page($mec['content']) : '';
@@ -284,7 +284,7 @@ class MEC_feature_popup extends MEC_base
         $post_id = wp_insert_post($post);
 
         // Categories
-        $categories = (isset($_POST['tax_input']) and isset($_POST['tax_input']['mec_category']) and is_array($_POST['tax_input']['mec_category'])) ? $this->main->sanitize_deep_array($_POST['tax_input']['mec_category']) : array();
+        $categories = (isset($_POST['tax_input']) and isset($_POST['tax_input']['mec_category']) and is_array($_POST['tax_input']['mec_category'])) ? $this->main->sanitize_deep_array($_POST['tax_input']['mec_category']) : [];
         wp_set_post_terms($post_id, $categories, 'mec_category');
 
         // Color
@@ -357,53 +357,56 @@ class MEC_feature_popup extends MEC_base
         // Organizer
         $organizer_id = isset($mec['organizer_id']) ? sanitize_text_field($mec['organizer_id']) : 0;
 
-        // Selected a saved organizer
-        if($organizer_id)
+        if(!isset($this->settings['organizers_status']) || $this->settings['organizers_status'])
         {
-            // Set term to the post
-            wp_set_object_terms($post_id, (int) $organizer_id, 'mec_organizer');
-        }
-        else
-        {
-            $name = (isset($mec['organizer']['name']) and trim($mec['organizer']['name'])) ? sanitize_text_field($mec['organizer']['name']) : esc_html__('Organizer Name', 'modern-events-calendar-lite');
-
-            $term = get_term_by('name', $name, 'mec_organizer');
-
-            // Term already exists
-            if(is_object($term) and isset($term->term_id))
+            // Selected a saved organizer
+            if($organizer_id)
             {
                 // Set term to the post
-                wp_set_object_terms($post_id, (int) $term->term_id, 'mec_organizer');
-                $organizer_id = (int) $term->term_id;
+                wp_set_object_terms($post_id, (int) $organizer_id, 'mec_organizer');
             }
             else
             {
-                $term = wp_insert_term($name, 'mec_organizer');
+                $name = (isset($mec['organizer']['name']) and trim($mec['organizer']['name'])) ? sanitize_text_field($mec['organizer']['name']) : esc_html__('Organizer Name', 'modern-events-calendar-lite');
 
-                $organizer_id = $term['term_id'];
-                if($organizer_id)
+                $term = get_term_by('name', $name, 'mec_organizer');
+
+                // Term already exists
+                if(is_object($term) and isset($term->term_id))
                 {
                     // Set term to the post
-                    wp_set_object_terms($post_id, (int) $organizer_id, 'mec_organizer');
-
-                    $tel = (isset($mec['organizer']['tel']) and trim($mec['organizer']['tel'])) ? sanitize_text_field($mec['organizer']['tel']) : '';
-                    $email = (isset($mec['organizer']['email']) and trim($mec['organizer']['email'])) ? sanitize_text_field($mec['organizer']['email']) : '';
-                    $url = (isset($mec['organizer']['url']) and trim($mec['organizer']['url'])) ? sanitize_url($mec['organizer']['url']) : '';
-                    $thumbnail = (isset($mec['organizer']['thumbnail']) and trim($mec['organizer']['thumbnail'])) ? sanitize_text_field($mec['organizer']['thumbnail']) : '';
-
-                    update_term_meta($organizer_id, 'tel', $tel);
-                    update_term_meta($organizer_id, 'email', $email);
-                    update_term_meta($organizer_id, 'url', $url);
-                    update_term_meta($organizer_id, 'thumbnail', $thumbnail);
+                    wp_set_object_terms($post_id, (int) $term->term_id, 'mec_organizer');
+                    $organizer_id = (int) $term->term_id;
                 }
-                else $organizer_id = 1;
+                else
+                {
+                    $term = wp_insert_term($name, 'mec_organizer');
+
+                    $organizer_id = $term['term_id'];
+                    if($organizer_id)
+                    {
+                        // Set term to the post
+                        wp_set_object_terms($post_id, (int) $organizer_id, 'mec_organizer');
+
+                        $tel = (isset($mec['organizer']['tel']) and trim($mec['organizer']['tel'])) ? sanitize_text_field($mec['organizer']['tel']) : '';
+                        $email = (isset($mec['organizer']['email']) and trim($mec['organizer']['email'])) ? sanitize_text_field($mec['organizer']['email']) : '';
+                        $url = (isset($mec['organizer']['url']) and trim($mec['organizer']['url'])) ? sanitize_url($mec['organizer']['url']) : '';
+                        $thumbnail = (isset($mec['organizer']['thumbnail']) and trim($mec['organizer']['thumbnail'])) ? sanitize_text_field($mec['organizer']['thumbnail']) : '';
+
+                        update_term_meta($organizer_id, 'tel', $tel);
+                        update_term_meta($organizer_id, 'email', $email);
+                        update_term_meta($organizer_id, 'url', $url);
+                        update_term_meta($organizer_id, 'thumbnail', $thumbnail);
+                    }
+                    else $organizer_id = 1;
+                }
             }
         }
 
         update_post_meta($post_id, 'mec_organizer_id', $organizer_id);
 
         // Date Options
-        $date = isset($mec['date']) ? $mec['date'] : array();
+        $date = $mec['date'] ?? [];
 
         $start_date = (isset($date['start']['date']) and trim($date['start']['date'])) ? $this->main->standardize_format(sanitize_text_field($date['start']['date'])) : date('Y-m-d');
         $end_date = (isset($date['end']['date']) and trim($date['end']['date'])) ? $this->main->standardize_format(sanitize_text_field($date['end']['date'])) : date('Y-m-d');
@@ -518,7 +521,7 @@ class MEC_feature_popup extends MEC_base
         update_post_meta($post_id, 'mec_end_datetime', $end_datetime);
 
         // Repeat Options
-        $repeat = array();
+        $repeat = [];
         $repeat_type = NULL;
         $repeat_status = 0;
 
@@ -610,39 +613,39 @@ class MEC_feature_popup extends MEC_base
         $schedule->reschedule($post_id, $schedule->get_reschedule_maximum($repeat_type));
 
         // Hourly Schedule Options
-        $hourly_schedules = array();
+        $hourly_schedules = [];
         update_post_meta($post_id, 'mec_hourly_schedules', $hourly_schedules);
 
         // Booking and Ticket Options
-        $booking = array();
+        $booking = [];
         update_post_meta($post_id, 'mec_booking', $booking);
 
-        $tickets = array();
+        $tickets = [];
         update_post_meta($post_id, 'mec_tickets', $tickets);
 
         // Fee options
         $fees_global_inheritance = 1;
         update_post_meta($post_id, 'mec_fees_global_inheritance', $fees_global_inheritance);
 
-        $fees = array();
+        $fees = [];
         update_post_meta($post_id, 'mec_fees', $fees);
 
         // Ticket Variation options
         $ticket_variations_global_inheritance = 1;
         update_post_meta($post_id, 'mec_ticket_variations_global_inheritance', $ticket_variations_global_inheritance);
 
-        $ticket_variations = array();
+        $ticket_variations = [];
         update_post_meta($post_id, 'mec_ticket_variations', $ticket_variations);
 
         // Registration Fields options
         $reg_fields_global_inheritance = 1;
         update_post_meta($post_id, 'mec_reg_fields_global_inheritance', $reg_fields_global_inheritance);
 
-        $reg_fields = array();
+        $reg_fields = [];
         update_post_meta($post_id, 'mec_reg_fields', $reg_fields);
 
         // Organizer Payment Options
-        $op = array();
+        $op = [];
         update_post_meta($post_id, 'mec_op', $op);
         update_user_meta(get_post_field('post_author', $post_id), 'mec_op', $op);
 

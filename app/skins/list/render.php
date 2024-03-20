@@ -7,10 +7,10 @@ defined('MECEXEC') or die();
 $styling = $this->main->get_styling();
 $settings = $this->main->get_settings();
 $current_month_divider = isset($_REQUEST['current_month_divider']) ? sanitize_text_field($_REQUEST['current_month_divider']) : 0;
-$display_label = isset($this->skin_options['display_label']) ? $this->skin_options['display_label'] : false;
-$reason_for_cancellation = isset($this->skin_options['reason_for_cancellation']) ? $this->skin_options['reason_for_cancellation'] : false;
+$display_label = $this->skin_options['display_label'] ?? false;
+$reason_for_cancellation = $this->skin_options['reason_for_cancellation'] ?? false;
 $event_colorskin = (isset($styling['mec_colorskin']) || isset($styling['color'])) ? 'colorskin-custom' : '';
-$map_events = array();
+$map_events = [];
 ?>
 <div class="mec-wrap <?php echo esc_attr($event_colorskin); ?>">
 	<div class="mec-event-list-<?php echo esc_attr($this->style); ?>">
@@ -94,15 +94,15 @@ $map_events = array();
                 <?php elseif($this->style == 'classic'): ?>
                     <div class="mec-event-image"><?php echo MEC_kses::element($this->display_link($event, $event->data->thumbnails['thumbnail'])); ?></div>
                     <?php if(isset($settings['multiple_day_show_method']) && $settings['multiple_day_show_method'] == 'all_days'): ?>
-                        <div class="mec-event-date mec-color"><i class="mec-sl-calendar"></i> <?php echo esc_html($this->main->date_i18n($this->date_format_classic_1, strtotime($event->date['start']['date']))); ?></div>
+                        <div class="mec-event-date mec-color"><?php echo $this->icons->display('calendar'); ?> <?php echo esc_html($this->main->date_i18n($this->date_format_classic_1, strtotime($event->date['start']['date']))); ?></div>
                     <?php else: ?>
-                        <div class="mec-event-date mec-color"><i class="mec-sl-calendar"></i> <?php echo MEC_kses::element($this->main->dateify($event, $this->date_format_classic_1)); ?></div>
-                        <div class="mec-event-time mec-color"><?php if($this->include_events_times and trim($start_time)) {echo '<i class="mec-sl-clock"></i>'; echo MEC_kses::element($this->main->display_time($start_time, $end_time)); } ?></div>
+                        <div class="mec-event-date mec-color"><?php echo $this->icons->display('calendar'); ?> <?php echo MEC_kses::element($this->main->dateify($event, $this->date_format_classic_1)); ?></div>
+                        <div class="mec-event-time mec-color"><?php if($this->include_events_times and trim($start_time)) { echo $this->icons->display('clock'); echo MEC_kses::element($this->main->display_time($start_time, $end_time)); } ?></div>
                     <?php endif; ?>
                     <?php echo MEC_kses::element($this->get_label_captions($event)); ?>
                     <?php if($this->localtime) echo MEC_kses::full($this->main->module('local-time.type2', array('event' => $event))); ?>
                     <h4 class="mec-event-title"><?php echo MEC_kses::element($this->display_link($event)); ?><?php echo MEC_kses::embed($this->display_custom_data($event)); ?><?php echo MEC_kses::element($this->main->get_flags($event).$event_color.$this->main->get_normal_labels($event, $display_label).$this->main->display_cancellation_reason($event, $reason_for_cancellation)); ?><?php do_action('mec_shortcode_virtual_badge', $event->data->ID ); ?></h4>
-                    <?php if(isset($location['name'])): ?><div class="mec-event-detail"><div class="mec-event-loc-place"><i class="mec-sl-map-marker"></i> <?php echo (isset($location['name']) ? esc_html($location['name']) : ''); ?></div></div><?php endif; ?>
+                    <?php if(isset($location['name'])): ?><div class="mec-event-detail"><div class="mec-event-loc-place"><?php echo $this->icons->display('map-marker'); ?> <?php echo esc_html($location['name']); ?></div></div><?php endif; ?>
                     <?php echo MEC_kses::element($this->display_categories($event)); ?>
                     <?php echo MEC_kses::element($this->display_organizers($event)); ?>
                     <?php echo MEC_kses::element($this->display_cost($event)); ?>
@@ -146,7 +146,7 @@ $map_events = array();
                     <div class="col-md-3 col-sm-3 btn-wrapper"><?php do_action('before_mec_list_minimal_button', $event); ?><?php echo MEC_kses::element($this->display_link($event, $this->main->m('event_detail', esc_html__('EVENT DETAIL', 'modern-events-calendar-lite')), 'mec-detail-button')); ?></div>
                 <?php elseif($this->style == 'standard'): ?>
                     <?php
-                        $excerpt = trim($event->data->post->post_excerpt) ? $event->data->post->post_excerpt : '';
+                        $excerpt = get_the_excerpt($event->data->post);
 
                         // Safe Excerpt for UTF-8 Strings
                         if(!trim($excerpt))
@@ -155,6 +155,7 @@ $map_events = array();
                             $words = array_slice($ex, 0, 10);
 
                             $excerpt = implode(' ', $words);
+                            if(trim($excerpt)) $excerpt .= ' <span>[…]</span>';
                         }
                     ?>
                     <div class="mec-topsec">
@@ -169,7 +170,7 @@ $map_events = array();
                                 <?php $soldout = $this->main->get_flags($event); ?>
                                 <?php echo MEC_kses::element($this->display_status_bar($event)); ?>
                                 <h3 class="mec-event-title"><?php echo MEC_kses::element($this->display_link($event)); ?><?php echo MEC_kses::embed($this->display_custom_data($event)); ?><?php echo MEC_kses::element($soldout.$event_color.$this->main->get_normal_labels($event, $display_label).$this->main->display_cancellation_reason($event, $reason_for_cancellation)); ?><?php do_action('mec_shortcode_virtual_badge', $event->data->ID ); ?></h3>
-                                <div class="mec-event-description"><?php echo MEC_kses::element($excerpt.(trim($excerpt) ? ' <span>...</span>' : '')); ?></div>
+                                <div class="mec-event-description"><?php echo MEC_kses::element($excerpt); ?></div>
                             </div>
                         </div>
                         <div class="col-md-3 mec-col-table-c mec-event-meta-wrap">

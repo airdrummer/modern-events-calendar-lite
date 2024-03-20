@@ -114,7 +114,7 @@ class MEC_captcha extends MEC_base
 
             $req = "";
             foreach([
-                'secret' => (isset($this->settings['google_recaptcha_secretkey']) ? $this->settings['google_recaptcha_secretkey'] : ''),
+                'secret' => $this->settings['google_recaptcha_secretkey'] ?? '',
                 'remoteip' => $this->main->get_client_ip(),
                 'v' => 'php_1.0',
                 'response' => $token

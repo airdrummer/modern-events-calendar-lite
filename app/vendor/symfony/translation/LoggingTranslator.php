@@ -97,7 +97,7 @@ class LoggingTranslator implements TranslatorInterface, TranslatorBagInterface
             return $this->translator->getFallbackLocales();
         }
 
-        return array();
+        return [];
     }
 
     /**

@@ -3,17 +3,19 @@
 defined('MECEXEC') or die();
 
 /** @var MEC_feature_bookingcalendar $this */
+/** @var stdClass $event */
+/** @var string $uniqueid */
 
 // Available Dates
-$dates = isset($event->dates) ? $event->dates : array($event->date);
+$dates = $event->dates ?? array($event->date);
 
 // Multiple Day Event
 $multiple_date = (isset($dates) && $dates[0]['start']['date'] != $dates[0]['end']['date']) ? 'mec-multiple-event' : '';
 
-$first_date = (isset($start) ? $start : (isset($dates[0]) ? $dates[0]['start']['date'] : NULL));
+$first_date = ($start ?? (isset($dates[0]) ? $dates[0]['start']['date'] : NULL));
 if(!$first_date) return;
 
-$selected_datetime = (isset($selected_datetime) ? $selected_datetime : $this->book->timestamp($dates[0]['start'], $dates[0]['end']));
+$selected_datetime = ($selected_datetime ?? $this->book->timestamp($dates[0]['start'], $dates[0]['end']));
 
 // Settings
 $settings = $this->main->get_settings();
@@ -23,7 +25,7 @@ $ml_settings = $this->main->get_ml_settings();
 $booking_ongoing = (isset($settings['booking_ongoing']) and $settings['booking_ongoing']);
 
 // Options
-$event_color = isset($event->data->meta['mec_color']) && !empty($event->data->meta['mec_color']) ? '#'.$event->data->meta['mec_color'] : '';
+$event_color = $this->main->get_event_color_dot($event);
 $allday = isset($event->data->meta['mec_allday']) ? $event->data->meta['mec_allday'] : 0;
 $date_format = (isset($ml_settings['booking_date_format1']) and trim($ml_settings['booking_date_format1'])) ? $ml_settings['booking_date_format1'] : 'Y-m-d';
 $date_format = trim(str_replace(['H', 'h', 'i', 's', 'A', 'a', 'G', 'g', 'B', 'u', 'v', ':'], '', $date_format), ': ');
@@ -44,13 +46,12 @@ $week_start = $this->main->get_first_day_of_week();
 // days and weeks vars
 $running_day = date('w', mktime(0, 0, 0, $month, 1, $year));
 $days_in_month = date('t', mktime(0, 0, 0, $month, 1, $year));
-$days_in_previous_month = date('t', strtotime('-1 month', strtotime($active_day)));
+$days_in_previous_month = $this->main->get_days_in_previous_month($month, $year);
 
 $days_in_this_week = 1;
 $day_counter = 0;
 
-if($week_start == 0) $running_day = $running_day; // Sunday
-elseif($week_start == 1) // Monday
+if($week_start == 1) // Monday
 {
     if($running_day != 0) $running_day = $running_day - 1;
     else $running_day = 6;

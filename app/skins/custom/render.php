@@ -86,7 +86,7 @@ $with_css = $is_load_more ? false : true;
 	</div>
 </div>
 <?php
-$map_eventss = array();
+$map_eventss = [];
 if(isset($map_events) && !empty($map_events))
 {
     foreach($map_events as $key => $value)

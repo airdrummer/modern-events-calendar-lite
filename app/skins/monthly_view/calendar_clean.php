@@ -3,6 +3,8 @@
 defined('MECEXEC') or die();
 
 /** @var MEC_skin_monthly_view $this */
+/** @var int $month */
+/** @var int $year */
 
 // table headings
 $headings = $this->main->get_weekday_abbr_labels();
@@ -11,21 +13,20 @@ echo '<dl class="mec-calendar-table-head"><dt class="mec-calendar-day-head">'.ME
 // Start day of week
 $week_start = $this->main->get_first_day_of_week();
 
-$this->localtime = isset($this->skin_options['include_local_time']) ? $this->skin_options['include_local_time'] : false;
-$display_label = isset($this->skin_options['display_label']) ? $this->skin_options['display_label'] : false;
-$reason_for_cancellation = isset($this->skin_options['reason_for_cancellation']) ? $this->skin_options['reason_for_cancellation'] : false;
+$this->localtime = $this->skin_options['include_local_time'] ?? false;
+$display_label = $this->skin_options['display_label'] ?? false;
+$reason_for_cancellation = $this->skin_options['reason_for_cancellation'] ?? false;
 
 // days and weeks vars
 $running_day = date('w', mktime(0, 0, 0, $month, 1, $year));
 $days_in_month = date('t', mktime(0, 0, 0, $month, 1, $year));
-$days_in_previous_month = date('t', strtotime('-1 month', strtotime($this->active_day)));
+$days_in_previous_month = $this->main->get_days_in_previous_month($month, $year);
 
 $days_in_this_week = 1;
 $day_counter = 0;
 $styles_str = '';
 
-if($week_start == 0) $running_day = $running_day; // Sunday
-elseif($week_start == 1) // Monday
+if($week_start == 1) // Monday
 {
     if($running_day != 0) $running_day = $running_day - 1;
     else $running_day = 6;
@@ -78,8 +79,8 @@ $date_format = get_option('date_format');
 
                     $events_filter = $after_time_filter = '';
 
-                    $start_datetime =  isset($event->date['start']) && !empty($event->date['start']) ? $event->date['start'] : array();
-                    $end_datetime = isset($event->date['end']) && !empty($event->date['end']) ? $event->date['end'] : array();
+                    $start_datetime =  isset($event->date['start']) && !empty($event->date['start']) ? $event->date['start'] : [];
+                    $end_datetime = isset($event->date['end']) && !empty($event->date['end']) ? $event->date['end'] : [];
                     $start_timestamp = isset( $start_datetime['timestamp'] ) ? $start_datetime['timestamp'] : ( isset( $start_datetime['date'] ) ? strtotime( $start_datetime['date'] ) : '' );
 
                     $multiple_day_show_method = \MEC\Settings\Settings::getInstance()->get_settings('multiple_day_show_method');
@@ -111,8 +112,8 @@ $date_format = get_option('date_format');
 
                     if($this->display_all) $events_str .= '<div class="mec-event-date">'.MEC_kses::element( $event_date ).'</div>';
 
-                    if($this->display_detailed_time and $this->main->is_multipleday_occurrence($event)) $events_str .= '<div class="mec-event-detailed-time mec-event-time mec-color"><i class="mec-sl-clock-o"></i> '.MEC_kses::element($this->display_detailed_time($event)).'</div>';
-                    elseif(trim($start_time)) $events_str .= '<div class="mec-event-time mec-color"><i class="mec-sl-clock-o"></i> '.MEC_kses::element($start_time.(trim($end_time) ? ' - '.$end_time : '')).'</div>';
+                    if($this->display_detailed_time and $this->main->is_multipleday_occurrence($event)) $events_str .= '<div class="mec-event-detailed-time mec-event-time mec-color">'.$this->icons->display('clock-o').' '.MEC_kses::element($this->display_detailed_time($event)).'</div>';
+                    elseif(trim($start_time)) $events_str .= '<div class="mec-event-time mec-color">'.$this->icons->display('clock-o').' '.MEC_kses::element($start_time.(trim($end_time) ? ' - '.$end_time : '')).'</div>';
 
                     if(has_filter('monthly_event_after_time')) $after_time_filter = apply_filters('monthly_event_after_time', $events_str, $event);
 
@@ -177,8 +178,8 @@ $date_format = get_option('date_format');
 
                     $events_filter = $after_time_filter = '';
 
-                    $start_datetime =  isset($event->date['start']) && !empty($event->date['start']) ? $event->date['start'] : array();
-                    $end_datetime = isset($event->date['end']) && !empty($event->date['end']) ? $event->date['end'] : array();
+                    $start_datetime =  isset($event->date['start']) && !empty($event->date['start']) ? $event->date['start'] : [];
+                    $end_datetime = isset($event->date['end']) && !empty($event->date['end']) ? $event->date['end'] : [];
                     $start_timestamp = isset( $start_datetime['timestamp'] ) ? $start_datetime['timestamp'] : ( isset( $start_datetime['date'] ) ? strtotime( $start_datetime['date'] ) : '' );
 
                     $multiple_day_show_method = \MEC\Settings\Settings::getInstance()->get_settings('multiple_day_show_method');
@@ -209,8 +210,8 @@ $date_format = get_option('date_format');
 
                     if($this->display_all) $events_str .= '<div class="mec-event-date">'.MEC_kses::element( $event_date ).'</div>';
 
-                    if($this->display_detailed_time and $this->main->is_multipleday_occurrence($event)) $events_str .= '<div class="mec-event-detailed-time mec-event-time mec-color"><i class="mec-sl-clock-o"></i> '.MEC_kses::element($this->display_detailed_time($event)).'</div>';
-                    elseif(trim($start_time)) $events_str .= '<div class="mec-event-time mec-color"><i class="mec-sl-clock-o"></i> '.esc_html($start_time.(trim($end_time) ? ' - '.$end_time : '')).'</div>';
+                    if($this->display_detailed_time and $this->main->is_multipleday_occurrence($event)) $events_str .= '<div class="mec-event-detailed-time mec-event-time mec-color">'.$this->icons->display('clock-o').' '.MEC_kses::element($this->display_detailed_time($event)).'</div>';
+                    elseif(trim($start_time)) $events_str .= '<div class="mec-event-time mec-color">'.$this->icons->display('clock-o').' '.esc_html($start_time.(trim($end_time) ? ' - '.$end_time : '')).'</div>';
 
                     if(has_filter('monthly_event_after_time')) $after_time_filter = apply_filters('monthly_event_after_time', $events_str, $event);
 
@@ -302,8 +303,8 @@ $date_format = get_option('date_format');
 
                         $events_filter = $after_time_filter = '';
 
-                        $start_datetime =  isset($event->date['start']) && !empty($event->date['start']) ? $event->date['start'] : array();
-                        $end_datetime = isset($event->date['end']) && !empty($event->date['end']) ? $event->date['end'] : array();
+                        $start_datetime =  isset($event->date['start']) && !empty($event->date['start']) ? $event->date['start'] : [];
+                        $end_datetime = isset($event->date['end']) && !empty($event->date['end']) ? $event->date['end'] : [];
                         $start_timestamp = isset($start_datetime['timestamp']) ? $start_datetime['timestamp'] : (isset($start_datetime['date']) ? strtotime($start_datetime['date']) : '');
 
                         $multiple_day_show_method = \MEC\Settings\Settings::getInstance()->get_settings('multiple_day_show_method');
@@ -325,8 +326,8 @@ $date_format = get_option('date_format');
 
                         if($this->display_all) $events_str .= '<div class="mec-event-date">'.MEC_kses::element( $event_date ).'</div>';
 
-                        if($this->display_detailed_time and $this->main->is_multipleday_occurrence($event)) $events_str .= '<div class="mec-event-detailed-time mec-event-time mec-color"><i class="mec-sl-clock-o"></i> '.MEC_kses::element($this->display_detailed_time($event)).'</div>';
-                        elseif(trim($start_time)) $events_str .= '<div class="mec-event-time mec-color"><i class="mec-sl-clock-o"></i> '.esc_html($start_time.(trim($end_time) ? ' - '.$end_time : '')).'</div>';
+                        if($this->display_detailed_time and $this->main->is_multipleday_occurrence($event)) $events_str .= '<div class="mec-event-detailed-time mec-event-time mec-color">'.$this->icons->display('clock-o').' '.MEC_kses::element($this->display_detailed_time($event)).'</div>';
+                        elseif(trim($start_time)) $events_str .= '<div class="mec-event-time mec-color">'.$this->icons->display('clock-o').' '.esc_html($start_time.(trim($end_time) ? ' - '.$end_time : '')).'</div>';
 
                         if(has_filter('monthly_event_after_time')) $after_time_filter = apply_filters('monthly_event_after_time', $events_str, $event);
 

@@ -29,7 +29,7 @@ class DataCollectorTranslatorTest extends TestCase
         $collector->trans('bar_ru');
         $collector->trans('bar_ru', array('foo' => 'bar'));
 
-        $expectedMessages = array();
+        $expectedMessages = [];
         $expectedMessages[] = array(
               'id' => 'foo',
               'translation' => 'foo (en)',

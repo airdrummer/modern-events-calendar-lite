@@ -58,7 +58,7 @@ if ( !class_exists('Puc_v4p11_UpdateChecker', false) ):
 		/**
 		 * @var array List of API errors triggered during the last checkForUpdates() call.
 		 */
-		protected $lastRequestApiErrors = array();
+		protected $lastRequestApiErrors = [];
 
 		/**
 		 * @var string|mixed The default is 0 because parse_url() can return NULL or FALSE.
@@ -257,7 +257,7 @@ if ( !class_exists('Puc_v4p11_UpdateChecker', false) ):
 			}
 
 			//Start collecting API errors.
-			$this->lastRequestApiErrors = array();
+			$this->lastRequestApiErrors = [];
 			add_action('puc_api_error', array($this, 'collectApiErrors'), 10, 4);
 
 			$state = $this->updateState;
@@ -362,7 +362,7 @@ if ( !class_exists('Puc_v4p11_UpdateChecker', false) ):
 				return;
 			}
 
-			$actualWpVersions = array();
+			$actualWpVersions = [];
 
 			$wpVersion = $GLOBALS['wp_version'];
 
@@ -550,7 +550,7 @@ if ( !class_exists('Puc_v4p11_UpdateChecker', false) ):
 		protected function addUpdateToList($updates, $updateToAdd) {
 			if ( !is_object($updates) ) {
 				$updates = new stdClass();
-				$updates->response = array();
+				$updates->response = [];
 			}
 
 			$updates->response[$this->getUpdateListKey()] = $updateToAdd;
@@ -578,10 +578,10 @@ if ( !class_exists('Puc_v4p11_UpdateChecker', false) ):
 		protected function addNoUpdateItem($updates) {
 			if ( !is_object($updates) ) {
 				$updates = new stdClass();
-				$updates->response = array();
-				$updates->no_update = array();
+				$updates->response = [];
+				$updates->no_update = [];
 			} else if ( !isset($updates->no_update) ) {
-				$updates->no_update = array();
+				$updates->no_update = [];
 			}
 
 			$updates->no_update[$this->getUpdateListKey()] = (object) $this->getNoUpdateItemFields();
@@ -741,7 +741,7 @@ if ( !class_exists('Puc_v4p11_UpdateChecker', false) ):
 			$languages = array_flip(array_values(get_available_languages()));
 			$installedTranslations = $this->getInstalledTranslations();
 
-			$applicableTranslations = array();
+			$applicableTranslations = [];
 			foreach ($translations as $translation) {
 				//Does it match one of the available core languages?
 				$isApplicable = array_key_exists($translation->language, $languages);
@@ -767,13 +767,13 @@ if ( !class_exists('Puc_v4p11_UpdateChecker', false) ):
 		 */
 		protected function getInstalledTranslations() {
 			if ( !function_exists('wp_get_installed_translations') ) {
-				return array();
+				return [];
 			}
 			$installedTranslations = wp_get_installed_translations($this->translationType . 's');
 			if ( isset($installedTranslations[$this->directoryName]) ) {
 				$installedTranslations = $installedTranslations[$this->directoryName];
 			} else {
-				$installedTranslations = array();
+				$installedTranslations = [];
 			}
 			return $installedTranslations;
 		}
@@ -795,7 +795,7 @@ if ( !class_exists('Puc_v4p11_UpdateChecker', false) ):
 				$updates = new stdClass();
 			}
 			if ( !isset($updates->translations) ) {
-				$updates->translations = array();
+				$updates->translations = [];
 			}
 
 			//In case there's a name collision with a plugin or theme hosted on wordpress.org,

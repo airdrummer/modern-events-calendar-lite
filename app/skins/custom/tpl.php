@@ -2,6 +2,8 @@
 /** no direct access **/
 defined('MECEXEC') or die();
 
+/** @var MEC_skin_custom $this */
+
 // Get layout path
 $render_path = $this->get_render_path();
 
@@ -71,11 +73,11 @@ do_action('mec_custom_skin_head');
         <?php echo MEC_kses::full($items_html); ?>
     </div>
     <div class="mec-skin-custom-no-events-container mec-util-hidden" id="mec_skin_no_events_<?php echo esc_attr($this->id); ?>">
-        <?php esc_html_e('No event found!', 'modern-events-calendar-lite'); ?>
+        <?php $this->main->display_not_found_message(); ?>
     </div>
     <?php else: ?>
     <div class="mec-skin-custom-events-container" id="mec_skin_events_<?php echo esc_attr($this->id); ?>">
-        <?php esc_html_e('No event found!', 'modern-events-calendar-lite'); ?>
+        <?php $this->main->display_not_found_message(); ?>
     </div>
     <?php endif; ?>
 

@@ -2,25 +2,48 @@
 /** no direct access **/
 defined('MECEXEC') or die();
 
+/** @var stdClass $event */
+
 // MEC Settings
 $settings = $this->get_settings();
 
 // The module is disabled
-if(!isset($settings['speakers_status']) or (isset($settings['speakers_status']) and !$settings['speakers_status'])) return;
+if(!isset($settings['speakers_status']) || !$settings['speakers_status']) return;
 
 // Event Speakers
-$speakers = (isset($event->data->speakers) and is_array($event->data->speakers)) ? $event->data->speakers : array();
+$speakers = (isset($event->data->speakers) and is_array($event->data->speakers)) ? $event->data->speakers : [];
 
 // No Speaker
 if(!count($speakers)) return false;
+
+$id_speaker_page = "";
+$name_speaker = "";
+foreach($speakers as $speaker)
+{
+    $id_speaker_page = $speaker['id'];
+    $name_speaker = $speaker['name'];
+    break;
+}
+
+$type_link=$settings['advanced_speaker']['speaker_type_link']??'dialog';
 ?>
 <div class="mec-speakers-details mec-frontbox" id="mec_speakers_details">
     <h3 class="mec-speakers mec-frontbox-title"><?php if(count($speakers) == 1): echo esc_html($this->m('taxonomy_speaker', esc_html__('Speaker', 'modern-events-calendar-lite'))); else: echo esc_html($this->m('taxonomy_speakers', esc_html__('Speakers', 'modern-events-calendar-lite'))); endif; ?></h3>
     <ul>
         <?php foreach($speakers as $speaker): ?>
         <li>
-            <div class="mec-speaker-avatar">
-                <a class="mec-color-hover" href="#mec-speaker-info-<?php echo esc_attr($event->ID.'-'.$speaker['id']); ?>">
+            <div class="mec-speaker-avatar
+            <?php if (is_plugin_active('mec-advanced-speaker/mec-advanced-speaker.php') && ($settings['advanced_speaker']['speaker_enable_link_section_title']??false) ) {
+                if($type_link !=='link') echo 'mec-speaker-avatar-dialog';
+                } else{
+                    $type_link='';
+                    echo 'mec-speaker-avatar-dialog';
+                } ?>">
+                <?php if (is_plugin_active('mec-advanced-speaker/mec-advanced-speaker.php') && ($settings['advanced_speaker']['speaker_enable_link_section_title']??false) && $type_link=='link'): ?>
+                    <a class="mec-color-hover" href="<?php echo get_permalink( $settings['advanced_speaker']['single_page'] ).'?fesection=speaker&feparam='.esc_attr($speaker['id']); ?>" target="<?php echo $settings['advanced_speaker']['speaker_link_target'];?>">
+                <?php else: ?>
+                    <a class="mec-color-hover" href="#mec-speaker-info-<?php echo esc_attr($event->ID.'-'.$speaker['id']); ?>">
+                <?php endif; ?>
                     <?php if(isset($speaker['thumbnail']) and trim($speaker['thumbnail'])): ?>
                         <?php if (class_exists('MEC_Fluent\Core\pluginBase\MecFluent') && (isset($settings['single_single_style']) and $settings['single_single_style'] == 'fluent')) { ?>
                             <img class="mec-border-color-hover" src="<?php echo esc_url(MEC_Fluent\Core\pluginBase\MecFluent::generateCustomThumbnailURL($speaker['thumbnail'], 60, 60, true)); ?>" alt="<?php echo esc_attr($speaker['name']); ?>">
@@ -83,6 +106,10 @@ if(!count($speakers)) return false;
                         <!-- Speaker LinkedIn -->
                         <?php if($linkedin = trim(get_term_meta($speaker['id'], 'linkedin', true))): ?>
                         <a href="<?php echo esc_url($linkedin); ?>" target="_blank"><i class="mec-fa-linkedin"></i></a>
+                        <?php endif; ?>
+                        <!-- Speaker Link -->
+                        <?php if ($type_link=='dialog_link'): ?>
+                        <a href="<?php echo get_permalink( $settings['advanced_speaker']['single_page'] ).'?fesection=speaker&feparam='.esc_attr($speaker['id']); ?>" target="<?php echo $settings['advanced_speaker']['speaker_link_target'];?>"><i class="mec-fa-link"></i></a>
                         <?php endif; ?>
                     </div>
                     <!-- Speaker Description -->

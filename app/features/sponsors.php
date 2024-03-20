@@ -20,14 +20,14 @@ class MEC_feature_sponsors extends MEC_base
     {
         // Import MEC Factory
         $this->factory = $this->getFactory();
-        
+
         // Import MEC Main
         $this->main = $this->getMain();
-        
+
         // MEC Settings
         $this->settings = $this->main->get_settings();
     }
-    
+
     /**
      * Initialize Sponsors feature
      * @author Webnus <info@webnus.net>
@@ -48,7 +48,7 @@ class MEC_feature_sponsors extends MEC_base
 
         $this->factory->filter('post_edit_category_parent_dropdown_args', array($this, 'hide_parent_dropdown'));
     }
-    
+
     /**
      * Registers Sponsors taxonomy
      * @author Webnus <info@webnus.net>
@@ -58,9 +58,8 @@ class MEC_feature_sponsors extends MEC_base
         $singular_label = $this->main->m('taxonomy_sponsor', esc_html__('Sponsor', 'modern-events-calendar-lite'));
         $plural_label = $this->main->m('taxonomy_sponsors', esc_html__('Sponsors', 'modern-events-calendar-lite'));
 
-        register_taxonomy(
-            'mec_sponsor',
-            $this->main->get_main_post_type(),
+        $sponsor_args = apply_filters(
+            'mec_register_taxonomy_args',
             array(
                 'label'=>$plural_label,
                 'labels'=>array(
@@ -82,13 +81,19 @@ class MEC_feature_sponsors extends MEC_base
                 'show_ui'=>true,
                 'show_in_rest'=>true,
                 'hierarchical'=>false,
-                'meta_box_cb'=>'post_categories_meta_box',
-            )
+                'meta_box_cb' => function_exists('wp_doing_ajax') && wp_doing_ajax() ? '' : 'post_categories_meta_box',
+            ),
+            'mec_sponsor'
         );
-        
+        register_taxonomy(
+            'mec_sponsor',
+            $this->main->get_main_post_type(),
+            $sponsor_args
+        );
+
         register_taxonomy_for_object_type('mec_sponsor', $this->main->get_main_post_type());
     }
-    
+
     /**
      * Show edit form of Sponsors taxonomy
      * @author Webnus <info@webnus.net>
@@ -121,7 +126,7 @@ class MEC_feature_sponsors extends MEC_base
         <?php do_action('mec_edit_sponsor_extra_fields', $term); ?>
     <?php
     }
-    
+
     /**
      * Show add form of Sponsors taxonomy
      * @author Webnus <info@webnus.net>
@@ -143,7 +148,7 @@ class MEC_feature_sponsors extends MEC_base
         <?php do_action('mec_add_sponsor_extra_fields'); ?>
     <?php
     }
-    
+
     /**
      * Save meta data of Sponsors taxonomy
      * @author Webnus <info@webnus.net>
@@ -156,7 +161,7 @@ class MEC_feature_sponsors extends MEC_base
 
         $link = (isset($_POST['link']) and trim($_POST['link'])) ? esc_url($_POST['link']) : '';
         $logo = (isset($_POST['logo']) and trim($_POST['logo'])) ? esc_url($_POST['logo']) : '';
-        
+
         update_term_meta($term_id, 'link', $link);
         update_term_meta($term_id, 'logo', $logo);
 

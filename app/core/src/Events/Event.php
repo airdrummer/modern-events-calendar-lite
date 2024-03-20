@@ -264,7 +264,7 @@ class Event extends PostBase {
 
 		$terms = $this->get_terms( $taxonomy );
 
-		$ids = array();
+		$ids = [];
 		foreach( $terms as $term ){
 
 			$ids[ $term->term_id ] = $term->term_id;
@@ -280,9 +280,9 @@ class Event extends PostBase {
 	 */
 	public function get_custom_data(){
 
-		$data = array();
+		$data = [];
 		$event_fields_data = $this->get_meta( 'mec_fields' );
-        if(!is_array($event_fields_data)) $event_fields_data = array();
+        if(!is_array($event_fields_data)) $event_fields_data = [];
 
 		$event_fields = \MEC\Base::get_main()->get_event_fields();
         foreach($event_fields as $f => $event_field){

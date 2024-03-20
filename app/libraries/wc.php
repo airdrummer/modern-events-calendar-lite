@@ -8,7 +8,7 @@ defined('MECEXEC') or die();
  */
 class MEC_wc extends MEC_base
 {
-    public $ticket_names = array();
+    public $ticket_names = [];
 
     /**
      * Constructor method
@@ -151,9 +151,9 @@ class MEC_wc extends MEC_base
     public function update($product_id, $event_id, $ticket_id)
     {
         $tickets = get_post_meta($event_id, 'mec_tickets', true);
-        if(!is_array($tickets)) $tickets = array();
+        if(!is_array($tickets)) $tickets = [];
 
-        $ticket = $tickets[$ticket_id] ?? array();
+        $ticket = $tickets[$ticket_id] ?? [];
 
         $product = new WC_Product($product_id);
         $product->set_name(get_the_title($event_id).': '.$ticket['name']);
@@ -237,7 +237,7 @@ class MEC_wc extends MEC_base
     public function completed($order_id)
     {
         $created_booking_ids = get_post_meta($order_id, 'mec_booking_ids', true);
-        if(!is_array($created_booking_ids)) $created_booking_ids = array();
+        if(!is_array($created_booking_ids)) $created_booking_ids = [];
 
         // It's already done
         if(count($created_booking_ids) == 1 and get_post($created_booking_ids[0])) return false;
@@ -260,14 +260,19 @@ class MEC_wc extends MEC_base
         {
             $event_id = wc_get_order_item_meta($item_id, 'mec_event_id');
             $date = wc_get_order_item_meta($item_id, 'mec_date');
-            $other_dates = wc_get_order_item_meta($item_id, 'mec_other_dates');
             $transaction_id = wc_get_order_item_meta($item_id, 'mec_transaction_id');
+
+            $other_dates_meta = wc_get_order_item_meta($item_id, 'mec_other_dates');
+            $other_dates = [];
+
+            if(is_string($other_dates_meta) and trim($other_dates_meta)) $other_dates = explode(',', $other_dates_meta);
+            elseif(is_array($other_dates_meta)) $other_dates = $other_dates_meta;
 
             $dates = array($date);
             if(is_array($other_dates)) $dates = array_merge($dates, $other_dates);
 
             if(!trim($event_id) or !trim($date)) continue;
-            if(!isset($mec[$event_id])) $mec[$event_id] = array();
+            if(!isset($mec[$event_id])) $mec[$event_id] = [];
 
             $product_id = $item->get_product_id();
 
@@ -276,13 +281,14 @@ class MEC_wc extends MEC_base
 
             list($e, $mec_ticket_id) = explode(':', $key);
 
-            $product_ids = array();
+            $product_ids = [];
             for($i = 1; $i <= ($item->get_quantity() / count($dates)); $i++)
             {
                 $product_ids[] = $product_id;
 
-                if(!isset($original_bought_tickets[$mec_ticket_id])) $original_bought_tickets[$mec_ticket_id] = 1;
-                else $original_bought_tickets[$mec_ticket_id] += 1;
+                if(!isset($original_bought_tickets[$event_id])) $original_bought_tickets[$event_id] = [];
+                if(!isset($original_bought_tickets[$event_id][$mec_ticket_id])) $original_bought_tickets[$event_id][$mec_ticket_id] = 1;
+                else $original_bought_tickets[$event_id][$mec_ticket_id] += 1;
             }
 
             $booking_key = $date.'-'.implode(',', $dates).'-'.$transaction_id;
@@ -312,29 +318,29 @@ class MEC_wc extends MEC_base
         $u = $this->getUser();
 
         // Create Bookings
-        $book_ids = array();
+        $book_ids = [];
         foreach($mec as $event_id => $bs)
         {
             foreach($bs as $b)
             {
-                $bought_tickets = $original_bought_tickets;
+                $bought_tickets = $original_bought_tickets[$event_id];
                 $transaction_id = $b['transaction_id'] ?? 0;
 
                 $date = $b['date'];
-                $other_dates = (isset($b['other_dates']) and is_array($b['other_dates'])) ? $b['other_dates'] : array();
+                $other_dates = (isset($b['other_dates']) and is_array($b['other_dates'])) ? $b['other_dates'] : [];
 
-                $all_dates = array();
+                $all_dates = [];
                 if(count($other_dates)) $all_dates = array_merge(array($date), $other_dates);
 
                 $timestamps = count($all_dates) ? $all_dates : array($date);
                 $event_tickets = get_post_meta($event_id, 'mec_tickets', true);
 
-                $tickets = array();
+                $tickets = [];
                 if(!$transaction_id)
                 {
                     $product_ids = $b['product_ids'];
 
-                    $raw_tickets = array();
+                    $raw_tickets = [];
                     foreach($product_ids as $product_id)
                     {
                         $key = get_post_meta($product_id, 'mec_ticket', true);
@@ -345,13 +351,13 @@ class MEC_wc extends MEC_base
                         if(!isset($raw_tickets[$mec_ticket_id])) $raw_tickets[$mec_ticket_id] = 1;
                         else $raw_tickets[$mec_ticket_id] += 1;
 
-                        $ticket = array();
+                        $ticket = [];
                         $ticket['name'] = $order->get_formatted_billing_full_name();
                         $ticket['email'] = $order->get_billing_email();
                         $ticket['id'] = $mec_ticket_id;
                         $ticket['count'] = 1;
-                        $ticket['reg'] = array();
-                        $ticket['variations'] = array();
+                        $ticket['reg'] = [];
+                        $ticket['variations'] = [];
 
                         $tickets[] = $ticket;
                     }
@@ -359,7 +365,7 @@ class MEC_wc extends MEC_base
                     // Calculate price of bookings
                     $price_details = $book->get_price_details($raw_tickets, $event_id, $event_tickets, array(), $timestamps, false);
 
-                    $booking = array();
+                    $booking = [];
                     $booking['tickets'] = $tickets;
                     $booking['first_for_all'] = 1;
                     $booking['date'] = $date;
@@ -383,7 +389,7 @@ class MEC_wc extends MEC_base
                 $transaction = $book->get_transaction($transaction_id);
 
                 // Calculate price of bookings
-                $price_details = $book->get_price_details($original_bought_tickets, $event_id, $event_tickets, array(), $timestamps, false);
+                $price_details = $book->get_price_details($original_bought_tickets[$event_id], $event_id, $event_tickets, array(), $timestamps, false);
 
                 $transaction['price_details'] = $price_details;
                 $transaction['total'] = $price_details['total'];
@@ -442,8 +448,13 @@ class MEC_wc extends MEC_base
                     $bought_attendees[] = $attendee;
 
                     $ticket_ids .= $attendee_ticket_id . ',';
-                    if(!array_key_exists($attendee['email'], $attendees_info)) $attendees_info[$attendee['email']] = array('count' => $attendee['count']);
+                    if(!array_key_exists($attendee['email'], $attendees_info)) $attendees_info[$attendee['email']] = ['count' => $attendee['count']];
                     else $attendees_info[$attendee['email']]['count'] = ($attendees_info[$attendee['email']]['count'] + $attendee['count']);
+                }
+
+                if(isset($transaction['attachments']) && count($transaction['attachments']))
+                {
+                    $bought_attendees['attachments'] = $transaction['attachments'];
                 }
 
                 // Update Transaction
@@ -454,7 +465,7 @@ class MEC_wc extends MEC_base
                 // Apply only those attendees who bought tickets
                 $attendees = $bought_attendees;
 
-                $main_attendee = $attendees[0] ?? array();
+                $main_attendee = $attendees[0] ?? [];
                 $name = $main_attendee['name'] ?? '';
 
                 $ticket_ids = ',' . trim($ticket_ids, ', ') . ',';
@@ -509,7 +520,7 @@ class MEC_wc extends MEC_base
     public function cancelled($order_id)
     {
         $booking_ids = get_post_meta($order_id, 'mec_booking_ids', true);
-        if(!is_array($booking_ids)) $booking_ids = array();
+        if(!is_array($booking_ids)) $booking_ids = [];
 
         // No Related Bookings
         if(!count($booking_ids)) return;
@@ -528,9 +539,9 @@ class MEC_wc extends MEC_base
         list($event_id, $ticket_id) = explode(':', $mec_ticket);
 
         $tickets = get_post_meta($event_id, 'mec_tickets', true);
-        if(!is_array($tickets)) $tickets = array();
+        if(!is_array($tickets)) $tickets = [];
 
-        $ticket = $tickets[$ticket_id] ?? array();
+        $ticket = $tickets[$ticket_id] ?? [];
         return $ticket['name'] ?? '';
     }
 }

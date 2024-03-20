@@ -135,7 +135,7 @@ class CarbonPeriod implements Iterator, Countable
      *
      * @var array
      */
-    protected static $macros = array();
+    protected static $macros = [];
 
     /**
      * Underlying date interval instance. Always present, one day by default.
@@ -156,7 +156,7 @@ class CarbonPeriod implements Iterator, Countable
      *
      * @var array
      */
-    protected $filters = array();
+    protected $filters = [];
 
     /**
      * Period start date. Applied on rewind. Always present, now by default.
@@ -323,7 +323,7 @@ class CarbonPeriod implements Iterator, Countable
      */
     protected static function parseIso8601($iso)
     {
-        $result = array();
+        $result = [];
 
         $interval = null;
         $start = null;
@@ -811,7 +811,7 @@ class CarbonPeriod implements Iterator, Countable
      */
     public function resetFilters()
     {
-        $this->filters = array();
+        $this->filters = [];
 
         if ($this->endDate !== null) {
             $this->filters[] = array(static::END_DATE_FILTER, null);
@@ -1184,7 +1184,7 @@ class CarbonPeriod implements Iterator, Countable
      */
     public function toIso8601String()
     {
-        $parts = array();
+        $parts = [];
 
         if ($this->recurrences !== null) {
             $parts[] = 'R'.$this->recurrences;
@@ -1210,7 +1210,7 @@ class CarbonPeriod implements Iterator, Countable
     {
         $translator = Carbon::getTranslator();
 
-        $parts = array();
+        $parts = [];
 
         $format = !$this->startDate->isStartOfDay() || $this->endDate && !$this->endDate->isStartOfDay()
             ? 'Y-m-d H:i:s'

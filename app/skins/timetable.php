@@ -50,19 +50,24 @@ class MEC_skin_timetable extends MEC_skins
         $this->atts = $atts;
 
         // Skin Options
-        $this->skin_options = (isset($this->atts['sk-options']) and isset($this->atts['sk-options'][$this->skin])) ? $this->atts['sk-options'][$this->skin] : array();
+        $this->skin_options = (isset($this->atts['sk-options']) and isset($this->atts['sk-options'][$this->skin])) ? $this->atts['sk-options'][$this->skin] : [];
+
+        // Icons
+        $this->icons = $this->main->icons(
+            ($this->getPRO() && isset($this->atts['icons']) && is_array($this->atts['icons'])) ? $this->atts['icons'] : []
+        );
 
         // Search Form Options
-        $this->sf_options = (isset($this->atts['sf-options']) and isset($this->atts['sf-options'][$this->skin])) ? $this->atts['sf-options'][$this->skin] : array();
+        $this->sf_options = (isset($this->atts['sf-options']) and isset($this->atts['sf-options'][$this->skin])) ? $this->atts['sf-options'][$this->skin] : [];
 
         // Search Form Status
-        $this->sf_status = isset($this->atts['sf_status']) ? $this->atts['sf_status'] : true;
-        $this->sf_display_label = isset($this->atts['sf_display_label']) ? $this->atts['sf_display_label'] : false;
-        $this->sf_reset_button = isset($this->atts['sf_reset_button']) ? $this->atts['sf_reset_button'] : false;
-        $this->sf_refine = isset($this->atts['sf_refine']) ? $this->atts['sf_refine'] : false;
+        $this->sf_status = $this->atts['sf_status'] ?? true;
+        $this->sf_display_label = $this->atts['sf_display_label'] ?? false;
+        $this->sf_reset_button = $this->atts['sf_reset_button'] ?? false;
+        $this->sf_refine = $this->atts['sf_refine'] ?? false;
 
         // Generate an ID for the skin
-        $this->id = isset($this->atts['id']) ? $this->atts['id'] : mt_rand(100, 999);
+        $this->id = $this->atts['id'] ?? mt_rand(100, 999);
 
         // Set the ID
         if(!isset($this->atts['id'])) $this->atts['id'] = $this->id;
@@ -107,7 +112,7 @@ class MEC_skin_timetable extends MEC_skins
         $this->end_time = isset($this->skin_options['end_time']) ? $this->skin_options['end_time'] : 24;
 
         // From Widget
-        $this->widget = (isset($this->atts['widget']) and trim($this->atts['widget'])) ? true : false;
+        $this->widget = isset($this->atts['widget']) && trim($this->atts['widget']);
 
         // Init MEC
         $this->args['mec-init'] = true;
@@ -133,6 +138,7 @@ class MEC_skin_timetable extends MEC_skins
 
         // Author
         $this->args['author'] = $this->author_query();
+        $this->args['author__not_in'] = $this->author_query_ex();
 
         // Pagination Options
         $this->paged = get_query_var('paged', 1);
@@ -186,13 +192,13 @@ class MEC_skin_timetable extends MEC_skins
 
         $this->weeks = $this->main->split_to_weeks($this->start_date, date('Y-m-t', strtotime($this->start_date)));
 
-        $this->week_of_days = array();
+        $this->week_of_days = [];
         foreach($this->weeks as $week_number=>$week) foreach($week as $day) $this->week_of_days[$day] = $week_number;
 
         // Number of Days
         if($this->style === 'modern' and $this->number_of_days_modern < 7)
         {
-            $unset = array();
+            $unset = [];
             $remove = 7 - $this->number_of_days_modern;
 
             foreach($this->weeks as $w => $week)
@@ -230,11 +236,11 @@ class MEC_skin_timetable extends MEC_skins
         if($this->style == 'clean' || $this->style == 'classic' || $this->style == 'fluent')
         {
             $s = $start;
-            $sorted = array();
+            $sorted = [];
             while(strtotime($s) <= strtotime($end))
             {
                 if(isset($dates[$s])) $sorted[$s] = $dates[$s];
-                else $sorted[$s] = array();
+                else $sorted[$s] = [];
 
                 $s = date('Y-m-d', strtotime('+1 Day', strtotime($s)));
             }
@@ -245,8 +251,8 @@ class MEC_skin_timetable extends MEC_skins
         // Limit
         $this->args['posts_per_page'] = $this->limit;
 
-        $events = array();
-        $qs = array();
+        $events = [];
+        $qs = [];
 
         foreach($dates as $date=>$IDs)
         {
@@ -279,10 +285,10 @@ class MEC_skin_timetable extends MEC_skins
 
             if(is_array($IDs) and count($IDs) and $query->have_posts())
             {
-                if(!isset($events[$date])) $events[$date] = array();
+                if(!isset($events[$date])) $events[$date] = [];
 
                 // Day Events
-                $d = array();
+                $d = [];
 
                 // The Loop
                 while($query->have_posts())
@@ -319,12 +325,12 @@ class MEC_skin_timetable extends MEC_skins
                     }
                 }
 
-                usort($d, array($this, 'sort_day_events'));
+                usort($d, [$this, 'sort_day_events']);
                 $events[$date] = $d;
             }
             else
             {
-                $events[$date] = array();
+                $events[$date] = [];
             }
 
             // Restore original Post Data
@@ -393,13 +399,13 @@ class MEC_skin_timetable extends MEC_skins
     }
 
     /**
-     * Load month for AJAX requert (Modern Style)
+     * Load month for AJAX request (Modern Style)
      * @author Webnus <info@webnus.net>
      * @return void
      */
     public function load_month()
     {
-        $this->sf = (isset($_REQUEST['sf']) and is_array($_REQUEST['sf'])) ? $this->main->sanitize_deep_array($_REQUEST['sf']) : array();
+        $this->sf = (isset($_REQUEST['sf']) and is_array($_REQUEST['sf'])) ? $this->main->sanitize_deep_array($_REQUEST['sf']) : [];
         $apply_sf_date = isset($_REQUEST['apply_sf_date']) ? sanitize_text_field($_REQUEST['apply_sf_date']) : 1;
         $atts = $this->sf_apply(((isset($_REQUEST['atts']) and is_array($_REQUEST['atts'])) ? $this->main->sanitize_deep_array($_REQUEST['atts']) : array()), $this->sf, $apply_sf_date);
 
@@ -424,13 +430,13 @@ class MEC_skin_timetable extends MEC_skins
         $this->weeks = $this->main->split_to_weeks($this->start_date, date('Y-m-t', strtotime($this->start_date)));
 
         // Get week of days
-        $this->week_of_days = array();
+        $this->week_of_days = [];
         foreach($this->weeks as $week_number=>$week) foreach($week as $day) $this->week_of_days[$day] = $week_number;
 
         // Number of Days
         if($this->style === 'modern' and $this->number_of_days_modern < 7)
         {
-            $unset = array();
+            $unset = [];
             $remove = 7 - $this->number_of_days_modern;
 
             foreach($this->weeks as $w => $week)
@@ -464,13 +470,13 @@ class MEC_skin_timetable extends MEC_skins
     }
 
     /**
-     * Load month for AJAX requert (Clean Style)
+     * Load month for AJAX request (Clean Style)
      * @author Webnus <info@webnus.net>
      * @return void
      */
     public function load_weeklyprogram()
     {
-        $this->sf = (isset($_REQUEST['sf']) and is_array($_REQUEST['sf'])) ? $this->main->sanitize_deep_array($_REQUEST['sf']) : array();
+        $this->sf = (isset($_REQUEST['sf']) and is_array($_REQUEST['sf'])) ? $this->main->sanitize_deep_array($_REQUEST['sf']) : [];
         $apply_sf_date = isset($_REQUEST['apply_sf_date']) ? sanitize_text_field($_REQUEST['apply_sf_date']) : 1;
         $atts = $this->sf_apply(((isset($_REQUEST['atts']) and is_array($_REQUEST['atts'])) ? $this->main->sanitize_deep_array($_REQUEST['atts']) : array()), $this->sf, $apply_sf_date);
 

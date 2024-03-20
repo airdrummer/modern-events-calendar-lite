@@ -97,14 +97,16 @@ class MEC_feature_schema extends MEC_base
                     <p class="description"><?php esc_html_e('This will be displayed in Single Event and Shortcode/Calendar Pages', 'modern-events-calendar-lite'); ?></p>
                 </div>
                 <div class="mec-form-row">
-                    <input
-                        <?php
-                        if (isset($display_cancellation_reason_in_single_page) and $display_cancellation_reason_in_single_page == true) {
-                            echo 'checked="checked"';
-                        }
-                        ?>
-                            type="checkbox" name="mec[display_cancellation_reason_in_single_page]" id="mec_display_cancellation_reason_in_single_page" value="1"/><label
-                            for="mec_display_cancellation_reason_in_single_page"><?php esc_html_e('Display in single event page', 'modern-events-calendar-lite'); ?></label>
+                <label for="mec_display_cancellation_reason_in_single_page">
+                        <input
+                            <?php
+                            if (isset($display_cancellation_reason_in_single_page) and $display_cancellation_reason_in_single_page == true) {
+                                echo 'checked="checked"';
+                            }
+                            ?>
+                                type="checkbox" name="mec[display_cancellation_reason_in_single_page]" id="mec_display_cancellation_reason_in_single_page" value="1"/>
+                                <?php esc_html_e('Display in single event page', 'modern-events-calendar-lite'); ?>
+                    </label>
                 </div>
             </div>
             <div class="mec-form-row">
@@ -169,7 +171,7 @@ class MEC_feature_schema extends MEC_base
         if(defined('DOING_AUTOSAVE') and DOING_AUTOSAVE) return false;
 
         // Get Modern Events Calendar Data
-        $_mec = isset($_POST['mec']) ? $this->main->sanitize_deep_array($_POST['mec']) : array();
+        $_mec = isset($_POST['mec']) ? $this->main->sanitize_deep_array($_POST['mec']) : [];
 
         $event_status = isset($_mec['event_status']) ? sanitize_text_field($_mec['event_status']) : 'EventScheduled';
         if(!in_array($event_status, array('EventScheduled', 'EventPostponed', 'EventCancelled', 'EventMovedOnline'))) $event_status = 'EventScheduled';
@@ -182,7 +184,7 @@ class MEC_feature_schema extends MEC_base
         $cancelled_reason = (isset($_mec['cancelled_reason']) and !empty($_mec['cancelled_reason'])) ? sanitize_text_field($_mec['cancelled_reason']) : '';
         update_post_meta($post_id, 'mec_cancelled_reason', $cancelled_reason);
 
-        $display_cancellation_reason_in_single_page = (isset($_mec['display_cancellation_reason_in_single_page']) and !empty($_mec['display_cancellation_reason_in_single_page'])) ? true : false;
+        $display_cancellation_reason_in_single_page = (isset($_mec['display_cancellation_reason_in_single_page']) and !empty($_mec['display_cancellation_reason_in_single_page']));
         update_post_meta($post_id, 'mec_display_cancellation_reason_in_single_page', $display_cancellation_reason_in_single_page);
 
         return true;
@@ -190,16 +192,16 @@ class MEC_feature_schema extends MEC_base
 
     public function schema($event)
     {
-        $status = isset($this->settings['schema']) ? $this->settings['schema'] : 0;
+        $status = $this->settings['schema'] ?? 0;
         if(!$status) return;
 
-        $speakers = array();
+        $speakers = [];
         if(isset($event->data->speakers) and is_array($event->data->speakers) and count($event->data->speakers))
         {
-            foreach($event->data->speakers as $key => $value)
+            foreach($event->data->speakers as $value)
             {
                 $speakers[] = array(
-                    "@type" 	=> "Person",
+                    "@type" 	=> isset($value['type']) && $value['type'] == 'group' ? "PerformingGroup" : "Person",
                     "name"		=> $value['name'],
                     "image"		=> $value['thumbnail'],
                     "sameAs"	=> $value['facebook'],
@@ -207,7 +209,7 @@ class MEC_feature_schema extends MEC_base
             }
         }
 
-        $start_timestamp = (isset($event->data->time['start_timestamp']) ? $event->data->time['start_timestamp'] : (isset($event->date['start']['timestamp']) ? $event->date['start']['timestamp'] : strtotime($event->date['start']['date'])));
+        $start_timestamp = ($event->data->time['start_timestamp'] ?? ($event->date['start']['timestamp'] ?? strtotime($event->date['start']['date'])));
 
         // All Params
         $params = MEC_feature_occurrences::param($event->ID, $start_timestamp, '*');
@@ -229,7 +231,7 @@ class MEC_feature_schema extends MEC_base
         $soldout = $this->main->is_soldout($event, $event->date);
 
         $organizer_id = $this->main->get_master_organizer_id($event);
-        $organizer = ($organizer_id ? $this->main->get_organizer_data($organizer_id) : array());
+        $organizer = $organizer_id ? $this->main->get_organizer_data($organizer_id) : [];
 
         $moved_online_link = (isset($event->data->meta['mec_moved_online_link']) and trim($event->data->meta['mec_moved_online_link'])) ? $event->data->meta['mec_moved_online_link'] : '';
         $moved_online_link = (isset($params['moved_online_link']) and trim($params['moved_online_link']) != '') ? $params['moved_online_link'] : $moved_online_link;
@@ -258,12 +260,14 @@ class MEC_feature_schema extends MEC_base
                     "address": "<?php echo (isset($location['address']) ? $this->escape($location['address']) : ''); ?>"
                     <?php endif; ?>
                 },
+                <?php if(!isset($this->settings['organizers_status']) || $this->settings['organizers_status']): ?>
                 "organizer":
                 {
                     "@type": "Person",
                     "name": "<?php echo (isset($organizer['name']) ? $this->escape($organizer['name']) : ''); ?>",
                     "url": "<?php echo (isset($organizer['url']) ? esc_url($organizer['url']) : ''); ?>"
                 },
+                <?php endif; ?>
                 "offers":
                 {
                     "url": "<?php echo esc_url($event->data->permalink); ?>",

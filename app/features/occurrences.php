@@ -66,7 +66,7 @@ class MEC_feature_occurrences extends MEC_base
 
     public function tab($tabs, $activated, $post)
     {
-        $draft = (isset($post->post_status) and $post->post_status != 'auto-draft') ? false : true;
+        $draft = !(isset($post->post_status) && $post->post_status != 'auto-draft');
         $repeat_status = get_post_meta($post->ID, 'mec_repeat_status', true);
 
         if($draft or !$repeat_status) return $tabs;
@@ -79,10 +79,10 @@ class MEC_feature_occurrences extends MEC_base
      * Show occurrences of event into the Add/Edit event page
      *
      * @author Webnus <info@webnus.net>
-     * @param object $post
+     * @param WP_Post $post
      */
-    public function meta_box_occurrences($post){
-
+    public function meta_box_occurrences($post)
+    {
         FormBuilder::occurrences( $post );
     }
 
@@ -137,7 +137,7 @@ class MEC_feature_occurrences extends MEC_base
         $params = $this->get($occurrence_id);
         $data = $this->get_data($occurrence_id);
 
-        $event_id = (isset($data['post_id']) ? $data['post_id'] : 0);
+        $event_id = $data['post_id'] ?? 0;
         $post = get_post($event_id);
 
         $date_format = get_option('date_format');
@@ -149,11 +149,11 @@ class MEC_feature_occurrences extends MEC_base
         $cancelled_reason = (isset($params['cancelled_reason']) and trim($params['cancelled_reason'])) ? $params['cancelled_reason'] : '';
         $display_cancellation_reason_in_single_page = (isset($params['display_cancellation_reason_in_single_page']) and trim($params['display_cancellation_reason_in_single_page'])) ? $params['display_cancellation_reason_in_single_page'] : '';
 
-        $hourly_schedules = (isset($params['hourly_schedules']) and is_array($params['hourly_schedules'])) ? $params['hourly_schedules'] : array();
+        $hourly_schedules = (isset($params['hourly_schedules']) and is_array($params['hourly_schedules'])) ? $params['hourly_schedules'] : [];
         $fields_data = (isset($params['fields']) and is_array($params['fields'])) ? $params['fields'] : get_post_meta($post->ID, 'mec_fields', true);
 
         // Status of Speakers Feature
-        $speakers_status = (!isset($this->settings['speakers_status']) or (isset($this->settings['speakers_status']) and !$this->settings['speakers_status'])) ? false : true;
+        $speakers_status = isset($this->settings['speakers_status']) && $this->settings['speakers_status'];
         $speakers = get_terms('mec_speaker', array(
             'orderby' => 'name',
             'order' => 'ASC',
@@ -181,9 +181,12 @@ class MEC_feature_occurrences extends MEC_base
 
         // Tickets
         $tickets = get_post_meta($event_id, 'mec_tickets', true);
-        if(!is_array($tickets)) $tickets = array();
+        if(!is_array($tickets)) $tickets = [];
 
-        $occ_tickets = (isset($params['tickets']) and is_array($params['tickets'])) ? $params['tickets'] : array();
+        $occ_tickets = (isset($params['tickets']) and is_array($params['tickets'])) ? $params['tickets'] : [];
+
+        // Bookings
+        $bookings = $this->main->get_bookings($event_id, $data['occurrence']);
         ?>
         <li class="mec_occurrences_item" id="mec_occurrences_<?php echo esc_attr($occurrence_id); ?>">
             <h3><span class="mec-occurrences-delete-button" data-id="<?php echo esc_attr($occurrence_id); ?>"><?php esc_html_e('Delete', 'modern-events-calendar-lite'); ?></span><?php echo date_i18n($datetime_format, $data['occurrence']); ?></h3>
@@ -197,6 +200,7 @@ class MEC_feature_occurrences extends MEC_base
                 <div class="mec-col-9"><input id="mec_occurrences_<?php echo esc_attr($occurrence_id); ?>_title" name="mec[occurrences][<?php echo esc_attr($occurrence_id); ?>][title]" type="text" value="<?php echo (isset($params['title']) ? esc_attr($params['title']) : ''); ?>"></div>
             </div>
             <div class="mec-form-row">
+                <h4><?php echo esc_html($this->main->m('event_cost', esc_html__('SEO Schema / Event Status', 'modern-events-calendar-lite'))); ?></h4>
                 <div class="mec-col-12">
                     <div class="mec-form-row">
                         <label class="label-radio">
@@ -228,10 +232,26 @@ class MEC_feature_occurrences extends MEC_base
                             <p class="description"><?php esc_html_e('This will be displayed in Single Event and Shortcode/Calendar Pages', 'modern-events-calendar-lite'); ?></p>
                         </div>
                         <div class="mec-form-row">
-                            <input type="hidden" name="mec[occurrences][<?php echo esc_attr($occurrence_id); ?>][display_cancellation_reason_in_single_page]" value="0">
-                            <input <?php if(isset($display_cancellation_reason_in_single_page) and $display_cancellation_reason_in_single_page == true) echo 'checked="checked"'; ?> type="checkbox" name="mec[occurrences][<?php echo esc_attr($occurrence_id); ?>][display_cancellation_reason_in_single_page]" id="mec_occurrences_<?php echo esc_attr($occurrence_id); ?>_display_cancellation_reason_in_single_page" value="1">
-                            <label for="mec_occurrences_<?php echo esc_attr($occurrence_id); ?>_display_cancellation_reason_in_single_page"><?php esc_html_e('Display in single event page', 'modern-events-calendar-lite'); ?></label>
+                            <label for="mec_occurrences_<?php echo esc_attr($occurrence_id); ?>_display_cancellation_reason_in_single_page">
+                                <input type="hidden" name="mec[occurrences][<?php echo esc_attr($occurrence_id); ?>][display_cancellation_reason_in_single_page]" value="0">
+                                <input <?php if(isset($display_cancellation_reason_in_single_page) and $display_cancellation_reason_in_single_page) echo 'checked="checked"'; ?> type="checkbox" name="mec[occurrences][<?php echo esc_attr($occurrence_id); ?>][display_cancellation_reason_in_single_page]" id="mec_occurrences_<?php echo esc_attr($occurrence_id); ?>_display_cancellation_reason_in_single_page" value="1">
+                                <?php esc_html_e('Display in single event page', 'modern-events-calendar-lite'); ?>
+                            </label>
                         </div>
+                        <?php if(count($bookings)): ?>
+                        <div class="mec-form-row">
+                            <h4><?php echo esc_html($this->main->m('bookings', esc_html__('Bookings', 'modern-events-calendar-lite'))); ?></h4>
+                            <p style="margin-bottom: 10px;"><?php echo esc_html(sprintf(_n('%s booking is made for this occurrence.', '%s bookings are made for this occurrence', count($bookings), 'modern-events-calendar-lite'), count($bookings))); ?></p>
+                            <label for="mec_occurrences_<?php echo esc_attr($occurrence_id); ?>_cancel_bookings" style="display: block;">
+                                <?php esc_html_e('What should be done regarding the bookings?', 'modern-events-calendar-lite'); ?>
+                            </label>
+                            <select id="mec_occurrences_<?php echo esc_attr($occurrence_id); ?>_cancel_bookings" name="mec[occurrences][<?php echo esc_attr($occurrence_id); ?>][cancel_bookings]">
+                                <option value=""><?php esc_html_e('Do Nothing', 'modern-events-calendar-lite'); ?></option>
+                                <option value="cancel"><?php esc_html_e('Cancel', 'modern-events-calendar-lite'); ?></option>
+                                <option value="refund"><?php esc_html_e('Cancel & Refund', 'modern-events-calendar-lite'); ?></option>
+                            </select>
+                        </div>
+                        <?php endif; ?>
                     </div>
                     <div class="mec-form-row">
                         <label class="label-radio">
@@ -254,15 +274,15 @@ class MEC_feature_occurrences extends MEC_base
             <div class="mec-form-row">
                 <div class="mec-col-12">
                     <?php
-                        $hourly_schedule = $this->getHourlySchedule();
-                        $hourly_schedule->form(array(
+                        $builder = $this->getFormBuilder();
+                        $builder->hourlySchedule([
                             'hourly_schedules' => $hourly_schedules,
                             'speakers_status' => $speakers_status,
                             'speakers' => $speakers,
                             'wrapper_class' => '',
                             'prefix' => 'mec_occurrences_'.esc_attr($occurrence_id).'_',
                             'name_prefix' => 'mec[occurrences]['.esc_attr($occurrence_id).']',
-                        ));
+                        ]);
                     ?>
                 </div>
             </div>
@@ -306,7 +326,7 @@ class MEC_feature_occurrences extends MEC_base
                     <div class="mec-form-row">
                         <div class="mec-col-12">
                             <input type="hidden" name="mec[occurrences][<?php echo esc_attr($occurrence_id); ?>][dont_show_map]" value="0" />
-                            <input type="checkbox" id="mec_occurrences_<?php echo esc_attr($occurrence_id); ?>_location_dont_show_map" name="mec[occurrences][<?php echo esc_attr($occurrence_id); ?>][dont_show_map]" value="1" <?php echo ($dont_show_map ? 'checked="checked"' : ''); ?> /><label for="mec_occurrences_<?php echo esc_attr($occurrence_id); ?>_location_dont_show_map"><?php echo esc_html__("Don't show map in single event page", 'modern-events-calendar-lite'); ?></label>
+                            <label for="mec_occurrences_<?php echo esc_attr($occurrence_id); ?>_location_dont_show_map"><input type="checkbox" id="mec_occurrences_<?php echo esc_attr($occurrence_id); ?>_location_dont_show_map" name="mec[occurrences][<?php echo esc_attr($occurrence_id); ?>][dont_show_map]" value="1" <?php echo ($dont_show_map ? 'checked="checked"' : ''); ?> /><?php echo esc_html__("Don't show map in single event page", 'modern-events-calendar-lite'); ?></label>
                         </div>
                     </div>
                     <?php endif; ?>
@@ -349,7 +369,7 @@ class MEC_feature_occurrences extends MEC_base
                 <div class="mec-col-12">
                     <h4><?php echo esc_html($this->main->m('tickets', esc_html__('Tickets', 'modern-events-calendar-lite'))); ?></h4>
                     <div id="mec_meta_box_ticket_form">
-                        <?php foreach($tickets as $key => $ticket): if(!is_numeric($key)) continue; $occ_ticket = isset($occ_tickets[$key]) ? $occ_tickets[$key] : array(); ?>
+                        <?php foreach($tickets as $key => $ticket): if(!is_numeric($key)) continue; $occ_ticket = $occ_tickets[$key] ?? []; ?>
                         <div class="mec-form-row">
                             <div class="mec-col-4">
                                 <b><?php echo isset($ticket['name']) ? esc_attr($ticket['name']) : esc_html__('No Name', 'modern-events-calendar-lite'); ?></b>
@@ -376,12 +396,12 @@ class MEC_feature_occurrences extends MEC_base
                     <h4><?php esc_html_e('Event Links', 'modern-events-calendar-lite'); ?></h4>
                     <div class="mec-form-row">
                         <label class="mec-col-2" for="mec_occurrences_<?php echo esc_attr($occurrence_id); ?>_read_more_link"><?php echo esc_html($this->main->m('read_more_link', esc_html__('Event Link', 'modern-events-calendar-lite'))); ?></label>
-                        <input class="mec-col-7" type="text" name="mec[occurrences][<?php echo esc_attr($occurrence_id); ?>][read_more]" id="mec_occurrences_<?php echo esc_attr($occurrence_id); ?>_read_more_link" value="<?php echo esc_attr($read_more); ?>" placeholder="<?php esc_html_e('eg. http://yoursite.com/your-event', 'modern-events-calendar-lite'); ?>"/>
+                        <input class="mec-col-7" type="text" name="mec[occurrences][<?php echo esc_attr($occurrence_id); ?>][read_more]" id="mec_occurrences_<?php echo esc_attr($occurrence_id); ?>_read_more_link" value="<?php echo esc_attr($read_more); ?>" placeholder="<?php esc_html_e('eg. https://yoursite.com/your-event', 'modern-events-calendar-lite'); ?>"/>
                         <?php do_action('extra_event_link_occurrence', $post->ID, esc_attr($occurrence_id)); ?>
                     </div>
                     <div class="mec-form-row">
                         <label class="mec-col-2" for="mec_occurrences_<?php echo esc_attr($occurrence_id); ?>_more_info_link"><?php echo esc_html($this->main->m('more_info_link', esc_html__('More Info', 'modern-events-calendar-lite'))); ?></label>
-                        <input class="mec-col-3" type="text" name="mec[occurrences][<?php echo esc_attr($occurrence_id); ?>][more_info]" id="mec_occurrences_<?php echo esc_attr($occurrence_id); ?>_more_info_link" value="<?php echo esc_attr($more_info); ?>" placeholder="<?php esc_html_e('eg. http://yoursite.com/your-event', 'modern-events-calendar-lite'); ?>"/>
+                        <input class="mec-col-3" type="text" name="mec[occurrences][<?php echo esc_attr($occurrence_id); ?>][more_info]" id="mec_occurrences_<?php echo esc_attr($occurrence_id); ?>_more_info_link" value="<?php echo esc_attr($more_info); ?>" placeholder="<?php esc_html_e('eg. https://yoursite.com/your-event', 'modern-events-calendar-lite'); ?>"/>
                         <input class="mec-col-2" type="text" name="mec[occurrences][<?php echo esc_attr($occurrence_id); ?>][more_info_title]" id="mec_occurrences_<?php echo esc_attr($occurrence_id); ?>_more_info_title" value="<?php echo esc_attr($more_info_title); ?>" placeholder="<?php esc_html_e('More Information', 'modern-events-calendar-lite'); ?>"/>
                         <select class="mec-col-2" name="mec[occurrences][<?php echo esc_attr($occurrence_id); ?>][more_info_target]" id="mec_occurrences_<?php echo esc_attr($occurrence_id); ?>_more_info_target">
                             <option value="_self" <?php echo($more_info_target == '_self' ? 'selected="selected"' : ''); ?>><?php esc_html_e('Current Window', 'modern-events-calendar-lite'); ?></option>
@@ -397,21 +417,24 @@ class MEC_feature_occurrences extends MEC_base
 
     public function save($post_id, $data)
     {
-        if(!isset($data['occurrences']) or (isset($data['occurrences']) and !is_array($data['occurrences']))) return;
+        if(!isset($data['occurrences']) || !is_array($data['occurrences'])) return;
 
         $occurrences = $data['occurrences'];
         do_action('mec_occurrences_save', $post_id, $occurrences);
 
-        $organizer_ids = array();
-        $location_ids = array();
+        $organizer_ids = [];
+        $location_ids = [];
+
+        // Booking Library
+        $book = $this->getBook();
 
         foreach($occurrences as $occurrence)
         {
             // Clean Hourly Schedules
-            $raw_hourly_schedules = isset($occurrence['hourly_schedules']) ? $occurrence['hourly_schedules'] : array();
+            $raw_hourly_schedules = $occurrence['hourly_schedules'] ?? [];
             if(isset($raw_hourly_schedules[':d:'])) unset($raw_hourly_schedules[':d:']);
 
-            $hourly_schedules = array();
+            $hourly_schedules = [];
             foreach($raw_hourly_schedules as $raw_hourly_schedule)
             {
                 if(isset($raw_hourly_schedule['schedules'][':i:'])) unset($raw_hourly_schedule['schedules'][':i:']);
@@ -421,11 +444,28 @@ class MEC_feature_occurrences extends MEC_base
             // Hourly Schedules
             $occurrence['hourly_schedules'] = $hourly_schedules;
 
-            $location_id = (isset($occurrence['location_id']) ? $occurrence['location_id'] : '');
+            $location_id = $occurrence['location_id'] ?? '';
             if($location_id) $location_ids[] = $location_id;
 
-            $organizer_id = (isset($occurrence['organizer_id']) ? $occurrence['organizer_id'] : '');
+            $organizer_id = $occurrence['organizer_id'] ?? '';
             if($organizer_id) $organizer_ids[] = $organizer_id;
+
+            // Status
+            $status = $occurrence['event_status'] ?? 'EventScheduled';
+            $bookings_status = $occurrence['cancel_bookings'] ?? '';
+
+            if($status === 'EventCancelled' && trim($bookings_status))
+            {
+                $timestamp = $this->db->select("SELECT occurrence FROM `#__mec_occurrences` WHERE `id`='".esc_sql($occurrence['id'])."'", 'loadResult');
+                $bookings = $this->main->get_bookings($post_id, $timestamp);
+
+                foreach($bookings as $booking)
+                {
+                    if($bookings_status === 'refund') $book->cancel($booking->ID, true);
+                    else $book->cancel($booking->ID, false);
+                }
+            }
+
 
             // Save Occurrence
             $this->db->q("UPDATE `#__mec_occurrences` SET `params`='".json_encode($occurrence, JSON_UNESCAPED_UNICODE)."' WHERE `id`='".$this->db->escape($occurrence['id'])."'");
@@ -447,12 +487,12 @@ class MEC_feature_occurrences extends MEC_base
     {
         $JSON = $this->db->select("SELECT `params` FROM `#__mec_occurrences` WHERE `id`='".$this->db->escape($occurrence_id)."'", 'loadResult');
 
-        if(!trim($JSON)) return array();
+        if(!trim($JSON)) return [];
         else
         {
             $params = json_decode($JSON, true);
 
-            if(!is_array($params)) return array();
+            if(!is_array($params)) return [];
             else return $params;
         }
     }
@@ -481,10 +521,10 @@ class MEC_feature_occurrences extends MEC_base
             $db = $main->getDB();
             $JSON = $db->select("SELECT `params` FROM `#__mec_occurrences` WHERE `post_id`='".$db->escape($post_id)."' AND `occurrence`='".$db->escape($timestamp)."' ORDER BY `id` DESC LIMIT 1", 'loadResult');
 
-            if(is_null($JSON) or !trim($JSON)) $params = array();
+            if(is_null($JSON) or !trim($JSON)) $params = [];
             else $params = json_decode($JSON, true);
 
-            return is_array($params) ? $params : array();
+            return is_array($params) ? $params : [];
         });
 
         if($key == '*') return $params;
@@ -495,10 +535,10 @@ class MEC_feature_occurrences extends MEC_base
 
     public static function fetch($date_events = array())
     {
-        $occurrences = array();
+        $occurrences = [];
         $where = '';
 
-        foreach($date_events as $date => $events)
+        foreach($date_events as $events)
         {
             foreach($events as $event)
             {
@@ -519,7 +559,7 @@ class MEC_feature_occurrences extends MEC_base
 
     public static function fetch_single($event, $dates)
     {
-        $occurrences = array();
+        $occurrences = [];
         $where = '';
 
         foreach($dates as $date)
@@ -547,16 +587,16 @@ class MEC_feature_occurrences extends MEC_base
         $db = $main->getDB();
 
         // Records
-        $records = $db->select("SELECT `post_id`, `occurrence`, `params` FROM `#__mec_occurrences` WHERE ".rtrim($where, 'OR '), 'loadObjectList');
+        $records = $db->select("SELECT `post_id`, `occurrence`, `params` FROM `#__mec_occurrences` WHERE ".rtrim($where, 'OR '));
 
         // Mapped Records
-        $mapped_records = array();
+        $mapped_records = [];
 
         foreach($records as $record)
         {
             $JSON = $record->params;
 
-            if(!trim($JSON)) $params = array();
+            if(!trim($JSON)) $params = [];
             else $params = json_decode($JSON, true);
 
             $mapped_records[$record->post_id.':'.$record->occurrence] = (is_array($params) ? $params : array());
@@ -571,7 +611,7 @@ class MEC_feature_occurrences extends MEC_base
             $post_id = $occurrence[0];
             $timestamp = $occurrence[1];
 
-            $value = (isset($mapped_records[$post_id.':'.$timestamp]) ? $mapped_records[$post_id.':'.$timestamp] : array());
+            $value = $mapped_records[$post_id . ':' . $timestamp] ?? [];
             $cache->set('mec_occ_param_'.$post_id.'_'.$timestamp, $value);
         }
     }

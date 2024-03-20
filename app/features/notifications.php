@@ -39,20 +39,20 @@ class MEC_feature_notifications extends MEC_base
     public function init()
     {
         // Module is disabled
-        if(!isset($this->settings['notif_per_event']) or (isset($this->settings['notif_per_event']) and !$this->settings['notif_per_event'])) return;
+        if(!isset($this->settings['notif_per_event']) || !$this->settings['notif_per_event']) return;
 
-        $this->factory->action('mec_metabox_details', array($this, 'meta_box_notifications'), 30);
+        $this->factory->action('mec_metabox_details', [$this, 'meta_box_notifications'], 30);
     }
 
     /**
      * Show notification meta box
      * @author Webnus <info@webnus.net>
-     * @param object $post
+     * @param $post
      */
     public function meta_box_notifications($post)
     {
         $values = get_post_meta($post->ID, 'mec_notifications', true);
-        if(!is_array($values)) $values = array();
+        if(!is_array($values)) $values = [];
 
         $notifications = $this->get_notifications();
     ?>
@@ -66,7 +66,7 @@ class MEC_feature_notifications extends MEC_base
                         <input onchange="jQuery('#mec_notification_<?php echo esc_attr($key); ?>_container_toggle').toggle();" value="1" type="checkbox" name="mec[notifications][<?php echo esc_attr($key); ?>][status]" <?php if(isset($values[$key]) and isset($values[$key]['status']) and $values[$key]['status']) echo 'checked="checked"'; ?> /> <?php echo esc_html__("Modify", 'modern-events-calendar-lite'); ?>
                     </label>
                 </div>
-                <div id="mec_notification_<?php echo esc_attr($key); ?>_container_toggle" class="<?php if(!isset($values[$key]) or (isset($values[$key]) and !$values[$key]['status'])) echo 'mec-util-hidden'; ?>">
+                <div id="mec_notification_<?php echo esc_attr($key); ?>_container_toggle" class="<?php if(!isset($values[$key]) || !$values[$key]['status']) echo 'mec-util-hidden'; ?>">
                     <div class="mec-form-row">
                         <div class="mec-col-2">
                             <label for="mec_notifications_<?php echo esc_attr($key); ?>_subject"><?php esc_html_e('Email Subject', 'modern-events-calendar-lite'); ?></label>
@@ -85,9 +85,7 @@ class MEC_feature_notifications extends MEC_base
                     </div>
 
                     <?php
-                        $section = $key;
-                        $options = $values;
-                        do_action('mec_display_notification_settings_for_event',$values,$section)
+                        do_action('mec_display_notification_settings_for_event', $values, $key);
                     ?>
                 </div>
 			</div>
@@ -100,35 +98,38 @@ class MEC_feature_notifications extends MEC_base
 
     public function get_notifications()
     {
-        $notifications = array(
-            'booking_notification' => array(
+        $notifications = [
+            'booking_notification' => [
                 'label' => esc_html__('Booking Notification', 'modern-events-calendar-lite')
-            ),
-            'booking_confirmation' => array(
+            ],
+            'booking_confirmation' => [
                 'label' => esc_html__('Booking Confirmation', 'modern-events-calendar-lite')
-            ),
-            'booking_rejection' => array(
+            ],
+            'booking_rejection' => [
                 'label' => esc_html__('Booking Rejection', 'modern-events-calendar-lite')
-            ),
-            'email_verification' => array(
+            ],
+            'email_verification' => [
                 'label' => esc_html__('Email Verification', 'modern-events-calendar-lite')
-            ),
-            'cancellation_notification' => array(
+            ],
+            'cancellation_notification' => [
                 'label' => esc_html__('Booking Cancellation', 'modern-events-calendar-lite')
-            ),
-            'booking_reminder' => array(
+            ],
+            'booking_reminder' => [
                 'label' => esc_html__('Booking Reminder', 'modern-events-calendar-lite')
-            ),
-            'event_finished' => array(
+            ],
+            'event_finished' => [
                 'label' => esc_html__('Event Finished', 'modern-events-calendar-lite')
-            ),
-            'event_soldout' => array(
+            ],
+            'event_soldout' => [
                 'label' => esc_html__('Event Soldout', 'modern-events-calendar-lite')
-            ),
-            'admin_notification' => array(
+            ],
+            'admin_notification' => [
                 'label' => esc_html__('Admin Notification', 'modern-events-calendar-lite')
-            ),
-        );
+            ],
+            'certificate_send' => [
+                'label' => esc_html__('Send Certificate', 'modern-events-calendar-lite')
+            ],
+        ];
 
         return apply_filters('mec_event_notifications', $notifications);
     }
@@ -177,7 +178,8 @@ class MEC_feature_notifications extends MEC_base
             <li><span>%%event_more_info%%</span>: <?php esc_html_e('Event link', 'modern-events-calendar-lite'); ?></li>
             <li><span>%%event_other_info%%</span>: <?php esc_html_e('Event more info link', 'modern-events-calendar-lite'); ?></li>
             <li><span>%%online_link%%</span>: <?php esc_html_e('Event online link', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%attendees_full_info%%</span>: <?php esc_html_e('Full Attendee info such as booking form data, name, email etc.', 'modern-events-calendar-lite'); ?></li>
+            <li><span>%%attendees_full_info%%</span>: <?php esc_html_e('Full Attendees info such as booking form data, name, email etc.', 'modern-events-calendar-lite'); ?></li>
+            <li><span>%%all_bfixed_fields%%</span>: <?php esc_html_e('All booking fixed fields data.', 'modern-events-calendar-lite'); ?></li>
             <li><span>%%booking_id%%</span>: <?php esc_html_e('Booking ID', 'modern-events-calendar-lite'); ?></li>
             <li><span>%%booking_transaction_id%%</span>: <?php esc_html_e('Transaction ID of Booking', 'modern-events-calendar-lite'); ?></li>
             <li><span>%%admin_link%%</span>: <?php esc_html_e('Admin booking management link.', 'modern-events-calendar-lite'); ?></li>

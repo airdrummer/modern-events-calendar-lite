@@ -35,7 +35,7 @@ $sed_method = isset($this->skin_options['sed_method']) ? $this->skin_options['se
                 $start_time = (isset($event->data->time) ? $event->data->time['start'] : '');
                 $end_time = (isset($event->data->time) ? $event->data->time['end'] : '');
                 $event_color = $this->get_event_color_dot($event);
-                $excerpt = trim($event->data->post->post_excerpt) ? $event->data->post->post_excerpt : '';
+                $excerpt = get_the_excerpt($event->data->post);
                 $event_start_date = !empty($event->date['start']['date']) ? $event->date['start']['date'] : '';
 
                 // Safe Excerpt for UTF-8 Strings
@@ -83,13 +83,13 @@ $sed_method = isset($this->skin_options['sed_method']) ? $this->skin_options['se
                                     <?php endif; ?>
                                     <div class="mec-timeline-event-details">
                                         <div class="mec-timeline-event-time mec-color">
-                                            <i class="mec-sl-clock"></i><?php echo MEC_kses::element($this->main->display_time($start_time, $end_time)); ?>
+                                            <?php echo $this->icons->display('clock'); ?><?php echo MEC_kses::element($this->main->display_time($start_time, $end_time)); ?>
                                         </div>
                                     </div>
                                     <?php if(!empty($location['address'])): ?>
                                         <div class="mec-timeline-event-details">
                                             <div class="mec-timeline-event-location mec-color">
-                                                <address class="mec-timeline-event-address"><i class="mec-sl-location-pin"></i><span><?php echo (isset($location['address']) ? esc_html($location['address']) : ''); ?></span></address>
+                                                <address class="mec-timeline-event-address"><?php echo $this->icons->display('location-pin'); ?><span><?php echo esc_html($location['address']); ?></span></address>
                                             </div>
                                         </div>
                                     <?php endif; ?>
@@ -107,7 +107,6 @@ $sed_method = isset($this->skin_options['sed_method']) ? $this->skin_options['se
                         <?php if($sed_method != 'no') echo MEC_kses::element($this->display_link($event, ((is_array($event->data->tickets) and count($event->data->tickets) and !strpos($soldout, '%%soldout%%') and !$this->booking_button and !$this->main->is_expired($event)) ? $this->main->m('register_button', esc_html__('Register for event', 'modern-events-calendar-lite')) : $this->main->m('view_detail', esc_html__('View Details', 'modern-events-calendar-lite'))).'<i class="mec-sl-arrow-right"></i>', 'mec-booking-button mec-timeline-readmore mec-bg-color')); ?>
                     </div>
                 </div>
-
         <?php } ?>
     </div>
 

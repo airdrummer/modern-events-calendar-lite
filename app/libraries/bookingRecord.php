@@ -42,7 +42,13 @@ class MEC_bookingRecord extends MEC_base
 
         if(!$booking || !is_a($booking, '\WP_Post')) return [];
 
-        $user_id = $booking->post_author;
+        // User Library
+        $u = $this->getUser();
+
+        // Get Main User
+        $user = $u->booking($booking->ID);
+
+        $user_id = $user ? $user->ID : 0;
         $verified = get_post_meta($booking->ID, 'mec_verified', true);
         $confirmed = get_post_meta($booking->ID, 'mec_confirmed', true);
         $event_id = get_post_meta($booking->ID, 'mec_event_id', true);
@@ -64,17 +70,19 @@ class MEC_bookingRecord extends MEC_base
         }
 
         $booking_options = get_post_meta($event_id, 'mec_booking', true);
-        $all_occurrences = (isset($booking_options['bookings_all_occurrences']) ? $booking_options['bookings_all_occurrences'] : 0);
+        $all_occurrences = $booking_options['bookings_all_occurrences'] ?? 0;
+
+        $attendees = get_post_meta($booking->ID, 'mec_attendees', true);
 
         $all_dates = get_post_meta($booking->ID, 'mec_all_dates', true);
-        $timestamps = array();
+        $timestamps = [];
 
         // Multiple Dates
         if($all_dates and is_array($all_dates) and count($all_dates)) $timestamps = $all_dates;
         // Single Date
         else $timestamps[] = get_post_meta($booking->ID, 'mec_date', true);
 
-        $ids = array();
+        $ids = [];
         foreach($timestamps as $timestamp)
         {
             $timestamp = explode(':', $timestamp)[0];
@@ -88,7 +96,28 @@ class MEC_bookingRecord extends MEC_base
 
             // Insert
             $query = "INSERT INTO `#__mec_bookings` (`booking_id`,`user_id`,`transaction_id`,`event_id`,`ticket_ids`,`seats`,`status`,`confirmed`,`verified`,`all_occurrences`,`date`,`timestamp`) VALUES ('".esc_sql($booking->ID)."','".esc_sql($user_id)."','".esc_sql($transaction_id)."','".esc_sql($event_id)."','".esc_sql($ticket_ids)."','".esc_sql($seats)."','".$booking->post_status."','".esc_sql($confirmed)."','".esc_sql($verified)."','".esc_sql($all_occurrences)."','".date('Y-n-d H:i:s', $timestamp)."','".esc_sql($timestamp)."');";
-            $ids[] = $this->db->q($query, 'INSERT');
+            $id = $this->db->q($query, 'INSERT');
+
+            foreach($attendees as $k => $attendee)
+            {
+                // No Attendee
+                if(!is_numeric($k)) continue;
+                if(!isset($attendee['id'])) continue;
+
+                // Ticket ID
+                $ticket_id = $attendee['id'];
+
+                // Register attendee in MEC
+                $attendee_id = $u->register($attendee, [
+                    'register_in_mec' => true,
+                ]);
+
+                // Insert Booking Attendees
+                $query = "INSERT INTO `#__mec_booking_attendees` (`mec_booking_id`,`user_id`,`ticket_id`) VALUES ('".esc_sql($id)."','".esc_sql($attendee_id)."','".esc_sql($ticket_id)."');";
+                $this->db->q($query, 'INSERT');
+            }
+
+            $ids[] = $id;
         }
 
         return $ids;
@@ -152,10 +181,8 @@ class MEC_bookingRecord extends MEC_base
         // Get Booking by ID
         if(is_numeric($booking)) $booking = get_post($booking);
 
-        if( !$booking || !is_a( $booking, '\WP_Post' ) ){
-
-            return [];
-        }
+        // Invalid Booking
+        if(!$booking || !is_a($booking, '\WP_Post')) return [];
 
         $q = "";
         foreach($values as $key => $value) $q .= "`".esc_attr($key)."`='".esc_sql($value)."',";

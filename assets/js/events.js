@@ -8,6 +8,13 @@ jQuery(document).ready(function($)
     {
         event.preventDefault();
 
+        var real_ajax_url = wp.ajax.settings.url;
+        wp.ajax.settings.url = real_ajax_url + '?mec_fes=1';
+
+        var post_id = $(this).data('post-id');
+        if(post_id && post_id !== -1) wp.media.model.settings.post.id = post_id;
+        if(post_id === -1) wp.media.model.settings.post.id = null;
+
         var preview_id = 'mec_thumbnail_img';
         var input_id = 'mec_thumbnail';
 
@@ -22,6 +29,7 @@ jQuery(document).ready(function($)
         }
 
         frame = wp.media();
+        console.log(frame);
         frame.on('select', function()
         {
             // Grab the selected attachment.
@@ -301,6 +309,8 @@ jQuery(document).ready(function($)
             gotoCurrent: true,
             yearRange: 'c-1:c+5',
         });
+
+        trigger_period_picker();
     }
 
     // Initialize WP Color Picker
@@ -447,41 +457,55 @@ jQuery(document).ready(function($)
 
     $('#mec_add_not_in_days').on('click', function()
     {
-        var date = $('#mec_exceptions_not_in_days_date').val();
+        let date = $('#mec_exceptions_not_in_days_date').val();
         if(date === '') return false;
 
-        var key = $('#mec_new_not_in_days_key').val();
-        var html = $('#mec_new_not_in_days_raw').html().replace(/:i:/g, key).replace(/:val:/g, date);
+        let d = date.replaceAll('-', '');
+        d = d.replaceAll('/', '');
+        d = d.replaceAll('.', '');
 
-        $('#mec_not_in_days').append(html);
-        $('#mec_new_not_in_days_key').val(parseInt(key)+1);
+
+        let $wrapper = $('#mec_not_in_days');
+        let $key = $('#mec_new_not_in_days_key');
+
+        let c = 'mec-date-'+d;
+        if($wrapper.find($('.'+c)).length) return;
+
+        let key = $key.val();
+        let html = $('#mec_new_not_in_days_raw').html().replace(/:i:/g, key).replace(/:d:/g, d).replace(/:val:/g, date);
+
+        $wrapper.append(html);
+        $key.val(parseInt(key)+1);
     });
 
     $('#mec_add_ticket_button').on('click', function()
     {
-        var key = $('#mec_new_ticket_key').val();
-        var html = $('#mec_new_ticket_raw').html().replace(/:i:/g, key);
+        let $key = $('#mec_new_ticket_key');
+        let key = $key.val();
+        let html = $('#mec_new_ticket_raw').html().replace(/:i:/g, key);
 
         $('#mec_tickets').append(html);
-        $('#mec_new_ticket_key').val(parseInt(key)+1);
+        $key.val(parseInt(key)+1);
 
         $('.mec_add_price_date_button').off('click').on('click', function()
         {
             mec_handle_add_price_date_button(this);
         });
 
-        $.each($(".mec-select2"), function(i,v){
-
-            if( $(v).attr('name').search(":i:") > 0 ){
-
+        $.each($(".mec-select2"), function(i,v)
+        {
+            if($(v).attr('name').search(":i:") > 0)
+            {
                 return;
             }
 
-            if( typeof $(v).data('select2-id') == 'undefined' ){
-
+            if(typeof $(v).data('select2-id') == 'undefined')
+            {
                 $(v).select2();
             }
         });
+
+        trigger_period_picker();
     });
 
     $('.mec_add_price_date_button').off('click').on('click', function()
@@ -610,6 +634,36 @@ jQuery(document).ready(function($)
         $('#mec_new_faq_key').val(parseInt(key)+1);
     });
 });
+
+function trigger_period_picker()
+{
+    jQuery('.mec-date-picker-start').datepicker(
+    {
+        changeYear: true,
+        changeMonth: true,
+        dateFormat: 'yy-mm-dd',
+        gotoCurrent: true,
+        yearRange: 'c-1:c+5',
+        onSelect: function(date)
+        {
+            const selectedDate = new Date(date);
+            const endDate = new Date(selectedDate.getTime());
+
+            const $end_picker = jQuery(this).next();
+            $end_picker.datepicker("option", "minDate", endDate);
+            $end_picker.datepicker("option", "maxDate", '+5y');
+        }
+    });
+
+    jQuery('.mec-date-picker-end').datepicker(
+    {
+        changeYear: true,
+        changeMonth: true,
+        dateFormat: 'yy-mm-dd',
+        gotoCurrent: true,
+        yearRange: 'c-1:c+5',
+    });
+}
 
 function mec_location_toggle()
 {
@@ -844,6 +898,13 @@ function mec_reg_fields_option_listeners()
         {
             handle: '.mec_reg_field_option_sort'
         });
+
+        jQuery(".mec-hourly-schedule-days").sortable(
+        {
+            handle: 'h4'
+        });
+
+        jQuery(".mec-hourly-schedule-schedules").sortable({});
     }
 }
 

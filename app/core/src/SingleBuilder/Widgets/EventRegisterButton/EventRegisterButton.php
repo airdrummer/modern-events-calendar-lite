@@ -55,8 +55,8 @@ class EventRegisterButton extends WidgetBase {
 			ob_start();
 			?>
 			<!-- Register Booking Button -->
-			<div class="mec-reg-btn mec-frontbox">
-				<?php if (Base::get_main()->can_show_booking_module($event_detail)) : ?>
+			<?php if (Base::get_main()->can_show_booking_module($event_detail)) : ?>
+				<div class="mec-reg-btn mec-frontbox">
 					<?php
 
 					$data_lity = '';
@@ -81,12 +81,14 @@ class EventRegisterButton extends WidgetBase {
 						jQuery( ".mec-booking-button.mec-booking-data-lity" ).on('click',mec_booking_lity_init);
 					}
 					</script>
-				<?php elseif ( $mec_more_info ) : ?>
+				</div>
+			<?php elseif ( $mec_more_info ) : ?>
+				<div class="mec-reg-btn mec-frontbox">
 					<a target="<?php echo esc_attr( $mec_more_info_target ); ?>" class="mec-booking-button mec-bg-color" href="<?php echo esc_url( $event_detail->data->meta['mec_more_info'] ); ?>">
 						<?php echo esc_html__( $button_text , 'modern-events-calendar-lite'); ?>
 					</a>
-				<?php endif; ?>
-			</div>
+				</div>
+			<?php endif; ?>
 			<?php
 			$html = ob_get_clean();
 		}

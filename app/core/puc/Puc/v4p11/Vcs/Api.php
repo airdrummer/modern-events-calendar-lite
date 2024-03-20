@@ -62,7 +62,7 @@ if ( !class_exists('Puc_v4p11_Vcs_Api') ):
 		public function getRemoteReadme($ref = 'master') {
 			$fileContents = $this->getRemoteFile($this->getLocalReadmeName(), $ref);
 			if ( empty($fileContents) ) {
-				return array();
+				return [];
 			}
 
 			$parser = new PucReadmeParser();

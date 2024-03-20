@@ -3,13 +3,14 @@
 namespace MEC\FES;
 
 use MEC\Singleton;
+use WP_Post;
 
 class FormBuilder extends Singleton {
 
     /**
      * Booking demo check
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -41,7 +42,7 @@ class FormBuilder extends Singleton {
     /**
      * Return title html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -60,7 +61,7 @@ class FormBuilder extends Singleton {
     /**
      * Return editor html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -84,7 +85,7 @@ class FormBuilder extends Singleton {
     /**
      * Return excerpt html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -112,7 +113,7 @@ class FormBuilder extends Singleton {
     /**
      * Return datetime html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -132,13 +133,23 @@ class FormBuilder extends Singleton {
         $one_occurrence = get_post_meta($post_id, 'one_occurrence', true);
         $comment = get_post_meta($post_id, 'mec_comment', true);
         $hide_time = get_post_meta($post_id, 'mec_hide_time', true);
+
+        // MEC Main
+        $main = \MEC\Base::get_main();
+
+        // Settings
+        $settings = $main->get_settings();
+
+        $hide_end_time_global = isset($settings['hide_event_end_time']) && $settings['hide_event_end_time'];
         $hide_end_time = get_post_meta($post_id, 'mec_hide_end_time', true);
+
+        if($hide_end_time_global) $hide_end_time = 1;
 
         $start_date = get_post_meta($post_id, 'mec_start_date', true);
 
         // Advanced Repeating Day
         $advanced_days = get_post_meta( $post->ID, 'mec_advanced_days', true );
-        $advanced_days = (is_array($advanced_days)) ? $advanced_days : array();
+        $advanced_days = (is_array($advanced_days)) ? $advanced_days : [];
         $advanced_str = (count($advanced_days)) ? implode('-', $advanced_days) : '';
 
         $start_time_hour = get_post_meta($post_id, 'mec_start_time_hour', true);
@@ -169,10 +180,10 @@ class FormBuilder extends Singleton {
         if(trim($repeat_interval) == '' and in_array($repeat_type, array('daily', 'weekly'))) $repeat_interval = 1;
 
         $certain_weekdays = get_post_meta($post_id, 'mec_certain_weekdays', true);
-        if($repeat_type != 'certain_weekdays') $certain_weekdays = array();
+        if($repeat_type != 'certain_weekdays') $certain_weekdays = [];
 
         $in_days_str = get_post_meta($post_id, 'mec_in_days', true);
-        $in_days = trim($in_days_str) ? explode(',', $in_days_str) : array();
+        $in_days = trim($in_days_str) ? explode(',', $in_days_str) : [];
 
         $mec_repeat_end = get_post_meta($post_id, 'mec_repeat_end', true);
         if(trim($mec_repeat_end) == '') $mec_repeat_end = 'never';
@@ -230,7 +241,7 @@ class FormBuilder extends Singleton {
                     <div class="mec-form-row">
                         <input <?php if($hide_time == '1') echo 'checked="checked"'; ?> type="checkbox" name="mec[date][hide_time]" id="mec_hide_time" value="1" /><label for="mec_hide_time"><?php esc_html_e('Hide Event Time', 'modern-events-calendar-lite'); ?></label>
                     </div>
-                    <div class="mec-form-row">
+                    <div class="mec-form-row <?php echo $hide_end_time_global ? 'mec-util-hidden' : ''; ?>">
                         <input <?php if($hide_end_time == '1') echo 'checked="checked"'; ?> type="checkbox" name="mec[date][hide_end_time]" id="mec_hide_end_time" value="1" /><label for="mec_hide_end_time"><?php esc_html_e('Hide Event End Time', 'modern-events-calendar-lite'); ?></label>
                     </div>
                     <div class="mec-form-row">
@@ -603,7 +614,7 @@ class FormBuilder extends Singleton {
                         </div>
                         <div id="mec_end_wrapper">
                             <div class="mec-form-row">
-                                <label for="mec_repeat_ends_never"><h5 class="mec-title"><?php esc_html_e('Ends Repeat', 'modern-events-calendar-lite'); ?></h5></label>
+                                <label for="mec_repeat_ends_never"><h5 class="mec-title"><?php esc_html_e('End Repeat', 'modern-events-calendar-lite'); ?></h5></label>
                             </div>
                             <div class="mec-form-row">
                                 <input <?php if($mec_repeat_end == 'never') echo 'checked="checked"'; ?> type="radio" value="never" name="mec[date][repeat][end]" id="mec_repeat_ends_never" />
@@ -651,7 +662,7 @@ class FormBuilder extends Singleton {
     /**
      * Return countdown status html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -685,7 +696,7 @@ class FormBuilder extends Singleton {
     /**
      * Return style per event html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -723,7 +734,7 @@ class FormBuilder extends Singleton {
     /**
      * Return trailer URL html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -740,8 +751,6 @@ class FormBuilder extends Singleton {
                 <div class="mec-col-6">
                     <input name="mec[trailer_url]" id="mec_trailer_url" title="<?php esc_attr_e('Trailer URL', 'modern-events-calendar-lite'); ?>" type="url" value="<?php echo trim($trailer_url) ? esc_url($trailer_url) : ''; ?>" class="widefat" placeholder="http://">
                 </div>
-            </div>
-            <div class="mec-form-row">
                 <div class="mec-col-6">
                     <input name="mec[trailer_title]" id="mec_trailer_title" title="<?php esc_attr_e('Trailer Title', 'modern-events-calendar-lite'); ?>" type="text" value="<?php echo esc_attr($trailer_title); ?>" class="widefat" placeholder="<?php esc_attr_e('Trailer Title', 'modern-events-calendar-lite'); ?>">
                 </div>
@@ -753,7 +762,7 @@ class FormBuilder extends Singleton {
     /**
      * Return visibility html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -786,7 +795,7 @@ class FormBuilder extends Singleton {
     /**
      * Return timezone html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -819,7 +828,7 @@ class FormBuilder extends Singleton {
     /**
      * Return note html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -861,7 +870,7 @@ class FormBuilder extends Singleton {
     /**
      * Return guest html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -899,7 +908,7 @@ class FormBuilder extends Singleton {
     /**
      * Return event links html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -908,13 +917,12 @@ class FormBuilder extends Singleton {
      */
     public static function event_links( $post, $atts = array() ){
 
-        $event_link_required = isset( $atts['event_link_required'] ) && $atts['event_link_required'] ? true : false;
-        $more_info_required = isset( $atts['more_info_required'] ) && $atts['more_info_required'] ? true : false;
+        $event_link_required = isset( $atts['event_link_required'] ) && $atts['event_link_required'];
+        $more_info_required = isset( $atts['more_info_required'] ) && $atts['more_info_required'];
 
         $read_more = get_post_meta($post->ID, 'mec_read_more', true);
         $more_info = get_post_meta($post->ID, 'mec_more_info', true);
         $more_info_title = get_post_meta($post->ID, 'mec_more_info_title', true);
-        $more_info_target = get_post_meta($post->ID, 'mec_more_info_target', true);
         ?>
         <!-- Event Links Section -->
         <div class="mec-meta-box-fields mec-fes-event-links" id="mec-event-links">
@@ -928,10 +936,6 @@ class FormBuilder extends Singleton {
                 <label class="mec-col-2" for="mec_more_info_link"><?php echo esc_html(\MEC\Base::get_main()->m('more_info_link', esc_html__('More Info', 'modern-events-calendar-lite'))); ?> <?php echo $more_info_required ? '<span class="mec-required">*</span>' : ''; ?></label>
                 <input class="mec-col-5" type="text" name="mec[more_info]" id="mec_more_info_link" value="<?php echo esc_attr($more_info); ?>" placeholder="<?php esc_html_e('eg. http://yoursite.com/your-event', 'modern-events-calendar-lite'); ?>" <?php echo ( $more_info_required ? 'required' : ''); ?> />
                 <input class="mec-col-2" type="text" name="mec[more_info_title]" id="mec_more_info_title" value="<?php echo esc_attr($more_info_title); ?>" placeholder="<?php esc_html_e('More Information', 'modern-events-calendar-lite'); ?>" />
-                <select class="mec-col-2" name="mec[more_info_target]" id="mec_more_info_target">
-                    <option value="_self" <?php echo ($more_info_target == '_self' ? 'selected="selected"' : ''); ?>><?php esc_html_e('Current Window', 'modern-events-calendar-lite'); ?></option>
-                    <option value="_blank" <?php echo ($more_info_target == '_blank' ? 'selected="selected"' : ''); ?>><?php esc_html_e('New Window', 'modern-events-calendar-lite'); ?></option>
-                </select>
                 <p class="description"><?php esc_html_e('This link will appear on the single event page. Insert full link including http(s)://', 'modern-events-calendar-lite'); ?></p>
             </div>
         </div>
@@ -942,7 +946,7 @@ class FormBuilder extends Singleton {
     /**
      * Return cost html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -961,7 +965,7 @@ class FormBuilder extends Singleton {
         $cost_auto_calculate = get_post_meta($post->ID, 'mec_cost_auto_calculate', true);
 
         $currency = get_post_meta($post->ID, 'mec_currency', true);
-        if(!is_array($currency)) $currency = array();
+        if(!is_array($currency)) $currency = [];
 
         $currency_per_event = ((isset($settings['currency_per_event']) and trim($settings['currency_per_event'])) ? $settings['currency_per_event'] : 0);
 
@@ -990,7 +994,7 @@ class FormBuilder extends Singleton {
                 <?php if($currency_per_event): ?>
                 <h4 class="mec-form-subtitle"><?php echo esc_html__('Currency Options', 'modern-events-calendar-lite'); ?></h4>
                 <div class="mec-form-row">
-                    <label class="mec-col-2" for="mec_currency_currency"><?php esc_html_e('Currency', 'modern-events-calendar-lite'); ?></label>
+                    <label class="mec-col-3" for="mec_currency_currency"><?php esc_html_e('Currency', 'modern-events-calendar-lite'); ?></label>
                     <div class="mec-col-4">
                         <select name="mec[currency][currency]" id="mec_currency_currency">
                             <?php foreach($currencies as $c=>$currency_name): ?>
@@ -1000,7 +1004,7 @@ class FormBuilder extends Singleton {
                     </div>
                 </div>
                 <div class="mec-form-row">
-                    <label class="mec-col-2" for="mec_currency_currency_symptom"><?php esc_html_e('Currency Sign', 'modern-events-calendar-lite'); ?></label>
+                    <label class="mec-col-3" for="mec_currency_currency_symptom"><?php esc_html_e('Currency Sign', 'modern-events-calendar-lite'); ?></label>
                     <div class="mec-col-4">
                         <input type="text" name="mec[currency][currency_symptom]" id="mec_currency_currency_symptom" value="<?php echo (isset($currency['currency_symptom']) ? esc_attr($currency['currency_symptom']) : ''); ?>" />
                         <span class="mec-tooltip">
@@ -1013,7 +1017,7 @@ class FormBuilder extends Singleton {
                     </div>
                 </div>
                 <div class="mec-form-row">
-                    <label class="mec-col-2" for="mec_currency_currency_sign"><?php esc_html_e('Currency Position', 'modern-events-calendar-lite'); ?></label>
+                    <label class="mec-col-3" for="mec_currency_currency_sign"><?php esc_html_e('Currency Position', 'modern-events-calendar-lite'); ?></label>
                     <div class="mec-col-4">
                         <select name="mec[currency][currency_sign]" id="mec_currency_currency_sign">
                             <option value="before" <?php echo ((isset($currency['currency_sign']) and $currency['currency_sign'] == 'before') ? 'selected="selected"' : ''); ?>><?php esc_html_e('$10 (Before)', 'modern-events-calendar-lite'); ?></option>
@@ -1024,13 +1028,13 @@ class FormBuilder extends Singleton {
                     </div>
                 </div>
                 <div class="mec-form-row">
-                    <label class="mec-col-2" for="mec_currency_thousand_separator"><?php esc_html_e('Thousand Separator', 'modern-events-calendar-lite'); ?></label>
+                    <label class="mec-col-3" for="mec_currency_thousand_separator"><?php esc_html_e('Thousand Separator', 'modern-events-calendar-lite'); ?></label>
                     <div class="mec-col-4">
                         <input type="text" name="mec[currency][thousand_separator]" id="mec_currency_thousand_separator" value="<?php echo (isset($currency['thousand_separator']) ? esc_attr($currency['thousand_separator']) : ','); ?>" />
                     </div>
                 </div>
                 <div class="mec-form-row">
-                    <label class="mec-col-2" for="mec_currency_decimal_separator"><?php esc_html_e('Decimal Separator', 'modern-events-calendar-lite'); ?></label>
+                    <label class="mec-col-3" for="mec_currency_decimal_separator"><?php esc_html_e('Decimal Separator', 'modern-events-calendar-lite'); ?></label>
                     <div class="mec-col-4">
                         <input type="text" name="mec[currency][decimal_separator]" id="mec_currency_decimal_separator" value="<?php echo (isset($currency['decimal_separator']) ? esc_attr($currency['decimal_separator']) : '.'); ?>" />
                     </div>
@@ -1052,7 +1056,7 @@ class FormBuilder extends Singleton {
     /**
      * Return thumbnail html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -1061,7 +1065,7 @@ class FormBuilder extends Singleton {
      */
     public static function thumbnail( $post, $atts = array() ){
 
-        $required = isset( $atts['required'] ) && $atts['required'] ? true : false;
+        $required = isset( $atts['required'] ) && $atts['required'];
 
         $attachment_id = get_post_thumbnail_id($post->ID);
         $featured_image = wp_get_attachment_image_src($attachment_id, 'large');
@@ -1083,7 +1087,7 @@ class FormBuilder extends Singleton {
                     <?php echo (trim($featured_image) ? '<img src="'.esc_attr($featured_image).'" />' : ''); ?>
                 </div>
                 <input type="hidden" id="mec_thumbnail" name="mec[featured_image]" value="<?php if(isset($attachment_id) and intval($attachment_id)) the_guid($attachment_id); ?>" />
-                <button type="button" class="mec_upload_image_button button" id="mec_thumbnail_button"><?php echo esc_html__('Choose image', 'modern-events-calendar-lite'); ?></button>
+                <button type="button" class="mec_upload_image_button button" data-post-id="<?php echo esc_attr($post->ID); ?>" id="mec_thumbnail_button"><?php echo esc_html__('Choose image', 'modern-events-calendar-lite'); ?></button>
                 <button type="button" class="mec_remove_image_button button <?php echo (trim($featured_image) ? '' : 'mec-util-hidden'); ?>"><?php echo esc_html__('Remove image', 'modern-events-calendar-lite'); ?></button>
             </div>
             <?php else: ?>
@@ -1099,7 +1103,7 @@ class FormBuilder extends Singleton {
 
             <?php if( $featured_image_caption ): ?>
             <div class="mec-form-row">
-                <input type="text" id="mec_fes_thumbnail_caption" name="mec[featured_image_caption]" value="<?php if(isset($attachment_id) and intval($attachment_id)) echo wp_get_attachment_caption($attachment_id); ?>" />
+                <input type="text" id="mec_fes_thumbnail_caption" name="mec[featured_image_caption]" value="<?php if(isset($attachment_id) and intval($attachment_id)) echo wp_get_attachment_caption($attachment_id); ?>" placeholder="<?php esc_attr_e('Image Caption', 'modern-events-calendar-lite'); ?>" />
             </div>
             <?php endif; ?>
         </div>
@@ -1110,7 +1114,7 @@ class FormBuilder extends Singleton {
     /**
      * Return categories html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -1142,7 +1146,7 @@ class FormBuilder extends Singleton {
     /**
      * Return labels html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -1157,7 +1161,7 @@ class FormBuilder extends Singleton {
 
         $post_labels = get_the_terms($post->ID, 'mec_label');
 
-        $labels = array();
+        $labels = [];
         if($post_labels) {
 
             foreach($post_labels as $post_label){
@@ -1204,7 +1208,7 @@ class FormBuilder extends Singleton {
     /**
      * Return color html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -1243,7 +1247,7 @@ class FormBuilder extends Singleton {
     /**
      * Return tags html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -1274,7 +1278,7 @@ class FormBuilder extends Singleton {
     /**
      * Return speakers html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -1305,7 +1309,7 @@ class FormBuilder extends Singleton {
         }
 
         $post_speakers = get_the_terms($post->ID, 'mec_speaker');
-        $speakers = array();
+        $speakers = [];
         if($post_speakers) {
             foreach($post_speakers as $post_speaker){
 
@@ -1341,7 +1345,7 @@ class FormBuilder extends Singleton {
     /**
      * Return sponsors html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -1370,7 +1374,7 @@ class FormBuilder extends Singleton {
             return;
         }
 
-        $sponsors = array();
+        $sponsors = [];
         if( is_array( $post_sponsors ) ) {
             foreach($post_sponsors as $post_sponsor){
 
@@ -1389,6 +1393,13 @@ class FormBuilder extends Singleton {
         <!-- Event Sponsors Section -->
         <div class="mec-meta-box-fields mec-fes-sponsors" id="mec-sponsors">
             <h4><?php echo esc_html(\MEC\Base::get_main()->m('taxonomy_sponsors', esc_html__('Sponsors', 'modern-events-calendar-lite'))); ?></h4>
+            <?php if(isset($atts['add_sponsors']) && $atts['add_sponsors']): ?>
+            <div class="mec-form-row">
+                <input type="text" name="mec[sponsors][datas][names]" id="mec_sponsor_input_names" placeholder="<?php echo sprintf(esc_html__('%s Name', 'modern-events-calendar-lite'), \MEC\Base::get_main()->m('taxonomy_sponsor', esc_html__('Sponsor', 'modern-events-calendar-lite'))); ?>" />
+                <p><?php echo sprintf(esc_html__('Insert name of one %s: Company A', 'modern-events-calendar-lite'), strtolower(\MEC\Base::get_main()->m('taxonomy_sponsor', esc_html__('sponsor', 'modern-events-calendar-lite')))); ?></p>
+                <button class="button" type="button" id="mec_add_sponsor_button"><?php esc_html_e('Add', 'modern-events-calendar-lite'); ?></button>
+            </div>
+            <?php endif; ?>
             <div class="mec-form-row" id="mec-fes-sponsors-list">
                 <?php if(count($sponsor_terms)): ?>
                     <?php foreach($sponsor_terms as $sponsor_term): ?>
@@ -1407,7 +1418,7 @@ class FormBuilder extends Singleton {
     /**
      * Return agreement html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -1441,7 +1452,7 @@ class FormBuilder extends Singleton {
     /**
      * Return event data html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -1465,7 +1476,7 @@ class FormBuilder extends Singleton {
     /**
      * Return hourly schedules html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -1481,7 +1492,7 @@ class FormBuilder extends Singleton {
         {
             $first_key = key($meta_hourly_schedules);
 
-            $hourly_schedules = array();
+            $hourly_schedules = [];
             if(!isset($meta_hourly_schedules[$first_key]['schedules']))
             {
                 $hourly_schedules[] = array(
@@ -1491,28 +1502,28 @@ class FormBuilder extends Singleton {
             }
             else $hourly_schedules = $meta_hourly_schedules;
         }
-        else $hourly_schedules = array();
+        else $hourly_schedules = [];
 
         // Status of Speakers Feature
-        $speakers_status = (!isset($settings['speakers_status']) or (isset($settings['speakers_status']) and !$settings['speakers_status'])) ? false : true;
+        $speakers_status = isset($settings['speakers_status']) && $settings['speakers_status'];
         $speakers = get_terms('mec_speaker', array(
             'orderby' => 'name',
             'order' => 'ASC',
             'hide_empty' => '0',
         ));
 
-        $hourly_schedule = \MEC\Base::get_main()->getHourlySchedule();
-        $hourly_schedule->form(array(
+        $builder = \MEC\Base::get_main()->getFormBuilder();
+        $builder->hourlySchedule([
             'hourly_schedules' => $hourly_schedules,
             'speakers_status' => $speakers_status,
             'speakers' => $speakers,
-        ));
+        ]);
     }
 
     /**
      * Return Event Gallery html form
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -1524,6 +1535,7 @@ class FormBuilder extends Singleton {
         // Disable For Guest
         if(!get_current_user_id()) return;
 
+        $required = isset($atts['required']) && $atts['required'];
         $gallery = get_post_meta($post->ID, 'mec_event_gallery', true);
         if(!is_array($gallery)) $gallery = [];
         ?>
@@ -1533,6 +1545,13 @@ class FormBuilder extends Singleton {
             <?php if(current_user_can('upload_files')): ?>
             jQuery('#mec_event_gallery_image_uploader').on('click', function(event)
             {
+                var real_ajax_url = wp.ajax.settings.url;
+                wp.ajax.settings.url = real_ajax_url + '?mec_fes=1';
+
+                var post_id = $(this).data('post-id');
+                if(post_id && post_id !== -1) wp.media.model.settings.post.id = post_id;
+                if(post_id === -1) wp.media.model.settings.post.id = null;
+
                 event.preventDefault();
 
                 var frame;
@@ -1545,6 +1564,7 @@ class FormBuilder extends Singleton {
                 frame = wp.media({
                     multiple: true
                 });
+
                 frame.on('select', function()
                 {
                     frame.state().get('selection').map(function(attachment)
@@ -1630,13 +1650,13 @@ class FormBuilder extends Singleton {
             mec_event_gallery_delete_listeners();
         });
         </script>
-        <div class="mec-meta-box-fields mec-event-tab-content mec-fes-event-gallery" id="mec-event-gallery">
-            <h4><?php esc_html_e('Event Gallery', 'modern-events-calendar-lite'); ?></h4>
-            <div id="mec_meta_box_event_gallery_options">
+        <div id="mec-event-gallery" class="mec-meta-box-fields mec-fes-gallery">
+            <h4><?php esc_html_e('Gallery', 'modern-events-calendar-lite'); ?> <?php echo ( $required ? '<span class="mec-required">*</span>' : ''); ?></h4>
+            <div id="mec_meta_box_event_gallery_options" class="mec-form-row">
                 <?php if(current_user_can('upload_files')): ?>
-                <button type="button" id="mec_event_gallery_image_uploader">Upload Images</button>
+                <button type="button" id="mec_event_gallery_image_uploader" class="button" data-post-id="<?php echo esc_attr($post->ID); ?>"><?php esc_html_e('Add event gallery images', 'modern-events-calendar-lite'); ?></button>
                 <?php else: ?>
-                <input type="file" id="mec_event_gallery_image_uploader" multiple>
+                <input type="file" id="mec_event_gallery_image_uploader" multiple><?php esc_html_e('Add event gallery images', 'modern-events-calendar-lite'); ?>
                 <?php endif; ?>
                 <p class="description"><?php esc_html_e('png, jpg, gif, and webp files are allowed.', 'modern-events-calendar-lite'); ?></p>
                 <div class="mec-error mec-util-hidden" id="mec_event_gallery_error"></div>
@@ -1705,7 +1725,7 @@ class FormBuilder extends Singleton {
             <div class="mec-form-row">
                 <label>
                     <input type="hidden" name="mec[banner][display]" value="0" />
-                    <input value="1" onchange="jQuery('#mec_meta_box_event_banner_options').toggleClass('mec-util-hidden');" type="checkbox" name="mec[banner][status]" <?php echo $mec_banner_status ? 'checked="checked"' : ''; ?> /> <?php esc_html_e('Display Banner', 'modern-events-calendar-lite'); ?>
+                    <input value="1" onchange="jQuery('#mec_meta_box_event_banner_options').toggleClass('mec-util-hidden');" type="checkbox" name="mec[banner][status]" <?php echo $mec_banner_status ? 'checked="checked"' : ''; ?> /><?php esc_html_e('Display Banner', 'modern-events-calendar-lite'); ?>
                 </label>
             </div>
             <div id="mec_meta_box_event_banner_options" class="<?php if(!$mec_banner_status) echo 'mec-util-hidden'; ?>">
@@ -1726,7 +1746,7 @@ class FormBuilder extends Singleton {
                     </div>
                     <input type="hidden" id="mec_banner_thumbnail" name="mec[banner][image]" value="<?php if(trim($mec_banner_image)) echo $mec_banner_image; ?>" />
                     <button type="button" class="mec_upload_image_button button" id="mec_banner_thumbnail_button" data-preview-id="mec_banner_thumbnail_img" data-input-id="mec_banner_thumbnail"><?php echo esc_html__('Choose image', 'modern-events-calendar-lite'); ?></button>
-                    <button type="button" class="mec_remove_image_button button <?php echo (trim($mec_banner_image) ? '' : 'mec-util-hidden'); ?>" data-preview-id="mec_banner_thumbnail_img" data-input-id="mec_banner_thumbnail"><?php echo esc_html__('Remove image', 'modern-events-calendar-lite'); ?></button>
+                    <button type="button" class="mec_remove_image_button button mec-dash-remove-btn <?php echo (trim($mec_banner_image) ? '' : 'mec-util-hidden'); ?>" data-preview-id="mec_banner_thumbnail_img" data-input-id="mec_banner_thumbnail"><?php echo esc_html__('Remove image', 'modern-events-calendar-lite'); ?></button>
 				</div>
             </div>
         </div>
@@ -1736,7 +1756,7 @@ class FormBuilder extends Singleton {
     /**
      * Return locations html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -1759,7 +1779,7 @@ class FormBuilder extends Singleton {
         $location_id = apply_filters('wpml_object_id', $location_id, 'mec_location', true);
 
         $location_ids = get_post_meta($post->ID, 'mec_additional_location_ids', true);
-        if(!is_array($location_ids)) $location_ids = array();
+        if(!is_array($location_ids)) $location_ids = [];
 
         $additional_locations_status = (!isset($settings['additional_locations']) or (isset($settings['additional_locations']) and $settings['additional_locations'])) ? true : false;
         if($is_fes_form and isset($settings['fes_section_other_locations']) and !$settings['fes_section_other_locations']) $additional_locations_status = false;
@@ -1840,13 +1860,16 @@ class FormBuilder extends Singleton {
                 <div class="mec-form-row">
                     <input type="text" name="mec[location][url]" id="mec_location_url" value="" placeholder="<?php esc_html_e('Location Website', 'modern-events-calendar-lite'); ?>" title="<?php esc_html_e('Location Website', 'modern-events-calendar-lite'); ?>" />
                 </div>
+                <div class="mec-form-row">
+                    <input type="text" name="mec[location][tel]" id="mec_location_tel" value="" placeholder="<?php esc_html_e('Location Phone', 'modern-events-calendar-lite'); ?>" title="<?php esc_html_e('Location Phone', 'modern-events-calendar-lite'); ?>" />
+                </div>
                 <?php do_action('mec_location_after_new_form'); ?>
                 <?php /* Don't show this section in FES */ if( !$is_fes_form ): ?>
 				<div class="mec-form-row mec-thumbnail-row">
 					<div id="mec_location_thumbnail_img"></div>
 					<input type="hidden" name="mec[location][thumbnail]" id="mec_location_thumbnail" value="" />
 					<button type="button" class="mec_location_upload_image_button button" id="mec_location_thumbnail_button"><?php echo esc_html__('Choose image', 'modern-events-calendar-lite'); ?></button>
-					<button type="button" class="mec_location_remove_image_button button mec-util-hidden"><?php echo esc_html__('Remove image', 'modern-events-calendar-lite'); ?></button>
+					<button type="button" class="mec_location_remove_image_button button mec-dash-remove-btn mec-util-hidden"><?php echo esc_html__('Remove image', 'modern-events-calendar-lite'); ?></button>
 				</div>
                 <?php else: ?>
                 <div class="mec-form-row mec-thumbnail-row">
@@ -1860,7 +1883,7 @@ class FormBuilder extends Singleton {
             <?php if(\MEC\Base::get_main()->getPRO()): ?>
             <div class="mec-form-row mec-show-map-status">
                 <input type="hidden" name="mec[dont_show_map]" value="0" />
-                <input type="checkbox" id="mec_location_dont_show_map" name="mec[dont_show_map]" value="1" <?php echo ($dont_show_map ? 'checked="checked"' : ''); ?> /><label for="mec_location_dont_show_map"><?php echo esc_html__("Don't show map in single event page", 'modern-events-calendar-lite'); ?></label>
+                <label for="mec_location_dont_show_map"><input type="checkbox" id="mec_location_dont_show_map" name="mec[dont_show_map]" value="1" <?php echo ($dont_show_map ? 'checked="checked"' : ''); ?> /><?php echo esc_html__("Don't show map in single event page", 'modern-events-calendar-lite'); ?></label>
             </div>
             <?php endif; ?>
             <?php if($additional_locations_status and count($locations)): ?>
@@ -1885,7 +1908,7 @@ class FormBuilder extends Singleton {
     /**
      * Return Organizers html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -1904,18 +1927,28 @@ class FormBuilder extends Singleton {
         $organizer_id = get_post_meta($post->ID, 'mec_organizer_id', true);
         $organizer_id = apply_filters('wpml_object_id', $organizer_id, 'mec_organizer', true);
 
+        // Detect it by current user
+        if($is_fes_form && trim($organizer_id) === '' && is_user_logged_in())
+        {
+            // MEC Main
+            $main = \MEC\Base::get_main();
+
+            $current_user = wp_get_current_user();
+            $organizer_id = $main->get_organizer_id_by_email($current_user->user_email);
+        }
+
         $organizer_ids = get_post_meta($post->ID, 'mec_additional_organizer_ids', true);
-        if(!is_array($organizer_ids)) $organizer_ids = array();
+        if(!is_array($organizer_ids)) $organizer_ids = [];
         $organizer_ids = array_unique($organizer_ids);
 
-        $additional_organizers_status = (!isset($settings['additional_organizers']) or (isset($settings['additional_organizers']) and $settings['additional_organizers'])) ? true : false;
+        $additional_organizers_status = !isset($settings['additional_organizers']) || $settings['additional_organizers'];
 
         // FES Options
         $use_all_organizers = (($is_fes_form and isset($settings['fes_use_all_organizers']) and !$settings['fes_use_all_organizers']) ? false : true);
         if(!$use_all_organizers)
         {
             $additional_organizers_status = false;
-            $organizers = array();
+            $organizers = [];
 
             // Display Saved Organizer for Current Event in FES
             if($post->ID and $organizer_id and $organizer_id != 1) $organizers[] = get_term($organizer_id);
@@ -1969,7 +2002,7 @@ class FormBuilder extends Singleton {
 					<div id="mec_organizer_thumbnail_img"></div>
 					<input type="hidden" name="mec[organizer][thumbnail]" id="mec_organizer_thumbnail" value="" />
                     <button type="button" class="mec_organizer_upload_image_button button" id="mec_organizer_thumbnail_button"><?php echo esc_html__('Choose image', 'modern-events-calendar-lite'); ?></button>
-					<button type="button" class="mec_organizer_remove_image_button button mec-util-hidden"><?php echo esc_html__('Remove image', 'modern-events-calendar-lite'); ?></button>
+					<button type="button" class="mec_organizer_remove_image_button button mec-util-hidden mec-dash-remove-btn"><?php echo esc_html__('Remove image', 'modern-events-calendar-lite'); ?></button>
 				</div>
                 <?php else: ?>
                 <div class="mec-form-row mec-thumbnail-row">
@@ -2028,7 +2061,7 @@ class FormBuilder extends Singleton {
         $booking_options = get_post_meta($post_id, 'mec_booking', true);
         if(!is_array($booking_options)) {
 
-            $booking_options = array();
+            $booking_options = [];
         }
 
         return $booking_options;
@@ -2037,7 +2070,7 @@ class FormBuilder extends Singleton {
     /**
      * Return total booking limit html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -2087,7 +2120,7 @@ class FormBuilder extends Singleton {
     /**
      * Return date selection method html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -2125,7 +2158,7 @@ class FormBuilder extends Singleton {
     /**
      * Return bookings minimum per booking html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -2156,7 +2189,7 @@ class FormBuilder extends Singleton {
     /**
      * Return discount per user roles html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -2199,7 +2232,7 @@ class FormBuilder extends Singleton {
     /**
      * Return discount per user roles html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -2222,7 +2255,7 @@ class FormBuilder extends Singleton {
         <div class="mec-meta-box-fields" id="mec-book-all-occurrences">
             <h4 class="mec-title"><?php esc_html_e('Book All Occurrences', 'modern-events-calendar-lite'); ?></h4>
             <div class="mec-form-row">
-                <label class="mec-col-4" for="mec_bookings_all_occurrences">
+                <label class="mec-col-12" for="mec_bookings_all_occurrences">
                     <input type="hidden" name="mec[booking][bookings_all_occurrences]" value="0"/>
                     <input id="mec_bookings_all_occurrences"
                         <?php
@@ -2255,7 +2288,7 @@ class FormBuilder extends Singleton {
                         }
                         ?>
                             type="checkbox" value="1" name="mec[booking][bookings_all_occurrences_multiple]"/>
-                    <?php esc_html_e('Allow multiple bookings by same email on different dates.', 'modern-events-calendar-lite'); ?>
+                    <?php esc_html_e('Allow multiple bookings by same email on different dates', 'modern-events-calendar-lite'); ?>
                 </label>
             </div>
         </div>
@@ -2265,7 +2298,7 @@ class FormBuilder extends Singleton {
     /**
      * Return interval options html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -2318,7 +2351,7 @@ class FormBuilder extends Singleton {
     /**
      * Return automatic approval html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -2364,7 +2397,7 @@ class FormBuilder extends Singleton {
     /**
      * Return last few tickets percentage html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -2382,7 +2415,7 @@ class FormBuilder extends Singleton {
 
         $booking_options = static::get_booking_options( $post->ID );
 
-        $bookings_last_few_tickets_percentage_inherite = isset($booking_options['last_few_tickets_percentage_inherit']) ? $booking_options['last_few_tickets_percentage_inherit'] : 1;
+        $bookings_last_few_tickets_percentage_inherite = $booking_options['last_few_tickets_percentage_inherit'] ?? 1;
         $bookings_last_few_tickets_percentage = ((isset($booking_options['last_few_tickets_percentage']) and trim($booking_options['last_few_tickets_percentage']) != '') ? max(1, $booking_options['last_few_tickets_percentage']) : (isset($settings['booking_last_few_tickets_percentage']) ? max(1, $settings['booking_last_few_tickets_percentage']) : 15));
 
         ?>
@@ -2411,7 +2444,7 @@ class FormBuilder extends Singleton {
     /**
      * Return thankyou page html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -2489,7 +2522,7 @@ class FormBuilder extends Singleton {
     /**
      * Return booking button label html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -2521,7 +2554,7 @@ class FormBuilder extends Singleton {
     /**
      * Return booking partial payment html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -2535,14 +2568,17 @@ class FormBuilder extends Singleton {
             return;
         }
 
-        $booking_options = static::get_booking_options( $post->ID );
-
-        $payable_inherit = isset($booking_options['bookings_payable_inherit']) ? (boolean) $booking_options['bookings_payable_inherit'] : true;
-        $payable = isset($booking_options['bookings_payable']) ? $booking_options['bookings_payable'] : 100;
-        $payable_type = isset($booking_options['bookings_payable_type']) ? $booking_options['bookings_payable_type'] : 'percent';
-
         // Partial Payment
         $partial_payment = \MEC\Base::get_main()->getPartialPayment();
+
+        // Partial Payment per event is not enabled
+        if(!$partial_payment->is_payable_per_event_enabled()) return;
+
+        $booking_options = static::get_booking_options( $post->ID );
+
+        $payable_inherit = !isset($booking_options['bookings_payable_inherit']) || $booking_options['bookings_payable_inherit'];
+        $payable = $booking_options['bookings_payable'] ?? 100;
+        $payable_type = $booking_options['bookings_payable_type'] ?? 'percent';
 
         // Validate
         [$payable, $payable_type] = $partial_payment->validate_payable_options($payable, $payable_type);
@@ -2582,7 +2618,7 @@ class FormBuilder extends Singleton {
     /**
      * Return booking button label html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -2598,11 +2634,11 @@ class FormBuilder extends Singleton {
 
         $booking_options = static::get_booking_options( $post->ID );
 
-        $bookings_user_limit = isset($booking_options['bookings_user_limit']) ? $booking_options['bookings_user_limit'] : '';
-        $bookings_user_limit_unlimited = isset($booking_options['bookings_user_limit_unlimited']) ? $booking_options['bookings_user_limit_unlimited'] : true;
+        $bookings_user_limit = $booking_options['bookings_user_limit'] ?? '';
+        $bookings_user_limit_unlimited = $booking_options['bookings_user_limit_unlimited'] ?? true;
 
         ?>
-        <div class="mec-meta-box-fields mec-booking-tab-content" id="mec_meta_box_booking_options_form_2">
+        <div class="mec-meta-box-fields" id="mec_bookings_user_limit">
             <h4 class="mec-title"><label for="mec_bookings_user_limit"><?php esc_html_e('Total User Booking Limits', 'modern-events-calendar-lite'); ?></label></h4>
             <div class="mec-form-row">
                 <label class="mec-col-4" for="mec_bookings_user_limit_unlimited" id="mec_bookings_user_limit_unlimited_label">
@@ -2626,7 +2662,7 @@ class FormBuilder extends Singleton {
     /**
      * Return booking button label html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -2656,7 +2692,7 @@ class FormBuilder extends Singleton {
         }
 
         $gateways = \MEC\Base::get_main()->get_gateways();
-        $enableds_gateways = array();
+        $enableds_gateways = [];
         foreach($gateways as $gateway){
 
             if(!$gateway->enabled()) continue;
@@ -2700,7 +2736,7 @@ class FormBuilder extends Singleton {
     /**
      * Return fees html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -2725,13 +2761,13 @@ class FormBuilder extends Singleton {
 
         $fees = get_post_meta($post->ID, 'mec_fees', true);
 
-        $global_fees = isset($settings['fees']) ? $settings['fees'] : array();
+        $global_fees = isset($settings['fees']) ? $settings['fees'] : [];
         if (!is_array($fees) and trim($fees) == '') {
             $fees = $global_fees;
         }
 
         if (!is_array($fees)) {
-            $fees = array();
+            $fees = [];
         }
         ?>
         <div class="mec-meta-box-fields mec-booking-tab-content mec-fes-fees" id="mec-fees">
@@ -2747,7 +2783,7 @@ class FormBuilder extends Singleton {
                                 echo 'checked="checked"';
                             }
                             ?>
-                        /> <?php esc_html_e('Inherit from global options', 'modern-events-calendar-lite'); ?>
+                        /><?php esc_html_e('Inherit from global options', 'modern-events-calendar-lite'); ?>
                     </label>
                 </div>
                 <div id="mec_taxes_fees_container_toggle" class="
@@ -2779,7 +2815,7 @@ class FormBuilder extends Singleton {
 								<span class="mec-col-4">
 									<input type="text" name="mec[fees][<?php echo esc_attr($i); ?>][amount]"
                                            placeholder="<?php esc_attr_e('Amount', 'modern-events-calendar-lite'); ?>"
-                                           value="<?php echo(isset($fee['amount']) ? esc_attr($fee['amount']) : ''); ?>"/>
+                                           value="<?php echo(isset($fee['amount']) ? esc_attr($fee['amount']) : 0); ?>"/>
 									<span class="mec-tooltip">
 										<div class="box top">
 											<h5 class="title"><?php esc_html_e('Amount', 'modern-events-calendar-lite'); ?></h5>
@@ -2798,7 +2834,7 @@ class FormBuilder extends Singleton {
 										<option value="amount_per_booking" <?php echo((isset($fee['type']) and $fee['type'] == 'amount_per_booking') ? 'selected="selected"' : ''); ?>><?php esc_html_e('Amount (Per Booking)', 'modern-events-calendar-lite'); ?></option>
 									</select>
 								</span>
-                                    <button class="button" type="button" id="mec_remove_fee_button<?php echo esc_attr($i); ?>"
+                                    <button class="button mec-dash-remove-btn" type="button" id="mec_remove_fee_button<?php echo esc_attr($i); ?>"
                                             onclick="mec_remove_fee(<?php echo esc_attr($i); ?>);"><?php esc_html_e('Remove', 'modern-events-calendar-lite'); ?></button>
                                 </div>
                             </div>
@@ -2816,7 +2852,7 @@ class FormBuilder extends Singleton {
                     <div class="mec-form-row">
 						<span class="mec-col-4">
 							<input type="text" name="mec[fees][:i:][amount]"
-                                   placeholder="<?php esc_attr_e('Amount', 'modern-events-calendar-lite'); ?>"/>
+                                   placeholder="<?php esc_attr_e('Amount', 'modern-events-calendar-lite'); ?>" value="0" />
 							<span class="mec-tooltip">
 								<div class="box top">
 									<h5 class="title"><?php esc_html_e('Amount', 'modern-events-calendar-lite'); ?></h5>
@@ -2835,7 +2871,7 @@ class FormBuilder extends Singleton {
 								<option value="amount_per_booking"><?php esc_html_e('Amount (Per Booking)', 'modern-events-calendar-lite'); ?></option>
 							</select>
 						</span>
-                        <button class="button mec_remove_fee_button" type="button" id="mec_remove_fee_button:i:"
+                        <button class="button mec_remove_fee_button mec-dash-remove-btn" type="button" id="mec_remove_fee_button:i:"
                                 onclick="mec_remove_fee(:i:);"><?php esc_html_e('Remove', 'modern-events-calendar-lite'); ?></button>
                     </div>
                 </div>
@@ -2847,7 +2883,7 @@ class FormBuilder extends Singleton {
     /**
      * Return booking form html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -2870,13 +2906,13 @@ class FormBuilder extends Singleton {
         $global_reg_fields = \MEC\Base::get_main()->get_reg_fields();
 
         if((is_array($reg_fields) and !count($reg_fields)) or (!is_array($reg_fields) and trim($reg_fields) == '')) $reg_fields = $global_reg_fields;
-        if(!is_array($reg_fields)) $reg_fields = array();
+        if(!is_array($reg_fields)) $reg_fields = [];
 
         $bfixed_fields = get_post_meta($post->ID, 'mec_bfixed_fields', true);
         $global_bfixed_fields = \MEC\Base::get_main()->get_bfixed_fields();
 
         if((is_array($bfixed_fields) and !count($bfixed_fields)) or (!is_array($bfixed_fields) and trim($bfixed_fields) == '')) $bfixed_fields = $global_bfixed_fields;
-        if(!is_array($bfixed_fields)) $bfixed_fields = array();
+        if(!is_array($bfixed_fields)) $bfixed_fields = [];
 
         $mec_name = false;
         $mec_email = false;
@@ -2927,7 +2963,7 @@ class FormBuilder extends Singleton {
                                 echo 'checked="checked"';
                             }
                             ?>
-                        /> <?php esc_html_e('Inherit from global options', 'modern-events-calendar-lite'); ?>
+                        /><?php esc_html_e('Inherit from global options', 'modern-events-calendar-lite'); ?>
                     </label>
                 </div>
                 <?php do_action('mec_meta_box_reg_fields_form', $post->ID); ?>
@@ -3121,7 +3157,7 @@ class FormBuilder extends Singleton {
     /**
      * Return ticket variations html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -3141,10 +3177,10 @@ class FormBuilder extends Singleton {
         if(trim($global_inheritance) == '') $global_inheritance = 1;
 
         $ticket_variations = get_post_meta($post->ID, 'mec_ticket_variations', true);
-        $global_variations = isset($settings['ticket_variations']) ? $settings['ticket_variations'] : array();
+        $global_variations = isset($settings['ticket_variations']) ? $settings['ticket_variations'] : [];
 
         if(!is_array($ticket_variations) and trim($ticket_variations) == '') $ticket_variations = $global_variations;
-        if(!is_array($ticket_variations)) $ticket_variations = array();
+        if(!is_array($ticket_variations)) $ticket_variations = [];
 
         // Ticket Variations Object
         $TicketVariations = \MEC\Base::get_main()->getTicketVariations();
@@ -3195,7 +3231,7 @@ class FormBuilder extends Singleton {
     /**
      * Return attendees html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -3209,7 +3245,7 @@ class FormBuilder extends Singleton {
             return;
         }
 
-        $draft = (isset($post->post_status) and $post->post_status != 'auto-draft') ? false : true;
+        $draft = !(isset($post->post_status) and $post->post_status != 'auto-draft');
         if($draft) return;
 
         $limit = 100;
@@ -3225,6 +3261,7 @@ class FormBuilder extends Singleton {
 
         $db = \MEC\Base::get_main()->getDB();
         $booking_dates = $db->select("SELECT `date` FROM `#__mec_bookings` WHERE `event_id`='".esc_sql($post->ID)."' GROUP BY `date` ORDER BY `date`", 'loadColumn');
+        $booking_dates_for_manage = $db->select("SELECT `date` FROM `#__mec_bookings` WHERE `event_id`='".esc_sql($post->ID)."' AND `verified`=1 GROUP BY `date` ORDER BY `date`", 'loadColumn');
 
         do_action('mec_events_meta_box_attendees_start', $post);
         ?>
@@ -3264,11 +3301,34 @@ class FormBuilder extends Singleton {
                 ?>
             <h4 class="mec-meta-box-header"><?php esc_html_e('Move Bookings', 'modern-events-calendar-lite'); ?></h4>
             <div class="mec-move-bookings-wrapper mec-booking-move-bookings-wrapper">
-                <div>
+                <div class="mec-form-row mec-label">
                     <?php echo sprintf(esc_html__('Move bookings from %s to %s', 'modern-events-calendar-lite'), $from, $to); ?>
                     <button id="mec_move_bookings_button" type="button" class="button button-secondary"><?php esc_html_e('Move', 'modern-events-calendar-lite'); ?></button>
                 </div>
                 <div id="mec_move_bookings_message"></div>
+            </div>
+            <?php endif; ?>
+            <?php if(count($booking_dates_for_manage)): ?>
+                <?php
+                    $manage_options = '';
+                    foreach($booking_dates_for_manage as $booking_date_for_manage) $manage_options .= '<option value="'.esc_attr(strtotime($booking_date_for_manage)).'">'.esc_html(date_i18n($datetime_format, strtotime($booking_date_for_manage))).'</option>';
+
+                    $dates_manage = '<select id="mec_manage_bookings_booking_dates_dropdown" title="'.esc_attr__('Occurrence', 'modern-events-calendar-lite').'">
+                        '.$manage_options.'
+                    </select>';
+                ?>
+            <h4 class="mec-meta-box-header"><?php esc_html_e('Manage Bookings', 'modern-events-calendar-lite'); ?></h4>
+            <div class="mec-manage-bookings-wrapper mec-booking-manage-bookings-wrapper">
+                <div class="mec-form-row mec-label">
+                    <?php echo $dates_manage; ?>
+                    <select id="mec_manage_bookings_booking_mode_dropdown" title="<?php esc_attr_e('Action', 'modern-events-calendar-lite'); ?>">
+                        <option value="">-----</option>
+                        <option value="cancel"><?php esc_html_e('Cancel', 'modern-events-calendar-lite'); ?></option>
+                        <option value="refund"><?php esc_html_e('Cancel & Refund', 'modern-events-calendar-lite'); ?></option>
+                    </select>
+                    <button id="mec_manage_bookings_button" type="button" class="button button-secondary"><?php esc_html_e('Send', 'modern-events-calendar-lite'); ?></button>
+                </div>
+                <div id="mec_manage_bookings_message"></div>
             </div>
             <?php endif; ?>
         </div>
@@ -3295,6 +3355,36 @@ class FormBuilder extends Singleton {
                     url: "<?php echo admin_url('admin-ajax.php', NULL); ?>",
                     type: "POST",
                     data: "action=mec_move_bookings&id=<?php echo esc_js($post->ID); ?>&_wpnonce=<?php echo wp_create_nonce('mec_move_bookings'); ?>&from="+from+"&to="+to,
+                    dataType: "json"
+                })
+                .done(function(response)
+                {
+                    // Display Message
+                    if(response.success) $message.html(response.message);
+                });
+            });
+
+            jQuery('#mec_manage_bookings_button').on('click', function()
+            {
+                let $message = jQuery('#mec_manage_bookings_message');
+                let mode = jQuery('#mec_manage_bookings_booking_mode_dropdown').val();
+                let date = jQuery('#mec_manage_bookings_booking_dates_dropdown').val();
+
+                // No Action!
+                if(!mode)
+                {
+                    $message.html("<p class='warning-msg'><?php echo esc_js(__("Please select an action", 'modern-events-calendar-lite')); ?></p>");
+                    return;
+                }
+
+                // Empty Message
+                $message.html('');
+
+                jQuery.ajax(
+                {
+                    url: "<?php echo admin_url('admin-ajax.php', NULL); ?>",
+                    type: "POST",
+                    data: "action=mec_manage_bookings&id=<?php echo esc_js($post->ID); ?>&_wpnonce=<?php echo wp_create_nonce('mec_manage_bookings'); ?>&date="+date+"&mode="+mode,
                     dataType: "json"
                 })
                 .done(function(response)
@@ -3357,6 +3447,7 @@ class FormBuilder extends Singleton {
                     })
                     .done(function(response)
                     {
+                        // Display Results
                         if(response.html) $attendees.html(response.html);
 
                         // Enable the Form
@@ -3373,7 +3464,7 @@ class FormBuilder extends Singleton {
     /**
      * Return tickets html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -3387,574 +3478,47 @@ class FormBuilder extends Singleton {
             return;
         }
 
-        $settings = \MEC\Settings\Settings::getInstance()->get_settings();
+        $FES = !is_admin();
+
+        // MEC Main
+        $main = \MEC\Base::get_main();
+
+        // Settings
+        $settings = $main->get_settings();
 
         $tickets = get_post_meta($post->ID, 'mec_tickets', true);
-        if(!is_array($tickets)) $tickets = array();
+        if(!is_array($tickets)) $tickets = [];
 
-        // This date format used for datepicker
-        $datepicker_format = (isset($settings['datepicker_format']) and trim($settings['datepicker_format'])) ? $settings['datepicker_format'] : 'Y-m-d';
+        // Global Tickets
+        if(isset($settings['default_tickets_status']) && $settings['default_tickets_status'] && !count($tickets))
+        {
+            $tickets = is_array($settings['tickets']) ? $settings['tickets'] : [];
+        }
 
-        // Private Description
-        $private_description_status = (!isset($settings['booking_private_description']) or (isset($settings['booking_private_description']) and $settings['booking_private_description'])) ? true : false;
-        if(is_admin()) $private_description_status = true;
-
-        // Variations Per Ticket
-        $variations_per_ticket_status = (isset($settings['ticket_variations_per_ticket']) and $settings['ticket_variations_per_ticket']) ? true : false;
-        if(isset($settings['ticket_variations_status']) and !$settings['ticket_variations_status']) $variations_per_ticket_status = false;
-
-        // Ticket Times Status
-        $ticket_times_status = (isset($settings['disable_ticket_times']) and $settings['disable_ticket_times']) ? false : true;
-
-        // Family Tickets Status
-        $family_ticket_status = (isset($settings['booking_family_ticket']) and $settings['booking_family_ticket']) ? true : false;
+        // Tickets
+        $ticketBuilder = $main->getTickets();
         ?>
         <div class="mec-meta-box-fields mec-booking-tab-content mec-fes-tickets" id="mec-tickets">
-            <h4 class="mec-meta-box-header"><?php echo esc_html(\MEC\Base::get_main()->m('tickets', esc_html__('Tickets', 'modern-events-calendar-lite'))); ?></h4>
 
-            <?php if($post->ID != \MEC\Base::get_main()->get_original_event($post->ID)): ?>
+            <?php if(!$FES): ?>
+            <div class="mec-backend-tab-wrap mec-basvanced-toggle" data-for="#mec-tickets" data-method="addition">
+                <div class="mec-backend-tab">
+                    <div class="mec-backend-tab-item mec-b-active-tab"><?php esc_html_e('Basic', 'modern-events-calendar-lite'); ?></div>
+                    <div class="mec-backend-tab-item"><?php esc_html_e('Advanced', 'modern-events-calendar-lite'); ?></div>
+                </div>
+            </div>
+            <?php endif; ?>
+
+            <h4 class="mec-meta-box-header"><?php echo esc_html($main->m('tickets', esc_html__('Tickets', 'modern-events-calendar-lite'))); ?></h4>
+
+            <?php if($post->ID != $main->get_original_event($post->ID)): ?>
             <p class="warning-msg"><?php esc_html_e("You're translating an event so MEC will use the original event for tickets and booking. You can only translate the ticket name and description. Please define exact tickets that you defined in the original event here.", 'modern-events-calendar-lite'); ?></p>
             <?php endif; ?>
 
-            <div id="mec_meta_box_tickets_form">
-                <div class="mec-form-row">
-                    <button class="button" type="button" id="mec_add_ticket_button"><?php esc_html_e('Add Ticket', 'modern-events-calendar-lite'); ?></button>
-                </div>
-                <div id="mec_tickets">
-                    <?php
-                    $i = 0;
-                    $tvi = 100;
-                    foreach($tickets as $key => $ticket)
-                    {
-                        if(!is_numeric($key)) continue;
-                        $i = max($i, $key);
-                        ?>
-                        <div class="mec-box mec_ticket_row" id="mec_ticket_row<?php echo esc_attr($key); ?>">
-                            <div class="mec-ticket-id mec-label" title="<?php esc_attr_e('Ticket ID', 'modern-events-calendar-lite'); ?>"><span class="mec-ticket-id-title"><?php esc_attr_e('ID', 'modern-events-calendar-lite'); ?>: </span><?php echo esc_attr($key); ?></div>
-                            <div class="mec-form-row">
-                                <input type="text" class="mec-col-12" name="mec[tickets][<?php echo esc_attr($key); ?>][name]"
-                                       placeholder="<?php esc_attr_e('Ticket Name', 'modern-events-calendar-lite'); ?>"
-                                       value="<?php echo(isset($ticket['name']) ? esc_attr($ticket['name']) : ''); ?>"/>
-                            </div>
-
-                            <?php do_action('mec_ticket_properties', $key, $ticket, $post->ID); ?>
-
-                            <?php if($ticket_times_status): ?>
-                            <div class="mec-form-row wn-ticket-time">
-                                <div class="mec-ticket-start-time mec-col-12">
-                                    <span class="mec-ticket-time mec-label"><?php esc_html_e('Start Time', 'modern-events-calendar-lite'); ?></span>
-                                    <?php \MEC\Base::get_main()->timepicker(array(
-                                        'method' => (isset($settings['time_format']) ? $settings['time_format'] : 12),
-                                        'time_hour' => (isset($ticket['ticket_start_time_hour']) ? $ticket['ticket_start_time_hour'] : 8),
-                                        'time_minutes' => (isset($ticket['ticket_start_time_minute']) ? $ticket['ticket_start_time_minute'] : 0),
-                                        'time_ampm' => (isset($ticket['ticket_start_time_ampm']) ? $ticket['ticket_start_time_ampm'] : 'AM'),
-                                        'name' => 'mec[tickets]['.esc_attr($key).']',
-                                        'hour_key' => 'ticket_start_time_hour',
-                                        'minutes_key' => 'ticket_start_time_minute',
-                                        'ampm_key' => 'ticket_start_time_ampm',
-                                        'include_h0' => true,
-                                    )); ?>
-                                </div>
-                                <div class="mec-ticket-end-time mec-ticket-start-time mec-col-12">
-                                    <span class="mec-ticket-time mec-label"><?php esc_html_e('End Time', 'modern-events-calendar-lite'); ?></span>
-                                    <?php \MEC\Base::get_main()->timepicker(array(
-                                        'method' => (isset($settings['time_format']) ? $settings['time_format'] : 12),
-                                        'time_hour' => (isset($ticket['ticket_end_time_hour']) ? $ticket['ticket_end_time_hour'] : 6),
-                                        'time_minutes' => (isset($ticket['ticket_end_time_minute']) ? $ticket['ticket_end_time_minute'] : 0),
-                                        'time_ampm' => (isset($ticket['ticket_end_time_ampm']) ? $ticket['ticket_end_time_ampm'] : 'PM'),
-                                        'name' => 'mec[tickets]['.esc_attr($key).']',
-                                        'hour_key' => 'ticket_end_time_hour',
-                                        'minutes_key' => 'ticket_end_time_minute',
-                                        'ampm_key' => 'ticket_end_time_ampm',
-                                    )); ?>
-                                </div>
-                            </div>
-                            <?php endif; ?>
-
-                            <div class="mec-form-row">
-                                <textarea type="text" class="mec-col-12"
-                                       name="mec[tickets][<?php echo esc_attr($key); ?>][description]"
-                                       placeholder="<?php esc_attr_e('Description', 'modern-events-calendar-lite'); ?>"><?php echo(isset($ticket['description']) ? esc_textarea($ticket['description']) : ''); ?></textarea>
-                            </div>
-                            <?php if($private_description_status): ?>
-                            <div class="mec-form-row">
-                                <textarea type="text" class="mec-col-12"
-                                          name="mec[tickets][<?php echo esc_attr($key); ?>][private_description]"
-                                          placeholder="<?php esc_attr_e('Private Description', 'modern-events-calendar-lite'); ?>"><?php echo(isset($ticket['private_description']) ? esc_textarea($ticket['private_description']) : ''); ?></textarea>
-                                <span class="mec-tooltip">
-                                    <div class="box top">
-                                        <h5 class="title"><?php esc_html_e('Private Description', 'modern-events-calendar-lite'); ?></h5>
-                                        <div class="content"><p><?php esc_attr_e("The value can be displayed on the email notifications by placing the %%ticket_private_description%% placeholder into the email content.", 'modern-events-calendar-lite'); ?></p></div>
-                                    </div>
-                                    <i title="" class="dashicons-before dashicons-editor-help"></i>
-                                </span>
-                            </div>
-                            <?php endif; ?>
-                            <div class="mec-form-row">
-                                <span class="mec-col-4">
-                                    <input type="number" min="0" step="0.01" name="mec[tickets][<?php echo esc_attr($key); ?>][price]"
-                                           placeholder="<?php esc_attr_e('Price', 'modern-events-calendar-lite'); ?>"
-                                           value="<?php echo ((isset($ticket['price']) and trim($ticket['price'])) ? esc_attr($ticket['price']) : 0); ?>"/>
-                                    <span class="mec-tooltip">
-                                        <div class="box top">
-                                            <h5 class="title"><?php esc_html_e('Price', 'modern-events-calendar-lite'); ?></h5>
-                                            <div class="content"><p><?php esc_attr_e('Only numbers are allowed; Enter only the price without any symbols or characters. Enter 0 for free tickets.', 'modern-events-calendar-lite'); ?>
-                                                    <a href="https://webnus.net/dox/modern-events-calendar/add-a-booking-system/"
-                                                       target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
-                                        </div>
-                                        <i title="" class="dashicons-before dashicons-editor-help"></i>
-                                    </span>
-                                </span>
-                                <span class="mec-col-8">
-                                    <input type="text" name="mec[tickets][<?php echo esc_attr($key); ?>][price_label]"
-                                           placeholder="<?php esc_attr_e('Price Label', 'modern-events-calendar-lite'); ?>"
-                                           value="<?php echo(isset($ticket['price_label']) ? esc_attr($ticket['price_label']) : ''); ?>"
-                                           class="mec-col-12"/>
-                                    <span class="mec-tooltip">
-                                        <div class="box top">
-                                            <h5 class="title"><?php esc_html_e('Price Label', 'modern-events-calendar-lite'); ?></h5>
-                                            <div class="content"><p><?php esc_attr_e('How shoould the price  be displayed in the booking module? Here you can insert the price with a currency symbol. e.g. $16', 'modern-events-calendar-lite'); ?>
-                                                    <a href="https://webnus.net/dox/modern-events-calendar/add-a-booking-system/"
-                                                       target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
-                                        </div>
-                                        <i title="" class="dashicons-before dashicons-editor-help"></i>
-                                    </span>
-                                </span>
-                            </div>
-                            <div class="mec-form-row">
-                                <div class="mec-col-10">
-                                    <input class="mec-col-4 mec-available-tickets" type="text" name="mec[tickets][<?php echo esc_attr($key); ?>][limit]"
-                                        placeholder="<?php esc_attr_e('Available Tickets', 'modern-events-calendar-lite'); ?>"
-                                        value="<?php echo (isset($ticket['limit']) ? esc_attr($ticket['limit']) : '100'); ?>"/>
-                                    <label class="mec-col-2 label-checkbox" for="mec_tickets_unlimited_<?php echo esc_attr($key); ?>"
-                                        id="mec_bookings_limit_unlimited_label<?php echo esc_attr($key); ?>">
-                                        <input type="hidden" name="mec[tickets][<?php echo esc_attr($key); ?>][unlimited]" value="0"/>
-                                        <input id="mec_tickets_unlimited_<?php echo esc_attr($key); ?>" type="checkbox" value="1"
-                                            name="mec[tickets][<?php echo esc_attr($key); ?>][unlimited]"
-                                            <?php
-                                            if (isset($ticket['unlimited']) and $ticket['unlimited']) {
-                                                echo 'checked="checked"';
-                                            }
-                                            ?>
-                                        />
-                                        <?php esc_html_e('Unlimited', 'modern-events-calendar-lite'); ?>
-                                    </label>
-                                    <?php if($family_ticket_status): ?>
-                                    <input class="mec-col-4 mec-ticket-number-of-seats" type="number" name="mec[tickets][<?php echo esc_attr($key); ?>][seats]"
-                                           placeholder="<?php esc_attr_e('Number of Seats', 'modern-events-calendar-lite'); ?>"
-                                           value="<?php echo (isset($ticket['seats']) ? (int) esc_attr($ticket['seats']) : '1'); ?>" min="0" step="1"/>
-                                    <span class="mec-tooltip">
-                                        <div class="box top">
-                                            <h5 class="title"><?php esc_html_e('Number of Seats', 'modern-events-calendar-lite'); ?></h5>
-                                            <div class="content">
-                                                <p><?php esc_attr_e('The number of seats that take off from the total availability when booked. If you are creating a family ticket for 4 people then you can set it to 4.', 'modern-events-calendar-lite'); ?></p>
-                                            </div>
-                                        </div>
-                                        <i title="" class="dashicons-before dashicons-editor-help"></i>
-                                    </span>
-                                    <?php else: ?>
-                                    <input type="hidden" name="mec[tickets][<?php echo esc_attr($key); ?>][seats]" value="1"/>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                            <div class="mec-form-row">
-                                <div class="mec-col-4">
-                                    <input type="number" min="0" step="1" name="mec[tickets][<?php echo esc_attr($key); ?>][minimum_ticket]" value="<?php echo (isset($ticket['minimum_ticket']) ? esc_attr($ticket['minimum_ticket']) : '0'); ?>" placeholder="<?php esc_html_e('Minimum Ticket e.g. 3', 'modern-events-calendar-lite'); ?>">
-                                    <span class="mec-tooltip">
-                                        <div class="box top">
-                                            <h5 class="title"><?php esc_html_e('Minimum Ticket', 'modern-events-calendar-lite'); ?></h5>
-                                            <div class="content">
-                                                <p><?php esc_attr_e('The minimum number of tickets a user needs to book.', 'modern-events-calendar-lite'); ?></p>
-                                            </div>
-                                        </div>
-                                        <i title="" class="dashicons-before dashicons-editor-help"></i>
-                                    </span>
-                                </div>
-                                <div class="mec-col-4">
-                                    <input type="number" min="0" step="1" name="mec[tickets][<?php echo esc_attr($key); ?>][maximum_ticket]" value="<?php echo (isset($ticket['maximum_ticket']) ? esc_attr($ticket['maximum_ticket']) : ''); ?>" placeholder="<?php esc_html_e('Maximum Ticket e.g. 1', 'modern-events-calendar-lite'); ?>">
-                                    <span class="mec-tooltip">
-                                        <div class="box top">
-                                            <h5 class="title"><?php esc_html_e('Maximum Ticket', 'modern-events-calendar-lite'); ?></h5>
-                                            <div class="content">
-                                                <p><?php esc_attr_e('The maximum number of tickets a user can book.', 'modern-events-calendar-lite'); ?></p>
-                                            </div>
-                                        </div>
-                                        <i title="" class="dashicons-before dashicons-editor-help"></i>
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="mec-form-row">
-                                <?php ob_start(); ?>
-                                <input type="number" class="mec-stop-selling-tickets" name="mec[tickets][<?php echo esc_attr($key); ?>][stop_selling_value]" value="<?php echo((isset($ticket['stop_selling_value']) and trim($ticket['stop_selling_value'])) ? esc_attr($ticket['stop_selling_value']) : '0'); ?>" placeholder="<?php esc_html_e('e.g. 0', 'modern-events-calendar-lite'); ?>">
-                                <select name="mec[tickets][<?php echo esc_attr($key); ?>][stop_selling_type]">
-                                    <option value="day" <?php echo(isset($ticket['stop_selling_type']) and trim($ticket['stop_selling_type']) == 'day') ? 'selected="selected"' : ''; ?>><?php esc_html_e("Day", "mec"); ?></option>
-                                    <option value="hour" <?php echo(isset($ticket['stop_selling_type']) and trim($ticket['stop_selling_type']) == 'hour') ? 'selected="selected"' : ''; ?>><?php esc_html_e("Hour", "mec"); ?></option>
-                                </select>
-                                <?php echo sprintf(
-                                    esc_html__('%s Stop selling ticket %s %s %s before event start. %s', 'modern-events-calendar-lite'),
-                                    '<span class="mec-label">',
-                                    '</span>',
-                                    ob_get_clean(),
-                                    '<span class="mec-label">',
-                                    '</span>'
-                                 ); ?>
-                                <button class="button remove mec_ticket_remove_button" type="button"
-                                        onclick="mec_ticket_remove(<?php echo esc_attr($key); ?>);"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 20 20"><path d="M14.95 6.46L11.41 10l3.54 3.54l-1.41 1.41L10 11.42l-3.53 3.53l-1.42-1.42L8.58 10L5.05 6.47l1.42-1.42L10 8.58l3.54-3.53z"/></svg></button>
-                            </div>
-                            <?php do_action('custom_field_ticket', $ticket, $key); ?>
-                            <div id="mec_price_per_dates_container">
-                                <div class="mec-form-row">
-                                    <h4><?php esc_html_e('Price per Date', 'modern-events-calendar-lite'); ?></h4>
-                                    <button class="button mec_add_price_date_button" type="button"
-                                            data-key="<?php echo esc_attr($key); ?>"><?php esc_html_e('Add', 'modern-events-calendar-lite'); ?></button>
-                                </div>
-                                <div id="mec-ticket-price-dates-<?php echo esc_attr($key); ?>">
-                                    <?php $j = 0; if(isset($ticket['dates']) and count($ticket['dates'])) : ?>
-                                        <?php
-                                        foreach ($ticket['dates'] as $p => $price_date) :
-                                            if (!is_numeric($p)) {
-                                                continue;
-                                            }
-                                            $j = max($j, $p);
-                                            ?>
-                                            <div id="mec_ticket_price_raw_<?php echo esc_attr($key); ?>_<?php echo esc_attr($p); ?>">
-                                                <div class="mec-form-row">
-                                                    <input class="mec-col-3 mec_date_picker_dynamic_format" type="text"
-                                                           name="mec[tickets][<?php echo esc_attr($key); ?>][dates][<?php echo esc_attr($p); ?>][start]"
-                                                           value="<?php echo isset($price_date['start']) ? esc_attr(\MEC\Base::get_main()->standardize_format($price_date['start'], $datepicker_format)) : esc_attr(\MEC\Base::get_main()->standardize_format(date('Y-m-d'), $datepicker_format)); ?>"
-                                                           placeholder="<?php esc_attr_e('Start', 'modern-events-calendar-lite'); ?>"/>
-                                                    <input class="mec-col-3 mec_date_picker_dynamic_format" type="text"
-                                                           name="mec[tickets][<?php echo esc_attr($key); ?>][dates][<?php echo esc_attr($p); ?>][end]"
-                                                           value="<?php echo isset($price_date['end']) ? esc_attr(\MEC\Base::get_main()->standardize_format($price_date['end'], $datepicker_format)) : esc_attr(\MEC\Base::get_main()->standardize_format(date('Y-m-d', strtotime( '+10 days')), $datepicker_format)); ?>"
-                                                           placeholder="<?php esc_attr_e('End', 'modern-events-calendar-lite'); ?>"/>
-                                                    <input class="mec-col-3" type="number"
-                                                           name="mec[tickets][<?php echo esc_attr($key); ?>][dates][<?php echo esc_attr($p); ?>][price]"
-                                                           value="<?php echo isset($price_date['price']) ? esc_attr($price_date['price']) : ''; ?>"
-                                                           placeholder="<?php esc_attr_e('Price', 'modern-events-calendar-lite'); ?>" min="0" step="0.01"/>
-                                                    <input class="mec-col-2" type="text"
-                                                           name="mec[tickets][<?php echo esc_attr($key); ?>][dates][<?php echo esc_attr($p); ?>][label]"
-                                                           value="<?php echo isset($price_date['label']) ? esc_attr($price_date['label']) : ''; ?>"
-                                                           placeholder="<?php esc_attr_e('Label', 'modern-events-calendar-lite'); ?>"/>
-                                                    <button class="button mec-col-1 mec_ticket_price_remove_button" type="button"
-                                                            onclick="mec_ticket_price_remove(<?php echo esc_attr($key); ?>, <?php echo esc_attr($p); ?>)"><?php esc_html_e('Remove', 'modern-events-calendar-lite'); ?></button>
-                                                </div>
-                                            </div>
-                                        <?php endforeach; ?>
-                                    <?php endif; ?>
-                                </div>
-                                <input type="hidden" id="mec_new_ticket_price_key_<?php echo esc_attr($key); ?>"
-                                       value="<?php echo ($j + 1); ?>"/>
-                                <div class="mec-util-hidden mec_new_ticket_price_raw" id="mec_new_ticket_price_raw_<?php echo esc_attr($key); ?>">
-                                    <div id="mec_ticket_price_raw_<?php echo esc_attr($key); ?>_:j:">
-                                        <div class="mec-form-row">
-                                            <input class="mec-col-3 new_added" type="text"
-                                                   name="mec[tickets][<?php echo esc_attr($key); ?>][dates][:j:][start]"
-                                                   value="<?php echo esc_attr(\MEC\Base::get_main()->standardize_format( date( 'Y-m-d' ), $datepicker_format )); ?>"
-                                                   placeholder="<?php esc_attr_e('Start', 'modern-events-calendar-lite'); ?>"/>
-                                            <input class="mec-col-3 new_added" type="text"
-                                                   name="mec[tickets][<?php echo esc_attr($key); ?>][dates][:j:][end]"
-                                                   value="<?php echo esc_attr(\MEC\Base::get_main()->standardize_format( date( 'Y-m-d', strtotime( '+10 days' ) ), $datepicker_format )); ?>"
-                                                   placeholder="<?php esc_attr_e('End', 'modern-events-calendar-lite'); ?>"/>
-                                            <input class="mec-col-3" type="number"
-                                                   name="mec[tickets][<?php echo esc_attr($key); ?>][dates][:j:][price]"
-                                                   placeholder="<?php esc_attr_e('Price', 'modern-events-calendar-lite'); ?>" min="0" step="0.01"/>
-                                            <input class="mec-col-2" type="text"
-                                                   name="mec[tickets][<?php echo esc_attr($key); ?>][dates][:j:][label]"
-                                                   placeholder="<?php esc_attr_e('Label', 'modern-events-calendar-lite'); ?>"/>
-                                            <button class="button mec-col-1 mec_ticket_price_remove_button" type="button"
-                                                    onclick="mec_ticket_price_remove(<?php echo esc_attr($key); ?>, :j:)"><?php esc_html_e('Remove', 'modern-events-calendar-lite'); ?></button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <?php if($variations_per_ticket_status): ?>
-                            <?php
-                                $event_inheritance = (isset($ticket['variations_event_inheritance']) ? $ticket['variations_event_inheritance'] : 1);
-                                if(trim($event_inheritance) == '') $event_inheritance = 1;
-
-                                // Ticket Variations Object
-                                $TicketVariations = \MEC\Base::get_main()->getTicketVariations();
-                            ?>
-                            <div id="mec_variations_per_ticket_container">
-                                <div class="mec-form-row">
-                                    <h4><?php esc_html_e('Variations Per Ticket', 'modern-events-calendar-lite'); ?></h4>
-                                    <div id="mec_variations_per_ticket_form<?php echo esc_attr($key); ?>">
-                                        <div class="mec-form-row">
-                                            <label class="label-checkbox">
-                                                <input type="hidden" name="mec[tickets][<?php echo esc_attr($key); ?>][variations_event_inheritance]" value="0"/>
-                                                <input onchange="jQuery('#mec_variations_per_ticket_container_toggle<?php echo esc_attr($key); ?>').toggle();" value="1" type="checkbox" name="mec[tickets][<?php echo esc_attr($key); ?>][variations_event_inheritance]" <?php echo ($event_inheritance ? 'checked="checked"' : ''); ?>> <?php esc_html_e('Inherit from event options', 'modern-events-calendar-lite'); ?>
-                                            </label>
-                                        </div>
-                                        <div id="mec_variations_per_ticket_container_toggle<?php echo esc_attr($key); ?>" class="<?php echo ($event_inheritance ? 'mec-util-hidden' : ''); ?>">
-                                            <div class="mec-form-row">
-                                                <button class="button mec_add_variation_per_ticket_button" type="button" id="mec_add_variation_per_ticket_button<?php echo esc_attr($key); ?>" onclick="add_variation_per_ticket(<?php echo esc_attr($key); ?>);"><?php esc_html_e('Add', 'modern-events-calendar-lite'); ?></button>
-                                            </div>
-                                            <div id="mec_ticket_variations_list<?php echo esc_attr($key); ?>">
-                                                <?php
-                                                $ticket_variations = ((isset($ticket['variations']) and is_array($ticket['variations'])) ? $ticket['variations'] : array());
-                                                foreach($ticket_variations as $tvk => $ticket_variation)
-                                                {
-                                                    if(!is_numeric($tvk)) continue;
-
-                                                    $tvi = max($tvi, $tvk);
-                                                    $TicketVariations->item(array(
-                                                        'name_prefix' => 'mec[tickets]['.esc_attr($key).'][variations]',
-                                                        'id_prefix' => 'variation_per_ticket'.esc_attr($key),
-                                                        'i' => $tvi,
-                                                        'value' => $ticket_variation,
-                                                    ));
-                                                }
-                                                ?>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="mec-util-hidden" id="mec_new_variation_per_ticket_raw<?php echo esc_attr($key); ?>">
-                                        <?php
-                                        $TicketVariations->item(array(
-                                            'name_prefix' => 'mec[tickets]['.esc_attr($key).'][variations]',
-                                            'id_prefix' => 'variation_per_ticket'.esc_attr($key),
-                                            'i' => ':v:',
-                                            'value' => array(),
-                                        ));
-                                        ?>
-                                    </div>
-                                </div>
-                            </div>
-                            <?php endif; ?>
-                        </div>
-                    <?php
-                    }
-                    ?>
-                </div>
-                <input type="hidden" id="mec_new_variation_per_ticket_key" value="<?php echo ($tvi + 1); ?>"/>
-            </div>
-            <input type="hidden" id="mec_new_ticket_key" value="<?php echo ($i + 1); ?>"/>
-            <div class="mec-util-hidden" id="mec_new_ticket_raw">
-                <div class="mec-box mec_ticket_row" id="mec_ticket_row:i:">
-                    <div class="mec-ticket-id" title="<?php esc_attr_e('Ticket ID', 'modern-events-calendar-lite'); ?>"><span class="mec-ticket-id-title"><?php esc_attr_e('ID', 'modern-events-calendar-lite'); ?>: </span>:i:</div>
-                    <div class="mec-form-row">
-                        <input class="mec-col-12" type="text" name="mec[tickets][:i:][name]"
-                               placeholder="<?php esc_attr_e('Ticket Name', 'modern-events-calendar-lite'); ?>"/>
-                    </div>
-                    <?php do_action('mec_ticket_properties', ':i:', [], $post->ID ); ?>
-                    <?php if($ticket_times_status): ?>
-                    <div class="mec-form-row wn-ticket-time">
-                        <div class="mec-ticket-start-time mec-col-12">
-                            <span class="mec-ticket-time mec-label"><?php esc_html_e('Start Time', 'modern-events-calendar-lite'); ?></span>
-                            <?php \MEC\Base::get_main()->timepicker(array(
-                                'method' => (isset($settings['time_format']) ? $settings['time_format'] : 12),
-                                'time_hour' => 8,
-                                'time_minutes' => 0,
-                                'time_ampm' => 'AM',
-                                'name' => 'mec[tickets][:i:]',
-                                'hour_key' => 'ticket_start_time_hour',
-                                'minutes_key' => 'ticket_start_time_minute',
-                                'ampm_key' => 'ticket_start_time_ampm',
-                                'include_h0' => true,
-                            )); ?>
-                        </div>
-                        <div class="mec-ticket-end-time mec-ticket-start-time mec-col-12">
-                            <span class="mec-ticket-time mec-label"><?php esc_html_e('End Time', 'modern-events-calendar-lite'); ?></span>
-                            <?php \MEC\Base::get_main()->timepicker(array(
-                                'method' => (isset($settings['time_format']) ? $settings['time_format'] : 12),
-                                'time_hour' => 6,
-                                'time_minutes' => 0,
-                                'time_ampm' => 'PM',
-                                'name' => 'mec[tickets][:i:]',
-                                'hour_key' => 'ticket_end_time_hour',
-                                'minutes_key' => 'ticket_end_time_minute',
-                                'ampm_key' => 'ticket_end_time_ampm',
-                            )); ?>
-                        </div>
-                    </div>
-                    <?php endif; ?>
-                    <div class="mec-form-row">
-                        <textarea class="mec-col-12" type="text" name="mec[tickets][:i:][description]"
-                               placeholder="<?php esc_attr_e('Description', 'modern-events-calendar-lite'); ?>"></textarea>
-                    </div>
-                    <?php if($private_description_status): ?>
-                    <div class="mec-form-row">
-                        <textarea type="text" class="mec-col-12" name="mec[tickets][:i:][private_description]"
-                                  placeholder="<?php esc_attr_e('Private Description', 'modern-events-calendar-lite'); ?>"></textarea>
-                        <span class="mec-tooltip">
-                            <div class="box top">
-                                <h5 class="title"><?php esc_html_e('Private Description', 'modern-events-calendar-lite'); ?></h5>
-                                <div class="content"><p><?php esc_attr_e("The value can be displayed on the email notifications by placing the %%ticket_private_description%% placeholder into the email content.", 'modern-events-calendar-lite'); ?></p></div>
-                            </div>
-                            <i title="" class="dashicons-before dashicons-editor-help"></i>
-                        </span>
-                    </div>
-                    <?php endif; ?>
-                    <div class="mec-form-row">
-						<span class="mec-col-4">
-							<input type="number" min="0" step="0.01" name="mec[tickets][:i:][price]" placeholder="<?php esc_attr_e('Price', 'modern-events-calendar-lite'); ?>" value="0">
-							<span class="mec-tooltip">
-								<div class="box top">
-									<h5 class="title"><?php esc_html_e('Price', 'modern-events-calendar-lite'); ?></h5>
-									<div class="content"><p><?php esc_attr_e('Only numbers are allowed; Enter only the price without any symbols or characters. Enter 0 for free tickets.', 'modern-events-calendar-lite'); ?>
-                                            <a href="https://webnus.net/dox/modern-events-calendar/add-a-booking-system/"
-                                               target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
-								</div>
-								<i title="" class="dashicons-before dashicons-editor-help"></i>
-							</span>
-						</span>
-                        <span class="mec-col-8">
-							<input type="text" name="mec[tickets][:i:][price_label]" placeholder="<?php esc_attr_e('Price Label', 'modern-events-calendar-lite'); ?>" class="mec-col-12">
-							<span class="mec-tooltip">
-								<div class="box top">
-									<h5 class="title"><?php esc_html_e('Price Label', 'modern-events-calendar-lite'); ?></h5>
-									<div class="content"><p><?php esc_attr_e('How shoould the price  be displayed in the booking module? Here you can insert the price with a currency symbol. e.g. $16', 'modern-events-calendar-lite'); ?>
-                                            <a href="https://webnus.net/dox/modern-events-calendar/add-a-booking-system/"
-                                               target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
-								</div>
-								<i title="" class="dashicons-before dashicons-editor-help"></i>
-							</span>
-						</span>
-                    </div>
-                    <div class="mec-form-row">
-                        <div class="mec-col-10">
-                            <input class="mec-col-4 mec-available-tickets" type="text" name="mec[tickets][:i:][limit]"
-                                placeholder="<?php esc_attr_e('Available Tickets', 'modern-events-calendar-lite'); ?>"/>
-                            <label class="mec-col-2 label-checkbox" for="mec_tickets_unlimited_:i:"
-                                id="mec_bookings_limit_unlimited_label">
-                                <input type="hidden" name="mec[tickets][:i:][unlimited]" value="0"/>
-                                <input id="mec_tickets_unlimited_:i:" type="checkbox" value="1"
-                                    name="mec[tickets][:i:][unlimited]"/>
-                                <?php esc_html_e('Unlimited', 'modern-events-calendar-lite'); ?>
-                            </label>
-                            <?php if($family_ticket_status): ?>
-                            <input class="mec-col-4 mec-ticket-number-of-seats" type="number" name="mec[tickets][:i:][seats]"
-                                   placeholder="<?php esc_attr_e('Number of Seats', 'modern-events-calendar-lite'); ?>"
-                                   value="1" min="0" step="1"/>
-                            <span class="mec-tooltip">
-                                <div class="box top">
-                                    <h5 class="title"><?php esc_html_e('Number of Seats', 'modern-events-calendar-lite'); ?></h5>
-                                    <div class="content">
-                                        <p><?php esc_attr_e('The number of seats that take off from the total availability when booked. If you are creating a family ticket for 4 people then you can set it to 4.', 'modern-events-calendar-lite'); ?></p>
-                                    </div>
-                                </div>
-                                <i title="" class="dashicons-before dashicons-editor-help"></i>
-                            </span>
-                            <?php else: ?>
-                            <input type="hidden" name="mec[tickets][:i:][seats]" value="1"/>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                    <div class="mec-form-row">
-                        <div class="mec-col-4">
-                            <input type="number" min="0" step="1" name="mec[tickets][:i:][minimum_ticket]" value="1" placeholder="<?php esc_html_e('Minimum Ticket e.g. 3', 'modern-events-calendar-lite'); ?>">
-                            <span class="mec-tooltip">
-                                <div class="box top">
-                                    <h5 class="title"><?php esc_html_e('Minimum Ticket', 'modern-events-calendar-lite'); ?></h5>
-                                    <div class="content">
-                                        <p><?php esc_attr_e('The minimum number of tickets  a user needs to book.', 'modern-events-calendar-lite'); ?></p>
-                                    </div>
-                                </div>
-                                <i title="" class="dashicons-before dashicons-editor-help"></i>
-                            </span>
-                        </div>
-                        <div class="mec-col-4">
-                            <input type="number" min="0" step="1" name="mec[tickets][:i:][maximum_ticket]" value="" placeholder="<?php esc_html_e('Maximum Ticket e.g. 1', 'modern-events-calendar-lite'); ?>">
-                            <span class="mec-tooltip">
-                                <div class="box top">
-                                    <h5 class="title"><?php esc_html_e('Maximum Ticket', 'modern-events-calendar-lite'); ?></h5>
-                                    <div class="content">
-                                        <p><?php esc_attr_e('The maximum number of tickets a user can book.', 'modern-events-calendar-lite'); ?></p>
-                                    </div>
-                                </div>
-                                <i title="" class="dashicons-before dashicons-editor-help"></i>
-                            </span>
-                        </div>
-                    </div>
-                    <div class="mec-form-row">
-                        <?php ob_start(); ?>
-                        <input type="number" class="mec-stop-selling-tickets" name="mec[tickets][:i:][stop_selling_value]" value="0" placeholder="<?php esc_html_e('e.g. 0', 'modern-events-calendar-lite'); ?>">
-                        <select name="mec[tickets][:i:][stop_selling_type]">
-                            <option value="day"><?php esc_html_e("Day", "mec"); ?></option>
-                            <option value="hour"><?php esc_html_e("Hour", "mec"); ?></option>
-                        </select>
-                        <?php echo sprintf(
-                            esc_html__('%s Stop selling ticket %s %s %s before event start. %s', 'modern-events-calendar-lite'),
-                            '<span class="mec-label">',
-                            '</span>',
-                            ob_get_clean(),
-                            '<span class="mec-label">',
-                            '</span>'
-                        ); ?>
-                        <button class="button remove mec_ticket_remove_button" type="button"
-                                onclick="mec_ticket_remove(:i:)"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 20 20"><path d="M14.95 6.46L11.41 10l3.54 3.54l-1.41 1.41L10 11.42l-3.53 3.53l-1.42-1.42L8.58 10L5.05 6.47l1.42-1.42L10 8.58l3.54-3.53z"/></svg></button>
-                    </div>
-                    <?php do_action('custom_field_dynamic_ticket'); ?>
-                    <div id="mec_price_per_dates_container_:i:">
-                        <div class="mec-form-row">
-                            <h4><?php esc_html_e('Price per Date', 'modern-events-calendar-lite'); ?></h4>
-                            <button class="button mec_add_price_date_button" type="button"
-                                    data-key=":i:"><?php esc_html_e('Add', 'modern-events-calendar-lite'); ?></button>
-                        </div>
-                        <div id="mec-ticket-price-dates-:i:">
-                        </div>
-                        <input type="hidden" id="mec_new_ticket_price_key_:i:" value="1"/>
-                        <div class="mec-util-hidden" id="mec_new_ticket_price_raw_:i:">
-                            <div id="mec_ticket_price_raw_:i:_:j:">
-                                <div class="mec-form-row">
-                                    <input class="mec-col-3 new_added" type="text"
-                                           name="mec[tickets][:i:][dates][:j:][start]"
-                                           value="<?php echo esc_attr(\MEC\Base::get_main()->standardize_format(date('Y-m-d'), $datepicker_format)); ?>"
-                                           placeholder="<?php esc_attr_e('Start', 'modern-events-calendar-lite'); ?>"/>
-                                    <input class="mec-col-3 new_added" type="text"
-                                           name="mec[tickets][:i:][dates][:j:][end]"
-                                           value="<?php echo esc_attr(\MEC\Base::get_main()->standardize_format(date('Y-m-d', strtotime('+10 days')), $datepicker_format)); ?>"
-                                           placeholder="<?php esc_attr_e('End', 'modern-events-calendar-lite'); ?>"/>
-                                    <input class="mec-col-3" type="number" name="mec[tickets][:i:][dates][:j:][price]"
-                                           placeholder="<?php esc_attr_e('Price', 'modern-events-calendar-lite'); ?>" min="0" step="0.01"/>
-                                    <input class="mec-col-2" type="text" name="mec[tickets][:i:][dates][:j:][label]"
-                                           placeholder="<?php esc_attr_e('Label', 'modern-events-calendar-lite'); ?>"/>
-                                    <button class="button mec-col-1 mec_ticket_price_remove_button" type="button"
-                                            onclick="mec_ticket_price_remove(:i:, :j:)"><?php esc_html_e('Remove', 'modern-events-calendar-lite'); ?></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <?php if($variations_per_ticket_status): ?>
-                    <?php
-                        // Ticket Variations Object
-                        $TicketVariations = \MEC\Base::get_main()->getTicketVariations();
-                    ?>
-                    <div id="mec_variations_per_ticket_container">
-                        <div class="mec-form-row">
-                            <h4><?php esc_html_e('Variations Per Ticket', 'modern-events-calendar-lite'); ?></h4>
-                            <div id="mec_variations_per_ticket_form:i:">
-                                <div class="mec-form-row">
-                                    <label class="label-checkbox">
-                                        <input type="hidden" name="mec[tickets][:i:][variations_event_inheritance]" value="0"/>
-                                        <input onchange="jQuery('#mec_variations_per_ticket_container_toggle:i:').toggle();" value="1" type="checkbox" name="mec[tickets][:i:][variations_event_inheritance]" checked="checked"> <?php esc_html_e('Inherit from event options', 'modern-events-calendar-lite'); ?>
-                                    </label>
-                                </div>
-                                <div id="mec_variations_per_ticket_container_toggle:i:" class="mec-util-hidden">
-                                    <div class="mec-form-row">
-                                        <button class="button mec_add_variation_per_ticket_button" type="button" id="mec_add_variation_per_ticket_button:i:" onclick="add_variation_per_ticket(:i:);"><?php esc_html_e('Add', 'modern-events-calendar-lite'); ?></button>
-                                    </div>
-                                    <div id="mec_ticket_variations_list:i:"></div>
-                                </div>
-                            </div>
-                            <input type="hidden" id="mec_new_variation_per_ticket_key:i:" value="1"/>
-                            <div class="mec-util-hidden" id="mec_new_variation_per_ticket_raw:i:">
-                                <?php
-                                $TicketVariations->item(array(
-                                    'name_prefix' => 'mec[tickets][:i:][variations]',
-                                    'id_prefix' => 'variation_per_ticket:i:',
-                                    'i' => ':v:',
-                                    'value' => array(),
-                                ));
-                                ?>
-                            </div>
-                        </div>
-                    </div>
-                    <?php endif; ?>
-                </div>
-            </div>
+            <?php $ticketBuilder->builder([
+                'tickets' => $tickets,
+                'object_id' => $post->ID,
+            ]); ?>
         </div>
         <?php
     }
@@ -3962,7 +3526,7 @@ class FormBuilder extends Singleton {
     /**
      * Return public download file html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -4055,7 +3619,7 @@ class FormBuilder extends Singleton {
     /**
      * Return downloadable file html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -4137,7 +3701,7 @@ class FormBuilder extends Singleton {
     /**
      * Return occurrences html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -4336,7 +3900,7 @@ class FormBuilder extends Singleton {
     /**
      * Return info html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -4354,7 +3918,7 @@ class FormBuilder extends Singleton {
     /**
      * Return actions html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -4388,7 +3952,7 @@ class FormBuilder extends Singleton {
     /**
      * Return recaptcha html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -4418,7 +3982,7 @@ class FormBuilder extends Singleton {
     /**
      * Return submit button html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -4442,7 +4006,7 @@ class FormBuilder extends Singleton {
     /**
      * Return virtual html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -4466,7 +4030,7 @@ class FormBuilder extends Singleton {
     /**
      * Return zoom html field
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0
@@ -4490,7 +4054,7 @@ class FormBuilder extends Singleton {
     /**
      * Return other html fields
      *
-     * @param \WP_Post $post
+     * @param WP_Post $post
      * @param array $atts
      *
      * @since 1.0.0

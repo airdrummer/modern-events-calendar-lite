@@ -37,6 +37,9 @@ class MEC_feature_organizers extends MEC_base
      */
     public function init()
     {
+        // Organizer Module is Disabled
+        if(isset($this->settings['organizers_status']) && !$this->settings['organizers_status']) return;
+
         $this->factory->action('init', array($this, 'register_taxonomy'), 25);
         $this->factory->action('mec_organizer_edit_form_fields', array($this, 'edit_form'));
         $this->factory->action('mec_organizer_add_form_fields', array($this, 'add_form'));
@@ -61,9 +64,8 @@ class MEC_feature_organizers extends MEC_base
         $singular_label = $this->main->m('taxonomy_organizer', esc_html__('Organizer', 'modern-events-calendar-lite'));
         $plural_label = $this->main->m('taxonomy_organizers', esc_html__('Organizers', 'modern-events-calendar-lite'));
 
-        register_taxonomy(
-            'mec_organizer',
-            $this->main->get_main_post_type(),
+        $organizer_args = apply_filters(
+            'mec_register_taxonomy_args',
             array(
                 'label'=>$plural_label,
                 'labels'=>array(
@@ -84,7 +86,13 @@ class MEC_feature_organizers extends MEC_base
                 'public'=>false,
                 'show_ui'=>true,
                 'hierarchical'=>false,
-            )
+            ),
+            'mec_organizer'
+        );
+        register_taxonomy(
+            'mec_organizer',
+            $this->main->get_main_post_type(),
+            $organizer_args
         );
 
         register_taxonomy_for_object_type('mec_organizer', $this->main->get_main_post_type());
@@ -354,7 +362,7 @@ class MEC_feature_organizers extends MEC_base
         if($action === 'mec_fes_form') return false;
 
         // Get Modern Events Calendar Data
-        $_mec = isset($_POST['mec']) ? $this->main->sanitize_deep_array($_POST['mec']) : array();
+        $_mec = isset($_POST['mec']) ? $this->main->sanitize_deep_array($_POST['mec']) : [];
 
         // Selected a saved organizer
         if(isset($_mec['organizer_id']) and $_mec['organizer_id'])
@@ -380,7 +388,7 @@ class MEC_feature_organizers extends MEC_base
 
         $term = wp_insert_term($name, 'mec_organizer');
 
-        // An error ocurred
+        // An error occurred
         if(is_wp_error($term)) return false;
 
         $organizer_id = $term['term_id'];

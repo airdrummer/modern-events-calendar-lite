@@ -18,7 +18,7 @@ class MEC_factory extends MEC_base
      * @static
      * @var array
      */
-    public static $params = array();
+    public static $params = [];
 
     /**
      * Constructor method
@@ -175,7 +175,15 @@ class MEC_factory extends MEC_base
      */
     public function load_menus()
     {
-        add_menu_page(__('M.E. Calendar', 'modern-events-calendar-lite'), esc_html__('M.E. Calendar', 'modern-events-calendar-lite'), 'edit_posts', 'mec-intro', array($this->main, 'dashboard'), plugin_dir_url(__FILE__ ) . '../../assets/img/mec.svg', 26);
+        add_menu_page(
+            __('M.E. Calendar', 'modern-events-calendar-lite'),
+            esc_html__('M.E. Calendar', 'modern-events-calendar-lite'),
+            apply_filters( 'mec_menu_cap', 'edit_posts', 'mec-intro' ),
+            'mec-intro',
+            array($this->main, 'dashboard'),
+            plugin_dir_url(__FILE__ ) . '../../assets/img/mec.svg',
+            26
+        );
     }
 
     /**
@@ -337,7 +345,7 @@ class MEC_factory extends MEC_base
             $styling = $this->main->get_styling();
 
             // Google Fonts Status
-            $gfonts_status = (isset($styling['disable_gfonts']) and $styling['disable_gfonts']) ? false : true;
+            $gfonts_status = !(isset($styling['disable_gfonts']) and $styling['disable_gfonts']);
 
             // Include WordPress jQuery
             wp_enqueue_script('jquery');
@@ -376,7 +384,7 @@ class MEC_factory extends MEC_base
             // Include MEC frontend JS libraries
             wp_enqueue_script('mec-owl-carousel-script', $this->main->asset('packages/owl-carousel/owl.carousel.min.js'), array(), $this->main->get_version(), true);
 
-            if(did_action('elementor/loaded')) $elementor_edit_mode = (\Elementor\Plugin::$instance->editor->is_edit_mode() == false) ? 'no' : 'yes';
+            if(did_action('elementor/loaded')) $elementor_edit_mode = !\Elementor\Plugin::$instance->editor->is_edit_mode() ? 'no' : 'yes';
             else $elementor_edit_mode = 'no';
 
             // Settings
@@ -426,7 +434,7 @@ class MEC_factory extends MEC_base
             if(is_rtl()) wp_enqueue_style('mec-frontend-rtl-style', $this->main->asset('css/mecrtl.min.css'));
 
             // Include Google Fonts
-            if($gfonts_status == true and get_option('mec_dyncss') == 0) wp_enqueue_style('mec-google-fonts', '//fonts.googleapis.com/css?family=Montserrat:400,700|Roboto:100,300,400,700');
+            if($gfonts_status and get_option('mec_dyncss') == 0) wp_enqueue_style('mec-google-fonts', '//fonts.googleapis.com/css?family=Montserrat:400,700|Roboto:100,300,400,700');
 
             // Include Google Font
             if($gfonts_status and get_option('mec_gfont')) wp_enqueue_style('mec-custom-google-font', get_option('mec_gfont'), array(), NULL);
@@ -449,9 +457,9 @@ class MEC_factory extends MEC_base
         if($this->should_include_assets('frontend'))
         {
             // Include Dynamic CSS
-            if(get_option('mec_dyncss') == true)
+            if(get_option('mec_dyncss'))
             {
-                echo '<style type="text/css">'.stripslashes(get_option('mec_dyncss')).'</style>';
+                echo '<style>'.stripslashes(get_option('mec_dyncss')).'</style>';
             }
 
             $styles = $this->main->get_styles();
@@ -460,7 +468,7 @@ class MEC_factory extends MEC_base
             if(isset($styles['CSS']) and trim($styles['CSS']) != '')
             {
                 $CSS = strip_tags($styles['CSS']);
-                echo '<style type="text/css">'.stripslashes($CSS).'</style>';
+                echo '<style>'.stripslashes($CSS).'</style>';
             }
         }
     }
@@ -605,9 +613,9 @@ class MEC_factory extends MEC_base
     public function load_auto_update()
     {
         $options = get_option('mec_options');
-        $product_name = (isset($options['product_name']) && !empty($options['product_name'])) ? esc_html__($options['product_name']) : '';
-        $product_id = (isset($options['product_id']) && !empty($options['product_id'])) ? esc_html__($options['product_id']) : '';
-        $purchase_code = (isset($options['purchase_code']) && !empty($options['purchase_code'])) ? esc_html__($options['purchase_code']) : '';
+        $product_name = !empty($options['product_name']) ? esc_html__($options['product_name']) : '';
+        $product_id = !empty($options['product_id']) ? esc_html__($options['product_id']) : '';
+        $purchase_code = !empty($options['purchase_code']) ? esc_html__($options['purchase_code']) : '';
         $url = urlencode(get_home_url());
 
         require_once MEC_ABSPATH.'app/core/puc/plugin-update-checker.php';
@@ -682,7 +690,7 @@ class MEC_factory extends MEC_base
 		if(trim($string) == '' or trim($key) == '') return false;
 
         // Register the key for removing PHP notices
-        if(!isset(self::$params[$key])) self::$params[$key] = array();
+        if(!isset(self::$params[$key])) self::$params[$key] = [];
 
         // Add it to the MEC params
         array_push(self::$params[$key], $string);
@@ -722,7 +730,7 @@ class MEC_factory extends MEC_base
      * Add MEC actions to WordPress
      * @author Webnus <info@webnus.net>
      * @param string $hook
-     * @param string|array $function
+     * @param string|array|Closure $function
      * @param int $priority
      * @param int $accepted_args
      * @return boolean
@@ -1181,7 +1189,7 @@ class MEC_factory extends MEC_base
     {
         $styling = $this->main->get_styling();
 
-        $dark_mode = (isset($styling['dark_mode']) ? $styling['dark_mode'] : '');
+        $dark_mode = $styling['dark_mode'] ?? '';
         if(!empty($dark_mode) and $dark_mode == 1) $dark[] = 'mec-dark-mode';
 
         return $dark;
@@ -1197,7 +1205,7 @@ class MEC_factory extends MEC_base
     {
         $styling = $this->main->get_styling();
 
-        $darkadmin_mode = isset($styling['dark_mode']) ? $styling['dark_mode'] : '';
+        $darkadmin_mode = $styling['dark_mode'] ?? '';
         if($darkadmin_mode == 1) $darkadmin = 'mec-admin-dark-mode';
 
         return $darkadmin;
@@ -1258,14 +1266,14 @@ class MEC_factory extends MEC_base
 
     function mecShowUpgradeNotification($currentPluginMetadata, $newPluginMetadata){
         // check "upgrade_notice"
-        if (isset($newPluginMetadata->upgrade_notice) && strlen(trim($newPluginMetadata->upgrade_notice)) > 0){
-        ?>
 
+        ?>
             <div class="mec-update-warning" style="margin-bottom: 5px; max-width: 1000px;">
                 <strong><?php echo esc_html__( 'Notice:', 'modern-events-calendar-lite'); ?></strong>
-                <?php echo esc_html__( 'This update includes only bug fixes.', 'modern-events-calendar-lite'); ?>
+                <?php echo esc_html__( 'If you are unable to auto update, please check this article:  ', 'modern-events-calendar-lite'); ?>
+                <a href="https://webnus.net/dox/modern-events-calendar/manual-update/" target="_blank"><?php echo esc_html__( 'How to manually update', 'modern-events-calendar-lite'); ?></a>
             </div>
         <?php
-        }
+
     }
 }

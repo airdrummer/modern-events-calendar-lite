@@ -8,14 +8,14 @@ defined('MECEXEC') or die();
 $settings = $this->get_settings();
 
 // The module is disabled
-if(!isset($settings['next_event_module_status']) or (isset($settings['next_event_module_status']) and !$settings['next_event_module_status'])) return;
+if(!isset($settings['next_event_module_status']) || !$settings['next_event_module_status']) return;
 
 // Next Event Method
-$method = (isset($settings['next_event_module_method']) ? $settings['next_event_module_method'] : 'occurrence');
+$method = ($settings['next_event_module_method'] ?? 'occurrence');
 $maximum = (isset($settings['next_event_module_multiple_count']) ? (int) $settings['next_event_module_multiple_count'] : 10);
 
 // Display Active Occurrence Button
-$active_button = isset($settings['next_event_module_active_button']) ? (bool) $settings['next_event_module_active_button'] : false;
+$active_button = isset($settings['next_event_module_active_button']) && $settings['next_event_module_active_button'];
 
 // Not Multiple Occurrences
 if($method != 'multiple')
@@ -25,10 +25,10 @@ if($method != 'multiple')
 }
 
 // Date Format
-$date_format1 = isset($settings['next_event_module_date_format1']) ? $settings['next_event_module_date_format1'] : 'M d Y';
+$date_format1 = $settings['next_event_module_date_format1'] ?? 'M d Y';
 $time_format = get_option('time_format');
 
-$date = array();
+$date = [];
 if(!empty($event->date)) $date = $event->date;
 
 $occurrence = (isset($date['start']) and isset($date['start']['date'])) ? $date['start']['date'] : date('Y-m-d');
@@ -48,12 +48,12 @@ $midnight = $this->is_midnight_event($event);
 if(is_array($date) and isset($date['start']) and isset($date['start']['timestamp']) and is_array($dates) and isset($dates[0]) and isset($dates[0]['start']) and isset($dates[0]['start']['timestamp']) and $dates[0]['start']['timestamp'] == $date['start']['timestamp']) unset($dates[0]);
 
 // Nothing Found!
-if(!is_array($dates) or (is_array($dates) and !count($dates))) return false;
+if(!is_array($dates) || !count($dates)) return false;
 
 $time_comment = isset($event->data->meta['mec_comment']) ? $event->data->meta['mec_comment'] : '';
 $allday = isset($event->data->meta['mec_allday']) ? $event->data->meta['mec_allday'] : 0;
 $hide_time = isset($event->data->meta['mec_hide_time']) ? $event->data->meta['mec_hide_time'] : 0;
-$hide_end_time = isset($event->data->meta['mec_hide_end_time']) ? $event->data->meta['mec_hide_end_time'] : 0;
+$hide_end_time = $this->hide_end_time_status($event->ID);
 ?>
 <div class="mec-next-event-details mec-frontbox" id="mec_next_event_details">
     <div class="mec-next-<?php echo esc_attr($method); ?>">

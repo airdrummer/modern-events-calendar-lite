@@ -6,9 +6,9 @@ defined('MECEXEC') or die();
 
 $current_month_divider = isset($_REQUEST['current_month_divider']) ? sanitize_text_field($_REQUEST['current_month_divider']) : 0;
 $settings = $this->main->get_settings();
-$this->localtime = isset($this->skin_options['include_local_time']) ? $this->skin_options['include_local_time'] : false;
-$display_label = isset($this->skin_options['display_label']) ? $this->skin_options['display_label'] : false;
-$reason_for_cancellation = isset($this->skin_options['reason_for_cancellation']) ? $this->skin_options['reason_for_cancellation'] : false;
+$this->localtime = $this->skin_options['include_local_time'] ?? false;
+$display_label = $this->skin_options['display_label'] ?? false;
+$reason_for_cancellation = $this->skin_options['reason_for_cancellation'] ?? false;
 ?>
 <?php foreach($this->events as $date=>$events): ?>
 
@@ -18,7 +18,7 @@ $reason_for_cancellation = isset($this->skin_options['reason_for_cancellation'])
     <div class="mec-events-agenda">
 
         <div class="mec-agenda-date-wrap">
-            <i class="mec-sl-calendar"></i>
+            <?php echo $this->icons->display('calendar'); ?>
             <span class="mec-agenda-day"><?php echo esc_html($this->main->date_i18n($this->date_format_clean_1, strtotime($date))); ?></span>
             <span class="mec-agenda-date"><?php echo esc_html($this->main->date_i18n($this->date_format_clean_2, strtotime($date))); ?></span>
         </div>
@@ -43,7 +43,7 @@ $reason_for_cancellation = isset($this->skin_options['reason_for_cancellation'])
 
                     if($this->style == 'clean'): ?>
                     <div class="<?php echo (isset($event->data->meta['event_past']) and trim($event->data->meta['event_past'])) ? 'mec-past-event ' : ''; ?>mec-agenda-event <?php echo esc_attr($this->get_event_classes($event)); ?>">
-                        <i class="mec-sl-clock "></i>
+                        <?php echo $this->icons->display('clock'); ?>
                         <span class="mec-agenda-time">
                             <?php
                                 if(trim($start_time))
@@ -55,6 +55,7 @@ $reason_for_cancellation = isset($this->skin_options['reason_for_cancellation'])
                         </span>
                         <span class="mec-agenda-event-title">
                             <?php echo MEC_kses::element($this->display_link($event)); ?>
+                            <?php echo $this->main->display_cancellation_reason($event, $reason_for_cancellation); ?>
                             <?php echo MEC_kses::element($this->main->get_flags($event).$event_color); ?>
                             <?php echo MEC_kses::element($this->get_label_captions($event, 'mec-fc-style')); ?>
                             <?php do_action('mec_shortcode_virtual_badge', $event->data->ID); ?>

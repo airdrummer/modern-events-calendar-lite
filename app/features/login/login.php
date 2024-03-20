@@ -12,6 +12,7 @@
             <i class="mec-sl-display-controller-password"></i>
         </label>
     </div>
+    <?php do_action( 'login_form' ); ?>
     <div class="mec-login-form-footer">
         <div class="mec-login-forgotpassword">
             <a class="mec-color-hover" href="<?php echo wp_lostpassword_url(); ?>"><?php esc_html_e('Forgot Password?', 'modern-events-calendar-lite'); ?></a>
@@ -44,7 +45,8 @@
 
         var mec_email = jQuery(".mec-login-form #email").val(),
             mec_pass = jQuery(".mec-login-form #password").val(),
-            mec_nonce = jQuery(".mec-login-form #mec_login_nonce").val();
+            mec_nonce = jQuery(".mec-login-form #mec_login_nonce").val(),
+            cf_turnstile_response = jQuery('input[name="cf-turnstile-response"]').val();
 
         jQuery.ajax(
         {
@@ -55,6 +57,7 @@
                 username: mec_email,
                 password : mec_pass,
                 mec_login_nonce : mec_nonce,
+                "cf-turnstile-response" : cf_turnstile_response,
             },
             beforeSend: function(message)
             {
@@ -88,3 +91,4 @@
     </script>
     <?php
 });
+

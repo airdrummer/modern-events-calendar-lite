@@ -33,9 +33,9 @@ $reason_for_cancellation = isset($this->skin_options['reason_for_cancellation'])
                 <?php echo MEC_kses::element($this->get_label_captions($event)); ?>
 
                 <?php if($this->display_detailed_time and $this->main->is_multipleday_occurrence($event)): ?>
-                <div class="mec-event-detailed-time mec-event-time mec-color"><i class="mec-sl-clock-o"></i> <?php echo MEC_kses::element($this->display_detailed_time($event)); ?></div>
+                <div class="mec-event-detailed-time mec-event-time mec-color"><?php echo $this->icons->display('clock-o'); ?> <?php echo MEC_kses::element($this->display_detailed_time($event)); ?></div>
                 <?php elseif(trim($start_time)): ?>
-                <div class="mec-event-time mec-color"><i class="mec-sl-clock-o"></i> <?php echo esc_html($start_time.(trim($end_time) ? ' - '.$end_time : '')); ?></div>
+                <div class="mec-event-time mec-color"><?php echo $this->icons->display('clock-o'); ?> <?php echo esc_html($start_time.(trim($end_time) ? ' - '.$end_time : '')); ?></div>
                 <?php endif; ?>
 
                 <h4 class="mec-event-title"><?php echo MEC_kses::element($this->display_link($event)); ?><?php echo MEC_kses::element($this->main->get_flags($event).$event_color.$this->main->get_normal_labels($event, $display_label).$this->main->display_cancellation_reason($event, $reason_for_cancellation)); ?><?php do_action('mec_shortcode_virtual_badge', $event->data->ID); ?></h4>

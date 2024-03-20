@@ -27,7 +27,7 @@ class DataCollectorTranslator implements TranslatorInterface, TranslatorBagInter
      */
     private $translator;
 
-    private $messages = array();
+    private $messages = [];
 
     /**
      * @param TranslatorInterface $translator The translator must implement TranslatorBagInterface
@@ -98,7 +98,7 @@ class DataCollectorTranslator implements TranslatorInterface, TranslatorBagInter
             return $this->translator->getFallbackLocales();
         }
 
-        return array();
+        return [];
     }
 
     /**

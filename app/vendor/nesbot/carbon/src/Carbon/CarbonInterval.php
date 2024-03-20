@@ -109,7 +109,7 @@ class CarbonInterval extends DateInterval
      *
      * @var array
      */
-    protected static $macros = array();
+    protected static $macros = [];
 
     /**
      * Before PHP 5.4.20/5.5.4 instead of FALSE days will be set to -99999 when the interval instance
@@ -145,7 +145,7 @@ class CarbonInterval extends DateInterval
     private static function getFlipCascadeFactors()
     {
         if (!self::$flipCascadeFactors) {
-            self::$flipCascadeFactors = array();
+            self::$flipCascadeFactors = [];
             foreach (static::getCascadeFactors() as $to => $tuple) {
                 list($factor, $from) = $tuple;
 
@@ -857,7 +857,7 @@ class CarbonInterval extends DateInterval
             'second' => array('s', $this->seconds),
         );
 
-        $parts = array();
+        $parts = [];
         foreach ($periods as $unit => $options) {
             list($shortUnit, $count) = $options;
             if ($count > 0) {

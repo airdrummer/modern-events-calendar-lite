@@ -19,8 +19,8 @@ $reg_fields = \MEC\Base::get_main()->get_reg_fields($event_id, $translated_event
 $bfixed_fields = \MEC\Base::get_main()->get_bfixed_fields($event_id, $translated_event_id);
 
 $custom_view_fields = apply_filters('mec_have_custom_view_fields', false, $bfixed_fields, 'booking_fixed_fields', $event_id);
-if( !$custom_view_fields ) {
-
+if(!$custom_view_fields)
+{
     \MEC\BookingForm\Attendees::output(
         $event,
         $date,
@@ -30,8 +30,9 @@ if( !$custom_view_fields ) {
         $uniqueid,
         $all_dates
     );
-}else{
-
+}
+else
+{
     do_action(
         'mec_booking_attendee_form_custom_view',
         $event,

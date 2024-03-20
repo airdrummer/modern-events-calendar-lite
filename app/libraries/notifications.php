@@ -53,10 +53,7 @@ class MEC_notifications extends MEC_base
      */
     public function email_verification($book_id, $mode = 'auto')
     {
-        if( !$book_id ){
-
-            return false;
-        }
+        if(!$book_id) return false;
 
         $booker = $this->u->booking($book_id);
         if(!isset($booker->user_email)) return false;
@@ -69,7 +66,7 @@ class MEC_notifications extends MEC_base
         // Event ID
         $event_id = get_post_meta($book_id, 'mec_event_id', true);
 
-        list($auto_verify_free, $auto_verify_paid) = $this->book->get_auto_verification_status($event_id);
+        list($auto_verify_free, $auto_verify_paid) = $this->book->get_auto_verification_status($event_id, $book_id);
 
         // Auto verification for free bookings is enabled so don't send the verification email
         if($mode == 'auto' and $price <= 0 and $auto_verify_free) return false;
@@ -82,14 +79,14 @@ class MEC_notifications extends MEC_base
 
         $headers = array('Content-Type: text/html; charset=UTF-8');
 
-        $recipients_str = isset($this->notif_settings['email_verification']['recipients']) ? $this->notif_settings['email_verification']['recipients'] : '';
-        $recipients = trim($recipients_str) ? explode(',', $recipients_str) : array();
+        $recipients_str = $this->notif_settings['email_verification']['recipients'] ?? '';
+        $recipients = trim($recipients_str) ? explode(',', $recipients_str) : [];
 
-        $users = isset($this->notif_settings['email_verification']['receiver_users']) ? $this->notif_settings['email_verification']['receiver_users'] : array();
+        $users = $this->notif_settings['email_verification']['receiver_users'] ?? [];
         $users_down = $this->main->get_emails_by_users($users);
         $recipients = array_merge($users_down, $recipients);
 
-        $roles = isset($this->notif_settings['email_verification']['receiver_roles']) ? $this->notif_settings['email_verification']['receiver_roles'] : array();
+        $roles = $this->notif_settings['email_verification']['receiver_roles'] ?? [];
         $user_roles = $this->main->get_emails_by_roles($roles);
         $recipients = array_merge($user_roles, $recipients);
 
@@ -110,10 +107,10 @@ class MEC_notifications extends MEC_base
 
         // Attendees
         $attendees = get_post_meta($book_id, 'mec_attendees', true);
-        if(!is_array($attendees) or (is_array($attendees) and !count($attendees))) $attendees = array(get_post_meta($book_id, 'mec_attendee', true));
+        if(!is_array($attendees) or !count($attendees)) $attendees = array(get_post_meta($book_id, 'mec_attendee', true));
 
         // Do not send email twice!
-        $done_emails = array();
+        $done_emails = [];
 
         // Book Data
         $key = get_post_meta($book_id, 'mec_verification_key', true);
@@ -128,10 +125,10 @@ class MEC_notifications extends MEC_base
         // Send the emails
         foreach($attendees as $attendee)
         {
-            $to = isset($attendee['email']) ? $attendee['email'] : '';
+            $to = $attendee['email'] ?? '';
             if(!trim($to) or in_array($to, $done_emails) or !filter_var($to, FILTER_VALIDATE_EMAIL)) continue;
 
-            $message = isset($this->notif_settings['email_verification']['content']) ? $this->notif_settings['email_verification']['content'] : '';
+            $message = $this->notif_settings['email_verification']['content'] ?? '';
             $message = $this->content($this->get_content($message, 'email_verification', $event_id, $book_id), $book_id, $attendee);
 
             $message = str_replace('%%verification_link%%', $link, $message);
@@ -174,10 +171,7 @@ class MEC_notifications extends MEC_base
      */
     public function booking_notification($book_id)
     {
-        if( !$book_id ){
-
-            return false;
-        }
+        if(!$book_id) return false;
 
         $booking_notification = apply_filters('mec_booking_notification', true);
         if(!$booking_notification) return false;
@@ -196,14 +190,14 @@ class MEC_notifications extends MEC_base
 
         $headers = array('Content-Type: text/html; charset=UTF-8');
 
-        $recipients_str = isset($this->notif_settings['booking_notification']['recipients']) ? $this->notif_settings['booking_notification']['recipients'] : '';
-        $recipients = trim($recipients_str) ? explode(',', $recipients_str) : array();
+        $recipients_str = $this->notif_settings['booking_notification']['recipients'] ?? '';
+        $recipients = trim($recipients_str) ? explode(',', $recipients_str) : [];
 
-        $users = isset($this->notif_settings['booking_notification']['receiver_users']) ? $this->notif_settings['booking_notification']['receiver_users'] : array();
+        $users = $this->notif_settings['booking_notification']['receiver_users'] ?? [];
         $users_down = $this->main->get_emails_by_users($users);
         $recipients = array_merge($users_down, $recipients);
 
-        $roles = isset($this->notif_settings['booking_notification']['receiver_roles']) ? $this->notif_settings['booking_notification']['receiver_roles'] : array();
+        $roles = $this->notif_settings['booking_notification']['receiver_roles'] ?? [];
         $user_roles = $this->main->get_emails_by_roles($roles);
         $recipients = array_merge($user_roles, $recipients);
 
@@ -241,10 +235,10 @@ class MEC_notifications extends MEC_base
 
         // Attendees
         $attendees = get_post_meta($book_id, 'mec_attendees', true);
-        if(!is_array($attendees) or (is_array($attendees) and !count($attendees))) $attendees = array(get_post_meta($book_id, 'mec_attendee', true));
+        if(!is_array($attendees) or !count($attendees)) $attendees = array(get_post_meta($book_id, 'mec_attendee', true));
 
         // Do not send email twice!
-        $done_emails = array();
+        $done_emails = [];
 
         // Changing some sender email info.
         $this->mec_sender_email_notification_filter();
@@ -255,10 +249,10 @@ class MEC_notifications extends MEC_base
         // Send the emails
         foreach($attendees as $attendee)
         {
-            $to = isset($attendee['email']) ? $attendee['email'] : '';
+            $to = $attendee['email'] ?? '';
             if(!trim($to) or in_array($to, $done_emails) or !filter_var($to, FILTER_VALIDATE_EMAIL)) continue;
 
-            $message = isset($this->notif_settings['booking_notification']['content']) ? $this->notif_settings['booking_notification']['content'] : '';
+            $message = $this->notif_settings['booking_notification']['content'] ?? '';
             $message = $this->content($this->get_content($message, 'booking_notification', $event_id, $book_id), $book_id, $attendee);
 
             // Remove remained placeholders
@@ -299,10 +293,8 @@ class MEC_notifications extends MEC_base
      */
     public function booking_confirmation($book_id, $mode = 'manually')
     {
-        if( !$book_id ){
+        if(!$book_id) return false;
 
-            return false;
-        }
         // Booking Confirmation is disabled
         if(isset($this->notif_settings['booking_confirmation']['status']) and !$this->notif_settings['booking_confirmation']['status']) return false;
 
@@ -312,7 +304,7 @@ class MEC_notifications extends MEC_base
         $booker = $this->u->booking($book_id);
         if(!isset($booker->user_email)) return false;
 
-        $send_in_automode = (isset($this->settings['booking_auto_confirm_send_email']) and $this->settings['booking_auto_confirm_send_email'] == '1') ? true : false;
+        $send_in_automode = isset($this->settings['booking_auto_confirm_send_email']) && $this->settings['booking_auto_confirm_send_email'] == '1';
 
         // Don't send the confirmation email
         if($mode == 'auto' and !$send_in_automode) return false;
@@ -332,14 +324,14 @@ class MEC_notifications extends MEC_base
 
         $headers = array('Content-Type: text/html; charset=UTF-8');
 
-        $recipients_str = isset($this->notif_settings['booking_confirmation']['recipients']) ? $this->notif_settings['booking_confirmation']['recipients'] : '';
-        $recipients = trim($recipients_str) ? explode(',', $recipients_str) : array();
+        $recipients_str = $this->notif_settings['booking_confirmation']['recipients'] ?? '';
+        $recipients = trim($recipients_str) ? explode(',', $recipients_str) : [];
 
-        $users = isset($this->notif_settings['booking_confirmation']['receiver_users']) ? $this->notif_settings['booking_confirmation']['receiver_users'] : array();
+        $users = $this->notif_settings['booking_confirmation']['receiver_users'] ?? [];
         $users_down = $this->main->get_emails_by_users($users);
         $recipients = array_merge($users_down, $recipients);
 
-        $roles = isset($this->notif_settings['booking_confirmation']['receiver_roles']) ? $this->notif_settings['booking_confirmation']['receiver_roles'] : array();
+        $roles = $this->notif_settings['booking_confirmation']['receiver_roles'] ?? [];
         $user_roles = $this->main->get_emails_by_roles($roles);
         $recipients = array_merge($user_roles, $recipients);
 
@@ -360,10 +352,10 @@ class MEC_notifications extends MEC_base
 
         // Attendees
         $attendees = get_post_meta($book_id, 'mec_attendees', true);
-        if(!is_array($attendees) or (is_array($attendees) and !count($attendees))) $attendees = array(get_post_meta($book_id, 'mec_attendee', true));
+        if(!is_array($attendees) || !count($attendees)) $attendees = array(get_post_meta($book_id, 'mec_attendee', true));
 
         // Do not send email twice!
-        $done_emails = array();
+        $done_emails = [];
 
         // Changing some sender email info.
         $this->mec_sender_email_notification_filter();
@@ -374,12 +366,12 @@ class MEC_notifications extends MEC_base
         // Send the emails
         foreach($attendees as $attendee)
         {
-            $to = isset($attendee['email']) ? $attendee['email'] : '';
+            $to = $attendee['email'] ?? '';
 
             if(!trim($to)) continue;
             if(in_array($to, $done_emails) or !filter_var($to, FILTER_VALIDATE_EMAIL)) continue;
 
-            $message = isset($this->notif_settings['booking_confirmation']['content']) ? $this->notif_settings['booking_confirmation']['content'] : '';
+            $message = $this->notif_settings['booking_confirmation']['content'] ?? '';
             $message = $this->content($this->get_content($message, 'booking_confirmation', $event_id, $book_id), $book_id, $attendee);
 
             // Remove remained placeholders
@@ -422,10 +414,8 @@ class MEC_notifications extends MEC_base
      */
     public function booking_cancellation($book_id)
     {
-        if( !$book_id ){
+        if(!$book_id) return;
 
-            return false;
-        }
         $cancellation_notification = apply_filters('mec_booking_cancellation', true);
         if(!$cancellation_notification) return;
 
@@ -434,7 +424,7 @@ class MEC_notifications extends MEC_base
         // Cancelling Notification is disabled
         if(!isset($this->notif_settings['cancellation_notification']['status']) or (isset($this->notif_settings['cancellation_notification']['status']) and !$this->notif_settings['cancellation_notification']['status'])) return;
 
-        $tos = array();
+        $tos = [];
 
         // Send the notification to admin
         if(isset($this->notif_settings['cancellation_notification']['send_to_admin']) and $this->notif_settings['cancellation_notification']['send_to_admin'] == 1)
@@ -469,7 +459,7 @@ class MEC_notifications extends MEC_base
                 if(!is_array($attendees) or (is_array($attendees) and !count($attendees))) $attendees = array(get_post_meta($book_id, 'mec_attendee', true));
 
                 // For When sended email time, And  prevention of email repeat send
-                $done_emails = array();
+                $done_emails = [];
 
                 // Send the emails
                 foreach($attendees as $attendee)
@@ -488,14 +478,14 @@ class MEC_notifications extends MEC_base
 
         $headers = array('Content-Type: text/html; charset=UTF-8');
 
-        $recipients_str = isset($this->notif_settings['cancellation_notification']['recipients']) ? $this->notif_settings['cancellation_notification']['recipients'] : '';
-        $recipients = trim($recipients_str) ? explode(',', $recipients_str) : array();
+        $recipients_str = $this->notif_settings['cancellation_notification']['recipients'] ?? '';
+        $recipients = trim($recipients_str) ? explode(',', $recipients_str) : [];
 
-        $users = isset($this->notif_settings['cancellation_notification']['receiver_users']) ? $this->notif_settings['cancellation_notification']['receiver_users'] : array();
+        $users = $this->notif_settings['cancellation_notification']['receiver_users'] ?? [];
         $users_down = $this->main->get_emails_by_users($users);
         $recipients = array_merge($users_down, $recipients);
 
-        $roles = isset($this->notif_settings['cancellation_notification']['receiver_roles']) ? $this->notif_settings['cancellation_notification']['receiver_roles'] : array();
+        $roles = $this->notif_settings['cancellation_notification']['receiver_roles'] ?? [];
         $user_roles = $this->main->get_emails_by_roles($roles);
         $recipients = array_merge($user_roles, $recipients);
 
@@ -535,7 +525,7 @@ class MEC_notifications extends MEC_base
             if(!trim($mailto) or !filter_var($mailto, FILTER_VALIDATE_EMAIL)) continue;
             if($i > 1) $headers = array('Content-Type: text/html; charset=UTF-8');
 
-            $message = isset($this->notif_settings['cancellation_notification']['content']) ? $this->notif_settings['cancellation_notification']['content'] : '';
+            $message = $this->notif_settings['cancellation_notification']['content'] ?? '';
             $message = $this->content($this->get_content($message, 'cancellation_notification', $event_id, $book_id), $book_id, (is_array($to) ? $to : NULL));
 
             // Book Data
@@ -575,10 +565,8 @@ class MEC_notifications extends MEC_base
      */
     public function booking_rejection($book_id)
     {
-        if( !$book_id ){
+        if(!$book_id) return;
 
-            return false;
-        }
         $rejection_notification = apply_filters('mec_booking_rejection', true);
         if(!$rejection_notification) return;
 
@@ -587,7 +575,7 @@ class MEC_notifications extends MEC_base
         // Rejection Notification is disabled
         if(!isset($this->notif_settings['booking_rejection']['status']) or (isset($this->notif_settings['booking_rejection']['status']) and !$this->notif_settings['booking_rejection']['status'])) return;
 
-        $tos = array();
+        $tos = [];
 
         // Send the notification to admin
         if(isset($this->notif_settings['booking_rejection']['send_to_admin']) and $this->notif_settings['booking_rejection']['send_to_admin'] == 1)
@@ -619,10 +607,10 @@ class MEC_notifications extends MEC_base
             {
                 // Attendees
                 $attendees = get_post_meta($book_id, 'mec_attendees', true);
-                if(!is_array($attendees) or (is_array($attendees) and !count($attendees))) $attendees = array(get_post_meta($book_id, 'mec_attendee', true));
+                if(!is_array($attendees) or !count($attendees)) $attendees = array(get_post_meta($book_id, 'mec_attendee', true));
 
                 // For When sended email time, And  prevention of email repeat send
-                $done_emails = array();
+                $done_emails = [];
 
                 // Send the emails
                 foreach($attendees as $attendee)
@@ -641,14 +629,14 @@ class MEC_notifications extends MEC_base
 
         $headers = array('Content-Type: text/html; charset=UTF-8');
 
-        $recipients_str = isset($this->notif_settings['booking_rejection']['recipients']) ? $this->notif_settings['booking_rejection']['recipients'] : '';
-        $recipients = trim($recipients_str) ? explode(',', $recipients_str) : array();
+        $recipients_str = $this->notif_settings['booking_rejection']['recipients'] ?? '';
+        $recipients = trim($recipients_str) ? explode(',', $recipients_str) : [];
 
-        $users = isset($this->notif_settings['booking_rejection']['receiver_users']) ? $this->notif_settings['booking_rejection']['receiver_users'] : array();
+        $users = $this->notif_settings['booking_rejection']['receiver_users'] ?? [];
         $users_down = $this->main->get_emails_by_users($users);
         $recipients = array_merge($users_down, $recipients);
 
-        $roles = isset($this->notif_settings['booking_rejection']['receiver_roles']) ? $this->notif_settings['booking_rejection']['receiver_roles'] : array();
+        $roles = $this->notif_settings['booking_rejection']['receiver_roles'] ?? [];
         $user_roles = $this->main->get_emails_by_roles($roles);
         $recipients = array_merge($user_roles, $recipients);
 
@@ -688,7 +676,7 @@ class MEC_notifications extends MEC_base
             if(!trim($mailto) or !filter_var($mailto, FILTER_VALIDATE_EMAIL)) continue;
             if($i > 1) $headers = array('Content-Type: text/html; charset=UTF-8');
 
-            $message = isset($this->notif_settings['booking_rejection']['content']) ? $this->notif_settings['booking_rejection']['content'] : '';
+            $message = $this->notif_settings['booking_rejection']['content'] ?? '';
             $message = $this->content($this->get_content($message, 'booking_rejection', $event_id, $book_id), $book_id, (is_array($to) ? $to : NULL));
 
             // Book Data
@@ -728,10 +716,8 @@ class MEC_notifications extends MEC_base
      */
     public function admin_notification($book_id)
     {
-        if( !$book_id ){
+        if(!$book_id) return;
 
-            return false;
-        }
         // Admin Notification is disabled
         if(isset($this->notif_settings['admin_notification']['status']) and !$this->notif_settings['admin_notification']['status']) return;
 
@@ -744,14 +730,14 @@ class MEC_notifications extends MEC_base
 
         $headers = array('Content-Type: text/html; charset=UTF-8');
 
-        $recipients_str = isset($this->notif_settings['admin_notification']['recipients']) ? $this->notif_settings['admin_notification']['recipients'] : '';
-        $recipients = trim($recipients_str) ? explode(',', $recipients_str) : array();
+        $recipients_str = $this->notif_settings['admin_notification']['recipients'] ?? '';
+        $recipients = trim($recipients_str) ? explode(',', $recipients_str) : [];
 
-        $users = isset($this->notif_settings['admin_notification']['receiver_users']) ? $this->notif_settings['admin_notification']['receiver_users'] : array();
+        $users = $this->notif_settings['admin_notification']['receiver_users'] ?? [];
         $users_down = $this->main->get_emails_by_users($users);
         $recipients = array_merge($users_down, $recipients);
 
-        $roles = isset($this->notif_settings['admin_notification']['receiver_roles']) ? $this->notif_settings['admin_notification']['receiver_roles'] : array();
+        $roles = $this->notif_settings['admin_notification']['receiver_roles'] ?? [];
         $user_roles = $this->main->get_emails_by_roles($roles);
         $recipients = array_merge($user_roles, $recipients);
 
@@ -806,7 +792,7 @@ class MEC_notifications extends MEC_base
             }
         }
 
-        $message = isset($this->notif_settings['admin_notification']['content']) ? $this->notif_settings['admin_notification']['content'] : '';
+        $message = $this->notif_settings['admin_notification']['content'] ?? '';
         $message = $this->content($this->get_content($message, 'admin_notification', $event_id, $book_id), $book_id);
 
         // Book Data
@@ -850,10 +836,8 @@ class MEC_notifications extends MEC_base
      */
     public function booking_reminder($book_id, $timestamps = NULL)
     {
-        if( !$book_id ){
+        if(!$book_id) return false;
 
-            return false;
-        }
         $booker = $this->u->booking($book_id);
         if(!isset($booker->user_email)) return false;
 
@@ -865,14 +849,14 @@ class MEC_notifications extends MEC_base
 
         $headers = array('Content-Type: text/html; charset=UTF-8');
 
-        $recipients_str = isset($this->notif_settings['booking_reminder']['recipients']) ? $this->notif_settings['booking_reminder']['recipients'] : '';
-        $recipients = trim($recipients_str) ? explode(',', $recipients_str) : array();
+        $recipients_str = $this->notif_settings['booking_reminder']['recipients'] ?? '';
+        $recipients = trim($recipients_str) ? explode(',', $recipients_str) : [];
 
-        $users = isset($this->notif_settings['booking_reminder']['receiver_users']) ? $this->notif_settings['booking_reminder']['receiver_users'] : array();
+        $users = $this->notif_settings['booking_reminder']['receiver_users'] ?? [];
         $users_down = $this->main->get_emails_by_users($users);
         $recipients = array_merge($users_down, $recipients);
 
-        $roles = isset($this->notif_settings['booking_reminder']['receiver_roles']) ? $this->notif_settings['booking_reminder']['receiver_roles'] : array();
+        $roles = $this->notif_settings['booking_reminder']['receiver_roles'] ?? [];
         $user_roles = $this->main->get_emails_by_roles($roles);
         $recipients = array_merge($user_roles, $recipients);
 
@@ -893,10 +877,10 @@ class MEC_notifications extends MEC_base
 
         // Attendees
         $attendees = get_post_meta($book_id, 'mec_attendees', true);
-        if(!is_array($attendees) or (is_array($attendees) and !count($attendees))) $attendees = array(get_post_meta($book_id, 'mec_attendee', true));
+        if(!is_array($attendees) or !count($attendees)) $attendees = array(get_post_meta($book_id, 'mec_attendee', true));
 
         // Do not send email twice!
-        $done_emails = array();
+        $done_emails = [];
 
         // Changing some sender email info.
         $this->mec_sender_email_notification_filter();
@@ -909,12 +893,12 @@ class MEC_notifications extends MEC_base
         {
             if(isset($attendee[0]['MEC_TYPE_OF_DATA'])) continue;
 
-            $to = (isset($attendee['email']) ? $attendee['email'] : '');
+            $to = $attendee['email'] ?? '';
 
             if(!trim($to)) continue;
             if(in_array($to, $done_emails) or !filter_var($to, FILTER_VALIDATE_EMAIL)) continue;
 
-            $message = isset($this->notif_settings['booking_reminder']['content']) ? $this->notif_settings['booking_reminder']['content'] : '';
+            $message = $this->notif_settings['booking_reminder']['content'] ?? '';
 
             $message = str_replace('%%zoom_join%%', get_post_meta($event_id, 'mec_zoom_join_url', true), $message);
             $message = str_replace('%%zoom_link%%', get_post_meta($event_id, 'mec_zoom_link_url', true), $message);
@@ -990,14 +974,14 @@ class MEC_notifications extends MEC_base
         $disabled_send_notification_if_current_user_or_author_is_superadmin = isset($this->notif_settings['new_event']['disable_send_notification_if_current_user_or_author_is_admin']) and $this->notif_settings['new_event']['disable_send_notification_if_current_user_or_author_is_admin'] ? true : false;
         if($disabled_send_notification_if_current_user_or_author_is_superadmin && current_user_can('manage_options')) $to = NULL;
 
-        $recipients_str = isset($this->notif_settings['new_event']['recipients']) ? $this->notif_settings['new_event']['recipients'] : '';
-        $recipients = trim($recipients_str) ? explode(',', $recipients_str) : array();
+        $recipients_str = $this->notif_settings['new_event']['recipients'] ?? '';
+        $recipients = trim($recipients_str) ? explode(',', $recipients_str) : [];
 
-        $users = isset($this->notif_settings['new_event']['receiver_users']) ? $this->notif_settings['new_event']['receiver_users'] : array();
+        $users = $this->notif_settings['new_event']['receiver_users'] ?? [];
         $users_down = $this->main->get_emails_by_users($users);
         $recipients = array_merge($users_down, $recipients);
 
-        $roles = isset($this->notif_settings['new_event']['receiver_roles']) ? $this->notif_settings['new_event']['receiver_roles'] : array();
+        $roles = $this->notif_settings['new_event']['receiver_roles'] ?? [];
         $user_roles = $this->main->get_emails_by_roles($roles);
         $recipients = array_merge($user_roles, $recipients);
 
@@ -1068,13 +1052,13 @@ class MEC_notifications extends MEC_base
         // Data Fields
         $event_fields = $this->main->get_event_fields();
         $event_fields_data = get_post_meta($event_id, 'mec_fields', true);
-        if(!is_array($event_fields_data)) $event_fields_data = array();
+        if(!is_array($event_fields_data)) $event_fields_data = [];
 
         foreach($event_fields as $f => $event_field)
         {
             if(!is_numeric($f)) continue;
 
-            $field_value = isset($event_fields_data[$f]) ? $event_fields_data[$f] : NULL;
+            $field_value = $event_fields_data[$f] ?? NULL;
             if((!is_array($field_value) and trim($field_value) === '') or (is_array($field_value) and !count($field_value)))
             {
                 $message = str_replace('%%event_field_'.$f.'%%', '', $message);
@@ -1083,7 +1067,7 @@ class MEC_notifications extends MEC_base
                 continue;
             }
 
-            $event_field_name = isset($event_field['label']) ? $event_field['label'] : '';
+            $event_field_name = $event_field['label'] ?? '';
             if(is_array($field_value)) $field_value = implode(', ', $field_value);
 
             $message = str_replace('%%event_field_'.$f.'%%', trim($field_value, ', '), $message);
@@ -1158,14 +1142,14 @@ class MEC_notifications extends MEC_base
 
             $headers = array('Content-Type: text/html; charset=UTF-8');
 
-            $recipients_str = isset($this->notif_settings['user_event_publishing']['recipients']) ? $this->notif_settings['user_event_publishing']['recipients'] : '';
-            $recipients = trim($recipients_str) ? explode(',', $recipients_str) : array();
+            $recipients_str = $this->notif_settings['user_event_publishing']['recipients'] ?? '';
+            $recipients = trim($recipients_str) ? explode(',', $recipients_str) : [];
 
-            $users = isset($this->notif_settings['user_event_publishing']['receiver_users']) ? $this->notif_settings['user_event_publishing']['receiver_users'] : array();
+            $users = $this->notif_settings['user_event_publishing']['receiver_users'] ?? [];
             $users_down = $this->main->get_emails_by_users($users);
             $recipients = array_merge($users_down, $recipients);
 
-            $roles = isset($this->notif_settings['user_event_publishing']['receiver_roles']) ? $this->notif_settings['user_event_publishing']['receiver_roles'] : array();
+            $roles = $this->notif_settings['user_event_publishing']['receiver_roles'] ?? [];
             $user_roles = $this->main->get_emails_by_roles($roles);
             $recipients = array_merge($user_roles, $recipients);
 
@@ -1220,7 +1204,7 @@ class MEC_notifications extends MEC_base
 
             if(!$mec_start_date and !$mec_end_date)
             {
-                $mec = isset($_POST['mec']) ? $this->main->sanitize_deep_array($_POST['mec']) : array();
+                $mec = isset($_POST['mec']) ? $this->main->sanitize_deep_array($_POST['mec']) : [];
 
                 $mec_start_date = (isset($mec['date']) and isset($mec['date']['start']) and isset($mec['date']['start']['date']) and trim($mec['date']['start']['date'])) ? $this->main->standardize_format(sanitize_text_field($mec['date']['start']['date'])) : NULL;
                 $mec_end_date = (isset($mec['date']) and isset($mec['date']['end']) and isset($mec['date']['end']['date']) and trim($mec['date']['end']['date'])) ? $this->main->standardize_format(sanitize_text_field($mec['date']['end']['date'])) : NULL;
@@ -1239,13 +1223,13 @@ class MEC_notifications extends MEC_base
             $event_fields = $this->main->get_event_fields();
 
             $event_fields_data = get_post_meta($post->ID, 'mec_fields', true);
-            if(!is_array($event_fields_data)) $event_fields_data = array();
+            if(!is_array($event_fields_data)) $event_fields_data = [];
 
             foreach($event_fields as $f => $event_field)
             {
                 if(!is_numeric($f)) continue;
 
-                $field_value = isset($event_fields_data[$f]) ? $event_fields_data[$f] : NULL;
+                $field_value = $event_fields_data[$f] ?? NULL;
                 if(!is_array($field_value) and trim($field_value) === '')
                 {
                     $message = str_replace('%%event_field_'.$f.'%%', '', $message);
@@ -1254,7 +1238,7 @@ class MEC_notifications extends MEC_base
                     continue;
                 }
 
-                $event_field_name = isset($event_field['label']) ? $event_field['label'] : '';
+                $event_field_name = $event_field['label'] ?? '';
                 if(is_array($field_value)) $field_value = implode(', ', $field_value);
 
                 $message = str_replace('%%event_field_'.$f.'%%', trim($field_value, ', '), $message);
@@ -1266,11 +1250,14 @@ class MEC_notifications extends MEC_base
             $message = str_replace('%%zoom_password%%', get_post_meta($post->ID, 'mec_zoom_password', true), $message);
             $message = str_replace('%%zoom_embed%%', get_post_meta($post->ID, 'mec_zoom_embed', true), $message);
 
+            $message = apply_filters( 'mec_notifications_user_event_publishing_render_content', $message, $post->ID, $post, $new, $old );
+
             // Remove remained placeholders
             $message = preg_replace('/%%.*%%/', '', $message);
 
             // Notification Subject
             $subject = str_replace('%%event_title%%', get_the_title($post->ID), $subject);
+            $subject = apply_filters( 'mec_notifications_user_event_publishing_render_subject', $subject, $post->ID, $post, $new, $old );
 
             // Changing some sender email info.
             $this->mec_sender_email_notification_filter();
@@ -1296,7 +1283,7 @@ class MEC_notifications extends MEC_base
         // Event Soldout Notification is disabled
         if(!isset($this->notif_settings['event_soldout']['status']) or (isset($this->notif_settings['event_soldout']['status']) and !$this->notif_settings['event_soldout']['status'])) return;
 
-        $tos = array();
+        $tos = [];
 
         // Send the notification to admin
         if(isset($this->notif_settings['event_soldout']['send_to_admin']) and $this->notif_settings['event_soldout']['send_to_admin'] == 1)
@@ -1326,14 +1313,14 @@ class MEC_notifications extends MEC_base
 
         $headers = array('Content-Type: text/html; charset=UTF-8');
 
-        $recipients_str = isset($this->notif_settings['event_soldout']['recipients']) ? $this->notif_settings['event_soldout']['recipients'] : '';
-        $recipients = trim($recipients_str) ? explode(',', $recipients_str) : array();
+        $recipients_str = $this->notif_settings['event_soldout']['recipients'] ?? '';
+        $recipients = trim($recipients_str) ? explode(',', $recipients_str) : [];
 
-        $users = isset($this->notif_settings['event_soldout']['receiver_users']) ? $this->notif_settings['event_soldout']['receiver_users'] : array();
+        $users = $this->notif_settings['event_soldout']['receiver_users'] ?? [];
         $users_down = $this->main->get_emails_by_users($users);
         $recipients = array_merge($users_down, $recipients);
 
-        $roles = isset($this->notif_settings['event_soldout']['receiver_roles']) ? $this->notif_settings['event_soldout']['receiver_roles'] : array();
+        $roles = $this->notif_settings['event_soldout']['receiver_roles'] ?? [];
         $user_roles = $this->main->get_emails_by_roles($roles);
         $recipients = array_merge($user_roles, $recipients);
 
@@ -1370,7 +1357,7 @@ class MEC_notifications extends MEC_base
             if(!trim($mailto) or !filter_var($mailto, FILTER_VALIDATE_EMAIL)) continue;
             if($i > 1) $headers = array('Content-Type: text/html; charset=UTF-8');
 
-            $message = isset($this->notif_settings['event_soldout']['content']) ? $this->notif_settings['event_soldout']['content'] : '';
+            $message = $this->notif_settings['event_soldout']['content'] ?? '';
             $message = $this->content($this->get_content($message, 'event_soldout', $event_id, $book_id), $book_id, (is_array($to) ? $to : NULL));
 
             // Book Data
@@ -1404,10 +1391,8 @@ class MEC_notifications extends MEC_base
 
     public function event_finished($event_id, $timestamps)
     {
-        if( !$event_id ){
+        if(!$event_id) return false;
 
-            return false;
-        }
         // Event Finished notification is disabled
         if(!isset($this->notif_settings['event_finished']['status']) or (isset($this->notif_settings['event_finished']['status']) and !$this->notif_settings['event_finished']['status'])) return false;
 
@@ -1417,18 +1402,18 @@ class MEC_notifications extends MEC_base
         $attendees = $this->main->get_event_attendees($event_id, $start_timestamp);
 
         // No Attendee
-        if(!is_array($attendees) or (is_array($attendees) and !count($attendees))) return false;
+        if(!is_array($attendees) or !count($attendees)) return false;
 
         $headers = array('Content-Type: text/html; charset=UTF-8');
 
-        $recipients_str = isset($this->notif_settings['event_finished']['recipients']) ? $this->notif_settings['event_finished']['recipients'] : '';
-        $recipients = trim($recipients_str) ? explode(',', $recipients_str) : array();
+        $recipients_str = $this->notif_settings['event_finished']['recipients'] ?? '';
+        $recipients = trim($recipients_str) ? explode(',', $recipients_str) : [];
 
-        $users = isset($this->notif_settings['event_finished']['receiver_users']) ? $this->notif_settings['event_finished']['receiver_users'] : array();
+        $users = $this->notif_settings['event_finished']['receiver_users'] ?? [];
         $users_down = $this->main->get_emails_by_users($users);
         $recipients = array_merge($users_down, $recipients);
 
-        $roles = isset($this->notif_settings['event_finished']['receiver_roles']) ? $this->notif_settings['event_finished']['receiver_roles'] : array();
+        $roles = $this->notif_settings['event_finished']['receiver_roles'] ?? [];
         $user_roles = $this->main->get_emails_by_roles($roles);
         $recipients = array_merge($user_roles, $recipients);
 
@@ -1454,7 +1439,7 @@ class MEC_notifications extends MEC_base
         add_filter('wp_mail_content_type', array($this->main, 'html_email_type'));
 
         // Do not send email twice!
-        $done_emails = array();
+        $done_emails = [];
 
         // Send the Emails
         foreach($attendees as $attendee)
@@ -1463,7 +1448,7 @@ class MEC_notifications extends MEC_base
             $book_id = $attendee['book_id'];
 
             // To Address
-            $to = (isset($attendee['email']) ? $attendee['email'] : '');
+            $to = $attendee['email'] ?? '';
 
             if(!trim($to)) continue;
             if(in_array($to, $done_emails) or !filter_var($to, FILTER_VALIDATE_EMAIL)) continue;
@@ -1471,7 +1456,7 @@ class MEC_notifications extends MEC_base
             $subject = isset($this->notif_settings['event_finished']['subject']) ? esc_html__($this->notif_settings['event_finished']['subject'], 'modern-events-calendar-lite') : esc_html__('Thanks for your attention!', 'modern-events-calendar-lite');
             $subject = $this->content($this->get_subject($subject, 'event_finished', $event_id, $book_id), $book_id, $attendee, $timestamps);
 
-            $message = isset($this->notif_settings['event_finished']['content']) ? $this->notif_settings['event_finished']['content'] : '';
+            $message = $this->notif_settings['event_finished']['content'] ?? '';
 
             $message = str_replace('%%zoom_join%%', get_post_meta($event_id, 'mec_zoom_join_url', true), $message);
             $message = str_replace('%%zoom_link%%', get_post_meta($event_id, 'mec_zoom_link_url', true), $message);
@@ -1521,10 +1506,10 @@ class MEC_notifications extends MEC_base
 
         // Attendees
         $attendees = get_post_meta($book_id, 'mec_attendees', true);
-        if(!is_array($attendees) or (is_array($attendees) and !count($attendees))) $attendees = array(get_post_meta($book_id, 'mec_attendee', true));
+        if(!is_array($attendees) || !count($attendees)) $attendees = array(get_post_meta($book_id, 'mec_attendee', true));
 
         // Do not send email twice!
-        $done_emails = array();
+        $done_emails = [];
 
         // Changing some sender email info.
         $this->mec_sender_email_notification_filter();
@@ -1537,7 +1522,7 @@ class MEC_notifications extends MEC_base
         {
             if(isset($attendee[0]['MEC_TYPE_OF_DATA'])) continue;
 
-            $to = (isset($attendee['email']) ? $attendee['email'] : '');
+            $to = $attendee['email'] ?? '';
 
             if(!trim($to)) continue;
             if(in_array($to, $done_emails) or !filter_var($to, FILTER_VALIDATE_EMAIL)) continue;
@@ -1570,6 +1555,73 @@ class MEC_notifications extends MEC_base
 
         // Remove the HTML Email filter
         remove_filter('wp_mail_content_type', array($this->main, 'html_email_type'));
+
+        return true;
+    }
+
+    /**
+     * @param $booking_attendee_id
+     * @param $template
+     * @return bool
+     */
+    public function certificate_send($booking_attendee_id, $template)
+    {
+        if(!$booking_attendee_id) return false;
+
+        $mec_book = $this->main->get_mec_attendee_record($booking_attendee_id);
+        if(!isset($mec_book->booking_id)) return false;
+
+        $book_id = $mec_book->booking_id;
+
+        $booker = $this->u->get($mec_book->user_id);
+        if(!isset($booker->user_email)) return false;
+
+        // Event ID
+        $event_id = get_post_meta($book_id, 'mec_event_id', true);
+
+        // Subject
+        $subject = isset($this->notif_settings['certificate_send']['subject']) ? esc_html__($this->notif_settings['certificate_send']['subject'], 'modern-events-calendar-lite') : esc_html__('Download your certificate.', 'modern-events-calendar-lite');
+        $subject = $this->content($this->get_subject($subject, 'certificate_send', $event_id, $book_id), $book_id);
+
+        $headers = ['Content-Type: text/html; charset=UTF-8'];
+
+        // Changing some sender email info.
+        $this->mec_sender_email_notification_filter();
+
+        // Set Email Type to HTML
+        add_filter('wp_mail_content_type', [$this->main, 'html_email_type']);
+
+        // Message
+        $message = $this->notif_settings['certificate_send']['content'] ?? '';
+        $message = $this->content($message, $book_id);
+
+        $certificate_link = $this->main->get_certificate_link($booking_attendee_id, $template);
+
+        // Certificate Link
+        $message = str_replace('%%certificate_link%%', $certificate_link, $message);
+
+        // Remove remained placeholders
+        $message = preg_replace('/%%.*%%/', '', $message);
+
+        // Add Template
+        $message = $this->add_template($message);
+
+        // Filter the email
+        $mail_arg = [
+            'to'            => $booker->user_email,
+            'subject'       => $subject,
+            'message'       => $message,
+            'headers'       => $headers,
+            'attachments'   => [],
+        ];
+
+        $mail_arg = apply_filters('mec_before_send_auto_email', $mail_arg, $book_id, 'auto_email');
+
+        // Send the mail
+        wp_mail($mail_arg['to'], html_entity_decode(stripslashes($mail_arg['subject']), ENT_HTML5), wpautop(stripslashes($mail_arg['message'])), $mail_arg['headers'], $mail_arg['attachments']);
+
+        // Remove the HTML Email filter
+        remove_filter('wp_mail_content_type', [$this->main, 'html_email_type']);
 
         return true;
     }
@@ -1625,11 +1677,11 @@ class MEC_notifications extends MEC_base
             $name = $attendee['name'];
             $attendee_ex_name = explode(' ', $name);
 
-            $first_name = isset($attendee_ex_name[0]) ? $attendee_ex_name[0] : '';
+            $first_name = $attendee_ex_name[0] ?? '';
             unset($attendee_ex_name[0]);
 
             $last_name = implode(' ', $attendee_ex_name);
-            $email = isset($attendee['email']) ? $attendee['email'] : $email;
+            $email = $attendee['email'] ?? $email;
         }
 
         // Booker Data
@@ -1637,7 +1689,7 @@ class MEC_notifications extends MEC_base
         $message = str_replace('%%last_name%%', $last_name, $message);
         $message = str_replace('%%name%%', $name, $message);
         $message = str_replace('%%user_email%%', $email, $message);
-        $message = str_replace('%%user_id%%', (isset($booker->ID) ? $booker->ID : ''), $message);
+        $message = str_replace('%%user_id%%', ($booker->ID ?? ''), $message);
 
         // Site Data
         $message = str_replace('%%blog_name%%', get_bloginfo('name'), $message);
@@ -1649,7 +1701,7 @@ class MEC_notifications extends MEC_base
         $transaction = $this->book->get_transaction($transaction_id);
 
         // First for All
-        $first_for_all = (isset($transaction['first_for_all']) ? $transaction['first_for_all'] : 0);
+        $first_for_all = $transaction['first_for_all'] ?? 0;
 
         // Date & Time Format
         $date_format = get_option('date_format');
@@ -1680,7 +1732,7 @@ class MEC_notifications extends MEC_base
 
         $allday = get_post_meta($event_id, 'mec_allday', true);
         $hide_time = get_post_meta($event_id, 'mec_hide_time', true);
-        $hide_end_time = get_post_meta($event_id, 'mec_hide_end_time', true);
+        $hide_end_time = $this->main->hide_end_time_status($event_id);
         $event_time = $allday ? $this->main->m('all_day', esc_html__('All Day' , 'modern-events-calendar-lite')) : (!$hide_end_time ? sprintf(esc_html__('%s to %s', 'modern-events-calendar-lite'), $event_start_time, $event_end_time) : $event_start_time);
 
         // Condition for check some parameter simple hide event time
@@ -1771,6 +1823,7 @@ class MEC_notifications extends MEC_base
 
         // Booking Fixed Fields
         $bfixed_fields = $this->main->get_bfixed_fields($event_id);
+        $all_bfixed_fields = '';
 
         if(is_array($bfixed_fields) and count($bfixed_fields) and isset($transaction['fields']) and is_array($transaction['fields']) and count($transaction['fields']))
         {
@@ -1778,16 +1831,22 @@ class MEC_notifications extends MEC_base
             {
                 if(!is_numeric($b)) continue;
 
-                $bfixed_field_name = isset($bfixed_field['label']) ? $bfixed_field['label'] : '';
-                $bfixed_value = isset($transaction['fields'][$b]) ? $transaction['fields'][$b] : NULL;
-                
+                $bfixed_field_name = $bfixed_field['label'] ?? '';
+                $bfixed_value = $transaction['fields'][$b] ?? NULL;
+
                 if(is_array($bfixed_value)) $bfixed_value = implode(', ', $bfixed_value);
                 if(trim($bfixed_value) === '') continue;
 
+                $name_and_value = trim((trim($bfixed_field_name) ? stripslashes($bfixed_field_name).': ' : '').trim(stripslashes($bfixed_value), ', '));
+                $all_bfixed_fields .= $name_and_value."<br>";
+
                 $message = str_replace('%%booking_field_'.$b.'%%', trim(stripslashes($bfixed_value), ', '), $message);
-                $message = str_replace('%%booking_field_'.$b.'_with_name%%', trim((trim($bfixed_field_name) ? stripslashes($bfixed_field_name).': ' : '').trim(stripslashes($bfixed_value), ', ')), $message);
+                $message = str_replace('%%booking_field_'.$b.'_with_name%%', $name_and_value, $message);
             }
         }
+
+        // All Booking Fields
+        $message = str_replace('%%all_bfixed_fields%%', $all_bfixed_fields, $message);
 
         // Event Data
         $organizer_id = $this->main->get_master_organizer_id($event_id, $mec_date[0]);
@@ -1800,14 +1859,14 @@ class MEC_notifications extends MEC_base
         // Data Fields
         $event_fields = $this->main->get_event_fields();
         $event_fields_data = get_post_meta($event_id, 'mec_fields', true);
-        if(!is_array($event_fields_data)) $event_fields_data = array();
+        if(!is_array($event_fields_data)) $event_fields_data = [];
 
         foreach($event_fields as $f => $event_field)
         {
             if(!is_numeric($f)) continue;
 
-            $event_field_name = isset($event_field['label']) ? $event_field['label'] : '';
-            $field_value = isset($event_fields_data[$f]) ? $event_fields_data[$f] : NULL;
+            $event_field_name = $event_field['label'] ?? '';
+            $field_value = $event_fields_data[$f] ?? NULL;
             if((!is_array($field_value) and trim($field_value) === '') or (is_array($field_value) and !count($field_value)))
             {
                 $message = str_replace('%%event_field_'.$f.'%%', '', $message);
@@ -1896,7 +1955,7 @@ class MEC_notifications extends MEC_base
 
         $message = str_replace('%%event_featured_image%%', $featured_image, $message);
 
-        $message = str_replace('%%event_organizer_name%%', (isset($organizer->name) ? $organizer->name : ''), $message);
+        $message = str_replace('%%event_organizer_name%%', ($organizer->name ?? ''), $message);
         $message = str_replace('%%event_organizer_tel%%', get_term_meta($organizer_id, 'tel', true), $message);
         $message = str_replace('%%event_organizer_email%%', get_term_meta($organizer_id, 'email', true), $message);
         $message = str_replace('%%event_organizer_url%%', get_term_meta($organizer_id, 'url', true), $message);
@@ -1907,7 +1966,7 @@ class MEC_notifications extends MEC_base
         $additional_organizers_url = '';
 
         $additional_organizers_ids = get_post_meta($event_id, 'mec_additional_organizer_ids', true);
-        if(!is_array($additional_organizers_ids)) $additional_organizers_ids = array();
+        if(!is_array($additional_organizers_ids)) $additional_organizers_ids = [];
 
         foreach($additional_organizers_ids as $additional_organizers_id)
         {
@@ -1926,18 +1985,18 @@ class MEC_notifications extends MEC_base
         $message = str_replace('%%event_other_organizers_email%%', trim($additional_organizers_email, ', '), $message);
         $message = str_replace('%%event_other_organizers_url%%', trim($additional_organizers_url, ', '), $message);
 
-        $speaker_name = array();
-        foreach($speaker_id as $speaker) $speaker_name[] = isset($speaker->name) ? $speaker->name : null;
+        $speaker_name = [];
+        foreach($speaker_id as $speaker) $speaker_name[] = $speaker->name ?? null;
 
         $message = str_replace('%%event_speaker_name%%', (isset($speaker_name) ? implode(', ', $speaker_name): ''), $message);
-        $message = str_replace('%%event_location_name%%', (isset($location->name) ? $location->name : get_term_meta($location_id, 'address', true)), $message);
+        $message = str_replace('%%event_location_name%%', ($location->name ?? get_term_meta($location_id, 'address', true)), $message);
         $message = str_replace('%%event_location_address%%', get_term_meta($location_id, 'address', true), $message);
 
         $additional_locations_name = '';
         $additional_locations_address = '';
 
         $additional_locations_ids = get_post_meta($event_id, 'mec_additional_location_ids', true);
-        if(!is_array($additional_locations_ids)) $additional_locations_ids = array();
+        if(!is_array($additional_locations_ids)) $additional_locations_ids = [];
 
         foreach($additional_locations_ids as $additional_locations_id)
         {
@@ -1952,10 +2011,9 @@ class MEC_notifications extends MEC_base
         $message = str_replace('%%event_other_locations_name%%', trim($additional_locations_name, ', '), $message);
         $message = str_replace('%%event_other_locations_address%%', trim($additional_locations_address, ', '), $message);
 
-        $ticket_start_hour = $ticket_start_minute = $ticket_end_hour = $ticket_end_minute = $ticket_start_ampm = $ticket_end_ampm = '';
-        $ticket_names = array();
-        $ticket_times = array();
-        $ticket_private_descriptions = array();
+        $ticket_names = [];
+        $ticket_times = [];
+        $ticket_private_descriptions = [];
 
         $ticket_ids_str = get_post_meta($book_id, 'mec_ticket_id', true);
         $tickets = get_post_meta($event_id, 'mec_tickets', true);
@@ -1963,24 +2021,23 @@ class MEC_notifications extends MEC_base
         $ticket_ids = explode(',', $ticket_ids_str);
         $ticket_ids = array_filter($ticket_ids);
 
-        if(!is_array($ticket_ids)) $ticket_ids = array();
-        if(!is_array($tickets)) $tickets = array();
+        if(!is_array($tickets)) $tickets = [];
 
-        foreach($ticket_ids as $get_ticket_id=>$value)
+        foreach($ticket_ids as $value)
         {
             foreach($tickets as $ticket=>$ticket_info)
             {
                 if($ticket != $value) continue;
 
                 $ticket_names[] = $ticket_info['name'];
-                $ticket_private_descriptions[] = (isset($ticket_info['private_description']) ? $ticket_info['private_description'] : '');
+                $ticket_private_descriptions[] = $ticket_info['private_description'] ?? '';
 
-                $ticket_start_hour = (isset($ticket_info['ticket_start_time_hour']) ? $ticket_info['ticket_start_time_hour'] : '');
-                $ticket_start_minute = (isset($ticket_info['ticket_start_time_minute']) ? $ticket_info['ticket_start_time_minute'] : '');
-                $ticket_start_ampm = (isset($ticket_info['ticket_start_time_ampm']) ? $ticket_info['ticket_start_time_ampm'] : '');
-                $ticket_end_hour = (isset($ticket_info['ticket_end_time_hour']) ? $ticket_info['ticket_end_time_hour'] : '');
-                $ticket_end_minute = (isset($ticket_info['ticket_end_time_minute']) ? $ticket_info['ticket_end_time_minute'] : '');
-                $ticket_end_ampm = (isset($ticket_info['ticket_end_time_ampm']) ? $ticket_info['ticket_end_time_ampm'] : '');
+                $ticket_start_hour = $ticket_info['ticket_start_time_hour'] ?? '';
+                $ticket_start_minute = $ticket_info['ticket_start_time_minute'] ?? '';
+                $ticket_start_ampm = $ticket_info['ticket_start_time_ampm'] ?? '';
+                $ticket_end_hour = $ticket_info['ticket_end_time_hour'] ?? '';
+                $ticket_end_minute = $ticket_info['ticket_end_time_minute'] ?? '';
+                $ticket_end_ampm = $ticket_info['ticket_end_time_ampm'] ?? '';
 
                 $ticket_start_minute_s = $ticket_start_minute;
                 $ticket_end_minute_s = $ticket_end_minute;
@@ -1998,31 +2055,13 @@ class MEC_notifications extends MEC_base
         }
 
         // Private Description
-        $private_description_status = (!isset($this->settings['booking_private_description']) or (isset($this->settings['booking_private_description']) and $this->settings['booking_private_description'])) ? true : false;
+        $private_description_status = (!isset($this->settings['booking_private_description']) || $this->settings['booking_private_description']);
 
         $ticket_times = array_unique($ticket_times);
         $message = str_replace('%%ticket_time%%', implode(',', $ticket_times), $message);
         $message = str_replace('%%ticket_name%%', implode(',', $ticket_names), $message);
 
-        if($private_description_status)
-        {
-            if(is_array($attendee) and isset($attendee['id']) and !$first_for_all)
-            {
-                $attendee_ticket = array();
-                foreach($tickets as $ticket_id=>$ticket)
-                {
-                    if($ticket_id == $attendee['id'])
-                    {
-                        $attendee_ticket = $ticket;
-                        break;
-                    }
-                }
-
-                $ticket_private_description = (isset($attendee_ticket['private_description']) ? $attendee_ticket['private_description'] : '');
-                $message = str_replace('%%ticket_private_description%%', $ticket_private_description, $message);
-            }
-            else $message = str_replace('%%ticket_private_description%%', implode(',', $ticket_private_descriptions), $message);
-        }
+        if($private_description_status) $message = str_replace('%%ticket_private_description%%', implode(',', array_unique($ticket_private_descriptions)), $message);
 
         $ticket_name_time = '';
         foreach($ticket_names as $t_i=>$ticket_name)
@@ -2129,9 +2168,9 @@ class MEC_notifications extends MEC_base
         $event_id = get_post_meta($book_id, 'mec_event_id', true);
 
         $organizer_ids = get_post_meta($event_id, 'mec_additional_organizer_ids', true);
-        if(!is_array($organizer_ids)) $organizer_ids = array();
+        if(!is_array($organizer_ids)) $organizer_ids = [];
 
-        $emails = array();
+        $emails = [];
 
         $organizer_ids = array_unique($organizer_ids);
         foreach($organizer_ids as $organizer_id)
@@ -2153,14 +2192,14 @@ class MEC_notifications extends MEC_base
         $attendees_full_info = '';
 
         $attendees = get_post_meta($book_id, 'mec_attendees', true);
-        if(!is_array($attendees) or (is_array($attendees) and !count($attendees))) $attendees = array(get_post_meta($book_id, 'mec_attendee', true));
+        if(!is_array($attendees) || !count($attendees)) $attendees = array(get_post_meta($book_id, 'mec_attendee', true));
 
         $event_id = get_post_meta($book_id, 'mec_event_id', true);
         $reg_fields = $this->main->get_reg_fields($event_id);
         $reg_fields = apply_filters( 'mec_notification_reg_fields', $reg_fields, $event_id, $book_id );
 
-        $attachments = (isset($attendees['attachments']) and is_array($attendees['attachments'])) ? $attendees['attachments'] : array();
-        $attachment_field = array();
+        $attachments = (isset($attendees['attachments']) and is_array($attendees['attachments'])) ? $attendees['attachments'] : [];
+        $attachment_field = [];
         if(count($attachments))
         {
             foreach($reg_fields as $reg_field_id => $reg_field)
@@ -2173,11 +2212,11 @@ class MEC_notifications extends MEC_base
             }
         }
 
-        foreach($attendees as $key=>$attendee)
+        foreach($attendees as $key => $attendee)
         {
             if($key === 'attachments') continue;
 
-            $reg_form = isset($attendee['reg']) ? $attendee['reg'] : array();
+            $reg_form = $attendee['reg'] ?? [];
 
             $attendees_full_info .= esc_html__('Name', 'modern-events-calendar-lite').': '.((isset($attendee['name']) and trim($attendee['name'])) ? $attendee['name'] : '---')."\r\n";
             $attendees_full_info .= esc_html__('Email', 'modern-events-calendar-lite').': '.((isset($attendee['email']) and trim($attendee['email'])) ? $attendee['email'] : '---')."\r\n";
@@ -2226,8 +2265,8 @@ class MEC_notifications extends MEC_base
     public function mec_sender_email_notification_filter()
     {
         // MEC Notification Sender Email
-        add_filter('wp_mail_from_name', array($this, 'notification_sender_name'));
-        add_filter('wp_mail_from', array($this, 'notification_sender_email'));
+        add_filter('wp_mail_from_name', [$this, 'notification_sender_name']);
+        add_filter('wp_mail_from', [$this, 'notification_sender_email']);
     }
 
     /**
@@ -2237,8 +2276,7 @@ class MEC_notifications extends MEC_base
      */
     public function notification_sender_name($sender_name)
     {
-        $sender_name = (isset($this->settings['booking_sender_name']) and trim($this->settings['booking_sender_name'])) ? stripslashes(trim($this->settings['booking_sender_name'])) : $sender_name;
-        return $sender_name;
+        return (isset($this->settings['booking_sender_name']) and trim($this->settings['booking_sender_name'])) ? stripslashes(trim($this->settings['booking_sender_name'])) : $sender_name;
     }
 
     /**
@@ -2248,8 +2286,7 @@ class MEC_notifications extends MEC_base
      */
     public function notification_sender_email($sender_email)
     {
-        $sender_email = (isset($this->settings['booking_sender_email']) and trim($this->settings['booking_sender_email'])) ? trim($this->settings['booking_sender_email']) : $sender_email;
-        return $sender_email;
+        return (isset($this->settings['booking_sender_email']) and trim($this->settings['booking_sender_email'])) ? trim($this->settings['booking_sender_email']) : $sender_email;
     }
 
     /**
@@ -2263,9 +2300,9 @@ class MEC_notifications extends MEC_base
         if(isset($this->settings['notif_template_disable']) and $this->settings['notif_template_disable']) return apply_filters('mec_email_template', $content);
 
         $style = $this->main->get_styling();
-        $bgnotifications = isset($style['notification_bg']) ? $style['notification_bg'] : '#f6f6f6';
+        $bg = $style['notification_bg'] ?? '#f6f6f6';
 
-        return '<table border="0" cellpadding="0" cellspacing="0" class="wn-body" style="background-color: '.esc_attr($bgnotifications).'; font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Oxygen,Open Sans, sans-serif;border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;">
+        return '<table border="0" cellpadding="0" cellspacing="0" class="wn-body" style="background-color: '.esc_attr($bg).'; font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Oxygen,Open Sans, sans-serif;border-collapse: separate; mso-table-lspace: 0; mso-table-rspace: 0; width: 100%;">
             <tr>
                 <td class="wn-container" style="display: block; margin: 0 auto !important; max-width: 680px; padding: 10px;font-family: sans-serif; font-size: 14px; vertical-align: top;">
                     <div class="wn-wrapper" style="box-sizing: border-box; padding: 38px 9% 50px; width: 100%; height: auto; background: #fff; background-size: contain; margin-bottom: 25px; margin-top: 30px; border-radius: 4px; box-shadow: 0 3px 55px -18px rgba(0,0,0,0.1);">
@@ -2293,19 +2330,19 @@ class MEC_notifications extends MEC_base
             $transaction = $this->book->get_transaction($transaction_id);
 
             // Use Translated Event for Content & Subject
-            if(isset($transaction['translated_event_id']) and $transaction['translated_event_id'] != $event_id) $event_id = $transaction['translated_event_id'];
+            if(isset($transaction['translated_event_id']) && $transaction['translated_event_id'] && $transaction['translated_event_id'] != $event_id) $event_id = $transaction['translated_event_id'];
         }
 
         $custom_subject = apply_filters('mec_notification_get_subject', '', $notification_key, $event_id);
         if(!empty($custom_subject)) return $custom_subject;
 
         $values = get_post_meta($event_id, 'mec_notifications', true);
-        if(!is_array($values) or (is_array($values) and !count($values))) return $value;
+        if(!is_array($values) or !count($values)) return $value;
 
-        $notification = isset($values[$notification_key]) ? $values[$notification_key] : array();
+        $notification = $values[$notification_key] ?? [];
 
-        if(!is_array($notification) or (is_array($notification) and !count($notification))) return $value;
-        if(!isset($notification['status']) or (isset($notification['status']) and !$notification['status'])) return $value;
+        if(!is_array($notification) or !count($notification)) return $value;
+        if(!isset($notification['status']) or !$notification['status']) return $value;
 
         return ((isset($notification['subject']) and trim($notification['subject'])) ? $notification['subject'] : $value);
     }
@@ -2327,23 +2364,26 @@ class MEC_notifications extends MEC_base
             $transaction = $this->book->get_transaction($transaction_id);
 
             // Use Translated Event for Content & Subject
-            if(isset($transaction['translated_event_id']) and $transaction['translated_event_id'] != $event_id) $event_id = $transaction['translated_event_id'];
+            if(isset($transaction['translated_event_id']) && $transaction['translated_event_id'] && $transaction['translated_event_id'] != $event_id) $event_id = $transaction['translated_event_id'];
         }
 
         $custom_message = apply_filters('mec_notification_get_content', '', $notification_key, $event_id);
         if(!empty($custom_message)) return $custom_message;
 
         $values = get_post_meta($event_id, 'mec_notifications', true);
-        if(!is_array($values) or (is_array($values) and !count($values))) return $value;
+        if(!is_array($values) or !count($values)) return $value;
 
-        $notification = isset($values[$notification_key]) ? $values[$notification_key] : array();
+        $notification = $values[$notification_key] ?? [];
 
-        if(!is_array($notification) or (is_array($notification) and !count($notification))) return $value;
-        if(!isset($notification['status']) or (isset($notification['status']) and !$notification['status'])) return $value;
+        if(!is_array($notification) or !count($notification)) return $value;
+        if(!isset($notification['status']) or !$notification['status']) return $value;
 
         return ((isset($notification['content']) and trim($notification['content'])) ? $notification['content'] : $value);
     }
 
+    /**
+     * @return string
+     */
     public function get_cc_bcc_method()
     {
         return ((isset($this->settings['booking_recipients_method']) and trim($this->settings['booking_recipients_method'])) ? strtoupper($this->settings['booking_recipients_method']) : 'BCC');

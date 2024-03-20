@@ -15,12 +15,12 @@ if ( !class_exists('Puc_v4p11_Plugin_Info', false) ):
 		public $slug;
 		public $version;
 		public $homepage;
-		public $sections = array();
+		public $sections = [];
 		public $download_url;
 
 		public $banners;
-		public $icons = array();
-		public $translations = array();
+		public $icons = [];
+		public $translations = [];
 
 		public $author;
 		public $author_homepage;

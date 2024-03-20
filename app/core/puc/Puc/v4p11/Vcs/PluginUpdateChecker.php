@@ -243,11 +243,11 @@ if ( !class_exists('Puc_v4p11_Vcs_PluginUpdateChecker') ):
 		protected function getLocalAssetUrls($filesToKeys) {
 			$assetDirectory = $this->package->getAbsoluteDirectoryPath() . DIRECTORY_SEPARATOR . 'assets';
 			if ( !is_dir($assetDirectory) ) {
-				return array();
+				return [];
 			}
 			$assetBaseUrl = trailingslashit(plugins_url('', $assetDirectory . '/imaginary.file'));
 
-			$foundAssets = array();
+			$foundAssets = [];
 			foreach ($filesToKeys as $fileName => $key) {
 				$fullBannerPath = $assetDirectory . DIRECTORY_SEPARATOR . $fileName;
 				if ( !isset($icons[$key]) && is_file($fullBannerPath) ) {

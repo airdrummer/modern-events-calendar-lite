@@ -3,6 +3,8 @@
 defined('MECEXEC') or die();
 
 /** @var MEC_skin_monthly_view $this */
+/** @var int $month */
+/** @var int $year */
 
 // table headings
 $headings = $this->main->get_weekday_abbr_labels();
@@ -11,23 +13,22 @@ echo '<dl class="mec-calendar-table-head"><dt class="mec-calendar-day-head">'.ME
 // Start day of week
 $week_start = $this->main->get_first_day_of_week();
 
-$display_label = isset($this->skin_options['display_label']) ? $this->skin_options['display_label'] : false;
-$reason_for_cancellation = isset($this->skin_options['reason_for_cancellation']) ? $this->skin_options['reason_for_cancellation'] : false;
+$display_label = $this->skin_options['display_label'] ?? false;
+$reason_for_cancellation = $this->skin_options['reason_for_cancellation'] ?? false;
 
 // Single Event Display Method
-$target_set = isset($this->skin_options['sed_method']) ? $this->skin_options['sed_method'] : false;
-$target_url = ($target_set == 'new') ? 'target="_blank"' : '';
+$target_set = $this->skin_options['sed_method'] ?? false;
+$target_url = $target_set === 'new' ? 'target="_blank"' : '';
 
 // days and weeks vars
 $running_day = date('w', mktime(0, 0, 0, $month, 1, $year));
 $days_in_month = date('t', mktime(0, 0, 0, $month, 1, $year));
-$days_in_previous_month = date('t', strtotime('-1 month', strtotime($this->active_day)));
+$days_in_previous_month = $this->main->get_days_in_previous_month($month, $year);
 
 $days_in_this_week = 1;
 $day_counter = 0;
 
-if($week_start == 0) $running_day = $running_day; // Sunday
-elseif($week_start == 1) // Monday
+if($week_start == 1) // Monday
 {
     if($running_day != 0) $running_day = $running_day - 1;
     else $running_day = 6;
@@ -69,14 +70,14 @@ elseif($week_start == 5) // Friday
                 echo '<dt class="mec-calendar-day '.esc_attr($selected_day).'" data-mec-cell="'.esc_attr($day_id).'" data-day="'.esc_attr($list_day).'" data-month="'.date('Ym', $time).'"><div class="mec-calendar-novel-selected-day '.esc_attr($selected_day_date).'">'.MEC_kses::full(apply_filters( 'mec_filter_list_day_value', $list_day, $today, $this)).'</div>';
                 foreach($events[$today] as $event)
                 {
-                    $event_color = isset($event->data->meta['mec_color']) && !empty($event->data->meta['mec_color']) ? '#'.$event->data->meta['mec_color'] : '';
+                    $event_color = $this->get_event_color_dot($event, true);
                     $start_date = (isset($event->date['start']['date']) ? str_replace ( '-', '', $event->date['start']['date'] ) : '');
                     $end_date = (isset($event->date['end']['date']) ? str_replace ( '-', '', $event->date['end']['date'] ) : '');
 
                     // MEC Schema
                     do_action('mec_schema', $event);
 
-                    echo '<a class="'.($this->main->is_expired($event) ? 'mec-past-event ' : '').'event-single-link-novel" data-event-id="'.esc_attr($event->data->ID).'" href="'.esc_url($this->main->get_event_date_permalink($event, $event->date['start']['date'])).'" '.$target_url.'>';
+                    if($target_set !== 'no') echo '<a class="'.($this->main->is_expired($event) ? 'mec-past-event ' : '').'event-single-link-novel" data-event-id="'.esc_attr($event->data->ID).'" href="'.esc_url($this->main->get_event_date_permalink($event, $event->date['start']['date'])).'" '.$target_url.'>';
 
                     echo '<div style="background:'.esc_attr($event_color).'" class="mec-single-event-novel mec-event-article '.esc_attr($this->get_event_classes($event)).'">';
                     echo '<h4 class="mec-event-title">'.MEC_kses::element($event->data->title).'</h4>'.$this->main->get_normal_labels($event, $display_label).$this->main->display_cancellation_reason($event, $reason_for_cancellation);
@@ -89,7 +90,7 @@ elseif($week_start == 5) // Friday
                     echo MEC_kses::embed($this->display_custom_data($event));
 
                     echo '</div>';
-                    echo '</a>';
+                    if($target_set !== 'no') echo '</a>';
                 }
 
                 echo '</dt>';

@@ -22,7 +22,7 @@ $options = $atts['options'];
     <div class="mec-col-12">
         <label>
             <input type="hidden" name="<?php echo esc_attr( $base_field_name ); ?>[<?php echo esc_attr( $group_id ); ?>_notification][status]" value="0" />
-            <input onchange="jQuery('#mec_notification_<?php echo esc_attr( $group_id ); ?>_notification_container_toggle').toggle();" value="1" type="checkbox" name="<?php echo esc_attr( $base_field_name ); ?>[<?php echo esc_attr( $group_id ); ?>_notification][status]" <?php if(!isset($options['status']) or (isset($options['status']) and $options['status'])) echo 'checked="checked"'; ?> /> <?php $enable_options_text; ?>
+            <input onchange="jQuery('#mec_notification_<?php echo esc_attr( $group_id ); ?>_notification_container_toggle').toggle();" value="1" type="checkbox" name="<?php echo esc_attr( $base_field_name ); ?>[<?php echo esc_attr( $group_id ); ?>_notification][status]" <?php if(!isset($options['status']) or (isset($options['status']) and $options['status'])) echo 'checked="checked"'; ?> /> <?php echo esc_html( $enable_options_text ); ?>
         </label>
     </div>
     <p class="mec-col-12 description"><?php echo esc_html($enable_options_description); ?></p>
@@ -47,7 +47,7 @@ $options = $atts['options'];
             </div>
             <div class="mec-col-9">
                 <?php
-                    $users = isset($options['receiver_users']) ? $options['receiver_users'] : array();
+                    $users = isset($options['receiver_users']) ? $options['receiver_users'] : [];
                     echo \MEC\Base::get_main()->get_users_dropdown($users, $group_id . '_notification');
                 ?>
                 <span class="mec-tooltip">
@@ -68,7 +68,7 @@ $options = $atts['options'];
             </div>
             <div class="mec-col-9">
                 <?php
-                    $roles = isset($options['receiver_roles']) ? $options['receiver_roles'] : array();
+                    $roles = isset($options['receiver_roles']) ? $options['receiver_roles'] : [];
                     echo \MEC\Base::get_main()->get_roles_dropdown($roles, $group_id . '_notification');
                 ?>
                 <span class="mec-tooltip">

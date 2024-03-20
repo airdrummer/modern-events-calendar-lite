@@ -2,6 +2,9 @@
 /** no direct access **/
 defined('MECEXEC') or die();
 
+/** @var MEC_main $this */
+/** @var stdClass $event */
+
 // PRO Version is required
 if(!$this->getPRO()) return;
 
@@ -9,7 +12,7 @@ if(!$this->getPRO()) return;
 $settings = $this->get_settings();
 
 // The module is disabled
-if(!isset($settings['weather_module_status']) or (isset($settings['weather_module_status']) and !$settings['weather_module_status'])) return;
+if(!isset($settings['weather_module_status']) || !$settings['weather_module_status']) return;
 
 $darksky = (isset($settings['weather_module_api_key']) and trim($settings['weather_module_api_key'])) ? $settings['weather_module_api_key'] : '';
 $visualcrossing = (isset($settings['weather_module_vs_api_key']) and trim($settings['weather_module_vs_api_key'])) ? $settings['weather_module_vs_api_key'] : '';
@@ -25,10 +28,10 @@ $location_id = $this->get_master_location_id($event);
 if(!$location_id) return;
 
 // Location
-$location = ($location_id ? $this->get_location_data($location_id) : array());
+$location = $this->get_location_data($location_id);
 
-$lat = isset($location['latitude']) ? $location['latitude'] : 0;
-$lng = isset($location['longitude']) ? $location['longitude'] : 0;
+$lat = $location['latitude'] ?? 0;
+$lng = $location['longitude'] ?? 0;
 
 // Cannot find the geo point
 if(!$lat or !$lng) return;

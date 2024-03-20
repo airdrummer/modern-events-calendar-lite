@@ -57,6 +57,11 @@
                 $(settings.sf.container).addClass('mec-skin-map-search-init');
             }
 
+            if(typeof google === 'undefined') {
+                setTimeout(init, 1000);
+                return;
+            }
+
             // Create the options
             bounds = new google.maps.LatLngBounds();
             var center = new google.maps.LatLng(settings.latitude, settings.longitude);
@@ -195,6 +200,8 @@
             for (var i in markers) {
                 f++;
                 var dataMarker = markers[i];
+
+                console.log(typeof RichMarker);
 
                 var marker = new RichMarker({
                     position: new google.maps.LatLng(dataMarker.latitude, dataMarker.longitude),

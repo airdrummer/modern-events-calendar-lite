@@ -168,7 +168,7 @@ class Google_Config
   {
     if (!is_array($config)) {
       if (!isset($this->configuration['classes'][$class])) {
-        $this->configuration['classes'][$class] = array();
+        $this->configuration['classes'][$class] = [];
       }
       $this->configuration['classes'][$class][$config] = $value;
     } else {
@@ -449,7 +449,7 @@ class Google_Config
   private function setAuthConfig($key, $value)
   {
     if (!isset($this->configuration['classes'][$this->getAuthClass()])) {
-      $this->configuration['classes'][$this->getAuthClass()] = array();
+      $this->configuration['classes'][$this->getAuthClass()] = [];
     }
     $this->configuration['classes'][$this->getAuthClass()][$key] = $value;
   }

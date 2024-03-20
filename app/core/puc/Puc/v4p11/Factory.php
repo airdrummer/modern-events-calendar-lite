@@ -12,7 +12,7 @@ if ( !class_exists('Puc_v4p11_Factory', false) ):
 	 * intended mainly for internal use and refer directly to specific implementations.
 	 */
 	class Puc_v4p11_Factory {
-		protected static $classVersions = array();
+		protected static $classVersions = [];
 		protected static $sorted = false;
 
 		protected static $myMajorVersion = '';
@@ -355,7 +355,7 @@ if ( !class_exists('Puc_v4p11_Factory', false) ):
 			}
 
 			if ( !isset(self::$classVersions[$generalClass]) ) {
-				self::$classVersions[$generalClass] = array();
+				self::$classVersions[$generalClass] = [];
 			}
 			self::$classVersions[$generalClass][$version] = $versionedClass;
 			self::$sorted = false;

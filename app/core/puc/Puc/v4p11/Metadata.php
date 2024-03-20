@@ -117,7 +117,7 @@ if ( !class_exists('Puc_v4p11_Metadata', false) ):
 		 * @return string[]
 		 */
 		protected function getFieldNames() {
-			return array();
+			return [];
 		}
 
 		/**

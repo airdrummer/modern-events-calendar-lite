@@ -3,6 +3,8 @@
 defined('MECEXEC') or die();
 
 /** @var MEC_skin_monthly_view $this */
+/** @var int $month */
+/** @var int $year */
 
 // table headings
 $headings = $this->main->get_weekday_abbr_labels();
@@ -11,20 +13,19 @@ echo '<dl class="mec-calendar-table-head"><dt class="mec-calendar-day-head">'.ME
 // Start day of week
 $week_start = $this->main->get_first_day_of_week();
 
-$this->localtime = isset($this->skin_options['include_local_time']) ? $this->skin_options['include_local_time'] : false;
-$display_label = isset($this->skin_options['display_label']) ? $this->skin_options['display_label'] : false;
-$reason_for_cancellation = isset($this->skin_options['reason_for_cancellation']) ? $this->skin_options['reason_for_cancellation'] : false;
+$this->localtime = $this->skin_options['include_local_time'] ?? false;
+$display_label = $this->skin_options['display_label'] ?? false;
+$reason_for_cancellation = $this->skin_options['reason_for_cancellation'] ?? false;
 
 // days and weeks vars
 $running_day = date('w', mktime(0, 0, 0, $month, 1, $year));
 $days_in_month = date('t', mktime(0, 0, 0, $month, 1, $year));
-$days_in_previous_month = date('t', strtotime('-1 month', strtotime($this->active_day)));
+$days_in_previous_month = $this->main->get_days_in_previous_month($month, $year);
 
 $days_in_this_week = 1;
 $day_counter = 0;
 
-if($week_start == 0) $running_day = $running_day; // Sunday
-elseif($week_start == 1) // Monday
+if($week_start == 1) // Monday
 {
     if($running_day != 0) $running_day = $running_day - 1;
     else $running_day = 6;
@@ -82,8 +83,8 @@ $events_str = '';
                     $events_str .= '<div class="mec-event-image">'.MEC_kses::element($event->data->thumbnails['thumbnail']).'</div>';
                     $events_str .= MEC_kses::element($this->get_label_captions($event));
 
-                    if($this->display_detailed_time and $this->main->is_multipleday_occurrence($event)) $events_str .= '<div class="mec-event-detailed-time mec-event-time mec-color"><i class="mec-sl-clock-o"></i> '.MEC_kses::element($this->display_detailed_time($event)).'</div>';
-                    elseif(trim($start_time)) $events_str .= '<div class="mec-event-time mec-color"><i class="mec-sl-clock-o"></i> '.esc_html($start_time.(trim($end_time) ? ' - '.$end_time : '')).'</div>';
+                    if($this->display_detailed_time and $this->main->is_multipleday_occurrence($event)) $events_str .= '<div class="mec-event-detailed-time mec-event-time mec-color">'.$this->icons->display('clock-o').' '.MEC_kses::element($this->display_detailed_time($event)).'</div>';
+                    elseif(trim($start_time)) $events_str .= '<div class="mec-event-time mec-color">'.$this->icons->display('clock-o').' '.esc_html($start_time.(trim($end_time) ? ' - '.$end_time : '')).'</div>';
 
                     $event_color = $this->get_event_color_dot($event);
                     $events_str .= '<h4 class="mec-event-title">'.MEC_kses::element($this->display_link($event).$this->main->get_flags($event).$event_color.$this->main->get_normal_labels($event, $display_label).$this->main->display_cancellation_reason($event, $reason_for_cancellation));
@@ -146,8 +147,8 @@ $events_str = '';
                     $events_str .= '<div class="mec-event-image">'.MEC_kses::element($event->data->thumbnails['thumbnail']).'</div>';
                     $events_str .= MEC_kses::element($this->get_label_captions($event));
 
-                    if($this->display_detailed_time and $this->main->is_multipleday_occurrence($event)) $events_str .= '<div class="mec-event-detailed-time mec-event-time mec-color"><i class="mec-sl-clock-o"></i> '.MEC_kses::element($this->display_detailed_time($event)).'</div>';
-                    elseif(trim($start_time)) $events_str .= '<div class="mec-event-time mec-color"><i class="mec-sl-clock-o"></i> '.esc_html($start_time.(trim($end_time) ? ' - '.$end_time : '')).'</div>';
+                    if($this->display_detailed_time and $this->main->is_multipleday_occurrence($event)) $events_str .= '<div class="mec-event-detailed-time mec-event-time mec-color">'.$this->icons->display('clock-o').' '.MEC_kses::element($this->display_detailed_time($event)).'</div>';
+                    elseif(trim($start_time)) $events_str .= '<div class="mec-event-time mec-color">'.$this->icons->display('clock-o').' '.esc_html($start_time.(trim($end_time) ? ' - '.$end_time : '')).'</div>';
 
                     $event_color = $this->get_event_color_dot($event);
                     $events_str .= '<h4 class="mec-event-title">'.MEC_kses::element($this->display_link($event).$this->main->get_flags($event).$event_color.$this->main->get_normal_labels($event, $display_label).$this->main->display_cancellation_reason($event, $reason_for_cancellation));
@@ -237,8 +238,8 @@ $events_str = '';
                         $events_str .= '<div class="mec-event-image">'.MEC_kses::element($event->data->thumbnails['thumbnail']).'</div>';
                         $events_str .= MEC_kses::element($this->get_label_captions($event));
 
-                        if($this->display_detailed_time and $this->main->is_multipleday_occurrence($event)) $events_str .= '<div class="mec-event-detailed-time mec-event-time mec-color"><i class="mec-sl-clock-o"></i> '.MEC_kses::element($this->display_detailed_time($event)).'</div>';
-                        elseif(trim($start_time)) $events_str .= '<div class="mec-event-time mec-color"><i class="mec-sl-clock-o"></i> '.esc_html($start_time.(trim($end_time) ? ' - '.$end_time : '')).'</div>';
+                        if($this->display_detailed_time and $this->main->is_multipleday_occurrence($event)) $events_str .= '<div class="mec-event-detailed-time mec-event-time mec-color">'.$this->icons->display('clock-o').' '.MEC_kses::element($this->display_detailed_time($event)).'</div>';
+                        elseif(trim($start_time)) $events_str .= '<div class="mec-event-time mec-color">'.$this->icons->display('clock-o').' '.esc_html($start_time.(trim($end_time) ? ' - '.$end_time : '')).'</div>';
 
                         $event_color = $this->get_event_color_dot($event);
                         $events_str .= '<h4 class="mec-event-title">'.MEC_kses::element($this->display_link($event).$this->main->get_flags($event).$event_color.$this->main->get_normal_labels($event, $display_label).$this->main->display_cancellation_reason($event, $reason_for_cancellation));

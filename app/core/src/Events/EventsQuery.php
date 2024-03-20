@@ -86,7 +86,7 @@ class EventsQuery extends Singleton{
 
         if(array_key_exists('event_ids__in',$q_args) && is_array( $q_args['event_ids__in'] )){
 
-            $post_in = isset( $q_args['post_in'] ) && is_array( $q_args['post_in'] ) ? $q_args['post_in'] : array();
+            $post_in = isset( $q_args['post_in'] ) && is_array( $q_args['post_in'] ) ? $q_args['post_in'] : [];
 
             $q_args['post__in'] = array_merge(
                 $post_in,
@@ -96,7 +96,7 @@ class EventsQuery extends Singleton{
 
         if(array_key_exists('event_ids__not_in',$q_args) && is_array( $q_args['event_ids__not_in'] )){
 
-            $post_not_in = isset( $q_args['post__not_in'] ) && is_array( $q_args['post__not_in'] ) ? $q_args['post__not_in'] : array();
+            $post_not_in = isset( $q_args['post__not_in'] ) && is_array( $q_args['post__not_in'] ) ? $q_args['post__not_in'] : [];
 
             $q_args['post__not_in'] = array_merge(
                 $post_not_in,

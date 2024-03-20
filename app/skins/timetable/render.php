@@ -4,15 +4,15 @@ defined('MECEXEC') or die();
 
 /** @var MEC_skin_timetable $this */
 
-$has_events = array();
+$has_events = [];
 $settings = $this->main->get_settings();
 $styling = $this->main->get_styling();
 
-$this->localtime = isset($this->skin_options['include_local_time']) ? $this->skin_options['include_local_time'] : false;
-$display_label = isset($this->skin_options['display_label']) ? $this->skin_options['display_label'] : false;
-$reason_for_cancellation = isset($this->skin_options['reason_for_cancellation']) ? $this->skin_options['reason_for_cancellation'] : false;
+$this->localtime = $this->skin_options['include_local_time'] ?? false;
+$display_label = $this->skin_options['display_label'] ?? false;
+$reason_for_cancellation = $this->skin_options['reason_for_cancellation'] ?? false;
 
-$dark_mode = (isset($styling['dark_mode']) ? $styling['dark_mode'] : '');
+$dark_mode = $styling['dark_mode'] ?? '';
 if($dark_mode == 1) $set_dark = 'mec-dark-mode';
 else $set_dark = '';
 ?>
@@ -45,7 +45,7 @@ else $set_dark = '';
             ?>
             <article class="<?php echo (isset($event->data->meta['event_past']) and trim($event->data->meta['event_past'])) ? 'mec-past-event ' : ''; ?>mec-timetable-event mec-timetable-day-<?php echo esc_attr($this->id); ?>-<?php echo date('Ymd', strtotime($date)); ?> <?php echo esc_attr($this->get_event_classes($event)); ?>">
                 <span class="mec-timetable-event-span mec-timetable-event-time">
-                    <i class="mec-sl-clock"></i>
+                    <?php echo $this->icons->display('clock'); ?>
                     <?php if(trim($start_time)): ?>
                     <span><?php echo esc_html($start_time.(trim($end_time) ? ' - '.$end_time : '')); ?></span>
                     <?php endif; ?>
@@ -58,15 +58,15 @@ else $set_dark = '';
                 </span>
 
                 <span class="mec-timetable-event-span mec-timetable-event-location">
-                    <i class="mec-sl-location-pin"></i>
+                    <?php echo $this->icons->display('location-pin'); ?>
                     <?php if(isset($location['name']) and trim($location['name'])): ?>
-                    <span><?php echo (isset($location['name']) ? esc_html($location['name']) : ''); ?></span>
+                    <span><?php echo esc_html($location['name']); ?></span>
                     <?php endif; ?>
                 </span>
                 <span class="mec-timetable-event-span mec-timetable-event-organizer">
-                    <i class="mec-sl-user"></i>
+                    <?php echo $this->icons->display('user'); ?>
                     <?php if(isset($organizer['name']) and trim($organizer['name'])): ?>
-                    <span><?php echo (isset($organizer['name']) ? esc_html($organizer['name']) : ''); ?></span>
+                    <span><?php echo esc_html($organizer['name']); ?></span>
                     <?php endif; ?>
                 </span>
             </article>
@@ -115,21 +115,21 @@ else $set_dark = '';
                 </h4>
                 <?php echo MEC_kses::element($this->get_label_captions($event,'mec-fc-style')); ?>
                 <div class="mec-event-time">
-                    <i class="mec-sl-clock-o"></i>
+                    <?php echo $this->icons->display('clock-o'); ?>
                     <?php if(trim($start_time)): ?>
                     <span><?php echo esc_html($start_time.(trim($end_time) ? ' - '.$end_time : '')); ?></span>
                     <?php endif; ?>
                 </div>
                 <div class="mec-event-loction">
-                    <i class="mec-sl-location-pin"></i>
+                    <?php echo $this->icons->display('location-pin'); ?>
                     <?php if(isset($location['name']) and trim($location['name'])): ?>
-                        <span><?php echo (isset($location['name']) ? esc_html($location['name']) : ''); ?></span>
+                        <span><?php echo esc_html($location['name']); ?></span>
                     <?php endif; ?>
                 </div>
                 <div class="mec-event-organizer">
-                    <i class="mec-sl-user"></i>
+                    <?php echo $this->icons->display('user'); ?>
                     <?php if(isset($organizer['name']) and trim($organizer['name'])): ?>
-                        <span><?php echo (isset($organizer['name']) ? esc_html($organizer['name']) : ''); ?></span>
+                        <span><?php echo esc_html($organizer['name']); ?></span>
                     <?php endif; ?>
                 </div>
                 <?php if($this->localtime) echo MEC_kses::full($this->main->module('local-time.type1', array('event' => $event))); ?>

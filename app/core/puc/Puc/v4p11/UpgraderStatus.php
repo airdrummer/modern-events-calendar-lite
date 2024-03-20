@@ -127,7 +127,7 @@ if ( !class_exists('Puc_v4p11_UpgraderStatus', false) ):
 			}
 
 			$installedPlugins = get_plugins();
-			$matches = array();
+			$matches = [];
 			foreach($installedPlugins as $pluginBasename => $headers) {
 				$diff1 = array_diff_assoc($headers, $searchHeaders);
 				$diff2 = array_diff_assoc($searchHeaders, $headers);

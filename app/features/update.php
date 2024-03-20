@@ -83,6 +83,9 @@ class MEC_feature_update extends MEC_base
         if(version_compare($version, '6.6.11', '<')) $this->version6611();
         if(version_compare($version, '6.7.5', '<')) $this->version675();
         if(version_compare($version, '6.8.35', '<')) $this->version6835();
+        if(version_compare($version, '7.0.0', '<')) $this->version700();
+        if(version_compare($version, '7.2.0', '<')) $this->version720();
+        if(version_compare($version, '7.4.0', '<')) $this->version740();
 
         // Update to latest version to prevent running the code twice
         update_option('mec_version', $this->main->get_version());
@@ -125,7 +128,7 @@ class MEC_feature_update extends MEC_base
     {
         // Get current MEC options
         $current = get_option('mec_options', array());
-        if(is_string($current) and trim($current) == '') $current = array();
+        if(is_string($current) and trim($current) == '') $current = [];
         
         // Merge new options with previous options
         $current['notifications']['new_event'] = array
@@ -177,7 +180,7 @@ class MEC_feature_update extends MEC_base
     {
         // Get current MEC options
         $current = get_option('mec_options', array());
-        if(is_string($current) and trim($current) == '') $current = array();
+        if(is_string($current) and trim($current) == '') $current = [];
 
         // Merge new options with previous options
         $current['notifications']['booking_reminder'] = array
@@ -284,7 +287,7 @@ class MEC_feature_update extends MEC_base
     {
         // Get current MEC options
         $current = get_option('mec_options', array());
-        if(is_string($current) and trim($current) == '') $current = array();
+        if(is_string($current) and trim($current) == '') $current = [];
 
         // Merge new options with previous options
         $current['notifications']['cancellation_notification'] = array
@@ -320,7 +323,7 @@ class MEC_feature_update extends MEC_base
     {
         // Get current MEC options
         $current = get_option('mec_options', array());
-        if(is_string($current) and trim($current) == '') $current = array();
+        if(is_string($current) and trim($current) == '') $current = [];
 
         // Merge new options with previous options
         $current['notifications']['user_event_publishing'] = array
@@ -416,7 +419,7 @@ class MEC_feature_update extends MEC_base
     {
         // Get current MEC options
         $current = get_option('mec_options', array());
-        if(is_string($current) and trim($current) == '') $current = array();
+        if(is_string($current) and trim($current) == '') $current = [];
 
         if(!isset($current['notifications']['booking_reminder'])) return;
         if(isset($current['notifications']['booking_reminder']['hours'])) return;
@@ -501,7 +504,7 @@ class MEC_feature_update extends MEC_base
     {
         // Get current MEC options
         $current = get_option('mec_options', array());
-        if(is_string($current) and trim($current) == '') $current = array();
+        if(is_string($current) and trim($current) == '') $current = [];
 
         // Merge new options with previous options
         $current['notifications']['booking_rejection'] = array
@@ -666,12 +669,12 @@ class MEC_feature_update extends MEC_base
 
         // Get Options
         $options = get_option('mec_options');
-        $code = isset($options['purchase_code']) ? $options['purchase_code'] : '';
-        $item_id = isset($options['product_id']) ? $options['product_id'] : '';
+        $code = $options['purchase_code'] ?? '';
+        $item_id = $options['product_id'] ?? '';
         $url = get_home_url();
 
         $reActivationOption = get_option('reActivationOption');
-        if(is_null($code) || empty($code) || !isset($code) || $reActivationOption) return;
+        if(empty($code) || $reActivationOption) return;
         
         if(!$reActivationOption)
         {
@@ -686,28 +689,21 @@ class MEC_feature_update extends MEC_base
             if($JSON != '')
             {
                 $data = json_decode($JSON);
-                if($data and !is_null($data) and isset($data->item_link) and !is_null($data->item_link))
+                if($data and isset($data->item_link))
                 {
                     $options['product_id'] = $data->item_id;
 
                     update_option('mec_license_status', 'active');
                     update_option('mec_options', $options);
                     update_option('reActivationOption', '1');
-
-                    return;
                 }
                 else
                 {
                     update_option('mec_license_status', 'faild');
                     update_option('reActivationOption', '1');
-
-                    return;
                 }
-            }  else {
-                update_option('reActivationOption', '1');
-
-                return;
             }
+            else update_option('reActivationOption', '1');
         }
     }
 
@@ -777,5 +773,75 @@ class MEC_feature_update extends MEC_base
     public function version6835()
     {
         if(!wp_next_scheduled('mec_maintenance')) wp_schedule_event(time(), 'weekly', 'mec_maintenance');
+    }
+
+    public function version700()
+    {
+        // Table already exists
+        if($this->db->exists('mec_booking_attendees')) return;
+
+        $this->db->q("CREATE TABLE IF NOT EXISTS `#__mec_booking_attendees` (
+          `id` int UNSIGNED NOT NULL,
+          `mec_booking_id` int UNSIGNED NOT NULL,
+          `user_id` int UNSIGNED NOT NULL,
+          `ticket_id` int UNSIGNED NOT NULL
+        ) CHARSET=[:CHARSET:] COLLATE=[:COLLATE:];");
+
+        $this->db->q("ALTER TABLE `#__mec_booking_attendees` ADD PRIMARY KEY (`id`);");
+        $this->db->q("ALTER TABLE `#__mec_booking_attendees` ADD KEY `mec_booking_id` (`mec_booking_id`);");
+        $this->db->q("ALTER TABLE `#__mec_booking_attendees` MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;");
+        $this->db->q("ALTER TABLE `#__mec_booking_attendees` ADD CONSTRAINT `mec_booking_id` FOREIGN KEY (`mec_booking_id`) REFERENCES `#__mec_bookings`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+    }
+
+    public function version720()
+    {
+        // Get current MEC options
+        $current = get_option('mec_options', array());
+        if(is_string($current) and trim($current) == '') $current = [];
+
+        // Merge new options with previous options
+        $current['notifications']['certificate_send'] = array
+        (
+            'status'=>'1',
+            'subject'=>'Event Attendee Certificates',
+            'recipients'=>'',
+            'content'=>"Hi %%name%%,
+
+            Congratulations for successfully attending / completing the event %%event_title%%.
+            Click the following link to download or print your PDF certificate.
+            
+            %%certificate_link%%
+
+            Regards,
+            %%blog_name%%"
+        );
+
+        // Update it only if options already exists.
+        if(get_option('mec_options') !== false)
+        {
+            // Save new options
+            update_option('mec_options', $current);
+        }
+    }
+
+    public function version740()
+    {
+        $settings = $this->main->get_settings();
+
+        // Speaker Status
+        if(isset($settings['speakers_status']) && $settings['speakers_status'])
+        {
+            $speakers = get_terms('mec_speaker', [
+                'orderby' => 'name',
+                'order' => 'ASC',
+                'hide_empty' => '0',
+            ]);
+
+            $i = 1;
+            foreach($speakers as $speaker)
+            {
+                update_term_meta($speaker->term_id, 'mec_index', $i);
+            }
+        }
     }
 }

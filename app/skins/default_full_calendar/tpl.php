@@ -2,7 +2,7 @@
 /** no direct access **/
 defined('MECEXEC') or die();
 
-// Inclue OWL Assets
+// Include OWL Assets
 $this->main->load_owl_assets();
 
 $sed_method = $this->sed_method;
@@ -45,7 +45,7 @@ else $this->factory->params('footer', $javascript);
 $styling = $this->main->get_styling();
 $event_colorskin = (isset($styling['mec_colorskin'] ) || isset($styling['color'])) ? 'colorskin-custom' : '';
 
-$dark_mode = (isset($styling['dark_mode']) ? $styling['dark_mode'] : '');
+$dark_mode = $styling['dark_mode'] ?? '';
 if($dark_mode == 1) $set_dark = 'mec-dark-mode';
 else $set_dark = '';
 

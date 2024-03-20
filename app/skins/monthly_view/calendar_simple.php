@@ -14,23 +14,22 @@ echo '<dl class="mec-calendar-table-head"><dt class="mec-calendar-day-head">'.im
 $week_start = $this->main->get_first_day_of_week();
 
 // Single Event Display Method
-$sed_method = isset($this->skin_options['sed_method']) ? $this->skin_options['sed_method'] : false;
+$sed_method = $this->skin_options['sed_method'] ?? false;
 $target_url = ($sed_method === 'new') ? 'target="_blank"' : '';
 
-$this->localtime = isset($this->skin_options['include_local_time']) ? $this->skin_options['include_local_time'] : false;
-$display_label = isset($this->skin_options['display_label']) ? $this->skin_options['display_label'] : false;
-$reason_for_cancellation = isset($this->skin_options['reason_for_cancellation']) ? $this->skin_options['reason_for_cancellation'] : false;
+$this->localtime = $this->skin_options['include_local_time'] ?? false;
+$display_label = $this->skin_options['display_label'] ?? false;
+$reason_for_cancellation = $this->skin_options['reason_for_cancellation'] ?? false;
 
 // days and weeks vars
 $running_day = date('w', mktime(0, 0, 0, $month, 1, $year));
 $days_in_month = date('t', mktime(0, 0, 0, $month, 1, $year));
-$days_in_previous_month = date('t', strtotime('-1 month', strtotime($this->active_day)));
+$days_in_previous_month = $this->main->get_days_in_previous_month($month, $year);
 
 $days_in_this_week = 1;
 $day_counter = 0;
 
-if($week_start == 0) $running_day = $running_day; // Sunday
-elseif($week_start == 1) // Monday
+if($week_start == 1) // Monday
 {
     if($running_day != 0) $running_day = $running_day - 1;
     else $running_day = 6;
@@ -72,7 +71,6 @@ elseif($week_start == 5) // Friday
                 echo '<dt class="mec-calendar-day '.esc_attr($selected_day).'" data-mec-cell="'.esc_attr($day_id).'" data-day="'.esc_attr($list_day).'" data-month="'.date('Ym', $time).'"><div class="'.esc_attr($selected_day_date).'">'.apply_filters('mec_filter_list_day_value', $list_day, $today, $this).'</div>';
                 foreach($events[$today] as $event)
                 {
-                    $event_color = isset($event->data->meta['mec_color']) && !empty($event->data->meta['mec_color']) ? '#'.$event->data->meta['mec_color'] : '';
                     $start_time = (isset($event->data->time) ? $event->data->time['start'] : '');
                     $end_time = (isset($event->data->time) ? $event->data->time['end'] : '');
 
@@ -86,6 +84,7 @@ elseif($week_start == 5) // Friday
 
                         $this->cache->set($event->data->ID.'_content', $event_content);
                     }
+
                     else $event_content = $this->cache->get($event->data->ID.'_content');
 
                     echo '<div class="'.($this->main->is_expired($event) ? 'mec-past-event ' : '').'ended-relative simple-skin-ended">';
@@ -97,8 +96,8 @@ elseif($week_start == 5) // Friday
 
                     $tooltip_content = !empty($event->data->title) ? '<div class="mec-tooltip-event-title">' . esc_html($event->data->title) . '</div>' : '';
 
-                    if($this->display_detailed_time and $this->main->is_multipleday_occurrence($event)) $tooltip_content .= '<div class="mec-event-detailed-time mec-tooltip-event-time mec-color"><i class="mec-sl-clock-o"></i> '.MEC_kses::element($this->display_detailed_time($event)).'</div>';
-                    elseif(trim($start_time)) $tooltip_content .= '<div class="mec-tooltip-event-time"><i class="mec-sl-clock-o"></i> '.esc_html($start_time.(trim($end_time) ? ' - '.$end_time : '')).'</div>';
+                    if($this->display_detailed_time and $this->main->is_multipleday_occurrence($event)) $tooltip_content .= '<div class="mec-event-detailed-time mec-tooltip-event-time mec-color">'.$this->icons->display('clock-o').' '.MEC_kses::element($this->display_detailed_time($event)).'</div>';
+                    elseif(trim($start_time)) $tooltip_content .= '<div class="mec-tooltip-event-time">'.$this->icons->display('clock-o').' '.esc_html($start_time.(trim($end_time) ? ' - '.$end_time : '')).'</div>';
 
                     $tooltip_content .= $this->display_cost($event);
                     $tooltip_content .= '<div class="mec-event-detail">

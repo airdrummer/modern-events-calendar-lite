@@ -28,7 +28,7 @@ class EventSponsors extends WidgetBase {
 
 		$settings = $this->settings;
 		$event_detail = $this->get_event_detail($event_id);
-		$sponsors = (isset($event_detail->data->sponsors) and is_array($event_detail->data->sponsors)) ? $event_detail->data->sponsors : array();
+		$sponsors = (isset($event_detail->data->sponsors) and is_array($event_detail->data->sponsors)) ? $event_detail->data->sponsors : [];
 
 		$html = '';
 		if ( true === $this->is_editor_mode && ( empty($sponsors) || (!isset($settings['sponsors_status']) || !$settings['sponsors_status']) ) ) {

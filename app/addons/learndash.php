@@ -118,7 +118,7 @@ class MEC_addon_learndash extends MEC_base
         $ticket_ids = explode(',', get_post_meta($book_id, 'mec_ticket_id', true));
 
         $attendees = get_post_meta($book_id, 'mec_attendees', true);
-        if(!is_array($attendees)) $attendees = array();
+        if(!is_array($attendees)) $attendees = [];
 
         $tickets = get_post_meta($event_id, 'mec_tickets', true);
 

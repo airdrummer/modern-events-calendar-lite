@@ -109,12 +109,13 @@ $this->factory->params('footer', $javascript);
             </span>
             <?php
                 $event_status = get_post_status(get_the_ID());
-                if(isset($event_status) and strtolower($event_status) == 'publish'):
+                if(isset($event_status) && strtolower($event_status) === 'publish' && isset($this->settings['booking_status']) && $this->settings['booking_status']):
             ?>
             <span class="mec-fes-event-export"><a href="#mec-fes-export-wrapper-<?php echo get_the_ID(); ?>" data-lity><div class="wn-p-t-right"><div class="wn-p-t-text-content"><?php echo esc_html__('Download Attendees', 'modern-events-calendar-lite'); ?></div><i></i></div></a></span>
             <?php endif; ?>
 
             <span class="mec-fes-event-view"><a href="<?php the_permalink(); ?>"><div class="wn-p-t-right"><div class="wn-p-t-text-content"><?php echo esc_html__('View Event', 'modern-events-calendar-lite'); ?></div><i></i></div></a></span>
+            <span class="mec-fes-event-edit"><a href="<?php echo esc_url($this->link_edit_event(get_the_ID())); ?>"><div class="wn-p-t-right"><div class="wn-p-t-text-content"><?php echo esc_html__('Edit Event', 'modern-events-calendar-lite'); ?></div><i></i></div></a></span>
             <?php if(current_user_can('delete_post', get_the_ID())): ?>
             <span class="mec-fes-event-remove" data-confirmed="0" data-id="<?php echo get_the_ID(); ?>"><div class="wn-p-t-right"><div class="wn-p-t-text-content"><?php echo esc_html__('Remove Event', 'modern-events-calendar-lite'); ?></div><i></i></div></span>
             <?php endif; ?>
@@ -169,6 +170,9 @@ $this->factory->params('footer', $javascript);
             )); ?>
         </div>
     <?php else: ?>
-    <p><?php echo sprintf(esc_html__('No events found! %s', 'modern-events-calendar-lite'), '<a href="'.esc_url($this->link_add_event()).'">'.esc_html__('Add new', 'modern-events-calendar-lite').'</a>'); ?></p>
+    <p><?php echo esc_html__('No events found!', 'modern-events-calendar-lite'); ?></p>
+    <div class="mec-fes-list-top-actions" style="padding-left: 0;">
+        <a href="<?php echo esc_url($this->link_add_event()); ?>"><?php echo esc_html__('Add new', 'modern-events-calendar-lite'); ?></a>
+    </div>
     <?php endif; ?>
 </div>

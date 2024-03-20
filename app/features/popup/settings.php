@@ -5,7 +5,7 @@
     <div class="mec-wizard-content wns-be-group-tab">
         <div class="mec-wizard-loading"><div class="mec-loader"></div></div>
         <div class="mec-steps-container">
-            <img src="<?php echo plugin_dir_url(__FILE__ ) . '../../../assets/img/popup/mec-logo.svg'; ?>" />
+            <img src="<?php echo plugin_dir_url(__FILE__ ) . '../../../assets/img/mec-logo-icon.svg'; ?>"  style="width: 50px" />
             <ul>
                 <li class="mec-step mec-step-1 mec-step-passed"><span>1</span></li>
                 <li class="mec-step mec-step-2"><span>2</span></li>
@@ -23,7 +23,9 @@
             <div class="mec-steps-header">
                 <div class="mec-steps-header-userinfo">
                     <?php $user = wp_get_current_user(); ?>
+                    <?php if(get_option('show_avatars')): ?>
                     <span class="mec-steps-header-img"><img src="<?php echo esc_url(get_avatar_url($user->ID)); ?>" /></span>
+                    <?php endif; ?>
                     <span class="mec-steps-header-name"><?php echo esc_html($user->display_name); ?></span>
                 </div>
                 <div class="mec-steps-header-dashboard">
@@ -216,7 +218,7 @@
                     <div class="mec-form-row">
                         <label style="display: block;">
                             <input type="hidden" name="mec[settings][countdown_status]" value="0" />
-                            <input onchange="jQuery('#mec_count_down_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][countdown_status]" <?php if(isset($settings['countdown_status']) and $settings['countdown_status']) echo 'checked="checked"'; ?> /> <?php esc_html_e('Show countdown module on event page', 'modern-events-calendar-lite'); ?>
+                            <input onchange="jQuery('#mec_count_down_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][countdown_status]" <?php if(isset($settings['countdown_status']) and $settings['countdown_status']) echo 'checked="checked"'; ?> /><?php esc_html_e('Show countdown module on event page', 'modern-events-calendar-lite'); ?>
                         </label>
                         <div id="mec_count_down_container_toggle" class="mec-col-6 <?php if((isset($settings['countdown_status']) and !$settings['countdown_status']) or !isset($settings['countdown_status'])) echo 'mec-util-hidden'; ?>">
                             <div class="mec-form-row">
@@ -234,36 +236,38 @@
                     <div class="mec-form-row">
                         <label>
                             <input type="hidden" name="mec[settings][related_events]" value="0" />
-                            <input onchange="jQuery('#mec_related_events_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][related_events]" <?php if(isset($settings['related_events']) and $settings['related_events']) echo 'checked="checked"'; ?> /> <?php esc_html_e('Display related events based on taxonomy in single event page.', 'modern-events-calendar-lite'); ?>
+                            <input onchange="jQuery('#mec_related_events_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][related_events]" <?php if(isset($settings['related_events']) and $settings['related_events']) echo 'checked="checked"'; ?> /><?php esc_html_e('Display related events based on taxonomy in single event page.', 'modern-events-calendar-lite'); ?>
                         </label>
                         <div id="mec_related_events_container_toggle" class="mec-col-8 <?php if((isset($settings['related_events']) and !$settings['related_events']) or !isset($settings['related_events'])) echo 'mec-util-hidden'; ?>">
                             <div class="mec-form-row" style="margin-top:20px;">
                                 <label style="margin-right:7px;" for="mec_settings_countdown_list"><?php esc_html_e('Select Taxonomies:', 'modern-events-calendar-lite'); ?></label>
                                 <label style="margin-right:7px;margin-bottom: 20px">
                                     <input type="hidden" name="mec[settings][related_events_basedon_category]" value="0" />
-                                    <input value="1" type="checkbox" name="mec[settings][related_events_basedon_category]" <?php if(isset($settings['related_events_basedon_category']) and $settings['related_events_basedon_category']) echo 'checked="checked"'; ?> /> <?php esc_html_e('Category', 'modern-events-calendar-lite'); ?>
+                                    <input value="1" type="checkbox" name="mec[settings][related_events_basedon_category]" <?php if(isset($settings['related_events_basedon_category']) and $settings['related_events_basedon_category']) echo 'checked="checked"'; ?> /><?php esc_html_e('Category', 'modern-events-calendar-lite'); ?>
                                 </label>
+                                <?php if(!isset($settings['organizers_status']) || $settings['organizers_status']): ?>
                                 <label style="margin-right:7px;">
                                     <input type="hidden" name="mec[settings][related_events_basedon_organizer]" value="0" />
-                                    <input value="1" type="checkbox" name="mec[settings][related_events_basedon_organizer]" <?php if(isset($settings['related_events_basedon_organizer']) and $settings['related_events_basedon_organizer']) echo 'checked="checked"'; ?> /> <?php esc_html_e('Organizer', 'modern-events-calendar-lite'); ?>
+                                    <input value="1" type="checkbox" name="mec[settings][related_events_basedon_organizer]" <?php if(isset($settings['related_events_basedon_organizer']) and $settings['related_events_basedon_organizer']) echo 'checked="checked"'; ?> /><?php esc_html_e('Organizer', 'modern-events-calendar-lite'); ?>
                                 </label>
+                                <?php endif; ?>
                                 <label style="margin-right:7px;">
                                     <input type="hidden" name="mec[settings][related_events_basedon_location]" value="0" />
-                                    <input value="1" type="checkbox" name="mec[settings][related_events_basedon_location]" <?php if(isset($settings['related_events_basedon_location']) and $settings['related_events_basedon_location']) echo 'checked="checked"'; ?> /> <?php esc_html_e('Location', 'modern-events-calendar-lite'); ?>
+                                    <input value="1" type="checkbox" name="mec[settings][related_events_basedon_location]" <?php if(isset($settings['related_events_basedon_location']) and $settings['related_events_basedon_location']) echo 'checked="checked"'; ?> /><?php esc_html_e('Location', 'modern-events-calendar-lite'); ?>
                                 </label>
                                 <?php if(isset($settings['speakers_status']) and $settings['speakers_status']) : ?>
                                 <label style="margin-right:7px;">
                                     <input type="hidden" name="mec[settings][related_events_basedon_speaker]" value="0" />
-                                    <input value="1" type="checkbox" name="mec[settings][related_events_basedon_speaker]" <?php if(isset($settings['related_events_basedon_speaker']) and $settings['related_events_basedon_speaker']) echo 'checked="checked"'; ?> /> <?php esc_html_e('Speaker', 'modern-events-calendar-lite'); ?>
+                                    <input value="1" type="checkbox" name="mec[settings][related_events_basedon_speaker]" <?php if(isset($settings['related_events_basedon_speaker']) and $settings['related_events_basedon_speaker']) echo 'checked="checked"'; ?> /><?php esc_html_e('Speaker', 'modern-events-calendar-lite'); ?>
                                 </label>
                                 <?php endif; ?>
                                 <label style="margin-right:7px;">
                                     <input type="hidden" name="mec[settings][related_events_basedon_label]" value="0" />
-                                    <input value="1" type="checkbox" name="mec[settings][related_events_basedon_label]" <?php if(isset($settings['related_events_basedon_label']) and $settings['related_events_basedon_label']) echo 'checked="checked"'; ?> /> <?php esc_html_e('Label', 'modern-events-calendar-lite'); ?>
+                                    <input value="1" type="checkbox" name="mec[settings][related_events_basedon_label]" <?php if(isset($settings['related_events_basedon_label']) and $settings['related_events_basedon_label']) echo 'checked="checked"'; ?> /><?php esc_html_e('Label', 'modern-events-calendar-lite'); ?>
                                 </label>
                                 <label style="margin-right:7px;">
                                     <input type="hidden" name="mec[settings][related_events_basedon_tag]" value="0" />
-                                    <input value="1" type="checkbox" name="mec[settings][related_events_basedon_tag]" <?php if(isset($settings['related_events_basedon_tag']) and $settings['related_events_basedon_tag']) echo 'checked="checked"'; ?> /> <?php esc_html_e('Tag', 'modern-events-calendar-lite'); ?>
+                                    <input value="1" type="checkbox" name="mec[settings][related_events_basedon_tag]" <?php if(isset($settings['related_events_basedon_tag']) and $settings['related_events_basedon_tag']) echo 'checked="checked"'; ?> /><?php esc_html_e('Tag', 'modern-events-calendar-lite'); ?>
                                 </label>
                             </div>
                         </div>
@@ -272,7 +276,7 @@
                     <div class="mec-form-row">
                         <label>
                             <input type="hidden" name="mec[settings][next_previous_events]" value="0" />
-                            <input onchange="jQuery('#mec_next_previous_events_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][next_previous_events]" <?php if(isset($settings['next_previous_events']) and $settings['next_previous_events']) echo 'checked="checked"'; ?> /> <?php esc_html_e('Display next / previous events based on taxonomy in single event page.', 'modern-events-calendar-lite'); ?>
+                            <input onchange="jQuery('#mec_next_previous_events_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][next_previous_events]" <?php if(isset($settings['next_previous_events']) and $settings['next_previous_events']) echo 'checked="checked"'; ?> /><?php esc_html_e('Display next / previous events based on taxonomy in single event page.', 'modern-events-calendar-lite'); ?>
                         </label>
                         <div id="mec_next_previous_events_container_toggle" class="mec-col-8 <?php if((isset($settings['next_previous_events']) and !$settings['next_previous_events']) or !isset($settings['next_previous_events'])) echo 'mec-util-hidden'; ?>">
 
@@ -280,29 +284,29 @@
                                 <label style="margin-right:7px;" for="mec_settings_countdown_list"><?php esc_html_e('Select Taxonomies:', 'modern-events-calendar-lite'); ?></label>
                                 <label style="margin-right:7px; margin-bottom: 20px;">
                                     <input type="hidden" name="mec[settings][next_previous_events_category]" value="0" />
-                                    <input value="1" type="checkbox" name="mec[settings][next_previous_events_category]" <?php if(isset($settings['next_previous_events_category']) and $settings['next_previous_events_category']) echo 'checked="checked"'; ?> /> <?php esc_html_e('Category', 'modern-events-calendar-lite'); ?>
+                                    <input value="1" type="checkbox" name="mec[settings][next_previous_events_category]" <?php if(isset($settings['next_previous_events_category']) and $settings['next_previous_events_category']) echo 'checked="checked"'; ?> /><?php esc_html_e('Category', 'modern-events-calendar-lite'); ?>
                                 </label>
                                 <label style="margin-right:7px;">
                                     <input type="hidden" name="mec[settings][next_previous_events_organizer]" value="0" />
-                                    <input value="1" type="checkbox" name="mec[settings][next_previous_events_organizer]" <?php if(isset($settings['next_previous_events_organizer']) and $settings['next_previous_events_organizer']) echo 'checked="checked"'; ?> /> <?php esc_html_e('Organizer', 'modern-events-calendar-lite'); ?>
+                                    <input value="1" type="checkbox" name="mec[settings][next_previous_events_organizer]" <?php if(isset($settings['next_previous_events_organizer']) and $settings['next_previous_events_organizer']) echo 'checked="checked"'; ?> /><?php esc_html_e('Organizer', 'modern-events-calendar-lite'); ?>
                                 </label>
                                 <label style="margin-right:7px;">
                                     <input type="hidden" name="mec[settings][next_previous_events_location]" value="0" />
-                                    <input value="1" type="checkbox" name="mec[settings][next_previous_events_location]" <?php if(isset($settings['next_previous_events_location']) and $settings['next_previous_events_location']) echo 'checked="checked"'; ?> /> <?php esc_html_e('Location', 'modern-events-calendar-lite'); ?>
+                                    <input value="1" type="checkbox" name="mec[settings][next_previous_events_location]" <?php if(isset($settings['next_previous_events_location']) and $settings['next_previous_events_location']) echo 'checked="checked"'; ?> /><?php esc_html_e('Location', 'modern-events-calendar-lite'); ?>
                                 </label>
                                 <?php if(isset($settings['speakers_status']) and $settings['speakers_status']) : ?>
                                 <label style="margin-right:7px;">
                                     <input type="hidden" name="mec[settings][next_previous_events_speaker]" value="0" />
-                                    <input value="1" type="checkbox" name="mec[settings][next_previous_events_speaker]" <?php if(isset($settings['next_previous_events_speaker']) and $settings['next_previous_events_speaker']) echo 'checked="checked"'; ?> /> <?php esc_html_e('Speaker', 'modern-events-calendar-lite'); ?>
+                                    <input value="1" type="checkbox" name="mec[settings][next_previous_events_speaker]" <?php if(isset($settings['next_previous_events_speaker']) and $settings['next_previous_events_speaker']) echo 'checked="checked"'; ?> /><?php esc_html_e('Speaker', 'modern-events-calendar-lite'); ?>
                                 </label>
                                 <?php endif; ?>
                                 <label style="margin-right:7px;">
                                     <input type="hidden" name="mec[settings][next_previous_events_label]" value="0" />
-                                    <input value="1" type="checkbox" name="mec[settings][next_previous_events_label]" <?php if(isset($settings['next_previous_events_label']) and $settings['next_previous_events_label']) echo 'checked="checked"'; ?> /> <?php esc_html_e('Label', 'modern-events-calendar-lite'); ?>
+                                    <input value="1" type="checkbox" name="mec[settings][next_previous_events_label]" <?php if(isset($settings['next_previous_events_label']) and $settings['next_previous_events_label']) echo 'checked="checked"'; ?> /><?php esc_html_e('Label', 'modern-events-calendar-lite'); ?>
                                 </label>
                                 <label style="margin-right:7px;">
                                     <input type="hidden" name="mec[settings][next_previous_events_tag]" value="0" />
-                                    <input value="1" type="checkbox" name="mec[settings][next_previous_events_tag]" <?php if(isset($settings['next_previous_events_tag']) and $settings['next_previous_events_tag']) echo 'checked="checked"'; ?> /> <?php esc_html_e('Tag', 'modern-events-calendar-lite'); ?>
+                                    <input value="1" type="checkbox" name="mec[settings][next_previous_events_tag]" <?php if(isset($settings['next_previous_events_tag']) and $settings['next_previous_events_tag']) echo 'checked="checked"'; ?> /><?php esc_html_e('Tag', 'modern-events-calendar-lite'); ?>
                                 </label>
                             </div>
                         </div>
@@ -331,7 +335,7 @@
                     <div class="mec-form-row">
                         <label class="mec-col-8">
                             <input type="hidden" name="mec[settings][export_module_status]" value="0" />
-                            <input onchange="jQuery('#mec_export_module_options_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][export_module_status]" <?php if(isset($settings['export_module_status']) and $settings['export_module_status']) echo 'checked="checked"'; ?> /> <?php esc_html_e('Show export module (iCal export and add to Google calendars) on event page', 'modern-events-calendar-lite'); ?>
+                            <input onchange="jQuery('#mec_export_module_options_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][export_module_status]" <?php if(isset($settings['export_module_status']) and $settings['export_module_status']) echo 'checked="checked"'; ?> /><?php esc_html_e('Show export module (iCal export and add to Google calendars) on event page', 'modern-events-calendar-lite'); ?>
                         </label>
                     </div>
                     <div class="mec-form-row">
@@ -362,7 +366,7 @@
                     <div class="mec-form-row">
                         <label>
                             <input type="hidden" name="mec[settings][booking_status]" value="0" />
-                            <input onchange="jQuery('#mec_booking_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][booking_status]" <?php if(isset($settings['booking_status']) and $settings['booking_status']) echo 'checked="checked"'; ?> /> <?php esc_html_e('Enable booking module', 'modern-events-calendar-lite'); ?>
+                            <input onchange="jQuery('#mec_booking_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][booking_status]" <?php if(isset($settings['booking_status']) and $settings['booking_status']) echo 'checked="checked"'; ?> /><?php esc_html_e('Enable booking module', 'modern-events-calendar-lite'); ?>
                         </label>
                     </div>
                     <div id="mec_booking_container_toggle" class="<?php if((isset($settings['booking_status']) and !$settings['booking_status']) or !isset($settings['booking_status'])) echo 'mec-util-hidden'; ?>">
@@ -370,8 +374,8 @@
                             <label class="mec-col-2" for="mec_settings_booking_date_selection"><?php esc_html_e('Date Selection', 'modern-events-calendar-lite'); ?></label>
                             <div class="mec-col-4">
                                 <select id="mec_settings_booking_date_selection" name="mec[settings][booking_date_selection]">
-                                    <option value="dropdown" <?php echo ((!isset($settings['booking_date_selection']) or (isset($settings['booking_date_selection']) and $settings['booking_date_selection'] == 'dropdown')) ? 'selected="selected"' : ''); ?>><?php esc_html_e('Dropdown', 'modern-events-calendar-lite'); ?></option>
-                                    <option value="calendar" <?php echo ((isset($settings['booking_date_selection']) and $settings['booking_date_selection'] == 'calendar') ? 'selected="selected"' : ''); ?>><?php esc_html_e('Calendar', 'modern-events-calendar-lite'); ?></option>
+                                    <option value="dropdown" <?php echo ((!isset($settings['booking_date_selection']) || $settings['booking_date_selection'] == 'dropdown') ? 'selected="selected"' : ''); ?>><?php esc_html_e('Dropdown', 'modern-events-calendar-lite'); ?></option>
+                                    <option value="calendar" <?php echo ((isset($settings['booking_date_selection']) && $settings['booking_date_selection'] == 'calendar') ? 'selected="selected"' : ''); ?>><?php esc_html_e('Calendar', 'modern-events-calendar-lite'); ?></option>
                                 </select>
                             </div>
                         </div>

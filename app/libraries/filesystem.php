@@ -222,7 +222,7 @@ class MEC_file extends MEC_base
      */
 	public static function getName($file)
 	{
-		// Convert back slashes to forward slashes
+		// Convert backslashes to forward slashes
 		$file = str_replace('\\', '/', $file);
 		$slash = strrpos($file, '/');
 		
@@ -599,7 +599,7 @@ class MEC_folder extends MEC_base
 		@set_time_limit(ini_get('max_execution_time'));
 
 		// Initialise variables.
-		$arr = array();
+		$arr = [];
 
 		// Read the source directory
 		if (!($handle = @opendir($path)))

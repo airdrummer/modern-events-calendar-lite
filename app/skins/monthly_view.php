@@ -45,32 +45,37 @@ class MEC_skin_monthly_view extends MEC_skins
         $this->atts = $atts;
 
         // Skin Options
-        $this->skin_options = (isset($this->atts['sk-options']) and isset($this->atts['sk-options'][$this->skin])) ? $this->atts['sk-options'][$this->skin] : array();
+        $this->skin_options = (isset($this->atts['sk-options']) and isset($this->atts['sk-options'][$this->skin])) ? $this->atts['sk-options'][$this->skin] : [];
+
+        // Icons
+        $this->icons = $this->main->icons(
+            ($this->getPRO() && isset($this->atts['icons']) && is_array($this->atts['icons'])) ? $this->atts['icons'] : []
+        );
 
         // Search Form Options
-        $this->sf_options = (isset($this->atts['sf-options']) and isset($this->atts['sf-options'][$this->skin])) ? $this->atts['sf-options'][$this->skin] : array();
+        $this->sf_options = (isset($this->atts['sf-options']) and isset($this->atts['sf-options'][$this->skin])) ? $this->atts['sf-options'][$this->skin] : [];
 
         // Search Form Status
-        $this->sf_status = isset($this->atts['sf_status']) ? $this->atts['sf_status'] : true;
-        $this->sf_display_label = isset($this->atts['sf_display_label']) ? $this->atts['sf_display_label'] : false;
-        $this->sf_reset_button = isset($this->atts['sf_reset_button']) ? $this->atts['sf_reset_button'] : false;
-        $this->sf_refine = isset($this->atts['sf_refine']) ? $this->atts['sf_refine'] : false;
+        $this->sf_status = $this->atts['sf_status'] ?? true;
+        $this->sf_display_label = $this->atts['sf_display_label'] ?? false;
+        $this->sf_reset_button = $this->atts['sf_reset_button'] ?? false;
+        $this->sf_refine = $this->atts['sf_refine'] ?? false;
 
         // The events
         $this->events_str = '';
 
-        // Generate an ID for the sking
-        $this->id = isset($this->atts['id']) ? $this->atts['id'] : mt_rand(100, 999);
+        // Generate an ID for the skin
+        $this->id = $this->atts['id'] ?? mt_rand(100, 999);
 
         // Set the ID
         if(!isset($this->atts['id'])) $this->atts['id'] = $this->id;
 
         // The style
-        $this->style = isset($this->skin_options['style']) ? $this->skin_options['style'] : 'modern';
+        $this->style = $this->skin_options['style'] ?? 'modern';
         if($this->style == 'fluent' and !is_plugin_active('mec-fluent-layouts/mec-fluent-layouts.php')) $this->style = 'modern';
 
         // Next/Previous Month
-        $this->next_previous_button = isset($this->skin_options['next_previous_button']) ? $this->skin_options['next_previous_button'] : true;
+        $this->next_previous_button = $this->skin_options['next_previous_button'] ?? true;
 
         // Display All Events
         $this->display_all = in_array($this->style, array('clean', 'modern')) && isset($this->skin_options['display_all']) && $this->skin_options['display_all'];
@@ -86,19 +91,22 @@ class MEC_skin_monthly_view extends MEC_skins
         $this->booking_button = isset($this->skin_options['booking_button']) ? (int) $this->skin_options['booking_button'] : 0;
 
         // SED Method
-        $this->sed_method = isset($this->skin_options['sed_method']) ? $this->skin_options['sed_method'] : '0';
+        $this->sed_method = $this->skin_options['sed_method'] ?? '0';
+
+        // Fix Backend Editors Like Elementor
+        if(is_admin()) $this->sed_method = '0';
 
         // reason_for_cancellation
-        $this->reason_for_cancellation = isset($this->skin_options['reason_for_cancellation']) ? $this->skin_options['reason_for_cancellation'] : false;
+        $this->reason_for_cancellation = $this->skin_options['reason_for_cancellation'] ?? false;
 
         // display_label
-        $this->display_label = isset($this->skin_options['display_label']) ? $this->skin_options['display_label'] : false;
+        $this->display_label = $this->skin_options['display_label'] ?? false;
 
         // Image popup
-        $this->image_popup = isset($this->skin_options['image_popup']) ? $this->skin_options['image_popup'] : '0';
+        $this->image_popup = $this->skin_options['image_popup'] ?? '0';
 
         // From Widget
-        $this->widget = (isset($this->atts['widget']) and trim($this->atts['widget']));
+        $this->widget = isset($this->atts['widget']) && trim($this->atts['widget']);
 
         // From Full Calendar
         $this->from_full_calendar = (isset($this->skin_options['from_fc']) and trim($this->skin_options['from_fc']));
@@ -133,6 +141,7 @@ class MEC_skin_monthly_view extends MEC_skins
 
         // Author
         $this->args['author'] = $this->author_query();
+        $this->args['author__not_in'] = $this->author_query_ex();
 
         // Pagination Options
         $this->paged = get_query_var('paged', 1);
@@ -153,13 +162,16 @@ class MEC_skin_monthly_view extends MEC_skins
         if($this->show_only_expired_events) $this->atts['show_past_events'] = '1';
 
         // Show Past Events
-        $this->args['mec-past-events'] = isset($this->atts['show_past_events']) ? $this->atts['show_past_events'] : '0';
+        $this->args['mec-past-events'] = $this->atts['show_past_events'] ?? '0';
+
+        // Activate First Date With Event
+        $this->activate_first_date = (isset($this->skin_options['activate_first_date']) and $this->skin_options['activate_first_date']);
 
         // Start Date
         list($this->year, $this->month, $this->day) = $this->get_start_date();
 
         // Activate Current Day
-        $this->activate_current_day = (!isset($this->skin_options['activate_current_day']) or (isset($this->skin_options['activate_current_day']) and $this->skin_options['activate_current_day']));
+        $this->activate_current_day = (!isset($this->skin_options['activate_current_day']) || $this->skin_options['activate_current_day']);
 
         $this->start_date = date('Y-m-d', strtotime($this->year.'-'.$this->month.'-'.$this->day));
         $this->active_day = $this->year.'-'.$this->month.'-'.current_time('d');
@@ -176,9 +188,6 @@ class MEC_skin_monthly_view extends MEC_skins
         // Include Ongoing Events
         $this->include_ongoing_events = (isset($this->atts['show_ongoing_events']) and trim($this->atts['show_ongoing_events'])) ? '1' : '0';
         if($this->include_ongoing_events) $this->args['mec-include-ongoing-events'] = $this->include_ongoing_events;
-
-        // Activate First Date With Event
-        $this->activate_first_date = (isset($this->skin_options['activate_first_date']) and $this->skin_options['activate_first_date']);
 
         // Auto Month Rotation
         $this->auto_month_rotation = !isset($this->settings['auto_month_rotation']) || $this->settings['auto_month_rotation'];
@@ -198,7 +207,7 @@ class MEC_skin_monthly_view extends MEC_skins
 
             $this->weeks = $this->main->split_to_weeks($end, $start);
 
-            $this->week_of_days = array();
+            $this->week_of_days = [];
             foreach($this->weeks as $week_number=>$week) foreach($week as $day) $this->week_of_days[$day] = $week_number;
 
             $end = $this->main->array_key_first($this->week_of_days);
@@ -210,7 +219,7 @@ class MEC_skin_monthly_view extends MEC_skins
 
             $this->weeks = $this->main->split_to_weeks($start, $end);
 
-            $this->week_of_days = array();
+            $this->week_of_days = [];
             foreach($this->weeks as $week_number=>$week) foreach($week as $day) $this->week_of_days[$day] = $week_number;
 
             $start = $this->main->array_key_first($this->week_of_days);
@@ -223,15 +232,15 @@ class MEC_skin_monthly_view extends MEC_skins
         // Limit
         $this->args['posts_per_page'] = $this->limit;
 
-        $events = array();
-        $qs = array();
+        $events = [];
+        $qs = [];
 
         foreach($dates as $date=>$IDs)
         {
             // No Event
             if(!is_array($IDs) or !count($IDs))
             {
-                $events[$date] = array();
+                $events[$date] = [];
                 continue;
             }
 
@@ -258,7 +267,7 @@ class MEC_skin_monthly_view extends MEC_skins
 
             if($query->have_posts())
             {
-                if(!isset($events[$date])) $events[$date] = array();
+                if(!isset($events[$date])) $events[$date] = [];
 
                 if($this->activate_first_date and $this->active_day and strtotime($date) >= current_time('timestamp') and date('m', strtotime($date)) == $this->month)
                 {
@@ -267,7 +276,7 @@ class MEC_skin_monthly_view extends MEC_skins
                 }
 
                 // Day Events
-                $d = array();
+                $d = [];
 
                 // The Loop
                 while($query->have_posts())
@@ -294,7 +303,7 @@ class MEC_skin_monthly_view extends MEC_skins
                     }
                 }
 
-                usort($d, array($this, 'sort_day_events'));
+                usort($d, [$this, 'sort_day_events']);
                 $events[$date] = $d;
             }
 
@@ -338,17 +347,17 @@ class MEC_skin_monthly_view extends MEC_skins
         }
 
         $time = strtotime($date);
-        return array(date('Y', $time), date('m', $time), date('d', $time));
+        return [date('Y', $time), date('m', $time), date('d', $time)];
     }
 
     /**
-     * Load month for AJAX requert
+     * Load month for AJAX request
      * @author Webnus <info@webnus.net>
      * @return void
      */
     public function load_month()
     {
-        $this->sf = (isset($_REQUEST['sf']) and is_array($_REQUEST['sf'])) ? $this->main->sanitize_deep_array($_REQUEST['sf']) : array();
+        $this->sf = (isset($_REQUEST['sf']) and is_array($_REQUEST['sf'])) ? $this->main->sanitize_deep_array($_REQUEST['sf']) : [];
         $apply_sf_date = isset($_REQUEST['apply_sf_date']) ? sanitize_text_field($_REQUEST['apply_sf_date']) : 1;
         $atts = $this->sf_apply(((isset($_REQUEST['atts']) and is_array($_REQUEST['atts'])) ? $this->main->sanitize_deep_array($_REQUEST['atts']) : array()), $this->sf, $apply_sf_date);
 
@@ -393,10 +402,7 @@ class MEC_skin_monthly_view extends MEC_skins
                 $day = current_time('d');
                 $this->active_day = $this->year.'-'.$this->month.'-'.$day;
 
-                if(!$this->activate_current_day and $this->month != current_time('m')) $this->active_day = $this->start_date;
-
-                // If date is not valid then use the first day of month
-                if(!$this->main->validate_date($this->active_day)) $this->active_day = $this->year.'-'.$this->month.'-01';
+                if(!$this->activate_current_day && !$this->activate_first_date && $this->month != current_time('m')) $this->active_day = '';
             }
 
             // We will extend the end date in the loop
@@ -408,7 +414,7 @@ class MEC_skin_monthly_view extends MEC_skins
             // Fetch the events
             $this->fetch();
 
-            // Break the loop if not resault
+            // Break the loop if not result
             if($break) break;
             if($navigator_click) break;
 

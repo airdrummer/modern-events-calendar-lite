@@ -290,7 +290,7 @@ class Book extends PostBase {
 	 */
 	public function get_tickets_ids() {
 
-		$ids     = array();
+		$ids     = [];
 		$tickets = $this->get_tickets();
 		$tickets = explode( ',', trim( $tickets, ', ' ) );
 

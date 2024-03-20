@@ -49,7 +49,7 @@ class MEC_feature_userevents extends MEC_base
     public function output($atts = array())
     {
         // Force to array
-        if(!is_array($atts)) $atts = array();
+        if(!is_array($atts)) $atts = [];
 
         // Show login/register message if user is not logged in and guest submission is not enabled.
         if(!is_user_logged_in())

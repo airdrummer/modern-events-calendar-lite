@@ -18,9 +18,9 @@ if(!isset($settings['booking_status']) or (isset($settings['booking_status']) an
 $skip_step1 = (isset($settings['booking_skip_step1']) and $settings['booking_skip_step1']);
 
 $event = $event[0];
-$uniqueid = (isset($uniqueid) && !empty($uniqueid) ? apply_filters('mec_booking_uniqueid_value', $uniqueid) : $event->data->ID);
+$uniqueid = !empty($uniqueid) ? apply_filters('mec_booking_uniqueid_value', $uniqueid) : $event->data->ID;
 
-$tickets = $event->data->tickets ?? array();
+$tickets = $event->data->tickets ?? [];
 $dates = $event->dates ?? $event->date;
 
 // No Dates
@@ -102,12 +102,17 @@ function mec_get_tickets_availability'.esc_js($uniqueid).'(event_id, date)
                     if(limit != "-1" && available_spots != "-1") available_spots += parseInt(limit);
                     else available_spots = "-1";
                 }
-
+                
+                jQuery("#mec_booking'.esc_js($uniqueid).' #mec_event_ticket"+ticket_id).removeClass("mec-util-hidden");
+                if(data.availability["not_available_"+ticket_id]) jQuery("#mec_booking'.esc_js($uniqueid).' #mec_event_ticket"+ticket_id).addClass("mec-util-hidden");
+                
                 jQuery("#mec_booking'.esc_js($uniqueid).' #mec_event_ticket"+ticket_id).addClass(".mec-event-ticket"+limit);
-
-                if(data.availability["stop_selling_"+ticket_id]) jQuery("#mec_booking'.esc_js($uniqueid).' #mec-ticket-message-"+ticket_id).attr("class", "mec-ticket-unavailable-spots mec-error").find("div").html(jQuery("#mec_booking'.esc_js($uniqueid).' #mec-ticket-message-sales-"+ticket_id).val());
-                else jQuery("#mec_booking'.esc_js($uniqueid).' #mec-ticket-message-"+ticket_id).attr("class", "mec-ticket-unavailable-spots info-msg").find("div").html(jQuery("#mec_booking'.esc_js($uniqueid).' #mec-ticket-message-sold-out-"+ticket_id).val());
-
+                
+                if(data.active_mec_waiting == undefined){
+                 if(data.availability["stop_selling_"+ticket_id]) jQuery("#mec_booking'.esc_js($uniqueid).' #mec-ticket-message-"+ticket_id).attr("class", "mec-ticket-unavailable-spots mec-error").find("div").html(jQuery("#mec_booking'.esc_js($uniqueid).' #mec-ticket-message-sales-"+ticket_id).val());
+                 else jQuery("#mec_booking'.esc_js($uniqueid).' #mec-ticket-message-"+ticket_id).attr("class", "mec-ticket-unavailable-spots info-msg").find("div").html(jQuery("#mec_booking'.esc_js($uniqueid).' #mec-ticket-message-sold-out-"+ticket_id).val());
+                }
+               
                 // There are some available spots
                 if(limit != "0")
                 {
@@ -750,7 +755,7 @@ function mec_book_form_submit'.esc_js($uniqueid).'()
             if(!jQuery(this).val())
             {
                 valid = false;
-                jQuery(this).addClass("mec-red-notification");
+                jQuery(this).parent().addClass("mec-red-notification");
                 
                 if(!focused)
                 {
@@ -758,14 +763,14 @@ function mec_book_form_submit'.esc_js($uniqueid).'()
                     focused = true;
                 }
                 
-                if ( jQuery(this).find(".mec-booking-field-required").length < 1) {
-                    jQuery(this).find("label").append("<span class=\'mec-booking-field-required\'>'.esc_html__('This field is required.', 'modern-events-calendar-lite').'</span>");
+                if ( jQuery(this).parent().find(".mec-booking-field-required").length < 1) {
+                    jQuery(this).parent().find("label").append("<span class=\'mec-booking-field-required\'>'.esc_html__('This field is required.', 'modern-events-calendar-lite').'</span>");
                 }
             }
             else
             {
-                jQuery(this).find(".mec-booking-field-required").remove();
-                jQuery(this).removeClass("mec-red-notification");
+                jQuery(this).parent().find(".mec-booking-field-required").remove();
+                jQuery(this).parent().removeClass("mec-red-notification");
             }
         });
 
@@ -774,7 +779,7 @@ function mec_book_form_submit'.esc_js($uniqueid).'()
 
     // Add loading Class to the button
     jQuery("#mec_book_form'.esc_js($uniqueid).' button[type=submit]").addClass("loading").attr("disabled" , "true");
-    jQuery("#mec_booking_message'.esc_js($uniqueid).'").removeClass("mec-success mec-error").hide();
+    jQuery("#mec_booking_message'.esc_js($uniqueid).'").removeClass("mec-success mec-error").addClass("mec-util-hidden");
 
     var fileToUpload = false;
 
@@ -853,7 +858,7 @@ function mec_book_form_submit'.esc_js($uniqueid).'()
             else
             {
                 jQuery("#mec_booking'.esc_js($uniqueid).'").removeClass("loading");
-                jQuery("#mec_booking_message'.esc_js($uniqueid).'").addClass("mec-error").html(data.message).show();
+                jQuery("#mec_booking_message'.esc_js($uniqueid).'").addClass("mec-error").html(data.message).removeClass("mec-util-hidden");
             }
         },
         error: function(jqXHR, textStatus, errorThrown)
@@ -891,7 +896,7 @@ function mec_book_apply_coupon'.esc_js($uniqueid).'()
                 if(data.data.price_raw === 0)
                 {
                     jQuery("#mec_booking'.esc_js($uniqueid).' .mec-book-form-gateways").hide();
-                    jQuery("#mec_book_form_free_booking'.esc_js($uniqueid).'").show();
+                    jQuery("#mec_book_form_free_booking'.esc_js($uniqueid).'").removeClass("mec-util-hidden").show();
                 }
 
                 jQuery("#mec_booking'.esc_js($uniqueid).' .mec-book-form-coupon .mec-coupon-message").addClass("mec-success").html(data.message).show();
@@ -928,7 +933,7 @@ function mec_book_free'.esc_js($uniqueid).'()
     // Add loading Class to the button
     jQuery("#mec_book_form_free_booking'.esc_js($uniqueid).'").find("button").prop("disabled", true);
     jQuery("#mec_book_form_free_booking'.esc_js($uniqueid).' button[type=submit]").addClass("loading");
-    jQuery("#mec_booking_message'.esc_js($uniqueid).'").removeClass("mec-success mec-error").hide();
+    jQuery("#mec_booking_message'.esc_js($uniqueid).'").removeClass("mec-success mec-error").addClass("mec-util-hidden");
 
     var data = jQuery("#mec_book_form_free_booking'.esc_js($uniqueid).'").serialize();
     jQuery.ajax(
@@ -960,7 +965,7 @@ function mec_book_free'.esc_js($uniqueid).'()
             }
             else
             {
-                jQuery("#mec_booking_message'.esc_js($uniqueid).'").addClass("mec-error").html(data.message).show();
+                jQuery("#mec_booking_message'.esc_js($uniqueid).'").addClass("mec-error").html(data.message).removeClass("mec-util-hidden");
                 jQuery("#mec_book_form_free_booking'.esc_js($uniqueid).'").find("button").prop("disabled", false);
             }
         },

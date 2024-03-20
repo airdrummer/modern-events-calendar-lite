@@ -3,13 +3,14 @@
 defined('MECEXEC') or die();
 
 /** @var MEC_main $this */
+/** @var stdClass $event */
 
 // MEC Settings
 $settings = $this->get_settings();
 $ml_settings = $this->get_ml_settings();
 
 // The module is disabled
-if(!isset($settings['local_time_module_status']) or (isset($settings['local_time_module_status']) and !$settings['local_time_module_status'])) return;
+if(!isset($settings['local_time_module_status']) || !$settings['local_time_module_status']) return;
 
 // Get the visitor Timezone
 $timezone = $this->get_timezone_by_ip();
@@ -42,10 +43,10 @@ $user_end_time = $gmt_end_time + $offset;
 
 $allday = isset($event->data->meta['mec_allday']) ? $event->data->meta['mec_allday'] : 0;
 $hide_time = isset($event->data->meta['mec_hide_time']) ? $event->data->meta['mec_hide_time'] : 0;
-$hide_end_time = isset($event->data->meta['mec_hide_end_time']) ? $event->data->meta['mec_hide_end_time'] : 0;
+$hide_end_time = $this->hide_end_time_status($event->ID);
 ?>
 <div class="mec-local-time-details mec-frontbox" id="mec_local_time_details">
-    <i class="mec-sl-clock"></i><h3 class="mec-local-time mec-frontbox-title"><?php esc_html_e('Local Time', 'modern-events-calendar-lite'); ?></h3>
+    <?php echo ((isset($icons) && $icons) ? $icons->display('clock') : '<i class="mec-sl-clock"></i>'); ?><h3 class="mec-local-time mec-frontbox-title"><?php esc_html_e('Local Time', 'modern-events-calendar-lite'); ?></h3>
     <ul>
         <li><?php echo sprintf(esc_html__('Timezone: %s', 'modern-events-calendar-lite'), '<span>'.esc_html($timezone).'</span>'); ?></li>
         <li><?php echo sprintf(esc_html__('Date: %s', 'modern-events-calendar-lite'), $this->date_label(array('date'=>date('Y-m-d', $user_start_time)), array('date'=>date('Y-m-d', $user_end_time)), $date_format1)); ?></li>

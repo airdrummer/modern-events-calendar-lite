@@ -47,7 +47,12 @@ class MEC_skin_masonry extends MEC_skins
         $this->atts = $atts;
         
         // Skin Options
-        $this->skin_options = (isset($this->atts['sk-options']) and isset($this->atts['sk-options'][$this->skin])) ? $this->atts['sk-options'][$this->skin] : array();
+        $this->skin_options = (isset($this->atts['sk-options']) and isset($this->atts['sk-options'][$this->skin])) ? $this->atts['sk-options'][$this->skin] : [];
+
+        // Icons
+        $this->icons = $this->main->icons(
+            ($this->getPRO() && isset($this->atts['icons']) && is_array($this->atts['icons'])) ? $this->atts['icons'] : []
+        );
         
         // Date Formats
         $this->date_format_1 = (isset($this->skin_options['date_format1']) and trim($this->skin_options['date_format1'])) ? $this->skin_options['date_format1'] : 'j';
@@ -57,31 +62,31 @@ class MEC_skin_masonry extends MEC_skins
         $this->filter_by = (isset($this->skin_options['filter_by']) and trim($this->skin_options['filter_by'])) ? $this->skin_options['filter_by'] : '';
         
         // Search Form Options
-        $this->sf_options = (isset($this->atts['sf-options']) and isset($this->atts['sf-options'][$this->skin])) ? $this->atts['sf-options'][$this->skin] : array();
+        $this->sf_options = $this->atts['sf-options'][$this->skin] ?? [];
         
         // Search Form Status
-        $this->sf_status = isset($this->atts['sf_status']) ? $this->atts['sf_status'] : true;
-        $this->sf_display_label = isset($this->atts['sf_display_label']) ? $this->atts['sf_display_label'] : false;
-        $this->sf_reset_button = isset($this->atts['sf_reset_button']) ? $this->atts['sf_reset_button'] : false;
-        $this->sf_refine = isset($this->atts['sf_refine']) ? $this->atts['sf_refine'] : false;
+        $this->sf_status = $this->atts['sf_status'] ?? true;
+        $this->sf_display_label = $this->atts['sf_display_label'] ?? false;
+        $this->sf_reset_button = $this->atts['sf_reset_button'] ?? false;
+        $this->sf_refine = $this->atts['sf_refine'] ?? false;
         
         // Generate an ID for the sking
-        $this->id = isset($this->atts['id']) ? $this->atts['id'] : mt_rand(100, 999);
+        $this->id = $this->atts['id'] ?? mt_rand(100, 999);
         
         // Set the ID
         if(!isset($this->atts['id'])) $this->atts['id'] = $this->id;
         
         // Show "Load More" button or not
-        $this->load_more_button = isset($this->skin_options['load_more_button']) ? $this->skin_options['load_more_button'] : true;
+        $this->load_more_button = $this->skin_options['load_more_button'] ?? true;
 
         // Pagination
-        $this->pagination = isset($this->skin_options['pagination']) ? $this->skin_options['pagination'] : (!$this->load_more_button ? '0' : 'loadmore');
+        $this->pagination = $this->skin_options['pagination'] ?? (!$this->load_more_button ? '0' : 'loadmore');
 
         // Show Masonry like grid
-        $this->masonry_like_grid = isset($this->skin_options['masonry_like_grid']) ? $this->skin_options['masonry_like_grid'] : true;
+        $this->masonry_like_grid = $this->skin_options['masonry_like_grid'] ?? true;
 
         // Show "Sort by date" button or not
-        $this->fit_to_row = isset($this->skin_options['fit_to_row']) ? $this->skin_options['fit_to_row'] : true;
+        $this->fit_to_row = $this->skin_options['fit_to_row'] ?? true;
 
         // HTML class
         $this->html_class = '';
@@ -91,22 +96,22 @@ class MEC_skin_masonry extends MEC_skins
         $this->booking_button = isset($this->skin_options['booking_button']) ? (int) $this->skin_options['booking_button'] : 0;
 
         // SED Method
-        $this->sed_method = isset($this->skin_options['sed_method']) ? $this->skin_options['sed_method'] : '0';
+        $this->sed_method = $this->skin_options['sed_method'] ?? '0';
 
         // Order Method
         $this->order_method = (isset($this->skin_options['order_method']) and trim($this->skin_options['order_method'])) ? $this->skin_options['order_method'] : 'ASC';
 
         // Image popup
-        $this->image_popup = isset($this->skin_options['image_popup']) ? $this->skin_options['image_popup'] : '0';
+        $this->image_popup = $this->skin_options['image_popup'] ?? '0';
 
         // reason_for_cancellation
-        $this->reason_for_cancellation = isset($this->skin_options['reason_for_cancellation']) ? $this->skin_options['reason_for_cancellation'] : false;
+        $this->reason_for_cancellation = $this->skin_options['reason_for_cancellation'] ?? false;
 
         // display_label
-        $this->display_label = isset($this->skin_options['display_label']) ? $this->skin_options['display_label'] : false;
+        $this->display_label = $this->skin_options['display_label'] ?? false;
         
         // From Widget
-        $this->widget = (isset($this->atts['widget']) and trim($this->atts['widget'])) ? true : false;
+        $this->widget = isset($this->atts['widget']) && trim($this->atts['widget']);
         
         // Init MEC
         $this->args['mec-init'] = true;
@@ -132,6 +137,7 @@ class MEC_skin_masonry extends MEC_skins
         
         // Author
         $this->args['author'] = $this->author_query();
+        $this->args['author__not_in'] = $this->author_query_ex();
         
         // Pagination Options
         $this->paged = get_query_var('paged', 1);
@@ -250,13 +256,13 @@ class MEC_skin_masonry extends MEC_skins
     }
 
     /**
-     * Load more events for AJAX requert
+     * Load more events for AJAX request
      * @author Webnus <info@webnus.net>
      * @return void
      */
     public function load_more()
     {
-        $this->sf = (isset($_REQUEST['sf']) and is_array($_REQUEST['sf'])) ? $this->main->sanitize_deep_array($_REQUEST['sf']) : array();
+        $this->sf = (isset($_REQUEST['sf']) and is_array($_REQUEST['sf'])) ? $this->main->sanitize_deep_array($_REQUEST['sf']) : [];
 
         $mec_filter_by = isset($_REQUEST['mec_filter_by']) ? sanitize_text_field($_REQUEST['mec_filter_by']) : '';
         $mec_filter_value = isset($_REQUEST['mec_filter_value']) ? sanitize_text_field($_REQUEST['mec_filter_value']) : '';

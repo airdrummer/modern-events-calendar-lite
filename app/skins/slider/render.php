@@ -29,7 +29,7 @@ $reason_for_cancellation = isset($this->skin_options['reason_for_cancellation'])
                 $end_time = (isset($event->data->time) ? $event->data->time['end'] : '');
                 $event_start_date = !empty($event->date['start']['date']) ? $event->date['start']['date'] : '';
 
-                $excerpt = trim($event->data->post->post_excerpt) ? $event->data->post->post_excerpt : '';
+                $excerpt = get_the_excerpt($event->data->post);
 
                 // Safe Excerpt for UTF-8 Strings
                 if(!trim($excerpt))
@@ -149,7 +149,7 @@ $reason_for_cancellation = isset($this->skin_options['reason_for_cancellation'])
                             </div>
                             <div class="mec-slider-t5-col6">
                                 <div class="mec-event-location">
-                                    <i class="mec-sl-location-pin mec-color"></i>
+                                    <?php echo $this->icons->display('location-pin'); ?>
                                     <div class="mec-event-location-det">
                                         <h6 class="mec-location"><?php echo (isset($location['name']) ? esc_html($location['name']) : ''); ?></h6>
                                         <address class="mec-events-address"><span class="mec-address"><?php echo (isset($location['address']) ? esc_html($location['address']) : ''); ?></span></address>

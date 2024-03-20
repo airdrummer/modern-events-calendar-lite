@@ -9,23 +9,25 @@ defined('MECEXEC') or die();
 class MEC_walker extends Walker
 {
     public $tree_type = 'category';
-    public $db_fields = array(
+    public $db_fields = [
         'parent' => 'parent',
         'id'     => 'term_id',
-    );
+    ];
 
-    public $mec_id = array();
-    public $mec_include = array();
+    public $mec_id = [];
+    public $mec_include = [];
+    public $mec_exclude = [];
 
     /**
      * Constructor method
      * @param array $params
      * @author Webnus <info@webnus.net>
      */
-    public function __construct($params = array())
+    public function __construct($params = [])
     {
-        $this->mec_id = (isset($params['id']) ? $params['id'] : '');
-        $this->mec_include = (isset($params['include']) ? $params['include'] : array());
+        $this->mec_id = $params['id'] ?? '';
+        $this->mec_include = $params['include'] ?? [];
+        $this->mec_exclude = $params['exclude'] ?? [];
     }
 
     /**
@@ -80,15 +82,18 @@ class MEC_walker extends Walker
         // Term is not Included
         if(is_array($this->mec_include) and count($this->mec_include) and !in_array($category->term_id, $this->mec_include)) return;
 
+        // Term is Excluded
+        if(is_array($this->mec_exclude) and count($this->mec_exclude) and in_array($category->term_id, $this->mec_exclude)) return;
+
         if(empty($args['taxonomy'])) $taxonomy = 'category';
         else $taxonomy = $args['taxonomy'];
 
         if('category' === $taxonomy) $name = 'post_category';
         else $name = 'tax_input[' . esc_attr($taxonomy) . ']';
 
-        $args['popular_cats'] = !empty($args['popular_cats']) ? array_map('intval', $args['popular_cats']) : array();
+        $args['popular_cats'] = !empty($args['popular_cats']) ? array_map('intval', $args['popular_cats']) : [];
         $class = in_array($category->term_id, $args['popular_cats'], true) ? ' class="popular-category"' : '';
-        $args['selected_cats'] = !empty($args['selected_cats']) ? array_map('intval', $args['selected_cats']) : array();
+        $args['selected_cats'] = !empty($args['selected_cats']) ? array_map('intval', $args['selected_cats']) : [];
 
         $is_selected = in_array($category->term_id, $args['selected_cats'], true);
         $selected = selected( $is_selected, true, false );
@@ -116,6 +121,15 @@ class MEC_walker extends Walker
         $output .= "";
     }
 
+    /**
+     * @param WP_Term $element
+     * @param $children_elements
+     * @param $max_depth
+     * @param $depth
+     * @param $args
+     * @param $output
+     * @return void
+     */
     public function display_element( $element, &$children_elements, $max_depth, $depth, $args, &$output )
     {
         if ( ! $element ) {
@@ -140,19 +154,17 @@ class MEC_walker extends Walker
     public function walk( $elements, $max_depth, ...$args )
     {
         $output = '<select multiple="multiple">';
+
         // Invalid parameter or nothing to walk.
         if ( $max_depth < -1 || empty( $elements ) ) {
             return $output;
         }
 
-        $parent_field = $this->db_fields['parent'];
-
         foreach ( $elements as $e ) {
             $this->display_element( $e, $empty_array, 1, 0, $args, $output );
         }
+
         $output .= '</select>';
-
         return $output;
-
     }
 }

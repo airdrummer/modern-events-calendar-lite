@@ -29,7 +29,7 @@ class EventCategories extends WidgetBase {
 
 		$settings = $this->settings;
 		$events_detail = $this->get_event_detail($event_id);
-		$categories    = isset($events_detail->data->categories) ? $events_detail->data->categories : array();
+		$categories    = isset($events_detail->data->categories) ? $events_detail->data->categories : [];
 
 		$html = '';
 		if ( true === $this->is_editor_mode && empty( $categories ) ) {
@@ -41,15 +41,19 @@ class EventCategories extends WidgetBase {
 		} elseif ( !empty($categories) ) {
 
 			ob_start();
-				echo '<div class="mec-single-event-category mec-event-meta mec-frontbox">';
-				?>
-				<i class="mec-sl-folder"></i>
-				<dt><?php echo Base::get_main()->m('taxonomy_categories', esc_html__('Category', 'modern-events-calendar-lite')); ?></dt>
-				<dl>
-				<?php
+				echo '<div class="mec-single-event-category mec-event-meta">';
+				if( isset( $atts['mec_category_show_icon'] ) && $atts['mec_category_show_icon'] ){
+                    echo $this->icons->display('folder');
+                }
+				if( isset( $atts['mec_category_show_title'] ) && $atts['mec_category_show_title'] ){
+					echo '<dt>' . Base::get_main()->m('taxonomy_categories', esc_html__('Category', 'modern-events-calendar-lite')) . '</dt>';
+				}
+				echo '<dl>';
 				foreach ($categories as $category) {
 					$icon = get_metadata('term', $category['id'], 'mec_cat_icon', true);
-					$icon = isset($icon) && $icon != '' ? '<i class="' . esc_attr( $icon ) . ' mec-color"></i>' : '<i class="mec-fa-angle-right"></i>';
+					if( isset( $atts['mec_category_show_link_icon'] ) && $atts['mec_category_show_link_icon'] ){
+						$icon = isset($icon) && $icon != '' ? '<i class="' . esc_attr( $icon ) . ' mec-color"></i>' : '<i class="mec-fa-angle-right"></i>';
+					}
 					echo '<dd class="mec-events-event-categories">
 						<a href="' . esc_attr( get_term_link($category['id'], 'mec_category') ) . '" class="mec-color-hover" rel="tag">' . $icon . esc_html($category['name']) . '</a></dd>';
 				}

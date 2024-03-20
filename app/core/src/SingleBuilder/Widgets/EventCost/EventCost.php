@@ -28,14 +28,14 @@ class EventCost extends WidgetBase {
 
 		$settings = $this->settings;
 		$events_detail = $this->get_event_detail($event_id);
-
 		$html = '';
-		if ( true === $this->is_editor_mode && !(isset($events_detail->data->meta['mec_cost']) && $events_detail->data->meta['mec_cost'] != '') ) {
-
-			$html = '<div class="mec-content-notification"><p>'
-					.'<span>'. esc_html__('This widget is displayed if cost is set. In order for the widget in this page to be displayed correctly, please set cost for your last event.', 'modern-events-calendar-lite').'</span>'
-					. '<a href="https://webnus.net/dox/modern-events-calendar/add-event/" target="_blank">' . esc_html__('How to set cost', 'modern-events-calendar-lite') . ' </a>'
-				.'</p></div>';
+		if ( true === $this->is_editor_mode && $events_detail->data->meta['mec_cost_auto_calculate'] == '0') {
+			if ( !(isset($events_detail->data->meta['mec_cost']) && $events_detail->data->meta['mec_cost'] != '') ) {
+				$html = '<div class="mec-content-notification"><p>'
+						.'<span>'. esc_html__('This widget is displayed if cost is set. In order for the widget in this page to be displayed correctly, please set cost for your last event.', 'modern-events-calendar-lite').'</span>'
+						. '<a href="https://webnus.net/dox/modern-events-calendar/add-event/" target="_blank">' . esc_html__('How to set cost', 'modern-events-calendar-lite') . ' </a>'
+					.'</p></div>';
+			}
 		} else {
 
 			ob_start();
@@ -45,8 +45,12 @@ class EventCost extends WidgetBase {
 				echo '<div class="mec-event-meta">';
 				?>
 				<div class="mec-event-cost">
-					<i class="mec-sl-wallet"></i>
-					<h3 class="mec-cost"><?php echo esc_html(\MEC\Base::get_main()->m('cost', esc_html__('Cost', 'modern-events-calendar-lite'))); ?></h3>
+					<?php if( isset( $atts['mec_cost_show_icon'] ) && $atts['mec_cost_show_icon'] ){
+                        echo $this->icons->display('wallet');
+					 } ?>
+					<?php if( isset( $atts['mec_cost_show_title'] ) && $atts['mec_cost_show_title'] ){ ?>
+						<h3 class="mec-cost"><?php echo esc_html(\MEC\Base::get_main()->m('cost', esc_html__('Cost', 'modern-events-calendar-lite'))); ?></h3>
+					<?php } ?>
 					<dl><dd class="mec-events-event-cost">
 						<?php
 						if( is_numeric( $cost ) ) {

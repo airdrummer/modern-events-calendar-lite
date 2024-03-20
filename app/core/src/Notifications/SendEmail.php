@@ -41,7 +41,6 @@ class SendEmail{
     public function get_notification_settings( $key = null ){
 
         if( empty($this->notifications_options) ){
-
             $global_options = $this->_get_notifications_settings();
             $this->notifications_options = $global_options;
 
@@ -54,6 +53,13 @@ class SendEmail{
 
                     $this->notifications_options['subject'] = $event_options['subject'];
                     $this->notifications_options['content'] = $event_options['content'];
+                }
+                if ( str_contains($this->group_id,'rsvp')){
+                    if( isset($event_options[$this->group_id]['status']) && (bool)$event_options[$this->group_id]['status'] ){
+
+                        $this->notifications_options['subject'] = $event_options[$this->group_id]['subject'];
+                        $this->notifications_options['content'] = $event_options[$this->group_id]['content'];
+                    }
                 }
             }
 
@@ -201,7 +207,7 @@ class SendEmail{
 
     public function get_target_users_or_emails(){
 
-        $users_or_emails = array();
+        $users_or_emails = [];
 
 
         $allowed_check_settings_for_attendees = $this->allowed_check_settings_for_attendees();
@@ -317,7 +323,7 @@ class SendEmail{
         // Data Fields
         $event_fields = \MEC\Base::get_main()->get_event_fields();
         $event_fields_data = get_post_meta($this->event_id, 'mec_fields', true);
-        if(!is_array($event_fields_data)) $event_fields_data = array();
+        if(!is_array($event_fields_data)) $event_fields_data = [];
 
         foreach($event_fields as $f => $event_field){
             if(!is_numeric($f)) {
@@ -391,7 +397,7 @@ class SendEmail{
         $additional_organizers_url = '';
 
         $additional_organizers_ids = get_post_meta($this->event_id, 'mec_additional_organizer_ids', true);
-        if(!is_array($additional_organizers_ids)) $additional_organizers_ids = array();
+        if(!is_array($additional_organizers_ids)) $additional_organizers_ids = [];
 
         foreach($additional_organizers_ids as $additional_organizers_id)
         {
@@ -410,7 +416,7 @@ class SendEmail{
         $content = str_replace('%%event_other_organizers_email%%', trim($additional_organizers_email, ', '), $content);
         $content = str_replace('%%event_other_organizers_url%%', trim($additional_organizers_url, ', '), $content);
 
-        $speaker_name = array();
+        $speaker_name = [];
         foreach($speaker_id as $speaker) $speaker_name[] = isset($speaker->name) ? $speaker->name : null;
 
         $content = str_replace('%%event_speaker_name%%', (isset($speaker_name) ? implode(', ', $speaker_name): ''), $content);
@@ -421,7 +427,7 @@ class SendEmail{
         $additional_locations_address = '';
 
         $additional_locations_ids = get_post_meta($this->event_id, 'mec_additional_location_ids', true);
-        if(!is_array($additional_locations_ids)) $additional_locations_ids = array();
+        if(!is_array($additional_locations_ids)) $additional_locations_ids = [];
 
         foreach($additional_locations_ids as $additional_locations_id){
             $additional_location = get_term($additional_locations_id, 'mec_location');

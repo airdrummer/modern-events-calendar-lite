@@ -22,7 +22,7 @@ if ( !class_exists('Puc_v4p11_OAuthSignature', false) ):
 		 * @return string The signed URL.
 		 */
 		public function sign($url, $method = 'GET') {
-			$parameters = array();
+			$parameters = [];
 
 			//Parse query parameters.
 			$query = parse_url($url, PHP_URL_QUERY);
