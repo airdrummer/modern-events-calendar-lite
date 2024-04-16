@@ -195,8 +195,6 @@ class CurlClient implements ClientInterface
 
     public function request($method, $absUrl, $headers, $params, $hasFile)
     {
-        $method = \strtolower($method);
-
         $opts = [];
         if (\is_callable($this->defaultOptions)) { // call defaultOptions callback, set options to return value
             $opts = \call_user_func_array($this->defaultOptions, \func_get_args());
@@ -206,6 +204,8 @@ class CurlClient implements ClientInterface
         } elseif (\is_array($this->defaultOptions)) { // set default curlopts from array
             $opts = $this->defaultOptions;
         }
+
+        $method = \strtolower($method);
 
         $params = Util\Util::objectsToIds($params);
 

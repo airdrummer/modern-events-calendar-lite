@@ -49,7 +49,6 @@ class EventLocations extends WidgetBase {
 			echo '<div class="mec-event-meta">';
 				?>
 				<div class="mec-single-event-location">
-                    <?php echo $this->icons->display('location-pin');?>
                     <h3 class="mec-events-single-section-title mec-location"><?php echo Base::get_main()->m('taxonomy_location', esc_html__('Location', 'modern-events-calendar-lite')); ?></h3>
 
 					<?php if ($location['thumbnail']) : ?>
@@ -69,7 +68,7 @@ class EventLocations extends WidgetBase {
 						</dd>
 					<?php endif;
 
-					$location_description_setting = isset( $settings['location_description'] ) ? $settings['location_description'] : '';
+					$location_description_setting = $settings['location_description'] ?? '';
 					if($location_description_setting == '1'):
 						?>
 						<dd class="mec-location-description">

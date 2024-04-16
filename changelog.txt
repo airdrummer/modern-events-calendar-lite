@@ -1,8 +1,16 @@
-v 7.8.0.1 – 20 March 2024
--	countdown fixes	air_drummer@verizon.net
-  fixed: default countdown to start prior to event, to end during event, while allowing override
-  improved: added interval param to countdown.js to reduce annoying page updates
-  improved: countdown displays "starts in" prior to event, "ends in" during event, passed after
+﻿v 7.9.0 – 15 April 2024
+- Added: Sidebar feature for the archive and category pages
+- Added: Ability to request billing address in Stripe gateway
+- Added: Placeholders for ticket variations
+- Improved: The functionality and integration of event start / end date pickers
+- Fixed: Some issues in PHP 8.2
+- Fixed: Issue in removing attendees in edit booking
+- Fixed: Issue regarding a dependency in MEC
+- Fixed: Issue in locking pre-filled fields in booking module
+- Fixed: Accessibility issues in slider buttons
+- Fixed: Issue in displaying location icon twice in event banner
+- Fixed: Issue in global tickets option
+- Fixed: Some minor issues
 
 v 7.8.0 – 14 March 2024
 - Added: Notice for lite users to update to the newest version

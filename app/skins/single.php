@@ -937,7 +937,6 @@ class MEC_skin_single extends MEC_skins
 
             ?>
             <div class="mec-single-event-location">
-                <?php echo $this->icons->display('location-pin'); ?>
                 <h3 class="mec-events-single-section-title mec-location"><?php echo esc_html($this->main->m('taxonomy_location', esc_html__('Location', 'modern-events-calendar-lite'))); ?></h3>
                 <?php if($location['thumbnail']): ?>
                     <img class="mec-img-location" src="<?php echo esc_url($location['thumbnail'] ); ?>" alt="<?php echo (isset($location['name']) ? esc_attr($location['name']) : ''); ?>">

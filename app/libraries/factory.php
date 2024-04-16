@@ -612,58 +612,64 @@ class MEC_factory extends MEC_base
      */
     public function load_auto_update()
     {
-        $options = get_option('mec_options');
-        $product_name = !empty($options['product_name']) ? esc_html__($options['product_name']) : '';
-        $product_id = !empty($options['product_id']) ? esc_html__($options['product_id']) : '';
-        $purchase_code = !empty($options['purchase_code']) ? esc_html__($options['purchase_code']) : '';
-        $url = urlencode(get_home_url());
+        global $pagenow;
 
-        require_once MEC_ABSPATH.'app/core/puc/plugin-update-checker.php';
-        if(!$this->getPRO())
-        {
-            $MyUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
-                add_query_arg(array('purchase_code' => '', 'url' => '','id' => '','category' => 'mec'), MEC_API_UPDATE . '/updates/?action=get_metadata&slug=modern-events-calendar-lite'), //Metadata URL.
-                MEC_ABSPATH.'modern-events-calendar-lite.php', //Full path to the main plugin file.
-                'modern-events-calendar-lite' //Plugin slug. Usually it's the same as the name of the directory.
-            );
-        } else {
-            $MyUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
-                add_query_arg(array('purchase_code' => $purchase_code, 'url' => $url,'id' => $product_id,'category' => 'mec'), MEC_API_UPDATE . '/updates/?action=get_metadata&slug=modern-events-calendar'), //Metadata URL.
-                MEC_ABSPATH.'mec.php', //Full path to the main plugin file.
-                'mec' //Plugin slug. Usually it's the same as the name of the directory.
-            );
+        if ( 'plugins.php' === $pagenow || 'update-core.php' ===  $pagenow ) {
+            $options = get_option('mec_options');
+            $product_name = !empty($options['product_name']) ? esc_html__($options['product_name']) : '';
+            $product_id = !empty($options['product_id']) ? esc_html__($options['product_id']) : '';
+            $purchase_code = !empty($options['purchase_code']) ? esc_html__($options['purchase_code']) : '';
+            $url = urlencode(get_home_url());
+
+            require_once MEC_ABSPATH.'app/core/puc/plugin-update-checker.php';
+            if(!$this->getPRO())
+            {
+                $MyUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
+                    add_query_arg(array('purchase_code' => '', 'url' => '','id' => '','category' => 'mec'), MEC_API_UPDATE . '/updates/?action=get_metadata&slug=modern-events-calendar-lite'), //Metadata URL.
+                    MEC_ABSPATH.'modern-events-calendar-lite.php', //Full path to the main plugin file.
+                    'modern-events-calendar-lite', //Plugin slug. Usually it's the same as the name of the directory.
+                    24
+                );
+            } else {
+                $MyUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
+                    add_query_arg(array('purchase_code' => $purchase_code, 'url' => $url,'id' => $product_id,'category' => 'mec'), MEC_API_UPDATE . '/updates/?action=get_metadata&slug=modern-events-calendar'), //Metadata URL.
+                    MEC_ABSPATH.'mec.php', //Full path to the main plugin file.
+                    'mec', //Plugin slug. Usually it's the same as the name of the directory.
+                    24
+                );
+            }
+
+
+            $name = $this->getPRO() ? 'mec' : 'modern-events-calendar-lite';
+            add_filter('puc_request_info_result-'. $name, function($info)
+            {
+                if(!$info) return;
+
+                unset($info->sections['installation']);
+                unset($info->sections['faq']);
+                unset($info->sections['screenshots']);
+                unset($info->sections['wordpress_event_calendar']);
+                unset($info->sections['best_wordpress_event_management_plugin']);
+                unset($info->sections['new_designed_beautiful_event_view_layouts:']);
+                unset($info->sections['covid-19_(coronavirus)']);
+                unset($info->sections['10_best_event_calendar_plugins_and_themes_for_wordpress_2020']);
+                unset($info->sections['experts_opinions']);
+                unset($info->sections['some_new_features']);
+                unset($info->sections['user_reviews']);
+                unset($info->sections['convert_your_events_in_a_few_seconds']);
+                unset($info->sections['virtual_events_addon']);
+                unset($info->sections['main_features']);
+                unset($info->sections['integration']);
+                unset($info->sections['key_features']);
+                unset($info->sections['addons']);
+                unset($info->sections['screenshots']);
+                unset($info->sections['helpful_documentation']);
+                unset($info->sections['developers']);
+                unset($info->sections['frequently_asked_questions']);
+
+                return $info;
+            });
         }
-
-
-        $name = $this->getPRO() ? 'mec' : 'modern-events-calendar-lite';
-        add_filter('puc_request_info_result-'. $name, function($info)
-        {
-            if(!$info) return;
-
-            unset($info->sections['installation']);
-            unset($info->sections['faq']);
-            unset($info->sections['screenshots']);
-            unset($info->sections['wordpress_event_calendar']);
-            unset($info->sections['best_wordpress_event_management_plugin']);
-            unset($info->sections['new_designed_beautiful_event_view_layouts:']);
-            unset($info->sections['covid-19_(coronavirus)']);
-            unset($info->sections['10_best_event_calendar_plugins_and_themes_for_wordpress_2020']);
-            unset($info->sections['experts_opinions']);
-            unset($info->sections['some_new_features']);
-            unset($info->sections['user_reviews']);
-            unset($info->sections['convert_your_events_in_a_few_seconds']);
-            unset($info->sections['virtual_events_addon']);
-            unset($info->sections['main_features']);
-            unset($info->sections['integration']);
-            unset($info->sections['key_features']);
-            unset($info->sections['addons']);
-            unset($info->sections['screenshots']);
-            unset($info->sections['helpful_documentation']);
-            unset($info->sections['developers']);
-            unset($info->sections['frequently_asked_questions']);
-
-            return $info;
-        });
     }
 
     /**

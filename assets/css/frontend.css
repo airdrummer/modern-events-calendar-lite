@@ -24586,3 +24586,8 @@ span.mec-marker-wrap,
 }
 
 /* Saga theme compatibility End*/
+
+/* Fix banner */
+.mec-event-banner-inner .mec-single-event-location > i {
+  display: none;
+}

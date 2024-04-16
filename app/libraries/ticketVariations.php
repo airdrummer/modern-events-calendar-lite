@@ -55,7 +55,7 @@ class MEC_ticketVariations extends MEC_base
                     </span>
                 </span>
                 <span class="mec-col-4">
-                    <input type="number" min="0" name="<?php echo esc_attr($name_prefix); ?>[<?php echo esc_attr($i); ?>][max]" placeholder="<?php esc_attr_e('Maximum Per Ticket', 'modern-events-calendar-lite'); ?>" value="<?php echo(isset($ticket_variation['max']) ? $ticket_variation['max'] : ''); ?>"/>
+                    <input type="number" min="0" name="<?php echo esc_attr($name_prefix); ?>[<?php echo esc_attr($i); ?>][max]" placeholder="<?php esc_attr_e('Maximum Per Ticket', 'modern-events-calendar-lite'); ?>" value="<?php echo $ticket_variation['max'] ?? ''; ?>">
                     <span class="mec-tooltip">
                         <div class="box top">
                             <h5 class="title"><?php esc_html_e('Maximum Per Ticket', 'modern-events-calendar-lite'); ?></h5>
@@ -70,6 +70,15 @@ class MEC_ticketVariations extends MEC_base
                     </span>
                 </span>
                 <button class="button mec_remove_ticket_variation_button mec-dash-remove-btn" type="button" id="mec_remove_<?php echo esc_attr($id_prefix); ?>_button<?php echo esc_attr($i); ?>" onclick="mec_remove_ticket_variation(<?php echo esc_attr($i); ?>, '<?php echo esc_attr($id_prefix); ?>');"><?php esc_html_e('Remove', 'modern-events-calendar-lite'); ?></button>
+            </div>
+            <div class="mec-form-row">
+                <div class="mec-col-3"><?php esc_html_e('Notification Placeholders', 'modern-events-calendar-lite'); ?></div>
+                <div class="mec-col-9">
+                    <ul style="margin: 0;">
+                        <li>%%ticket_variations_<?php echo esc_attr($i); ?>_title%%</li>
+                        <li>%%ticket_variations_<?php echo esc_attr($i); ?>_count%%</li>
+                    </ul>
+                </div>
             </div>
         </div>
         <?php

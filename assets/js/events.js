@@ -233,9 +233,15 @@ jQuery(document).ready(function($)
             yearRange: 'c-3:c+5',
             onSelect: function(value, i)
             {
+                const end = $("#mec_end_date");
                 if(value !== i.lastVal)
                 {
-                    $("#mec_end_date").datepicker("option", "minDate", value);
+                    end.datepicker("option", "minDate", value);
+                }
+
+                if(end.val() === '')
+                {
+                    end.val(value);
                 }
             }
         });
@@ -249,9 +255,15 @@ jQuery(document).ready(function($)
             yearRange: 'c-3:c+5',
             onSelect: function(value, i)
             {
+                const start = $("#mec_start_date");
                 if(value !== i.lastVal)
                 {
-                    $("#mec_start_date").datepicker("option", "maxDate", value);
+                    start.datepicker("option", "maxDate", value);
+                }
+
+                if(start.val() === '')
+                {
+                    start.val(value);
                 }
             }
         });

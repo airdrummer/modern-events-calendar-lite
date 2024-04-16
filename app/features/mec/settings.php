@@ -575,6 +575,16 @@ $shortcodes = get_posts(array(
                             </div>
 
                             <div class="mec-form-row">
+                                <label class="mec-col-3" for="mec_settings_archive_sidebar"><?php esc_html_e('MEC Archive Sidebar', 'modern-events-calendar-lite'); ?></label>
+                                <div class="mec-col-9">
+                                    <select id="mec_settings_archive_sidebar" name="mec[settings][archive_sidebar]">
+                                        <option value="0" <?php if(isset($settings['archive_sidebar']) and '0' == $settings['archive_sidebar']) echo 'selected="selected"'; ?>><?php esc_html_e('Hide'); ?></option>
+                                        <option value="1" <?php if(isset($settings['archive_sidebar']) and '1' == $settings['archive_sidebar']) echo 'selected="selected"'; ?>><?php esc_html_e('Display'); ?></option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mec-form-row">
                                 <label class="mec-col-3" for="mec_settings_default_skin_archive"><?php esc_html_e('Archive Page Skin', 'modern-events-calendar-lite'); ?></label>
                                 <div class="mec-col-9 tooltip-move-up">
                                     <select id="mec_settings_default_skin_archive" name="mec[settings][default_skin_archive]" onchange="mec_archive_skin_style_changed(this.value);">

@@ -1548,7 +1548,7 @@ class FormBuilder extends Singleton {
                 var real_ajax_url = wp.ajax.settings.url;
                 wp.ajax.settings.url = real_ajax_url + '?mec_fes=1';
 
-                var post_id = $(this).data('post-id');
+                var post_id = jQuery(this).data('post-id');
                 if(post_id && post_id !== -1) wp.media.model.settings.post.id = post_id;
                 if(post_id === -1) wp.media.model.settings.post.id = null;
 
@@ -2581,12 +2581,12 @@ class FormBuilder extends Singleton {
         $payable_type = $booking_options['bookings_payable_type'] ?? 'percent';
 
         // Validate
-        [$payable, $payable_type] = $partial_payment->validate_payable_options($payable, $payable_type);
+        list($payable, $payable_type) = $partial_payment->validate_payable_options($payable, $payable_type);
         ?>
         <div class="mec-meta-box-fields" id="mec-booking-partial-payment">
             <h4 class="mec-title"><?php esc_html_e('Partial Payment', 'modern-events-calendar-lite'); ?></h4>
             <div class="mec-form-row">
-                <label class="mec-col-4 mec-bookings-pyable-inherit" for="mec_bookings_payable_inherit">
+                <label class="mec-col-4 mec-bookings-payable-inherit" for="mec_bookings_payable_inherit">
                     <input type="hidden" name="mec[booking][bookings_payable_inherit]" value="0"/>
                     <input id="mec_bookings_payable_inherit"
                         <?php
@@ -3177,7 +3177,7 @@ class FormBuilder extends Singleton {
         if(trim($global_inheritance) == '') $global_inheritance = 1;
 
         $ticket_variations = get_post_meta($post->ID, 'mec_ticket_variations', true);
-        $global_variations = isset($settings['ticket_variations']) ? $settings['ticket_variations'] : [];
+        $global_variations = $settings['ticket_variations'] ?? [];
 
         if(!is_array($ticket_variations) and trim($ticket_variations) == '') $ticket_variations = $global_variations;
         if(!is_array($ticket_variations)) $ticket_variations = [];
@@ -3206,10 +3206,10 @@ class FormBuilder extends Singleton {
                             if(!is_numeric($key)) continue;
 
                             $i = max($i, $key);
-                            $TicketVariations->item(array(
+                            $TicketVariations->item([
                                 'i' => $i,
                                 'value' => $ticket_variation,
-                            ));
+                            ]);
                         }
                         ?>
                     </div>
@@ -3218,10 +3218,10 @@ class FormBuilder extends Singleton {
             <input type="hidden" id="mec_new_ticket_variation_key" value="<?php echo ($i + 1); ?>"/>
             <div class="mec-util-hidden" id="mec_new_ticket_variation_raw">
                 <?php
-                    $TicketVariations->item(array(
+                    $TicketVariations->item([
                         'i' => ':i:',
-                        'value' => array(),
-                    ));
+                        'value' => [],
+                    ]);
                 ?>
             </div>
         </div>
@@ -3490,7 +3490,10 @@ class FormBuilder extends Singleton {
         if(!is_array($tickets)) $tickets = [];
 
         // Global Tickets
-        if(isset($settings['default_tickets_status']) && $settings['default_tickets_status'] && !count($tickets))
+        $global_tickets = isset($settings['default_tickets_status']) && $settings['default_tickets_status'];
+
+        // Global Tickets
+        if($global_tickets && !count($tickets) && ($post->ID == -1 || get_post_status($post->ID) === 'auto-draft'))
         {
             $tickets = is_array($settings['tickets']) ? $settings['tickets'] : [];
         }

@@ -2,14 +2,17 @@
 /** no direct access **/
 defined('MECEXEC') or die();
 
+/** @var StdClass $event */
+/** @var boolean $display_progress_bar */
+
 $event_id = $event->ID;
 
 /** @var MEC_main $main */
 $main = $this instanceof MEC_main ? $this : MEC::getInstance('app.libraries.main');
 
 // Transaction ID
-$transaction_id = isset($_REQUEST['mec_stripe_redirect_transaction_id']) ? $_REQUEST['mec_stripe_redirect_transaction_id'] : '';
-if(!trim($transaction_id)) $transaction_id = isset($_REQUEST['mec_stripe_connect_redirect_transaction_id']) ? $_REQUEST['mec_stripe_connect_redirect_transaction_id'] : '';
+$transaction_id = $_REQUEST['mec_stripe_redirect_transaction_id'] ?? '';
+if(!trim($transaction_id)) $transaction_id = $_REQUEST['mec_stripe_connect_redirect_transaction_id'] ?? '';
 
 $had_payment = false;
 if(trim($transaction_id))

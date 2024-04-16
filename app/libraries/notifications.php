@@ -458,7 +458,7 @@ class MEC_notifications extends MEC_base
                 $attendees = get_post_meta($book_id, 'mec_attendees', true);
                 if(!is_array($attendees) or (is_array($attendees) and !count($attendees))) $attendees = array(get_post_meta($book_id, 'mec_attendee', true));
 
-                // For When sended email time, And  prevention of email repeat send
+                // Prevent duplicate send
                 $done_emails = [];
 
                 // Send the emails
@@ -609,7 +609,7 @@ class MEC_notifications extends MEC_base
                 $attendees = get_post_meta($book_id, 'mec_attendees', true);
                 if(!is_array($attendees) or !count($attendees)) $attendees = array(get_post_meta($book_id, 'mec_attendee', true));
 
-                // For When sended email time, And  prevention of email repeat send
+                // Prevent duplicate send
                 $done_emails = [];
 
                 // Send the emails
@@ -1058,7 +1058,7 @@ class MEC_notifications extends MEC_base
         {
             if(!is_numeric($f)) continue;
 
-            $field_value = $event_fields_data[$f] ?? NULL;
+            $field_value = $event_fields_data[$f] ?? '';
             if((!is_array($field_value) and trim($field_value) === '') or (is_array($field_value) and !count($field_value)))
             {
                 $message = str_replace('%%event_field_'.$f.'%%', '', $message);
@@ -1229,7 +1229,7 @@ class MEC_notifications extends MEC_base
             {
                 if(!is_numeric($f)) continue;
 
-                $field_value = $event_fields_data[$f] ?? NULL;
+                $field_value = $event_fields_data[$f] ?? '';
                 if(!is_array($field_value) and trim($field_value) === '')
                 {
                     $message = str_replace('%%event_field_'.$f.'%%', '', $message);
@@ -1643,14 +1643,14 @@ class MEC_notifications extends MEC_base
 
     /**
      * Generate content of email
-     * @author Webnus <info@webnus.net>
      * @param string $message
      * @param int $book_id
      * @param array $attendee
      * @param string $timestamps
      * @return string
+     * @author Webnus <info@webnus.net>
      */
-    public function content($message, $book_id, $attendee = array(), $timestamps = '')
+    public function content($message, $book_id, $attendee = [], $timestamps = '')
     {
         if(!$book_id) return false;
 
@@ -1661,8 +1661,8 @@ class MEC_notifications extends MEC_base
         $booker = $this->u->booking($book_id);
         $event_id = get_post_meta($book_id, 'mec_event_id', true);
 
-        $first_name = (isset($booker->first_name) ? $booker->first_name : '');
-        $last_name = (isset($booker->last_name) ? $booker->last_name : '');
+        $first_name = isset($booker->first_name) ? $booker->first_name : '';
+        $last_name = isset($booker->last_name) ? $booker->last_name : '';
         $name = (isset($booker->first_name) ? trim($booker->first_name.' '.(isset($booker->last_name) ? $booker->last_name : '')) : '');
         $email = (isset($booker->user_email) ? $booker->user_email : '');
 
@@ -1792,7 +1792,7 @@ class MEC_notifications extends MEC_base
         if(isset($attendee['email']))
         {
             $attendee_price = $this->book->get_attendee_price($transaction, $attendee['email']);
-            $message = str_replace('%%attendee_price%%', $this->main->render_price(($attendee_price ? $attendee_price : $price), $event_id), $message);
+            $message = str_replace('%%attendee_price%%', $this->main->render_price(($attendee_price ?: $price), $event_id), $message);
         }
 
         $event_id = get_post_meta($book_id, 'mec_event_id', true);
@@ -1806,12 +1806,32 @@ class MEC_notifications extends MEC_base
         }
 
         // Attendee Full Information
-        if(strpos($message, '%%attendee_full_info%%') !== false or strpos($message, '%%attendees_full_info%%') !== false)
+        if(strpos($message, '%%attendee_full_info%%') !== false || strpos($message, '%%attendees_full_info%%') !== false)
         {
             $attendees_full_info = $this->get_full_attendees_info($book_id);
 
             $message = str_replace('%%attendee_full_info%%', $attendees_full_info, $message);
             $message = str_replace('%%attendees_full_info%%', $attendees_full_info, $message);
+        }
+
+        // Ticket Variations
+        if(isset($attendee['variations']) and is_array($attendee['variations']) and count($attendee['variations']))
+        {
+            $ticket_variations = $this->main->ticket_variations($event_id, $attendee['id']);
+
+            $ticket_variations_str = '';
+            foreach($attendee['variations'] as $variation_id => $count)
+            {
+                if(!isset($ticket_variations[$variation_id])) continue;
+
+                $title = $ticket_variations[$variation_id]['title'] ?? '';
+                $ticket_variations_str .= $title.': '.$count."<br>";
+
+                $message = str_replace('%%ticket_variations_'.$variation_id.'_title%%', $title, $message);
+                $message = str_replace('%%ticket_variations_'.$variation_id.'_count%%', (int) $count, $message);
+            }
+
+            $message = str_replace('%%ticket_variations%%', $ticket_variations_str, $message);
         }
 
         // Booking IDs
@@ -1832,7 +1852,7 @@ class MEC_notifications extends MEC_base
                 if(!is_numeric($b)) continue;
 
                 $bfixed_field_name = $bfixed_field['label'] ?? '';
-                $bfixed_value = $transaction['fields'][$b] ?? NULL;
+                $bfixed_value = $transaction['fields'][$b] ?? '';
 
                 if(is_array($bfixed_value)) $bfixed_value = implode(', ', $bfixed_value);
                 if(trim($bfixed_value) === '') continue;
@@ -1866,7 +1886,7 @@ class MEC_notifications extends MEC_base
             if(!is_numeric($f)) continue;
 
             $event_field_name = $event_field['label'] ?? '';
-            $field_value = $event_fields_data[$f] ?? NULL;
+            $field_value = $event_fields_data[$f] ?? '';
             if((!is_array($field_value) and trim($field_value) === '') or (is_array($field_value) and !count($field_value)))
             {
                 $message = str_replace('%%event_field_'.$f.'%%', '', $message);
@@ -2137,7 +2157,7 @@ class MEC_notifications extends MEC_base
         // Enable Cache
         $cache->enable();
 
-        return apply_filters( 'mec_render_message_email', $message, $book_id, $attendee, $timestamps );
+        return apply_filters('mec_render_message_email', $message, $book_id, $attendee, $timestamps);
     }
 
     /**

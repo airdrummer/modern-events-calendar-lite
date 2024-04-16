@@ -67,7 +67,8 @@ class MEC
         }
 
         // Initialize Auto Update Feature
-        $factory->load_auto_update();
+        $factory->action('admin_init', array($factory, 'load_auto_update'));
+
 
         // Registering MEC actions
         $factory->load_actions();

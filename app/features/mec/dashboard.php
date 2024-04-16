@@ -63,20 +63,7 @@ $box_stats = apply_filters('mec_dashboard_box_stats', true);
             </div>
         </div>
     </div>
-    <?php if(!$this->getPRO() && $new_version = $this->is_new_version_available()): ?>
-        <div class="w-row mec-pro-notice mec-new-version-notice">
-            <div class="w-col-sm-12">
-                <div class="info-msg w-box version-info-message mec-intro-section">
-                    <p>
-                        <?php echo sprintf(esc_html__("A new version is available. You're using the %s version but the latest version is %s.", 'modern-events-calendar-lite'), MEC_VERSION, '<strong>'.$new_version.'</strong>'); ?>
-                    </p>
-                    <a class="info-msg-link" href="<?php echo esc_url(admin_url('update-core.php')); ?>">
-                        <?php esc_html_e('UPDATE NOW', 'modern-events-calendar-lite'); ?>
-                    </a>
-                </div>
-            </div>
-        </div>
-    <?php endif; ?>
+    <!-- remove update notification section for high request -->
     <div class="welcome-content w-clearfix extra">
         <div class="w-row" style="margin-bottom: 30px;">
             <div class="w-col-sm-12">

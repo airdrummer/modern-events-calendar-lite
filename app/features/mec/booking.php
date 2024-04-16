@@ -945,67 +945,31 @@ $gateways_options = $this->main->get_gateways_options();
                                         <button class="button" type="button" id="mec_add_ticket_variation_button"><?php esc_html_e('Add Variation / Option', 'modern-events-calendar-lite'); ?></button>
                                     </div>
                                     <div class="mec-form-row" id="mec_ticket_variations_list">
-                                        <?php $i = 0; foreach($ticket_variations as $key=>$ticket_variation): if(!is_numeric($key)) continue; $i = max($i, $key); ?>
-                                            <div class="mec-box mec_ticket_variation_row" id="mec_ticket_variation_row<?php echo esc_attr($i); ?>">
-                                                <div class="mec-form-row">
-                                                    <input class="mec-col-12" type="text" name="mec[settings][ticket_variations][<?php echo esc_attr($i); ?>][title]" placeholder="<?php esc_attr_e('Title', 'modern-events-calendar-lite'); ?>" value="<?php echo (isset($ticket_variation['title']) ? esc_attr($ticket_variation['title']) : ''); ?>" />
-                                                </div>
-                                                <div class="mec-form-row">
-                                                    <span class="mec-col-4">
-                                                        <input type="text" name="mec[settings][ticket_variations][<?php echo esc_attr($i); ?>][price]" placeholder="<?php esc_attr_e('Price', 'modern-events-calendar-lite'); ?>" value="<?php echo (isset($ticket_variation['price']) ? esc_attr($ticket_variation['price']) : ''); ?>" />
-                                                        <span class="mec-tooltip">
-                                                            <div class="box top">
-                                                                <h5 class="title"><?php esc_html_e('Price', 'modern-events-calendar-lite'); ?></h5>
-                                                                <div class="content"><p><?php esc_attr_e("Option Price", 'modern-events-calendar-lite'); ?><a href="https://webnus.net/dox/modern-events-calendar/booking-settings/#Ticket_Variations_per_Ticket/" target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
-                                                            </div>
-                                                            <i title="" class="dashicons-before dashicons-editor-help"></i>
-                                                        </span>
-                                                    </span>
-                                                    <span class="mec-col-4">
-                                                        <input type="number" min="0" name="mec[settings][ticket_variations][<?php echo esc_attr($i); ?>][max]" placeholder="<?php esc_attr_e('Maximum Per Ticket', 'modern-events-calendar-lite'); ?>" value="<?php echo (isset($ticket_variation['max']) ? esc_attr($ticket_variation['max']) : ''); ?>" />
-                                                        <span class="mec-tooltip">
-                                                            <div class="box top">
-                                                                <h5 class="title"><?php esc_html_e('Maximum Per Ticket', 'modern-events-calendar-lite'); ?></h5>
-                                                                <div class="content"><p><?php esc_attr_e("Maximum Per Ticket. Leave blank for unlimited.", 'modern-events-calendar-lite'); ?><a href="https://webnus.net/dox/modern-events-calendar/booking-settings/#Ticket_Variations_per_Ticket/" target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
-                                                            </div>
-                                                            <i title="" class="dashicons-before dashicons-editor-help"></i>
-                                                        </span>
-                                                    </span>
-                                                    <button class="button mec_remove_ticket_variation_button mec-dash-remove-btn" type="button" id="mec_remove_ticket_variation_button<?php echo esc_attr($i); ?>" onclick="mec_remove_ticket_variation(<?php echo esc_attr($i); ?>, 'ticket_variation');"><?php esc_html_e('Remove', 'modern-events-calendar-lite'); ?></button>
-                                                </div>
-                                            </div>
-                                        <?php endforeach; ?>
+                                        <?php
+                                            $TicketVariations = $this->getTicketVariations();
+                                            $i = 0;
+                                            foreach($ticket_variations as $key => $ticket_variation)
+                                            {
+                                                if(!is_numeric($key)) continue;
+                                                $i = max($i, $key);
+
+                                                $TicketVariations->item([
+                                                    'i' => $i,
+                                                    'name_prefix' => 'mec[settings][ticket_variations]',
+                                                    'value' => $ticket_variation,
+                                                ]);
+                                            }
+                                        ?>
                                     </div>
                                     <input type="hidden" id="mec_new_ticket_variation_key" value="<?php echo ($i+1); ?>" />
                                     <div class="mec-util-hidden" id="mec_new_ticket_variation_raw">
-                                        <div class="mec-box mec_ticket_variation_row" id="mec_ticket_variation_row:i:">
-                                            <div class="mec-form-row">
-                                                <input class="mec-col-12" type="text" name="mec[settings][ticket_variations][:i:][title]" placeholder="<?php esc_attr_e('Title', 'modern-events-calendar-lite'); ?>" />
-                                            </div>
-                                            <div class="mec-form-row">
-                                                <span class="mec-col-4">
-                                                    <input type="text" name="mec[settings][ticket_variations][:i:][price]" placeholder="<?php esc_attr_e('Price', 'modern-events-calendar-lite'); ?>" />
-                                                    <span class="mec-tooltip">
-                                                        <div class="box top">
-                                                            <h5 class="title"><?php esc_html_e('Price', 'modern-events-calendar-lite'); ?></h5>
-                                                            <div class="content"><p><?php esc_attr_e("Option Price", 'modern-events-calendar-lite'); ?><a href="https://webnus.net/dox/modern-events-calendar/ticket-variations/" target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
-                                                        </div>
-                                                        <i title="" class="dashicons-before dashicons-editor-help"></i>
-                                                    </span>
-                                                </span>
-                                                <span class="mec-col-4">
-                                                    <input type="number" min="0" name="mec[settings][ticket_variations][:i:][max]" placeholder="<?php esc_attr_e('Maximum Per Ticket', 'modern-events-calendar-lite'); ?>" value="1" />
-                                                    <span class="mec-tooltip">
-                                                        <div class="box top">
-                                                            <h5 class="title"><?php esc_html_e('Maximum Per Ticket', 'modern-events-calendar-lite'); ?></h5>
-                                                            <div class="content"><p><?php esc_attr_e("Maximum Per Ticket. Leave blank for unlimited.", 'modern-events-calendar-lite'); ?><a href="https://webnus.net/dox/modern-events-calendar/ticket-variations/" target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
-                                                        </div>
-                                                        <i title="" class="dashicons-before dashicons-editor-help"></i>
-                                                    </span>
-                                                </span>
-                                                <button class="button mec_remove_ticket_variation_button mec-dash-remove-btn" type="button" id="mec_remove_ticket_variation_button:i:" onclick="mec_remove_ticket_variation(:i:, 'ticket_variation');"><?php esc_html_e('Remove', 'modern-events-calendar-lite'); ?></button>
-                                            </div>
-                                        </div>
+                                        <?php
+                                            $TicketVariations->item([
+                                                'i' => ':i:',
+                                                'name_prefix' => 'mec[settings][ticket_variations]',
+                                                'value' => [],
+                                            ]);
+                                        ?>
                                     </div>
                                     <div class="mec-form-row">
                                         <label>

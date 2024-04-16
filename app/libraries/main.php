@@ -10145,13 +10145,13 @@ class MEC_main extends MEC_base
             $book = $this->getBook();
             $transaction = $book->get_transaction($transaction_id);
 
-            $event_id = (isset($transaction['event_id']) ? $transaction['event_id'] : 0);
+            $event_id = $transaction['event_id'] ?? 0;
             if($event_id)
             {
                 $booking_options = get_post_meta($event_id, 'mec_booking', true);
                 if(!is_array($booking_options)) $booking_options = [];
 
-                $bookings_thankyou_page_inherit = isset($booking_options['thankyou_page_inherit']) ? $booking_options['thankyou_page_inherit'] : 1;
+                $bookings_thankyou_page_inherit = $booking_options['thankyou_page_inherit'] ?? 1;
                 if(!$bookings_thankyou_page_inherit)
                 {
                     if(isset($booking_options['booking_thankyou_page_time']) and $booking_options['booking_thankyou_page_time']) $thankyou_page_time = (int) $booking_options['booking_thankyou_page_time'];

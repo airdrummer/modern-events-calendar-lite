@@ -1376,6 +1376,10 @@ body.post-type-mec-books th.column-author {
   margin-bottom: 0;
 }
 
+.wns-be-main .mec-form-row textarea:not([name*="mec[settings][tickets]"])  {
+  max-width: unset;
+}
+
 .wns-be-main .mec-form-row .wp-editor-area {
   max-width: 100%;
   background: #fff;
@@ -11095,6 +11099,24 @@ div#mec_popup_event_form {
   background: #1f1f1f;
 }
 
+.mec-admin-dark-mode.m-e-calendar_page_MEC-ix #mec-wrap h2.nav-tab-wrapper,
+.mec-admin-dark-mode.m-e-calendar_page_MEC-ix #mec-wrap .nav-tab-wrapper .nav-tab,
+.mec-admin-dark-mode.m-e-calendar_page_MEC-ix #mec-wrap .mec-container {
+  border-color: #353535;
+}
+.mec-admin-dark-mode.m-e-calendar_page_MEC-ix #mec-wrap .nav-tab-wrapper .nav-tab-active {
+  background: #404040 !important;
+}
+.mec-admin-dark-mode.m-e-calendar_page_MEC-ix  #mec-wrap .nav-tab-wrapper .nav-tab:not(.nav-tab-active):after {
+  background: #4f4f4f;
+}
+
+.mec-admin-dark-mode.m-e-calendar_page_MEC-ix  #mec-wrap .nav-tab-wrapper .nav-tab-active:after {
+  border-color: #404040 transparent transparent;
+}
+.mec-admin-dark-mode.m-e-calendar_page_MEC-ix  #mec-wrap .nav-tab-wrapper .nav-tab-active:before {
+  border-color: #404040 transparent transparent;
+}
 .mec-admin-dark-mode #mec_bfixed_form_fields li,
 .mec-admin-dark-mode #mec_calendar_filter,
 .mec-admin-dark-mode #mec_calendar_filter .mec-add-booking-tabs-left,
@@ -11181,16 +11203,6 @@ div#mec_popup_event_form {
   color: #fff;
 }
 
-.mec-admin-dark-mode.m-e-calendar_page_MEC-settings .extra .mec-cmsg-2-notification-box-wrap .w-box-head,
-.mec-admin-dark-mode.m-e-calendar_page_MEC-settings .mec-custom-msg-2-notification-set-box.extra,
-.mec-admin-dark-mode.m-e-calendar_page_MEC-settings .mec-custom-msg-notification-set-box.extra {
-  border-color: #515151;
-}
-
-.mec-admin-dark-mode.m-e-calendar_page_MEC-settings .mec-custom-msg-2-notification-set-box.extra,
-.mec-admin-dark-mode.m-e-calendar_page_MEC-settings .mec-custom-msg-notification-set-box.extra {
-  background-color: #515151;
-}
 
 .mec-admin-dark-mode .mec-form-row .mec-box,
 .mec-admin-dark-mode .mec-form-row input[type="checkbox"],
@@ -11200,6 +11212,23 @@ div#mec_popup_event_form {
   background: #333;
   border-color: #353535;
   box-shadow: 0 1px 6px -2px #000;
+}
+
+.mec-admin-dark-mode .wns-be-container .dpr-btn.dpr-save-btn,
+.mec-admin-dark-mode #wpwrap .mec-button-primary {
+  box-shadow: none;
+  background: #5e7a65;
+}
+
+.mec-admin-dark-mode .wns-be-container .dpr-btn.dpr-save-btn:hover,
+.mec-admin-dark-mode #wpwrap .mec-button-primary:hover {
+  box-shadow: none;
+  background: #559164;
+  border-color: none;
+}
+
+.mec-admin-dark-mode #mec-wrap .nav-tab-wrapper .nav-tab {
+  border-radius: 7px;
 }
 
 .mec-admin-dark-mode #mec_bfixed_form_fields,
@@ -11331,8 +11360,15 @@ div#mec_popup_event_form {
 .mec-admin-dark-mode.post-type-mec_calendars div.mce-panel,
 .mec-admin-dark-mode.post-type-mec_calendars div.mce-toolbar-grp,
 .mec-admin-dark-mode.post-type-mec_calendars ul.add-menu-item-tabs li.tabs,
-.mec-admin-dark-mode.post-type-mec_calendars ul.category-tabs li.tabs {
+.mec-admin-dark-mode.post-type-mec_calendars ul.category-tabs li.tabs,
+.mec-admin-dark-mode .mec-cmsg-2-notification-box-wrap,
+.mec-admin-dark-mode .mec-cmsg-notification-box-wrap,
+.mec-admin-dark-mode .w-box {
   border-color: #353535;
+}
+
+.mec-admin-dark-mode  .notice.notice-warning.is-dismissible {
+  color: #353535;
 }
 
 .mec-admin-dark-mode #mec_bfixed_form_fields input[type="checkbox"],
@@ -11507,10 +11543,16 @@ div#mec_popup_event_form {
 .mec-admin-dark-mode.post-type-mec_calendars textarea,
 .mec-admin-dark-mode.toplevel_page_mec-intro .w-box.mec-activation input[name="MECPurchaseCode"],
 .mec-admin-dark-mode.toplevel_page_mec-intro .w-box.mec-activation input[type="radio"]+label span,
-.mec-select-deselect-actions li {
+.mec-select-deselect-actions li,
+.mec-admin-dark-mode .mec-backend-tab {
   background: #1d1d1d;
   border-color: #353535;
   color: #d2d2d2;
+}
+
+.mec-admin-dark-mode .mec-b-active-tab{
+  background: #505050;
+  color: #dbdbdb;
 }
 
 .mec-admin-dark-mode #mec_metabox_booking .mec-form-row input[type="checkbox"]:checked,

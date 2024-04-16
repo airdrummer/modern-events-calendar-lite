@@ -965,7 +965,7 @@ class MEC_feature_ix extends MEC_base
 
                 // Event location
                 $location = $event->location;
-                $location_id = trim($location) ? $main->save_location(array
+                $location_id = $location && trim($location) ? $main->save_location(array
                 (
                     'name'=>trim((string) $location),
                 )) : 1;

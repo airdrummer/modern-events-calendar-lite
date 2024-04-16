@@ -3,8 +3,8 @@ Contributors: webnus
 Donate link: https://webnus.net
 Tags: Event, Events, Calendar, Booking, Schedule, Organizer, Venue
 Requires at least: 4.0.0
-Tested up to: 6.4.3
-Stable tag: 7.7.0
+Tested up to: 6.5.2
+Stable tag: 7.9.0
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -472,6 +472,20 @@ You can see [plugin documentation](https://webnus.net/dox/modern-events-calendar
 43. WordPress Event Calendar - Daily view(Fluent View Layouts Addon)
 
 == Changelog ==
+= 7.9.0 – 15 April 2024 =
+- Added: Sidebar feature for the archive and category pages
+- Added: Ability to request billing address in Stripe gateway
+- Added: Placeholders for ticket variations
+- Improved: The functionality and integration of event start / end date pickers
+- Fixed: Some issues in PHP 8.2
+- Fixed: Issue in removing attendees in edit booking
+- Fixed: Issue regarding a dependency in MEC
+- Fixed: Issue in locking pre-filled fields in booking module
+- Fixed: Accessibility issues in slider buttons
+- Fixed: Issue in displaying location icon twice in event banner
+- Fixed: Issue in global tickets option
+- Fixed: Some minor issues
+
 = 7.8.0 – 14 March 2024 =
 - Added: Notice for lite users to update to the newest version
 - Added: Some new filters for better integration with third party developers

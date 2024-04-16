@@ -189,6 +189,7 @@ class MEC_feature_notifications extends MEC_base
             <li><span>%%ticket_time%%</span>: <?php esc_html_e('Ticket time', 'modern-events-calendar-lite'); ?></li>
             <li><span>%%ticket_name_time%%</span>: <?php esc_html_e('Ticket name & time', 'modern-events-calendar-lite'); ?></li>
             <li><span>%%ticket_private_description%%</span>: <?php esc_html_e('Ticket private description', 'modern-events-calendar-lite'); ?></li>
+            <li><span>%%ticket_variations%%</span>: <?php esc_html_e('Ticket Variations', 'modern-events-calendar-lite'); ?></li>
             <li><span>%%payment_gateway%%</span>: <?php esc_html_e('Payment Gateway', 'modern-events-calendar-lite'); ?></li>
             <li><span>%%dl_file%%</span>: <?php esc_html_e('Link to the downloadable file', 'modern-events-calendar-lite'); ?></li>
             <li><span>%%google_calendar_link%%</span>: <?php esc_html_e('Add to Google Calendar', 'modern-events-calendar-lite'); ?></li>

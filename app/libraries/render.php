@@ -1175,7 +1175,7 @@ class MEC_render extends MEC_base
      */
     public function dates($event_id, $event = NULL, $maximum = 6, $today = '')
     {
-        if(!trim($today)) $today = date('Y-m-d');
+        if(!$today) $today = date('Y-m-d');
 
         // Original Start Date
         $original_start_date = $today;
