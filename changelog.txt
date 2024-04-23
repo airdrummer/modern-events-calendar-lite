@@ -1,4 +1,10 @@
-﻿v 7.9.0 – 15 April 2024
+v 7.9.0.1 – 16apr 2024
+-	countdown fixes	air_drummer@verizon.net
+  fixed: default countdown to start prior to event, to end during event, while allowing override
+  improved: added interval param to countdown.js to reduce annoying page updates
+  improved: countdown displays "starts in" prior to event, "ends in" during event, passed after
+
+v 7.9.0 – 15 April 2024
 - Added: Sidebar feature for the archive and category pages
 - Added: Ability to request billing address in Stripe gateway
 - Added: Placeholders for ticket variations

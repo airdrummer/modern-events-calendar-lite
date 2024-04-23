@@ -8,6 +8,7 @@ defined('MECEXEC') or die();
  * @author Webnus <info@webnus.net>
  * @package MEC/Templates
  * @version 1.0.0
+ *		relocate ical/gcal, display event passed msg
  */
 get_header('mec'); ?>
 
@@ -24,5 +25,39 @@ get_header('mec'); ?>
     </section>
 
     <?php do_action('mec_after_main_content'); ?>
+
+<script type="text/javascript" id="cghoa-reparent-export-div">
+    var countdown = document.querySelector("#mec_countdown_details");
+    if ( countdown === null )
+    {
+ 	    var msg = document.createElement("h3");
+	    msg.appendChild(document.createTextNode("This event has passed"));
+	    var infobox = document.querySelector(".mec-event-meta");
+	    infobox.insertBefore(msg, infobox.firstChild);
+        countdown = document.querySelector(".mec-events-meta-group-countdown");
+	    if (countdown !== null) 
+	        countdown.remove();
+    }
+    var icals = document.querySelector(".mec-event-export-module");
+    if ( icals !== null )
+    {
+	    var info = document.querySelector(".col-md-4");
+        b4 = info.lastChild.nextSibling;
+        info.insertBefore(icals,b4);
+    }
+	var article = document.querySelector("article.mec-single-event");
+	var jprp = document.querySelector("#jp-relatedposts");
+    if ( jprp !== null )
+    {
+        b4 = article.lastChild.nextSibling;
+        article.insertBefore(jprp,b4);
+	}
+	var shddy = document.querySelector("div.sharedaddy");
+    if ( shddy !== null )
+    {
+        b4 = article.lastChild.nextSibling;
+        article.insertBefore(shddy,b4);
+	}
+</script>
 
 <?php get_footer('mec');

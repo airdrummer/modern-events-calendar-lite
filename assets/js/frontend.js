@@ -4506,7 +4506,9 @@ jQuery(window).on('load', function()
                     dots: typeof settings.dots_navigation != 'undefined' ? settings.dots_navigation : false,
                     nav: typeof settings.navigation != 'undefined' ? settings.navigation : true,
                     autoplayHoverPause: true,
-                    navText: typeof settings.navText != 'undefined' ? settings.navText : ["<i class='mec-sl-arrow-left' aria-label='Previous'></i>", " <i class='mec-sl-arrow-right' aria-label='Next'></i>"],
+					navText: typeof settings.navText != 'undefined' 
+                   			? settings.navText 
+                   			: ["<i class='mec-sl-arrow-left' aria-label='Previous'></i>", " <i class='mec-sl-arrow-right' aria-label='Next'></i>"],
                     navElement: 'button type="button" role="button"',
                     rtl: owl_rtl,
                     responsiveClass: true,
@@ -4605,7 +4607,9 @@ jQuery(window).on('load', function()
                     dots: false,
                     nav: true,
                     autoplayHoverPause: true,
-                    navText: typeof settings.navText != 'undefined' ? settings.navText : ["<i class='mec-sl-arrow-left' aria-label='Previous'></i>", " <i class='mec-sl-arrow-right' aria-label='Next'></i>"],
+					navText: typeof settings.navText != 'undefined' 
+                   			? settings.navText 
+                   			: ["<i class='mec-sl-arrow-left' aria-label='Previous'></i>", " <i class='mec-sl-arrow-right' aria-label='Next'></i>"],
                     navElement: 'button type="button" role="button"',
                     rtl: rtl,
                 });
@@ -4617,25 +4621,29 @@ jQuery(window).on('load', function()
 (function ($) {
     $.fn.mecCountDown = function (options, callBack) {
         // Default Options
-        var settings = $.extend({
+        var settings = $.extend(
+        {
             // These are the defaults.
             date: null,
-            format: null
+            format: null,
+            interval: 1000
         }, options);
 
         var callback = callBack;
         var selector = $(this);
 
         startCountdown();
-        var interval = setInterval(startCountdown, 1000);
+        var intervalID = setInterval(startCountdown, settings.interval);
 
-        function startCountdown() {
+        function startCountdown() 
+        {
             var eventDate = Date.parse(settings.date) / 1000;
             var currentDate = Math.floor($.now() / 1000);
 
-            if (eventDate <= currentDate) {
+            if (eventDate <= currentDate) 
+            {
                 callback.call(this);
-                clearInterval(interval);
+                clearInterval(intervalID);
             }
 
             var seconds = eventDate - currentDate;
@@ -4649,17 +4657,18 @@ jQuery(window).on('load', function()
             var minutes = Math.floor(seconds / 60);
             seconds -= minutes * 60;
 
-            if (days == 1) selector.find(".mec-timeRefDays").text(mecdata.day);
-            else selector.find(".mec-timeRefDays").text(mecdata.days);
-
-            if (hours == 1) selector.find(".mec-timeRefHours").text(mecdata.hour);
-            else selector.find(".mec-timeRefHours").text(mecdata.hours);
-
-            if (minutes == 1) selector.find(".mec-timeRefMinutes").text(mecdata.minute);
-            else selector.find(".mec-timeRefMinutes").text(mecdata.minutes);
-
-            if (seconds == 1) selector.find(".mec-timeRefSeconds").text(mecdata.second);
-            else selector.find(".mec-timeRefSeconds").text(mecdata.seconds);
+            selector.find(".mec-timeRefDays").text((days == 1 
+            					? mecdata.day
+            					: mecdata.days));
+            selector.find(".mec-timeRefHours").text((hours == 1
+            					? mecdata.hour
+            					: mecdata.hours));
+			selector.find(".mec-timeRefMinutes").text((minutes == 1
+            					? mecdata.minute
+            					: mecdata.minutes));
+            selector.find(".mec-timeRefSeconds").text((seconds == 1
+								? mecdata.second
+								: mecdata.seconds));
 
             if (settings.format === "on") {
                 days = (String(days).length >= 2) ? days : "0" + days;
@@ -4674,7 +4683,7 @@ jQuery(window).on('load', function()
                 selector.find(".mec-minutes").text(minutes);
                 selector.find(".mec-seconds").text(seconds);
             } else {
-                clearInterval(interval);
+                clearInterval(intervalID);
             }
         }
     };
@@ -5260,7 +5269,7 @@ function mec_focus_week(id, skin) {
                     loop: (loop_status ? true : false),
                     dots: false,
                     nav: true,
-                    navText: ["<i class='mec-sl-arrow-left' aria-label='Previous'></i>", " <i class='mec-sl-arrow-right' aria-label='Next'></i>"],
+                   navText: ["<i class='mec-sl-arrow-left' aria-label='Previous'></i>", " <i class='mec-sl-arrow-right' aria-label='Next'></i>"],
                     navElement: 'button type="button" role="button"',
                     items: 1,
                     autoHeight: true,
