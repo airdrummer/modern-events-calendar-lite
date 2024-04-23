@@ -485,7 +485,6 @@ You can see [plugin documentation](https://webnus.net/dox/modern-events-calendar
 - Fixed: Issue in displaying location icon twice in event banner
 - Fixed: Issue in global tickets option
 - Fixed: Some minor issues
-
 = 7.8.0 – 14 March 2024 =
 - Added: Notice for lite users to update to the newest version
 - Added: Some new filters for better integration with third party developers
