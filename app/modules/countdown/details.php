@@ -64,8 +64,8 @@ else
 
 $disable_for_ongoing = isset($settings['countdown_disable_for_ongoing_events']) && $settings['countdown_disable_for_ongoing_events'];
 
-$ongoing = ($starttime < $nowtime);
-if ( $ongoing )
+$is_ongoing = ($starttime < $nowtime);
+if ( $is_ongoing )
 {
 	echo '<div class="mec-end-counts"><h3>'
         . esc_html__('going on NOW!', 'modern-events-calendar-lite')
@@ -88,7 +88,7 @@ if (isset($_SERVER['HTTP_USER_AGENT']))
 	if (strpos($_SERVER['HTTP_USER_AGENT'], 'Trident') == true)
 		$gmt_offset = substr(trim($gmt_offset), 2, 3);
 }
-$datetime = $ongoing ? $end_time : $start_time;
+$datetime = $is_ongoing ? $end_time : $start_time;
 $countdown_interval = 30000;  // setting tbd
 
 // Generating javascript code of countdown default module
@@ -99,10 +99,12 @@ jQuery(document).ready(function($)
     {
         var datetime = jQuery(el).data("datetime");
         var gmt_offset = jQuery(el).data("gmt_offset");
+        var countdown_interval = jQuery(el).data("countdown_interval");
         jQuery(el).mecCountDown(
             {
                 date: datetime+""+gmt_offset,
-                format: "off"
+                format: "off",
+                countdown_interval: countdown_interval
             },
             function(){}
         );
@@ -201,9 +203,9 @@ if (!function_exists('is_plugin_active')) include_once(ABSPATH . 'wp-admin/inclu
     ?>
     <div class="mec-countdown-details" id="mec_countdown_details" 
     	 data-datetime="<?php echo esc_attr($datetime); ?>"
-         data-gmt_offset="<?php echo esc_attr($gmt_offset); ?>">
+         data-gmt_offset="<?php echo esc_attr($gmt_offset); ?>"
          data-countdown_interval ="<?php echo esc_attr($countdown_interval); ?>">
-	<?php  echo $cd2; ?>         	
+	<?php  echo $cd2; ?>
         <div class="countdown-w ctd-simple">
             <ul class="clockdiv" id="countdown">
                 <li class="days-w block-w">
