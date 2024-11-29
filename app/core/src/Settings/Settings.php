@@ -43,8 +43,25 @@ class Settings extends Singleton {
 			return isset( $this->options['settings'][ $key ] ) ? $this->options['settings'][ $key ] : null;
 		}
 
-		return isset( $this->options['settings'] ) ? $this->options['settings'] : array();
+		return isset( $this->options['settings'] ) ? $this->options['settings'] : [];
 	}
+
+	/**
+	 * @param string|null $key
+	 *
+	 * @return false|mixed|void
+	 */
+	public function get_styling( $key = null ) {
+
+
+		if ( !is_null( $key ) ) {
+
+			return isset( $this->options['styling'][ $key ] ) ? $this->options['styling'][ $key ] : null;
+		}
+
+		return isset( $this->options['styling'] ) ? $this->options['styling'] : [];
+	}
+
 
 
 }

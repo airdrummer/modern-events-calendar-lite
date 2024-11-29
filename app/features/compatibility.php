@@ -4,7 +4,7 @@ defined('MECEXEC') or die();
 
 /**
  * Webnus MEC compatibility class.
- * @author Webnus <info@webnus.biz>
+ * @author Webnus <info@webnus.net>
  */
 class MEC_feature_compatibility extends MEC_base
 {
@@ -28,11 +28,11 @@ class MEC_feature_compatibility extends MEC_base
      * To add HTML Classes to MEC template files
      * @var array
      */
-    public $html_class = array();
+    public $html_class = [];
     
     /**
      * Constructor method
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      */
     public function __construct()
     {
@@ -45,7 +45,7 @@ class MEC_feature_compatibility extends MEC_base
     
     /**
      * Initialize compatibility
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      */
     public function init()
     {
@@ -65,25 +65,21 @@ class MEC_feature_compatibility extends MEC_base
     
     /**
      * Make MEC compatible by adding/changing HTML Classes/IDs
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      */
     public function make_it_compatible()
     {
         $template = get_template();
-        
-        switch($template)
+
+        if($template == 'logitrans')
         {
-            case 'logitrans':
-                
-                $this->html_class = array('wrapper');
-                
-                break;
+            $this->html_class = ['wrapper'];
         }
     }
     
     /**
      * Return HTML ID of MEC Pages
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      * @param string $id
      * @return string
      */
@@ -95,7 +91,7 @@ class MEC_feature_compatibility extends MEC_base
     
     /**
      * Return HTML Class of MEC Pages
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      * @param string $class
      * @return string
      */

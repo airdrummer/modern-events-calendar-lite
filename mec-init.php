@@ -4,7 +4,7 @@ defined('MECEXEC') or die();
 
 /**
  * Webnus MEC main class
- * @author Webnus <info@webnus.biz>
+ * @author Webnus <info@webnus.net>
  */
 class MEC
 {
@@ -16,7 +16,7 @@ class MEC
 
     /**
      * Constructor method
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      */
     protected function __construct()
     {
@@ -37,8 +37,8 @@ class MEC
 
     /**
      * Getting instance. This Class is a singleton class
-     * @author Webnus <info@webnus.biz>
-     * @return \static
+     * @author Webnus <info@webnus.net>
+     * @return static
      */
     public static function instance()
 	{
@@ -48,14 +48,15 @@ class MEC
         // Return the instance
         return self::$instance;
 	}
-    
+
     /**
      * This method initialize the MEC, This add WordPress Actions, Filters and Widgets
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      */
     public function init()
     {
         // Import MEC Factory, This file will do the rest
+        /** @var MEC_factory $factory */
         $factory = MEC::getInstance('app.libraries.factory');
 
         // Deactivate MEC Lite when Pro is installed
@@ -65,8 +66,9 @@ class MEC
             if(is_plugin_active('modern-events-calendar/mec.php')) deactivate_plugins('modern-events-calendar-lite/modern-events-calendar-lite.php');
         }
 
-        // Initialize Auto Update Feaature
-        if($factory->getPRO()) $factory->load_auto_update();
+        // Initialize Auto Update Feature
+        $factory->action('admin_init', array($factory, 'load_auto_update'));
+
 
         // Registering MEC actions
         $factory->load_actions();
@@ -89,6 +91,9 @@ class MEC
         // Register MEC Widget
         $factory->action('widgets_init', array($factory, 'load_widgets'));
 
+        // MEC Active Theme Body Class
+        $factory->action('body_class', array($factory, 'mec_active_theme_body_class'));
+
         // MEC Body Class
         $factory->action('body_class', array($factory, 'mec_body_class'));
 
@@ -101,34 +106,42 @@ class MEC
         // Register MEC Menus
         $factory->action('init', array($factory, 'mec_dyncss'));
 
-        // Include needed assets (CSS, JavaScript etc) in the WordPress backend
+        add_action( 'elementor/preview/before_enqueue_styles', array($factory, 'register_styles_and_scripts'), 0);
+        add_action( 'elementor/preview/before_enqueue_scripts', array($factory, 'register_styles_and_scripts'), 0);
+
+        // Include needed assets (CSS, JavaScript etc.) in the WordPress backend
+        $factory->action('admin_enqueue_scripts', array($factory, 'register_styles_and_scripts'), 0);
         $factory->action('admin_enqueue_scripts', array($factory, 'load_backend_assets'), 0);
 
-        // Include needed assets (CSS, JavaScript etc) in the website frontend
-		$factory->action('wp_enqueue_scripts', array($factory, 'load_frontend_assets'), 0);
+        // Include needed assets (CSS, JavaScript etc.) in the website frontend
+        $main = MEC::getInstance('app.libraries.main');
+
+        $factory->action('wp_enqueue_scripts', array($factory, 'register_styles_and_scripts'), 0);
+        if($main and is_object($main) and method_exists($main, 'get_settings') and $settings = $main->get_settings() and isset($settings['assets_in_footer_status']) and $settings['assets_in_footer_status'] == '1') $factory->action('wp_footer', array($factory, 'load_frontend_assets'), 0);
+        else $factory->action('wp_enqueue_scripts', array($factory, 'load_frontend_assets'), 0);
 
         // Register the shortcodes
         $factory->action('init', array($factory, 'load_shortcodes'));
 
         // Register language files for localization
-        $factory->action('plugins_loaded', array($factory, 'load_languages'));
+        $factory->action('init', array($factory, 'load_languages'));
 
         // Plugin Update Notification
         $factory->action('in_plugin_update_message-' . MEC_BASENAME , array($factory, 'mecShowUpgradeNotification') , 10,2);
     }
-    
+
     /**
-     * Getting a instance of a MEC library
-     * @author Webnus <info@webnus.biz>
+     * Getting an instance of a MEC library
+     * @author Webnus <info@webnus.net>
      * @static
      * @param string $file
      * @param string $class_name
      * @return mixed
      */
-    public static function getInstance($file, $class_name = NULL)
+    public static function getInstance($file, $class_name = '')
     {
         /** Generate class name if not provided **/
-        if(!trim($class_name))
+        if(is_null($class_name) or (is_string($class_name) and !trim($class_name)))
         {
             $ex = explode('.', $file);
             $file_name = end($ex);
@@ -137,15 +150,15 @@ class MEC
 
         /** Import the file using import method **/
         if(!class_exists($class_name)) self::import($file);
-        
+
         /** Generate the object **/
         if(class_exists($class_name)) return new $class_name();
         else return false;
     }
-    
+
     /**
      * Imports the MEC file
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      * @static
      * @param string $file Use 'app.libraries.base' for including /path/to/plugin/app/libraries/base.php file
      * @param boolean $override include overridden file or not (if exists)
@@ -157,16 +170,16 @@ class MEC
         // Converting the MEC path to normal path (app.libraries.base to /path/to/plugin/app/libraries/base.php)
         $original_exploded = explode('.', $file);
         $file = implode(DS, $original_exploded) . '.php';
-        
+
         $path = MEC_ABSPATH . $file;
         $overridden = false;
-        
+
         // Including override file from theme
         if($override)
         {
             // Search the file in the main theme
             $theme_path = get_template_directory() .DS. 'webnus' .DS. MEC_DIRNAME .DS. $file;
-            
+
             /**
              * If overridden file exists on the main theme, then use it instead of normal file
              * For example you can override /path/to/plugin/app/libraries/base.php file in your theme by adding a file into the /path/to/theme/webnus/modern-events-calendar/app/libraries/base.php
@@ -176,11 +189,11 @@ class MEC
                 $overridden = true;
                 $path = $theme_path;
             }
-            
+
             // If the theme is a child theme then search the file in child theme
             if(get_template_directory() != get_stylesheet_directory())
             {
-                // Child theme overriden file
+                // Child theme overridden file
                 $child_theme_path = get_stylesheet_directory() .DS. 'webnus' .DS. MEC_DIRNAME .DS. $file;
 
                 /**
@@ -194,18 +207,18 @@ class MEC
                 }
             }
         }
-        
+
         // Return the file path without importing it
         if($return_path) return $path;
-        
+
         // Import the file and return override status
         if(file_exists($path)) require_once $path;
         return $overridden;
     }
-    
+
     /**
      * Load MEC language file from plugin language directory or WordPress language directory
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      */
     public function load_languages()
     {
@@ -215,10 +228,10 @@ class MEC
         {
             // Get current locale
             $locale = apply_filters('plugin_locale', get_locale(), 'modern-events-calendar-lite');
-            
-            // WordPress language directory /wp-content/languages/mec-en_US.mo
+
+            // WordPress' language directory /wp-content/languages/mec-en_US.mo
             $language_filepath = WP_LANG_DIR.DS.'modern-events-calendar-lite-'.$locale.'.mo';
-            
+
             // If language file exists on WordPress language directory use it
             if($file->exists($language_filepath))
             {
@@ -234,10 +247,10 @@ class MEC
         {
             // Get current locale
             $locale = apply_filters('plugin_locale', get_locale(), 'modern-events-calendar-lite');
-            
-            // WordPress language directory /wp-content/languages/mec-en_US.mo
+
+            // WordPress' language directory /wp-content/languages/mec-en_US.mo
             $language_filepath = WP_LANG_DIR.DS.'mec-'.$locale.'.mo';
-            
+
             // If language file exists on WordPress language directory use it
             if($file->exists($language_filepath))
             {
@@ -246,14 +259,18 @@ class MEC
             // Otherwise use MEC plugin directory /path/to/plugin/languages/mec-en_US.mo
             else
             {
-                load_plugin_textdomain('mec', false, dirname(plugin_basename(__FILE__)).DS.'languages'.DS);
+                // Plugin Language File
+                $plugin_file_path = MEC_ABSPATH.'languages'.DS.'mec-'.$locale.'.mo';
+
+                if ($file->exists($plugin_file_path)) load_textdomain('mec', $plugin_file_path);
+                else load_plugin_textdomain('mec', false, dirname(plugin_basename(__FILE__)).DS.'languages'.DS);
             }
         }
     }
-    
+
     /**
      * Load Single event full content
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      */
     public function single()
     {
@@ -261,10 +278,10 @@ class MEC
         $render = MEC::getInstance('app.libraries.render');
         return $render->vsingle(array('id'=>get_the_ID()));
     }
-    
+
     /**
      * Load category archive page
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      */
     public function category()
     {

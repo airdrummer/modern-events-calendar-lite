@@ -17,7 +17,7 @@ class MECDIVI_MECShortcodes extends ET_Builder_Module {
 
 	public function get_fields() {
 		$calendar_posts = get_posts(array('post_type'=>'mec_calendars', 'posts_per_page'=>'-1'));
-        $calendars = array();
+        $calendars = [];
 		foreach($calendar_posts as $calendar_post) $calendars[$calendar_post->ID] = $calendar_post->post_title;
 		
 		return array(
@@ -29,7 +29,7 @@ class MECDIVI_MECShortcodes extends ET_Builder_Module {
 			),
 		);
 	}
-	public function render(  $attrs, $content = null, $render_slug ) {
+	public function render(  $attrs, $content = NULL, $render_slug = NULL ) {
 		return do_shortcode('[MEC id="'.$this->props['shortcode_id'].'"]');
 	}
 }

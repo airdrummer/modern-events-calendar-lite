@@ -2,6 +2,8 @@
 /** no direct access **/
 defined('MECEXEC') or die();
 
+/** @var stdClass $event */
+
 // PRO Version is required
 if(!$this->getPRO()) return;
 
@@ -30,4 +32,4 @@ if(!$file->exists($file_path))
     $QRcode->png($url, $file_path, 'L', 4, 2);
 }
 
-echo $file_path;
+echo esc_html($file_path);

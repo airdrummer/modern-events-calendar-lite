@@ -1,6 +1,6 @@
-/*! Lity - v2.1.0 - 2016-09-19
+/*! Lity - v2.4.1 - 2020-04-26
 * http://sorgalla.com/lity/
-* Copyright (c) 2015-2016 Jan Sorgalla; Licensed MIT */
+* Copyright (c) 2015-2020 Jan Sorgalla; Licensed MIT */
 .lity {
   z-index: 9990;
   position: fixed;
@@ -10,7 +10,7 @@
   left: 0;
   white-space: nowrap;
   background: #0b0b0b;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.9);
   outline: none !important;
   opacity: 0;
   -webkit-transition: opacity 0.3s ease;
@@ -19,7 +19,6 @@
 }
 .lity.lity-opened {
   opacity: 1;
-  z-index: 9999999999;
 }
 .lity.lity-closed {
   opacity: 0;
@@ -111,11 +110,11 @@
 }
 .lity-close {
   z-index: 9994;
-  width: 60px;
-  height: 60px;
+  width: 35px;
+  height: 35px;
   position: fixed;
-  right: 15px;
-  top: 15px;
+  right: 0;
+  top: 0;
   -webkit-appearance: none;
   cursor: pointer;
   text-decoration: none;
@@ -123,17 +122,16 @@
   padding: 0;
   color: #fff;
   font-style: normal;
-  font-size: 32px;
+  font-size: 35px;
   font-family: Arial, Baskerville, monospace;
   line-height: 35px;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
   border: 0;
-  background: #000;
+  background: none;
   outline: none;
   -webkit-box-shadow: none;
-  box-shadow: none;
+          box-shadow: none;
 }
-
 .lity-close::-moz-focus-inner {
   border: 0;
   padding: 0;
@@ -142,9 +140,24 @@
 .lity-close:focus,
 .lity-close:active,
 .lity-close:visited {
-  background: #000;
+  text-decoration: none;
+  text-align: center;
+  padding: 0;
+  color: #fff;
+  font-style: normal;
+  font-size: 35px;
+  font-family: Arial, Baskerville, monospace;
+  line-height: 35px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  border: 0;
+  background: none;
+  outline: none;
+  -webkit-box-shadow: none;
+          box-shadow: none;
 }
-
+.lity-close:active {
+  top: 1px;
+}
 /* Image */
 .lity-image img {
   max-width: 100%;
@@ -156,6 +169,7 @@
 .lity-iframe .lity-container,
 .lity-youtube .lity-container,
 .lity-vimeo .lity-container,
+.lity-facebookvideo .lity-container,
 .lity-googlemaps .lity-container {
   width: 100%;
   max-width: 964px;

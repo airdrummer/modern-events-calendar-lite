@@ -3,35 +3,41 @@
 defined('MECEXEC') or die();
 
 /** @var MEC_main $this */
+/** @var stdClass $event */
 
 // MEC Settings
 $settings = $this->get_settings();
 
-// BuddyPress integration is disabled
-if(!isset($settings['bp_status']) or (isset($settings['bp_status']) and !$settings['bp_status'])) return;
-        
+// BuddyPress' integration is disabled
+if(!isset($settings['bp_status']) || !$settings['bp_status']) return;
+
 // Attendees Module is disabled
-if(!isset($settings['bp_attendees_module']) or (isset($settings['bp_attendees_module']) and !$settings['bp_attendees_module'])) return;
+if(!isset($settings['bp_attendees_module']) || !$settings['bp_attendees_module']) return;
 
 // BuddyPress is not installed or activated
-if(!function_exists('bp_activity_add')) return;
+if(!function_exists('is_plugin_active'))
+{
+    include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+}
+
+if(!(function_exists('bp_activity_add') || is_plugin_active('buddypress/bp-loader.php'))) return;
 
 $date = $event->date;
 $timestamp = (isset($date['start']) and isset($date['start']['timestamp'])) ? $date['start']['timestamp'] : current_time('timestamp');
 
-$limit = isset($settings['bp_attendees_module_limit']) ? $settings['bp_attendees_module_limit'] : 30;
+$limit = $settings['bp_attendees_module_limit'] ?? 30;
 $bookings = $this->get_bookings($event->data->ID, $timestamp, $limit);
 
 // Book Library
 $book = $this->getBook();
 
 // Start Date belongs to future but booking module cannot show so return without any output
-if(!$this->can_show_booking_module($event) and $timestamp > time()) return;
+if(!$this->can_show_booking_module($event) && $timestamp > time()) return;
 
-$attendees = array();
+$attendees = [];
 foreach($bookings as $booking)
 {
-    if(!isset($attendees[$booking->post_author])) $attendees[$booking->post_author] = array();
+    if(!isset($attendees[$booking->post_author])) $attendees[$booking->post_author] = [];
     $attendees[$booking->post_author][] = $booking->ID;
 }
 
@@ -39,9 +45,9 @@ foreach($bookings as $booking)
 $u = $this->getUser();
 ?>
 <div class="mec-attendees-list-details mec-frontbox" id="mec_attendees_list_details">
-    <h3 class="mec-attendees-list mec-frontbox-title"><?php _e('Event Attendees', 'modern-events-calendar-lite'); ?></h3>
+    <h3 class="mec-attendees-list mec-frontbox-title"><?php esc_html_e('Event Attendees', 'modern-events-calendar-lite'); ?></h3>
     <?php if(!count($attendees)): ?>
-    <p><?php _e('No attendee found! Be the first one to book!', 'modern-events-calendar-lite'); ?></p>
+    <p><?php esc_html_e('No attendee found! Be the first one to book!', 'modern-events-calendar-lite'); ?></p>
     <?php else: ?>
     <ul>
         <?php do_action('mec_attendeed_hook', $attendees); foreach($attendees as $attendee_id=>$attendee_bookings): ?>
@@ -62,13 +68,13 @@ $u = $this->getUser();
                 foreach($attendee_bookings as $booking_id) $total_attendees += $book->get_total_attendees($booking_id);
             ?>
             <div class="mec-attendee-profile-link">
-                <?php echo '<a href="'.$link.'">'.$name.'</a>' . '<span class="mec-attendee-profile-ticket-number mec-bg-color">'. $total_attendees .'</span>' . '<span class="mec-color-hover"> ' . esc_html__( 'tickets' , 'modern-events-calendar-lite' ) . '<i class="mec-sl-arrow-down"></i></span>' ; ?>
+                <?php echo '<a href="'.esc_url($link).'">'.esc_html($name).'</a>' . '<span class="mec-attendee-profile-ticket-number mec-bg-color">'. esc_html($total_attendees) .'</span>' . '<span class="mec-color-hover"> ' . esc_html__( 'tickets' , 'modern-events-calendar-lite') . '<i class="mec-sl-arrow-down"></i></span>' ; ?>
             </div>
 
             <!-- MEC BuddyPress Integration Attendees Modules -->
             <div class="mec-attendees-toggle mec-util-hidden">
             <?php
-                $un_attendees = array();
+                $un_attendees = [];
                 foreach($attendee_bookings as $booking_id)
                 {
                     $mec_attendees = get_post_meta($booking_id, 'mec_attendees', true);
@@ -76,7 +82,7 @@ $u = $this->getUser();
                     {
                         if(!is_numeric($mec_attendee_key)) continue;
 
-                        $email = isset($mec_attendee['email']) ? $mec_attendee['email'] : NULL;
+                        $email = $mec_attendee['email'] ?? NULL;
                         if(!$email) continue;
 
                         if(!isset($un_attendees[$email])) $un_attendees[$email] = $mec_attendee;

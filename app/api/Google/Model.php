@@ -28,9 +28,9 @@ class Google_Model implements ArrayAccess
    * instead - it will be replaced when converting to JSON with a real null.
    */
   const NULL_VALUE = "{}gapi-php-null";
-  protected $internal_gapi_mappings = array();
-  protected $modelData = array();
-  protected $processed = array();
+  protected $internal_gapi_mappings = [];
+  protected $modelData = [];
+  protected $processed = [];
 
   /**
    * Polymorphic - accepts a variable number of arguments dependent
@@ -60,7 +60,7 @@ class Google_Model implements ArrayAccess
         $val = $this->modelData[$key];
       } else if (isset($this->$keyDataType) &&
           ($this->$keyDataType == 'array' || $this->$keyDataType == 'map')) {
-        $val = array();
+        $val = [];
       } else {
         $val = null;
       }
@@ -75,7 +75,7 @@ class Google_Model implements ArrayAccess
           $this->modelData[$key] = $this->createObjectFromName($keyTypeName, $val);
         }
       } else if (is_array($val)) {
-        $arrayObject = array();
+        $arrayObject = [];
         foreach ($val as $arrayIndex => $arrayItem) {
           $arrayObject[$arrayIndex] =
             $this->createObjectFromName($keyTypeName, $arrayItem);
@@ -163,7 +163,7 @@ class Google_Model implements ArrayAccess
     if ($value instanceof Google_Model) {
       return $value->toSimpleObject();
     } else if (is_array($value)) {
-      $return = array();
+      $return = [];
       foreach ($value as $key => $a_value) {
         $a_value = $this->getSimpleValue($a_value);
         if ($a_value !== null) {
@@ -246,11 +246,19 @@ class Google_Model implements ArrayAccess
     }
   }
 
+    /**
+     * @param mixed $offset
+     * @return bool
+     */
   public function offsetExists($offset)
   {
     return isset($this->$offset) || isset($this->modelData[$offset]);
   }
 
+    /**
+     * @param mixed $offset
+     * @return mixed
+     */
   public function offsetGet($offset)
   {
     return isset($this->$offset) ?
@@ -258,6 +266,11 @@ class Google_Model implements ArrayAccess
         $this->__get($offset);
   }
 
+    /**
+     * @param mixed $offset
+     * @param mixed $value
+     * @return void
+     */
   public function offsetSet($offset, $value)
   {
     if (property_exists($this, $offset)) {
@@ -268,6 +281,10 @@ class Google_Model implements ArrayAccess
     }
   }
 
+    /**
+     * @param mixed $offset
+     * @return void
+     */
   public function offsetUnset($offset)
   {
     unset($this->modelData[$offset]);

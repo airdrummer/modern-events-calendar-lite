@@ -3,7 +3,7 @@
 defined('MECEXEC') or die();
 
 /**
- * @author Webnus <info@webnus.biz>
+ * @author Webnus <info@webnus.net>
  */
 class MEC_feature_search extends MEC_base
 {
@@ -29,7 +29,7 @@ class MEC_feature_search extends MEC_base
 
     /**
      * Constructor method
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      */
     public function __construct()
     {
@@ -48,7 +48,7 @@ class MEC_feature_search extends MEC_base
     
     /**
      * Initialize search feature
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      */
     public function init()
     {
@@ -60,7 +60,7 @@ class MEC_feature_search extends MEC_base
             $this->factory->action('wp_ajax_mec_get_ajax_search_data', array($this, 'mec_get_ajax_search_data'));
             $this->factory->action('wp_ajax_nopriv_mec_get_ajax_search_data', array($this, 'mec_get_ajax_search_data'));
         }
-        else
+        elseif(!is_admin())
         {
             $this->factory->filter('pre_get_posts', array($this, 'mec_search_filter'));
         }
@@ -88,37 +88,37 @@ class MEC_feature_search extends MEC_base
         {
             // Message Category
             case 'category':
-                $taxonomy_name = $this->main->m('taxonomy_category', __('Category', 'modern-events-calendar-lite'));
+                $taxonomy_name = $this->main->m('taxonomy_category', esc_html__('Category', 'modern-events-calendar-lite'));
                 $taxonomy_key = 'category';
                 break;
 
             // Message Location
             case 'location':
-                $taxonomy_name = $this->main->m('taxonomy_location', __('Location', 'modern-events-calendar-lite'));
+                $taxonomy_name = $this->main->m('taxonomy_location', esc_html__('Location', 'modern-events-calendar-lite'));
                 $taxonomy_key = 'location';
                 break;
 
             // Message Organizer
             case 'organizer':
-                $taxonomy_name = $this->main->m('taxonomy_organizer', __('Organizer', 'modern-events-calendar-lite'));
+                $taxonomy_name = $this->main->m('taxonomy_organizer', esc_html__('Organizer', 'modern-events-calendar-lite'));
                 $taxonomy_key = 'organizer';
                 break;
 
             // Message Organizer
             case 'speaker':
-                $taxonomy_name = $this->main->m('taxonomy_speaker', __('Speaker', 'modern-events-calendar-lite'));
+                $taxonomy_name = $this->main->m('taxonomy_speaker', esc_html__('Speaker', 'modern-events-calendar-lite'));
                 $taxonomy_key = 'speaker';
                 break;
 
             // Message Tag
             case 'tag':
-                $taxonomy_name =  __('Tag', 'modern-events-calendar-lite');
+                $taxonomy_name =  esc_html__('Tag', 'modern-events-calendar-lite');
                 $taxonomy_key = 'tag';
                 break;
 
             // Message label
             case 'label':
-                $taxonomy_name = $this->main->m('taxonomy_label', __('Label', 'modern-events-calendar-lite'));
+                $taxonomy_name = $this->main->m('taxonomy_label', esc_html__('Label', 'modern-events-calendar-lite'));
                 $taxonomy_key = 'label';
                 break;
 
@@ -129,7 +129,7 @@ class MEC_feature_search extends MEC_base
                 break;
         }
 
-        $out .= '<div class="mec-dropdown-search"><i class="mec-sl-'.$icon.'"></i>';
+        $out .= '<div class="mec-dropdown-search"><i class="mec-sl-'.esc_attr($icon).'"></i>';
         $args = array(
             'show_option_none'   => $taxonomy_name,
             'option_none_value'  => '',
@@ -153,14 +153,14 @@ class MEC_feature_search extends MEC_base
 
     public function mec_get_ajax_search_data()
     {
-        if($_POST['length'] < '3')
+        if(sanitize_text_field($_POST['length']) < '3')
         {
-            _e('Please enter at least 3 characters and try again', 'modern-events-calendar-lite');
+            esc_html_e('Please enter at least 3 characters and try again', 'modern-events-calendar-lite');
             die();
         }
 
         $mec_tag_query = NULL;
-        $mec_queries = array();
+        $mec_queries = [];
 
         if(!empty($_POST['location']))
         {
@@ -206,10 +206,25 @@ class MEC_feature_search extends MEC_base
             );
         }
 
+        // Tag Method
+        $tag_method = $this->settings['tag_method'] ?? 'post_tag';
+
         if(!empty($_POST['tag']))
         {
-            $term = get_term_by('id', sanitize_text_field($_POST['tag']), apply_filters('mec_taxonomy_tag', ''));
-            if($term) $mec_tag_query = $term->slug;
+            if($tag_method === 'post_tag')
+            {
+                $term = get_term_by('id', sanitize_text_field($_POST['tag']), apply_filters('mec_taxonomy_tag', ''));
+                if($term) $mec_tag_query = $term->slug;
+            }
+            else
+            {
+                $mec_queries[] = array(
+                    'taxonomy' => apply_filters('mec_taxonomy_tag', ''),
+                    'field' => 'id',
+                    'terms' => array(sanitize_text_field($_POST['tag'])),
+                    'operator' => 'IN'
+                );
+            }
         }
 
         if(!empty($_POST['label']))
@@ -225,14 +240,15 @@ class MEC_feature_search extends MEC_base
 
         $args = array(
             'tax_query' => $mec_queries,
-            's' => esc_attr($_POST['keyword']),
+            's' => sanitize_text_field($_POST['keyword']),
             'post_type' => $this->main->get_main_post_type(),
             'post_status' => array('publish'),
         );
 
-        if($mec_tag_query) $args['tag'] = $mec_tag_query;
-        $the_query = new WP_Query($args);
+        if($tag_method === 'post_tag' && $mec_tag_query) $args['tag'] = $mec_tag_query;
 
+        // Query
+        $the_query = new WP_Query($args);
         if($the_query->have_posts())
         {
             while($the_query->have_posts())
@@ -253,8 +269,8 @@ class MEC_feature_search extends MEC_base
 
     /**
      * Search Filter
-     * @param object $query
-     * @return string
+     * @param WP_Query $query
+     * @return WP_Query $query
      */
     public function mec_search_filter($query)
     {
@@ -271,15 +287,15 @@ class MEC_feature_search extends MEC_base
         if((is_array($query->get('post_type')) and !in_array($this->main->get_main_post_type(), $query->get('post_type'))) or (!is_array($query->get('post_type')) and $query->get('post_type') != 'mec-events')) return $query;
 
         $mec_tag_query = NULL;
-        $mec_queries = array();
+        $mec_queries = [];
 
         if(!empty($_GET['location']))
         {
             $mec_queries[] = array(
                 'taxonomy' => 'mec_location',
                 'field' => 'id',
-                'terms' => array($_GET['location']),
-                'operator'=> 'IN'
+                'terms' => array(sanitize_text_field($_GET['location'])),
+                'operator' => 'IN'
             );
         }
 
@@ -288,8 +304,8 @@ class MEC_feature_search extends MEC_base
             $mec_queries[] = array(
                 'taxonomy' => 'mec_category',
                 'field' => 'id',
-                'terms' => array($_GET['category']),
-                'operator'=> 'IN'
+                'terms' => array(sanitize_text_field($_GET['category'])),
+                'operator' => 'IN'
             );
         }
 
@@ -298,8 +314,8 @@ class MEC_feature_search extends MEC_base
             $mec_queries[] = array(
                 'taxonomy' => 'mec_organizer',
                 'field' => 'id',
-                'terms' => array($_GET['organizer']),
-                'operator'=> 'IN'
+                'terms' => array(sanitize_text_field($_GET['organizer'])),
+                'operator' => 'IN'
             );
         }
 
@@ -308,15 +324,30 @@ class MEC_feature_search extends MEC_base
             $mec_queries[] = array(
                 'taxonomy' => 'mec_speaker',
                 'field' => 'id',
-                'terms' => array($_GET['speaker']),
-                'operator'=> 'IN'
+                'terms' => array(sanitize_text_field($_GET['speaker'])),
+                'operator' => 'IN'
             );
         }
 
+        // Tag Method
+        $tag_method = $this->settings['tag_method'] ?? 'post_tag';
+
         if(!empty($_GET['tag']))
         {
-            $term = get_term_by('id', $_GET['tag'], apply_filters('mec_taxonomy_tag', ''));
-            if($term) $mec_tag_query = $term->slug;
+            if($tag_method === 'post_tag')
+            {
+                $term = get_term_by('id', sanitize_text_field($_GET['tag']), apply_filters('mec_taxonomy_tag', ''));
+                if($term) $mec_tag_query = $term->slug;
+            }
+            else
+            {
+                $mec_queries[] = array(
+                    'taxonomy' => apply_filters('mec_taxonomy_tag', ''),
+                    'field' => 'id',
+                    'terms' => array(sanitize_text_field($_GET['tag'])),
+                    'operator' => 'IN'
+                );
+            }
         }
 
         if(!empty($_GET['label']))
@@ -324,13 +355,23 @@ class MEC_feature_search extends MEC_base
             $mec_queries[] = array(
                 'taxonomy' => 'mec_label',
                 'field' => 'id',
-                'terms' => array($_GET['label']),
-                'operator'=> 'IN'
+                'terms' => array(sanitize_text_field($_GET['label'])),
+                'operator' => 'IN'
             );
         }
 
-        if($mec_tag_query) $query->set('tag', $mec_tag_query);
-        if(count($mec_queries)) $query->set('tax_query', $mec_queries);
+        if($mec_tag_query and $tag_method === 'post_tag') $query->set('tag', $mec_tag_query);
+        else
+        {
+            $query->set('tag', null);
+            $query->set('tag_slug__in', null);
+        }
+
+        if(count($mec_queries))
+        {
+            $query->set('tax_query', $mec_queries);
+            $query->tax_query = $mec_queries;
+        }
 
         return $query;
     }
