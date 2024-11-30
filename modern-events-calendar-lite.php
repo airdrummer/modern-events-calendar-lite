@@ -33,7 +33,7 @@ if (!defined('MECEXEC')) {
     define('MEC_BASENAME', plugin_basename(__FILE__)); // modern-events-calendar/mec.php
 
     /** Plugin Version **/
-    define('MEC_VERSION', '7.17.1');
+    define('MEC_VERSION', '7.17.1.1');
 
     /** API URL **/
     define('MEC_API_ACTIVATION', 'https://my.webnus.net/api/v3');

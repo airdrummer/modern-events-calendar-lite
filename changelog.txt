@@ -1,4 +1,7 @@
-﻿v 7.17.1 – 30 November 2024
+v 7.17.1.1 – 30 November 2024 
+- fix countdown
+
+v 7.17.1 – 30 November 2024
 - Fixed: An issue with bookings export.
 
 v 7.17.0 – 24 November 2024
