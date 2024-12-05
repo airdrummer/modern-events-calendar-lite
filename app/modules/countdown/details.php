@@ -80,7 +80,7 @@ if ( $ongoing )
 	$datetime = $end_time;
     $cd2 = "ends in";
 }
-else if (!$disable_for_ongoing or $countdown_method == 'end')
+else if (!$disable_for_ongoing and $countdown_method == 'end')
 {
 	$datetime = $end_time;
     $cd2 = "ends in";

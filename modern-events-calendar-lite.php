@@ -8,7 +8,7 @@
  *   Author URI: https://webnus.net
  *   Developer: Webnus
  *   Developer URI: https://webnus.net
- *   Version: 7.17.1
+ *   Version: 7.17.1.1
  *   Text Domain: modern-events-calendar-lite
  *   Domain Path: /languages
  **/
