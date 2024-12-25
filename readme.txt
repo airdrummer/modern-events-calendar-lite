@@ -1,4 +1,4 @@
-﻿=== Modern Events Calendar Lite ===
+=== Modern Events Calendar Lite ===
 Contributors: webnus
 Donate link: https://webnus.net
 Tags: Event, Events, Calendar, Booking, Schedule, Organizer, Venue
@@ -472,6 +472,9 @@ You can see [plugin documentation](https://webnus.net/dox/modern-events-calendar
 43. WordPress Event Calendar - Daily view(Fluent View Layouts Addon)
 
 == Changelog ==
+v 7.18.1 – 25 December 2024 
+- fix countdown
+
 = v 7.18.0 – 23 December 2024 =
 - Added: An ability to insert full data of sponsors in Frontend Submission.
 - Added: An ability to insert full data of speakers in Frontend Submission.

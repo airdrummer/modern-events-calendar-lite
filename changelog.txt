@@ -1,4 +1,7 @@
-﻿v 7.18.0 – 23 December 2024
+v 7.18.1 – 25 December 2024 
+- fix countdown
+
+v 7.18.0 – 23 December 2024
 - Added: An ability to insert full data of sponsors in Frontend Submission.
 - Added: An ability to insert full data of speakers in Frontend Submission.
 - Added: Login command to the restful API.
