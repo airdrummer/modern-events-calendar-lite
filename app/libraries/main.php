@@ -1799,7 +1799,7 @@ class MEC_main extends MEC_base
         // Never End
         if ($point <= 0) return false;
 
-        return ($equal ? $date >= $point : $date > $point);
+        return $equal ? $date >= $point : $date > $point;
     }
 
     /**
@@ -6547,7 +6547,7 @@ class MEC_main extends MEC_base
         $main_node = array_keys($data);
 
         // Creating SimpleXMLElement object
-        $xml = new SimpleXMLElement('<?xml version="1.0"?><' . $main_node[0] . '></' . $main_node[0] . '>');
+        $xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><' . $main_node[0] . '></' . $main_node[0] . '>');
 
         // Convert array to xml
         $this->array_to_xml($data[$main_node[0]], $xml);
@@ -6568,7 +6568,7 @@ class MEC_main extends MEC_base
                 $subnode = $xml->addChild($key);
                 $this->array_to_xml($value, $subnode);
             } else {
-                $xml->addChild($key, ($value ? htmlspecialchars($value) : $value));
+                $xml->addChild($key, ($value ? htmlspecialchars($value, ENT_XML1, 'UTF-8') : $value));
             }
         }
     }
@@ -10631,5 +10631,16 @@ class MEC_main extends MEC_base
         }
 
         return strip_tags(strip_shortcodes(get_post_field('post_content', $post_id)));
+    }
+
+    public static function str_random($length): string
+    {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $count = strlen($characters);
+
+        $string = '';
+        for ($i = 0; $i < $length; $i++) $string .= $characters[rand(0, $count - 1)];
+
+        return $string;
     }
 }

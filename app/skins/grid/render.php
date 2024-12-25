@@ -229,7 +229,7 @@ if($this->style == 'colorful')
                     <?php endif; ?>
                     <?php
                         if($this->include_events_times and trim($start_time)) echo MEC_kses::element($this->main->display_time($start_time, $end_time, array('class' => 'mec-event-detail')));
-                        if(isset($location['address'])) echo '<div class="mec-event-address">'.esc_html($location['address']).'</div>';
+                        if(isset($location['address']) && !empty($location['address'])) echo '<div class="mec-event-address">'.esc_html($location['address']).'</div>';
                         if($this->localtime) echo MEC_kses::full($this->main->module('local-time.type1', array('event' => $event, 'display_svg' => true )));
                         echo MEC_kses::element($this->display_categories($event));
                         echo MEC_kses::element($this->display_organizers($event));

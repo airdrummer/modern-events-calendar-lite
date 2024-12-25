@@ -39,11 +39,14 @@ $type_link=$settings['advanced_speaker']['speaker_type_link']??'dialog';
                     $type_link='';
                     echo 'mec-speaker-avatar-dialog';
                 } ?>">
-                <?php if (is_plugin_active('mec-advanced-speaker/mec-advanced-speaker.php') && ($settings['advanced_speaker']['speaker_enable_link_section_title'] ?? false) && $type_link=='link'): ?>
-                    <a class="mec-color-hover" href="<?php echo get_permalink( $settings['advanced_speaker']['single_page'] ).'?fesection=speaker&feparam='.esc_attr($speaker['id']); ?>" target="<?php echo $settings['advanced_speaker']['speaker_link_target'];?>">
-                <?php else: ?>
+                <?php if (is_plugin_active('mec-advanced-speaker/mec-advanced-speaker.php') && ($settings['advanced_speaker']['speaker_enable_link_section_title'] ?? false) && $type_link=='link'){
+                    $skin = new \MEC_Advanced_Speaker\Core\Lib\MEC_Advanced_Speaker_Lib_Skin();
+                    $speaker_link = $skin->single_page_url($speaker['id']);
+                ?>
+                    <a class="mec-color-hover" href="<?php echo $speaker_link;?>" target="<?php echo $settings['advanced_speaker']['speaker_link_target'];?>">
+                <?php }else {?>
                     <a class="mec-color-hover" href="#mec-speaker-info-<?php echo esc_attr($event->ID.'-'.$speaker['id']); ?>">
-                <?php endif; ?>
+                <?php } ?>
                     <?php if(isset($speaker['thumbnail']) and trim($speaker['thumbnail'])): ?>
                         <?php if (class_exists('MEC_Fluent\Core\pluginBase\MecFluent') && (isset($settings['single_single_style']) and $settings['single_single_style'] == 'fluent')) { ?>
                             <img class="mec-border-color-hover" src="<?php echo esc_url(MEC_Fluent\Core\pluginBase\MecFluent::generateCustomThumbnailURL($speaker['thumbnail'], 60, 60, true)); ?>" alt="<?php echo esc_attr($speaker['name']); ?>">

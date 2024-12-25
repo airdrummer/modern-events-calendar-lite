@@ -112,9 +112,22 @@ if(is_array($fonts))
                                 </div>
                             </div>
                             <div class="mec-form-row">
+                                <label class="mec-col-3" for="mec_styling_wrapper_edge-radius"><?php esc_html_e('Primary border-radius', 'modern-events-calendar-lite'); ?></label>
+                                <div class="mec-col-9">
+                                    <input type="text" id="mec_styling_wrapper_edge-radius" name="mec[styling][primary_border_radius]" value="<?php echo ((isset($styling['container_normal_width']) and trim($styling['container_normal_width']) != '') ? $styling['container_normal_width'] : ''); ?>" />
+                                    <span class="mec-tooltip">
+                                        <div class="box left">
+                                            <h5 class="title"><?php esc_html_e('Primary border-radius', 'modern-events-calendar-lite'); ?></h5>
+                                            <div class="content"><p><?php esc_attr_e('Customize the border-radius for wrappers, event items and event modules', 'modern-events-calendar-lite'); ?></p></div>
+                                        </div>
+                                        <i title="" class="dashicons-before dashicons-editor-help"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="mec-form-row">
                                 <label class="mec-col-3" for="mec_styling_dark_mode"><?php esc_html_e('Dark Mode', 'modern-events-calendar-lite'); ?></label>
                                 <div class="mec-col-9">
-                                    <label id="mec_styling_dark_mode" >                                                
+                                    <label id="mec_styling_dark_mode" >
                                         <input type="hidden" name="mec[styling][dark_mode]" value="0" />
                                         <input value="1" type="checkbox" id="mec_styling_dark_mode" name="mec[styling][dark_mode]" <?php if(isset($styling['dark_mode']) and $styling['dark_mode']) echo 'checked="checked"'; ?> /><?php esc_html_e('Enable', 'modern-events-calendar-lite'); ?>
                                     </label>

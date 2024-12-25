@@ -71,6 +71,34 @@ class MEC_feature_restful extends MEC_base
                 ],
             ],
         ]);
+
+        // Login Controller
+        register_rest_route($this->restful->get_namespace(), 'login', [
+            'methods' => 'POST',
+            'callback' => [$this, 'login'],
+            'permission_callback' => [$this->restful, 'guest'],
+        ]);
+
+        // My Events
+        register_rest_route($this->restful->get_namespace(), 'my-events', [
+            'methods' => 'GET',
+            'callback' => [$this, 'my'],
+            'permission_callback' => [$this->restful, 'permission'],
+        ]);
+
+        // Trash Event
+        register_rest_route($this->restful->get_namespace(), 'events/(?P<id>\d+)/trash', [
+            'methods' => 'DELETE',
+            'callback' => [$this, 'trash'],
+            'permission_callback' => [$this->restful, 'permission'],
+        ]);
+
+        // Delete Event
+        register_rest_route($this->restful->get_namespace(), 'events/(?P<id>\d+)', [
+            'methods' => 'DELETE',
+            'callback' => [$this, 'delete'],
+            'permission_callback' => [$this->restful, 'permission'],
+        ]);
     }
 
     public function events(WP_REST_Request $request)
@@ -217,6 +245,156 @@ class MEC_feature_restful extends MEC_base
         // Response
         return $this->restful->response([
             'data' => isset($events[0]) && is_object($events[0]) ? $events[0] : new stdClass(),
+        ]);
+    }
+
+    public function login(WP_REST_Request $request)
+    {
+        $vars = $request->get_params();
+
+        $username = $vars['username'] ?? '';
+        $password = $vars['password'] ?? '';
+
+        // Login
+        $response = wp_signon([
+            'user_login' => $username,
+            'user_password' => $password,
+            'remember' => false,
+        ], is_ssl());
+
+        // Invalid Credentials
+        if (is_wp_error($response)) return $response;
+
+        // Response
+        return $this->restful->response([
+            'data' => [
+                'success' => 1,
+                'id' => $response->ID,
+                'token' => $this->restful->get_user_token($response->ID),
+            ],
+            'status' => 200,
+        ]);
+    }
+
+    public function my(WP_REST_Request $request)
+    {
+        $limit = $request->get_param('limit');
+        if (!$limit) $limit = 12;
+
+        if (!is_numeric($limit))
+        {
+            return $this->restful->response([
+                'data' => new WP_Error(400, esc_html__('Limit parameter must be numeric!', 'modern-events-calendar-lite')),
+                'status' => 400,
+            ]);
+        }
+
+        // Get Current User
+        $user = wp_get_current_user();
+
+        // Invalid User
+        if (is_wp_error($user)) return $user;
+
+        // Page
+        $paged = $request->get_param('paged');
+        if (!$paged) $paged = 1;
+
+        // The Query
+        $query = new WP_Query([
+            'post_type' => $this->getMain()->get_main_post_type(),
+            'posts_per_page' => $limit,
+            'paged' => $paged,
+            'post_status' => ['pending', 'draft', 'future', 'publish'],
+            'author' => get_current_user_id()
+        ]);
+
+        $events = [];
+        while($query->have_posts())
+        {
+            $query->the_post();
+
+            $events[] = [
+                'id' => get_the_ID(),
+                'title' => get_the_title(),
+                'url' => get_the_permalink(),
+                'status' => get_post_status(),
+            ];
+        }
+
+        wp_reset_postdata();
+
+        // Response
+        return $this->restful->response([
+            'data' => [
+                'events' => $events,
+                'pagination' => [
+                    'current_page' => $paged,
+                    'total_pages' => $query->max_num_pages,
+                ],
+            ],
+            'status' => 200,
+        ]);
+    }
+
+    public function trash(WP_REST_Request $request): WP_REST_Response
+    {
+        $id = $request->get_param('id');
+
+        // Current User is not Authorized to Delete this Event
+        if (!current_user_can('delete_post', $id)) return $this->restful->response([
+            'data' => new WP_Error('401', esc_html__("You're not authorized to trash this event!", 'modern-events-calendar-lite')),
+            'status' => 401,
+        ]);
+
+        // Event
+        $event = get_post($id);
+
+        // Not Found!
+        if (!$event || (isset($event->post_type) && $event->post_type !== $this->getMain()->get_main_post_type())) return $this->restful->response([
+            'data' => new WP_Error('404', esc_html__('Event not found!', 'modern-events-calendar-lite')),
+            'status' => 404,
+        ]);
+
+        // Trash
+        wp_trash_post($id);
+
+        // Response
+        return $this->restful->response([
+            'data' => [
+                'success' => 1,
+            ],
+            'status' => 200,
+        ]);
+    }
+
+    public function delete(WP_REST_Request $request): WP_REST_Response
+    {
+        $id = $request->get_param('id');
+
+        // Current User is not Authorized to Delete this Event
+        if (!current_user_can('delete_post', $id)) return $this->restful->response([
+            'data' => new WP_Error('401', esc_html__("You're not authorized to delete this event!", 'modern-events-calendar-lite')),
+            'status' => 401,
+        ]);
+
+        // Event
+        $event = get_post($id);
+
+        // Not Found!
+        if (!$event || (isset($event->post_type) && $event->post_type !== $this->getMain()->get_main_post_type())) return $this->restful->response([
+            'data' => new WP_Error('404', esc_html__('Event not found!', 'modern-events-calendar-lite')),
+            'status' => 404,
+        ]);
+
+        // Delete
+        wp_delete_post($id, true);
+
+        // Response
+        return $this->restful->response([
+            'data' => [
+                'success' => 1,
+            ],
+            'status' => 200,
         ]);
     }
 }

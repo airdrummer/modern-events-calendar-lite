@@ -471,6 +471,9 @@ body.toplevel_page_mec-intro #webnus-dashboard .mec-cmsg-2-notification-box-wrap
   background: #fff;
   vertical-align: top;
   border-radius: 4px;
+  height: 30px;
+  line-height: 30px;
+  margin-bottom: 0;
   box-shadow: 0 3px 10px -1px rgb(0 0 0 / 1%);
   transition: all 0.2s ease;
 }
@@ -1236,11 +1239,6 @@ body.post-type-mec-books th.column-author {
 
 .post-type-mec-events .mec-form-row {
   padding: 0 0 20px 0;
-}
-
-.mec-form-row .mec-col-3 {
-  margin: 0;
-  padding-right: 10px;
 }
 
 .mec-form-row label.mec-col-3 {
@@ -7178,11 +7176,17 @@ a.mec-create-shortcode-tabs-link {
   min-height: 60px;
 }
 
+.mec-form-row .wp-picker-container {
+  margin: 4px 0;
+  vertical-align: top;
+}
+
 .mec-form-row .wp-picker-container input[type="text"].wp-color-picker {
-  height: 25px;
+  min-height: 30px;
+  height: 30px;
   vertical-align: top;
   width: 4rem;
-  margin: -1px 0 0 0 !important;
+  margin: 0 !important;
 }
 
 .mec-form-row .wp-picker-container label {
@@ -13938,4 +13942,8 @@ body[class*="page_MEC-settings"] .mec-new-addons-wrap .mec-addons-notification-b
 #mec_restful_container_toggle .mec-api-key-wrapper code {
   line-height: 38px;
   margin-left: 20px;
+}
+
+.mec-form-row.mec-zoom-event-type label {
+  margin-right: 30px;
 }

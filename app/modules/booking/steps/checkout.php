@@ -100,17 +100,17 @@ $paid_booking = !$free_booking;
             </div>
         <?php endif; ?>
         <?php if(isset($price_details['details']) and is_array($price_details['details']) and count($price_details['details'])): ?>
-            <div class="mec-book-price-details">
+            <ul class="mec-book-price-details">
                 <?php foreach($price_details['details'] as $detail): ?>
-                    <div class="mec-book-price-detail mec-book-price-detail-type-<?php echo esc_attr($detail['type']); ?>">
+                    <li class="mec-book-price-detail mec-book-price-detail-type-<?php echo esc_attr($detail['type']); ?>">
                         <?php if($detail['type'] === 'tickets'): ?><span class="mec-book-price-detail-icon"><?php echo $this->main->svg('form/subtotal-icon'); ?></span><?php endif; ?>
                             <div class="mec-ticket-name-description-wrapper">
                             <span class="mec-book-price-detail-description"><?php echo MEC_kses::element($detail['description']); ?></span>
                             <span class="mec-book-price-detail-amount"><?php echo MEC_kses::element($this->main->render_price($detail['amount'], $requested_event_id)); ?></span>
                         </div>
-                    </div>
+                    </li>
                 <?php endforeach; ?>
-            </div>
+            </ul>
         <?php endif; ?>
         <div class="mec-book-price-total">
             <span class="mec-book-price-total-description"><?php esc_html_e('Total Due', 'modern-events-calendar-lite'); ?></span>

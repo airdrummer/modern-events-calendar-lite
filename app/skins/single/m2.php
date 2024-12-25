@@ -52,15 +52,18 @@ $organizer = ($organizer_id ? $this->main->get_organizer_data($organizer_id) : a
                         <dl>
                         <?php if(isset($organizer['thumbnail'])): ?>
                         <dd class="mec-organizer">
-                            <?php if( is_plugin_active('mec-advanced-organizer/mec-advanced-organizer.php') && ( $settings['advanced_organizer']['organizer_enable_link_section_title'] ?? false ) ): ?>
-                                <a href="<?php echo get_permalink( $settings['advanced_organizer']['single_page'] ).'?fesection=organizer&feparam='.$organizer['id']; ?>" target="<?php echo $settings['advanced_organizer']['organizer_link_target']; ?>">
+                            <?php if( is_plugin_active('mec-advanced-organizer/mec-advanced-organizer.php') && ( $settings['advanced_organizer']['organizer_enable_link_section_title'] ?? false ) ){
+                                $skin = new \MEC_Advanced_Organizer\Core\Lib\MEC_Advanced_Organizer_Lib_Skin();
+                                $organizer_link = $skin->single_page_url($organizer['id']);
+                                ?>
+                                <a href="<?php echo $organizer_link;?>" target="<?php echo $settings['advanced_organizer']['organizer_link_target']; ?>">
                                     <i class="mec-sl-link"></i>
                                     <h6><?php echo (isset($organizer['name']) ? esc_html($organizer['name']) : ''); ?></h6>
                                 </a>
-                            <?php else: ?>
+                            <?php }else{ ?>
                                 <?php echo $this->icons->display('home'); ?>
                                 <h6><?php echo (isset($organizer['name']) ? esc_html($organizer['name']) : ''); ?></h6>
-                            <?php endif; ?>
+                            <?php } ?>
                         </dd>
                         <?php endif;
                         if(isset($organizer['tel']) && !empty($organizer['tel'])): ?>

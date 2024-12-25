@@ -660,4 +660,20 @@ class MEC_feature_occurrences extends MEC_base
 
         return $title;
     }
+
+    public static function copy($master_id, $destination_id)
+    {
+        $occ = new MEC_feature_occurrences();
+        $occurrences = $occ->get_all_occurrences($master_id);
+
+        foreach ($occurrences as $o)
+        {
+            $new_id = $occ->db->q("INSERT INTO `#__mec_occurrences` (`post_id`, `occurrence`, `params`) VALUES ('".esc_sql($destination_id)."', '".esc_sql($o['occurrence'])."', '".esc_sql($o['params'])."')", 'INSERT');
+
+            $params = json_decode($o['params'], true);
+            $params['id'] = (string) $new_id;
+
+            $occ->db->q("UPDATE `#__mec_occurrences` SET `params`='".json_encode($params)."' WHERE `id`='".esc_sql($new_id)."'");
+        }
+    }
 }

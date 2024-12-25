@@ -1,10 +1,10 @@
-=== Modern Events Calendar Lite ===
+﻿=== Modern Events Calendar Lite ===
 Contributors: webnus
 Donate link: https://webnus.net
 Tags: Event, Events, Calendar, Booking, Schedule, Organizer, Venue
 Requires at least: 4.0.0
 Tested up to: 6.7.1
-Stable tag: 7.17.1.1
+Stable tag: 7.18.0
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -472,8 +472,23 @@ You can see [plugin documentation](https://webnus.net/dox/modern-events-calendar
 43. WordPress Event Calendar - Daily view(Fluent View Layouts Addon)
 
 == Changelog ==
-= v 7.17.1.1 – 30 November 2024 
-- fix countdown
+= v 7.18.0 – 23 December 2024 =
+- Added: An ability to insert full data of sponsors in Frontend Submission.
+- Added: An ability to insert full data of speakers in Frontend Submission.
+- Added: Login command to the restful API.
+- Added: Trash event command to the restful API.
+- Added: Delete event command to the restful API.
+- Added: My events command to the restful API.
+- Added: An option to restrict MEC coupon codes to be applicable only for one booking in MEC cart.
+- Added: An option to change the primary border-radius in settings.
+- Improved: The Edit Per Occurrence option to be compatible with WPML.
+- Improved: The MEC translation option.
+- Improved: The search bar by adding enhanced drop-downs.
+- Improved: The PayPal standard gateway.
+- Fixed: An issue with importing custom days events using .ics file.
+- Fixed: An issue in XML export.
+- Fixed: An issue in weekly skin regarding displaying the active day.
+- Fixed: Some issues in countdown skin.
 
 = v 7.17.1 – 30 November 2024 =
 - Fixed: An issue with bookings export.

@@ -178,6 +178,30 @@ jQuery(document).ready(function($)
         $('#mec_fes_organizer_remove_image_button').addClass('mec-util-hidden');
     });
 
+    // Sponsor Image remover on frontend event submission menu
+    $('#mec_fes_sponsor_remove_image_button').click(function(event)
+    {
+        event.preventDefault();
+
+        $('#mec_fes_sponsor_thumbnail_img').html('');
+        $('#mec_fes_sponsor_thumbnail').val('');
+        $('#mec_fes_sponsor_thumbnail_file').val('');
+
+        $('#mec_fes_sponsor_remove_image_button').addClass('mec-util-hidden');
+    });
+
+    // Speaker Image remover on frontend event submission menu
+    $('#mec_fes_speaker_remove_image_button').click(function(event)
+    {
+        event.preventDefault();
+
+        $('#mec_fes_speaker_thumbnail_img').html('');
+        $('#mec_fes_speaker_thumbnail').val('');
+        $('#mec_fes_speaker_thumbnail_file').val('');
+
+        $('#mec_fes_speaker_remove_image_button').addClass('mec-util-hidden');
+    });
+
     var date_splite;
     if(typeof mec_admin_localize !== 'undefined')
     {

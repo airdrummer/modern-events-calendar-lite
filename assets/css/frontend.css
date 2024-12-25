@@ -6,14 +6,6 @@
 	License: GNU General Public License
 /*-----------------------------------------------------------------------------------*/
 
-/* #CSS Base & Typography
-	================================================== */
-/* .mec-wrap,
-.mec-wrap div:not([class^="elementor-"]),
-.lity-container {
-    font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-} */
-
 .mec-wrap {
   position: relative;
 }
@@ -438,6 +430,7 @@
   box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.016);
   margin-bottom: 30px;
   max-width: none;
+  border-radius: var(--mec-primary-border-radius);;
 }
 
 .mec-event-grid-classic .mec-event-content {
@@ -497,9 +490,15 @@
   font-weight: 400;
 }
 
+.mec-event-grid-classic .mec-event-image {
+  border-radius: var(--mec-primary-border-radius) var(--mec-primary-border-radius) 0 0;
+  overflow: hidden;
+}
+
 .mec-event-grid-classic img {
   margin-bottom: 0;
   width: 100%;
+  display: block;
 }
 
 .mec-event-footer {
@@ -509,6 +508,7 @@
   min-height: 80px;
   margin: 0;
   background: #fafafa;
+  border-radius: 0 0 var(--mec-primary-border-radius) var(--mec-primary-border-radius);
 }
 
 .mec-event-sharing-wrap {
@@ -915,6 +915,7 @@
   padding: 15px 15px 0;
   background: #fff;
   box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.016);
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-event-grid-clean .mec-event-content {
@@ -1031,6 +1032,7 @@
   padding: 45px 15px 10px;
   background: #fff;
   box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.016);
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-event-grid-modern .mec-event-content {
@@ -1194,6 +1196,7 @@ span.mec-event-title-soldout {
   padding-top: 25px;
   margin: 0;
   color: #fff;
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-event-grid-colorful .mec-event-content {
@@ -1310,6 +1313,7 @@ span.mec-event-title-soldout {
 .mec-event-list-minimal .mec-event-date {
   min-width: 52px;
   width: fit-content;
+  line-height: 1.3;
 }
 
 .mec-event-list-minimal .mec-event-date:nth-child(2) {
@@ -1318,10 +1322,9 @@ span.mec-event-title-soldout {
 
 .mec-event-list-minimal .mec-event-date span {
   display: block;
-  font-size: 24px;
+  font-size: 23px;
   font-weight: 700;
   text-align: center;
-  margin-bottom: 4px;
 }
 
 .mec-event-list-minimal .mec-event-date:after {
@@ -1329,8 +1332,8 @@ span.mec-event-title-soldout {
   content: "";
   position: absolute;
   width: 50px;
-  left: 1px;
-  top: 1px;
+  left: 0px;
+  top: 0px;
   height: 34px;
   background: rgba(255, 255, 255, 0.1);
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.02);
@@ -1347,7 +1350,6 @@ span.mec-event-title-soldout {
   font-size: 18px;
   text-transform: uppercase;
   letter-spacing: 0;
-  padding-top: 10px;
 }
 
 .mec-event-list-minimal .mec-time-details,
@@ -2035,8 +2037,7 @@ span.mec-event-title-soldout {
   position: relative;
   margin-bottom: 30px;
   padding: 60px 5% 60px 7%;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 10px;
+  border-radius: var(--mec-primary-border-radius);
   background-color: #0050fd;
   -webkit-transition: all 0.3s ease;
   -o-transition: all 0.3s ease;
@@ -2050,7 +2051,7 @@ span.mec-event-title-soldout {
   left: 0;
   width: 100%;
   height: 100%;
-  border-radius: 10px;
+  border-radius: var(--mec-primary-border-radius);
   opacity: 0;
   z-index: -1;
   -webkit-transition: all 0.3s ease;
@@ -2418,6 +2419,7 @@ span.mec-event-title-soldout {
     -------------------------- */
 .mec-event-cover-modern {
   position: relative;
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-event-cover-modern .mec-event-cover-a {
@@ -2435,6 +2437,7 @@ span.mec-event-title-soldout {
   width: 100%;
   height: 100%;
   position: absolute;
+  border-radius: 0 0 0 var(--mec-primary-border-radius);
 }
 
 .mec-event-cover-modern .mec-event-cover-a:hover .mec-event-overlay {
@@ -2444,6 +2447,7 @@ span.mec-event-title-soldout {
 .mec-event-cover-modern .mec-event-detail {
   padding: 40px;
   position: relative;
+  border-radius: 0 0 0 var(--mec-primary-border-radius);
 }
 
 .mec-event-cover-modern .mec-event-cover-a:hover .mec-event-tag {
@@ -2499,6 +2503,7 @@ span.mec-event-title-soldout {
   background: #fff;
   padding: 6px;
   border: 1px solid #e8e8e8;
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-event-cover-classic .mec-event-overlay {
@@ -2511,6 +2516,7 @@ span.mec-event-title-soldout {
   height: auto;
   background-color: rgba(36, 36, 36, 0.4);
   transition: all 0.33s ease-in-out;
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-event-cover-classic:hover .mec-event-overlay {
@@ -2524,6 +2530,7 @@ span.mec-event-title-soldout {
   bottom: 0;
   padding: 50px 35px;
   transition: all 0.33s ease-in-out;
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-event-cover-classic .mec-event-date {
@@ -2583,6 +2590,8 @@ span.mec-event-title-soldout {
 
 .mec-event-cover-classic .mec-event-image img {
   min-width: 100%;
+  border-radius: var(--mec-primary-border-radius);
+  display: block;
 }
 
 @media only screen and (max-width: 960px) {
@@ -2734,6 +2743,7 @@ span.mec-event-title-soldout {
   position: relative;
   border: 1px solid #e6e6e6;
   padding: 8px;
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-event-cover-clean .mec-event-overlay {
@@ -2742,9 +2752,10 @@ span.mec-event-title-soldout {
   position: absolute;
   width: 100%;
   left: 0;
-  border: 8px solid #fff;
+  border: 12px solid #fff;
   top: 0;
   transition: all 0.5s ease-in-out;
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-event-cover-clean .mec-event-content {
@@ -2811,6 +2822,8 @@ span.mec-event-title-soldout {
 
 .mec-event-cover-clean .mec-event-image img {
   width: 100%;
+  display: block;
+  border-radius: var(--mec-primary-border-radius);
 }
 
 @media only screen and (max-width: 768px) {
@@ -2914,6 +2927,7 @@ span.mec-event-title-soldout {
   background-color: #fff;
   border: 1px solid #e9e9e9;
   box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.016);
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-event-list-standard .mec-topsec {
@@ -2923,6 +2937,11 @@ span.mec-event-title-soldout {
 
 .mec-event-list-standard .col-md-3.mec-event-image-wrap {
   padding-left: 0;
+}
+
+.mec-event-list-standard .col-md-3.mec-event-image-wrap .mec-event-image {
+  border-radius: var(--mec-primary-border-radius) 0 0 0;
+  overflow: hidden;
 }
 
 .mec-event-list-standard .mec-event-content {
@@ -3138,6 +3157,11 @@ span.mec-event-title-soldout {
 
 .mec-event-list-standard .mec-event-description {
   font-size: 14px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  -webkit-box-orient: vertical;
 }
 
 .mec-event-list-minimal .mec-event-title a {
@@ -3865,7 +3889,7 @@ span.mec-event-title-soldout {
 .mec-single-event .mec-events-meta-group-countdown,
 .mec-single-event .mec-events-meta-group-gmap,
 .mec-single-modern .mec-single-event-bar {
-  border-radius: 3px;
+  border-radius: var(--mec-primary-border-radius);
   overflow: hidden;
   margin-bottom: 30px;
 }
@@ -4853,7 +4877,6 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
   .mec-select-date-dropdown {
   border: 1px solid #e3e5e7;
   border-radius: 3px;
-  max-width: 300px;
   width: auto;
   height: 42px;
   display: flex;
@@ -4920,6 +4943,7 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
   .mec-custom-nice-select {
   margin: 0;
   border: none;
+  padding-right: 30px;
 }
 
 .lity-content
@@ -6493,7 +6517,7 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
   float: left;
 }
 
-.mec-events-meta-group-booking ul.mec-book-price-details {
+.mec-events-meta-group-booking .mec-book-price-details {
   list-style: none;
   padding: 0;
   overflow: hidden;
@@ -6501,23 +6525,23 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
   align-items: center;
 }
 
-.mec-events-meta-group-booking ul.mec-book-price-details li {
+.mec-events-meta-group-booking .mec-book-price-details li {
   list-style: none;
   margin: 0;
   border-right: 1px dashed #e6e7e8;
   padding-right: 30px !important;
-  margin-right: 30px;
+  margin-right: 30px !important;
   text-align: center;
 }
 
 .mec-events-meta-group-booking
-  ul.mec-book-price-details
+  .mec-book-price-details
   li.mec-book-price-detail.mec-book-price-detail-type-tickets {
   display: flex;
   align-items: center;
 }
 
-.mec-events-meta-group-booking ul.mec-book-price-details li span {
+.mec-events-meta-group-booking .mec-book-price-details li span {
   display: block;
   font-size: 14px;
   font-weight: 400;
@@ -6527,7 +6551,7 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
 }
 
 .mec-events-meta-group-booking
-  ul.mec-book-price-details
+  .mec-book-price-details
   li
   span.mec-book-price-detail-icon {
   margin: 0 30px 0 0;
@@ -6535,7 +6559,7 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
 }
 
 .mec-events-meta-group-booking
-  ul.mec-book-price-details
+  .mec-book-price-details
   li
   span.mec-book-price-detail-amount {
   font-size: 18px;
@@ -6545,16 +6569,16 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
   margin-bottom: 0;
 }
 
-.mec-events-meta-group-booking ul.mec-book-price-details li:last-child {
+.mec-events-meta-group-booking .mec-book-price-details li:last-child {
   border-right: none;
 }
 
 @media only screen and (max-width: 767px) {
-  .mec-events-meta-group-booking ul.mec-book-price-details {
+  .mec-events-meta-group-booking .mec-book-price-details {
     flex-direction: column;
   }
 
-  .mec-events-meta-group-booking ul.mec-book-price-details li {
+  .mec-events-meta-group-booking .mec-book-price-details li {
     border-right: none;
     padding-right: 0 !important;
     margin-right: 0;
@@ -7808,7 +7832,7 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
 .mec-single-event .mec-events-meta-date dd span,
 .mec-single-event .mec-single-event-location dd span {
   display: block;
-  padding-left: 0px;
+  padding-left: 40px;
   color: #8d8d8d;
 }
 
@@ -8106,15 +8130,16 @@ address.mec-events-address {
 /* MEC Events Calendar Clean
     ----------------------------------------- */
 .mec-calendar {
-  margin-bottom: 20px;
   border: 1px solid #e8e8e8;
   width: 100%;
   box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.016);
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-calendar .mec-calendar-topsec {
   display: table;
   background: #fff;
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-calendar .mec-calendar-topsec .mec-calendar-side .mec-calendar-table {
@@ -8185,6 +8210,7 @@ address.mec-events-address {
 .mec-calendar .mec-event-footer {
   width: auto;
   min-height: 60px;
+  border-radius: 0 0 var(--mec-primary-border-radius) var(--mec-primary-border-radius);
 }
 
 .mec-calendar dl {
@@ -8359,7 +8385,7 @@ address.mec-events-address {
   height: auto;
 }
 
-.mec-calendar:not(.mec-liquid-custom-scrollbar)
+.mec-calendar:not(.mec-liquid-custom-scrollbar, .mec-liquid-daily)
   .mec-event-article
   .mec-event-image {
   max-width: 70px;
@@ -9193,6 +9219,11 @@ address.mec-events-address {
 
 /* MEC Events - Calendar Daily
     -------------------------------- */
+
+.mec-calendar.mec-calendar-daily {
+  border-radius: var(--mec-primary-border-radius);
+}
+
 .mec-calendar.mec-calendar-daily .mec-calendar-day-events .mec-event-article {
   padding-left: 15px;
   padding-right: 15px;
@@ -9204,6 +9235,8 @@ address.mec-events-address {
   background-color: #fff;
   border-bottom: 2px solid #f4f4f4;
   position: relative;
+  display: inline;
+  border-radius: var(--mec-primary-border-radius) var(--mec-primary-border-radius) 0 0;
 }
 
 .mec-calendar.mec-calendar-daily .mec-calendar-a-month h4 {
@@ -9350,7 +9383,8 @@ address.mec-events-address {
   cursor: default;
   background: #fff;
   color: #c1c1c1;
-  line-height: 59px;
+  line-height: 49px;
+  padding-bottom: 10px;
   text-align: center;
   border-right: 1px solid #e6e6e6;
   border-bottom: 1px solid #e6e6e6;
@@ -9844,6 +9878,10 @@ li.mec-no-event-found .mec-event-title {
 .mec-skin-grid-container .mec-skin-map-container,
 .mec-skin-list-container .mec-skin-map-container {
   margin-bottom: 20px;
+}
+
+.mec-googlemap-skin {
+  border-radius: var(--mec-primary-border-radius);
 }
 
 /* Mec Countdown
@@ -11061,6 +11099,7 @@ select#mec_fes_selected_group {
   overflow: hidden;
   box-shadow: 0 3px 2px 0 rgba(0, 0, 0, 0.012);
   min-height: 78px;
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-wrap .mec-totalcal-box i {
@@ -11092,6 +11131,75 @@ select#mec_fes_selected_group {
   float: left;
   padding: 0 5px;
   font-family: inherit;
+}
+
+.mec-search-form .mec-dropdown-wrap span.select2 .selection .select2-selection {
+  min-height: 36px;
+  height: 36px;
+  line-height: 36px;
+  background: #fff;
+  font-size: 13px;
+  color: #777;
+  border: 1px solid #efefef;
+  margin: 0 0 10px -1px;
+  padding: 0 5px;
+  font-family: inherit;
+  border-radius: 0;
+  width: 100%;
+}
+
+
+.mec-search-form .mec-dropdown-wrap span.select2 .selection .select2-selection .select2-selection__rendered {
+    color: #777;
+    line-height: 34px;
+    padding-left: 5px;
+}
+
+.mec-search-form .mec-dropdown-wrap span.select2 .selection .select2-selection .select2-selection__arrow {
+  height: 34px;
+}
+
+.select2-container--open .select2-dropdown--below {
+  margin-top: 22px;
+  border: 1px solid #efefef;
+
+}
+
+.select2-container--open .select2-dropdown--above {
+  margin-top: 32px;
+  border: 1px solid #efefef;
+
+}
+
+.select2-search--dropdown .select2-search__field {
+  font-size: 13px;
+  color: #777;
+  border: 1px solid #efefef !important;
+}
+
+.select2-container--default .select2-results__option--selected {
+  background-color: #efefef !important;
+}
+
+.select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
+  background-color: var(--mec-color-skin) !important;
+}
+
+.select2-results__option {
+  font-size: 13px !important;
+}
+
+.mec-wrap .mec-totalcal-box input[type=text],
+.mec-wrap .mec-totalcal-box input[type=date],
+.mec-wrap .mec-totalcal-box input[type=email],
+.mec-wrap .mec-totalcal-box input[type=number],
+.mec-wrap .mec-totalcal-box input[type=password],
+.mec-wrap .mec-totalcal-box input[type=search],
+.mec-wrap .mec-totalcal-box input[type=tel],
+.mec-wrap .mec-totalcal-box input[type=url],
+.mec-wrap .mec-totalcal-box select,
+.mec-wrap .mec-totalcal-box textarea {
+    border-radius: 0
 }
 
 .mec-wrap .mec-totalcal-box .mec-totalcal-view span.mec-totalcalview-selected {
@@ -11700,6 +11808,7 @@ select#mec_fes_selected_group {
 .mec-search-form .mec-dropdown-wrap {
   display: table;
   width: 100%;
+  table-layout: fixed;
 }
 
 .mec-search-form .mec-date-input-search,
@@ -11745,6 +11854,14 @@ select#mec_fes_selected_group {
 .mec-wrap .mec-search-form .with-mec-date-search .mec-timepicker-start,
 .mec-wrap .mec-search-form .with-mec-date-search .mec-timepicker-end {
   width: calc(50% - 17px);
+}
+
+.mec-wrap .mec-search-form .with-mec-date-search .mec-timepicker-start:hover,
+.mec-wrap .mec-search-form .with-mec-date-search .mec-timepicker-end:hover,
+.mec-wrap .mec-search-form .with-mec-date-search .mec-timepicker-start:focus,
+.mec-wrap .mec-search-form .with-mec-date-search .mec-timepicker-end:focus {
+  border-color: #efefef;
+  box-shadow: none;
 }
 
 .mec-search-form .mec-text-address-search,
@@ -12188,6 +12305,7 @@ select#mec_fes_selected_group {
   position: relative;
   min-height: 150px;
   overflow: hidden;
+  border-radius: var(--mec-primary-border-radius) var(--mec-primary-border-radius) 0 0;
 }
 
 .event-carousel-type1-head .mec-event-image img {
@@ -12265,6 +12383,7 @@ select#mec_fes_selected_group {
 
 .mec-owl-crousel-skin-type1 .owl-item .mec-event-article {
   padding: 0 19px;
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-event-carousel-type1 .owl-page.active span {
@@ -12273,10 +12392,15 @@ select#mec_fes_selected_group {
   width: 14px;
 }
 
+.mec-event-carousel-type1 .mec-event-date {
+  border-radius: var(--mec-primary-border-radius) var(--mec-primary-border-radius) 0 0;
+}
+
 .mec-event-carousel-type1 .mec-event-carousel-content {
   margin-bottom: 15px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
   transition: all 0.27s ease;
+  border-radius: 0 0 var(--mec-primary-border-radius) var(--mec-primary-border-radius);
 }
 
 .mec-skin-carousel-container .mec-owl-carousel button:focus {
@@ -12446,6 +12570,7 @@ select#mec_fes_selected_group {
 .mec-event-article .event-carousel-type2-head {
   padding: 10%;
   margin-right: -1px;
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-event-carousel-type2 .mec-owl-carousel .owl-wrapper-outer {
@@ -12562,6 +12687,7 @@ select#mec_fes_selected_group {
 .event-carousel-type3-head .mec-event-image img {
   width: 100%;
   height: auto;
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .event-carousel-type3-head .mec-event-footer-carousel-type3 {
@@ -12575,6 +12701,7 @@ select#mec_fes_selected_group {
   margin-bottom: 6px;
   padding: 8% 11%;
   box-shadow: 0 2px 10px -2px rgba(0, 0, 0, 0.2);
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .event-carousel-type3-head
@@ -12637,8 +12764,9 @@ select#mec_fes_selected_group {
 }
 
 .mec-event-footer-carousel-type3 .mec-event-sharing-wrap {
-  position: static;
+  position: relative;
   float: left;
+  left: 0;
 }
 
 .mec-event-footer-carousel-type3 .mec-event-sharing-wrap .mec-event-sharing {
@@ -12675,6 +12803,7 @@ select#mec_fes_selected_group {
   position: relative;
   overflow: hidden;
   background: #fff;
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .event-carousel-type4-head .mec-event-overlay {
@@ -12707,6 +12836,7 @@ select#mec_fes_selected_group {
 
 .mec-event-carousel-type4 .mec-event-article {
   margin: 0 10px;
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-event-carousel-type4
@@ -12815,6 +12945,7 @@ select#mec_fes_selected_group {
   padding: 0 !important;
   display: table;
   background: #437df9;
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-wrap .mec-event-countdown-style1 .mec-event-countdown-part1 {
@@ -12841,6 +12972,7 @@ select#mec_fes_selected_group {
   float: none;
   text-align: center;
   vertical-align: middle;
+  border-radius: 0 var(--mec-primary-border-radius) var(--mec-primary-border-radius) 0;
 }
 
 .mec-wrap
@@ -13042,6 +13174,8 @@ select#mec_fes_selected_group {
   padding: 30px 0;
   background: #437df9;
   max-width: 600px;
+  margin: 0 auto;
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-wrap .mec-event-countdown-style2 .mec-event-countdown-part1,
@@ -13224,28 +13358,33 @@ select#mec_fes_selected_group {
   color: #fff;
   padding: 0;
   background: #282828;
-  display: table;
+  display: flex;
   width: 100%;
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-wrap .mec-event-countdown-style3 .mec-event-countdown-part1 {
-  width: 68%;
-  padding: 50px 1% 50px 4%;
+  width: 800px;
+  padding: 50px 10px 50px 60px;
   vertical-align: middle;
-  display: table-cell;
   position: relative;
 }
 
 .mec-wrap .mec-event-countdown-style3 .mec-event-countdown-part2 {
-  width: 32%;
-  display: table-cell;
+  width: calc(100% - 800px);
   position: relative;
   padding-bottom: 0;
   padding-top: 0;
 }
 
-.mec-wrap .mec-event-countdown-style3 .mec-event-countdown-part2 img {
-  width: 100%;
+.mec-wrap .mec-event-countdown-style3 .mec-event-countdown-part2 .mec-event-image {
+  overflow: hidden;
+  border-radius: 0 var(--mec-primary-border-radius) var(--mec-primary-border-radius) 0;
+}
+
+.mec-wrap .mec-event-countdown-style3 .mec-event-countdown-part2 .mec-event-image img {
+  width: auto;
+  max-width: unset;
   display: block;
 }
 
@@ -13581,11 +13720,13 @@ select#mec_fes_selected_group {
 .mec-slider-t1 {
   height: 500px;
   box-shadow: 0 5px 35px 0 rgba(0, 0, 0, 0.13);
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-slider-t1 .mec-event-article {
   position: relative;
   height: 500px;
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-slider-t1 .mec-slider-t1-img {
@@ -13597,6 +13738,7 @@ select#mec_fes_selected_group {
   float: right;
   margin: 0;
   overflow: hidden;
+  border-radius: 0 var(--mec-primary-border-radius) var(--mec-primary-border-radius) 0;
 }
 
 .mec-slider-t1 .mec-slider-t1-content {
@@ -13605,6 +13747,7 @@ select#mec_fes_selected_group {
   height: 100%;
   background: #fff;
   padding: 6%;
+  border-radius: var(--mec-primary-border-radius) 0 0 var(--mec-primary-border-radius);
 }
 
 .mec-slider-t1-content.mec-event-grid-modern .mec-event-article {
@@ -13634,24 +13777,25 @@ select#mec_fes_selected_group {
 .mec-slider-t1-wrap .mec-owl-theme .owl-nav .owl-prev,
 .mec-slider-t1-wrap .mec-owl-theme .owl-nav .owl-next {
   opacity: 1;
-  width: 54px;
-  height: 54px;
-  line-height: 48px;
+  width: 44px;
+  height: 44px;
+  line-height: 38px;
   border-radius: 0;
   text-align: center;
   background: #fff;
-  box-shadow: 0 2px 11px 0 rgba(0, 0, 0, 0.045);
+  border: 1px solid #fff;
   transition: all 0.25s ease;
   -webkit-transition: all 0.25s ease;
   position: absolute;
   top: 50%;
-  margin-top: -27px;
+  margin-top: -21px;
   cursor: pointer;
 }
 
 .mec-slider-t1-wrap .mec-owl-theme .owl-nav .owl-prev:hover,
 .mec-slider-t1-wrap .mec-owl-theme .owl-nav .owl-next:hover {
-  box-shadow: 0 4px 29px 0 rgba(0, 0, 0, 0.095);
+  box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.075);
+  background: #fff;
 }
 
 .mec-slider-t1-wrap .mec-owl-theme .owl-nav .owl-next {
@@ -13673,7 +13817,6 @@ select#mec_fes_selected_group {
 
 .mec-slider-t1-wrap .mec-owl-theme .owl-nav .owl-prev:hover i,
 .mec-slider-t1-wrap .mec-owl-theme .owl-nav .owl-next:hover i {
-  font-size: 13px;
   color: #000;
   cursor: pointer;
 }
@@ -13766,6 +13909,7 @@ select#mec_fes_selected_group {
   height: 100%;
   margin: 0;
   overflow: hidden;
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-slider-t2 .mec-slider-t2-content {
@@ -13775,6 +13919,7 @@ select#mec_fes_selected_group {
   top: 60px;
   bottom: 60px;
   padding: 3%;
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-slider-t2 .mec-slider-t2-content.mec-event-grid-modern * {
@@ -13911,6 +14056,7 @@ select#mec_fes_selected_group {
   background: #161616;
   min-height: 700px;
   position: relative;
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-slider-t3 .mec-event-article {
@@ -13921,6 +14067,7 @@ select#mec_fes_selected_group {
   margin: 0;
   box-shadow: none;
   background: none;
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-slider-t3 .mec-slider-t3-img {
@@ -13935,6 +14082,7 @@ select#mec_fes_selected_group {
   overflow: hidden;
   opacity: 0.68;
   z-index: 1;
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-slider-t3 .mec-slider-t3-content {
@@ -14099,6 +14247,7 @@ select#mec_fes_selected_group {
   background: #161616;
   min-height: 700px;
   position: relative;
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-slider-t4 .mec-event-article {
@@ -14108,6 +14257,7 @@ select#mec_fes_selected_group {
   margin: 0;
   box-shadow: none;
   background: none;
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-slider-t4 .mec-slider-t4-img {
@@ -14121,6 +14271,7 @@ select#mec_fes_selected_group {
   margin: 0;
   overflow: hidden;
   z-index: 1;
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-slider-t4 .mec-slider-t4-content {
@@ -14137,6 +14288,7 @@ select#mec_fes_selected_group {
   margin: auto 0;
   background: none;
   z-index: 2;
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-slider-t4 .mec-slider-t4-content.mec-event-grid-modern *:not(.mec-color) {
@@ -14269,19 +14421,22 @@ select#mec_fes_selected_group {
   max-width: 570px;
   padding: 0;
   margin: 0 auto 25px;
-  background: #f7f7f7;
+  background: #fff;
   min-height: 480px;
   position: relative;
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-slider-t5 {
   height: auto;
   box-shadow: 0 5px 35px 0 rgba(0, 0, 0, 0.13);
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-slider-t5 .mec-event-article {
   position: relative;
   height: auto;
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-slider-t5 .mec-slider-t5-img {
@@ -14293,19 +14448,24 @@ select#mec_fes_selected_group {
   float: none;
   margin: 0;
   overflow: hidden;
+  border-radius: var(--mec-primary-border-radius) var(--mec-primary-border-radius) 0 0;
 }
 
 .mec-slider-t5 .mec-slider-t5-content {
   width: 100%;
   float: none;
   height: 100%;
-  background: #fff;
   padding: 0 20px 20px;
   margin-bottom: 0;
 }
 
 .mec-slider-t5 .mec-events-content p {
   margin-bottom: 20px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  -webkit-box-orient: vertical;
 }
 
 .mec-slider-t5-content.mec-event-grid-modern .mec-event-article {
@@ -14908,6 +15068,7 @@ body .featherlight .featherlight-close-icon:hover {
   border: 1px solid #e4e4e4;
   margin-bottom: 15px;
   box-shadow: 0 10px 15px #f3f3f3;
+  border-radius: 0 var(--mec-primary-border-radius) var(--mec-primary-border-radius) 0;
 }
 
 .mec-events-toggle .mec-toggle-item-inner {
@@ -14920,6 +15081,7 @@ body .featherlight .featherlight-close-icon:hover {
   display: table;
   width: 100%;
   border-collapse: separate;
+  border-radius: 0 var(--mec-primary-border-radius) var(--mec-primary-border-radius) 0;
 }
 
 .mec-events-toggle .mec-toggle-item-inner:hover {
@@ -14978,10 +15140,10 @@ body .featherlight .featherlight-close-icon:hover {
 
 .mec-events-toggle .mec-toggle-item-inner span.event-color {
   width: 5px;
-  height: 100%;
+  height: calc(100% + 2px);
   position: absolute;
   left: -1px;
-  top: 0;
+  top: -1px;
   bottom: 0;
   border-radius: 0;
   margin: 0;
@@ -15101,11 +15263,21 @@ body .featherlight .featherlight-close-icon:hover {
   background: #fff;
   padding-left: 20px;
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.03);
+  border-radius: var(--mec-primary-border-radius);
 }
 
-.mec-events-agenda {
+.mec-events-agenda:not(:last-of-type) {
   padding: 0;
   border-bottom: 1px solid #e9e9e9;
+}
+
+.mec-events-agenda:last-of-type {
+  border-radius: 0 0 var(--mec-primary-border-radius) var(--mec-primary-border-radius);
+}
+
+
+.mec-events-agenda:last-of-type .mec-agenda-events-wrap {
+  border-radius: 0 0 var(--mec-primary-border-radius) 0;
 }
 
 .mec-agenda-date-wrap {
@@ -15205,6 +15377,7 @@ body .featherlight .featherlight-close-icon:hover {
   background: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
   border-bottom-width: 4px;
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-yearly-view-wrap .mec-calendar.mec-yearly-calendar {
@@ -15235,7 +15408,7 @@ body .featherlight .featherlight-close-icon:hover {
   width: 4px;
   height: 4px;
   bottom: 3px;
-  margin-left: -2px;
+  left: calc(50% - 2px);
 }
 
 .mec-yearly-view-wrap .mec-calendar-side .mec-calendar-table {
@@ -15263,6 +15436,7 @@ body .featherlight .featherlight-close-icon:hover {
   float: left;
   background: #f8f8f8;
   padding: 15px;
+  border-radius: 0 0 0 var(--mec-primary-border-radius);
 }
 
 .mec-yearly-view-wrap .mec-yearly-agenda-sec {
@@ -15472,6 +15646,7 @@ body .featherlight .featherlight-close-icon:hover {
 
 .mec-week-events-container {
   background: #fff;
+  border-radius: 0 0 var(--mec-primary-border-radius) var(--mec-primary-border-radius);
 }
 
 .mec-timetable-events-list {
@@ -15580,6 +15755,7 @@ body .featherlight .featherlight-close-icon:hover {
   padding: 0 15px 15px;
   overflow: hidden;
   box-shadow: 0 3px 2px 0 rgba(0, 0, 0, 0.012);
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-timetable-t2-col {
@@ -15616,7 +15792,7 @@ body .featherlight .featherlight-close-icon:hover {
   bottom: 0;
   margin: 0;
   z-index: 1;
-  border-radius: 2px;
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-timetable-t2-content {
@@ -15839,17 +16015,20 @@ body .featherlight .featherlight-close-icon:hover {
   background: #f7f7f7;
   min-height: 480px;
   position: relative;
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-av-spot {
   height: auto;
   border: 1px solid #eee;
   box-shadow: 0 6px 12px -4px rgba(0, 0, 0, 0.05);
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-av-spot .mec-event-article {
   position: relative;
   height: auto;
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-av-spot .mec-av-spot-img {
@@ -15861,6 +16040,11 @@ body .featherlight .featherlight-close-icon:hover {
   float: none;
   margin: 0;
   overflow: hidden;
+  border-radius: var(--mec-primary-border-radius) var(--mec-primary-border-radius) 0 0;
+}
+
+.mec-av-spot .mec-av-spot-content {
+  border-radius: 0 0 var(--mec-primary-border-radius) var(--mec-primary-border-radius);
 }
 
 .mec-av-spot .mec-av-spot-content,
@@ -16045,11 +16229,14 @@ body .featherlight .featherlight-close-icon:hover {
   height: auto;
   border: 1px solid #eee;
   box-shadow: 0 6px 12px -4px rgba(0, 0, 0, 0.05);
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-masonry .mec-event-article {
   position: relative;
   height: auto;
+  background-color: #fff;
+  border-radius: var(--mec-primary-border-radius);
 }
 
 .mec-masonry .mec-masonry-img {
@@ -16059,10 +16246,12 @@ body .featherlight .featherlight-close-icon:hover {
   float: none;
   margin: 0;
   overflow: hidden;
+  border-radius: var(--mec-primary-border-radius) var(--mec-primary-border-radius) 0 0;
 }
 
 .mec-masonry .mec-masonry-img img {
   width: 100%;
+  display: block;
 }
 
 .mec-masonry .mec-masonry-content,
@@ -16070,7 +16259,6 @@ body .featherlight .featherlight-close-icon:hover {
   width: 100%;
   float: none;
   height: 100%;
-  background: #fff;
   padding: 0 20px 20px;
   margin-bottom: 0;
 }
@@ -16097,8 +16285,13 @@ body .featherlight .featherlight-close-icon:hover {
   border-bottom: 1px solid #eee;
 }
 
-.mec-masonry-content.mec-event-grid-modern .mec-event-title {
-  font-size: 22px;
+.mec-masonry-content.mec-event-grid-modern .mec-event-description {
+  padding-top: 20px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  -webkit-box-orient: vertical;
 }
 
 .mec-masonry-content.mec-event-grid-modern .mec-event-content {
@@ -21138,7 +21331,7 @@ span.mec-event-export-csv:before,
   width: 82%;
   background: #fff;
   box-shadow: 0 10px 30px 0 rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
+  border-radius: var(--mec-primary-border-radius);
   overflow: visible;
   position: relative;
 }
@@ -21177,7 +21370,7 @@ a.mec-timeline-readmore {
   font-weight: bold;
   -webkit-transition: all 0.2s ease;
   transition: all 0.2s ease;
-  border-radius: 0 0 10px 10px;
+  border-radius: 0 0 var(--mec-primary-border-radius) var(--mec-primary-border-radius);
 }
 
 a.mec-timeline-readmore:hover {
@@ -21378,14 +21571,14 @@ a.mec-timeline-readmore i {
 
 .mec-timeline-event-image a img {
   margin-bottom: 0;
-  border-radius: 0 10px 0 0;
+  border-radius: 0 var(--mec-primary-border-radius) 0 0;
 }
 
 /* Tile View */
 .mec-event-tile-view article.mec-tile-item {
   height: 400px;
   margin: 15px 0;
-  border-radius: 22px;
+  border-radius: var(--mec-primary-border-radius);
   padding: 35px 25px;
   position: relative;
   color: #fff;
@@ -21467,7 +21660,7 @@ a.mec-timeline-readmore i {
   width: 100%;
   height: 100%;
   display: block;
-  border-radius: 22px;
+  border-radius: var(--mec-primary-border-radius);
   z-index: 1;
 }
 
@@ -21570,7 +21763,7 @@ a.mec-timeline-readmore i {
   height: 80px;
   background: #f7f7f7;
   padding: 28px;
-  border-radius: 11px;
+  border-radius: var(--mec-primary-border-radius);
   margin-bottom: 20px;
 }
 
@@ -22415,8 +22608,8 @@ body.mec-dark-mode .mec-single-modern .mec-single-event-bar {
 .mec-dark-mode .mec-load-more-button,
 /*up shortcodes */
 .mec-dark-mode .mec-wrap .mec-totalcal-box,
-.mec-dark-mode .mec-events-meta-group-booking ul.mec-book-price-details,
-.mec-dark-mode .mec-events-meta-group-booking ul.mec-book-price-details li,
+.mec-dark-mode .mec-events-meta-group-booking .mec-book-price-details,
+.mec-dark-mode .mec-events-meta-group-booking .mec-book-price-details li,
 .mec-dark-mode .mec-breadcrumbs,
 .mec-dark-mode .mec-hourly-schedule-speaker-info,
 .mec-dark-mode .mec-single-event .mec-event-exporting .mec-export-details a:hover,
@@ -22490,8 +22683,8 @@ body.mec-dark-mode .mec-single-modern .mec-single-event-bar {
 .mec-dark-mode .mec-event-list-modern .mec-btn-wrapper .mec-booking-button,
 .mec-dark-mode .mec-wrap .mec-event-list-modern .mec-event-title a,
 .mec-dark-mode .mec-event-list-minimal .mec-event-title a,
-.mec-dark-mode .mec-events-meta-group-booking ul.mec-book-price-details li,
-.mec-dark-mode .mec-events-meta-group-booking ul.mec-book-price-details li span.mec-book-price-detail-amount,
+.mec-dark-mode .mec-events-meta-group-booking .mec-book-price-details li,
+.mec-dark-mode .mec-events-meta-group-booking .mec-book-price-details li span.mec-book-price-detail-amount,
 .mec-dark-mode .mec-event-list-classic .mec-event-title a,
 .mec-dark-mode .mec-event-list-minimal a.mec-detail-button,
 .mec-dark-mode .mec-load-more-button,
@@ -23014,13 +23207,13 @@ body.mec-dark-mode .mec-single-modern .mec-single-event-bar {
     padding: 20px;
   }
 
-  .mec-booking-shortcode ul.mec-book-price-details li {
+  .mec-booking-shortcode .mec-book-price-details li {
     width: 100%;
     border-right: 0 !important;
     border-bottom: 1px solid;
   }
 
-  .mec-booking-shortcode ul.mec-book-price-details li:last-child {
+  .mec-booking-shortcode .mec-book-price-details li:last-child {
     width: 100%;
     border-right: 0;
     border-bottom: 0 solid;
@@ -24042,7 +24235,7 @@ span.mec-booking-field-required {
 
 .mec-gCalendar #mec-gCalendar-wrap .fc-header-toolbar.fc-toolbar {
   border: 1px solid #e3e4e5;
-  border-radius: 7px;
+  border-radius: var(--mec-primary-border-radius);
   padding: 18px 30px 10px;
   position: relative;
   flex-wrap: wrap;
@@ -24487,7 +24680,7 @@ span.mec-booking-field-required {
 .fc-daygrid.fc-dayGridMonth-view.fc-view {
   overflow: auto;
   border: 1px solid #e3e4e5;
-  border-radius: 7px;
+  border-radius: var(--mec-primary-border-radius);
 }
 
 #mec-gCalendar-wrap table.fc-scrollgrid {
@@ -24495,6 +24688,7 @@ span.mec-booking-field-required {
   overflow: auto;
   border: none;
   border-radius: unset;
+  margin: 0;
 }
 
 @media (min-width: 992px) {
@@ -24585,7 +24779,7 @@ span.mec-booking-field-required {
 
 #mec-gCalendar-wrap table.fc-scrollgrid-sync-table tr td {
   text-align: left;
-  background: #fff !important;
+  background: transparent !important;
 }
 
 #mec-gCalendar-wrap table.fc-scrollgrid-sync-table .fc-daygrid-day-top {
@@ -24606,6 +24800,7 @@ span.mec-booking-field-required {
 
 #mec-gCalendar-wrap .fc-scrollgrid-section-body > td {
   border: none !important;
+  background-color: transparent !important;
 }
 
 #mec-gCalendar-wrap
@@ -25390,6 +25585,7 @@ a.mec-nextprev-next-button:hover {
   font-size: 11px;
   text-align: center;
   color: #919293;
+  margin-top: 20px;
 }
 
 .mec-credit-url a {
@@ -25736,8 +25932,9 @@ body[class*="mec-theme"] .mec-wrap a {
 }
 
 .mec-wrap button.mec-subscribe-to-calendar-btn {
-  margin-bottom: 10px !important;
+  margin-top: 20px;
   margin-right: 0 !important;
+  margin-bottom: 0 !important;
   width: 180px;
 }
 
@@ -27343,7 +27540,8 @@ span.load-more-text:before {
   z-index: 1;
 }
 
-.mec-event-meta img.mec-custom-image-icon {
+.mec-event-meta img.mec-custom-image-icon,
+.mec-single-event-bar img.mec-custom-image-icon {
   width: 20px;
 }
 
@@ -27371,7 +27569,7 @@ span.load-more-text:before {
 }
 
 .mec-partial-full-payment li:nth-child(odd) {
-  margin-right: 20px;
+  margin-right: 20px !important;
 }
 
 .mec-partial-full-payment li.mec-active {
@@ -27386,15 +27584,19 @@ span.load-more-text:before {
 .mec-partial-full-payment .mec-book-form-partial-full-radio {
   margin-left: auto;
 }
-/* Partial payment section in booking form END*/
 
-.select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+/* Partial payment section in booking form END*/
+.select2-container--default
+  .select2-selection--multiple
+  .select2-selection__choice__remove {
   padding: 0px !important;
   margin: 0 !important;
   line-height: 10px !important;
 }
 
-.select2-container--default .select2-selection--multiple .select2-selection__choice__display {
+.select2-container--default
+  .select2-selection--multiple
+  .select2-selection__choice__display {
   line-height: 5px;
   padding: 0 0 0 5px;
   position: relative;

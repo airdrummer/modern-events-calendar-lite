@@ -906,7 +906,7 @@ class MEC_feature_events extends MEC_base
                 <div class="mec-form-repeating-event-row">
                     <div class="mec-form-row">
                         <label class="mec-col-3" for="mec_repeat_type"><?php esc_html_e('Repeats', 'modern-events-calendar-lite'); ?></label>
-                        <select class="mec-col-2" name="mec[date][repeat][type]" id="mec_repeat_type">
+                        <select class="mec-col-4" name="mec[date][repeat][type]" id="mec_repeat_type">
                             <option
                                 <?php
                                 if ($repeat_type == 'daily') {
@@ -3733,6 +3733,9 @@ class MEC_feature_events extends MEC_base
         // Update Schedule
         $schedule = $this->getSchedule();
         $schedule->reschedule($id);
+
+        // Occurrences
+        MEC_feature_occurrences::copy($master_post_id, $id);
     }
 
     public function wpml_pro_translation_saved($new_post_id, $fields, $job)

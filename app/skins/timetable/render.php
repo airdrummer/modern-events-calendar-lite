@@ -64,8 +64,8 @@ else $set_dark = '';
                     <?php endif; ?>
                 </span>
                 <span class="mec-timetable-event-span mec-timetable-event-organizer">
-                    <?php echo $this->icons->display('user'); ?>
                     <?php if(isset($organizer['name']) and trim($organizer['name'])): ?>
+                    <?php echo $this->icons->display('user'); ?>
                     <span><?php echo esc_html($organizer['name']); ?></span>
                     <?php endif; ?>
                 </span>

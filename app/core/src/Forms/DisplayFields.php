@@ -223,7 +223,8 @@ class DisplayFields {
 							$current_value = esc_html__( $field_option['label'], 'modern-events-calendar-lite');
 							$checked = in_array($current_value,(array)$value);
 							$input_html .= '<label for="' . esc_attr($html_id . $j . '_' . strtolower( str_replace( ' ', '_', $field_option['label'] ) )) . '">'
-								 . '<input type="' . esc_attr( $field_type ) . '" id="mec_' . esc_attr($form_type . '_field_' . $type . $j . '_' . $field_id . '_' . strtolower( str_replace( ' ', '_', $field_option['label'] ) )) . '" name="' . esc_attr( $field_name ) . '[]" value="' . esc_attr($current_value) . '" '.checked($checked,true,false).'/>'
+								 . '<input type="' . esc_attr( $field_type ) . '" id="mec_' . esc_attr($form_type . '_field_' . $type . $j . '_' . $field_id . '_' . strtolower( str_replace( ' ', '_', $field_option['label'] ) )) . '" name="' . esc_attr( $field_name ) . '[]" value="' . esc_attr($current_value) . '" '.checked($checked,true,false).
+                                 $required.' class="input-radio-checkbox"/>'
 								 . esc_html__( $field_option['label'], 'modern-events-calendar-lite')
 								 . '</label>';
 						}

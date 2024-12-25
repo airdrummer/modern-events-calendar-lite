@@ -118,15 +118,25 @@ class MEC_skin_countdown extends MEC_skins
         {
             $rendered = $this->render->data($this->event_id, ($this->atts['content'] ?? ''));
 
+            $now = current_time('Y-m-d H:i:s');
+
             $data = new stdClass();
             $data->ID = $this->event_id;
             $data->data = $rendered;
-            $data->dates = $this->render->dates($this->event_id, $rendered, $this->maximum_dates);
-            $data->date = $data->dates[0] ?? [];
+            $data->dates = $this->render->dates($this->event_id, $rendered, $this->maximum_dates, $now);
+            $data->date = [];
+
+            foreach($data->dates as $date)
+            {
+                if($this->main->is_past($date['start']['timestamp'], $now)) continue;
+
+                $data->date = $date;
+                break;
+            }
 
             $events[] = $this->render->after_render($data, $this);
         }
-        
+
         return $events;
     }
 }

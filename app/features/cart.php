@@ -123,18 +123,37 @@ class MEC_feature_cart extends MEC_base
         $cart = $this->cart->get_cart($cart_id);
 
         $applied = false;
-        foreach($cart as $transaction_id)
+        $applicable = true;
+        $message = esc_html__('Coupon was not valid or applicable.', 'modern-events-calendar-lite');
+
+        $term = get_term_by('name', $coupon, 'mec_coupon');
+        $coupon_id = $term->term_id ?? 0;
+
+        if($coupon_id)
         {
-            $TO = $this->book->get_TO($transaction_id);
-
-            // Free Transaction
-            if($TO->is_free()) continue;
-
-            $validity = $this->book->coupon_check_validity($coupon, $TO->get_event_id(), $TO->get_array());
-            if($validity == 1)
+            $maximum_bookings = get_term_meta($term->term_id, 'maximum_bookings', true);
+            if(is_numeric($maximum_bookings) && $maximum_bookings < count($cart))
             {
-                $applied = true;
-                $this->book->coupon_apply($coupon, $transaction_id);
+                $applicable = false;
+                $message = sprintf(esc_html__('The coupon is applicable to only %s bookings; you currently have %s bookings.', 'modern-events-calendar-lite'), $maximum_bookings, count($cart));
+            }
+        }
+
+        if($applicable)
+        {
+            foreach($cart as $transaction_id)
+            {
+                $TO = $this->book->get_TO($transaction_id);
+
+                // Free Transaction
+                if($TO->is_free()) continue;
+
+                $validity = $this->book->coupon_check_validity($coupon, $TO->get_event_id(), $TO->get_array());
+                if($validity == 1)
+                {
+                    $applied = true;
+                    $this->book->coupon_apply($coupon, $transaction_id);
+                }
             }
         }
 
@@ -150,7 +169,7 @@ class MEC_feature_cart extends MEC_base
         {
             wp_send_json(array(
                 'success' => 0,
-                'message' => esc_html__('Coupon was not valid or applicable.', 'modern-events-calendar-lite'),
+                'message' => $message,
             ));
         }
     }

@@ -458,8 +458,27 @@ $mec_categories = get_terms(array(
                             <div class="mec-form-row">
                                 <label>
                                     <input type="hidden" name="mec[settings][fes_section_speaker]" value="0" />
-                                    <input value="1" type="checkbox" name="mec[settings][fes_section_speaker]" <?php if(isset($settings['fes_section_speaker']) and $settings['fes_section_speaker']) echo 'checked="checked"'; ?> /><?php esc_html_e('Speakers', 'modern-events-calendar-lite'); ?>
+                                    <input value="1" onchange="jQuery('#mec_fes_speaker_section_options').toggle();" type="checkbox" name="mec[settings][fes_section_speaker]" <?php if(isset($settings['fes_section_speaker']) and $settings['fes_section_speaker']) echo 'checked="checked"'; ?> /><?php esc_html_e('Speakers', 'modern-events-calendar-lite'); ?>
                                 </label>
+                            </div>
+                            <div id="mec_fes_speaker_section_options" class="<?php echo isset($settings['fes_section_speaker']) && $settings['fes_section_speaker'] ? '' : 'mec-util-hidden'; ?>">
+                                <div class="mec-form-row">
+                                    <label class="mec-col-3" for="mec_settings_fes_add_speaker"><?php esc_html_e('Ability to Add New Speakers', 'modern-events-calendar-lite'); ?></label>
+                                    <div class="mec-col-9">
+                                        <select id="mec_settings_fes_add_speaker" name="mec[settings][fes_add_speaker]">
+                                            <option <?php echo isset($settings['fes_add_speaker']) && $settings['fes_add_speaker'] == '1' ? 'selected="selected"' : ''; ?> value="1"><?php esc_html_e('Name Only', 'modern-events-calendar-lite'); ?></option>
+                                            <option <?php echo isset($settings['fes_add_speaker']) && $settings['fes_add_speaker'] == '2' ? 'selected="selected"' : ''; ?> value="2"><?php esc_html_e('Full Details', 'modern-events-calendar-lite'); ?></option>
+                                            <option <?php echo isset($settings['fes_add_speaker']) && $settings['fes_add_speaker'] == '0' ? 'selected="selected"' : ''; ?> value="0"><?php esc_html_e('No', 'modern-events-calendar-lite'); ?></option>
+                                        </select>
+                                        <span class="mec-tooltip">
+                                            <div class="box left">
+                                                <h5 class="title"><?php esc_html_e('Ability to Add New Sponsors', 'modern-events-calendar-lite'); ?></h5>
+                                                <div class="content"><p><?php esc_attr_e("If enabled, then users are able to add their own new sponsors.", 'modern-events-calendar-lite'); ?></p></div>
+                                            </div>
+                                            <i title="" class="dashicons-before dashicons-editor-help"></i>
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                             <div class="mec-form-row">
                                 <label>
@@ -472,8 +491,9 @@ $mec_categories = get_terms(array(
                                     <label class="mec-col-3" for="mec_settings_fes_add_sponsor"><?php esc_html_e('Ability to Add New Sponsors', 'modern-events-calendar-lite'); ?></label>
                                     <div class="mec-col-9">
                                         <select id="mec_settings_fes_add_sponsor" name="mec[settings][fes_add_sponsor]">
-                                            <option <?php echo ((isset($settings['fes_add_sponsor']) and $settings['fes_add_sponsor'] == '1') ? 'selected="selected"' : ''); ?> value="1"><?php esc_html_e('Yes', 'modern-events-calendar-lite'); ?></option>
-                                            <option <?php echo ((isset($settings['fes_add_sponsor']) and $settings['fes_add_sponsor'] == '0') ? 'selected="selected"' : ''); ?> value="0"><?php esc_html_e('No', 'modern-events-calendar-lite'); ?></option>
+                                            <option <?php echo isset($settings['fes_add_sponsor']) && $settings['fes_add_sponsor'] == '1' ? 'selected="selected"' : ''; ?> value="1"><?php esc_html_e('Name Only', 'modern-events-calendar-lite'); ?></option>
+                                            <option <?php echo isset($settings['fes_add_sponsor']) && $settings['fes_add_sponsor'] == '2' ? 'selected="selected"' : ''; ?> value="2"><?php esc_html_e('Full Details', 'modern-events-calendar-lite'); ?></option>
+                                            <option <?php echo isset($settings['fes_add_sponsor']) && $settings['fes_add_sponsor'] == '0' ? 'selected="selected"' : ''; ?> value="0"><?php esc_html_e('No', 'modern-events-calendar-lite'); ?></option>
                                         </select>
                                         <span class="mec-tooltip">
                                             <div class="box left">

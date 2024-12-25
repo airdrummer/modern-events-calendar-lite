@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Modern Events Calendar\n"
-"POT-Creation-Date: 2024-11-30 15:35+0330\n"
-"PO-Revision-Date: 2024-11-30 15:37+0330\n"
+"POT-Creation-Date: 2024-12-23 13:24+0330\n"
+"PO-Revision-Date: 2024-12-23 13:26+0330\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ca_ES\n"
@@ -31,7 +31,7 @@ msgstr "Modern Events Calendar"
 
 #: app/addons/KC.php:70 app/addons/VC.php:64
 #: app/addons/mec-beaver-builder/mec-beaver-builder.php:25
-#: app/features/mec/styling.php:153
+#: app/features/mec/styling.php:166
 msgid "Content"
 msgstr "Contingut"
 
@@ -108,7 +108,7 @@ msgid "LearnDash Course"
 msgstr ""
 
 #: app/addons/mec-beaver-builder/mec-beaver-builder.php:9
-#: app/core/src/FES/FormBuilder.php:3573 app/features/events.php:758
+#: app/core/src/FES/FormBuilder.php:3634 app/features/events.php:758
 #: app/features/events.php:1429 app/features/events.php:1907
 #: app/features/mec/booking.php:107 app/features/mec/booking.php:821
 #: app/features/mec/fes.php:50 app/features/mec/settings.php:56
@@ -216,8 +216,8 @@ msgid "Attendee's Form"
 msgstr "Formulari dels assistents"
 
 #: app/core/src/BookingForm/Attendees.php:268
-#: app/core/src/FES/FormBuilder.php:903 app/core/src/FES/FormBuilder.php:2044
-#: app/core/src/FES/FormBuilder.php:2998 app/core/src/ImportExport/Terms.php:39
+#: app/core/src/FES/FormBuilder.php:903 app/core/src/FES/FormBuilder.php:2105
+#: app/core/src/FES/FormBuilder.php:3059 app/core/src/ImportExport/Terms.php:39
 #: app/features/events.php:742 app/features/fes.php:322
 #: app/features/labels.php:189 app/features/mec/booking.php:49
 #: app/features/popup/event.php:199 app/features/profile/profile.php:203
@@ -227,9 +227,9 @@ msgstr "Nom"
 
 #: app/core/src/BookingForm/Attendees.php:276
 #: app/core/src/BookingForm/DisplayFields.php:134
-#: app/core/src/FES/FormBuilder.php:899 app/core/src/FES/FormBuilder.php:3007
-#: app/core/src/FES/FormBuilder.php:3074 app/core/src/FES/FormBuilder.php:3164
-#: app/core/src/Forms/CustomForm.php:108
+#: app/core/src/FES/FormBuilder.php:899 app/core/src/FES/FormBuilder.php:1410
+#: app/core/src/FES/FormBuilder.php:3068 app/core/src/FES/FormBuilder.php:3135
+#: app/core/src/FES/FormBuilder.php:3225 app/core/src/Forms/CustomForm.php:108
 #: app/core/src/Forms/DisplayFields.php:94
 #: app/core/src/Forms/FormFields.php:189 app/core/src/Forms/SettingsForm.php:93
 #: app/core/src/ImportExport/Terms.php:55
@@ -240,19 +240,19 @@ msgstr "Nom"
 #: app/features/mec/booking.php:61 app/features/mec/booking.php:1056
 #: app/features/mec/booking.php:1154 app/features/mec/single.php:453
 #: app/features/organizers.php:128 app/features/organizers.php:209
-#: app/features/profile/profile.php:206 app/features/speakers.php:156
-#: app/features/speakers.php:249 app/libraries/main.php:2078
+#: app/features/profile/profile.php:206 app/features/speakers.php:154
+#: app/features/speakers.php:247 app/libraries/main.php:2078
 #: app/libraries/main.php:2151 app/libraries/main.php:4275
 #: app/libraries/main.php:10233 app/libraries/notifications.php:2475
-#: app/skins/single.php:1371 app/skins/single.php:1447
-#: app/skins/single/default.php:315 app/skins/single/m1.php:128
-#: app/skins/single/m2.php:76 app/widgets/single/default.php:149
+#: app/skins/single.php:1373 app/skins/single.php:1453
+#: app/skins/single/default.php:318 app/skins/single/m1.php:131
+#: app/skins/single/m2.php:79 app/widgets/single/default.php:152
 #: app/widgets/single/modern.php:61
 msgid "Email"
 msgstr "Correu electrònic"
 
 #: app/core/src/BookingForm/Attendees.php:337
-#: app/core/src/FES/FormBuilder.php:2246
+#: app/core/src/FES/FormBuilder.php:2307
 #: app/modules/booking/steps/checkout.php:73
 #: app/modules/booking/steps/message.php:30
 #: app/modules/booking/steps/tickets.php:134
@@ -280,8 +280,8 @@ msgid "2"
 msgstr "12"
 
 #: app/core/src/BookingForm/Attendees.php:338
-#: app/core/src/FES/FormBuilder.php:3332 app/features/events.php:3859
-#: app/features/mec/fes.php:606 app/features/profile/profile.php:68
+#: app/core/src/FES/FormBuilder.php:3393 app/features/events.php:3862
+#: app/features/mec/fes.php:626 app/features/profile/profile.php:68
 #: app/libraries/main.php:3138 app/libraries/main.php:3419
 #: app/modules/booking/steps/checkout.php:74
 #: app/modules/booking/steps/message.php:31
@@ -326,7 +326,7 @@ msgid "Confirmation"
 msgstr "Confirmació"
 
 #: app/core/src/BookingForm/Attendees.php:354
-#: app/core/src/BookingForm/Attendees.php:387 app/libraries/book.php:230
+#: app/core/src/BookingForm/Attendees.php:387 app/libraries/book.php:242
 #, fuzzy
 #| msgid "Total"
 msgid "Subtotal"
@@ -427,8 +427,8 @@ msgid "Waiting"
 msgstr "En espera"
 
 #: app/core/src/Books/BookingForm.php:48 app/skins/single.php:1033
-#: app/skins/single/default.php:161 app/skins/single/m1.php:301
-#: app/skins/single/m2.php:267 app/skins/single/modern.php:183
+#: app/skins/single/default.php:161 app/skins/single/m1.php:304
+#: app/skins/single/m2.php:270 app/skins/single/modern.php:183
 msgid "Sold out!"
 msgstr "Esgotat!"
 
@@ -452,9 +452,9 @@ msgstr ""
 msgid "How to set booking module"
 msgstr "Com configurar el mòdul de reserva"
 
-#: app/core/src/FES/FormBuilder.php:56 app/core/src/FES/FormBuilder.php:3675
+#: app/core/src/FES/FormBuilder.php:56 app/core/src/FES/FormBuilder.php:3736
 #: app/features/events.php:3000 app/features/events.php:3349
-#: app/features/events.php:3856 app/features/mec/styling.php:135
+#: app/features/events.php:3859 app/features/mec/styling.php:148
 #: app/libraries/formBuilder.php:61 app/libraries/formBuilder.php:77
 #: app/libraries/formBuilder.php:105 app/libraries/formBuilder.php:137
 #: app/libraries/formBuilder.php:157 app/libraries/ticketVariations.php:39
@@ -471,8 +471,8 @@ msgstr "Extracte de l'esdeveniment opcional"
 msgid "Optional Event Excerpt"
 msgstr "Extracte de l'esdeveniment opcional"
 
-#: app/core/src/FES/FormBuilder.php:105 app/features/mec/fes.php:629
-#: app/features/mec/fes.php:752
+#: app/core/src/FES/FormBuilder.php:105 app/features/mec/fes.php:649
+#: app/features/mec/fes.php:772
 msgid "Excerpt"
 msgstr "Extracte"
 
@@ -608,7 +608,7 @@ msgstr "Anualment"
 msgid "Custom Days"
 msgstr "Dies personalitzats"
 
-#: app/core/src/FES/FormBuilder.php:273 app/core/src/FES/FormBuilder.php:3574
+#: app/core/src/FES/FormBuilder.php:273 app/core/src/FES/FormBuilder.php:3635
 #: app/features/events.php:759 app/features/events.php:972
 #: app/features/events.php:1430 app/features/events.php:1908
 #: app/features/mec/booking.php:108 app/features/mec/booking.php:822
@@ -688,10 +688,9 @@ msgstr "Inici"
 msgid "End"
 msgstr "Final"
 
-#: app/core/src/FES/FormBuilder.php:326 app/core/src/FES/FormBuilder.php:1386
-#: app/core/src/FES/FormBuilder.php:1458 app/core/src/FES/FormBuilder.php:2092
-#: app/core/src/FES/FormBuilder.php:2860 app/core/src/FES/FormBuilder.php:3262
-#: app/core/src/FES/FormBuilder.php:3816 app/features/events.php:1013
+#: app/core/src/FES/FormBuilder.php:326 app/core/src/FES/FormBuilder.php:2153
+#: app/core/src/FES/FormBuilder.php:2921 app/core/src/FES/FormBuilder.php:3323
+#: app/core/src/FES/FormBuilder.php:3877 app/features/events.php:1013
 #: app/features/faq.php:77 app/features/mec/settings.php:1166
 #: app/libraries/formBuilder.php:69 app/libraries/formBuilder.php:146
 #: app/libraries/formBuilder.php:202 app/libraries/tickets.php:259
@@ -721,10 +720,10 @@ msgstr ""
 "d'inici i de finalització han de ser proporcionals a la data inicial."
 
 #: app/core/src/FES/FormBuilder.php:333 app/core/src/FES/FormBuilder.php:641
-#: app/core/src/FES/FormBuilder.php:1015 app/core/src/FES/FormBuilder.php:1872
-#: app/core/src/FES/FormBuilder.php:2037 app/core/src/FES/FormBuilder.php:2168
-#: app/core/src/FES/FormBuilder.php:2560 app/core/src/FES/FormBuilder.php:2573
-#: app/core/src/FES/FormBuilder.php:2887 app/core/src/FES/FormBuilder.php:2924
+#: app/core/src/FES/FormBuilder.php:1015 app/core/src/FES/FormBuilder.php:1933
+#: app/core/src/FES/FormBuilder.php:2098 app/core/src/FES/FormBuilder.php:2229
+#: app/core/src/FES/FormBuilder.php:2621 app/core/src/FES/FormBuilder.php:2634
+#: app/core/src/FES/FormBuilder.php:2948 app/core/src/FES/FormBuilder.php:2985
 #: app/core/src/Notifications/template-notification-settings.php:94
 #: app/core/src/SingleBuilder/Widgets/EventMoreInfo/EventMoreInfo.php:36
 #: app/features/dc.php:215 app/features/events.php:853
@@ -741,8 +740,8 @@ msgstr ""
 #: app/features/mec/booking.php:909 app/features/mec/booking.php:1252
 #: app/features/mec/booking.php:1280 app/features/mec/fes.php:93
 #: app/features/mec/fes.php:146 app/features/mec/fes.php:226
-#: app/features/mec/fes.php:370 app/features/mec/fes.php:695
-#: app/features/mec/fes.php:711 app/features/mec/integrations.php:75
+#: app/features/mec/fes.php:370 app/features/mec/fes.php:715
+#: app/features/mec/fes.php:731 app/features/mec/integrations.php:75
 #: app/features/mec/meta_boxes/display_options.php:112
 #: app/features/mec/meta_boxes/display_options.php:125
 #: app/features/mec/meta_boxes/display_options.php:136
@@ -809,9 +808,9 @@ msgstr ""
 #: app/features/mec/single.php:75 app/features/mec/single.php:95
 #: app/features/mec/single.php:113 app/features/mec/single.php:130
 #: app/features/mec/single.php:165 app/features/mec/single.php:182
-#: app/features/mec/styling.php:124 app/features/mec/styling.php:225
-#: app/features/mec/styling.php:244 app/features/mec/styling.php:261
-#: app/features/mec/styling.php:275 app/features/occurrences.php:343
+#: app/features/mec/styling.php:137 app/features/mec/styling.php:238
+#: app/features/mec/styling.php:257 app/features/mec/styling.php:274
+#: app/features/mec/styling.php:288 app/features/occurrences.php:343
 #: app/features/occurrences.php:373 app/features/popup/event.php:140
 #: app/features/popup/event.php:190 app/features/popup/settings.php:82
 #: app/features/popup/settings.php:186 app/features/popup/settings.php:207
@@ -888,12 +887,12 @@ msgid "Countdown Method"
 msgstr "Mètode de compte enrere"
 
 #: app/core/src/FES/FormBuilder.php:688 app/core/src/FES/FormBuilder.php:722
-#: app/core/src/FES/FormBuilder.php:820 app/core/src/FES/FormBuilder.php:2209
-#: app/core/src/FES/FormBuilder.php:2440 app/core/src/FES/FormBuilder.php:2450
-#: app/core/src/FES/FormBuilder.php:2498 app/core/src/FES/FormBuilder.php:2543
-#: app/core/src/FES/FormBuilder.php:2661 app/core/src/FES/FormBuilder.php:2716
-#: app/core/src/FES/FormBuilder.php:2849 app/core/src/FES/FormBuilder.php:3029
-#: app/core/src/FES/FormBuilder.php:3257 app/features/events.php:610
+#: app/core/src/FES/FormBuilder.php:820 app/core/src/FES/FormBuilder.php:2270
+#: app/core/src/FES/FormBuilder.php:2501 app/core/src/FES/FormBuilder.php:2511
+#: app/core/src/FES/FormBuilder.php:2559 app/core/src/FES/FormBuilder.php:2604
+#: app/core/src/FES/FormBuilder.php:2722 app/core/src/FES/FormBuilder.php:2777
+#: app/core/src/FES/FormBuilder.php:2910 app/core/src/FES/FormBuilder.php:3090
+#: app/core/src/FES/FormBuilder.php:3318 app/features/events.php:610
 #: app/features/events.php:867 app/features/events.php:881
 #: app/features/mec/single.php:305
 msgid "Inherit from global options"
@@ -976,13 +975,13 @@ msgstr "Amaga als Shortcodes"
 msgid "Timezone"
 msgstr "Zona horària"
 
-#: app/core/src/FES/FormBuilder.php:850 app/core/src/FES/FormBuilder.php:1424
+#: app/core/src/FES/FormBuilder.php:850 app/core/src/FES/FormBuilder.php:1466
 msgid "The output cannot be displayed."
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:852 app/core/src/FES/FormBuilder.php:1426
-#: app/core/src/FES/FormBuilder.php:2749 app/core/src/FES/FormBuilder.php:2772
-#: app/core/src/FES/FormBuilder.php:4049
+#: app/core/src/FES/FormBuilder.php:852 app/core/src/FES/FormBuilder.php:1468
+#: app/core/src/FES/FormBuilder.php:2810 app/core/src/FES/FormBuilder.php:2833
+#: app/core/src/FES/FormBuilder.php:4110
 #, fuzzy
 #| msgid "How to set cost"
 msgid "How to set"
@@ -1000,7 +999,7 @@ msgstr "Dades d'usuari"
 msgid "eg. yourname@gmail.com"
 msgstr "ex. yourname@gmail.com"
 
-#: app/core/src/FES/FormBuilder.php:904 app/core/src/FES/FormBuilder.php:2045
+#: app/core/src/FES/FormBuilder.php:904 app/core/src/FES/FormBuilder.php:2106
 #: app/features/popup/event.php:200
 msgid "eg. John Smith"
 msgstr "ex. John Smith"
@@ -1011,7 +1010,7 @@ msgid "Event Links"
 msgstr "Enllaços d'esdeveniments"
 
 #: app/core/src/FES/FormBuilder.php:933 app/features/events.php:1762
-#: app/features/events.php:1770 app/features/mec/fes.php:755
+#: app/features/events.php:1770 app/features/mec/fes.php:775
 #: app/features/occurrences.php:422 app/libraries/main.php:7892
 #: app/libraries/main.php:7939
 msgid "Event Link"
@@ -1036,7 +1035,7 @@ msgstr ""
 #: app/features/mec/single.php:547 app/features/occurrences.php:427
 #: app/libraries/main.php:7893 app/libraries/main.php:7940
 #: app/skins/single.php:1186 app/skins/single/default.php:225
-#: app/skins/single/m1.php:227 app/skins/single/m2.php:203
+#: app/skins/single/m1.php:230 app/skins/single/m2.php:206
 #: app/widgets/single/default.php:56 app/widgets/single/modern.php:158
 msgid "More Info"
 msgstr "Més informació"
@@ -1095,7 +1094,7 @@ msgstr "Cost de l'esdeveniment"
 #: app/core/src/SingleBuilder/Widgets/EventCost/EventCost.php:52
 #: app/core/src/SingleBuilder/Widgets/EventCost/EventCost.php:86
 #: app/features/events.php:498 app/features/events.php:1441
-#: app/features/mec/fes.php:754 app/features/occurrences.php:385
+#: app/features/mec/fes.php:774 app/features/occurrences.php:385
 #: app/libraries/main.php:7895 app/libraries/main.php:7942
 #: app/libraries/skins.php:1836 app/skins/single.php:1087
 #: app/skins/single/default.php:207 app/skins/single/m1.php:58
@@ -1181,24 +1180,25 @@ msgid "Group not found!"
 msgstr "No s'ha trobat cap esdeveniment!"
 
 #: app/core/src/FES/FormBuilder.php:1140 app/features/events.php:3362
-#: app/features/mec/fes.php:318 app/features/mec/fes.php:759
+#: app/features/mec/fes.php:318 app/features/mec/fes.php:779
 msgid "Featured Image"
 msgstr "Imatge destacada"
 
-#: app/core/src/FES/FormBuilder.php:1148 app/core/src/FES/FormBuilder.php:1806
-#: app/core/src/FES/FormBuilder.php:1929 app/core/src/FES/FormBuilder.php:2067
+#: app/core/src/FES/FormBuilder.php:1148 app/core/src/FES/FormBuilder.php:1867
+#: app/core/src/FES/FormBuilder.php:1990 app/core/src/FES/FormBuilder.php:2128
 #: app/features/popup/event.php:227
 msgid "Choose image"
 msgstr "Tria imatge"
 
-#: app/core/src/FES/FormBuilder.php:1149 app/core/src/FES/FormBuilder.php:1807
-#: app/core/src/FES/FormBuilder.php:1930 app/core/src/FES/FormBuilder.php:1937
-#: app/core/src/FES/FormBuilder.php:2068 app/core/src/FES/FormBuilder.php:2075
+#: app/core/src/FES/FormBuilder.php:1149 app/core/src/FES/FormBuilder.php:1425
+#: app/core/src/FES/FormBuilder.php:1517 app/core/src/FES/FormBuilder.php:1868
+#: app/core/src/FES/FormBuilder.php:1991 app/core/src/FES/FormBuilder.php:1998
+#: app/core/src/FES/FormBuilder.php:2129 app/core/src/FES/FormBuilder.php:2136
 #: app/features/events.php:329 app/features/events.php:387
 #: app/features/locations.php:188 app/features/locations.php:248
 #: app/features/organizers.php:190 app/features/organizers.php:241
-#: app/features/speakers.php:219 app/features/speakers.php:282
-#: app/features/sponsors.php:123 app/features/sponsors.php:146
+#: app/features/speakers.php:217 app/features/speakers.php:280
+#: app/features/sponsors.php:126 app/features/sponsors.php:149
 msgid "Remove image"
 msgstr "Eliminar imatge"
 
@@ -1244,7 +1244,7 @@ msgstr "Com configurar l'etiqueta"
 #: app/features/mec/meta_boxes/filter.php:189
 #: app/features/mec/meta_boxes/filter.php:193 app/libraries/main.php:7848
 #: app/libraries/main.php:7911 app/skins/single.php:1216
-#: app/skins/single.php:2003 app/skins/single/m1.php:73
+#: app/skins/single.php:2009 app/skins/single/m1.php:73
 msgid "Labels"
 msgstr "Etiquetes"
 
@@ -1281,23 +1281,17 @@ msgstr ""
 msgid "How to set speaker"
 msgstr "Com configurar l'altaveu"
 
-#: app/core/src/FES/FormBuilder.php:1382 app/features/events.php:3369
+#: app/core/src/FES/FormBuilder.php:1379 app/features/events.php:3369
 #: app/features/mec.php:537 app/features/mec/fes.php:461
 #: app/features/mec/modules.php:34 app/features/mec/modules.php:44
-#: app/features/popup/settings.php:327 app/features/speakers.php:71
+#: app/features/popup/settings.php:327 app/features/speakers.php:69
 #: app/libraries/main.php:677 app/libraries/main.php:736
 #: app/libraries/main.php:7854 app/libraries/main.php:7917
 #: app/modules/speakers/details.php:31
 msgid "Speakers"
 msgstr "Ponents"
 
-#: app/core/src/FES/FormBuilder.php:1384 app/core/src/FES/FormBuilder.php:1456
-#, fuzzy, php-format
-#| msgid "New %s Name"
-msgid "%s Name"
-msgstr "Nom %s nou"
-
-#: app/core/src/FES/FormBuilder.php:1384
+#: app/core/src/FES/FormBuilder.php:1380
 #: app/features/mec/meta_boxes/search_form.php:97
 #: app/features/mec/meta_boxes/search_form.php:195
 #: app/features/mec/meta_boxes/search_form.php:293
@@ -1313,125 +1307,214 @@ msgstr "Nom %s nou"
 #: app/features/mec/modules.php:273 app/features/mec/modules.php:333
 #: app/features/mec/settings.php:1115 app/features/popup/settings.php:261
 #: app/features/popup/settings.php:300 app/features/search.php:109
-#: app/features/speakers.php:70 app/features/speakers.php:339
+#: app/features/speakers.php:68 app/features/speakers.php:337
 #: app/libraries/main.php:7855 app/libraries/main.php:7918
 #: app/libraries/search.php:384 app/libraries/skins.php:1563
 #: app/modules/speakers/details.php:31
 msgid "Speaker"
 msgstr "Orador"
 
-#: app/core/src/FES/FormBuilder.php:1385
+#: app/core/src/FES/FormBuilder.php:1387 app/core/src/FES/FormBuilder.php:1393
+#: app/core/src/FES/FormBuilder.php:1500 app/core/src/FES/FormBuilder.php:1506
+#, fuzzy, php-format
+#| msgid "New %s Name"
+msgid "%s Name"
+msgstr "Nom %s nou"
+
+#: app/core/src/FES/FormBuilder.php:1388 app/core/src/FES/FormBuilder.php:1394
 #, php-format
 msgid "Insert name of one %s: Chris Taylor"
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:1385 app/features/speakers.php:399
+#: app/core/src/FES/FormBuilder.php:1389 app/core/src/FES/FormBuilder.php:1427
 #, fuzzy
 #| msgid "Speaker"
-msgid "speaker"
+msgid "Add Speaker"
 msgstr "Orador"
 
-#: app/core/src/FES/FormBuilder.php:1453 app/features/mec.php:543
-#: app/features/mec/fes.php:467 app/features/mec/meta_boxes/filter.php:72
+#: app/core/src/FES/FormBuilder.php:1397 app/features/mec/booking.php:526
+#: app/features/speakers.php:127 app/features/speakers.php:232
+msgid "Type"
+msgstr "Tipus"
+
+#: app/core/src/FES/FormBuilder.php:1399 app/features/speakers.php:131
+#: app/features/speakers.php:234
+msgid "Person"
+msgstr ""
+
+#: app/core/src/FES/FormBuilder.php:1400 app/features/speakers.php:132
+#: app/features/speakers.php:235
+#, fuzzy
+#| msgid "Group ID"
+msgid "Group"
+msgstr "Id de grup"
+
+#: app/core/src/FES/FormBuilder.php:1404 app/features/speakers.php:138
+#: app/features/speakers.php:239 app/features/speakers.php:338
+msgid "Job Title"
+msgstr "Lloc de treball"
+
+#: app/core/src/FES/FormBuilder.php:1407 app/core/src/FES/FormBuilder.php:3137
+#: app/core/src/FES/FormBuilder.php:3227 app/core/src/Forms/FormFields.php:315
+#: app/core/src/Forms/SettingsForm.php:103
+#: app/core/src/ImportExport/Terms.php:54 app/features/mec/booking.php:1058
+#: app/features/mec/booking.php:1156 app/features/mec/single.php:456
+#: app/features/organizers.php:120 app/features/organizers.php:205
+#: app/features/speakers.php:146 app/features/speakers.php:243
+#: app/features/speakers.php:339 app/libraries/main.php:4402
+msgid "Tel"
+msgstr "Telèfon"
+
+#: app/core/src/FES/FormBuilder.php:1413
+#: app/core/src/SingleBuilder/Widgets/EventLocations/EventLocations.php:75
+#: app/core/src/SingleBuilder/Widgets/EventOrganizers/EventOrganizers.php:131
+#: app/features/speakers.php:162 app/features/speakers.php:251
+#: app/skins/single.php:971 app/skins/single.php:1380 app/skins/single.php:1460
+#: app/skins/single.php:1531 app/skins/single/default.php:325
+#: app/skins/single/m1.php:138 app/skins/single/m2.php:86
+#: app/skins/single/m2.php:155 app/widgets/single/default.php:159
+#: app/widgets/single/modern.php:68
+msgid "Website"
+msgstr "Web"
+
+#: app/core/src/FES/FormBuilder.php:1415 app/features/organizers.php:152
+#: app/features/organizers.php:221 app/features/speakers.php:179
+#: app/features/speakers.php:260
+msgid "Facebook Page"
+msgstr "Pàgina de Facebook"
+
+#: app/core/src/FES/FormBuilder.php:1415 app/core/src/ImportExport/Terms.php:60
+#: app/features/organizers.php:160 app/features/organizers.php:225
+#: app/features/speakers.php:187 app/features/speakers.php:264
+msgid "Instagram"
+msgstr "Instagram"
+
+#: app/core/src/FES/FormBuilder.php:1415 app/features/organizers.php:168
+#: app/features/organizers.php:229 app/features/speakers.php:195
+#: app/features/speakers.php:268
+msgid "LinkedIn"
+msgstr "LinkedIn"
+
+#: app/core/src/FES/FormBuilder.php:1415 app/features/organizers.php:176
+#: app/features/organizers.php:233 app/features/speakers.php:203
+#: app/features/speakers.php:272
+msgid "Twitter Page"
+msgstr "Pàgina de Twitter"
+
+#: app/core/src/FES/FormBuilder.php:1492 app/features/mec.php:543
+#: app/features/mec/fes.php:486 app/features/mec/meta_boxes/filter.php:72
 #: app/features/mec/meta_boxes/filter.php:225
 #: app/features/mec/meta_boxes/filter.php:228 app/features/mec/modules.php:155
-#: app/features/mec/modules.php:165 app/features/sponsors.php:59
+#: app/features/mec/modules.php:165 app/features/sponsors.php:62
 #: app/libraries/main.php:738 app/libraries/main.php:7856
 #: app/modules/sponsors/details.php:23
 msgid "Sponsors"
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:1456 app/features/sponsors.php:58
+#: app/core/src/FES/FormBuilder.php:1493 app/features/sponsors.php:61
 #: app/libraries/main.php:7857 app/modules/sponsors/details.php:23
 msgid "Sponsor"
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:1457
+#: app/core/src/FES/FormBuilder.php:1501 app/core/src/FES/FormBuilder.php:1507
 #, php-format
 msgid "Insert name of one %s: Company A"
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:1457 app/features/speakers.php:441
+#: app/core/src/FES/FormBuilder.php:1501 app/features/sponsors.php:198
+#: app/features/sponsors.php:218
 msgid "sponsor"
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:1500
+#: app/core/src/FES/FormBuilder.php:1502 app/core/src/FES/FormBuilder.php:1519
+#, fuzzy
+#| msgid "Event Color"
+msgid "Add Sponsor"
+msgstr "Color de l'esdeveniment"
+
+#: app/core/src/FES/FormBuilder.php:1510
+#, fuzzy, php-format
+#| msgid "Link"
+msgid "%s Link"
+msgstr "Enllaç"
+
+#: app/core/src/FES/FormBuilder.php:1561
 #, php-format
 msgid "I accept the %s in order to submit an event."
 msgstr "Accepto els %s per enviar un esdeveniment."
 
-#: app/core/src/FES/FormBuilder.php:1500
+#: app/core/src/FES/FormBuilder.php:1561
 msgid "Privacy Policy"
 msgstr "Política de privacitat"
 
-#: app/core/src/FES/FormBuilder.php:1502
+#: app/core/src/FES/FormBuilder.php:1563
 msgid "I accept the Privacy Policy in order to submit an event."
 msgstr "Accepto la política de privadesa per enviar un esdeveniment."
 
-#: app/core/src/FES/FormBuilder.php:1557 app/libraries/render.php:677
+#: app/core/src/FES/FormBuilder.php:1618 app/libraries/render.php:677
 msgid "Day 1"
 msgstr "Dia 1"
 
-#: app/core/src/FES/FormBuilder.php:1712 app/features/events.php:457
+#: app/core/src/FES/FormBuilder.php:1773 app/features/events.php:457
 #, fuzzy
 #| msgid "Event Name"
 msgid "Gallery"
 msgstr "Nom de l'esdeveniment"
 
-#: app/core/src/FES/FormBuilder.php:1715 app/core/src/FES/FormBuilder.php:1717
+#: app/core/src/FES/FormBuilder.php:1776 app/core/src/FES/FormBuilder.php:1778
 #: app/features/events.php:1720 app/features/events.php:1722
 #, fuzzy
 #| msgid "Enable booking module"
 msgid "Add event gallery images"
 msgstr "Activa el mòdul de reserves"
 
-#: app/core/src/FES/FormBuilder.php:1719 app/features/events.php:1724
+#: app/core/src/FES/FormBuilder.php:1780 app/features/events.php:1724
 #, fuzzy
 #| msgid "pdf,zip,png,jpg and gif files are allowed."
 msgid "png, jpg, gif, and webp files are allowed."
 msgstr "s'admeten fitxers pdf,zip,png,jpg i gif."
 
-#: app/core/src/FES/FormBuilder.php:1759 app/features/events.php:502
+#: app/core/src/FES/FormBuilder.php:1820 app/features/events.php:502
 #: app/features/mec/fes.php:335 app/features/mec/modules.php:248
 #: app/libraries/main.php:688 app/libraries/main.php:748
 #: app/skins/single.php:234 app/skins/single.php:552
 msgid "Related Events"
 msgstr "Esdeveniments relacionats"
 
-#: app/core/src/FES/FormBuilder.php:1782 app/features/events.php:503
+#: app/core/src/FES/FormBuilder.php:1843 app/features/events.php:503
 #: app/features/mec/fes.php:344 app/features/mec/single.php:353
 #, fuzzy
 #| msgid "Event Organizer"
 msgid "Event Banner"
 msgstr "Organitzador d'esdeveniments"
 
-#: app/core/src/FES/FormBuilder.php:1786
+#: app/core/src/FES/FormBuilder.php:1847
 #, fuzzy
 #| msgid "Display Organizers"
 msgid "Display Banner"
 msgstr "Mostar organitzadors"
 
-#: app/core/src/FES/FormBuilder.php:1791
+#: app/core/src/FES/FormBuilder.php:1852
 #: app/features/mec/meta_boxes/display_options.php:2268
 msgid "Background Color"
 msgstr "Color de fons"
 
-#: app/core/src/FES/FormBuilder.php:1798
+#: app/core/src/FES/FormBuilder.php:1859
 msgid "Use featured image as banner image"
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:1856 app/core/src/FES/FormBuilder.php:2023
+#: app/core/src/FES/FormBuilder.php:1917 app/core/src/FES/FormBuilder.php:2084
 #: app/features/occurrences.php:331 app/features/occurrences.php:361
 #, php-format
 msgid "Event Main %s"
 msgstr "Esdeveniment principal %s"
 
-#: app/core/src/FES/FormBuilder.php:1856 app/core/src/FES/FormBuilder.php:1858
-#: app/core/src/FES/FormBuilder.php:1871
+#: app/core/src/FES/FormBuilder.php:1917 app/core/src/FES/FormBuilder.php:1919
+#: app/core/src/FES/FormBuilder.php:1932
 #: app/core/src/SingleBuilder/Widgets/EventLocations/EventLocations.php:53
 #: app/features/events.php:3002 app/features/events.php:3356
 #: app/features/locations.php:61 app/features/locations.php:305
-#: app/features/mec/fes.php:758
+#: app/features/mec/fes.php:778
 #: app/features/mec/meta_boxes/display_options.php:1982
 #: app/features/mec/meta_boxes/search_form.php:76
 #: app/features/mec/meta_boxes/search_form.php:174
@@ -1454,36 +1537,36 @@ msgstr "Esdeveniment principal %s"
 #: app/libraries/main.php:3345 app/libraries/main.php:7851
 #: app/libraries/main.php:7914 app/libraries/search.php:316
 #: app/libraries/skins.php:1443 app/skins/single.php:953
-#: app/skins/single/m2.php:138
+#: app/skins/single/m2.php:141
 msgid "Location"
 msgstr "Localització"
 
-#: app/core/src/FES/FormBuilder.php:1860 app/features/occurrences.php:335
+#: app/core/src/FES/FormBuilder.php:1921 app/features/occurrences.php:335
 #: app/features/popup/event.php:132
 msgid "Hide location"
 msgstr "Amaga la ubicació"
 
-#: app/core/src/FES/FormBuilder.php:1863
+#: app/core/src/FES/FormBuilder.php:1924
 msgid "Insert a new location"
 msgstr "Insereix una nova ubicació"
 
-#: app/core/src/FES/FormBuilder.php:1872
+#: app/core/src/FES/FormBuilder.php:1933
 #, fuzzy
 #| msgid "Choose one of saved locations or insert new one."
 msgid "Choose one of saved locations or insert a new one."
 msgstr "Trieu una de les ubicacions desades o inseriu-ne una de nova."
 
-#: app/core/src/FES/FormBuilder.php:1879 app/features/fes.php:833
+#: app/core/src/FES/FormBuilder.php:1940 app/features/fes.php:833
 #: app/features/locations.php:386 app/features/popup.php:309
 #: app/features/popup/event.php:156
 msgid "Location Name"
 msgstr "Nom de la ubicació"
 
-#: app/core/src/FES/FormBuilder.php:1880 app/features/popup/event.php:157
+#: app/core/src/FES/FormBuilder.php:1941 app/features/popup/event.php:157
 msgid "eg. City Hall"
 msgstr "ex. Almenar"
 
-#: app/core/src/FES/FormBuilder.php:1883 app/core/src/ImportExport/Terms.php:75
+#: app/core/src/FES/FormBuilder.php:1944 app/core/src/ImportExport/Terms.php:75
 #: app/features/events.php:3357 app/features/locations.php:121
 #: app/features/locations.php:207 app/features/locations.php:306
 #: app/features/mec/meta_boxes/search_form.php:120
@@ -1502,83 +1585,83 @@ msgstr "ex. Almenar"
 msgid "Address"
 msgstr "Adreça"
 
-#: app/core/src/FES/FormBuilder.php:1884 app/features/popup/event.php:161
+#: app/core/src/FES/FormBuilder.php:1945 app/features/popup/event.php:161
 msgid "eg. City hall, Manhattan, New York"
 msgstr "ex. City hall, Manhattan, New York"
 
-#: app/core/src/FES/FormBuilder.php:1905 app/features/locations.php:144
+#: app/core/src/FES/FormBuilder.php:1966 app/features/locations.php:144
 #: app/features/locations.php:224
 msgid "Opening hour in text format like 09:15 or 18:30"
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:1905 app/core/src/ImportExport/Terms.php:76
+#: app/core/src/FES/FormBuilder.php:1966 app/core/src/ImportExport/Terms.php:76
 #: app/core/src/SingleBuilder/Widgets/EventLocations/EventLocations.php:67
 #: app/features/locations.php:141 app/features/locations.php:223
-#: app/skins/single.php:964 app/skins/single.php:1518
+#: app/skins/single.php:964 app/skins/single.php:1524
 #, fuzzy
 #| msgid "Midnight Hour"
 msgid "Opening Hour"
 msgstr "Mitja nit"
 
-#: app/core/src/FES/FormBuilder.php:1908 app/core/src/ImportExport/Terms.php:77
+#: app/core/src/FES/FormBuilder.php:1969 app/core/src/ImportExport/Terms.php:77
 #: app/features/locations.php:149 app/features/locations.php:227
 #: app/features/popup/event.php:164
 msgid "Latitude"
 msgstr "Latitud"
 
-#: app/core/src/FES/FormBuilder.php:1909 app/core/src/ImportExport/Terms.php:78
+#: app/core/src/FES/FormBuilder.php:1970 app/core/src/ImportExport/Terms.php:78
 #: app/features/locations.php:157 app/features/locations.php:231
 #: app/features/popup/event.php:165
 msgid "Longitude"
 msgstr "Longitud"
 
-#: app/core/src/FES/FormBuilder.php:1912 app/features/popup/event.php:168
+#: app/core/src/FES/FormBuilder.php:1973 app/features/popup/event.php:168
 msgid "Latitude/Longitude"
 msgstr "Latitud/Longitud"
 
-#: app/core/src/FES/FormBuilder.php:1913
+#: app/core/src/FES/FormBuilder.php:1974
 msgid ""
 "Latitude and Longitude are parameters that represent the coordinates in the "
 "geographic coordinate system. You can find your venue's Latitude and "
 "Longitude measurments via the link below. "
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:1913 app/features/popup/event.php:169
+#: app/core/src/FES/FormBuilder.php:1974 app/features/popup/event.php:169
 msgid "Get Latitude and Longitude"
 msgstr "Obteniu latitud i longitud"
 
-#: app/core/src/FES/FormBuilder.php:1919 app/core/src/ImportExport/Terms.php:79
+#: app/core/src/FES/FormBuilder.php:1980 app/core/src/ImportExport/Terms.php:79
 #: app/features/locations.php:165 app/features/locations.php:235
 msgid "Location Website"
 msgstr "Lloc web de localització"
 
-#: app/core/src/FES/FormBuilder.php:1922 app/features/locations.php:173
+#: app/core/src/FES/FormBuilder.php:1983 app/features/locations.php:173
 #: app/features/locations.php:239
 #, fuzzy
 #| msgid "Location Name"
 msgid "Location Phone"
 msgstr "Nom de la ubicació"
 
-#: app/core/src/FES/FormBuilder.php:1944 app/features/occurrences.php:353
+#: app/core/src/FES/FormBuilder.php:2005 app/features/occurrences.php:353
 #: app/features/popup/event.php:150
 msgid "Don't show map in single event page"
 msgstr "No mostris el mapa a la pàgina d'un sol esdeveniment"
 
-#: app/core/src/FES/FormBuilder.php:1948 app/features/mec/fes.php:414
+#: app/core/src/FES/FormBuilder.php:2009 app/features/mec/fes.php:414
 #: app/features/mec/modules.php:129 app/libraries/main.php:7897
-#: app/libraries/main.php:7944 app/skins/single.php:1499
+#: app/libraries/main.php:7944 app/skins/single.php:1505
 msgid "Other Locations"
 msgstr "Altres Ubicacions"
 
-#: app/core/src/FES/FormBuilder.php:1950
+#: app/core/src/FES/FormBuilder.php:2011
 msgid ""
 "You can select extra locations in addition to main location if you like."
 msgstr ""
 "Podeu seleccionar ubicacions addicionals a més de la ubicació principal si "
 "voleu."
 
-#: app/core/src/FES/FormBuilder.php:2023 app/core/src/FES/FormBuilder.php:2025
-#: app/core/src/FES/FormBuilder.php:2036
+#: app/core/src/FES/FormBuilder.php:2084 app/core/src/FES/FormBuilder.php:2086
+#: app/core/src/FES/FormBuilder.php:2097
 #: app/core/src/SingleBuilder/Widgets/EventOrganizers/EventOrganizers.php:96
 #: app/features/events.php:497 app/features/events.php:3003
 #: app/features/events.php:3358 app/features/events.php:3359
@@ -1604,46 +1687,46 @@ msgstr ""
 #: app/features/popup/settings.php:251 app/features/popup/settings.php:291
 #: app/features/search.php:103 app/libraries/main.php:7853
 #: app/libraries/main.php:7916 app/libraries/search.php:350
-#: app/libraries/skins.php:1503 app/skins/single.php:1342
+#: app/libraries/skins.php:1503 app/skins/single.php:1344
 #: app/skins/single/default.php:286 app/skins/single/m1.php:99
 #: app/skins/single/m2.php:46 app/widgets/single/default.php:120
 #: app/widgets/single/modern.php:31
 msgid "Organizer"
 msgstr "Organitzador"
 
-#: app/core/src/FES/FormBuilder.php:2026 app/features/occurrences.php:365
+#: app/core/src/FES/FormBuilder.php:2087 app/features/occurrences.php:365
 #: app/features/popup/event.php:182
 msgid "Hide organizer"
 msgstr "Amaga l'organitzador"
 
-#: app/core/src/FES/FormBuilder.php:2028
+#: app/core/src/FES/FormBuilder.php:2089
 msgid "Insert a new organizer"
 msgstr "Insereix un nou organitzador"
 
-#: app/core/src/FES/FormBuilder.php:2037
+#: app/core/src/FES/FormBuilder.php:2098
 #, fuzzy
 #| msgid "Choose one of saved organizers or insert new one below."
 msgid "Choose one of the saved organizers or insert a new one."
 msgstr ""
 "Trieu un dels organitzadors desats o inseriu-ne un de nou a continuació."
 
-#: app/core/src/FES/FormBuilder.php:2048 app/features/popup/event.php:203
+#: app/core/src/FES/FormBuilder.php:2109 app/features/popup/event.php:203
 msgid "Phone number."
 msgstr "Número de telèfon."
 
-#: app/core/src/FES/FormBuilder.php:2049 app/features/popup/event.php:204
+#: app/core/src/FES/FormBuilder.php:2110 app/features/popup/event.php:204
 msgid "eg. +1 (234) 5678"
 msgstr "ex. +34 900 123 456"
 
-#: app/core/src/FES/FormBuilder.php:2052 app/features/popup/event.php:208
+#: app/core/src/FES/FormBuilder.php:2113 app/features/popup/event.php:208
 msgid "Email address."
 msgstr "Correu electrònic."
 
-#: app/core/src/FES/FormBuilder.php:2053 app/features/popup/event.php:209
+#: app/core/src/FES/FormBuilder.php:2114 app/features/popup/event.php:209
 msgid "eg. john@smith.com"
 msgstr "ex. usuari@elteuweb.com"
 
-#: app/core/src/FES/FormBuilder.php:2056 app/core/src/ImportExport/Terms.php:56
+#: app/core/src/FES/FormBuilder.php:2117 app/core/src/ImportExport/Terms.php:56
 #: app/features/organizers.php:136 app/features/organizers.php:213
 #: app/features/popup/event.php:213
 #, fuzzy
@@ -1651,11 +1734,11 @@ msgstr "ex. usuari@elteuweb.com"
 msgid "Page URL"
 msgstr "API URL"
 
-#: app/core/src/FES/FormBuilder.php:2057 app/features/popup/event.php:214
+#: app/core/src/FES/FormBuilder.php:2118 app/features/popup/event.php:214
 msgid "eg. https://webnus.net"
 msgstr "ex. https://webnus.net"
 
-#: app/core/src/FES/FormBuilder.php:2060 app/core/src/ImportExport/Terms.php:57
+#: app/core/src/FES/FormBuilder.php:2121 app/core/src/ImportExport/Terms.php:57
 #: app/features/organizers.php:144 app/features/organizers.php:217
 #: app/features/popup/event.php:219
 #, fuzzy
@@ -1663,23 +1746,23 @@ msgstr "ex. https://webnus.net"
 msgid "Page Label"
 msgstr "Etiqueta de preu"
 
-#: app/core/src/FES/FormBuilder.php:2061
+#: app/core/src/FES/FormBuilder.php:2122
 msgid "eg. Website name or any text"
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:2081 app/libraries/main.php:7896
-#: app/libraries/main.php:7943 app/skins/single.php:1413
+#: app/core/src/FES/FormBuilder.php:2142 app/libraries/main.php:7896
+#: app/libraries/main.php:7943 app/skins/single.php:1415
 msgid "Other Organizers"
 msgstr "Altres organitzadors"
 
-#: app/core/src/FES/FormBuilder.php:2083
+#: app/core/src/FES/FormBuilder.php:2144
 msgid ""
 "You can select extra organizers in addition to main organizer if you like."
 msgstr ""
 "Podeu seleccionar organitzadors addicionals a més de l'organitzador "
 "principal si voleu."
 
-#: app/core/src/FES/FormBuilder.php:2092 app/core/src/FES/FormBuilder.php:2100
+#: app/core/src/FES/FormBuilder.php:2153 app/core/src/FES/FormBuilder.php:2161
 #: app/core/src/Forms/FormFields.php:51 app/core/src/Forms/FormFields.php:100
 #: app/core/src/Forms/FormFields.php:158 app/core/src/Forms/FormFields.php:188
 #: app/core/src/Forms/FormFields.php:220 app/core/src/Forms/FormFields.php:251
@@ -1698,8 +1781,8 @@ msgstr ""
 msgid "Sort"
 msgstr "Ordenar"
 
-#: app/core/src/FES/FormBuilder.php:2092 app/core/src/FES/FormBuilder.php:2101
-#: app/core/src/FES/FormBuilder.php:2901 app/core/src/FES/FormBuilder.php:2938
+#: app/core/src/FES/FormBuilder.php:2153 app/core/src/FES/FormBuilder.php:2162
+#: app/core/src/FES/FormBuilder.php:2962 app/core/src/FES/FormBuilder.php:2999
 #: app/core/src/Forms/FormFields.php:62 app/core/src/Forms/FormFields.php:110
 #: app/core/src/Forms/FormFields.php:168 app/core/src/Forms/FormFields.php:199
 #: app/core/src/Forms/FormFields.php:230 app/core/src/Forms/FormFields.php:262
@@ -1724,11 +1807,11 @@ msgstr "Ordenar"
 msgid "Remove"
 msgstr "Eliminar"
 
-#: app/core/src/FES/FormBuilder.php:2156 app/core/src/FES/FormBuilder.php:2164
+#: app/core/src/FES/FormBuilder.php:2217 app/core/src/FES/FormBuilder.php:2225
 msgid "Total booking limit"
 msgstr "Límit total de reserves"
 
-#: app/core/src/FES/FormBuilder.php:2161 app/libraries/book.php:1758
+#: app/core/src/FES/FormBuilder.php:2222 app/libraries/book.php:1770
 #: app/libraries/tickets.php:189 app/libraries/tickets.php:500
 #: app/modules/booking/default.php:135 app/modules/booking/default.php:240
 #: app/modules/booking/steps/tickets.php:266
@@ -1736,7 +1819,7 @@ msgstr "Límit total de reserves"
 msgid "Unlimited"
 msgstr "Il·limitat"
 
-#: app/core/src/FES/FormBuilder.php:2167
+#: app/core/src/FES/FormBuilder.php:2228
 #, fuzzy
 #| msgid ""
 #| "If you want to set a limit to all tickets, uncheck this checkbox and put "
@@ -1748,22 +1831,22 @@ msgstr ""
 "Si voleu establir un límit a totes les entrades, desmarqueu aquesta casella "
 "de selecció i poseu un número de limitació."
 
-#: app/core/src/FES/FormBuilder.php:2169
+#: app/core/src/FES/FormBuilder.php:2230
 msgid "Read About A Booking System"
 msgstr "Llegeix sobre un sistema de reserves"
 
-#: app/core/src/FES/FormBuilder.php:2177
+#: app/core/src/FES/FormBuilder.php:2238
 msgid "100"
 msgstr "100"
 
-#: app/core/src/FES/FormBuilder.php:2204 app/core/src/FES/FormBuilder.php:2206
+#: app/core/src/FES/FormBuilder.php:2265 app/core/src/FES/FormBuilder.php:2267
 #: app/features/mec/booking.php:141 app/features/mec/booking.php:151
 #: app/features/popup/settings.php:374
 msgid "Date Selection"
 msgstr "Selecció de la data"
 
-#: app/core/src/FES/FormBuilder.php:2210 app/core/src/FES/FormBuilder.php:3081
-#: app/core/src/FES/FormBuilder.php:3170 app/core/src/Forms/FormFields.php:497
+#: app/core/src/FES/FormBuilder.php:2271 app/core/src/FES/FormBuilder.php:3142
+#: app/core/src/FES/FormBuilder.php:3231 app/core/src/Forms/FormFields.php:497
 #: app/core/src/Forms/SettingsForm.php:128 app/features/mec.php:2100
 #: app/features/mec/booking.php:144 app/features/mec/booking.php:1063
 #: app/features/mec/booking.php:1160
@@ -1852,13 +1935,13 @@ msgstr "Selecció de la data"
 msgid "Dropdown"
 msgstr "Desplegable"
 
-#: app/core/src/FES/FormBuilder.php:2211 app/features/mec/booking.php:145
+#: app/core/src/FES/FormBuilder.php:2272 app/features/mec/booking.php:145
 #: app/features/popup/settings.php:378
 msgid "Calendar"
 msgstr "Calendari"
 
-#: app/core/src/FES/FormBuilder.php:2212 app/core/src/FES/FormBuilder.php:3079
-#: app/core/src/FES/FormBuilder.php:3168 app/core/src/Forms/FormFields.php:403
+#: app/core/src/FES/FormBuilder.php:2273 app/core/src/FES/FormBuilder.php:3140
+#: app/core/src/FES/FormBuilder.php:3229 app/core/src/Forms/FormFields.php:403
 #: app/core/src/Forms/SettingsForm.php:118 app/features/mec/booking.php:146
 #: app/features/mec/booking.php:1061 app/features/mec/booking.php:1158
 #: app/features/mec/meta_boxes/search_form.php:72
@@ -1925,36 +2008,36 @@ msgstr "Calendari"
 msgid "Checkboxes"
 msgstr "Checkboxes"
 
-#: app/core/src/FES/FormBuilder.php:2213 app/features/mec/booking.php:147
+#: app/core/src/FES/FormBuilder.php:2274 app/features/mec/booking.php:147
 #, fuzzy
 #| msgid "M.E. Calendar"
 msgid "Express Calendar"
 msgstr "M.E. Calendar"
 
-#: app/core/src/FES/FormBuilder.php:2243
+#: app/core/src/FES/FormBuilder.php:2304
 #, fuzzy
 #| msgid "Minimum Ticket e.g. 3"
 msgid "Minimum ticket per booking"
 msgstr "Número mínim de tiquets. Per exemple 3"
 
-#: app/core/src/FES/FormBuilder.php:2278
+#: app/core/src/FES/FormBuilder.php:2339
 msgid "Discount per user roles"
 msgstr "Descompte per rols d'usuari"
 
-#: app/core/src/FES/FormBuilder.php:2287
+#: app/core/src/FES/FormBuilder.php:2348
 msgid "e.g 5"
 msgstr "e.g 5"
 
-#: app/core/src/FES/FormBuilder.php:2319 app/core/src/FES/FormBuilder.php:2333
-#: app/features/mec/fes.php:534
+#: app/core/src/FES/FormBuilder.php:2380 app/core/src/FES/FormBuilder.php:2394
+#: app/features/mec/fes.php:554
 msgid "Book All Occurrences"
 msgstr "Reserva totes les ocurrències"
 
-#: app/core/src/FES/FormBuilder.php:2330
+#: app/core/src/FES/FormBuilder.php:2391
 msgid "Sell all occurrences by one booking"
 msgstr "Vendre totes les ocurrències per una reserva"
 
-#: app/core/src/FES/FormBuilder.php:2336
+#: app/core/src/FES/FormBuilder.php:2397
 msgid ""
 "If you have a series of events and you want to sell all of them at once, "
 "this option is for you! For example a weekly yoga course or something "
@@ -1964,28 +2047,28 @@ msgstr ""
 "opció és per a tu! Per exemple, un curs setmanal de ioga o alguna cosa "
 "semblant."
 
-#: app/core/src/FES/FormBuilder.php:2354
+#: app/core/src/FES/FormBuilder.php:2415
 #, fuzzy
 #| msgid "Allow multiple bookings by same email on different dates."
 msgid "Allow multiple bookings by same email on different dates"
 msgstr ""
 "Permet múltiples reserves pel mateix correu electrònic en dates diferents."
 
-#: app/core/src/FES/FormBuilder.php:2383 app/features/mec/booking.php:183
-#: app/features/mec/fes.php:540
+#: app/core/src/FES/FormBuilder.php:2444 app/features/mec/booking.php:183
+#: app/features/mec/fes.php:560
 msgid "Interval Options"
 msgstr "Opcions d'interval"
 
-#: app/core/src/FES/FormBuilder.php:2385 app/core/src/FES/FormBuilder.php:2390
+#: app/core/src/FES/FormBuilder.php:2446 app/core/src/FES/FormBuilder.php:2451
 #: app/features/mec/booking.php:185 app/features/mec/booking.php:190
 msgid "Show Booking Form Interval"
 msgstr "Mostra l'interval del formulari de reserva"
 
-#: app/core/src/FES/FormBuilder.php:2387 app/features/mec/booking.php:187
+#: app/core/src/FES/FormBuilder.php:2448 app/features/mec/booking.php:187
 msgid "Minutes (e.g 5)"
 msgstr "Minuts (exemple: 5)"
 
-#: app/core/src/FES/FormBuilder.php:2391 app/features/mec/booking.php:191
+#: app/core/src/FES/FormBuilder.php:2452 app/features/mec/booking.php:191
 #, fuzzy
 #| msgid ""
 #| "You can show booking form only at certain times before event start. If "
@@ -2001,19 +2084,19 @@ msgstr ""
 "de reserva s'obrirà només 30 minuts abans de començar l'esdeveniment! Un dia "
 "són 1440 minuts."
 
-#: app/core/src/FES/FormBuilder.php:2407
+#: app/core/src/FES/FormBuilder.php:2468
 msgid "Stop selling tickets after first occurrence."
 msgstr "Deixeu de vendre entrades després de la primera aparició."
 
-#: app/core/src/FES/FormBuilder.php:2435 app/features/mec/fes.php:546
+#: app/core/src/FES/FormBuilder.php:2496 app/features/mec/fes.php:566
 msgid "Automatic Approval"
 msgstr "Aprovació automàtica"
 
-#: app/core/src/FES/FormBuilder.php:2437 app/features/notifications.php:112
+#: app/core/src/FES/FormBuilder.php:2498 app/features/notifications.php:112
 msgid "Email Verification"
 msgstr "Verificació del correu electrònic"
 
-#: app/core/src/FES/FormBuilder.php:2441 app/core/src/FES/FormBuilder.php:2451
+#: app/core/src/FES/FormBuilder.php:2502 app/core/src/FES/FormBuilder.php:2512
 #: app/features/mec.php:1339 app/features/mec.php:2091
 #: app/features/mec/booking.php:204 app/features/mec/booking.php:271
 #: app/features/mec/booking.php:286 app/features/mec/booking.php:430
@@ -2154,37 +2237,37 @@ msgstr "Verificació del correu electrònic"
 msgid "Disabled"
 msgstr "Inhabilitat"
 
-#: app/core/src/FES/FormBuilder.php:2442 app/core/src/FES/FormBuilder.php:2452
+#: app/core/src/FES/FormBuilder.php:2503 app/core/src/FES/FormBuilder.php:2513
 #: app/features/mec/booking.php:270 app/features/mec/booking.php:287
 #: app/features/mec/booking.php:1245 app/features/mec/booking.php:1274
 #: app/features/mec/modules.php:568 app/features/mec/settings.php:540
 msgid "Enabled"
 msgstr "Habilitat"
 
-#: app/core/src/FES/FormBuilder.php:2447 app/features/mec/booking.php:485
+#: app/core/src/FES/FormBuilder.php:2508 app/features/mec/booking.php:485
 #: app/features/mec/notifications.php:448 app/features/notifications.php:106
 #: app/libraries/main.php:715
 msgid "Booking Confirmation"
 msgstr "Confirmació de la reserva"
 
-#: app/core/src/FES/FormBuilder.php:2487 app/features/mec/booking.php:356
-#: app/features/mec/fes.php:558
+#: app/core/src/FES/FormBuilder.php:2548 app/features/mec/booking.php:356
+#: app/features/mec/fes.php:578
 msgid "Last Few Tickets Percentage"
 msgstr "Percentatge de les últimes entrades"
 
-#: app/core/src/FES/FormBuilder.php:2500
+#: app/core/src/FES/FormBuilder.php:2561
 msgid "15"
 msgstr "15"
 
-#: app/core/src/FES/FormBuilder.php:2532 app/core/src/FES/FormBuilder.php:2549
-#: app/core/src/FES/FormBuilder.php:2559 app/features/mec/booking.php:369
+#: app/core/src/FES/FormBuilder.php:2593 app/core/src/FES/FormBuilder.php:2610
+#: app/core/src/FES/FormBuilder.php:2620 app/features/mec/booking.php:369
 #: app/features/mec/booking.php:371 app/features/mec/booking.php:381
 #: app/features/mec/fes.php:122 app/features/mec/fes.php:132
-#: app/features/mec/fes.php:564
+#: app/features/mec/fes.php:584
 msgid "Thank You Page"
 msgstr "Pàgina d'agraïment"
 
-#: app/core/src/FES/FormBuilder.php:2560
+#: app/core/src/FES/FormBuilder.php:2621
 msgid ""
 "User redirects to this page after booking. Leave it empty if you want to "
 "disable it."
@@ -2192,18 +2275,18 @@ msgstr ""
 "L'usuari redirigeix a aquesta pàgina després de fer la reserva. Deixeu-lo "
 "buit si voleu desactivar-lo."
 
-#: app/core/src/FES/FormBuilder.php:2567 app/core/src/FES/FormBuilder.php:2572
+#: app/core/src/FES/FormBuilder.php:2628 app/core/src/FES/FormBuilder.php:2633
 #: app/features/mec/booking.php:389 app/features/mec/booking.php:394
 #: app/features/mec/fes.php:175 app/features/mec/fes.php:180
 msgid "Thank You Page Time Interval"
 msgstr "Interval per a pàgina d'agraïment"
 
-#: app/core/src/FES/FormBuilder.php:2569 app/features/mec/booking.php:391
+#: app/core/src/FES/FormBuilder.php:2630 app/features/mec/booking.php:391
 #: app/features/mec/fes.php:177
 msgid "2000 mean 2 seconds"
 msgstr "2000 vol dir 2 segons"
 
-#: app/core/src/FES/FormBuilder.php:2573
+#: app/core/src/FES/FormBuilder.php:2634
 msgid ""
 "Waiting time before redirecting to thank you page. It's in miliseconds so "
 "2000 means 2 seconds."
@@ -2211,69 +2294,69 @@ msgstr ""
 "Temps d'espera abans de redirigir a la pàgina d'agraïment. Està en "
 "mil·lisegons, de manera que 2000 significa 2 segons."
 
-#: app/core/src/FES/FormBuilder.php:2608 app/features/mec/fes.php:570
+#: app/core/src/FES/FormBuilder.php:2669 app/features/mec/fes.php:590
 #, fuzzy
 #| msgid "Booking Button"
 msgid "Booking Button Label"
 msgstr "Botó de reserva"
 
-#: app/core/src/FES/FormBuilder.php:2611 app/libraries/main.php:7881
+#: app/core/src/FES/FormBuilder.php:2672 app/libraries/main.php:7881
 msgid "Book Now"
 msgstr "Reservar ara"
 
-#: app/core/src/FES/FormBuilder.php:2650 app/features/mec/booking.php:605
+#: app/core/src/FES/FormBuilder.php:2711 app/features/mec/booking.php:605
 #: app/features/mec/booking.php:614 app/modules/booking/steps/checkout.php:185
 #, fuzzy
 #| msgid "Payment"
 msgid "Partial Payment"
 msgstr "Pagament"
 
-#: app/core/src/FES/FormBuilder.php:2667 app/features/cart/cart.php:47
+#: app/core/src/FES/FormBuilder.php:2728 app/features/cart/cart.php:47
 #: app/features/mec/booking.php:623 app/modules/booking/steps/checkout.php:170
 msgid "Payable"
 msgstr "A pagar"
 
-#: app/core/src/FES/FormBuilder.php:2670 app/features/mec/booking.php:626
+#: app/core/src/FES/FormBuilder.php:2731 app/features/mec/booking.php:626
 #, fuzzy
 #| msgid "Payable"
 msgid "Payable Type"
 msgstr "A pagar"
 
-#: app/core/src/FES/FormBuilder.php:2671 app/features/mec/booking.php:627
+#: app/core/src/FES/FormBuilder.php:2732 app/features/mec/booking.php:627
 #, fuzzy
 #| msgid "Percent"
 msgid "Percent (%)"
 msgstr "Percentatge"
 
-#: app/core/src/FES/FormBuilder.php:2672 app/features/mec/booking.php:628
+#: app/core/src/FES/FormBuilder.php:2733 app/features/mec/booking.php:628
 #, fuzzy
 #| msgid "Amount"
 msgid "Amount ($)"
 msgstr "Quantitat"
 
-#: app/core/src/FES/FormBuilder.php:2705 app/features/mec/fes.php:552
+#: app/core/src/FES/FormBuilder.php:2766 app/features/mec/fes.php:572
 msgid "Total User Booking Limits"
 msgstr "Límits totals de reserves d'usuari"
 
-#: app/core/src/FES/FormBuilder.php:2719
+#: app/core/src/FES/FormBuilder.php:2780
 msgid "12"
 msgstr "12"
 
-#: app/core/src/FES/FormBuilder.php:2747
+#: app/core/src/FES/FormBuilder.php:2808
 #, fuzzy
 #| msgid "Payment Gateways Per Event"
 msgid "Payment gateways per event is disabled."
 msgstr "Passarel·les de pagament per esdeveniment"
 
-#: app/core/src/FES/FormBuilder.php:2770
+#: app/core/src/FES/FormBuilder.php:2831
 msgid "There is no payment gateway to show."
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:2783
+#: app/core/src/FES/FormBuilder.php:2844
 msgid "Disabled Gateways"
 msgstr "Passarel·les desactivades"
 
-#: app/core/src/FES/FormBuilder.php:2784
+#: app/core/src/FES/FormBuilder.php:2845
 msgid ""
 "You can disable some of the following payment gateways by checking them "
 "otherwise they will be enabled."
@@ -2281,23 +2364,23 @@ msgstr ""
 "Podeu desactivar algunes de les passarel·les de pagament següents marcant-"
 "les, en cas contrari s'habilitaran."
 
-#: app/core/src/FES/FormBuilder.php:2837 app/features/events.php:1835
+#: app/core/src/FES/FormBuilder.php:2898 app/features/events.php:1835
 msgid "Fees"
 msgstr "Taxes"
 
-#: app/core/src/FES/FormBuilder.php:2874 app/core/src/FES/FormBuilder.php:2913
+#: app/core/src/FES/FormBuilder.php:2935 app/core/src/FES/FormBuilder.php:2974
 #: app/features/mec/booking.php:871 app/features/mec/booking.php:901
 msgid "Fee Title"
 msgstr "Títol de la taxa"
 
-#: app/core/src/FES/FormBuilder.php:2880 app/core/src/FES/FormBuilder.php:2884
-#: app/core/src/FES/FormBuilder.php:2918 app/core/src/FES/FormBuilder.php:2921
+#: app/core/src/FES/FormBuilder.php:2941 app/core/src/FES/FormBuilder.php:2945
+#: app/core/src/FES/FormBuilder.php:2979 app/core/src/FES/FormBuilder.php:2982
 #: app/features/mec/booking.php:875 app/features/mec/booking.php:878
 #: app/features/mec/booking.php:905 app/features/mec/booking.php:908
 msgid "Amount"
 msgstr "Quantitat"
 
-#: app/core/src/FES/FormBuilder.php:2885 app/core/src/FES/FormBuilder.php:2922
+#: app/core/src/FES/FormBuilder.php:2946 app/core/src/FES/FormBuilder.php:2983
 #: app/features/mec/booking.php:879 app/features/mec/booking.php:909
 msgid ""
 "Fee amount, considered as fixed amount if you set the type to amount "
@@ -2306,34 +2389,34 @@ msgstr ""
 "Import de la tarifa, considerat com a import fix si definiu el tipus en un "
 "import, en cas contrari, considerat com a percentatge"
 
-#: app/core/src/FES/FormBuilder.php:2894 app/core/src/FES/FormBuilder.php:2931
+#: app/core/src/FES/FormBuilder.php:2955 app/core/src/FES/FormBuilder.php:2992
 #: app/features/mec/booking.php:886 app/features/mec/booking.php:916
 msgid "Percent"
 msgstr "Percentatge"
 
-#: app/core/src/FES/FormBuilder.php:2895 app/core/src/FES/FormBuilder.php:2932
+#: app/core/src/FES/FormBuilder.php:2956 app/core/src/FES/FormBuilder.php:2993
 #: app/features/mec/booking.php:887 app/features/mec/booking.php:917
 msgid "Amount (Per Ticket)"
 msgstr "Import (per bitllet)"
 
-#: app/core/src/FES/FormBuilder.php:2896 app/core/src/FES/FormBuilder.php:2933
+#: app/core/src/FES/FormBuilder.php:2957 app/core/src/FES/FormBuilder.php:2994
 #: app/features/mec/booking.php:888 app/features/mec/booking.php:918
 msgid "Amount (Per Date)"
 msgstr "Import (per data)"
 
-#: app/core/src/FES/FormBuilder.php:2897 app/core/src/FES/FormBuilder.php:2934
+#: app/core/src/FES/FormBuilder.php:2958 app/core/src/FES/FormBuilder.php:2995
 #: app/features/mec/booking.php:889 app/features/mec/booking.php:919
 msgid "Amount (Per Booking)"
 msgstr "Import (per reserva)"
 
-#: app/core/src/FES/FormBuilder.php:3012 app/features/contextual.php:62
+#: app/core/src/FES/FormBuilder.php:3073 app/features/contextual.php:62
 #: app/features/events.php:1840 app/features/mec/booking.php:1018
-#: app/features/mec/booking.php:1278 app/features/mec/fes.php:588
+#: app/features/mec/booking.php:1278 app/features/mec/fes.php:608
 #: app/features/mec/support.php:29
 msgid "Booking Form"
 msgstr "Formulari de reserva"
 
-#: app/core/src/FES/FormBuilder.php:3015
+#: app/core/src/FES/FormBuilder.php:3076
 msgid ""
 "You're translating an event so MEC will use the original event for booking "
 "form. You can only translate the field name and options. Please define exact "
@@ -2344,22 +2427,22 @@ msgstr ""
 "les opcions. Definiu aquí els camps exactes que heu definit a l'esdeveniment "
 "original."
 
-#: app/core/src/FES/FormBuilder.php:3041 app/features/mec/booking.php:1020
+#: app/core/src/FES/FormBuilder.php:3102 app/features/mec/booking.php:1020
 msgid "Per Attendee Fields"
 msgstr "Camps per assistent"
 
-#: app/core/src/FES/FormBuilder.php:3071 app/core/src/Forms/FormFields.php:94
+#: app/core/src/FES/FormBuilder.php:3132 app/core/src/Forms/FormFields.php:94
 #: app/features/mec/booking.php:1053 app/libraries/main.php:4215
 msgid "MEC Name"
 msgstr "Nom"
 
-#: app/core/src/FES/FormBuilder.php:3072 app/core/src/Forms/FormFields.php:159
+#: app/core/src/FES/FormBuilder.php:3133 app/core/src/Forms/FormFields.php:159
 #: app/core/src/Forms/SettingsForm.php:83 app/features/mec/booking.php:1054
 #: app/libraries/main.php:4245
 msgid "MEC Email"
 msgstr "Correu electrònic"
 
-#: app/core/src/FES/FormBuilder.php:3073 app/core/src/FES/FormBuilder.php:3163
+#: app/core/src/FES/FormBuilder.php:3134 app/core/src/FES/FormBuilder.php:3224
 #: app/core/src/Forms/FormFields.php:52 app/core/src/Forms/SettingsForm.php:88
 #: app/features/mec/booking.php:1055 app/features/mec/booking.php:1153
 #: app/features/mec/modules.php:416 app/features/mec/single.php:452
@@ -2367,7 +2450,7 @@ msgstr "Correu electrònic"
 msgid "Text"
 msgstr "Text"
 
-#: app/core/src/FES/FormBuilder.php:3075 app/core/src/FES/FormBuilder.php:3165
+#: app/core/src/FES/FormBuilder.php:3136 app/core/src/FES/FormBuilder.php:3226
 #: app/core/src/Forms/FormFields.php:283 app/core/src/Forms/SettingsForm.php:98
 #: app/core/src/SingleBuilder/Widgets/EventDate/EventDate.php:50
 #: app/features/fes.php:322 app/features/mec/booking.php:1057
@@ -2375,28 +2458,17 @@ msgstr "Text"
 #: app/features/profile/profile.php:62 app/features/wc.php:90
 #: app/libraries/formBuilder.php:198 app/libraries/main.php:4370
 #: app/libraries/skins.php:1719 app/modules/next-event/details.php:152
-#: app/skins/single.php:1152 app/skins/single.php:1964
+#: app/skins/single.php:1152 app/skins/single.php:1970
 msgid "Date"
 msgstr "Data"
 
-#: app/core/src/FES/FormBuilder.php:3076 app/core/src/FES/FormBuilder.php:3166
-#: app/core/src/Forms/FormFields.php:315
-#: app/core/src/Forms/SettingsForm.php:103
-#: app/core/src/ImportExport/Terms.php:54 app/features/mec/booking.php:1058
-#: app/features/mec/booking.php:1156 app/features/mec/single.php:456
-#: app/features/organizers.php:120 app/features/organizers.php:205
-#: app/features/speakers.php:148 app/features/speakers.php:245
-#: app/features/speakers.php:341 app/libraries/main.php:4402
-msgid "Tel"
-msgstr "Telèfon"
-
-#: app/core/src/FES/FormBuilder.php:3077 app/core/src/Forms/FormFields.php:252
+#: app/core/src/FES/FormBuilder.php:3138 app/core/src/Forms/FormFields.php:252
 #: app/core/src/Forms/SettingsForm.php:108 app/features/mec/booking.php:1059
 #: app/libraries/main.php:4339
 msgid "File"
 msgstr "Arxiu"
 
-#: app/core/src/FES/FormBuilder.php:3078 app/core/src/FES/FormBuilder.php:3167
+#: app/core/src/FES/FormBuilder.php:3139 app/core/src/FES/FormBuilder.php:3228
 #: app/core/src/Forms/FormFields.php:347
 #: app/core/src/Forms/SettingsForm.php:113 app/features/mec/booking.php:1060
 #: app/features/mec/booking.php:1157 app/features/mec/single.php:457
@@ -2404,7 +2476,7 @@ msgstr "Arxiu"
 msgid "Textarea"
 msgstr "Àrea de text"
 
-#: app/core/src/FES/FormBuilder.php:3080 app/core/src/FES/FormBuilder.php:3169
+#: app/core/src/FES/FormBuilder.php:3141 app/core/src/FES/FormBuilder.php:3230
 #: app/core/src/Forms/FormFields.php:450
 #: app/core/src/Forms/SettingsForm.php:123 app/features/mec/booking.php:1062
 #: app/features/mec/booking.php:1159 app/features/mec/single.php:460
@@ -2412,14 +2484,14 @@ msgstr "Àrea de text"
 msgid "Radio Buttons"
 msgstr "Botó tipus ràdio"
 
-#: app/core/src/FES/FormBuilder.php:3082 app/core/src/FES/FormBuilder.php:3171
+#: app/core/src/FES/FormBuilder.php:3143 app/core/src/FES/FormBuilder.php:3232
 #: app/core/src/Forms/FormFields.php:554
 #: app/core/src/Forms/SettingsForm.php:133 app/features/mec/booking.php:1064
 #: app/features/mec/booking.php:1161 app/libraries/main.php:4648
 msgid "Agreement"
 msgstr "Acord"
 
-#: app/core/src/FES/FormBuilder.php:3083 app/core/src/FES/FormBuilder.php:3172
+#: app/core/src/FES/FormBuilder.php:3144 app/core/src/FES/FormBuilder.php:3233
 #: app/core/src/Forms/FormFields.php:379
 #: app/core/src/Forms/SettingsForm.php:138 app/features/mec/booking.php:1065
 #: app/features/mec/booking.php:1162 app/features/mec/settings.php:585
@@ -2427,90 +2499,90 @@ msgstr "Acord"
 msgid "Paragraph"
 msgstr "Paràgraf"
 
-#: app/core/src/FES/FormBuilder.php:3132 app/features/mec/booking.php:1118
+#: app/core/src/FES/FormBuilder.php:3193 app/features/mec/booking.php:1118
 msgid "Fixed Fields"
 msgstr "Camps fixos"
 
-#: app/core/src/FES/FormBuilder.php:3252 app/features/events.php:1838
-#: app/features/mec/fes.php:600
+#: app/core/src/FES/FormBuilder.php:3313 app/features/events.php:1838
+#: app/features/mec/fes.php:620
 msgid "Ticket Variations / Options"
 msgstr "Variacions / Opcions d'entrades"
 
-#: app/core/src/FES/FormBuilder.php:3335 app/core/src/FES/FormBuilder.php:3354
-#: app/core/src/FES/FormBuilder.php:3361 app/core/src/FES/FormBuilder.php:3379
-#: app/core/src/FES/FormBuilder.php:3807
+#: app/core/src/FES/FormBuilder.php:3396 app/core/src/FES/FormBuilder.php:3415
+#: app/core/src/FES/FormBuilder.php:3422 app/core/src/FES/FormBuilder.php:3440
+#: app/core/src/FES/FormBuilder.php:3868
 msgid "Occurrence"
 msgstr "Repetició"
 
-#: app/core/src/FES/FormBuilder.php:3336 app/core/src/FES/FormBuilder.php:3808
+#: app/core/src/FES/FormBuilder.php:3397 app/core/src/FES/FormBuilder.php:3869
 #: app/features/mec.php:2033
 msgid "Previous Occurrences"
 msgstr "Ocurrències anteriors"
 
-#: app/core/src/FES/FormBuilder.php:3341 app/core/src/FES/FormBuilder.php:3813
+#: app/core/src/FES/FormBuilder.php:3402 app/core/src/FES/FormBuilder.php:3874
 #: app/features/mec.php:2043 app/modules/next-event/multiple.php:60
 msgid "Next Occurrences"
 msgstr "Pròximes Ocurrències"
 
-#: app/core/src/FES/FormBuilder.php:3365 app/features/occurrences.php:264
+#: app/core/src/FES/FormBuilder.php:3426 app/features/occurrences.php:264
 #, fuzzy
 #| msgid "Bookings"
 msgid "Move Bookings"
 msgstr "Reserves"
 
-#: app/core/src/FES/FormBuilder.php:3368
+#: app/core/src/FES/FormBuilder.php:3429
 #, fuzzy, php-format
 #| msgid "No bookings found to import!"
 msgid "Move bookings from %s to %s"
 msgstr "No s'han trobat reserves per importar!"
 
-#: app/core/src/FES/FormBuilder.php:3369
+#: app/core/src/FES/FormBuilder.php:3430
 msgid "Move"
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:3383
+#: app/core/src/FES/FormBuilder.php:3444
 #, fuzzy
 #| msgid "Manage The Bookings"
 msgid "Manage Bookings"
 msgstr "Gestionar les reserves"
 
-#: app/core/src/FES/FormBuilder.php:3387
+#: app/core/src/FES/FormBuilder.php:3448
 #, fuzzy
 #| msgid "Location"
 msgid "Action"
 msgstr "Localització"
 
-#: app/core/src/FES/FormBuilder.php:3389 app/features/events.php:1015
+#: app/core/src/FES/FormBuilder.php:3450 app/features/events.php:1015
 #: app/features/occurrences.php:262 app/features/profile/profile.php:78
 msgid "Cancel"
 msgstr "Cancel·lar"
 
-#: app/core/src/FES/FormBuilder.php:3390 app/features/occurrences.php:263
+#: app/core/src/FES/FormBuilder.php:3451 app/features/occurrences.php:263
 #, fuzzy
 #| msgid "Canceled"
 msgid "Cancel & Refund"
 msgstr "Cancel·lat"
 
-#: app/core/src/FES/FormBuilder.php:3392 app/features/report/tpl.php:76
+#: app/core/src/FES/FormBuilder.php:3453 app/features/report/tpl.php:76
 #, fuzzy
 #| msgid "Send it"
 msgid "Send"
 msgstr "Envia-ho"
 
-#: app/core/src/FES/FormBuilder.php:3439
+#: app/core/src/FES/FormBuilder.php:3500
 #, fuzzy
 #| msgid "Please select a date first."
 msgid "Please select an action"
 msgstr "Sis us plau, seleccioneu primer una data."
 
-#: app/core/src/FES/FormBuilder.php:3579 app/features/cart/cart.php:45
+#: app/core/src/FES/FormBuilder.php:3640 app/features/cart/cart.php:45
 #: app/features/events.php:1833 app/features/events.php:3008
 #: app/features/occurrences.php:394 app/libraries/main.php:7883
 #: app/modules/booking/steps/tickets.php:266
 msgid "Tickets"
 msgstr "Tickets"
 
-#: app/core/src/FES/FormBuilder.php:3582
+#: app/core/src/FES/FormBuilder.php:3643
 msgid ""
 "You're translating an event so MEC will use the original event for tickets "
 "and booking. You can only translate the ticket name and description. Please "
@@ -2521,26 +2593,26 @@ msgstr ""
 "descripció del bitllet. Si us plau, defineix les entrades exactes que has "
 "definit a l'esdeveniment original aquí."
 
-#: app/core/src/FES/FormBuilder.php:3665
+#: app/core/src/FES/FormBuilder.php:3726
 msgid "Public File to Download"
 msgstr "Fitxer públic per descarregar"
 
-#: app/core/src/FES/FormBuilder.php:3669 app/core/src/FES/FormBuilder.php:3763
+#: app/core/src/FES/FormBuilder.php:3730 app/core/src/FES/FormBuilder.php:3824
 msgid "pdf,zip,png,jpg and gif files are allowed."
 msgstr "s'admeten fitxers pdf,zip,png,jpg i gif."
 
-#: app/core/src/FES/FormBuilder.php:3671 app/core/src/FES/FormBuilder.php:3765
+#: app/core/src/FES/FormBuilder.php:3732 app/core/src/FES/FormBuilder.php:3826
 msgid "Remove File"
 msgstr "Elimina el fitxer"
 
-#: app/core/src/FES/FormBuilder.php:3679 app/core/src/ImportExport/Terms.php:40
+#: app/core/src/FES/FormBuilder.php:3740 app/core/src/ImportExport/Terms.php:40
 #: app/features/events.php:3350 app/libraries/formBuilder.php:84
 #: app/libraries/formBuilder.php:112 app/libraries/formBuilder.php:164
 #: app/libraries/tickets.php:126 app/libraries/tickets.php:450
 msgid "Description"
 msgstr "Descripció"
 
-#: app/core/src/FES/FormBuilder.php:3744
+#: app/core/src/FES/FormBuilder.php:3805
 #, fuzzy
 #| msgid "An error occurred during the file upload! Please check permissions!"
 msgid "An unknown error occurred during uploading the file."
@@ -2548,18 +2620,18 @@ msgstr ""
 "S'ha produït un error durant la càrrega del fitxer! Si us plau, comproveu "
 "els permisos!"
 
-#: app/core/src/FES/FormBuilder.php:3759 app/features/events.php:1845
-#: app/features/mec/booking.php:789 app/features/mec/fes.php:637
+#: app/core/src/FES/FormBuilder.php:3820 app/features/events.php:1845
+#: app/features/mec/booking.php:789 app/features/mec/fes.php:657
 msgid "Downloadable File"
 msgstr "Fitxer descarregable"
 
-#: app/core/src/FES/FormBuilder.php:3804 app/features/mec/fes.php:664
+#: app/core/src/FES/FormBuilder.php:3865 app/features/mec/fes.php:684
 #: app/features/mec/meta_boxes/filter.php:76
 #: app/features/mec/meta_boxes/filter.php:308 app/features/occurrences.php:76
 msgid "Occurrences"
 msgstr "Repeticions"
 
-#: app/core/src/FES/FormBuilder.php:3987
+#: app/core/src/FES/FormBuilder.php:4048
 msgid ""
 "This event is imported from Google calendar so if you modify it would "
 "overwrite in the next import from Google."
@@ -2567,17 +2639,17 @@ msgstr ""
 "Aquest esdeveniment s'importa del calendari de Google, de manera que si el "
 "modifiqueu, se sobreescriurà a la propera importació de Google."
 
-#: app/core/src/FES/FormBuilder.php:4014
+#: app/core/src/FES/FormBuilder.php:4075
 msgid "Go back to events list"
 msgstr "Torna a la llista d'esdeveniments"
 
-#: app/core/src/FES/FormBuilder.php:4047
+#: app/core/src/FES/FormBuilder.php:4108
 #, fuzzy
 #| msgid "Request is not valid."
 msgid "Captcha is not enabled."
 msgstr "La sol·licitud no és vàlida."
 
-#: app/core/src/FES/FormBuilder.php:4072
+#: app/core/src/FES/FormBuilder.php:4133
 msgid "Submit Event"
 msgstr "Envia l'esdeveniment"
 
@@ -2655,7 +2727,7 @@ msgstr "Integració amb MEC"
 msgid "Instead of %s, the page title with a link will be show."
 msgstr "Substituint %s, es mostrarà el títol de la pàgina amb un enllaç."
 
-#: app/core/src/Forms/FormFields.php:569 app/features/mec/fes.php:732
+#: app/core/src/Forms/FormFields.php:569 app/features/mec/fes.php:752
 #: app/libraries/main.php:4664
 msgid "Agreement Page"
 msgstr "Pàgina de l'acord"
@@ -2684,27 +2756,21 @@ msgstr "Mapeig amb camps de perfil"
 #: app/core/src/ImportExport/Terms.php:38 app/features/events.php:3348
 #: app/features/fes.php:322 app/features/labels.php:188
 #: app/features/locations.php:304 app/features/organizers.php:293
-#: app/features/speakers.php:338 app/libraries/tickets.php:80
+#: app/features/speakers.php:336 app/libraries/tickets.php:80
 #: app/libraries/tickets.php:409
 msgid "ID"
 msgstr "ID"
 
 #: app/core/src/ImportExport/Terms.php:41 app/features/locations.php:182
 #: app/features/locations.php:244 app/features/organizers.php:184
-#: app/features/organizers.php:237 app/features/speakers.php:213
-#: app/features/speakers.php:278
+#: app/features/organizers.php:237 app/features/speakers.php:211
+#: app/features/speakers.php:276
 msgid "Thumbnail"
 msgstr "Miniatura"
 
 #: app/core/src/ImportExport/Terms.php:59 app/libraries/main.php:2067
 msgid "Facebook"
 msgstr "Facebook"
-
-#: app/core/src/ImportExport/Terms.php:60 app/features/organizers.php:160
-#: app/features/organizers.php:225 app/features/speakers.php:189
-#: app/features/speakers.php:266
-msgid "Instagram"
-msgstr "Instagram"
 
 #: app/core/src/ImportExport/Terms.php:61 app/libraries/main.php:2069
 #: app/libraries/main.php:2129
@@ -3141,7 +3207,7 @@ msgstr "Com configurar la categoria"
 
 #: app/core/src/SingleBuilder/Widgets/EventCategories/EventCategories.php:49
 #: app/features/events.php:262 app/features/events.php:3001
-#: app/features/mec/fes.php:757
+#: app/features/mec/fes.php:777
 #: app/features/mec/meta_boxes/display_options.php:1980
 #: app/features/mec/meta_boxes/search_form.php:67
 #: app/features/mec/meta_boxes/search_form.php:165
@@ -3161,7 +3227,7 @@ msgstr "Com configurar la categoria"
 #: app/libraries/main.php:7847 app/libraries/main.php:7910
 #: app/libraries/search.php:268 app/libraries/skins.php:1353
 #: app/skins/single.php:1055 app/skins/single/default.php:256
-#: app/skins/single/m1.php:199 app/skins/single/m2.php:174
+#: app/skins/single/m1.php:202 app/skins/single/m2.php:177
 #: app/widgets/single/default.php:91 app/widgets/single/modern.php:129
 msgid "Category"
 msgstr "Categoria"
@@ -3296,23 +3362,12 @@ msgstr ""
 msgid "How to set location"
 msgstr "Com establir la ubicació"
 
-#: app/core/src/SingleBuilder/Widgets/EventLocations/EventLocations.php:75
-#: app/core/src/SingleBuilder/Widgets/EventOrganizers/EventOrganizers.php:131
-#: app/features/speakers.php:164 app/features/speakers.php:253
-#: app/skins/single.php:971 app/skins/single.php:1378 app/skins/single.php:1454
-#: app/skins/single.php:1525 app/skins/single/default.php:322
-#: app/skins/single/m1.php:135 app/skins/single/m2.php:83
-#: app/skins/single/m2.php:152 app/widgets/single/default.php:156
-#: app/widgets/single/modern.php:68
-msgid "Website"
-msgstr "Web"
-
 #: app/core/src/SingleBuilder/Widgets/EventLocations/EventLocations.php:83
 #: app/core/src/SingleBuilder/Widgets/EventOrganizers/EventOrganizers.php:117
-#: app/skins/single.php:978 app/skins/single.php:1364 app/skins/single.php:1440
-#: app/skins/single.php:1532 app/skins/single/default.php:308
-#: app/skins/single/m1.php:121 app/skins/single/m2.php:69
-#: app/widgets/single/default.php:142 app/widgets/single/modern.php:54
+#: app/skins/single.php:978 app/skins/single.php:1366 app/skins/single.php:1446
+#: app/skins/single.php:1538 app/skins/single/default.php:311
+#: app/skins/single/m1.php:124 app/skins/single/m2.php:72
+#: app/widgets/single/default.php:145 app/widgets/single/modern.php:54
 msgid "Phone"
 msgstr "Telèfon"
 
@@ -3431,14 +3486,14 @@ msgstr "Com configurar el botó de registre"
 #: app/skins/list/render.php:91 app/skins/list/render.php:222
 #: app/skins/masonry/render.php:150 app/skins/single.php:612
 #: app/skins/single.php:1292 app/skins/single.php:1303
-#: app/skins/single/default.php:346 app/skins/single/default.php:348
-#: app/skins/single/m1.php:157 app/skins/single/m1.php:159
-#: app/skins/single/m1.php:161 app/skins/single/m2.php:105
-#: app/skins/single/m2.php:107 app/skins/single/m2.php:109
+#: app/skins/single/default.php:349 app/skins/single/default.php:351
+#: app/skins/single/m1.php:160 app/skins/single/m1.php:162
+#: app/skins/single/m1.php:164 app/skins/single/m2.php:108
+#: app/skins/single/m2.php:110 app/skins/single/m2.php:112
 #: app/skins/slider/render.php:64 app/skins/slider/render.php:88
 #: app/skins/slider/render.php:111 app/skins/slider/render.php:135
-#: app/skins/slider/render.php:170 app/widgets/single/default.php:175
-#: app/widgets/single/default.php:177 app/widgets/single/modern.php:94
+#: app/skins/slider/render.php:170 app/widgets/single/default.php:178
+#: app/widgets/single/default.php:180 app/widgets/single/modern.php:94
 #: app/widgets/single/modern.php:96
 msgid "REGISTER"
 msgstr "REGISTRE"
@@ -3498,21 +3553,21 @@ msgid "How to set tags"
 msgstr "Com establir etiquetes"
 
 #: app/core/src/SingleBuilder/Widgets/EventTags/EventTags.php:53
-#: app/skins/single/default.php:180 app/skins/single/m1.php:318
-#: app/skins/single/m2.php:284 app/skins/single/modern.php:199
+#: app/skins/single/default.php:180 app/skins/single/m1.php:321
+#: app/skins/single/m2.php:287 app/skins/single/modern.php:199
 msgid "Tags: "
 msgstr "Etiquetes: "
 
 #: app/core/src/SingleBuilder/Widgets/EventTime/EventTime.php:47
 #: app/features/emails/details.php:26 app/features/emails/details.php:29
 #: app/libraries/skins.php:1793 app/modules/next-event/details.php:158
-#: app/skins/single.php:1260 app/skins/single.php:1983
+#: app/skins/single.php:1260 app/skins/single.php:1989
 msgid "Time"
 msgstr "Hora"
 
 #: app/core/src/SingleBuilder/Widgets/EventTime/EventTime.php:55
 #: app/features/booking/calendar_novel.php:150
-#: app/features/search_bar/search_result.php:12 app/libraries/main.php:7898
+#: app/features/search_bar/search_result.php:14 app/libraries/main.php:7898
 #: app/libraries/main.php:7945 app/libraries/notifications.php:1950
 #: app/libraries/render.php:649 app/libraries/render.php:913
 #: app/libraries/render.php:1158 app/libraries/render.php:1185
@@ -3521,7 +3576,7 @@ msgstr "Hora"
 #: app/modules/local-time/type2.php:85 app/modules/local-time/type3.php:49
 #: app/modules/next-event/details.php:164
 #: app/modules/next-event/multiple.php:77 app/skins/single.php:1266
-#: app/skins/single.php:1989
+#: app/skins/single.php:1995
 msgid "All Day"
 msgstr "Activitat de tot el dia"
 
@@ -3618,8 +3673,8 @@ msgstr "Descompte de cupó de WooCommerce"
 msgid "User Discount"
 msgstr "Descompte"
 
-#: app/core/src/Transactions/Transaction.php:919 app/libraries/book.php:1151
-#: app/libraries/book.php:1277 app/modules/booking/steps/checkout.php:160
+#: app/core/src/Transactions/Transaction.php:919 app/libraries/book.php:1163
+#: app/libraries/book.php:1289 app/modules/booking/steps/checkout.php:160
 msgid "Discount"
 msgstr "Descompte"
 
@@ -3636,7 +3691,7 @@ msgstr ""
 msgid "There is no attendee for booking!"
 msgstr "No hi ha assistent per reservar!"
 
-#: app/core/src/Transactions/Transaction.php:2009 app/features/fes.php:322
+#: app/core/src/Transactions/Transaction.php:2012 app/features/fes.php:322
 #: app/features/profile/profile.php:209 app/libraries/cart.php:64
 #: app/libraries/main.php:3153 app/libraries/main.php:3435
 #: app/libraries/main.php:7882 app/libraries/main.php:10236
@@ -3691,7 +3746,7 @@ msgstr "No s'ha trobat cap %s!"
 #: app/features/autoemails.php:74 app/features/certificates.php:77
 #: app/features/events.php:273 app/features/labels.php:71
 #: app/features/locations.php:72 app/features/organizers.php:75
-#: app/features/speakers.php:80 app/features/sponsors.php:69
+#: app/features/speakers.php:78 app/features/sponsors.php:72
 #: app/features/tag.php:69 app/features/webhooks.php:85
 #, php-format
 msgid "Edit %s"
@@ -3719,23 +3774,29 @@ msgstr "La transacció no existeix al carretó."
 msgid "Successfully removed and updated the cart."
 msgstr "S'ha eliminat i actualitzat correctament a la cistella."
 
-#: app/features/cart.php:146
-msgid "Coupon applied successfully. Please wait ..."
-msgstr "Cupó aplicat correctament. Si us plau, espereu..."
-
-#: app/features/cart.php:153
+#: app/features/cart.php:127
 msgid "Coupon was not valid or applicable."
 msgstr "El cupó no era vàlid ni aplicable."
 
-#: app/features/cart.php:168
+#: app/features/cart.php:138
+#, php-format
+msgid ""
+"The coupon is applicable to only %s bookings; you currently have %s bookings."
+msgstr ""
+
+#: app/features/cart.php:165
+msgid "Coupon applied successfully. Please wait ..."
+msgstr "Cupó aplicat correctament. Si us plau, espereu..."
+
+#: app/features/cart.php:187
 msgid "Request is invalid!"
 msgstr "La sol·licitud no és vàlida!"
 
-#: app/features/cart.php:178
+#: app/features/cart.php:197
 msgid "Your cart is not free!"
 msgstr "El teu carretó no és gratuït!"
 
-#: app/features/cart.php:185
+#: app/features/cart.php:204
 msgid "Thanks for your booking."
 msgstr "Gràcies per la teva reserva."
 
@@ -3747,7 +3808,7 @@ msgstr "El carretó està buit!"
 msgid "Go to events page"
 msgstr "Vés a la pàgina d'esdeveniments"
 
-#: app/features/cart/cart.php:43 app/features/events.php:3862
+#: app/features/cart/cart.php:43 app/features/events.php:3865
 #: app/features/fes.php:322 app/features/mec/booking.php:407
 #: app/features/mec/modules.php:462 app/features/wc.php:92
 #: app/libraries/main.php:3108 app/libraries/main.php:3237
@@ -3755,7 +3816,7 @@ msgstr "Vés a la pàgina d'esdeveniments"
 msgid "Transaction ID"
 msgstr "ID de transacció"
 
-#: app/features/cart/cart.php:46 app/features/mec/fes.php:753
+#: app/features/cart/cart.php:46 app/features/mec/fes.php:773
 #: app/modules/booking/steps/tickets.php:184
 msgid "Dates"
 msgstr "Dates"
@@ -4094,7 +4155,7 @@ msgid "Add New Event"
 msgstr "Afegeix un nou esdeveniment"
 
 #: app/features/events.php:239 app/features/fes/list.php:173
-#: app/features/ix.php:5022 app/features/ix/thirdparty.php:45
+#: app/features/ix.php:5054 app/features/ix/thirdparty.php:45
 #: app/skins/map/tpl.php:73 app/skins/map/tpl.php:93
 msgid "No events found!"
 msgstr "No s'han trobat esdeveniments!"
@@ -4114,7 +4175,7 @@ msgstr "No s'han trobat esdeveniments a la paperera!"
 
 #: app/features/events.php:272 app/features/labels.php:70
 #: app/features/locations.php:71 app/features/organizers.php:74
-#: app/features/speakers.php:79 app/features/sponsors.php:68
+#: app/features/speakers.php:77 app/features/sponsors.php:71
 #: app/features/tag.php:68
 #, php-format
 msgid "All %s"
@@ -4122,7 +4183,7 @@ msgstr "Tots %s"
 
 #: app/features/events.php:274 app/features/labels.php:72
 #: app/features/locations.php:73 app/features/organizers.php:76
-#: app/features/speakers.php:81 app/features/sponsors.php:70
+#: app/features/speakers.php:79 app/features/sponsors.php:73
 #: app/features/tag.php:70
 #, php-format
 msgid "View %s"
@@ -4130,7 +4191,7 @@ msgstr "Veure %s"
 
 #: app/features/events.php:275 app/features/labels.php:73
 #: app/features/locations.php:74 app/features/organizers.php:77
-#: app/features/speakers.php:82 app/features/sponsors.php:71
+#: app/features/speakers.php:80 app/features/sponsors.php:74
 #: app/features/tag.php:71
 #, php-format
 msgid "Update %s"
@@ -4138,7 +4199,7 @@ msgstr "Actualitzar %s"
 
 #: app/features/events.php:276 app/features/labels.php:74
 #: app/features/locations.php:75 app/features/organizers.php:78
-#: app/features/speakers.php:83 app/features/sponsors.php:72
+#: app/features/speakers.php:81 app/features/sponsors.php:75
 #: app/features/tag.php:72
 #, php-format
 msgid "Add New %s"
@@ -4146,7 +4207,7 @@ msgstr "Afegeix %s nou"
 
 #: app/features/events.php:277 app/features/labels.php:75
 #: app/features/locations.php:76 app/features/organizers.php:79
-#: app/features/speakers.php:84 app/features/sponsors.php:73
+#: app/features/speakers.php:82 app/features/sponsors.php:76
 #: app/features/tag.php:73
 #, php-format
 msgid "New %s Name"
@@ -4154,7 +4215,7 @@ msgstr "Nom %s nou"
 
 #: app/features/events.php:278 app/features/labels.php:76
 #: app/features/locations.php:77 app/features/organizers.php:80
-#: app/features/speakers.php:85 app/features/sponsors.php:74
+#: app/features/speakers.php:83 app/features/sponsors.php:77
 #: app/features/tag.php:74
 #, php-format
 msgid "Popular %s"
@@ -4162,7 +4223,7 @@ msgstr "Popular %s"
 
 #: app/features/events.php:279 app/features/labels.php:77
 #: app/features/locations.php:78 app/features/organizers.php:81
-#: app/features/speakers.php:86 app/features/sponsors.php:75
+#: app/features/speakers.php:84 app/features/sponsors.php:78
 #: app/features/tag.php:75
 #, php-format
 msgid "Search %s"
@@ -4193,8 +4254,8 @@ msgstr "Imatge de reserva"
 #: app/features/events.php:328 app/features/events.php:386
 #: app/features/locations.php:187 app/features/locations.php:247
 #: app/features/organizers.php:189 app/features/organizers.php:240
-#: app/features/speakers.php:218 app/features/speakers.php:281
-#: app/features/sponsors.php:122 app/features/sponsors.php:145
+#: app/features/speakers.php:216 app/features/speakers.php:279
+#: app/features/sponsors.php:125 app/features/sponsors.php:148
 msgid "Upload/Add image"
 msgstr "Carregar/Afegir imatge"
 
@@ -4215,8 +4276,8 @@ msgstr "Data i hora"
 msgid "Event Data"
 msgstr "Dades de l'esdeveniment"
 
-#: app/features/events.php:494 app/features/mec/fes.php:491
-#: app/libraries/formBuilder.php:48 app/skins/single.php:1572
+#: app/features/events.php:494 app/features/mec/fes.php:511
+#: app/libraries/formBuilder.php:48 app/skins/single.php:1578
 msgid "Hourly Schedule"
 msgstr "Programació horària"
 
@@ -4339,7 +4400,7 @@ msgstr "Finestra actual"
 msgid "New Window"
 msgstr "Finestra nova"
 
-#: app/features/events.php:1832 app/features/mec/fes.php:499
+#: app/features/events.php:1832 app/features/mec/fes.php:519
 msgid "Booking Options"
 msgstr "Opcions de reserva"
 
@@ -4431,8 +4492,8 @@ msgstr "Hora d'inici"
 msgid "End Time"
 msgstr "Hora de finalització"
 
-#: app/features/events.php:3355 app/features/sponsors.php:109
-#: app/features/sponsors.php:138
+#: app/features/events.php:3355 app/features/sponsors.php:112
+#: app/features/sponsors.php:141
 msgid "Link"
 msgstr "Enllaç"
 
@@ -4450,7 +4511,7 @@ msgstr "%s Correu electrònic"
 msgid "Send Certificates"
 msgstr ""
 
-#: app/features/events.php:3865 app/features/occurrences.php:403
+#: app/features/events.php:3868 app/features/occurrences.php:403
 #: app/libraries/ticketVariations.php:43 app/libraries/ticketVariations.php:46
 #: app/libraries/tickets.php:145 app/libraries/tickets.php:149
 #: app/libraries/tickets.php:283 app/libraries/tickets.php:310
@@ -4459,42 +4520,42 @@ msgstr ""
 msgid "Price"
 msgstr "Preu"
 
-#: app/features/events.php:3908
+#: app/features/events.php:3911
 #, fuzzy, php-format
 #| msgid "Check for updates"
 msgid "for %s dates"
 msgstr "Fes clic per actualitzacions"
 
-#: app/features/events.php:3920
+#: app/features/events.php:3923
 msgid "No Bookings Found!"
 msgstr "No s'han trobat reserves!"
 
-#: app/features/events.php:3940 app/features/fes.php:485
+#: app/features/events.php:3943 app/features/fes.php:485
 msgid "Please upload an image."
 msgstr "Si us plau, carregueu una imatge."
 
-#: app/features/events.php:4001
+#: app/features/events.php:4004
 #, fuzzy
 #| msgid "Image uploaded!"
 msgid "The images are uploaded!"
 msgstr "Imatge penjada!"
 
-#: app/features/events.php:4001
+#: app/features/events.php:4004
 msgid "An error occurred!"
 msgstr ""
 
-#: app/features/events.php:4030
+#: app/features/events.php:4033
 #, php-format
 msgid "%s bookings moved to new date"
 msgstr ""
 
-#: app/features/events.php:4058
+#: app/features/events.php:4061
 #, fuzzy, php-format
 #| msgid "booking canceled."
 msgid "%s bookings canceled (and refunded)."
 msgstr "reserva cancel·lada."
 
-#: app/features/events.php:4059
+#: app/features/events.php:4062
 #, fuzzy, php-format
 #| msgid "booking canceled."
 msgid "%s bookings canceled."
@@ -4772,93 +4833,93 @@ msgstr ""
 msgid "The events are imported successfully!"
 msgstr "Els esdeveniments s'han importat correctament!"
 
-#: app/features/ix.php:1434
+#: app/features/ix.php:1466
 #, fuzzy, php-format
 #| msgid "Target Event"
 msgid "%s - Test Event"
 msgstr "Esdeveniment objectiu"
 
-#: app/features/ix.php:1493
+#: app/features/ix.php:1525
 #, fuzzy, php-format
 #| msgid "%s events deleted successfully."
 msgid "%s events successfully created."
 msgstr "%s esdeveniments s'han suprimit correctament."
 
-#: app/features/ix.php:1599
+#: app/features/ix.php:1631
 msgid "Third Party plugin is not installed and activated!"
 msgstr "El connector de tercers no està instal·lat i activat!"
 
-#: app/features/ix.php:1629
+#: app/features/ix.php:1661
 msgid "Third Party plugin is invalid!"
 msgstr "El connector de tercers no és vàlid!"
 
-#: app/features/ix.php:3752 app/features/ix.php:3819
+#: app/features/ix.php:3784 app/features/ix.php:3851
 msgid "API key and Calendar ID are required!"
 msgstr "Calen la clau API i l'identificador de calendari!"
 
-#: app/features/ix.php:3814 app/features/ix.php:4350 app/features/ix.php:5029
+#: app/features/ix.php:3846 app/features/ix.php:4382 app/features/ix.php:5061
 msgid "Please select events to import!"
 msgstr "Seleccioneu els esdeveniments per importar!"
 
-#: app/features/ix.php:4287
+#: app/features/ix.php:4319
 msgid ""
 "Something happened. Please make sure you allow the website to access your "
 "meetup account."
 msgstr ""
 
-#: app/features/ix.php:4305
+#: app/features/ix.php:4337
 msgid "Meetup group not found!"
 msgstr ""
 
-#: app/features/ix.php:4363
+#: app/features/ix.php:4395
 msgid "Invalid API Token."
 msgstr ""
 
-#: app/features/ix.php:4532
+#: app/features/ix.php:4564
 msgid "Check at Meetup"
 msgstr "Consulta a Meetup"
 
-#: app/features/ix.php:4709
+#: app/features/ix.php:4741
 msgid "All of Client ID, Client Secret, and Calendar ID are required!"
 msgstr ""
 "L'ID de client, el secret del client i l'ID de calendari són necessaris!"
 
-#: app/features/ix.php:4732
+#: app/features/ix.php:4764
 #, php-format
 msgid "All seems good! Please click %s to authenticate your app."
 msgstr "Tot sembla bé! Feu clic a %s per autenticar la vostra aplicació."
 
-#: app/features/ix.php:4732 app/features/mec/integrations.php:241
+#: app/features/ix.php:4764 app/features/mec/integrations.php:241
 #: app/features/mec/settings.php:1340
 msgid "here"
 msgstr "aquí"
 
-#: app/features/ix.php:4787
+#: app/features/ix.php:4819
 msgid "Client App, Client Secret, and Calendar ID are all required!"
 msgstr ""
 "Es requereix l'aplicació del client, el secret del client i l'identificador "
 "del calendari!"
 
-#: app/features/ix.php:4951
+#: app/features/ix.php:4983
 #, php-format
 msgid "%s events added to Google Calendar with success."
 msgstr "%s esdeveniments afegits a Google Calendar amb èxit."
 
-#: app/features/ix.php:4952
+#: app/features/ix.php:4984
 #, php-format
 msgid "%s Updated previously added events."
 msgstr "%s S'han actualitzat els esdeveniments afegits anteriorment."
 
-#: app/features/ix.php:4953
+#: app/features/ix.php:4985
 #, php-format
 msgid "%s events failed to add for following reasons: %s"
 msgstr "No s'han pogut afegir %s esdeveniments pels motius següents: %s"
 
-#: app/features/ix.php:4985
+#: app/features/ix.php:5017
 msgid "Please insert your Facebook page's link."
 msgstr "Si us plau, inseriu l'enllaç de la vostra pàgina de Facebook."
 
-#: app/features/ix.php:4996 app/features/ix.php:5038
+#: app/features/ix.php:5028 app/features/ix.php:5070
 msgid ""
 "We were not able to recognize your Facebook page. Please check again and "
 "provide a valid link."
@@ -4866,7 +4927,7 @@ msgstr ""
 "No hem pogut reconèixer la teva pàgina de Facebook. Si us plau, torneu a "
 "comprovar i proporcioneu un enllaç vàlid."
 
-#: app/features/ix.php:5033
+#: app/features/ix.php:5065
 msgid "Please insert your facebook page's link."
 msgstr "Si us plau, inseriu l'enllaç de la vostra pàgina de Facebook."
 
@@ -5657,7 +5718,7 @@ msgstr ""
 msgid "The import is finished."
 msgstr "L'acte s'ha acabat."
 
-#: app/features/labels.php:60 app/features/mec/fes.php:760
+#: app/features/labels.php:60 app/features/mec/fes.php:780
 #: app/features/mec/meta_boxes/display_options.php:1981
 #: app/features/mec/meta_boxes/search_form.php:112
 #: app/features/mec/meta_boxes/search_form.php:210
@@ -5681,15 +5742,15 @@ msgid "Label"
 msgstr "Etiqueta"
 
 #: app/features/labels.php:78 app/features/locations.php:79
-#: app/features/organizers.php:82 app/features/speakers.php:87
-#: app/features/sponsors.php:76 app/features/tag.php:76
+#: app/features/organizers.php:82 app/features/speakers.php:85
+#: app/features/sponsors.php:79 app/features/tag.php:76
 #, php-format
 msgid "← Back to %s"
 msgstr "← Torna a %s"
 
 #: app/features/labels.php:79 app/features/locations.php:80
-#: app/features/organizers.php:83 app/features/speakers.php:88
-#: app/features/sponsors.php:77 app/features/tag.php:77
+#: app/features/organizers.php:83 app/features/speakers.php:86
+#: app/features/sponsors.php:80 app/features/tag.php:77
 #, php-format
 msgid "no %s found."
 msgstr "no s'ha trobat cap %s."
@@ -5732,7 +5793,7 @@ msgstr ""
 "estil diferent!"
 
 #: app/features/labels.php:191 app/features/locations.php:307
-#: app/features/organizers.php:296 app/features/speakers.php:342
+#: app/features/organizers.php:296 app/features/speakers.php:340
 #: app/modules/booking/steps/tickets.php:263
 msgid "Count"
 msgstr "Comptador"
@@ -6177,8 +6238,8 @@ msgstr "Cercar..."
 #: app/features/mec/booking.php:1373 app/features/mec/booking.php:1454
 #: app/features/mec/booking.php:1464 app/features/mec/booking.php:1546
 #: app/features/mec/booking.php:1560 app/features/mec/fes.php:30
-#: app/features/mec/fes.php:775 app/features/mec/fes.php:785
-#: app/features/mec/fes.php:822 app/features/mec/fes.php:832
+#: app/features/mec/fes.php:795 app/features/mec/fes.php:805
+#: app/features/mec/fes.php:842 app/features/mec/fes.php:852
 #: app/features/mec/integrations.php:27 app/features/mec/integrations.php:420
 #: app/features/mec/integrations.php:430 app/features/mec/integrations.php:491
 #: app/features/mec/integrations.php:505 app/features/mec/messages.php:20
@@ -6198,9 +6259,9 @@ msgstr "Cercar..."
 #: app/features/mec/single.php:753 app/features/mec/styles.php:11
 #: app/features/mec/styles.php:32 app/features/mec/styles.php:42
 #: app/features/mec/styles.php:83 app/features/mec/styles.php:92
-#: app/features/mec/styling.php:37 app/features/mec/styling.php:306
-#: app/features/mec/styling.php:316 app/features/mec/styling.php:383
-#: app/features/mec/styling.php:392
+#: app/features/mec/styling.php:37 app/features/mec/styling.php:319
+#: app/features/mec/styling.php:329 app/features/mec/styling.php:396
+#: app/features/mec/styling.php:405
 msgid "Save Changes"
 msgstr "Desar canvis"
 
@@ -6263,10 +6324,10 @@ msgstr "Data de finalització"
 #: app/features/mec/booking.php:162 app/features/mec/booking.php:171
 #: app/features/mec/fes.php:115 app/features/mec/fes.php:400
 #: app/features/mec/fes.php:430 app/features/mec/fes.php:446
-#: app/features/mec/fes.php:476 app/features/mec/modules.php:778
-#: app/features/mec/notifications.php:69 app/libraries/main.php:3167
-#: app/libraries/main.php:3406 app/libraries/main.php:3449
-#: app/libraries/notifications.php:2494
+#: app/features/mec/fes.php:471 app/features/mec/fes.php:496
+#: app/features/mec/modules.php:778 app/features/mec/notifications.php:69
+#: app/libraries/main.php:3167 app/libraries/main.php:3406
+#: app/libraries/main.php:3449 app/libraries/notifications.php:2494
 msgid "No"
 msgstr "No"
 
@@ -6275,7 +6336,7 @@ msgid "If Possible"
 msgstr "Si és possible"
 
 #: app/features/mec/booking.php:168 app/features/mec/booking.php:176
-#: app/features/mec/fes.php:513
+#: app/features/mec/fes.php:533
 #, fuzzy
 #| msgid "Date Selection"
 msgid "Date Selection Per Event"
@@ -6283,10 +6344,10 @@ msgstr "Selecció de la data"
 
 #: app/features/mec/booking.php:172 app/features/mec/fes.php:116
 #: app/features/mec/fes.php:399 app/features/mec/fes.php:429
-#: app/features/mec/fes.php:445 app/features/mec/fes.php:475
-#: app/features/mec/modules.php:779 app/features/mec/notifications.php:70
-#: app/libraries/main.php:3167 app/libraries/main.php:3406
-#: app/libraries/main.php:3449 app/libraries/notifications.php:2494
+#: app/features/mec/fes.php:445 app/features/mec/modules.php:779
+#: app/features/mec/notifications.php:70 app/libraries/main.php:3167
+#: app/libraries/main.php:3406 app/libraries/main.php:3449
+#: app/libraries/notifications.php:2494
 msgid "Yes"
 msgstr "Sí"
 
@@ -6464,7 +6525,7 @@ msgstr ""
 msgid "Do not accept duplicate emails in the attendees form"
 msgstr ""
 
-#: app/features/mec/booking.php:320 app/features/mec/fes.php:576
+#: app/features/mec/booking.php:320 app/features/mec/fes.php:596
 msgid "Ticket Options"
 msgstr "Opcions d'entrades"
 
@@ -6634,11 +6695,6 @@ msgstr "Fins a 24 per exemple"
 msgid "Period"
 msgstr "Periode"
 
-#: app/features/mec/booking.php:526 app/features/speakers.php:129
-#: app/features/speakers.php:234
-msgid "Type"
-msgstr "Tipus"
-
 #: app/features/mec/booking.php:531
 msgid "Event Start"
 msgstr "Inici de l'esdeveniment"
@@ -6782,7 +6838,7 @@ msgid ""
 "and partial payments when booking."
 msgstr ""
 
-#: app/features/mec/booking.php:651 app/features/mec/fes.php:527
+#: app/features/mec/booking.php:651 app/features/mec/fes.php:547
 msgid "Discount Per User Roles"
 msgstr "Descompte per rols d'usuari"
 
@@ -6906,7 +6962,7 @@ msgstr "Entrades venudes"
 #: app/features/mec/settings.php:382 app/features/mec/settings.php:391
 #: app/features/mec/single.php:144 app/features/mec/single.php:233
 #: app/features/mec/single.php:242 app/features/mec/single.php:258
-#: app/features/mec/styling.php:119 app/features/mec/styling.php:239
+#: app/features/mec/styling.php:132 app/features/mec/styling.php:252
 msgid "Enable"
 msgstr "Habilitar"
 
@@ -7256,19 +7312,19 @@ msgstr "Pàgina de pagament"
 msgid "Enable Cart Invoice"
 msgstr "Activa la factura del carret"
 
-#: app/features/mec/booking.php:1524 app/features/mec/fes.php:805
+#: app/features/mec/booking.php:1524 app/features/mec/fes.php:825
 #: app/features/mec/integrations.php:469 app/features/mec/messages.php:94
 #: app/features/mec/modules.php:831 app/features/mec/notifications.php:2479
 #: app/features/mec/settings.php:1482 app/features/mec/single.php:717
-#: app/features/mec/styles.php:66 app/features/mec/styling.php:365
+#: app/features/mec/styles.php:66 app/features/mec/styling.php:378
 msgid "Saved"
 msgstr "Desat"
 
-#: app/features/mec/booking.php:1525 app/features/mec/fes.php:806
+#: app/features/mec/booking.php:1525 app/features/mec/fes.php:826
 #: app/features/mec/integrations.php:470 app/features/mec/messages.php:95
 #: app/features/mec/modules.php:832 app/features/mec/notifications.php:2480
 #: app/features/mec/settings.php:1483 app/features/mec/single.php:718
-#: app/features/mec/styles.php:67 app/features/mec/styling.php:366
+#: app/features/mec/styles.php:67 app/features/mec/styling.php:379
 msgid "Settings Saved!"
 msgstr "Configuració desada!"
 
@@ -7646,75 +7702,94 @@ msgstr "Capacitat d'utilitzar tots els organitzadors"
 msgid "If enabled, then users are able to add their own new organizers."
 msgstr "Envieu el correu electrònic a organitzadors addicionals"
 
-#: app/features/mec/fes.php:472 app/features/mec/fes.php:480
+#: app/features/mec/fes.php:466
+#, fuzzy
+#| msgid "Add Location"
+msgid "Ability to Add New Speakers"
+msgstr "Afegeix una ubicació"
+
+#: app/features/mec/fes.php:469 app/features/mec/fes.php:494
+#, fuzzy
+#| msgid "Name"
+msgid "Name Only"
+msgstr "Nom"
+
+#: app/features/mec/fes.php:470 app/features/mec/fes.php:495
+#, fuzzy
+#| msgid "FES Details"
+msgid "Full Details"
+msgstr "Detalls de FES"
+
+#: app/features/mec/fes.php:475 app/features/mec/fes.php:491
+#: app/features/mec/fes.php:500
 #, fuzzy
 #| msgid "Add Location"
 msgid "Ability to Add New Sponsors"
 msgstr "Afegeix una ubicació"
 
-#: app/features/mec/fes.php:481
+#: app/features/mec/fes.php:476 app/features/mec/fes.php:501
 #, fuzzy
 #| msgid "Send the email to additional organizers"
 msgid "If enabled, then users are able to add their own new sponsors."
 msgstr "Envieu el correu electrònic a organitzadors addicionals"
 
-#: app/features/mec/fes.php:506 app/features/occurrences.php:200
+#: app/features/mec/fes.php:526 app/features/occurrences.php:200
 msgid "Total Booking Limit"
 msgstr "Límit total de reserves"
 
-#: app/features/mec/fes.php:520
+#: app/features/mec/fes.php:540
 #, fuzzy
 #| msgid "Minimum Ticket e.g. 3"
 msgid "Minimum Tickets Per Booking"
 msgstr "Número mínim de tiquets. Per exemple 3"
 
-#: app/features/mec/fes.php:582 app/libraries/tickets.php:132
+#: app/features/mec/fes.php:602 app/libraries/tickets.php:132
 #: app/libraries/tickets.php:135 app/libraries/tickets.php:455
 #: app/libraries/tickets.php:458
 msgid "Private Description"
 msgstr "Descripció privada"
 
-#: app/features/mec/fes.php:594
+#: app/features/mec/fes.php:614
 msgid "Fees / Taxes Options"
 msgstr "Tarifes/Impostos Opcions"
 
-#: app/features/mec/fes.php:613
+#: app/features/mec/fes.php:633
 #, fuzzy
 #| msgid "Archive Page Options"
 msgid "Partial Payment Options"
 msgstr "Opciones de página de archivo"
 
-#: app/features/mec/fes.php:623 app/features/schema.php:67
+#: app/features/mec/fes.php:643 app/features/schema.php:67
 msgid "SEO Schema"
 msgstr "SEO Schema"
 
-#: app/features/mec/fes.php:646 app/features/mec/single.php:238
+#: app/features/mec/fes.php:666 app/features/mec/single.php:238
 #: app/features/mec/single.php:246
 msgid "Public Download Module"
 msgstr "Mòdul de descàrrega pública"
 
-#: app/features/mec/fes.php:655
+#: app/features/mec/fes.php:675
 #, fuzzy
 #| msgid "Event"
 msgid "Event FAQ"
 msgstr "Esdeveniment"
 
-#: app/features/mec/fes.php:673 app/features/mec/single.php:664
+#: app/features/mec/fes.php:693 app/features/mec/single.php:664
 msgid "Virtual Event"
 msgstr "Esdeveniment virtual"
 
-#: app/features/mec/fes.php:682
+#: app/features/mec/fes.php:702
 msgid "Zoom Event"
 msgstr "Esdeveniment de Zoom"
 
-#: app/features/mec/fes.php:690 app/features/mec/fes.php:694
+#: app/features/mec/fes.php:710 app/features/mec/fes.php:714
 #: app/features/mec/notifications.php:1968
 #: app/features/mec/notifications.php:2085
 #: app/features/mec/notifications.php:2370 app/features/notifications.php:207
 msgid "Event Note"
 msgstr "Nota d'esdeveniment"
 
-#: app/features/mec/fes.php:695
+#: app/features/mec/fes.php:715
 #, fuzzy, php-format
 #| msgid ""
 #| "Users can put a note for editors while they're submitting the event. Also "
@@ -7729,35 +7804,35 @@ msgstr ""
 "l'esdeveniment. També podeu posar %%event_note%% a la notificació de "
 "l'esdeveniment nou per rebre la nota dels usuaris al correu electrònic."
 
-#: app/features/mec/fes.php:702 app/features/mec/fes.php:710
+#: app/features/mec/fes.php:722 app/features/mec/fes.php:730
 msgid "Note visibility"
 msgstr "Visibilitat de la nota"
 
-#: app/features/mec/fes.php:705
+#: app/features/mec/fes.php:725
 msgid "Always"
 msgstr "Sempre"
 
-#: app/features/mec/fes.php:706
+#: app/features/mec/fes.php:726
 msgid "While event is not published"
 msgstr "Mentre no es publiqui l'esdeveniment"
 
-#: app/features/mec/fes.php:711
+#: app/features/mec/fes.php:731
 msgid "When should event note be displayed in FES Form and Backend?"
 msgstr ""
 
-#: app/features/mec/fes.php:721
+#: app/features/mec/fes.php:741
 msgid "Agreement Checkbox (GDPR Compatibility)"
 msgstr "Casella de verificació de l'acord (compatibilitat GDPR)"
 
-#: app/features/mec/fes.php:728
+#: app/features/mec/fes.php:748
 msgid "Checked by Default"
 msgstr "Verificat per defecte"
 
-#: app/features/mec/fes.php:748 app/libraries/main.php:699
+#: app/features/mec/fes.php:768 app/libraries/main.php:699
 msgid "Required Fields"
 msgstr "Camps obligatoris"
 
-#: app/features/mec/fes.php:751 app/features/mec/notifications.php:231
+#: app/features/mec/fes.php:771 app/features/mec/notifications.php:231
 #: app/features/mec/notifications.php:390
 #: app/features/mec/notifications.php:566
 #: app/features/mec/notifications.php:773
@@ -7774,7 +7849,7 @@ msgstr "Camps obligatoris"
 msgid "Event Description"
 msgstr "Descripció de l'esdeveniment"
 
-#: app/features/mec/fes.php:756 app/libraries/main.php:7893
+#: app/features/mec/fes.php:776 app/libraries/main.php:7893
 #: app/libraries/main.php:7940
 msgid "More Info Link"
 msgstr "Enllaç per a més informació"
@@ -12802,8 +12877,8 @@ msgstr ""
 "tema després de tots els estils, de manera que substituiran els estils "
 "predeterminats (o tema) de MEC."
 
-#: app/features/mec/styling.php:10 app/features/mec/styling.php:178
-#: app/features/mec/styling.php:205
+#: app/features/mec/styling.php:10 app/features/mec/styling.php:191
+#: app/features/mec/styling.php:218
 msgid "Default Font"
 msgstr "Tipus de lletra per defecte"
 
@@ -12834,47 +12909,55 @@ msgstr ""
 "Si voleu seleccionar una tema predefinit, heu d'esborrar el color d'aquest "
 "element"
 
-#: app/features/mec/styling.php:115 app/features/mec/styling.php:123
+#: app/features/mec/styling.php:115 app/features/mec/styling.php:120
+msgid "Primary border-radius"
+msgstr ""
+
+#: app/features/mec/styling.php:121
+msgid "Customize the border-radius for wrappers, event items and event modules"
+msgstr ""
+
+#: app/features/mec/styling.php:128 app/features/mec/styling.php:136
 msgid "Dark Mode"
 msgstr "Mode fosc"
 
-#: app/features/mec/styling.php:124
+#: app/features/mec/styling.php:137
 #, fuzzy
 #| msgid "Enable it to turn on dark mode"
 msgid "Enable this option to turn on the dark mode"
 msgstr "Activeu-lo per activar el mode fosc"
 
-#: app/features/mec/styling.php:132
+#: app/features/mec/styling.php:145
 msgid "Advanced Color Options (shortcodes)"
 msgstr "Opcions de color avançades (shortcodes)"
 
-#: app/features/mec/styling.php:144
+#: app/features/mec/styling.php:157
 msgid "Title Hover"
 msgstr "Per sobre del títol"
 
-#: app/features/mec/styling.php:161
+#: app/features/mec/styling.php:174
 msgid "Typography"
 msgstr "Tipografia"
 
-#: app/features/mec/styling.php:163
+#: app/features/mec/styling.php:176
 msgid "Heading (Events Title) Font Family"
 msgstr "Encapçalament (Títol de l'esdeveniment) Família de tipus de lletra"
 
-#: app/features/mec/styling.php:190
+#: app/features/mec/styling.php:203
 msgid "Paragraph Font Family"
 msgstr "Família de fonts de paràgraf"
 
-#: app/features/mec/styling.php:216 app/features/mec/styling.php:224
+#: app/features/mec/styling.php:229 app/features/mec/styling.php:237
 msgid "Disable Google Fonts"
 msgstr "Desactiva Google Fonts"
 
-#: app/features/mec/styling.php:220
+#: app/features/mec/styling.php:233
 #, fuzzy
 #| msgid "Disabled"
 msgid "Disable"
 msgstr "Inhabilitat"
 
-#: app/features/mec/styling.php:225
+#: app/features/mec/styling.php:238
 #, fuzzy
 #| msgid ""
 #| "To be GDPR compliant you may need to disable Google fonts! set \"Default "
@@ -12887,26 +12970,26 @@ msgstr ""
 "lletra de Google. establiu el valor \"Tipus de lletra predeterminat\" per a "
 "la família de tipus de lletra i activeu aquesta opció."
 
-#: app/features/mec/styling.php:233 app/features/mec/styling.php:235
-#: app/features/mec/styling.php:243
+#: app/features/mec/styling.php:246 app/features/mec/styling.php:248
+#: app/features/mec/styling.php:256
 #, fuzzy
 #| msgid "Visibility"
 msgid "Accessibility"
 msgstr "Visibilitat"
 
-#: app/features/mec/styling.php:244
+#: app/features/mec/styling.php:257
 msgid "Enable A11Y or accessibility in MEC."
 msgstr ""
 
-#: app/features/mec/styling.php:253
+#: app/features/mec/styling.php:266
 msgid "Container Width"
 msgstr "Amplada del contenidor"
 
-#: app/features/mec/styling.php:255 app/features/mec/styling.php:260
+#: app/features/mec/styling.php:268 app/features/mec/styling.php:273
 msgid "Desktop Normal Screens"
 msgstr "Pantalles normals d'escriptori"
 
-#: app/features/mec/styling.php:261
+#: app/features/mec/styling.php:274
 #, fuzzy
 #| msgid "You can enter your theme container size in this field"
 msgid ""
@@ -12914,11 +12997,11 @@ msgid ""
 "normal screens."
 msgstr "Podeu introduir la mida del contenidor del tema en aquest camp"
 
-#: app/features/mec/styling.php:269 app/features/mec/styling.php:274
+#: app/features/mec/styling.php:282 app/features/mec/styling.php:287
 msgid "Desktop Large Screens"
 msgstr "Pantalles grans d'escriptori"
 
-#: app/features/mec/styling.php:275
+#: app/features/mec/styling.php:288
 #, fuzzy
 #| msgid "You can enter your theme container size in this field"
 msgid ""
@@ -12926,15 +13009,15 @@ msgid ""
 "large screens."
 msgstr "Podeu introduir la mida del contenidor del tema en aquest camp"
 
-#: app/features/mec/styling.php:284
+#: app/features/mec/styling.php:297
 msgid "Other Styling Option"
 msgstr "Una altra opció d'estil"
 
-#: app/features/mec/styling.php:288
+#: app/features/mec/styling.php:301
 msgid "Frontend Event Submission Color"
 msgstr "Color d'enviament d'esdeveniments de front-end"
 
-#: app/features/mec/styling.php:297
+#: app/features/mec/styling.php:310
 msgid "Notifications Background"
 msgstr "Notificacions de fons -background"
 
@@ -13392,7 +13475,7 @@ msgstr ""
 msgid "Log file size is about %s. %s"
 msgstr ""
 
-#: app/features/mec/support-page.php:446 app/skins/single.php:1799
+#: app/features/mec/support-page.php:446 app/skins/single.php:1805
 msgid "Download"
 msgstr "Descarregar"
 
@@ -13710,41 +13793,26 @@ msgstr ""
 msgid "Site name or any text"
 msgstr "Nom de l'assistent"
 
-#: app/features/organizers.php:152 app/features/organizers.php:221
-#: app/features/speakers.php:181 app/features/speakers.php:262
-msgid "Facebook Page"
-msgstr "Pàgina de Facebook"
-
 #: app/features/organizers.php:155 app/features/organizers.php:222
-#: app/features/speakers.php:184 app/features/speakers.php:263
+#: app/features/speakers.php:182 app/features/speakers.php:261
 msgid "Insert URL of Facebook Page"
 msgstr "Insereix l'URL de la pàgina de Facebook"
 
 #: app/features/organizers.php:163 app/features/organizers.php:226
-#: app/features/speakers.php:192 app/features/speakers.php:267
+#: app/features/speakers.php:190 app/features/speakers.php:265
 msgid "Insert URL of Instagram"
 msgstr "Insereix l'URL d'Instagram"
 
-#: app/features/organizers.php:168 app/features/organizers.php:229
-#: app/features/speakers.php:197 app/features/speakers.php:270
-msgid "LinkedIn"
-msgstr "LinkedIn"
-
-#: app/features/organizers.php:171 app/features/speakers.php:200
+#: app/features/organizers.php:171 app/features/speakers.php:198
 msgid "Insert URL of LinkedIn"
 msgstr "Insereix l'URL de LinkedIn"
 
-#: app/features/organizers.php:176 app/features/organizers.php:233
-#: app/features/speakers.php:205 app/features/speakers.php:274
-msgid "Twitter Page"
-msgstr "Pàgina de Twitter"
-
 #: app/features/organizers.php:179 app/features/organizers.php:234
-#: app/features/speakers.php:208 app/features/speakers.php:275
+#: app/features/speakers.php:206 app/features/speakers.php:273
 msgid "Insert URL of Twitter Page"
 msgstr "Insereix l'URL de la pàgina de Twitter"
 
-#: app/features/organizers.php:230 app/features/speakers.php:271
+#: app/features/organizers.php:230 app/features/speakers.php:269
 msgid "Insert URL of linkedin"
 msgstr "Insereix l'URL de linkedin"
 
@@ -14131,31 +14199,44 @@ msgstr "El contingut del correu electrònic no pot estar buit!"
 msgid "There was an error please try again!"
 msgstr "S'ha produït un error, torna-ho a provar!"
 
-#: app/features/restful.php:84
+#: app/features/restful.php:112 app/features/restful.php:287
 msgid "Limit parameter must be numeric!"
 msgstr ""
 
-#: app/features/restful.php:95
+#: app/features/restful.php:123
 #, fuzzy
 #| msgid "Request is invalid!"
 msgid "Order parameter is invalid!"
 msgstr "La sol·licitud no és vàlida!"
 
-#: app/features/restful.php:108
+#: app/features/restful.php:136
 msgid ""
 "When the start_date_type parameter is set to date, then start_date parameter "
 "is required."
 msgstr ""
 
-#: app/features/restful.php:191
+#: app/features/restful.php:219
 msgid "Event id must be numeric!"
 msgstr ""
 
-#: app/features/restful.php:208
+#: app/features/restful.php:236 app/features/restful.php:354
+#: app/features/restful.php:385
 #, fuzzy
 #| msgid "No event found!"
 msgid "Event not found!"
 msgstr "No s'ha trobat cap esdeveniment!"
+
+#: app/features/restful.php:345
+#, fuzzy
+#| msgid "Discount is not valid for this event!"
+msgid "You're not authorized to trash this event!"
+msgstr "El descompte no és vàlid per a aquest esdeveniment!"
+
+#: app/features/restful.php:376
+#, fuzzy
+#| msgid "Discount is not valid for this event!"
+msgid "You're not authorized to delete this event!"
+msgstr "El descompte no és vàlid per a aquest esdeveniment!"
 
 #: app/features/schema.php:68
 msgid ""
@@ -14172,15 +14253,15 @@ msgstr ""
 msgid "Please enter at least 3 characters and try again"
 msgstr "Introduïu almenys 3 caràcters i torneu-ho a provar"
 
-#: app/features/search_bar/search_bar.php:29
+#: app/features/search_bar/search_bar.php:30
 msgid "Please enter at least 3 characters"
 msgstr "Introduïu almenys 3 caràcters"
 
-#: app/features/search_bar/search_bar.php:31
+#: app/features/search_bar/search_bar.php:32
 msgid "Search results will show here"
 msgstr "Els resultats de la cerca es mostraran aquí"
 
-#: app/features/search_bar/search_bar.php:51 app/libraries/main.php:640
+#: app/features/search_bar/search_bar.php:52 app/libraries/main.php:640
 msgid "Search"
 msgstr "Cercar"
 
@@ -14188,58 +14269,50 @@ msgstr "Cercar"
 msgid "No search result."
 msgstr "Cap resultat de la cerca."
 
-#: app/features/speakers.php:133 app/features/speakers.php:236
-msgid "Person"
-msgstr ""
-
-#: app/features/speakers.php:134 app/features/speakers.php:237
-#, fuzzy
-#| msgid "Group ID"
-msgid "Group"
-msgstr "Id de grup"
-
-#: app/features/speakers.php:140 app/features/speakers.php:241
-#: app/features/speakers.php:340
-msgid "Job Title"
-msgstr "Lloc de treball"
-
-#: app/features/speakers.php:143 app/features/speakers.php:242
+#: app/features/speakers.php:141 app/features/speakers.php:240
 msgid "Insert speaker job title."
 msgstr "Insereix el títol de la feina del ponent."
 
-#: app/features/speakers.php:151 app/features/speakers.php:246
+#: app/features/speakers.php:149 app/features/speakers.php:244
 msgid "Insert speaker phone number."
 msgstr "Insereix el número de telèfon del ponent."
 
-#: app/features/speakers.php:159 app/features/speakers.php:250
+#: app/features/speakers.php:157 app/features/speakers.php:248
 msgid "Insert speaker email address."
 msgstr "Insereix l'adreça de correu electrònic del ponent."
 
-#: app/features/speakers.php:167 app/features/speakers.php:254
+#: app/features/speakers.php:165 app/features/speakers.php:252
 msgid "Insert URL of Website"
 msgstr "Insereix l'URL del lloc web"
 
-#: app/features/speakers.php:172 app/features/speakers.php:257
+#: app/features/speakers.php:170 app/features/speakers.php:255
 msgid "Index"
 msgstr ""
 
-#: app/features/speakers.php:175 app/features/speakers.php:258
+#: app/features/speakers.php:173 app/features/speakers.php:256
 msgid "Index. Used for sorting."
 msgstr ""
 
-#: app/features/speakers.php:176 app/features/speakers.php:259
+#: app/features/speakers.php:174 app/features/speakers.php:257
 #, fuzzy
 #| msgid "Create some calendars first."
 msgid "Lower numbers appears first."
 msgstr "Creeu uns calendaris primer."
 
-#: app/features/speakers.php:399 app/features/speakers.php:441
+#: app/features/speakers.php:399 app/features/speakers.php:427
+#: app/features/sponsors.php:198 app/features/sponsors.php:218
 #, fuzzy, php-format
 #| msgid "Sorry, You must insert speaker name!"
 msgid "Sorry, You must insert %s name!"
 msgstr "Ho sentim, has d'inserir el nom del ponent!"
 
-#: app/features/speakers.php:485
+#: app/features/speakers.php:399 app/features/speakers.php:427
+#, fuzzy
+#| msgid "Speaker"
+msgid "speaker"
+msgstr "Orador"
+
+#: app/features/speakers.php:488
 msgid ""
 "Note: You can use the speakers in your event edit/add page > hourly schedule "
 "section and speaker widget section!"
@@ -14247,17 +14320,17 @@ msgstr ""
 "Nota: podeu utilitzar els ponents a la pàgina d'edició/afegiu "
 "d'esdeveniments > secció de programació horària i secció de giny de ponents!"
 
-#: app/features/sponsors.php:112
+#: app/features/sponsors.php:115
 #, fuzzy
 #| msgid "Insert URL of Instagram"
 msgid "Insert URL of Sponsor"
 msgstr "Insereix l'URL d'Instagram"
 
-#: app/features/sponsors.php:117 app/features/sponsors.php:142
+#: app/features/sponsors.php:120 app/features/sponsors.php:145
 msgid "Logo"
 msgstr ""
 
-#: app/features/sponsors.php:139
+#: app/features/sponsors.php:142
 #, fuzzy
 #| msgid "Insert URL of Instagram"
 msgid "Insert URL of Sponsor."
@@ -14360,7 +14433,7 @@ msgstr ""
 msgid "MEC will send the data to your target as plain form data"
 msgstr ""
 
-#: app/libraries/book.php:1391 app/modules/booking/default.php:864
+#: app/libraries/book.php:1403 app/modules/booking/default.php:864
 #: app/modules/booking/default.php:998
 msgid "Download Invoice"
 msgstr "Descarrega Factura"
@@ -14497,7 +14570,7 @@ msgid "To e.g. 8:45"
 msgstr "Fins a les 8:45, per exemple"
 
 #: app/libraries/formBuilder.php:89 app/libraries/formBuilder.php:117
-#: app/libraries/formBuilder.php:169 app/skins/single.php:1590
+#: app/libraries/formBuilder.php:169 app/skins/single.php:1596
 msgid "Speakers:"
 msgstr "Ponents:"
 
@@ -16147,7 +16220,7 @@ msgstr "Esdeveniment Següent"
 msgid "Home"
 msgstr "Inici"
 
-#: app/skins/single.php:1825
+#: app/skins/single.php:1831
 #, fuzzy
 #| msgid "Event Organizer"
 msgid "Watch Event Trailer"
@@ -16701,9 +16774,6 @@ msgstr "http://webnus.net"
 
 #~ msgid "Discount coupon is expired!"
 #~ msgstr "El cupó de descompte està caducat!"
-
-#~ msgid "Discount is not valid for this event!"
-#~ msgstr "El descompte no és vàlid per a aquest esdeveniment!"
 
 #~ msgid "You should buy at-least %s tickets to use this discount."
 #~ msgstr ""

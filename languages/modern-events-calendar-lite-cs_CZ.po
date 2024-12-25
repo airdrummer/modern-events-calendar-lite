@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Modern Events Calendar Lite\n"
-"POT-Creation-Date: 2024-11-30 15:35+0330\n"
-"PO-Revision-Date: 2024-11-30 15:37+0330\n"
+"POT-Creation-Date: 2024-12-23 13:24+0330\n"
+"PO-Revision-Date: 2024-12-23 13:26+0330\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: cs_CZ\n"
@@ -32,7 +32,7 @@ msgstr "Moderní kalendář událostí"
 
 #: app/addons/KC.php:70 app/addons/VC.php:64
 #: app/addons/mec-beaver-builder/mec-beaver-builder.php:25
-#: app/features/mec/styling.php:153
+#: app/features/mec/styling.php:166
 msgid "Content"
 msgstr "Obsah"
 
@@ -115,7 +115,7 @@ msgid "LearnDash Course"
 msgstr "Žádné možnosti vyhledávání"
 
 #: app/addons/mec-beaver-builder/mec-beaver-builder.php:9
-#: app/core/src/FES/FormBuilder.php:3573 app/features/events.php:758
+#: app/core/src/FES/FormBuilder.php:3634 app/features/events.php:758
 #: app/features/events.php:1429 app/features/events.php:1907
 #: app/features/mec/booking.php:107 app/features/mec/booking.php:821
 #: app/features/mec/fes.php:50 app/features/mec/settings.php:56
@@ -231,8 +231,8 @@ msgid "Attendee's Form"
 msgstr "Formulář účastníků"
 
 #: app/core/src/BookingForm/Attendees.php:268
-#: app/core/src/FES/FormBuilder.php:903 app/core/src/FES/FormBuilder.php:2044
-#: app/core/src/FES/FormBuilder.php:2998 app/core/src/ImportExport/Terms.php:39
+#: app/core/src/FES/FormBuilder.php:903 app/core/src/FES/FormBuilder.php:2105
+#: app/core/src/FES/FormBuilder.php:3059 app/core/src/ImportExport/Terms.php:39
 #: app/features/events.php:742 app/features/fes.php:322
 #: app/features/labels.php:189 app/features/mec/booking.php:49
 #: app/features/popup/event.php:199 app/features/profile/profile.php:203
@@ -242,9 +242,9 @@ msgstr "Jméno"
 
 #: app/core/src/BookingForm/Attendees.php:276
 #: app/core/src/BookingForm/DisplayFields.php:134
-#: app/core/src/FES/FormBuilder.php:899 app/core/src/FES/FormBuilder.php:3007
-#: app/core/src/FES/FormBuilder.php:3074 app/core/src/FES/FormBuilder.php:3164
-#: app/core/src/Forms/CustomForm.php:108
+#: app/core/src/FES/FormBuilder.php:899 app/core/src/FES/FormBuilder.php:1410
+#: app/core/src/FES/FormBuilder.php:3068 app/core/src/FES/FormBuilder.php:3135
+#: app/core/src/FES/FormBuilder.php:3225 app/core/src/Forms/CustomForm.php:108
 #: app/core/src/Forms/DisplayFields.php:94
 #: app/core/src/Forms/FormFields.php:189 app/core/src/Forms/SettingsForm.php:93
 #: app/core/src/ImportExport/Terms.php:55
@@ -255,19 +255,19 @@ msgstr "Jméno"
 #: app/features/mec/booking.php:61 app/features/mec/booking.php:1056
 #: app/features/mec/booking.php:1154 app/features/mec/single.php:453
 #: app/features/organizers.php:128 app/features/organizers.php:209
-#: app/features/profile/profile.php:206 app/features/speakers.php:156
-#: app/features/speakers.php:249 app/libraries/main.php:2078
+#: app/features/profile/profile.php:206 app/features/speakers.php:154
+#: app/features/speakers.php:247 app/libraries/main.php:2078
 #: app/libraries/main.php:2151 app/libraries/main.php:4275
 #: app/libraries/main.php:10233 app/libraries/notifications.php:2475
-#: app/skins/single.php:1371 app/skins/single.php:1447
-#: app/skins/single/default.php:315 app/skins/single/m1.php:128
-#: app/skins/single/m2.php:76 app/widgets/single/default.php:149
+#: app/skins/single.php:1373 app/skins/single.php:1453
+#: app/skins/single/default.php:318 app/skins/single/m1.php:131
+#: app/skins/single/m2.php:79 app/widgets/single/default.php:152
 #: app/widgets/single/modern.php:61
 msgid "Email"
 msgstr "Email"
 
 #: app/core/src/BookingForm/Attendees.php:337
-#: app/core/src/FES/FormBuilder.php:2246
+#: app/core/src/FES/FormBuilder.php:2307
 #: app/modules/booking/steps/checkout.php:73
 #: app/modules/booking/steps/message.php:30
 #: app/modules/booking/steps/tickets.php:134
@@ -295,8 +295,8 @@ msgid "2"
 msgstr "12"
 
 #: app/core/src/BookingForm/Attendees.php:338
-#: app/core/src/FES/FormBuilder.php:3332 app/features/events.php:3859
-#: app/features/mec/fes.php:606 app/features/profile/profile.php:68
+#: app/core/src/FES/FormBuilder.php:3393 app/features/events.php:3862
+#: app/features/mec/fes.php:626 app/features/profile/profile.php:68
 #: app/libraries/main.php:3138 app/libraries/main.php:3419
 #: app/modules/booking/steps/checkout.php:74
 #: app/modules/booking/steps/message.php:31
@@ -343,7 +343,7 @@ msgid "Confirmation"
 msgstr "Potvrzení"
 
 #: app/core/src/BookingForm/Attendees.php:354
-#: app/core/src/BookingForm/Attendees.php:387 app/libraries/book.php:230
+#: app/core/src/BookingForm/Attendees.php:387 app/libraries/book.php:242
 #, fuzzy
 #| msgid "Total"
 msgid "Subtotal"
@@ -453,8 +453,8 @@ msgid "Waiting"
 msgstr "Čekající"
 
 #: app/core/src/Books/BookingForm.php:48 app/skins/single.php:1033
-#: app/skins/single/default.php:161 app/skins/single/m1.php:301
-#: app/skins/single/m2.php:267 app/skins/single/modern.php:183
+#: app/skins/single/default.php:161 app/skins/single/m1.php:304
+#: app/skins/single/m2.php:270 app/skins/single/modern.php:183
 msgid "Sold out!"
 msgstr "Vyprodáno!"
 
@@ -472,9 +472,9 @@ msgstr ""
 msgid "How to set booking module"
 msgstr "Povolit modul rezervace"
 
-#: app/core/src/FES/FormBuilder.php:56 app/core/src/FES/FormBuilder.php:3675
+#: app/core/src/FES/FormBuilder.php:56 app/core/src/FES/FormBuilder.php:3736
 #: app/features/events.php:3000 app/features/events.php:3349
-#: app/features/events.php:3856 app/features/mec/styling.php:135
+#: app/features/events.php:3859 app/features/mec/styling.php:148
 #: app/libraries/formBuilder.php:61 app/libraries/formBuilder.php:77
 #: app/libraries/formBuilder.php:105 app/libraries/formBuilder.php:137
 #: app/libraries/formBuilder.php:157 app/libraries/ticketVariations.php:39
@@ -493,8 +493,8 @@ msgstr "Při spuštění události"
 msgid "Optional Event Excerpt"
 msgstr "Při spuštění události"
 
-#: app/core/src/FES/FormBuilder.php:105 app/features/mec/fes.php:629
-#: app/features/mec/fes.php:752
+#: app/core/src/FES/FormBuilder.php:105 app/features/mec/fes.php:649
+#: app/features/mec/fes.php:772
 msgid "Excerpt"
 msgstr ""
 
@@ -634,7 +634,7 @@ msgstr "Ročně"
 msgid "Custom Days"
 msgstr "Vlastní dny"
 
-#: app/core/src/FES/FormBuilder.php:273 app/core/src/FES/FormBuilder.php:3574
+#: app/core/src/FES/FormBuilder.php:273 app/core/src/FES/FormBuilder.php:3635
 #: app/features/events.php:759 app/features/events.php:972
 #: app/features/events.php:1430 app/features/events.php:1908
 #: app/features/mec/booking.php:108 app/features/mec/booking.php:822
@@ -714,10 +714,9 @@ msgstr "Začátek"
 msgid "End"
 msgstr "Konec"
 
-#: app/core/src/FES/FormBuilder.php:326 app/core/src/FES/FormBuilder.php:1386
-#: app/core/src/FES/FormBuilder.php:1458 app/core/src/FES/FormBuilder.php:2092
-#: app/core/src/FES/FormBuilder.php:2860 app/core/src/FES/FormBuilder.php:3262
-#: app/core/src/FES/FormBuilder.php:3816 app/features/events.php:1013
+#: app/core/src/FES/FormBuilder.php:326 app/core/src/FES/FormBuilder.php:2153
+#: app/core/src/FES/FormBuilder.php:2921 app/core/src/FES/FormBuilder.php:3323
+#: app/core/src/FES/FormBuilder.php:3877 app/features/events.php:1013
 #: app/features/faq.php:77 app/features/mec/settings.php:1166
 #: app/libraries/formBuilder.php:69 app/libraries/formBuilder.php:146
 #: app/libraries/formBuilder.php:202 app/libraries/tickets.php:259
@@ -746,10 +745,10 @@ msgstr ""
 "datum zahájení a ukončení musí odpovídat počátečnímu datu."
 
 #: app/core/src/FES/FormBuilder.php:333 app/core/src/FES/FormBuilder.php:641
-#: app/core/src/FES/FormBuilder.php:1015 app/core/src/FES/FormBuilder.php:1872
-#: app/core/src/FES/FormBuilder.php:2037 app/core/src/FES/FormBuilder.php:2168
-#: app/core/src/FES/FormBuilder.php:2560 app/core/src/FES/FormBuilder.php:2573
-#: app/core/src/FES/FormBuilder.php:2887 app/core/src/FES/FormBuilder.php:2924
+#: app/core/src/FES/FormBuilder.php:1015 app/core/src/FES/FormBuilder.php:1933
+#: app/core/src/FES/FormBuilder.php:2098 app/core/src/FES/FormBuilder.php:2229
+#: app/core/src/FES/FormBuilder.php:2621 app/core/src/FES/FormBuilder.php:2634
+#: app/core/src/FES/FormBuilder.php:2948 app/core/src/FES/FormBuilder.php:2985
 #: app/core/src/Notifications/template-notification-settings.php:94
 #: app/core/src/SingleBuilder/Widgets/EventMoreInfo/EventMoreInfo.php:36
 #: app/features/dc.php:215 app/features/events.php:853
@@ -766,8 +765,8 @@ msgstr ""
 #: app/features/mec/booking.php:909 app/features/mec/booking.php:1252
 #: app/features/mec/booking.php:1280 app/features/mec/fes.php:93
 #: app/features/mec/fes.php:146 app/features/mec/fes.php:226
-#: app/features/mec/fes.php:370 app/features/mec/fes.php:695
-#: app/features/mec/fes.php:711 app/features/mec/integrations.php:75
+#: app/features/mec/fes.php:370 app/features/mec/fes.php:715
+#: app/features/mec/fes.php:731 app/features/mec/integrations.php:75
 #: app/features/mec/meta_boxes/display_options.php:112
 #: app/features/mec/meta_boxes/display_options.php:125
 #: app/features/mec/meta_boxes/display_options.php:136
@@ -834,9 +833,9 @@ msgstr ""
 #: app/features/mec/single.php:75 app/features/mec/single.php:95
 #: app/features/mec/single.php:113 app/features/mec/single.php:130
 #: app/features/mec/single.php:165 app/features/mec/single.php:182
-#: app/features/mec/styling.php:124 app/features/mec/styling.php:225
-#: app/features/mec/styling.php:244 app/features/mec/styling.php:261
-#: app/features/mec/styling.php:275 app/features/occurrences.php:343
+#: app/features/mec/styling.php:137 app/features/mec/styling.php:238
+#: app/features/mec/styling.php:257 app/features/mec/styling.php:274
+#: app/features/mec/styling.php:288 app/features/occurrences.php:343
 #: app/features/occurrences.php:373 app/features/popup/event.php:140
 #: app/features/popup/event.php:190 app/features/popup/settings.php:82
 #: app/features/popup/settings.php:186 app/features/popup/settings.php:207
@@ -918,12 +917,12 @@ msgid "Countdown Method"
 msgstr "Zobrazení odpočítávání"
 
 #: app/core/src/FES/FormBuilder.php:688 app/core/src/FES/FormBuilder.php:722
-#: app/core/src/FES/FormBuilder.php:820 app/core/src/FES/FormBuilder.php:2209
-#: app/core/src/FES/FormBuilder.php:2440 app/core/src/FES/FormBuilder.php:2450
-#: app/core/src/FES/FormBuilder.php:2498 app/core/src/FES/FormBuilder.php:2543
-#: app/core/src/FES/FormBuilder.php:2661 app/core/src/FES/FormBuilder.php:2716
-#: app/core/src/FES/FormBuilder.php:2849 app/core/src/FES/FormBuilder.php:3029
-#: app/core/src/FES/FormBuilder.php:3257 app/features/events.php:610
+#: app/core/src/FES/FormBuilder.php:820 app/core/src/FES/FormBuilder.php:2270
+#: app/core/src/FES/FormBuilder.php:2501 app/core/src/FES/FormBuilder.php:2511
+#: app/core/src/FES/FormBuilder.php:2559 app/core/src/FES/FormBuilder.php:2604
+#: app/core/src/FES/FormBuilder.php:2722 app/core/src/FES/FormBuilder.php:2777
+#: app/core/src/FES/FormBuilder.php:2910 app/core/src/FES/FormBuilder.php:3090
+#: app/core/src/FES/FormBuilder.php:3318 app/features/events.php:610
 #: app/features/events.php:867 app/features/events.php:881
 #: app/features/mec/single.php:305
 msgid "Inherit from global options"
@@ -1019,13 +1018,13 @@ msgstr "Zkrácené kódy"
 msgid "Timezone"
 msgstr "Časové pásmo: %s"
 
-#: app/core/src/FES/FormBuilder.php:850 app/core/src/FES/FormBuilder.php:1424
+#: app/core/src/FES/FormBuilder.php:850 app/core/src/FES/FormBuilder.php:1466
 msgid "The output cannot be displayed."
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:852 app/core/src/FES/FormBuilder.php:1426
-#: app/core/src/FES/FormBuilder.php:2749 app/core/src/FES/FormBuilder.php:2772
-#: app/core/src/FES/FormBuilder.php:4049
+#: app/core/src/FES/FormBuilder.php:852 app/core/src/FES/FormBuilder.php:1468
+#: app/core/src/FES/FormBuilder.php:2810 app/core/src/FES/FormBuilder.php:2833
+#: app/core/src/FES/FormBuilder.php:4110
 #, fuzzy
 #| msgid "Hide location"
 msgid "How to set"
@@ -1043,7 +1042,7 @@ msgstr "Údaje uživatele"
 msgid "eg. yourname@gmail.com"
 msgstr "např. vasejmeno@gmail.com"
 
-#: app/core/src/FES/FormBuilder.php:904 app/core/src/FES/FormBuilder.php:2045
+#: app/core/src/FES/FormBuilder.php:904 app/core/src/FES/FormBuilder.php:2106
 #: app/features/popup/event.php:200
 msgid "eg. John Smith"
 msgstr "např. Jan Novák"
@@ -1054,7 +1053,7 @@ msgid "Event Links"
 msgstr "Odkazy na událost"
 
 #: app/core/src/FES/FormBuilder.php:933 app/features/events.php:1762
-#: app/features/events.php:1770 app/features/mec/fes.php:755
+#: app/features/events.php:1770 app/features/mec/fes.php:775
 #: app/features/occurrences.php:422 app/libraries/main.php:7892
 #: app/libraries/main.php:7939
 msgid "Event Link"
@@ -1083,7 +1082,7 @@ msgstr ""
 #: app/features/mec/single.php:547 app/features/occurrences.php:427
 #: app/libraries/main.php:7893 app/libraries/main.php:7940
 #: app/skins/single.php:1186 app/skins/single/default.php:225
-#: app/skins/single/m1.php:227 app/skins/single/m2.php:203
+#: app/skins/single/m1.php:230 app/skins/single/m2.php:206
 #: app/widgets/single/default.php:56 app/widgets/single/modern.php:158
 msgid "More Info"
 msgstr "Více info"
@@ -1142,7 +1141,7 @@ msgstr "Cena události"
 #: app/core/src/SingleBuilder/Widgets/EventCost/EventCost.php:52
 #: app/core/src/SingleBuilder/Widgets/EventCost/EventCost.php:86
 #: app/features/events.php:498 app/features/events.php:1441
-#: app/features/mec/fes.php:754 app/features/occurrences.php:385
+#: app/features/mec/fes.php:774 app/features/occurrences.php:385
 #: app/libraries/main.php:7895 app/libraries/main.php:7942
 #: app/libraries/skins.php:1836 app/skins/single.php:1087
 #: app/skins/single/default.php:207 app/skins/single/m1.php:58
@@ -1235,24 +1234,25 @@ msgstr "Nebyla nalezena žádná událost!"
 
 # v kontextu
 #: app/core/src/FES/FormBuilder.php:1140 app/features/events.php:3362
-#: app/features/mec/fes.php:318 app/features/mec/fes.php:759
+#: app/features/mec/fes.php:318 app/features/mec/fes.php:779
 msgid "Featured Image"
 msgstr "Hlavní obrázek"
 
-#: app/core/src/FES/FormBuilder.php:1148 app/core/src/FES/FormBuilder.php:1806
-#: app/core/src/FES/FormBuilder.php:1929 app/core/src/FES/FormBuilder.php:2067
+#: app/core/src/FES/FormBuilder.php:1148 app/core/src/FES/FormBuilder.php:1867
+#: app/core/src/FES/FormBuilder.php:1990 app/core/src/FES/FormBuilder.php:2128
 #: app/features/popup/event.php:227
 msgid "Choose image"
 msgstr "Vyberte obrázek"
 
-#: app/core/src/FES/FormBuilder.php:1149 app/core/src/FES/FormBuilder.php:1807
-#: app/core/src/FES/FormBuilder.php:1930 app/core/src/FES/FormBuilder.php:1937
-#: app/core/src/FES/FormBuilder.php:2068 app/core/src/FES/FormBuilder.php:2075
+#: app/core/src/FES/FormBuilder.php:1149 app/core/src/FES/FormBuilder.php:1425
+#: app/core/src/FES/FormBuilder.php:1517 app/core/src/FES/FormBuilder.php:1868
+#: app/core/src/FES/FormBuilder.php:1991 app/core/src/FES/FormBuilder.php:1998
+#: app/core/src/FES/FormBuilder.php:2129 app/core/src/FES/FormBuilder.php:2136
 #: app/features/events.php:329 app/features/events.php:387
 #: app/features/locations.php:188 app/features/locations.php:248
 #: app/features/organizers.php:190 app/features/organizers.php:241
-#: app/features/speakers.php:219 app/features/speakers.php:282
-#: app/features/sponsors.php:123 app/features/sponsors.php:146
+#: app/features/speakers.php:217 app/features/speakers.php:280
+#: app/features/sponsors.php:126 app/features/sponsors.php:149
 msgid "Remove image"
 msgstr "Odebrat obrázek"
 
@@ -1296,7 +1296,7 @@ msgstr ""
 #: app/features/mec/meta_boxes/filter.php:189
 #: app/features/mec/meta_boxes/filter.php:193 app/libraries/main.php:7848
 #: app/libraries/main.php:7911 app/skins/single.php:1216
-#: app/skins/single.php:2003 app/skins/single/m1.php:73
+#: app/skins/single.php:2009 app/skins/single/m1.php:73
 msgid "Labels"
 msgstr "Štítky"
 
@@ -1330,23 +1330,17 @@ msgstr ""
 msgid "How to set speaker"
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:1382 app/features/events.php:3369
+#: app/core/src/FES/FormBuilder.php:1379 app/features/events.php:3369
 #: app/features/mec.php:537 app/features/mec/fes.php:461
 #: app/features/mec/modules.php:34 app/features/mec/modules.php:44
-#: app/features/popup/settings.php:327 app/features/speakers.php:71
+#: app/features/popup/settings.php:327 app/features/speakers.php:69
 #: app/libraries/main.php:677 app/libraries/main.php:736
 #: app/libraries/main.php:7854 app/libraries/main.php:7917
 #: app/modules/speakers/details.php:31
 msgid "Speakers"
 msgstr "Řečníci"
 
-#: app/core/src/FES/FormBuilder.php:1384 app/core/src/FES/FormBuilder.php:1456
-#, fuzzy, php-format
-#| msgid "New %s Name"
-msgid "%s Name"
-msgstr "Nové jméno %s"
-
-#: app/core/src/FES/FormBuilder.php:1384
+#: app/core/src/FES/FormBuilder.php:1380
 #: app/features/mec/meta_boxes/search_form.php:97
 #: app/features/mec/meta_boxes/search_form.php:195
 #: app/features/mec/meta_boxes/search_form.php:293
@@ -1362,126 +1356,219 @@ msgstr "Nové jméno %s"
 #: app/features/mec/modules.php:273 app/features/mec/modules.php:333
 #: app/features/mec/settings.php:1115 app/features/popup/settings.php:261
 #: app/features/popup/settings.php:300 app/features/search.php:109
-#: app/features/speakers.php:70 app/features/speakers.php:339
+#: app/features/speakers.php:68 app/features/speakers.php:337
 #: app/libraries/main.php:7855 app/libraries/main.php:7918
 #: app/libraries/search.php:384 app/libraries/skins.php:1563
 #: app/modules/speakers/details.php:31
 msgid "Speaker"
 msgstr "Řečník"
 
-#: app/core/src/FES/FormBuilder.php:1385
+#: app/core/src/FES/FormBuilder.php:1387 app/core/src/FES/FormBuilder.php:1393
+#: app/core/src/FES/FormBuilder.php:1500 app/core/src/FES/FormBuilder.php:1506
+#, fuzzy, php-format
+#| msgid "New %s Name"
+msgid "%s Name"
+msgstr "Nové jméno %s"
+
+#: app/core/src/FES/FormBuilder.php:1388 app/core/src/FES/FormBuilder.php:1394
 #, php-format
 msgid "Insert name of one %s: Chris Taylor"
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:1385 app/features/speakers.php:399
+#: app/core/src/FES/FormBuilder.php:1389 app/core/src/FES/FormBuilder.php:1427
 #, fuzzy
 #| msgid "Speaker"
-msgid "speaker"
+msgid "Add Speaker"
 msgstr "Řečník"
 
-#: app/core/src/FES/FormBuilder.php:1453 app/features/mec.php:543
-#: app/features/mec/fes.php:467 app/features/mec/meta_boxes/filter.php:72
+#: app/core/src/FES/FormBuilder.php:1397 app/features/mec/booking.php:526
+#: app/features/speakers.php:127 app/features/speakers.php:232
+#, fuzzy
+#| msgid "Type 1"
+msgid "Type"
+msgstr "Typ 1"
+
+#: app/core/src/FES/FormBuilder.php:1399 app/features/speakers.php:131
+#: app/features/speakers.php:234
+msgid "Person"
+msgstr ""
+
+#: app/core/src/FES/FormBuilder.php:1400 app/features/speakers.php:132
+#: app/features/speakers.php:235
+#, fuzzy
+#| msgid "Group URL"
+msgid "Group"
+msgstr "Group URL"
+
+#: app/core/src/FES/FormBuilder.php:1404 app/features/speakers.php:138
+#: app/features/speakers.php:239 app/features/speakers.php:338
+msgid "Job Title"
+msgstr "Pracovní pozice"
+
+#: app/core/src/FES/FormBuilder.php:1407 app/core/src/FES/FormBuilder.php:3137
+#: app/core/src/FES/FormBuilder.php:3227 app/core/src/Forms/FormFields.php:315
+#: app/core/src/Forms/SettingsForm.php:103
+#: app/core/src/ImportExport/Terms.php:54 app/features/mec/booking.php:1058
+#: app/features/mec/booking.php:1156 app/features/mec/single.php:456
+#: app/features/organizers.php:120 app/features/organizers.php:205
+#: app/features/speakers.php:146 app/features/speakers.php:243
+#: app/features/speakers.php:339 app/libraries/main.php:4402
+msgid "Tel"
+msgstr "Tel"
+
+#: app/core/src/FES/FormBuilder.php:1413
+#: app/core/src/SingleBuilder/Widgets/EventLocations/EventLocations.php:75
+#: app/core/src/SingleBuilder/Widgets/EventOrganizers/EventOrganizers.php:131
+#: app/features/speakers.php:162 app/features/speakers.php:251
+#: app/skins/single.php:971 app/skins/single.php:1380 app/skins/single.php:1460
+#: app/skins/single.php:1531 app/skins/single/default.php:325
+#: app/skins/single/m1.php:138 app/skins/single/m2.php:86
+#: app/skins/single/m2.php:155 app/widgets/single/default.php:159
+#: app/widgets/single/modern.php:68
+msgid "Website"
+msgstr "Webová stránka"
+
+#: app/core/src/FES/FormBuilder.php:1415 app/features/organizers.php:152
+#: app/features/organizers.php:221 app/features/speakers.php:179
+#: app/features/speakers.php:260
+msgid "Facebook Page"
+msgstr "Stránka na Facebooku"
+
+#: app/core/src/FES/FormBuilder.php:1415 app/core/src/ImportExport/Terms.php:60
+#: app/features/organizers.php:160 app/features/organizers.php:225
+#: app/features/speakers.php:187 app/features/speakers.php:264
+msgid "Instagram"
+msgstr "Instagram"
+
+#: app/core/src/FES/FormBuilder.php:1415 app/features/organizers.php:168
+#: app/features/organizers.php:229 app/features/speakers.php:195
+#: app/features/speakers.php:268
+#, fuzzy
+#| msgid "Linkedin"
+msgid "LinkedIn"
+msgstr "Linkedin"
+
+#: app/core/src/FES/FormBuilder.php:1415 app/features/organizers.php:176
+#: app/features/organizers.php:233 app/features/speakers.php:203
+#: app/features/speakers.php:272
+msgid "Twitter Page"
+msgstr "Stránka na Twitteru"
+
+#: app/core/src/FES/FormBuilder.php:1492 app/features/mec.php:543
+#: app/features/mec/fes.php:486 app/features/mec/meta_boxes/filter.php:72
 #: app/features/mec/meta_boxes/filter.php:225
 #: app/features/mec/meta_boxes/filter.php:228 app/features/mec/modules.php:155
-#: app/features/mec/modules.php:165 app/features/sponsors.php:59
+#: app/features/mec/modules.php:165 app/features/sponsors.php:62
 #: app/libraries/main.php:738 app/libraries/main.php:7856
 #: app/modules/sponsors/details.php:23
 msgid "Sponsors"
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:1456 app/features/sponsors.php:58
+#: app/core/src/FES/FormBuilder.php:1493 app/features/sponsors.php:61
 #: app/libraries/main.php:7857 app/modules/sponsors/details.php:23
 msgid "Sponsor"
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:1457
+#: app/core/src/FES/FormBuilder.php:1501 app/core/src/FES/FormBuilder.php:1507
 #, php-format
 msgid "Insert name of one %s: Company A"
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:1457 app/features/speakers.php:441
+#: app/core/src/FES/FormBuilder.php:1501 app/features/sponsors.php:198
+#: app/features/sponsors.php:218
 msgid "sponsor"
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:1500
+#: app/core/src/FES/FormBuilder.php:1502 app/core/src/FES/FormBuilder.php:1519
+#, fuzzy
+#| msgid "Event Color"
+msgid "Add Sponsor"
+msgstr "Barva události"
+
+#: app/core/src/FES/FormBuilder.php:1510
+#, fuzzy, php-format
+#| msgid "Link"
+msgid "%s Link"
+msgstr "Odkaz"
+
+#: app/core/src/FES/FormBuilder.php:1561
 #, fuzzy, php-format
 #| msgid "Please %s/%s in order to submit new events."
 msgid "I accept the %s in order to submit an event."
 msgstr "Prosím %s/%s za účelem odeslání nových událostí."
 
-#: app/core/src/FES/FormBuilder.php:1500
+#: app/core/src/FES/FormBuilder.php:1561
 msgid "Privacy Policy"
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:1502
+#: app/core/src/FES/FormBuilder.php:1563
 #, fuzzy
 #| msgid "Please %s/%s in order to submit new events."
 msgid "I accept the Privacy Policy in order to submit an event."
 msgstr "Prosím %s/%s za účelem odeslání nových událostí."
 
-#: app/core/src/FES/FormBuilder.php:1557 app/libraries/render.php:677
+#: app/core/src/FES/FormBuilder.php:1618 app/libraries/render.php:677
 msgid "Day 1"
 msgstr "Den 1"
 
-#: app/core/src/FES/FormBuilder.php:1712 app/features/events.php:457
+#: app/core/src/FES/FormBuilder.php:1773 app/features/events.php:457
 #, fuzzy
 #| msgid "Event Note"
 msgid "Gallery"
 msgstr "Poznámka události"
 
-#: app/core/src/FES/FormBuilder.php:1715 app/core/src/FES/FormBuilder.php:1717
+#: app/core/src/FES/FormBuilder.php:1776 app/core/src/FES/FormBuilder.php:1778
 #: app/features/events.php:1720 app/features/events.php:1722
 #, fuzzy
 #| msgid "Enable booking module"
 msgid "Add event gallery images"
 msgstr "Povolit modul rezervace"
 
-#: app/core/src/FES/FormBuilder.php:1719 app/features/events.php:1724
+#: app/core/src/FES/FormBuilder.php:1780 app/features/events.php:1724
 msgid "png, jpg, gif, and webp files are allowed."
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:1759 app/features/events.php:502
+#: app/core/src/FES/FormBuilder.php:1820 app/features/events.php:502
 #: app/features/mec/fes.php:335 app/features/mec/modules.php:248
 #: app/libraries/main.php:688 app/libraries/main.php:748
 #: app/skins/single.php:234 app/skins/single.php:552
 msgid "Related Events"
 msgstr "Související události"
 
-#: app/core/src/FES/FormBuilder.php:1782 app/features/events.php:503
+#: app/core/src/FES/FormBuilder.php:1843 app/features/events.php:503
 #: app/features/mec/fes.php:344 app/features/mec/single.php:353
 #, fuzzy
 #| msgid "Event Organizer"
 msgid "Event Banner"
 msgstr "Organizátor události"
 
-#: app/core/src/FES/FormBuilder.php:1786
+#: app/core/src/FES/FormBuilder.php:1847
 #, fuzzy
 #| msgid "Organizers"
 msgid "Display Banner"
 msgstr "Organizátoři"
 
-#: app/core/src/FES/FormBuilder.php:1791
+#: app/core/src/FES/FormBuilder.php:1852
 #: app/features/mec/meta_boxes/display_options.php:2268
 msgid "Background Color"
 msgstr "Barva pozadí"
 
-#: app/core/src/FES/FormBuilder.php:1798
+#: app/core/src/FES/FormBuilder.php:1859
 msgid "Use featured image as banner image"
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:1856 app/core/src/FES/FormBuilder.php:2023
+#: app/core/src/FES/FormBuilder.php:1917 app/core/src/FES/FormBuilder.php:2084
 #: app/features/occurrences.php:331 app/features/occurrences.php:361
 #, php-format
 msgid "Event Main %s"
 msgstr "Hlavní událost %s"
 
-#: app/core/src/FES/FormBuilder.php:1856 app/core/src/FES/FormBuilder.php:1858
-#: app/core/src/FES/FormBuilder.php:1871
+#: app/core/src/FES/FormBuilder.php:1917 app/core/src/FES/FormBuilder.php:1919
+#: app/core/src/FES/FormBuilder.php:1932
 #: app/core/src/SingleBuilder/Widgets/EventLocations/EventLocations.php:53
 #: app/features/events.php:3002 app/features/events.php:3356
 #: app/features/locations.php:61 app/features/locations.php:305
-#: app/features/mec/fes.php:758
+#: app/features/mec/fes.php:778
 #: app/features/mec/meta_boxes/display_options.php:1982
 #: app/features/mec/meta_boxes/search_form.php:76
 #: app/features/mec/meta_boxes/search_form.php:174
@@ -1504,36 +1591,36 @@ msgstr "Hlavní událost %s"
 #: app/libraries/main.php:3345 app/libraries/main.php:7851
 #: app/libraries/main.php:7914 app/libraries/search.php:316
 #: app/libraries/skins.php:1443 app/skins/single.php:953
-#: app/skins/single/m2.php:138
+#: app/skins/single/m2.php:141
 msgid "Location"
 msgstr "Umístění"
 
-#: app/core/src/FES/FormBuilder.php:1860 app/features/occurrences.php:335
+#: app/core/src/FES/FormBuilder.php:1921 app/features/occurrences.php:335
 #: app/features/popup/event.php:132
 msgid "Hide location"
 msgstr "Skrýt místo"
 
-#: app/core/src/FES/FormBuilder.php:1863
+#: app/core/src/FES/FormBuilder.php:1924
 msgid "Insert a new location"
 msgstr "Vložit nové místo"
 
-#: app/core/src/FES/FormBuilder.php:1872
+#: app/core/src/FES/FormBuilder.php:1933
 #, fuzzy
 #| msgid "Choose one of saved locations or insert new one below."
 msgid "Choose one of saved locations or insert a new one."
 msgstr "Vyberte jedno z uložených míst nebo vložte nové."
 
-#: app/core/src/FES/FormBuilder.php:1879 app/features/fes.php:833
+#: app/core/src/FES/FormBuilder.php:1940 app/features/fes.php:833
 #: app/features/locations.php:386 app/features/popup.php:309
 #: app/features/popup/event.php:156
 msgid "Location Name"
 msgstr "Název místa"
 
-#: app/core/src/FES/FormBuilder.php:1880 app/features/popup/event.php:157
+#: app/core/src/FES/FormBuilder.php:1941 app/features/popup/event.php:157
 msgid "eg. City Hall"
 msgstr "např. Radnice"
 
-#: app/core/src/FES/FormBuilder.php:1883 app/core/src/ImportExport/Terms.php:75
+#: app/core/src/FES/FormBuilder.php:1944 app/core/src/ImportExport/Terms.php:75
 #: app/features/events.php:3357 app/features/locations.php:121
 #: app/features/locations.php:207 app/features/locations.php:306
 #: app/features/mec/meta_boxes/search_form.php:120
@@ -1552,81 +1639,81 @@ msgstr "např. Radnice"
 msgid "Address"
 msgstr "Adresa"
 
-#: app/core/src/FES/FormBuilder.php:1884 app/features/popup/event.php:161
+#: app/core/src/FES/FormBuilder.php:1945 app/features/popup/event.php:161
 msgid "eg. City hall, Manhattan, New York"
 msgstr "např. Radnice, Dominikánská 2, Brno"
 
-#: app/core/src/FES/FormBuilder.php:1905 app/features/locations.php:144
+#: app/core/src/FES/FormBuilder.php:1966 app/features/locations.php:144
 #: app/features/locations.php:224
 msgid "Opening hour in text format like 09:15 or 18:30"
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:1905 app/core/src/ImportExport/Terms.php:76
+#: app/core/src/FES/FormBuilder.php:1966 app/core/src/ImportExport/Terms.php:76
 #: app/core/src/SingleBuilder/Widgets/EventLocations/EventLocations.php:67
 #: app/features/locations.php:141 app/features/locations.php:223
-#: app/skins/single.php:964 app/skins/single.php:1518
+#: app/skins/single.php:964 app/skins/single.php:1524
 msgid "Opening Hour"
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:1908 app/core/src/ImportExport/Terms.php:77
+#: app/core/src/FES/FormBuilder.php:1969 app/core/src/ImportExport/Terms.php:77
 #: app/features/locations.php:149 app/features/locations.php:227
 #: app/features/popup/event.php:164
 msgid "Latitude"
 msgstr "Zeměpisná šířka"
 
-#: app/core/src/FES/FormBuilder.php:1909 app/core/src/ImportExport/Terms.php:78
+#: app/core/src/FES/FormBuilder.php:1970 app/core/src/ImportExport/Terms.php:78
 #: app/features/locations.php:157 app/features/locations.php:231
 #: app/features/popup/event.php:165
 msgid "Longitude"
 msgstr "Zeměpisná délka"
 
-#: app/core/src/FES/FormBuilder.php:1912 app/features/popup/event.php:168
+#: app/core/src/FES/FormBuilder.php:1973 app/features/popup/event.php:168
 msgid "Latitude/Longitude"
 msgstr "Zeměpisná šířka / délka"
 
-#: app/core/src/FES/FormBuilder.php:1913
+#: app/core/src/FES/FormBuilder.php:1974
 msgid ""
 "Latitude and Longitude are parameters that represent the coordinates in the "
 "geographic coordinate system. You can find your venue's Latitude and "
 "Longitude measurments via the link below. "
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:1913 app/features/popup/event.php:169
+#: app/core/src/FES/FormBuilder.php:1974 app/features/popup/event.php:169
 msgid "Get Latitude and Longitude"
 msgstr "Získejte šířku a délku"
 
-#: app/core/src/FES/FormBuilder.php:1919 app/core/src/ImportExport/Terms.php:79
+#: app/core/src/FES/FormBuilder.php:1980 app/core/src/ImportExport/Terms.php:79
 #: app/features/locations.php:165 app/features/locations.php:235
 #, fuzzy
 #| msgid "Locations"
 msgid "Location Website"
 msgstr "Umístění"
 
-#: app/core/src/FES/FormBuilder.php:1922 app/features/locations.php:173
+#: app/core/src/FES/FormBuilder.php:1983 app/features/locations.php:173
 #: app/features/locations.php:239
 #, fuzzy
 #| msgid "Location Name"
 msgid "Location Phone"
 msgstr "Název místa"
 
-#: app/core/src/FES/FormBuilder.php:1944 app/features/occurrences.php:353
+#: app/core/src/FES/FormBuilder.php:2005 app/features/occurrences.php:353
 #: app/features/popup/event.php:150
 msgid "Don't show map in single event page"
 msgstr "Nezobrazovat mapu na jednostránkové události"
 
-#: app/core/src/FES/FormBuilder.php:1948 app/features/mec/fes.php:414
+#: app/core/src/FES/FormBuilder.php:2009 app/features/mec/fes.php:414
 #: app/features/mec/modules.php:129 app/libraries/main.php:7897
-#: app/libraries/main.php:7944 app/skins/single.php:1499
+#: app/libraries/main.php:7944 app/skins/single.php:1505
 msgid "Other Locations"
 msgstr "Další místa"
 
-#: app/core/src/FES/FormBuilder.php:1950
+#: app/core/src/FES/FormBuilder.php:2011
 msgid ""
 "You can select extra locations in addition to main location if you like."
 msgstr "Pokud chcete, můžete kromě hlavního místa vybrat i další místa."
 
-#: app/core/src/FES/FormBuilder.php:2023 app/core/src/FES/FormBuilder.php:2025
-#: app/core/src/FES/FormBuilder.php:2036
+#: app/core/src/FES/FormBuilder.php:2084 app/core/src/FES/FormBuilder.php:2086
+#: app/core/src/FES/FormBuilder.php:2097
 #: app/core/src/SingleBuilder/Widgets/EventOrganizers/EventOrganizers.php:96
 #: app/features/events.php:497 app/features/events.php:3003
 #: app/features/events.php:3358 app/features/events.php:3359
@@ -1652,45 +1739,45 @@ msgstr "Pokud chcete, můžete kromě hlavního místa vybrat i další místa."
 #: app/features/popup/settings.php:251 app/features/popup/settings.php:291
 #: app/features/search.php:103 app/libraries/main.php:7853
 #: app/libraries/main.php:7916 app/libraries/search.php:350
-#: app/libraries/skins.php:1503 app/skins/single.php:1342
+#: app/libraries/skins.php:1503 app/skins/single.php:1344
 #: app/skins/single/default.php:286 app/skins/single/m1.php:99
 #: app/skins/single/m2.php:46 app/widgets/single/default.php:120
 #: app/widgets/single/modern.php:31
 msgid "Organizer"
 msgstr "Organizátor"
 
-#: app/core/src/FES/FormBuilder.php:2026 app/features/occurrences.php:365
+#: app/core/src/FES/FormBuilder.php:2087 app/features/occurrences.php:365
 #: app/features/popup/event.php:182
 msgid "Hide organizer"
 msgstr "Skrýt organizátora"
 
-#: app/core/src/FES/FormBuilder.php:2028
+#: app/core/src/FES/FormBuilder.php:2089
 msgid "Insert a new organizer"
 msgstr "Vložit nového organizátora"
 
-#: app/core/src/FES/FormBuilder.php:2037
+#: app/core/src/FES/FormBuilder.php:2098
 #, fuzzy
 #| msgid "Choose one of saved organizers or insert new one below."
 msgid "Choose one of the saved organizers or insert a new one."
 msgstr "Vyberte některého z uložených organizátorů nebo vložte nového."
 
-#: app/core/src/FES/FormBuilder.php:2048 app/features/popup/event.php:203
+#: app/core/src/FES/FormBuilder.php:2109 app/features/popup/event.php:203
 msgid "Phone number."
 msgstr "Telefonní číslo."
 
-#: app/core/src/FES/FormBuilder.php:2049 app/features/popup/event.php:204
+#: app/core/src/FES/FormBuilder.php:2110 app/features/popup/event.php:204
 msgid "eg. +1 (234) 5678"
 msgstr "např. + 420 123 456 789"
 
-#: app/core/src/FES/FormBuilder.php:2052 app/features/popup/event.php:208
+#: app/core/src/FES/FormBuilder.php:2113 app/features/popup/event.php:208
 msgid "Email address."
 msgstr "Emailová adresa."
 
-#: app/core/src/FES/FormBuilder.php:2053 app/features/popup/event.php:209
+#: app/core/src/FES/FormBuilder.php:2114 app/features/popup/event.php:209
 msgid "eg. john@smith.com"
 msgstr "např. info@itreseni.cz"
 
-#: app/core/src/FES/FormBuilder.php:2056 app/core/src/ImportExport/Terms.php:56
+#: app/core/src/FES/FormBuilder.php:2117 app/core/src/ImportExport/Terms.php:56
 #: app/features/organizers.php:136 app/features/organizers.php:213
 #: app/features/popup/event.php:213
 #, fuzzy
@@ -1698,11 +1785,11 @@ msgstr "např. info@itreseni.cz"
 msgid "Page URL"
 msgstr "Stránka s poděkováním"
 
-#: app/core/src/FES/FormBuilder.php:2057 app/features/popup/event.php:214
+#: app/core/src/FES/FormBuilder.php:2118 app/features/popup/event.php:214
 msgid "eg. https://webnus.net"
 msgstr "např. https://webnus.net"
 
-#: app/core/src/FES/FormBuilder.php:2060 app/core/src/ImportExport/Terms.php:57
+#: app/core/src/FES/FormBuilder.php:2121 app/core/src/ImportExport/Terms.php:57
 #: app/features/organizers.php:144 app/features/organizers.php:217
 #: app/features/popup/event.php:219
 #, fuzzy
@@ -1710,22 +1797,22 @@ msgstr "např. https://webnus.net"
 msgid "Page Label"
 msgstr "Cenový štítek"
 
-#: app/core/src/FES/FormBuilder.php:2061
+#: app/core/src/FES/FormBuilder.php:2122
 msgid "eg. Website name or any text"
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:2081 app/libraries/main.php:7896
-#: app/libraries/main.php:7943 app/skins/single.php:1413
+#: app/core/src/FES/FormBuilder.php:2142 app/libraries/main.php:7896
+#: app/libraries/main.php:7943 app/skins/single.php:1415
 msgid "Other Organizers"
 msgstr "Další organizátoři"
 
-#: app/core/src/FES/FormBuilder.php:2083
+#: app/core/src/FES/FormBuilder.php:2144
 msgid ""
 "You can select extra organizers in addition to main organizer if you like."
 msgstr ""
 "Pokud chcete, můžete kromě hlavního organizátora vybrat další organizátory."
 
-#: app/core/src/FES/FormBuilder.php:2092 app/core/src/FES/FormBuilder.php:2100
+#: app/core/src/FES/FormBuilder.php:2153 app/core/src/FES/FormBuilder.php:2161
 #: app/core/src/Forms/FormFields.php:51 app/core/src/Forms/FormFields.php:100
 #: app/core/src/Forms/FormFields.php:158 app/core/src/Forms/FormFields.php:188
 #: app/core/src/Forms/FormFields.php:220 app/core/src/Forms/FormFields.php:251
@@ -1744,8 +1831,8 @@ msgstr ""
 msgid "Sort"
 msgstr "Seřadit"
 
-#: app/core/src/FES/FormBuilder.php:2092 app/core/src/FES/FormBuilder.php:2101
-#: app/core/src/FES/FormBuilder.php:2901 app/core/src/FES/FormBuilder.php:2938
+#: app/core/src/FES/FormBuilder.php:2153 app/core/src/FES/FormBuilder.php:2162
+#: app/core/src/FES/FormBuilder.php:2962 app/core/src/FES/FormBuilder.php:2999
 #: app/core/src/Forms/FormFields.php:62 app/core/src/Forms/FormFields.php:110
 #: app/core/src/Forms/FormFields.php:168 app/core/src/Forms/FormFields.php:199
 #: app/core/src/Forms/FormFields.php:230 app/core/src/Forms/FormFields.php:262
@@ -1770,13 +1857,13 @@ msgstr "Seřadit"
 msgid "Remove"
 msgstr "Odstranit"
 
-#: app/core/src/FES/FormBuilder.php:2156 app/core/src/FES/FormBuilder.php:2164
+#: app/core/src/FES/FormBuilder.php:2217 app/core/src/FES/FormBuilder.php:2225
 #, fuzzy
 #| msgid "Total booking limits"
 msgid "Total booking limit"
 msgstr "Celkové limity rezervace"
 
-#: app/core/src/FES/FormBuilder.php:2161 app/libraries/book.php:1758
+#: app/core/src/FES/FormBuilder.php:2222 app/libraries/book.php:1770
 #: app/libraries/tickets.php:189 app/libraries/tickets.php:500
 #: app/modules/booking/default.php:135 app/modules/booking/default.php:240
 #: app/modules/booking/steps/tickets.php:266
@@ -1784,7 +1871,7 @@ msgstr "Celkové limity rezervace"
 msgid "Unlimited"
 msgstr "Neomezené"
 
-#: app/core/src/FES/FormBuilder.php:2167
+#: app/core/src/FES/FormBuilder.php:2228
 #, fuzzy
 #| msgid ""
 #| "If you want to set a limit to all tickets, uncheck this checkbox and put "
@@ -1796,15 +1883,15 @@ msgstr ""
 "Pokud chcete nastavit limit na všechny lístky, zrušte zaškrtnutí tohoto "
 "políčka a zadejte číslo omezení."
 
-#: app/core/src/FES/FormBuilder.php:2169
+#: app/core/src/FES/FormBuilder.php:2230
 msgid "Read About A Booking System"
 msgstr "Přečtěte si o rezervačním systému"
 
-#: app/core/src/FES/FormBuilder.php:2177
+#: app/core/src/FES/FormBuilder.php:2238
 msgid "100"
 msgstr "100"
 
-#: app/core/src/FES/FormBuilder.php:2204 app/core/src/FES/FormBuilder.php:2206
+#: app/core/src/FES/FormBuilder.php:2265 app/core/src/FES/FormBuilder.php:2267
 #: app/features/mec/booking.php:141 app/features/mec/booking.php:151
 #: app/features/popup/settings.php:374
 #, fuzzy
@@ -1812,8 +1899,8 @@ msgstr "100"
 msgid "Date Selection"
 msgstr "Vybrat ikonu"
 
-#: app/core/src/FES/FormBuilder.php:2210 app/core/src/FES/FormBuilder.php:3081
-#: app/core/src/FES/FormBuilder.php:3170 app/core/src/Forms/FormFields.php:497
+#: app/core/src/FES/FormBuilder.php:2271 app/core/src/FES/FormBuilder.php:3142
+#: app/core/src/FES/FormBuilder.php:3231 app/core/src/Forms/FormFields.php:497
 #: app/core/src/Forms/SettingsForm.php:128 app/features/mec.php:2100
 #: app/features/mec/booking.php:144 app/features/mec/booking.php:1063
 #: app/features/mec/booking.php:1160
@@ -1902,15 +1989,15 @@ msgstr "Vybrat ikonu"
 msgid "Dropdown"
 msgstr "Rozbalovací"
 
-#: app/core/src/FES/FormBuilder.php:2211 app/features/mec/booking.php:145
+#: app/core/src/FES/FormBuilder.php:2272 app/features/mec/booking.php:145
 #: app/features/popup/settings.php:378
 #, fuzzy
 #| msgid "Calendar ID"
 msgid "Calendar"
 msgstr "ID kalendáře"
 
-#: app/core/src/FES/FormBuilder.php:2212 app/core/src/FES/FormBuilder.php:3079
-#: app/core/src/FES/FormBuilder.php:3168 app/core/src/Forms/FormFields.php:403
+#: app/core/src/FES/FormBuilder.php:2273 app/core/src/FES/FormBuilder.php:3140
+#: app/core/src/FES/FormBuilder.php:3229 app/core/src/Forms/FormFields.php:403
 #: app/core/src/Forms/SettingsForm.php:118 app/features/mec/booking.php:146
 #: app/features/mec/booking.php:1061 app/features/mec/booking.php:1158
 #: app/features/mec/meta_boxes/search_form.php:72
@@ -1977,67 +2064,67 @@ msgstr "ID kalendáře"
 msgid "Checkboxes"
 msgstr "Zatržítko"
 
-#: app/core/src/FES/FormBuilder.php:2213 app/features/mec/booking.php:147
+#: app/core/src/FES/FormBuilder.php:2274 app/features/mec/booking.php:147
 #, fuzzy
 #| msgid "M.E. Calendar"
 msgid "Express Calendar"
 msgstr "M.E. Kalendář"
 
-#: app/core/src/FES/FormBuilder.php:2243
+#: app/core/src/FES/FormBuilder.php:2304
 #, fuzzy
 #| msgid "Maximum Per Ticket"
 msgid "Minimum ticket per booking"
 msgstr "Maximum na jednu vstupenku"
 
-#: app/core/src/FES/FormBuilder.php:2278
+#: app/core/src/FES/FormBuilder.php:2339
 #, fuzzy
 #| msgid "Discount"
 msgid "Discount per user roles"
 msgstr "Sleva"
 
-#: app/core/src/FES/FormBuilder.php:2287
+#: app/core/src/FES/FormBuilder.php:2348
 msgid "e.g 5"
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:2319 app/core/src/FES/FormBuilder.php:2333
-#: app/features/mec/fes.php:534
+#: app/core/src/FES/FormBuilder.php:2380 app/core/src/FES/FormBuilder.php:2394
+#: app/features/mec/fes.php:554
 #, fuzzy
 #| msgid "Next Occurrence"
 msgid "Book All Occurrences"
 msgstr "Další výskyt"
 
-#: app/core/src/FES/FormBuilder.php:2330
+#: app/core/src/FES/FormBuilder.php:2391
 msgid "Sell all occurrences by one booking"
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:2336
+#: app/core/src/FES/FormBuilder.php:2397
 msgid ""
 "If you have a series of events and you want to sell all of them at once, "
 "this option is for you! For example a weekly yoga course or something "
 "similar."
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:2354
+#: app/core/src/FES/FormBuilder.php:2415
 msgid "Allow multiple bookings by same email on different dates"
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:2383 app/features/mec/booking.php:183
-#: app/features/mec/fes.php:540
+#: app/core/src/FES/FormBuilder.php:2444 app/features/mec/booking.php:183
+#: app/features/mec/fes.php:560
 #, fuzzy
 #| msgid "General Options"
 msgid "Interval Options"
 msgstr "Obecné možnosti"
 
-#: app/core/src/FES/FormBuilder.php:2385 app/core/src/FES/FormBuilder.php:2390
+#: app/core/src/FES/FormBuilder.php:2446 app/core/src/FES/FormBuilder.php:2451
 #: app/features/mec/booking.php:185 app/features/mec/booking.php:190
 msgid "Show Booking Form Interval"
 msgstr "Zobrazit Interval rezervačního formuláře"
 
-#: app/core/src/FES/FormBuilder.php:2387 app/features/mec/booking.php:187
+#: app/core/src/FES/FormBuilder.php:2448 app/features/mec/booking.php:187
 msgid "Minutes (e.g 5)"
 msgstr "Minuty (např. 5)"
 
-#: app/core/src/FES/FormBuilder.php:2391 app/features/mec/booking.php:191
+#: app/core/src/FES/FormBuilder.php:2452 app/features/mec/booking.php:191
 #, fuzzy
 #| msgid ""
 #| "You can show booking form only at certain time before event start. If you "
@@ -2052,21 +2139,21 @@ msgstr ""
 "Pokud nastavíte tuto možnost na 30, rezervační formulář se otevře pouze 30 "
 "minut před zahájením akce!"
 
-#: app/core/src/FES/FormBuilder.php:2407
+#: app/core/src/FES/FormBuilder.php:2468
 msgid "Stop selling tickets after first occurrence."
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:2435 app/features/mec/fes.php:546
+#: app/core/src/FES/FormBuilder.php:2496 app/features/mec/fes.php:566
 msgid "Automatic Approval"
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:2437 app/features/notifications.php:112
+#: app/core/src/FES/FormBuilder.php:2498 app/features/notifications.php:112
 #, fuzzy
 #| msgid "Email verification"
 msgid "Email Verification"
 msgstr "Ověřovací email"
 
-#: app/core/src/FES/FormBuilder.php:2441 app/core/src/FES/FormBuilder.php:2451
+#: app/core/src/FES/FormBuilder.php:2502 app/core/src/FES/FormBuilder.php:2512
 #: app/features/mec.php:1339 app/features/mec.php:2091
 #: app/features/mec/booking.php:204 app/features/mec/booking.php:271
 #: app/features/mec/booking.php:286 app/features/mec/booking.php:430
@@ -2207,39 +2294,39 @@ msgstr "Ověřovací email"
 msgid "Disabled"
 msgstr "Zakázaný"
 
-#: app/core/src/FES/FormBuilder.php:2442 app/core/src/FES/FormBuilder.php:2452
+#: app/core/src/FES/FormBuilder.php:2503 app/core/src/FES/FormBuilder.php:2513
 #: app/features/mec/booking.php:270 app/features/mec/booking.php:287
 #: app/features/mec/booking.php:1245 app/features/mec/booking.php:1274
 #: app/features/mec/modules.php:568 app/features/mec/settings.php:540
 msgid "Enabled"
 msgstr "Povoleno"
 
-#: app/core/src/FES/FormBuilder.php:2447 app/features/mec/booking.php:485
+#: app/core/src/FES/FormBuilder.php:2508 app/features/mec/booking.php:485
 #: app/features/mec/notifications.php:448 app/features/notifications.php:106
 #: app/libraries/main.php:715
 msgid "Booking Confirmation"
 msgstr "Potvrzení rezervace"
 
-#: app/core/src/FES/FormBuilder.php:2487 app/features/mec/booking.php:356
-#: app/features/mec/fes.php:558
+#: app/core/src/FES/FormBuilder.php:2548 app/features/mec/booking.php:356
+#: app/features/mec/fes.php:578
 #, fuzzy
 #| msgid "Ticket"
 msgid "Last Few Tickets Percentage"
 msgstr "Vstupenka"
 
-#: app/core/src/FES/FormBuilder.php:2500
+#: app/core/src/FES/FormBuilder.php:2561
 msgid "15"
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:2532 app/core/src/FES/FormBuilder.php:2549
-#: app/core/src/FES/FormBuilder.php:2559 app/features/mec/booking.php:369
+#: app/core/src/FES/FormBuilder.php:2593 app/core/src/FES/FormBuilder.php:2610
+#: app/core/src/FES/FormBuilder.php:2620 app/features/mec/booking.php:369
 #: app/features/mec/booking.php:371 app/features/mec/booking.php:381
 #: app/features/mec/fes.php:122 app/features/mec/fes.php:132
-#: app/features/mec/fes.php:564
+#: app/features/mec/fes.php:584
 msgid "Thank You Page"
 msgstr "Stránka s poděkováním"
 
-#: app/core/src/FES/FormBuilder.php:2560
+#: app/core/src/FES/FormBuilder.php:2621
 msgid ""
 "User redirects to this page after booking. Leave it empty if you want to "
 "disable it."
@@ -2247,18 +2334,18 @@ msgstr ""
 "Uživatel bude přesměrován na tuto stránku po rezervaci. Pokud ji chcete "
 "vypnout, ponechte ji prázdnou."
 
-#: app/core/src/FES/FormBuilder.php:2567 app/core/src/FES/FormBuilder.php:2572
+#: app/core/src/FES/FormBuilder.php:2628 app/core/src/FES/FormBuilder.php:2633
 #: app/features/mec/booking.php:389 app/features/mec/booking.php:394
 #: app/features/mec/fes.php:175 app/features/mec/fes.php:180
 msgid "Thank You Page Time Interval"
 msgstr "Stránka s poděkováním časového intervalu"
 
-#: app/core/src/FES/FormBuilder.php:2569 app/features/mec/booking.php:391
+#: app/core/src/FES/FormBuilder.php:2630 app/features/mec/booking.php:391
 #: app/features/mec/fes.php:177
 msgid "2000 mean 2 seconds"
 msgstr "2000 znamená 2 vteřiny"
 
-#: app/core/src/FES/FormBuilder.php:2573
+#: app/core/src/FES/FormBuilder.php:2634
 msgid ""
 "Waiting time before redirecting to thank you page. It's in miliseconds so "
 "2000 means 2 seconds."
@@ -2266,99 +2353,99 @@ msgstr ""
 "Čekací doba před přesměrováním na stránku s poděkováním. Je to v "
 "milisekundách, takže 2000 znamená 2 vteřiny."
 
-#: app/core/src/FES/FormBuilder.php:2608 app/features/mec/fes.php:570
+#: app/core/src/FES/FormBuilder.php:2669 app/features/mec/fes.php:590
 #, fuzzy
 #| msgid "Booking Options"
 msgid "Booking Button Label"
 msgstr "Možnosti rezervace"
 
-#: app/core/src/FES/FormBuilder.php:2611 app/libraries/main.php:7881
+#: app/core/src/FES/FormBuilder.php:2672 app/libraries/main.php:7881
 #, fuzzy
 #| msgid "Booking Form"
 msgid "Book Now"
 msgstr "Rezervační formulář"
 
-#: app/core/src/FES/FormBuilder.php:2650 app/features/mec/booking.php:605
+#: app/core/src/FES/FormBuilder.php:2711 app/features/mec/booking.php:605
 #: app/features/mec/booking.php:614 app/modules/booking/steps/checkout.php:185
 #, fuzzy
 #| msgid "Payment Gateways"
 msgid "Partial Payment"
 msgstr "Platební brány"
 
-#: app/core/src/FES/FormBuilder.php:2667 app/features/cart/cart.php:47
+#: app/core/src/FES/FormBuilder.php:2728 app/features/cart/cart.php:47
 #: app/features/mec/booking.php:623 app/modules/booking/steps/checkout.php:170
 #, fuzzy
 #| msgid "Enabled"
 msgid "Payable"
 msgstr "Povoleno"
 
-#: app/core/src/FES/FormBuilder.php:2670 app/features/mec/booking.php:626
+#: app/core/src/FES/FormBuilder.php:2731 app/features/mec/booking.php:626
 #, fuzzy
 #| msgid "Enabled"
 msgid "Payable Type"
 msgstr "Povoleno"
 
-#: app/core/src/FES/FormBuilder.php:2671 app/features/mec/booking.php:627
+#: app/core/src/FES/FormBuilder.php:2732 app/features/mec/booking.php:627
 #, fuzzy
 #| msgid "Percent"
 msgid "Percent (%)"
 msgstr "Procent"
 
-#: app/core/src/FES/FormBuilder.php:2672 app/features/mec/booking.php:628
+#: app/core/src/FES/FormBuilder.php:2733 app/features/mec/booking.php:628
 #, fuzzy
 #| msgid "Amount"
 msgid "Amount ($)"
 msgstr "Množství"
 
-#: app/core/src/FES/FormBuilder.php:2705 app/features/mec/fes.php:552
+#: app/core/src/FES/FormBuilder.php:2766 app/features/mec/fes.php:572
 #, fuzzy
 #| msgid "Total user booking limits"
 msgid "Total User Booking Limits"
 msgstr "Celkové limity rezervace uživatelů"
 
-#: app/core/src/FES/FormBuilder.php:2719
+#: app/core/src/FES/FormBuilder.php:2780
 msgid "12"
 msgstr "12"
 
-#: app/core/src/FES/FormBuilder.php:2747
+#: app/core/src/FES/FormBuilder.php:2808
 #, fuzzy
 #| msgid "Payment Gateways"
 msgid "Payment gateways per event is disabled."
 msgstr "Platební brány"
 
-#: app/core/src/FES/FormBuilder.php:2770
+#: app/core/src/FES/FormBuilder.php:2831
 msgid "There is no payment gateway to show."
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:2783
+#: app/core/src/FES/FormBuilder.php:2844
 #, fuzzy
 #| msgid "Payment Gateways"
 msgid "Disabled Gateways"
 msgstr "Platební brány"
 
-#: app/core/src/FES/FormBuilder.php:2784
+#: app/core/src/FES/FormBuilder.php:2845
 msgid ""
 "You can disable some of the following payment gateways by checking them "
 "otherwise they will be enabled."
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:2837 app/features/events.php:1835
+#: app/core/src/FES/FormBuilder.php:2898 app/features/events.php:1835
 msgid "Fees"
 msgstr "Poplatky"
 
-#: app/core/src/FES/FormBuilder.php:2874 app/core/src/FES/FormBuilder.php:2913
+#: app/core/src/FES/FormBuilder.php:2935 app/core/src/FES/FormBuilder.php:2974
 #: app/features/mec/booking.php:871 app/features/mec/booking.php:901
 msgid "Fee Title"
 msgstr "Název poplatku"
 
-#: app/core/src/FES/FormBuilder.php:2880 app/core/src/FES/FormBuilder.php:2884
-#: app/core/src/FES/FormBuilder.php:2918 app/core/src/FES/FormBuilder.php:2921
+#: app/core/src/FES/FormBuilder.php:2941 app/core/src/FES/FormBuilder.php:2945
+#: app/core/src/FES/FormBuilder.php:2979 app/core/src/FES/FormBuilder.php:2982
 #: app/features/mec/booking.php:875 app/features/mec/booking.php:878
 #: app/features/mec/booking.php:905 app/features/mec/booking.php:908
 msgid "Amount"
 msgstr "Množství"
 
-#: app/core/src/FES/FormBuilder.php:2885 app/core/src/FES/FormBuilder.php:2922
+#: app/core/src/FES/FormBuilder.php:2946 app/core/src/FES/FormBuilder.php:2983
 #: app/features/mec/booking.php:879 app/features/mec/booking.php:909
 msgid ""
 "Fee amount, considered as fixed amount if you set the type to amount "
@@ -2367,36 +2454,36 @@ msgstr ""
 "Výše poplatku, je považovaná za pevnou částku, pokud nastavíte typ na částku "
 "odpovídající procentuální hodnotě"
 
-#: app/core/src/FES/FormBuilder.php:2894 app/core/src/FES/FormBuilder.php:2931
+#: app/core/src/FES/FormBuilder.php:2955 app/core/src/FES/FormBuilder.php:2992
 #: app/features/mec/booking.php:886 app/features/mec/booking.php:916
 msgid "Percent"
 msgstr "Procent"
 
-#: app/core/src/FES/FormBuilder.php:2895 app/core/src/FES/FormBuilder.php:2932
+#: app/core/src/FES/FormBuilder.php:2956 app/core/src/FES/FormBuilder.php:2993
 #: app/features/mec/booking.php:887 app/features/mec/booking.php:917
 msgid "Amount (Per Ticket)"
 msgstr "Částka (za vstupenku)"
 
-#: app/core/src/FES/FormBuilder.php:2896 app/core/src/FES/FormBuilder.php:2933
+#: app/core/src/FES/FormBuilder.php:2957 app/core/src/FES/FormBuilder.php:2994
 #: app/features/mec/booking.php:888 app/features/mec/booking.php:918
 #, fuzzy
 #| msgid "Amount (Per Ticket)"
 msgid "Amount (Per Date)"
 msgstr "Částka (za vstupenku)"
 
-#: app/core/src/FES/FormBuilder.php:2897 app/core/src/FES/FormBuilder.php:2934
+#: app/core/src/FES/FormBuilder.php:2958 app/core/src/FES/FormBuilder.php:2995
 #: app/features/mec/booking.php:889 app/features/mec/booking.php:919
 msgid "Amount (Per Booking)"
 msgstr "Částka (za rezervaci)"
 
-#: app/core/src/FES/FormBuilder.php:3012 app/features/contextual.php:62
+#: app/core/src/FES/FormBuilder.php:3073 app/features/contextual.php:62
 #: app/features/events.php:1840 app/features/mec/booking.php:1018
-#: app/features/mec/booking.php:1278 app/features/mec/fes.php:588
+#: app/features/mec/booking.php:1278 app/features/mec/fes.php:608
 #: app/features/mec/support.php:29
 msgid "Booking Form"
 msgstr "Rezervační formulář"
 
-#: app/core/src/FES/FormBuilder.php:3015
+#: app/core/src/FES/FormBuilder.php:3076
 #, fuzzy
 #| msgid ""
 #| "You're translating an event so MEC will use the original event for "
@@ -2412,24 +2499,24 @@ msgstr ""
 "vstupenek a rezervace. Můžete přeložit pouze název a popis vstupenky. Prosím "
 "definujte určité vstupenky, které jste definovali v původní události."
 
-#: app/core/src/FES/FormBuilder.php:3041 app/features/mec/booking.php:1020
+#: app/core/src/FES/FormBuilder.php:3102 app/features/mec/booking.php:1020
 #, fuzzy
 #| msgid "Attendees Limit"
 msgid "Per Attendee Fields"
 msgstr "Limit účastníků"
 
-#: app/core/src/FES/FormBuilder.php:3071 app/core/src/Forms/FormFields.php:94
+#: app/core/src/FES/FormBuilder.php:3132 app/core/src/Forms/FormFields.php:94
 #: app/features/mec/booking.php:1053 app/libraries/main.php:4215
 msgid "MEC Name"
 msgstr "MEC Jméno"
 
-#: app/core/src/FES/FormBuilder.php:3072 app/core/src/Forms/FormFields.php:159
+#: app/core/src/FES/FormBuilder.php:3133 app/core/src/Forms/FormFields.php:159
 #: app/core/src/Forms/SettingsForm.php:83 app/features/mec/booking.php:1054
 #: app/libraries/main.php:4245
 msgid "MEC Email"
 msgstr "MEC Email"
 
-#: app/core/src/FES/FormBuilder.php:3073 app/core/src/FES/FormBuilder.php:3163
+#: app/core/src/FES/FormBuilder.php:3134 app/core/src/FES/FormBuilder.php:3224
 #: app/core/src/Forms/FormFields.php:52 app/core/src/Forms/SettingsForm.php:88
 #: app/features/mec/booking.php:1055 app/features/mec/booking.php:1153
 #: app/features/mec/modules.php:416 app/features/mec/single.php:452
@@ -2437,7 +2524,7 @@ msgstr "MEC Email"
 msgid "Text"
 msgstr "Text"
 
-#: app/core/src/FES/FormBuilder.php:3075 app/core/src/FES/FormBuilder.php:3165
+#: app/core/src/FES/FormBuilder.php:3136 app/core/src/FES/FormBuilder.php:3226
 #: app/core/src/Forms/FormFields.php:283 app/core/src/Forms/SettingsForm.php:98
 #: app/core/src/SingleBuilder/Widgets/EventDate/EventDate.php:50
 #: app/features/fes.php:322 app/features/mec/booking.php:1057
@@ -2445,28 +2532,17 @@ msgstr "Text"
 #: app/features/profile/profile.php:62 app/features/wc.php:90
 #: app/libraries/formBuilder.php:198 app/libraries/main.php:4370
 #: app/libraries/skins.php:1719 app/modules/next-event/details.php:152
-#: app/skins/single.php:1152 app/skins/single.php:1964
+#: app/skins/single.php:1152 app/skins/single.php:1970
 msgid "Date"
 msgstr "Datum"
 
-#: app/core/src/FES/FormBuilder.php:3076 app/core/src/FES/FormBuilder.php:3166
-#: app/core/src/Forms/FormFields.php:315
-#: app/core/src/Forms/SettingsForm.php:103
-#: app/core/src/ImportExport/Terms.php:54 app/features/mec/booking.php:1058
-#: app/features/mec/booking.php:1156 app/features/mec/single.php:456
-#: app/features/organizers.php:120 app/features/organizers.php:205
-#: app/features/speakers.php:148 app/features/speakers.php:245
-#: app/features/speakers.php:341 app/libraries/main.php:4402
-msgid "Tel"
-msgstr "Tel"
-
-#: app/core/src/FES/FormBuilder.php:3077 app/core/src/Forms/FormFields.php:252
+#: app/core/src/FES/FormBuilder.php:3138 app/core/src/Forms/FormFields.php:252
 #: app/core/src/Forms/SettingsForm.php:108 app/features/mec/booking.php:1059
 #: app/libraries/main.php:4339
 msgid "File"
 msgstr "Soubor"
 
-#: app/core/src/FES/FormBuilder.php:3078 app/core/src/FES/FormBuilder.php:3167
+#: app/core/src/FES/FormBuilder.php:3139 app/core/src/FES/FormBuilder.php:3228
 #: app/core/src/Forms/FormFields.php:347
 #: app/core/src/Forms/SettingsForm.php:113 app/features/mec/booking.php:1060
 #: app/features/mec/booking.php:1157 app/features/mec/single.php:457
@@ -2474,7 +2550,7 @@ msgstr "Soubor"
 msgid "Textarea"
 msgstr "Plocha textu"
 
-#: app/core/src/FES/FormBuilder.php:3080 app/core/src/FES/FormBuilder.php:3169
+#: app/core/src/FES/FormBuilder.php:3141 app/core/src/FES/FormBuilder.php:3230
 #: app/core/src/Forms/FormFields.php:450
 #: app/core/src/Forms/SettingsForm.php:123 app/features/mec/booking.php:1062
 #: app/features/mec/booking.php:1159 app/features/mec/single.php:460
@@ -2482,14 +2558,14 @@ msgstr "Plocha textu"
 msgid "Radio Buttons"
 msgstr "Přepínače"
 
-#: app/core/src/FES/FormBuilder.php:3082 app/core/src/FES/FormBuilder.php:3171
+#: app/core/src/FES/FormBuilder.php:3143 app/core/src/FES/FormBuilder.php:3232
 #: app/core/src/Forms/FormFields.php:554
 #: app/core/src/Forms/SettingsForm.php:133 app/features/mec/booking.php:1064
 #: app/features/mec/booking.php:1161 app/libraries/main.php:4648
 msgid "Agreement"
 msgstr "Smlouva"
 
-#: app/core/src/FES/FormBuilder.php:3083 app/core/src/FES/FormBuilder.php:3172
+#: app/core/src/FES/FormBuilder.php:3144 app/core/src/FES/FormBuilder.php:3233
 #: app/core/src/Forms/FormFields.php:379
 #: app/core/src/Forms/SettingsForm.php:138 app/features/mec/booking.php:1065
 #: app/features/mec/booking.php:1162 app/features/mec/settings.php:585
@@ -2497,98 +2573,98 @@ msgstr "Smlouva"
 msgid "Paragraph"
 msgstr "Paragraf"
 
-#: app/core/src/FES/FormBuilder.php:3132 app/features/mec/booking.php:1118
+#: app/core/src/FES/FormBuilder.php:3193 app/features/mec/booking.php:1118
 #, fuzzy
 #| msgid "Required Field"
 msgid "Fixed Fields"
 msgstr "Požadovaná pole"
 
-#: app/core/src/FES/FormBuilder.php:3252 app/features/events.php:1838
-#: app/features/mec/fes.php:600
+#: app/core/src/FES/FormBuilder.php:3313 app/features/events.php:1838
+#: app/features/mec/fes.php:620
 msgid "Ticket Variations / Options"
 msgstr "Varianty vstupenky / možnosti"
 
-#: app/core/src/FES/FormBuilder.php:3335 app/core/src/FES/FormBuilder.php:3354
-#: app/core/src/FES/FormBuilder.php:3361 app/core/src/FES/FormBuilder.php:3379
-#: app/core/src/FES/FormBuilder.php:3807
+#: app/core/src/FES/FormBuilder.php:3396 app/core/src/FES/FormBuilder.php:3415
+#: app/core/src/FES/FormBuilder.php:3422 app/core/src/FES/FormBuilder.php:3440
+#: app/core/src/FES/FormBuilder.php:3868
 #, fuzzy
 #| msgid "Next Occurrence"
 msgid "Occurrence"
 msgstr "Další výskyt"
 
-#: app/core/src/FES/FormBuilder.php:3336 app/core/src/FES/FormBuilder.php:3808
+#: app/core/src/FES/FormBuilder.php:3397 app/core/src/FES/FormBuilder.php:3869
 #: app/features/mec.php:2033
 #, fuzzy
 #| msgid "Next Occurrence"
 msgid "Previous Occurrences"
 msgstr "Další výskyt"
 
-#: app/core/src/FES/FormBuilder.php:3341 app/core/src/FES/FormBuilder.php:3813
+#: app/core/src/FES/FormBuilder.php:3402 app/core/src/FES/FormBuilder.php:3874
 #: app/features/mec.php:2043 app/modules/next-event/multiple.php:60
 #, fuzzy
 #| msgid "Next Occurrence"
 msgid "Next Occurrences"
 msgstr "Další výskyt"
 
-#: app/core/src/FES/FormBuilder.php:3365 app/features/occurrences.php:264
+#: app/core/src/FES/FormBuilder.php:3426 app/features/occurrences.php:264
 #, fuzzy
 #| msgid "Bookings"
 msgid "Move Bookings"
 msgstr "Rezervace"
 
-#: app/core/src/FES/FormBuilder.php:3368
+#: app/core/src/FES/FormBuilder.php:3429
 #, fuzzy, php-format
 #| msgid "No bookings found!"
 msgid "Move bookings from %s to %s"
 msgstr "Nebyly nalezeny žádné rezervace!"
 
-#: app/core/src/FES/FormBuilder.php:3369
+#: app/core/src/FES/FormBuilder.php:3430
 msgid "Move"
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:3383
+#: app/core/src/FES/FormBuilder.php:3444
 #, fuzzy
 #| msgid "Enable Booking"
 msgid "Manage Bookings"
 msgstr "Povolit rezervace"
 
-#: app/core/src/FES/FormBuilder.php:3387
+#: app/core/src/FES/FormBuilder.php:3448
 #, fuzzy
 #| msgid "Location"
 msgid "Action"
 msgstr "Umístění"
 
-#: app/core/src/FES/FormBuilder.php:3389 app/features/events.php:1015
+#: app/core/src/FES/FormBuilder.php:3450 app/features/events.php:1015
 #: app/features/occurrences.php:262 app/features/profile/profile.php:78
 msgid "Cancel"
 msgstr "Zrušit"
 
-#: app/core/src/FES/FormBuilder.php:3390 app/features/occurrences.php:263
+#: app/core/src/FES/FormBuilder.php:3451 app/features/occurrences.php:263
 #, fuzzy
 #| msgid "Canceled"
 msgid "Cancel & Refund"
 msgstr "Zrušená"
 
-#: app/core/src/FES/FormBuilder.php:3392 app/features/report/tpl.php:76
+#: app/core/src/FES/FormBuilder.php:3453 app/features/report/tpl.php:76
 #, fuzzy
 #| msgid "Organizer Email"
 msgid "Send"
 msgstr "Organizátor Email"
 
-#: app/core/src/FES/FormBuilder.php:3439
+#: app/core/src/FES/FormBuilder.php:3500
 #, fuzzy
 #| msgid "Please select some events to import!"
 msgid "Please select an action"
 msgstr "Vyberte události, které chcete importovat!"
 
-#: app/core/src/FES/FormBuilder.php:3579 app/features/cart/cart.php:45
+#: app/core/src/FES/FormBuilder.php:3640 app/features/cart/cart.php:45
 #: app/features/events.php:1833 app/features/events.php:3008
 #: app/features/occurrences.php:394 app/libraries/main.php:7883
 #: app/modules/booking/steps/tickets.php:266
 msgid "Tickets"
 msgstr "Vstupenky"
 
-#: app/core/src/FES/FormBuilder.php:3582
+#: app/core/src/FES/FormBuilder.php:3643
 msgid ""
 "You're translating an event so MEC will use the original event for tickets "
 "and booking. You can only translate the ticket name and description. Please "
@@ -2598,41 +2674,41 @@ msgstr ""
 "vstupenek a rezervace. Můžete přeložit pouze název a popis vstupenky. Prosím "
 "definujte určité vstupenky, které jste definovali v původní události."
 
-#: app/core/src/FES/FormBuilder.php:3665
+#: app/core/src/FES/FormBuilder.php:3726
 msgid "Public File to Download"
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:3669 app/core/src/FES/FormBuilder.php:3763
+#: app/core/src/FES/FormBuilder.php:3730 app/core/src/FES/FormBuilder.php:3824
 msgid "pdf,zip,png,jpg and gif files are allowed."
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:3671 app/core/src/FES/FormBuilder.php:3765
+#: app/core/src/FES/FormBuilder.php:3732 app/core/src/FES/FormBuilder.php:3826
 #, fuzzy
 #| msgid "Remove image"
 msgid "Remove File"
 msgstr "Odebrat obrázek"
 
-#: app/core/src/FES/FormBuilder.php:3679 app/core/src/ImportExport/Terms.php:40
+#: app/core/src/FES/FormBuilder.php:3740 app/core/src/ImportExport/Terms.php:40
 #: app/features/events.php:3350 app/libraries/formBuilder.php:84
 #: app/libraries/formBuilder.php:112 app/libraries/formBuilder.php:164
 #: app/libraries/tickets.php:126 app/libraries/tickets.php:450
 msgid "Description"
 msgstr "Popis"
 
-#: app/core/src/FES/FormBuilder.php:3744
+#: app/core/src/FES/FormBuilder.php:3805
 #, fuzzy
 #| msgid "An error occurred during the file upload! Please check permissions!"
 msgid "An unknown error occurred during uploading the file."
 msgstr "Při nahrávání souboru došlo k chybě! Zkontrolujte oprávnění!"
 
-#: app/core/src/FES/FormBuilder.php:3759 app/features/events.php:1845
-#: app/features/mec/booking.php:789 app/features/mec/fes.php:637
+#: app/core/src/FES/FormBuilder.php:3820 app/features/events.php:1845
+#: app/features/mec/booking.php:789 app/features/mec/fes.php:657
 #, fuzzy
 #| msgid "Download ICS file"
 msgid "Downloadable File"
 msgstr "Stáhnout ICS soubor"
 
-#: app/core/src/FES/FormBuilder.php:3804 app/features/mec/fes.php:664
+#: app/core/src/FES/FormBuilder.php:3865 app/features/mec/fes.php:684
 #: app/features/mec/meta_boxes/filter.php:76
 #: app/features/mec/meta_boxes/filter.php:308 app/features/occurrences.php:76
 #, fuzzy
@@ -2640,23 +2716,23 @@ msgstr "Stáhnout ICS soubor"
 msgid "Occurrences"
 msgstr "Další výskyt"
 
-#: app/core/src/FES/FormBuilder.php:3987
+#: app/core/src/FES/FormBuilder.php:4048
 msgid ""
 "This event is imported from Google calendar so if you modify it would "
 "overwrite in the next import from Google."
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:4014
+#: app/core/src/FES/FormBuilder.php:4075
 msgid "Go back to events list"
 msgstr "Přejít zpět na seznam událostí"
 
-#: app/core/src/FES/FormBuilder.php:4047
+#: app/core/src/FES/FormBuilder.php:4108
 #, fuzzy
 #| msgid "Request is not valid."
 msgid "Captcha is not enabled."
 msgstr "Požadavek není platný."
 
-#: app/core/src/FES/FormBuilder.php:4072
+#: app/core/src/FES/FormBuilder.php:4133
 #, fuzzy
 #| msgid "Edit Event"
 msgid "Submit Event"
@@ -2742,7 +2818,7 @@ msgstr "Integrovat s MEC"
 msgid "Instead of %s, the page title with a link will be show."
 msgstr "Místo%s se zobrazí název stránky s odkazem."
 
-#: app/core/src/Forms/FormFields.php:569 app/features/mec/fes.php:732
+#: app/core/src/Forms/FormFields.php:569 app/features/mec/fes.php:752
 #: app/libraries/main.php:4664
 msgid "Agreement Page"
 msgstr "Stránka smlouvy"
@@ -2771,27 +2847,21 @@ msgstr ""
 #: app/core/src/ImportExport/Terms.php:38 app/features/events.php:3348
 #: app/features/fes.php:322 app/features/labels.php:188
 #: app/features/locations.php:304 app/features/organizers.php:293
-#: app/features/speakers.php:338 app/libraries/tickets.php:80
+#: app/features/speakers.php:336 app/libraries/tickets.php:80
 #: app/libraries/tickets.php:409
 msgid "ID"
 msgstr "ID"
 
 #: app/core/src/ImportExport/Terms.php:41 app/features/locations.php:182
 #: app/features/locations.php:244 app/features/organizers.php:184
-#: app/features/organizers.php:237 app/features/speakers.php:213
-#: app/features/speakers.php:278
+#: app/features/organizers.php:237 app/features/speakers.php:211
+#: app/features/speakers.php:276
 msgid "Thumbnail"
 msgstr "Náhled"
 
 #: app/core/src/ImportExport/Terms.php:59 app/libraries/main.php:2067
 msgid "Facebook"
 msgstr "Facebook"
-
-#: app/core/src/ImportExport/Terms.php:60 app/features/organizers.php:160
-#: app/features/organizers.php:225 app/features/speakers.php:189
-#: app/features/speakers.php:266
-msgid "Instagram"
-msgstr "Instagram"
 
 #: app/core/src/ImportExport/Terms.php:61 app/libraries/main.php:2069
 #: app/libraries/main.php:2129
@@ -3191,7 +3261,7 @@ msgstr ""
 
 #: app/core/src/SingleBuilder/Widgets/EventCategories/EventCategories.php:49
 #: app/features/events.php:262 app/features/events.php:3001
-#: app/features/mec/fes.php:757
+#: app/features/mec/fes.php:777
 #: app/features/mec/meta_boxes/display_options.php:1980
 #: app/features/mec/meta_boxes/search_form.php:67
 #: app/features/mec/meta_boxes/search_form.php:165
@@ -3211,7 +3281,7 @@ msgstr ""
 #: app/libraries/main.php:7847 app/libraries/main.php:7910
 #: app/libraries/search.php:268 app/libraries/skins.php:1353
 #: app/skins/single.php:1055 app/skins/single/default.php:256
-#: app/skins/single/m1.php:199 app/skins/single/m2.php:174
+#: app/skins/single/m1.php:202 app/skins/single/m2.php:177
 #: app/widgets/single/default.php:91 app/widgets/single/modern.php:129
 msgid "Category"
 msgstr "Kategorie"
@@ -3326,23 +3396,12 @@ msgstr ""
 msgid "How to set location"
 msgstr "Skrýt místo"
 
-#: app/core/src/SingleBuilder/Widgets/EventLocations/EventLocations.php:75
-#: app/core/src/SingleBuilder/Widgets/EventOrganizers/EventOrganizers.php:131
-#: app/features/speakers.php:164 app/features/speakers.php:253
-#: app/skins/single.php:971 app/skins/single.php:1378 app/skins/single.php:1454
-#: app/skins/single.php:1525 app/skins/single/default.php:322
-#: app/skins/single/m1.php:135 app/skins/single/m2.php:83
-#: app/skins/single/m2.php:152 app/widgets/single/default.php:156
-#: app/widgets/single/modern.php:68
-msgid "Website"
-msgstr "Webová stránka"
-
 #: app/core/src/SingleBuilder/Widgets/EventLocations/EventLocations.php:83
 #: app/core/src/SingleBuilder/Widgets/EventOrganizers/EventOrganizers.php:117
-#: app/skins/single.php:978 app/skins/single.php:1364 app/skins/single.php:1440
-#: app/skins/single.php:1532 app/skins/single/default.php:308
-#: app/skins/single/m1.php:121 app/skins/single/m2.php:69
-#: app/widgets/single/default.php:142 app/widgets/single/modern.php:54
+#: app/skins/single.php:978 app/skins/single.php:1366 app/skins/single.php:1446
+#: app/skins/single.php:1538 app/skins/single/default.php:311
+#: app/skins/single/m1.php:124 app/skins/single/m2.php:72
+#: app/widgets/single/default.php:145 app/widgets/single/modern.php:54
 msgid "Phone"
 msgstr "Telefon"
 
@@ -3443,14 +3502,14 @@ msgstr "Registrační tlačítko"
 #: app/skins/list/render.php:91 app/skins/list/render.php:222
 #: app/skins/masonry/render.php:150 app/skins/single.php:612
 #: app/skins/single.php:1292 app/skins/single.php:1303
-#: app/skins/single/default.php:346 app/skins/single/default.php:348
-#: app/skins/single/m1.php:157 app/skins/single/m1.php:159
-#: app/skins/single/m1.php:161 app/skins/single/m2.php:105
-#: app/skins/single/m2.php:107 app/skins/single/m2.php:109
+#: app/skins/single/default.php:349 app/skins/single/default.php:351
+#: app/skins/single/m1.php:160 app/skins/single/m1.php:162
+#: app/skins/single/m1.php:164 app/skins/single/m2.php:108
+#: app/skins/single/m2.php:110 app/skins/single/m2.php:112
 #: app/skins/slider/render.php:64 app/skins/slider/render.php:88
 #: app/skins/slider/render.php:111 app/skins/slider/render.php:135
-#: app/skins/slider/render.php:170 app/widgets/single/default.php:175
-#: app/widgets/single/default.php:177 app/widgets/single/modern.php:94
+#: app/skins/slider/render.php:170 app/widgets/single/default.php:178
+#: app/widgets/single/default.php:180 app/widgets/single/modern.php:94
 #: app/widgets/single/modern.php:96
 msgid "REGISTER"
 msgstr "REGISTROVAT"
@@ -3501,21 +3560,21 @@ msgid "How to set tags"
 msgstr ""
 
 #: app/core/src/SingleBuilder/Widgets/EventTags/EventTags.php:53
-#: app/skins/single/default.php:180 app/skins/single/m1.php:318
-#: app/skins/single/m2.php:284 app/skins/single/modern.php:199
+#: app/skins/single/default.php:180 app/skins/single/m1.php:321
+#: app/skins/single/m2.php:287 app/skins/single/modern.php:199
 msgid "Tags: "
 msgstr "Značky: "
 
 #: app/core/src/SingleBuilder/Widgets/EventTime/EventTime.php:47
 #: app/features/emails/details.php:26 app/features/emails/details.php:29
 #: app/libraries/skins.php:1793 app/modules/next-event/details.php:158
-#: app/skins/single.php:1260 app/skins/single.php:1983
+#: app/skins/single.php:1260 app/skins/single.php:1989
 msgid "Time"
 msgstr "Čas"
 
 #: app/core/src/SingleBuilder/Widgets/EventTime/EventTime.php:55
 #: app/features/booking/calendar_novel.php:150
-#: app/features/search_bar/search_result.php:12 app/libraries/main.php:7898
+#: app/features/search_bar/search_result.php:14 app/libraries/main.php:7898
 #: app/libraries/main.php:7945 app/libraries/notifications.php:1950
 #: app/libraries/render.php:649 app/libraries/render.php:913
 #: app/libraries/render.php:1158 app/libraries/render.php:1185
@@ -3524,7 +3583,7 @@ msgstr "Čas"
 #: app/modules/local-time/type2.php:85 app/modules/local-time/type3.php:49
 #: app/modules/next-event/details.php:164
 #: app/modules/next-event/multiple.php:77 app/skins/single.php:1266
-#: app/skins/single.php:1989
+#: app/skins/single.php:1995
 #, fuzzy
 #| msgid "Add Day"
 msgid "All Day"
@@ -3631,8 +3690,8 @@ msgstr "Slevový kupon"
 msgid "User Discount"
 msgstr "Sleva"
 
-#: app/core/src/Transactions/Transaction.php:919 app/libraries/book.php:1151
-#: app/libraries/book.php:1277 app/modules/booking/steps/checkout.php:160
+#: app/core/src/Transactions/Transaction.php:919 app/libraries/book.php:1163
+#: app/libraries/book.php:1289 app/modules/booking/steps/checkout.php:160
 msgid "Discount"
 msgstr "Sleva"
 
@@ -3651,7 +3710,7 @@ msgstr ""
 msgid "There is no attendee for booking!"
 msgstr "Neexistuje žádný vzhled"
 
-#: app/core/src/Transactions/Transaction.php:2009 app/features/fes.php:322
+#: app/core/src/Transactions/Transaction.php:2012 app/features/fes.php:322
 #: app/features/profile/profile.php:209 app/libraries/cart.php:64
 #: app/libraries/main.php:3153 app/libraries/main.php:3435
 #: app/libraries/main.php:7882 app/libraries/main.php:10236
@@ -3710,7 +3769,7 @@ msgstr "Nebyly nalezeny žádné události!"
 #: app/features/autoemails.php:74 app/features/certificates.php:77
 #: app/features/events.php:273 app/features/labels.php:71
 #: app/features/locations.php:72 app/features/organizers.php:75
-#: app/features/speakers.php:80 app/features/sponsors.php:69
+#: app/features/speakers.php:78 app/features/sponsors.php:72
 #: app/features/tag.php:69 app/features/webhooks.php:85
 #, php-format
 msgid "Edit %s"
@@ -3743,29 +3802,35 @@ msgstr ""
 msgid "Successfully removed and updated the cart."
 msgstr ""
 
-#: app/features/cart.php:146
-#, fuzzy
-#| msgid "Your options imported successfuly."
-msgid "Coupon applied successfully. Please wait ..."
-msgstr "Vaše možnosti byly úspěšně importovány."
-
-#: app/features/cart.php:153
+#: app/features/cart.php:127
 #, fuzzy
 #| msgid "Event is not repeating. No dates exist for this event!"
 msgid "Coupon was not valid or applicable."
 msgstr "Událost se neopakuje. Pro tuto událost neexistují žádná data!álosti)"
 
-#: app/features/cart.php:168
+#: app/features/cart.php:138
+#, php-format
+msgid ""
+"The coupon is applicable to only %s bookings; you currently have %s bookings."
+msgstr ""
+
+#: app/features/cart.php:165
+#, fuzzy
+#| msgid "Your options imported successfuly."
+msgid "Coupon applied successfully. Please wait ..."
+msgstr "Vaše možnosti byly úspěšně importovány."
+
+#: app/features/cart.php:187
 #, fuzzy
 #| msgid "Request is not valid."
 msgid "Request is invalid!"
 msgstr "Požadavek není platný."
 
-#: app/features/cart.php:178
+#: app/features/cart.php:197
 msgid "Your cart is not free!"
 msgstr ""
 
-#: app/features/cart.php:185
+#: app/features/cart.php:204
 msgid "Thanks for your booking."
 msgstr "Děkujeme za vaši rezervaci."
 
@@ -3781,7 +3846,7 @@ msgstr "Výchozí hodnota je prázdná"
 msgid "Go to events page"
 msgstr "Zobrazit Mapy Google na stránce události"
 
-#: app/features/cart/cart.php:43 app/features/events.php:3862
+#: app/features/cart/cart.php:43 app/features/events.php:3865
 #: app/features/fes.php:322 app/features/mec/booking.php:407
 #: app/features/mec/modules.php:462 app/features/wc.php:92
 #: app/libraries/main.php:3108 app/libraries/main.php:3237
@@ -3789,7 +3854,7 @@ msgstr "Zobrazit Mapy Google na stránce události"
 msgid "Transaction ID"
 msgstr "ID transakce"
 
-#: app/features/cart/cart.php:46 app/features/mec/fes.php:753
+#: app/features/cart/cart.php:46 app/features/mec/fes.php:773
 #: app/modules/booking/steps/tickets.php:184
 msgid "Dates"
 msgstr "Data"
@@ -4171,7 +4236,7 @@ msgid "Add New Event"
 msgstr "Přidat novou událost"
 
 #: app/features/events.php:239 app/features/fes/list.php:173
-#: app/features/ix.php:5022 app/features/ix/thirdparty.php:45
+#: app/features/ix.php:5054 app/features/ix/thirdparty.php:45
 #: app/skins/map/tpl.php:73 app/skins/map/tpl.php:93
 msgid "No events found!"
 msgstr "Nebyly nalezeny žádné události!"
@@ -4191,7 +4256,7 @@ msgstr "V koši nebyly nalezeny žádné události!"
 
 #: app/features/events.php:272 app/features/labels.php:70
 #: app/features/locations.php:71 app/features/organizers.php:74
-#: app/features/speakers.php:79 app/features/sponsors.php:68
+#: app/features/speakers.php:77 app/features/sponsors.php:71
 #: app/features/tag.php:68
 #, php-format
 msgid "All %s"
@@ -4199,7 +4264,7 @@ msgstr "Všechny %s"
 
 #: app/features/events.php:274 app/features/labels.php:72
 #: app/features/locations.php:73 app/features/organizers.php:76
-#: app/features/speakers.php:81 app/features/sponsors.php:70
+#: app/features/speakers.php:79 app/features/sponsors.php:73
 #: app/features/tag.php:70
 #, php-format
 msgid "View %s"
@@ -4207,7 +4272,7 @@ msgstr "Zobrazit %s"
 
 #: app/features/events.php:275 app/features/labels.php:73
 #: app/features/locations.php:74 app/features/organizers.php:77
-#: app/features/speakers.php:82 app/features/sponsors.php:71
+#: app/features/speakers.php:80 app/features/sponsors.php:74
 #: app/features/tag.php:71
 #, php-format
 msgid "Update %s"
@@ -4215,7 +4280,7 @@ msgstr "Aktualizovat %s"
 
 #: app/features/events.php:276 app/features/labels.php:74
 #: app/features/locations.php:75 app/features/organizers.php:78
-#: app/features/speakers.php:83 app/features/sponsors.php:72
+#: app/features/speakers.php:81 app/features/sponsors.php:75
 #: app/features/tag.php:72
 #, php-format
 msgid "Add New %s"
@@ -4223,7 +4288,7 @@ msgstr "Přidat novou %s"
 
 #: app/features/events.php:277 app/features/labels.php:75
 #: app/features/locations.php:76 app/features/organizers.php:79
-#: app/features/speakers.php:84 app/features/sponsors.php:73
+#: app/features/speakers.php:82 app/features/sponsors.php:76
 #: app/features/tag.php:73
 #, php-format
 msgid "New %s Name"
@@ -4231,7 +4296,7 @@ msgstr "Nové jméno %s"
 
 #: app/features/events.php:278 app/features/labels.php:76
 #: app/features/locations.php:77 app/features/organizers.php:80
-#: app/features/speakers.php:85 app/features/sponsors.php:74
+#: app/features/speakers.php:83 app/features/sponsors.php:77
 #: app/features/tag.php:74
 #, php-format
 msgid "Popular %s"
@@ -4239,7 +4304,7 @@ msgstr "Populární %s"
 
 #: app/features/events.php:279 app/features/labels.php:77
 #: app/features/locations.php:78 app/features/organizers.php:81
-#: app/features/speakers.php:86 app/features/sponsors.php:75
+#: app/features/speakers.php:84 app/features/sponsors.php:78
 #: app/features/tag.php:75
 #, php-format
 msgid "Search %s"
@@ -4270,8 +4335,8 @@ msgstr ""
 #: app/features/events.php:328 app/features/events.php:386
 #: app/features/locations.php:187 app/features/locations.php:247
 #: app/features/organizers.php:189 app/features/organizers.php:240
-#: app/features/speakers.php:218 app/features/speakers.php:281
-#: app/features/sponsors.php:122 app/features/sponsors.php:145
+#: app/features/speakers.php:216 app/features/speakers.php:279
+#: app/features/sponsors.php:125 app/features/sponsors.php:148
 msgid "Upload/Add image"
 msgstr "Nahrát / přidat obrázek"
 
@@ -4298,8 +4363,8 @@ msgstr "Datum a čas"
 msgid "Event Data"
 msgstr "Zobrazit událost"
 
-#: app/features/events.php:494 app/features/mec/fes.php:491
-#: app/libraries/formBuilder.php:48 app/skins/single.php:1572
+#: app/features/events.php:494 app/features/mec/fes.php:511
+#: app/libraries/formBuilder.php:48 app/skins/single.php:1578
 msgid "Hourly Schedule"
 msgstr "Hodinový rozvrh"
 
@@ -4425,7 +4490,7 @@ msgstr "Aktuální okno"
 msgid "New Window"
 msgstr "Nové okno"
 
-#: app/features/events.php:1832 app/features/mec/fes.php:499
+#: app/features/events.php:1832 app/features/mec/fes.php:519
 msgid "Booking Options"
 msgstr "Možnosti rezervace"
 
@@ -4521,8 +4586,8 @@ msgstr "Začátek"
 msgid "End Time"
 msgstr "Konec"
 
-#: app/features/events.php:3355 app/features/sponsors.php:109
-#: app/features/sponsors.php:138
+#: app/features/events.php:3355 app/features/sponsors.php:112
+#: app/features/sponsors.php:141
 msgid "Link"
 msgstr "Odkaz"
 
@@ -4540,7 +4605,7 @@ msgstr "%s Email"
 msgid "Send Certificates"
 msgstr ""
 
-#: app/features/events.php:3865 app/features/occurrences.php:403
+#: app/features/events.php:3868 app/features/occurrences.php:403
 #: app/libraries/ticketVariations.php:43 app/libraries/ticketVariations.php:46
 #: app/libraries/tickets.php:145 app/libraries/tickets.php:149
 #: app/libraries/tickets.php:283 app/libraries/tickets.php:310
@@ -4549,46 +4614,46 @@ msgstr ""
 msgid "Price"
 msgstr "Cena"
 
-#: app/features/events.php:3908
+#: app/features/events.php:3911
 #, fuzzy, php-format
 #| msgid "Checkout"
 msgid "for %s dates"
 msgstr "Překontrolovat"
 
-#: app/features/events.php:3920
+#: app/features/events.php:3923
 #, fuzzy
 #| msgid "No bookings found!"
 msgid "No Bookings Found!"
 msgstr "Nebyly nalezeny žádné rezervace!"
 
-#: app/features/events.php:3940 app/features/fes.php:485
+#: app/features/events.php:3943 app/features/fes.php:485
 #, fuzzy
 #| msgid "Please upload the feed file."
 msgid "Please upload an image."
 msgstr "Nahrajte prosím zdrojový soubor."
 
-#: app/features/events.php:4001
+#: app/features/events.php:4004
 #, fuzzy
 #| msgid "The image is uploaded!"
 msgid "The images are uploaded!"
 msgstr "Obrázek je nahraný!"
 
-#: app/features/events.php:4001
+#: app/features/events.php:4004
 msgid "An error occurred!"
 msgstr ""
 
-#: app/features/events.php:4030
+#: app/features/events.php:4033
 #, php-format
 msgid "%s bookings moved to new date"
 msgstr ""
 
-#: app/features/events.php:4058
+#: app/features/events.php:4061
 #, fuzzy, php-format
 #| msgid "booking canceled."
 msgid "%s bookings canceled (and refunded)."
 msgstr "rezervace zrušena."
 
-#: app/features/events.php:4059
+#: app/features/events.php:4062
 #, fuzzy, php-format
 #| msgid "booking canceled."
 msgid "%s bookings canceled."
@@ -4902,76 +4967,76 @@ msgstr ""
 msgid "The events are imported successfully!"
 msgstr "Události byly úspěšně importovány!"
 
-#: app/features/ix.php:1434
+#: app/features/ix.php:1466
 #, fuzzy, php-format
 #| msgid "Next Event"
 msgid "%s - Test Event"
 msgstr "Další událost"
 
-#: app/features/ix.php:1493
+#: app/features/ix.php:1525
 #, fuzzy, php-format
 #| msgid "%s events added to Google Calendar successfully."
 msgid "%s events successfully created."
 msgstr "% s události byly přidané do Google kalendáře úspěšně."
 
-#: app/features/ix.php:1599
+#: app/features/ix.php:1631
 msgid "Third Party plugin is not installed and activated!"
 msgstr "Plugin třetích stran není nainstalován a aktivován!"
 
-#: app/features/ix.php:1629
+#: app/features/ix.php:1661
 msgid "Third Party plugin is invalid!"
 msgstr "Plugin třetí strany je neplatný!"
 
-#: app/features/ix.php:3752 app/features/ix.php:3819
+#: app/features/ix.php:3784 app/features/ix.php:3851
 #, fuzzy
 #| msgid "Both of API key and Calendar ID are required!"
 msgid "API key and Calendar ID are required!"
 msgstr "Obě hodnoty: klíč API a ID kalendáře jsou povinné!"
 
-#: app/features/ix.php:3814 app/features/ix.php:4350 app/features/ix.php:5029
+#: app/features/ix.php:3846 app/features/ix.php:4382 app/features/ix.php:5061
 #, fuzzy
 #| msgid "Please select some events to import!"
 msgid "Please select events to import!"
 msgstr "Vyberte události, které chcete importovat!"
 
-#: app/features/ix.php:4287
+#: app/features/ix.php:4319
 msgid ""
 "Something happened. Please make sure you allow the website to access your "
 "meetup account."
 msgstr ""
 
-#: app/features/ix.php:4305
+#: app/features/ix.php:4337
 msgid "Meetup group not found!"
 msgstr ""
 
-#: app/features/ix.php:4363
+#: app/features/ix.php:4395
 msgid "Invalid API Token."
 msgstr ""
 
-#: app/features/ix.php:4532
+#: app/features/ix.php:4564
 msgid "Check at Meetup"
 msgstr "Ověřit Meetup"
 
 # Client Secret dle kontextu
-#: app/features/ix.php:4709
+#: app/features/ix.php:4741
 #, fuzzy
 #| msgid "All of Client ID, Client Secret and Calendar ID are required!"
 msgid "All of Client ID, Client Secret, and Calendar ID are required!"
 msgstr ""
 "Vyžadují se všechny klientské ID, tajné informace klienta a ID kalendáře!"
 
-#: app/features/ix.php:4732
+#: app/features/ix.php:4764
 #, fuzzy, php-format
 #| msgid "All seems good! Please click %s for authenticating your app."
 msgid "All seems good! Please click %s to authenticate your app."
 msgstr "Vše vypadá dobře! Klikněte na % s pro ověření vaší aplikace."
 
-#: app/features/ix.php:4732 app/features/mec/integrations.php:241
+#: app/features/ix.php:4764 app/features/mec/integrations.php:241
 #: app/features/mec/settings.php:1340
 msgid "here"
 msgstr ""
 
-#: app/features/ix.php:4787
+#: app/features/ix.php:4819
 #, fuzzy
 #| msgid "All of Client App, Client Secret and Calendar ID are required!"
 msgid "Client App, Client Secret, and Calendar ID are all required!"
@@ -4979,28 +5044,28 @@ msgstr ""
 "Všechny klientské aplikace, tajné informace klienta a ID kalendáře jsou "
 "povinné!"
 
-#: app/features/ix.php:4951
+#: app/features/ix.php:4983
 #, fuzzy, php-format
 #| msgid "%s events added to Google Calendar successfully."
 msgid "%s events added to Google Calendar with success."
 msgstr "% s události byly přidané do Google kalendáře úspěšně."
 
-#: app/features/ix.php:4952
+#: app/features/ix.php:4984
 #, fuzzy, php-format
 #| msgid "%s previously added events get updated."
 msgid "%s Updated previously added events."
 msgstr "% s dříve přidané události byly aktualizovány."
 
-#: app/features/ix.php:4953
+#: app/features/ix.php:4985
 #, php-format
 msgid "%s events failed to add for following reasons: %s"
 msgstr "% s události se nepodařilo přidat z následujících důvodů: % s"
 
-#: app/features/ix.php:4985
+#: app/features/ix.php:5017
 msgid "Please insert your Facebook page's link."
 msgstr "Vložte prosím odkaz na svou stránku na Facebooku."
 
-#: app/features/ix.php:4996 app/features/ix.php:5038
+#: app/features/ix.php:5028 app/features/ix.php:5070
 #, fuzzy
 #| msgid ""
 #| "We couldn't recognize your Facebook page. Please check it and provide us "
@@ -5012,7 +5077,7 @@ msgstr ""
 "Vaši facebookovou stránku jsme nemohli rozpoznat. Zkontrolujte to prosím a "
 "poskytněte nám platný odkaz na facebookovou stránku."
 
-#: app/features/ix.php:5033
+#: app/features/ix.php:5065
 msgid "Please insert your facebook page's link."
 msgstr "Vložte prosím odkaz na svou facebookovou stránku."
 
@@ -5811,7 +5876,7 @@ msgstr ""
 msgid "The import is finished."
 msgstr "Událost je ukončena."
 
-#: app/features/labels.php:60 app/features/mec/fes.php:760
+#: app/features/labels.php:60 app/features/mec/fes.php:780
 #: app/features/mec/meta_boxes/display_options.php:1981
 #: app/features/mec/meta_boxes/search_form.php:112
 #: app/features/mec/meta_boxes/search_form.php:210
@@ -5835,16 +5900,16 @@ msgid "Label"
 msgstr "Štítek"
 
 #: app/features/labels.php:78 app/features/locations.php:79
-#: app/features/organizers.php:82 app/features/speakers.php:87
-#: app/features/sponsors.php:76 app/features/tag.php:76
+#: app/features/organizers.php:82 app/features/speakers.php:85
+#: app/features/sponsors.php:79 app/features/tag.php:76
 #, fuzzy, php-format
 #| msgid "← Back to  %s"
 msgid "← Back to %s"
 msgstr "← Zpět na %s"
 
 #: app/features/labels.php:79 app/features/locations.php:80
-#: app/features/organizers.php:83 app/features/speakers.php:88
-#: app/features/sponsors.php:77 app/features/tag.php:77
+#: app/features/organizers.php:83 app/features/speakers.php:86
+#: app/features/sponsors.php:80 app/features/tag.php:77
 #, fuzzy, php-format
 #| msgid "No events found!"
 msgid "no %s found."
@@ -5890,7 +5955,7 @@ msgid "You can show featured, canceled and custom labels by a different style!"
 msgstr "Vybrané a zrušené události můžete zobrazit jiným stylem!"
 
 #: app/features/labels.php:191 app/features/locations.php:307
-#: app/features/organizers.php:296 app/features/speakers.php:342
+#: app/features/organizers.php:296 app/features/speakers.php:340
 #: app/modules/booking/steps/tickets.php:263
 msgid "Count"
 msgstr "Spočítat"
@@ -6369,8 +6434,8 @@ msgstr "Vyhledávání ..."
 #: app/features/mec/booking.php:1373 app/features/mec/booking.php:1454
 #: app/features/mec/booking.php:1464 app/features/mec/booking.php:1546
 #: app/features/mec/booking.php:1560 app/features/mec/fes.php:30
-#: app/features/mec/fes.php:775 app/features/mec/fes.php:785
-#: app/features/mec/fes.php:822 app/features/mec/fes.php:832
+#: app/features/mec/fes.php:795 app/features/mec/fes.php:805
+#: app/features/mec/fes.php:842 app/features/mec/fes.php:852
 #: app/features/mec/integrations.php:27 app/features/mec/integrations.php:420
 #: app/features/mec/integrations.php:430 app/features/mec/integrations.php:491
 #: app/features/mec/integrations.php:505 app/features/mec/messages.php:20
@@ -6390,9 +6455,9 @@ msgstr "Vyhledávání ..."
 #: app/features/mec/single.php:753 app/features/mec/styles.php:11
 #: app/features/mec/styles.php:32 app/features/mec/styles.php:42
 #: app/features/mec/styles.php:83 app/features/mec/styles.php:92
-#: app/features/mec/styling.php:37 app/features/mec/styling.php:306
-#: app/features/mec/styling.php:316 app/features/mec/styling.php:383
-#: app/features/mec/styling.php:392
+#: app/features/mec/styling.php:37 app/features/mec/styling.php:319
+#: app/features/mec/styling.php:329 app/features/mec/styling.php:396
+#: app/features/mec/styling.php:405
 msgid "Save Changes"
 msgstr "Uložit změny"
 
@@ -6456,10 +6521,10 @@ msgstr "Konečný den"
 #: app/features/mec/booking.php:162 app/features/mec/booking.php:171
 #: app/features/mec/fes.php:115 app/features/mec/fes.php:400
 #: app/features/mec/fes.php:430 app/features/mec/fes.php:446
-#: app/features/mec/fes.php:476 app/features/mec/modules.php:778
-#: app/features/mec/notifications.php:69 app/libraries/main.php:3167
-#: app/libraries/main.php:3406 app/libraries/main.php:3449
-#: app/libraries/notifications.php:2494
+#: app/features/mec/fes.php:471 app/features/mec/fes.php:496
+#: app/features/mec/modules.php:778 app/features/mec/notifications.php:69
+#: app/libraries/main.php:3167 app/libraries/main.php:3406
+#: app/libraries/main.php:3449 app/libraries/notifications.php:2494
 msgid "No"
 msgstr "Ne"
 
@@ -6468,7 +6533,7 @@ msgid "If Possible"
 msgstr ""
 
 #: app/features/mec/booking.php:168 app/features/mec/booking.php:176
-#: app/features/mec/fes.php:513
+#: app/features/mec/fes.php:533
 #, fuzzy
 #| msgid "Select icon"
 msgid "Date Selection Per Event"
@@ -6476,10 +6541,10 @@ msgstr "Vybrat ikonu"
 
 #: app/features/mec/booking.php:172 app/features/mec/fes.php:116
 #: app/features/mec/fes.php:399 app/features/mec/fes.php:429
-#: app/features/mec/fes.php:445 app/features/mec/fes.php:475
-#: app/features/mec/modules.php:779 app/features/mec/notifications.php:70
-#: app/libraries/main.php:3167 app/libraries/main.php:3406
-#: app/libraries/main.php:3449 app/libraries/notifications.php:2494
+#: app/features/mec/fes.php:445 app/features/mec/modules.php:779
+#: app/features/mec/notifications.php:70 app/libraries/main.php:3167
+#: app/libraries/main.php:3406 app/libraries/main.php:3449
+#: app/libraries/notifications.php:2494
 msgid "Yes"
 msgstr "Ano"
 
@@ -6627,7 +6692,7 @@ msgstr ""
 msgid "Do not accept duplicate emails in the attendees form"
 msgstr ""
 
-#: app/features/mec/booking.php:320 app/features/mec/fes.php:576
+#: app/features/mec/booking.php:320 app/features/mec/fes.php:596
 #, fuzzy
 #| msgid "Ticket Variations / Options"
 msgid "Ticket Options"
@@ -6811,13 +6876,6 @@ msgstr "Do např. 8:45"
 msgid "Period"
 msgstr ""
 
-#: app/features/mec/booking.php:526 app/features/speakers.php:129
-#: app/features/speakers.php:234
-#, fuzzy
-#| msgid "Type 1"
-msgid "Type"
-msgstr "Typ 1"
-
 #: app/features/mec/booking.php:531
 #, fuzzy
 #| msgid "On Event Start"
@@ -6949,7 +7007,7 @@ msgid ""
 "and partial payments when booking."
 msgstr ""
 
-#: app/features/mec/booking.php:651 app/features/mec/fes.php:527
+#: app/features/mec/booking.php:651 app/features/mec/fes.php:547
 #, fuzzy
 #| msgid "Discount"
 msgid "Discount Per User Roles"
@@ -7068,7 +7126,7 @@ msgstr "Vstupenky"
 #: app/features/mec/settings.php:382 app/features/mec/settings.php:391
 #: app/features/mec/single.php:144 app/features/mec/single.php:233
 #: app/features/mec/single.php:242 app/features/mec/single.php:258
-#: app/features/mec/styling.php:119 app/features/mec/styling.php:239
+#: app/features/mec/styling.php:132 app/features/mec/styling.php:252
 #, fuzzy
 #| msgid "Enabled"
 msgid "Enable"
@@ -7440,19 +7498,19 @@ msgstr "Překontrolovat"
 msgid "Enable Cart Invoice"
 msgstr "Povolit fakturu"
 
-#: app/features/mec/booking.php:1524 app/features/mec/fes.php:805
+#: app/features/mec/booking.php:1524 app/features/mec/fes.php:825
 #: app/features/mec/integrations.php:469 app/features/mec/messages.php:94
 #: app/features/mec/modules.php:831 app/features/mec/notifications.php:2479
 #: app/features/mec/settings.php:1482 app/features/mec/single.php:717
-#: app/features/mec/styles.php:66 app/features/mec/styling.php:365
+#: app/features/mec/styles.php:66 app/features/mec/styling.php:378
 msgid "Saved"
 msgstr "Uloženo"
 
-#: app/features/mec/booking.php:1525 app/features/mec/fes.php:806
+#: app/features/mec/booking.php:1525 app/features/mec/fes.php:826
 #: app/features/mec/integrations.php:470 app/features/mec/messages.php:95
 #: app/features/mec/modules.php:832 app/features/mec/notifications.php:2480
 #: app/features/mec/settings.php:1483 app/features/mec/single.php:718
-#: app/features/mec/styles.php:67 app/features/mec/styling.php:366
+#: app/features/mec/styles.php:67 app/features/mec/styling.php:379
 msgid "Settings Saved!"
 msgstr "Nastavení uložena!"
 
@@ -7832,31 +7890,50 @@ msgstr "Další organizátoři"
 msgid "If enabled, then users are able to add their own new organizers."
 msgstr "Pošlete e-mail organizátorovi události"
 
-#: app/features/mec/fes.php:472 app/features/mec/fes.php:480
+#: app/features/mec/fes.php:466
+#, fuzzy
+#| msgid "Location"
+msgid "Ability to Add New Speakers"
+msgstr "Umístění"
+
+#: app/features/mec/fes.php:469 app/features/mec/fes.php:494
+#, fuzzy
+#| msgid "Name"
+msgid "Name Only"
+msgstr "Jméno"
+
+#: app/features/mec/fes.php:470 app/features/mec/fes.php:495
+#, fuzzy
+#| msgid "Event Details"
+msgid "Full Details"
+msgstr "Podrobnosti události"
+
+#: app/features/mec/fes.php:475 app/features/mec/fes.php:491
+#: app/features/mec/fes.php:500
 #, fuzzy
 #| msgid "Location"
 msgid "Ability to Add New Sponsors"
 msgstr "Umístění"
 
-#: app/features/mec/fes.php:481
+#: app/features/mec/fes.php:476 app/features/mec/fes.php:501
 #, fuzzy
 #| msgid "Send the email to event organizer"
 msgid "If enabled, then users are able to add their own new sponsors."
 msgstr "Pošlete e-mail organizátorovi události"
 
-#: app/features/mec/fes.php:506 app/features/occurrences.php:200
+#: app/features/mec/fes.php:526 app/features/occurrences.php:200
 #, fuzzy
 #| msgid "Total booking limits"
 msgid "Total Booking Limit"
 msgstr "Celkové limity rezervace"
 
-#: app/features/mec/fes.php:520
+#: app/features/mec/fes.php:540
 #, fuzzy
 #| msgid "Maximum Per Ticket"
 msgid "Minimum Tickets Per Booking"
 msgstr "Maximum na jednu vstupenku"
 
-#: app/features/mec/fes.php:582 app/libraries/tickets.php:132
+#: app/features/mec/fes.php:602 app/libraries/tickets.php:132
 #: app/libraries/tickets.php:135 app/libraries/tickets.php:455
 #: app/libraries/tickets.php:458
 #, fuzzy
@@ -7864,55 +7941,55 @@ msgstr "Maximum na jednu vstupenku"
 msgid "Private Description"
 msgstr "Popis"
 
-#: app/features/mec/fes.php:594
+#: app/features/mec/fes.php:614
 msgid "Fees / Taxes Options"
 msgstr "Možnosti Poplatky / Daně"
 
-#: app/features/mec/fes.php:613
+#: app/features/mec/fes.php:633
 #, fuzzy
 #| msgid "Display Options"
 msgid "Partial Payment Options"
 msgstr "Zobrazit možnosti"
 
-#: app/features/mec/fes.php:623 app/features/schema.php:67
+#: app/features/mec/fes.php:643 app/features/schema.php:67
 #, fuzzy
 #| msgid "Schema"
 msgid "SEO Schema"
 msgstr "Schéma"
 
-#: app/features/mec/fes.php:646 app/features/mec/single.php:238
+#: app/features/mec/fes.php:666 app/features/mec/single.php:238
 #: app/features/mec/single.php:246
 #, fuzzy
 #| msgid "Download ICS file"
 msgid "Public Download Module"
 msgstr "Stáhnout ICS soubor"
 
-#: app/features/mec/fes.php:655
+#: app/features/mec/fes.php:675
 #, fuzzy
 #| msgid "Event"
 msgid "Event FAQ"
 msgstr "Událost"
 
-#: app/features/mec/fes.php:673 app/features/mec/single.php:664
+#: app/features/mec/fes.php:693 app/features/mec/single.php:664
 #, fuzzy
 #| msgid "Edit Event"
 msgid "Virtual Event"
 msgstr "Editace události"
 
-#: app/features/mec/fes.php:682
+#: app/features/mec/fes.php:702
 #, fuzzy
 #| msgid "Book Event"
 msgid "Zoom Event"
 msgstr "Rezervovat událost"
 
-#: app/features/mec/fes.php:690 app/features/mec/fes.php:694
+#: app/features/mec/fes.php:710 app/features/mec/fes.php:714
 #: app/features/mec/notifications.php:1968
 #: app/features/mec/notifications.php:2085
 #: app/features/mec/notifications.php:2370 app/features/notifications.php:207
 msgid "Event Note"
 msgstr "Poznámka události"
 
-#: app/features/mec/fes.php:695
+#: app/features/mec/fes.php:715
 #, fuzzy, php-format
 #| msgid ""
 #| "Users can put a note for editors while they're submitting the event. Also "
@@ -7927,41 +8004,41 @@ msgstr ""
 "oznámení o nové události můžete také vložit %%event_note%%, abyste dostali e-"
 "mail s poznámkami uživatelů."
 
-#: app/features/mec/fes.php:702 app/features/mec/fes.php:710
+#: app/features/mec/fes.php:722 app/features/mec/fes.php:730
 #, fuzzy
 #| msgid "Visibility"
 msgid "Note visibility"
 msgstr "Viditelnost"
 
-#: app/features/mec/fes.php:705
+#: app/features/mec/fes.php:725
 msgid "Always"
 msgstr "Vždy"
 
-#: app/features/mec/fes.php:706
+#: app/features/mec/fes.php:726
 msgid "While event is not published"
 msgstr "I když událost není zveřejněna"
 
-#: app/features/mec/fes.php:711
+#: app/features/mec/fes.php:731
 msgid "When should event note be displayed in FES Form and Backend?"
 msgstr ""
 
-#: app/features/mec/fes.php:721
+#: app/features/mec/fes.php:741
 msgid "Agreement Checkbox (GDPR Compatibility)"
 msgstr ""
 
-#: app/features/mec/fes.php:728
+#: app/features/mec/fes.php:748
 #, fuzzy
 #| msgid "Checked by default"
 msgid "Checked by Default"
 msgstr "Ve výchozím nastavení zaškrtnuto"
 
-#: app/features/mec/fes.php:748 app/libraries/main.php:699
+#: app/features/mec/fes.php:768 app/libraries/main.php:699
 #, fuzzy
 #| msgid "Required Field"
 msgid "Required Fields"
 msgstr "Požadovaná pole"
 
-#: app/features/mec/fes.php:751 app/features/mec/notifications.php:231
+#: app/features/mec/fes.php:771 app/features/mec/notifications.php:231
 #: app/features/mec/notifications.php:390
 #: app/features/mec/notifications.php:566
 #: app/features/mec/notifications.php:773
@@ -7980,7 +8057,7 @@ msgstr "Požadovaná pole"
 msgid "Event Description"
 msgstr "Popis"
 
-#: app/features/mec/fes.php:756 app/libraries/main.php:7893
+#: app/features/mec/fes.php:776 app/libraries/main.php:7893
 #: app/libraries/main.php:7940
 msgid "More Info Link"
 msgstr "Odkaz na více informací"
@@ -13286,8 +13363,8 @@ msgstr ""
 "tematického rozhraní po všech stylech, takže přepíší výchozí MEC (nebo "
 "tématické) styly."
 
-#: app/features/mec/styling.php:10 app/features/mec/styling.php:178
-#: app/features/mec/styling.php:205
+#: app/features/mec/styling.php:10 app/features/mec/styling.php:191
+#: app/features/mec/styling.php:218
 msgid "Default Font"
 msgstr "Výchozí písmo"
 
@@ -13320,50 +13397,58 @@ msgstr ""
 "Pokud chcete vybrat předdefinovaný vzhled barev, musíte vymazat barvu této "
 "položky"
 
-#: app/features/mec/styling.php:115 app/features/mec/styling.php:123
+#: app/features/mec/styling.php:115 app/features/mec/styling.php:120
+msgid "Primary border-radius"
+msgstr ""
+
+#: app/features/mec/styling.php:121
+msgid "Customize the border-radius for wrappers, event items and event modules"
+msgstr ""
+
+#: app/features/mec/styling.php:128 app/features/mec/styling.php:136
 #, fuzzy
 #| msgid "Modern"
 msgid "Dark Mode"
 msgstr "Moderní"
 
-#: app/features/mec/styling.php:124
+#: app/features/mec/styling.php:137
 #, fuzzy
 #| msgid "Enable ticket options module"
 msgid "Enable this option to turn on the dark mode"
 msgstr "Povolit modul možností vstupenek"
 
-#: app/features/mec/styling.php:132
+#: app/features/mec/styling.php:145
 msgid "Advanced Color Options (shortcodes)"
 msgstr "Pokročilé možnosti barev (zkrácené kódy)"
 
 # Efekt přejetí myši
-#: app/features/mec/styling.php:144
+#: app/features/mec/styling.php:157
 msgid "Title Hover"
 msgstr "Pohyb myši nad názvem"
 
-#: app/features/mec/styling.php:161
+#: app/features/mec/styling.php:174
 msgid "Typography"
 msgstr "Typografie"
 
-#: app/features/mec/styling.php:163
+#: app/features/mec/styling.php:176
 msgid "Heading (Events Title) Font Family"
 msgstr "Záhlaví (Název události) Rodina písma"
 
-#: app/features/mec/styling.php:190
+#: app/features/mec/styling.php:203
 msgid "Paragraph Font Family"
 msgstr "Rodina písma odstavce"
 
-#: app/features/mec/styling.php:216 app/features/mec/styling.php:224
+#: app/features/mec/styling.php:229 app/features/mec/styling.php:237
 msgid "Disable Google Fonts"
 msgstr "Zakázat Google písma"
 
-#: app/features/mec/styling.php:220
+#: app/features/mec/styling.php:233
 #, fuzzy
 #| msgid "Disabled"
 msgid "Disable"
 msgstr "Zakázaný"
 
-#: app/features/mec/styling.php:225
+#: app/features/mec/styling.php:238
 #, fuzzy
 #| msgid "To be GDPR compliant you may need to disable Google fonts!"
 msgid ""
@@ -13371,26 +13456,26 @@ msgid ""
 "\" value for font family and enable this option."
 msgstr "Chcete-li vyhovět GDPR, možná budete muset zakázat písma Google!"
 
-#: app/features/mec/styling.php:233 app/features/mec/styling.php:235
-#: app/features/mec/styling.php:243
+#: app/features/mec/styling.php:246 app/features/mec/styling.php:248
+#: app/features/mec/styling.php:256
 #, fuzzy
 #| msgid "Visibility"
 msgid "Accessibility"
 msgstr "Viditelnost"
 
-#: app/features/mec/styling.php:244
+#: app/features/mec/styling.php:257
 msgid "Enable A11Y or accessibility in MEC."
 msgstr ""
 
-#: app/features/mec/styling.php:253
+#: app/features/mec/styling.php:266
 msgid "Container Width"
 msgstr "Šířka kontejneru"
 
-#: app/features/mec/styling.php:255 app/features/mec/styling.php:260
+#: app/features/mec/styling.php:268 app/features/mec/styling.php:273
 msgid "Desktop Normal Screens"
 msgstr "Desktop Normální obrazovky"
 
-#: app/features/mec/styling.php:261
+#: app/features/mec/styling.php:274
 #, fuzzy
 #| msgid "You can enter your theme container size in this field"
 msgid ""
@@ -13398,11 +13483,11 @@ msgid ""
 "normal screens."
 msgstr "Do tohoto pole můžete zadat velikost kontejneru tématu"
 
-#: app/features/mec/styling.php:269 app/features/mec/styling.php:274
+#: app/features/mec/styling.php:282 app/features/mec/styling.php:287
 msgid "Desktop Large Screens"
 msgstr "Desktop velké obrazovky"
 
-#: app/features/mec/styling.php:275
+#: app/features/mec/styling.php:288
 #, fuzzy
 #| msgid "You can enter your theme container size in this field"
 msgid ""
@@ -13410,19 +13495,19 @@ msgid ""
 "large screens."
 msgstr "Do tohoto pole můžete zadat velikost kontejneru tématu"
 
-#: app/features/mec/styling.php:284
+#: app/features/mec/styling.php:297
 #, fuzzy
 #| msgid "Styling Option"
 msgid "Other Styling Option"
 msgstr "Možnosti stylování"
 
-#: app/features/mec/styling.php:288
+#: app/features/mec/styling.php:301
 #, fuzzy
 #| msgid "Frontend Event Submission"
 msgid "Frontend Event Submission Color"
 msgstr "Předání události frontendu"
 
-#: app/features/mec/styling.php:297
+#: app/features/mec/styling.php:310
 #, fuzzy
 #| msgid "Notifications"
 msgid "Notifications Background"
@@ -13923,7 +14008,7 @@ msgstr ""
 msgid "Log file size is about %s. %s"
 msgstr ""
 
-#: app/features/mec/support-page.php:446 app/skins/single.php:1799
+#: app/features/mec/support-page.php:446 app/skins/single.php:1805
 #, fuzzy
 #| msgid "Download ICS file"
 msgid "Download"
@@ -14272,45 +14357,28 @@ msgstr ""
 msgid "Site name or any text"
 msgstr "První jméno účastníka"
 
-#: app/features/organizers.php:152 app/features/organizers.php:221
-#: app/features/speakers.php:181 app/features/speakers.php:262
-msgid "Facebook Page"
-msgstr "Stránka na Facebooku"
-
 #: app/features/organizers.php:155 app/features/organizers.php:222
-#: app/features/speakers.php:184 app/features/speakers.php:263
+#: app/features/speakers.php:182 app/features/speakers.php:261
 msgid "Insert URL of Facebook Page"
 msgstr "Vložte URL stránky na Facebooku"
 
 #: app/features/organizers.php:163 app/features/organizers.php:226
-#: app/features/speakers.php:192 app/features/speakers.php:267
+#: app/features/speakers.php:190 app/features/speakers.php:265
 msgid "Insert URL of Instagram"
 msgstr "Vložte URL Instagramu"
 
-#: app/features/organizers.php:168 app/features/organizers.php:229
-#: app/features/speakers.php:197 app/features/speakers.php:270
-#, fuzzy
-#| msgid "Linkedin"
-msgid "LinkedIn"
-msgstr "Linkedin"
-
-#: app/features/organizers.php:171 app/features/speakers.php:200
+#: app/features/organizers.php:171 app/features/speakers.php:198
 #, fuzzy
 #| msgid "Insert URL of Instagram"
 msgid "Insert URL of LinkedIn"
 msgstr "Vložte URL Instagramu"
 
-#: app/features/organizers.php:176 app/features/organizers.php:233
-#: app/features/speakers.php:205 app/features/speakers.php:274
-msgid "Twitter Page"
-msgstr "Stránka na Twitteru"
-
 #: app/features/organizers.php:179 app/features/organizers.php:234
-#: app/features/speakers.php:208 app/features/speakers.php:275
+#: app/features/speakers.php:206 app/features/speakers.php:273
 msgid "Insert URL of Twitter Page"
 msgstr "Vložte URL stránky na Twitteru"
 
-#: app/features/organizers.php:230 app/features/speakers.php:271
+#: app/features/organizers.php:230 app/features/speakers.php:269
 #, fuzzy
 #| msgid "Insert URL of Instagram"
 msgid "Insert URL of linkedin"
@@ -14752,31 +14820,44 @@ msgstr "Pole možností nemůže být prázdné!"
 msgid "There was an error please try again!"
 msgstr ""
 
-#: app/features/restful.php:84
+#: app/features/restful.php:112 app/features/restful.php:287
 msgid "Limit parameter must be numeric!"
 msgstr ""
 
-#: app/features/restful.php:95
+#: app/features/restful.php:123
 #, fuzzy
 #| msgid "Request is not valid."
 msgid "Order parameter is invalid!"
 msgstr "Požadavek není platný."
 
-#: app/features/restful.php:108
+#: app/features/restful.php:136
 msgid ""
 "When the start_date_type parameter is set to date, then start_date parameter "
 "is required."
 msgstr ""
 
-#: app/features/restful.php:191
+#: app/features/restful.php:219
 msgid "Event id must be numeric!"
 msgstr ""
 
-#: app/features/restful.php:208
+#: app/features/restful.php:236 app/features/restful.php:354
+#: app/features/restful.php:385
 #, fuzzy
 #| msgid "No event found!"
 msgid "Event not found!"
 msgstr "Nebyla nalezena žádná událost!"
+
+#: app/features/restful.php:345
+#, fuzzy
+#| msgid "Event is not repeating. No dates exist for this event!"
+msgid "You're not authorized to trash this event!"
+msgstr "Událost se neopakuje. Pro tuto událost neexistují žádná data!álosti)"
+
+#: app/features/restful.php:376
+#, fuzzy
+#| msgid "Event is not repeating. No dates exist for this event!"
+msgid "You're not authorized to delete this event!"
+msgstr "Událost se neopakuje. Pro tuto událost neexistují žádná data!álosti)"
 
 #: app/features/schema.php:68
 msgid ""
@@ -14789,15 +14870,15 @@ msgstr ""
 msgid "Please enter at least 3 characters and try again"
 msgstr "Zadejte prosím alespoň 3 znaky a zkuste to znovu"
 
-#: app/features/search_bar/search_bar.php:29
+#: app/features/search_bar/search_bar.php:30
 msgid "Please enter at least 3 characters"
 msgstr "Zadejte alespoň 3 znaky"
 
-#: app/features/search_bar/search_bar.php:31
+#: app/features/search_bar/search_bar.php:32
 msgid "Search results will show here"
 msgstr "Zde se zobrazí výsledky vyhledávání"
 
-#: app/features/search_bar/search_bar.php:51 app/libraries/main.php:640
+#: app/features/search_bar/search_bar.php:52 app/libraries/main.php:640
 msgid "Search"
 msgstr "Vyhledat"
 
@@ -14805,60 +14886,52 @@ msgstr "Vyhledat"
 msgid "No search result."
 msgstr "Žádný výsledek vyhledávání."
 
-#: app/features/speakers.php:133 app/features/speakers.php:236
-msgid "Person"
-msgstr ""
-
-#: app/features/speakers.php:134 app/features/speakers.php:237
-#, fuzzy
-#| msgid "Group URL"
-msgid "Group"
-msgstr "Group URL"
-
-#: app/features/speakers.php:140 app/features/speakers.php:241
-#: app/features/speakers.php:340
-msgid "Job Title"
-msgstr "Pracovní pozice"
-
-#: app/features/speakers.php:143 app/features/speakers.php:242
+#: app/features/speakers.php:141 app/features/speakers.php:240
 msgid "Insert speaker job title."
 msgstr "Vložte pracovní pozici řečníka."
 
-#: app/features/speakers.php:151 app/features/speakers.php:246
+#: app/features/speakers.php:149 app/features/speakers.php:244
 msgid "Insert speaker phone number."
 msgstr "Vložte telefonní číslo řečníka."
 
-#: app/features/speakers.php:159 app/features/speakers.php:250
+#: app/features/speakers.php:157 app/features/speakers.php:248
 msgid "Insert speaker email address."
 msgstr "Vložte email řečníka."
 
-#: app/features/speakers.php:167 app/features/speakers.php:254
+#: app/features/speakers.php:165 app/features/speakers.php:252
 #, fuzzy
 #| msgid "Insert URL of Instagram"
 msgid "Insert URL of Website"
 msgstr "Vložte URL Instagramu"
 
-#: app/features/speakers.php:172 app/features/speakers.php:257
+#: app/features/speakers.php:170 app/features/speakers.php:255
 msgid "Index"
 msgstr ""
 
-#: app/features/speakers.php:175 app/features/speakers.php:258
+#: app/features/speakers.php:173 app/features/speakers.php:256
 msgid "Index. Used for sorting."
 msgstr ""
 
-#: app/features/speakers.php:176 app/features/speakers.php:259
+#: app/features/speakers.php:174 app/features/speakers.php:257
 #, fuzzy
 #| msgid "Create some calendars first."
 msgid "Lower numbers appears first."
 msgstr "Nejdříve vytvořte nějaké kalendáře."
 
-#: app/features/speakers.php:399 app/features/speakers.php:441
+#: app/features/speakers.php:399 app/features/speakers.php:427
+#: app/features/sponsors.php:198 app/features/sponsors.php:218
 #, fuzzy, php-format
 #| msgid "Sorry, You must insert speaker name!"
 msgid "Sorry, You must insert %s name!"
 msgstr "Litujeme, musíte zadat jméno řečníka!"
 
-#: app/features/speakers.php:485
+#: app/features/speakers.php:399 app/features/speakers.php:427
+#, fuzzy
+#| msgid "Speaker"
+msgid "speaker"
+msgstr "Řečník"
+
+#: app/features/speakers.php:488
 msgid ""
 "Note: You can use the speakers in your event edit/add page > hourly schedule "
 "section and speaker widget section!"
@@ -14866,17 +14939,17 @@ msgstr ""
 "Poznámka: Řečníky můžete použít na vaší stránce úprav / přidání > sekce "
 "hodinového plánu a v sekci widgetu řečníka!"
 
-#: app/features/sponsors.php:112
+#: app/features/sponsors.php:115
 #, fuzzy
 #| msgid "Insert URL of Instagram"
 msgid "Insert URL of Sponsor"
 msgstr "Vložte URL Instagramu"
 
-#: app/features/sponsors.php:117 app/features/sponsors.php:142
+#: app/features/sponsors.php:120 app/features/sponsors.php:145
 msgid "Logo"
 msgstr ""
 
-#: app/features/sponsors.php:139
+#: app/features/sponsors.php:142
 #, fuzzy
 #| msgid "Insert URL of Instagram"
 msgid "Insert URL of Sponsor."
@@ -14980,7 +15053,7 @@ msgstr ""
 msgid "MEC will send the data to your target as plain form data"
 msgstr ""
 
-#: app/libraries/book.php:1391 app/modules/booking/default.php:864
+#: app/libraries/book.php:1403 app/modules/booking/default.php:864
 #: app/modules/booking/default.php:998
 msgid "Download Invoice"
 msgstr "Stáhnout fakturu"
@@ -15119,7 +15192,7 @@ msgid "To e.g. 8:45"
 msgstr "Do např. 8:45"
 
 #: app/libraries/formBuilder.php:89 app/libraries/formBuilder.php:117
-#: app/libraries/formBuilder.php:169 app/skins/single.php:1590
+#: app/libraries/formBuilder.php:169 app/skins/single.php:1596
 msgid "Speakers:"
 msgstr "Řečník:"
 
@@ -16876,7 +16949,7 @@ msgstr "Nová událost"
 msgid "Home"
 msgstr "Domů"
 
-#: app/skins/single.php:1825
+#: app/skins/single.php:1831
 #, fuzzy
 #| msgid "Event Organizer"
 msgid "Watch Event Trailer"
@@ -17410,12 +17483,6 @@ msgstr "http://webnus.net"
 #~| msgid "Discount Coupon"
 #~ msgid "Discount coupon is expired!"
 #~ msgstr "Slevový kupon"
-
-#, fuzzy
-#~| msgid "Event is not repeating. No dates exist for this event!"
-#~ msgid "Discount is not valid for this event!"
-#~ msgstr ""
-#~ "Událost se neopakuje. Pro tuto událost neexistují žádná data!álosti)"
 
 #, fuzzy
 #~| msgid "Event is not repeating. No dates exist for this event!"

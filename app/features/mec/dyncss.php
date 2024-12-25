@@ -31,6 +31,17 @@ elseif (isset($styling['mec_colorskin'])) $color = $styling['mec_colorskin'];
 $rgb_color = '64,217,241';
 if (!empty($color)) $rgb_color = mec_dyn_hex2rgb($color);
 
+$mec_primary_border_radius = '';
+
+if (isset($styling['primary_border_radius']) && $styling['primary_border_radius']) {
+	$mec_primary_border_radius = trim($styling['primary_border_radius']);
+	if ($mec_primary_border_radius) {
+		if (is_numeric($mec_primary_border_radius)) {
+			$mec_primary_border_radius .= 'px';
+		}
+	}
+}
+
 // Typography
 $mec_h_fontfamily_arr = $mec_p_fontfamily_arr = $fonts_url = $mec_container_normal_width = $mec_container_large_width = '';
 
@@ -95,6 +106,7 @@ if (isset($styling['container_large_width']) && $styling['container_large_width'
 		}
 	}
 }
+
 $title_color = $title_color_hover = $content_color = '';
 if (isset($styling['title_color']) && $styling['title_color']) {
 	$title_color = $styling['title_color'];
@@ -142,6 +154,12 @@ if ($color && $color != '#40d9f1'): ?>
 	--mec-color-skin-rgba-2: rgba(64, 217, 241, .5);
 	--mec-color-skin-rgba-3: rgba(64, 217, 241, .75);
 	--mec-color-skin-rgba-4: rgba(64, 217, 241, .11);
+<?php endif;
+
+if ($mec_primary_border_radius): ?>
+	--mec-primary-border-radius: <?php echo esc_html($mec_primary_border_radius); ?>;
+<?php else: ?>
+	--mec-primary-border-radius: 3px;
 <?php endif;
 
 // Render Container Width

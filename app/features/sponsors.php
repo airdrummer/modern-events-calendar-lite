@@ -47,6 +47,9 @@ class MEC_feature_sponsors extends MEC_base
         $this->factory->action('created_mec_sponsor', array($this, 'save_metadata'));
 
         $this->factory->filter('post_edit_category_parent_dropdown_args', array($this, 'hide_parent_dropdown'));
+
+        $this->factory->action('wp_ajax_mec_sponsor_adding', array($this, 'fes_sponsor_adding'));
+        $this->factory->action('wp_ajax_nopriv_mec_sponsor_adding', array($this, 'fes_sponsor_adding'));
     }
 
     /**
@@ -159,8 +162,8 @@ class MEC_feature_sponsors extends MEC_base
         // Quick Edit
         if(!isset($_POST['link'])) return;
 
-        $link = (isset($_POST['link']) and trim($_POST['link'])) ? esc_url($_POST['link']) : '';
-        $logo = (isset($_POST['logo']) and trim($_POST['logo'])) ? esc_url($_POST['logo']) : '';
+        $link = trim($_POST['link']) ? esc_url($_POST['link']) : '';
+        $logo = isset($_POST['logo']) && trim($_POST['logo']) ? esc_url($_POST['logo']) : '';
 
         update_term_meta($term_id, 'link', $link);
         update_term_meta($term_id, 'logo', $logo);
@@ -172,5 +175,77 @@ class MEC_feature_sponsors extends MEC_base
     {
         if('mec_sponsor' == $args['taxonomy']) $args['echo'] = false;
         return $args;
+    }
+
+    /**
+     * Adding new sponsor
+     * @author Webnus <info@webnus.net>
+     * @return void
+     */
+    public function fes_sponsor_adding()
+    {
+        $key = isset($_REQUEST['key']) ? sanitize_text_field($_REQUEST['key']) : NULL;
+        $key = intval($key);
+
+        if(isset($_REQUEST['content']))
+        {
+            $content = sanitize_text_field($_REQUEST['content']);
+            $content = wp_strip_all_tags($content);
+            $content = sanitize_text_field($content);
+
+            if(!trim($content))
+            {
+                echo '<p class="mec-error" id="mec-sponsor-error-' . esc_attr($key) . '">' . sprintf(esc_html__('Sorry, You must insert %s name!', 'modern-events-calendar-lite'), strtolower(\MEC\Base::get_main()->m('taxonomy_sponsor', esc_html__('sponsor', 'modern-events-calendar-lite')))) . '</p>';
+                exit;
+            }
+
+            if(term_exists($content, 'mec_sponsor'))
+            {
+                echo '<p class="mec-error" id="mec-sponsor-error-' . esc_attr($key) . '">' . esc_html__("Sorry, $content already exists!", 'modern-events-calendar-lite') . '</p>';
+                exit;
+            }
+
+            wp_insert_term(trim($content), 'mec_sponsor');
+        }
+        elseif(isset($_REQUEST['name']))
+        {
+            $name = sanitize_text_field($_REQUEST['name']);
+            $url = isset($_REQUEST['url']) ? esc_url($_REQUEST['url']) : '';
+            $image = isset($_REQUEST['image']) ? esc_url($_REQUEST['image']) : '';
+
+            if(!trim($name))
+            {
+                echo '<p class="mec-error" id="mec-sponsor-error-' . esc_attr($key) . '">' . sprintf(esc_html__('Sorry, You must insert %s name!', 'modern-events-calendar-lite'), strtolower(\MEC\Base::get_main()->m('taxonomy_sponsor', esc_html__('sponsor', 'modern-events-calendar-lite')))) . '</p>';
+                exit;
+            }
+
+            if(term_exists($name, 'mec_sponsor'))
+            {
+                echo '<p class="mec-error" id="mec-sponsor-error-' . esc_attr($key) . '">' . esc_html__("Sorry, $name already exists!", 'modern-events-calendar-lite') . '</p>';
+                exit;
+            }
+
+            $sponsor = wp_insert_term(trim($name), 'mec_sponsor');
+            if(is_array($sponsor))
+            {
+                $sponsor_id = $sponsor['term_id'];
+
+                update_term_meta($sponsor_id, 'link', $url);
+                update_term_meta($sponsor_id, 'logo', $image);
+            }
+        }
+
+        $sponsors = '';
+        $sponsor_terms = get_terms(array('taxonomy'=>'mec_sponsor', 'hide_empty'=>false));
+        foreach($sponsor_terms as $sponsor_term)
+        {
+            $sponsors .= '<label for="mec_fes_sponsors'.esc_attr($sponsor_term->term_id).'">
+                <input type="checkbox" name="mec[sponsors]['.esc_attr($sponsor_term->term_id).']" id="mec_fes_sponsors'.esc_attr($sponsor_term->term_id).'" value="1">
+                '.esc_html($sponsor_term->name).'
+            </label>';
+        }
+
+        echo MEC_kses::form($sponsors);
+        exit;
     }
 }

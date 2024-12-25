@@ -1252,6 +1252,38 @@ class MEC_feature_ix extends MEC_base
                     $finish = isset($rule['until']) ? date('Y-m-d', strtotime($rule['until'])) : NULL;
                 }
 
+                // Custom Days
+                if(trim($repeat_type) === '' && isset($event->rdate) && trim($event->rdate))
+                {
+                    $custom_dates = explode(',', $event->rdate);
+                    unset($custom_dates[0]);
+
+                    if(count($custom_dates))
+                    {
+                        $repeat_type = 'custom_days';
+                        $repeat_status = 1;
+                        $days = '';
+
+                        $timezone = $this->main->get_TZO();
+                        $UTC = new DateTimeZone('UTC');
+
+                        foreach ($custom_dates as $custom_date)
+                        {
+                            list($custom_date_start, $custom_date_end) = explode('/', $custom_date);
+
+                            $custom_start = new DateTime($custom_date_start, $UTC);
+                            $custom_start->setTimezone($timezone);
+
+                            $custom_end = new DateTime($custom_date_end, $UTC);
+                            $custom_end->setTimezone($timezone);
+
+                            $days .= $custom_start->format('Y-m-d').':'.$custom_end->format('Y-m-d').':'.$custom_start->format('h-i-A').':'.$custom_end->format('h-i-A').',';
+                        }
+
+                        $days = trim($days, ',');
+                    }
+                }
+
                 $additional_organizer_ids = [];
                 $hourly_schedules = [];
                 $tickets = [];

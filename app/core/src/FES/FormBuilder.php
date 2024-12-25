@@ -261,7 +261,7 @@ class FormBuilder extends Singleton {
                     <div class="mec-form-repeating-event-row">
                         <div class="mec-form-row">
                             <label class="mec-col-3" for="mec_repeat_type"><?php esc_html_e('Repeats', 'modern-events-calendar-lite'); ?></label>
-                            <select class="mec-col-2" name="mec[date][repeat][type]" id="mec_repeat_type">
+                            <select class="mec-col-4" name="mec[date][repeat][type]" id="mec_repeat_type">
                                 <option <?php if($repeat_type == 'daily') echo 'selected="selected"'; ?> value="daily"><?php esc_html_e('Daily', 'modern-events-calendar-lite'); ?></option>
                                 <option <?php if($repeat_type == 'weekday') echo 'selected="selected"'; ?> value="weekday"><?php esc_html_e('Every Weekday', 'modern-events-calendar-lite'); ?></option>
                                 <option <?php if($repeat_type == 'weekend') echo 'selected="selected"'; ?> value="weekend"><?php esc_html_e('Every Weekend', 'modern-events-calendar-lite'); ?></option>
@@ -1376,15 +1376,57 @@ class FormBuilder extends Singleton {
             }
         }
 
+        $plural_label = \MEC\Base::get_main()->m('taxonomy_speakers', esc_html__('Speakers', 'modern-events-calendar-lite'));
+        $singular_label = \MEC\Base::get_main()->m('taxonomy_speaker', esc_html__('Speaker', 'modern-events-calendar-lite'));
         ?>
         <!-- Event Speakers Section -->
         <div class="mec-meta-box-fields mec-fes-speakers" id="mec-speakers">
-            <h4><?php echo esc_html(\MEC\Base::get_main()->m('taxonomy_speakers', esc_html__('Speakers', 'modern-events-calendar-lite'))); ?></h4>
-            <div class="mec-form-row">
-                <input type="text" name="mec[speakers][datas][names]" id="mec_speaker_input_names" placeholder="<?php echo sprintf(esc_html__('%s Name', 'modern-events-calendar-lite'), \MEC\Base::get_main()->m('taxonomy_speaker', esc_html__('Speaker', 'modern-events-calendar-lite'))); ?>" class="" />
-                <p><?php echo sprintf(esc_html__('Insert name of one %s: Chris Taylor', 'modern-events-calendar-lite'), strtolower(\MEC\Base::get_main()->m('taxonomy_speaker', esc_html__('speaker', 'modern-events-calendar-lite')))); ?></p>
-                <button class="button" type="button" id="mec_add_speaker_button"><?php esc_html_e('Add', 'modern-events-calendar-lite'); ?></button>
-            </div>
+            <h4><?php echo esc_html($plural_label); ?></h4>
+            <?php if(isset($atts['add_speaker']) && $atts['add_speaker'] == '1'): ?>
+                <div class="mec-form-row">
+                    <input type="text" name="mec[speakers][datas][names]" id="mec_speaker_input_names" placeholder="<?php echo sprintf(esc_attr__('%s Name', 'modern-events-calendar-lite'), $singular_label); ?>">
+                    <p><?php echo sprintf(esc_html__('Insert name of one %s: Chris Taylor', 'modern-events-calendar-lite'), strtolower($singular_label)); ?></p>
+                    <button class="button" type="button" id="mec_add_speaker_button"><?php esc_html_e('Add Speaker', 'modern-events-calendar-lite'); ?></button>
+                </div>
+            <?php elseif(isset($atts['add_speaker']) && $atts['add_speaker'] == '2'): ?>
+                <div class="mec-form-row mec-add-speaker-row">
+                    <input type="text" name="mec[speakers][data][name]" id="mec_speaker_full_info_name" placeholder="<?php echo sprintf(esc_attr__('%s Name', 'modern-events-calendar-lite'), $singular_label); ?>">
+                    <p><?php echo sprintf(esc_html__('Insert name of one %s: Chris Taylor', 'modern-events-calendar-lite'), strtolower($singular_label)); ?></p>
+                </div>
+                <div class="mec-form-row mec-add-speaker-row">
+                    <label><?php esc_html_e('Type', 'modern-events-calendar-lite'); ?></label>
+                    <select name="mec[speakers][data][type]" id="mec_speaker_full_info_type">
+                        <option value="person"><?php esc_html_e('Person', 'modern-events-calendar-lite'); ?></option>
+                        <option value="group"><?php esc_html_e('Group', 'modern-events-calendar-lite'); ?></option>
+                    </select>
+                </div>
+                <div class="mec-form-row mec-add-speaker-row">
+                    <input type="text" name="mec[speakers][data][job_title]" id="mec_speaker_full_info_job_title" placeholder="<?php echo esc_attr__('Job Title', 'modern-events-calendar-lite'); ?>">
+                </div>
+                <div class="mec-form-row mec-add-speaker-row">
+                    <input type="tel" name="mec[speakers][data][tel]" id="mec_speaker_full_info_tel" placeholder="<?php echo esc_attr__('Tel', 'modern-events-calendar-lite'); ?>">
+                </div>
+                <div class="mec-form-row mec-add-speaker-row">
+                    <input type="email" name="mec[speakers][data][email]" id="mec_speaker_full_info_email" placeholder="<?php echo esc_attr__('Email', 'modern-events-calendar-lite'); ?>">
+                </div>
+                <div class="mec-form-row mec-add-speaker-row">
+                    <input type="url" name="mec[speakers][data][website]" id="mec_speaker_full_info_website" placeholder="<?php echo esc_attr__('Website', 'modern-events-calendar-lite'); ?>">
+                </div>
+                <?php foreach(['facebook' => esc_html__('Facebook Page'), 'instagram' => esc_html__('Instagram'), 'linkedin' => esc_html__('LinkedIn'), 'twitter' => esc_html__('Twitter Page')] as $sc => $label): ?>
+                    <div class="mec-form-row mec-add-speaker-row">
+                        <input type="url" name="mec[speakers][data][<?php echo esc_attr($sc); ?>]" id="mec_speaker_full_info_<?php echo esc_attr($sc); ?>" placeholder="<?php echo esc_attr($label); ?>">
+                    </div>
+                <?php endforeach; ?>
+                <div class="mec-form-row mec-add-speaker-row">
+                    <div class="mec-form-row mec-thumbnail-row">
+                        <span id="mec_fes_speaker_thumbnail_img"></span>
+                        <input type="hidden" name="mec[speakers][data][thumbnail]" id="mec_fes_speaker_thumbnail" value="">
+                        <input type="file" id="mec_fes_speaker_thumbnail_file" onchange="mec_fes_upload_speaker_thumbnail();" />
+                        <span class="mec_fes_speaker_remove_image_button button mec-util-hidden" id="mec_fes_speaker_remove_image_button"><?php echo esc_html__('Remove image', 'modern-events-calendar-lite'); ?></span>
+                    </div>
+                    <button class="button" type="button" id="mec_add_full_speaker_button"><?php esc_html_e('Add Speaker', 'modern-events-calendar-lite'); ?></button>
+                </div>
+            <?php endif; ?>
             <div class="mec-form-row" id="mec-fes-speakers-list">
             <?php if(count($speaker_terms)): ?>
                 <?php foreach($speaker_terms as $speaker_term): ?>
@@ -1447,15 +1489,34 @@ class FormBuilder extends Singleton {
             'hide_empty'=>false
         ));
 
+        $plural_label = \MEC\Base::get_main()->m('taxonomy_sponsors', esc_html__('Sponsors', 'modern-events-calendar-lite'));
+        $singular_label = \MEC\Base::get_main()->m('taxonomy_sponsor', esc_html__('Sponsor', 'modern-events-calendar-lite'));
         ?>
         <!-- Event Sponsors Section -->
         <div class="mec-meta-box-fields mec-fes-sponsors" id="mec-sponsors">
-            <h4><?php echo esc_html(\MEC\Base::get_main()->m('taxonomy_sponsors', esc_html__('Sponsors', 'modern-events-calendar-lite'))); ?></h4>
-            <?php if(isset($atts['add_sponsors']) && $atts['add_sponsors']): ?>
+            <h4><?php echo esc_html($plural_label); ?></h4>
+            <?php if(isset($atts['add_sponsors']) && $atts['add_sponsors'] == '1'): ?>
             <div class="mec-form-row">
-                <input type="text" name="mec[sponsors][datas][names]" id="mec_sponsor_input_names" placeholder="<?php echo sprintf(esc_html__('%s Name', 'modern-events-calendar-lite'), \MEC\Base::get_main()->m('taxonomy_sponsor', esc_html__('Sponsor', 'modern-events-calendar-lite'))); ?>" />
+                <input type="text" name="mec[sponsors][datas][names]" id="mec_sponsor_input_names" placeholder="<?php echo sprintf(esc_html__('%s Name', 'modern-events-calendar-lite'), $singular_label); ?>">
                 <p><?php echo sprintf(esc_html__('Insert name of one %s: Company A', 'modern-events-calendar-lite'), strtolower(\MEC\Base::get_main()->m('taxonomy_sponsor', esc_html__('sponsor', 'modern-events-calendar-lite')))); ?></p>
-                <button class="button" type="button" id="mec_add_sponsor_button"><?php esc_html_e('Add', 'modern-events-calendar-lite'); ?></button>
+                <button class="button" type="button" id="mec_add_sponsor_button"><?php esc_html_e('Add Sponsor', 'modern-events-calendar-lite'); ?></button>
+            </div>
+            <?php elseif(isset($atts['add_sponsors']) && $atts['add_sponsors'] == '2'): ?>
+            <div class="mec-form-row mec-add-sponsor-row">
+                <input type="text" name="mec[sponsors][data][name]" id="mec_sponsor_full_info_name" placeholder="<?php echo sprintf(esc_html__('%s Name', 'modern-events-calendar-lite'), $singular_label); ?>">
+                <p><?php echo sprintf(esc_html__('Insert name of one %s: Company A', 'modern-events-calendar-lite'), strtolower($singular_label)); ?></p>
+            </div>
+            <div class="mec-form-row mec-add-sponsor-row">
+                <input type="url" name="mec[sponsors][data][url]" id="mec_sponsor_full_info_url" placeholder="<?php echo sprintf(esc_html__('%s Link', 'modern-events-calendar-lite'), $singular_label); ?>">
+            </div>
+            <div class="mec-form-row mec-add-sponsor-row">
+                <div class="mec-form-row mec-thumbnail-row">
+                    <span id="mec_fes_sponsor_thumbnail_img"></span>
+                    <input type="hidden" name="mec[sponsors][data][thumbnail]" id="mec_fes_sponsor_thumbnail" value="">
+                    <input type="file" id="mec_fes_sponsor_thumbnail_file" onchange="mec_fes_upload_sponsor_thumbnail();" />
+                    <span class="mec_fes_sponsor_remove_image_button button mec-util-hidden" id="mec_fes_sponsor_remove_image_button"><?php echo esc_html__('Remove image', 'modern-events-calendar-lite'); ?></span>
+                </div>
+                <button class="button" type="button" id="mec_add_full_sponsor_button"><?php esc_html_e('Add Sponsor', 'modern-events-calendar-lite'); ?></button>
             </div>
             <?php endif; ?>
             <div class="mec-form-row" id="mec-fes-sponsors-list">
@@ -4150,8 +4211,8 @@ class FormBuilder extends Singleton {
      *
      * @return void
      */
-    public static function register_style_and_scripts(){
-
+    public static function register_style_and_scripts()
+    {
         wp_register_script( 'mec-fes-form-builder', plugin_dir_url( __FILE__ ) . 'scripts.js', array( 'jquery' ), MEC_VERSION );
     }
 

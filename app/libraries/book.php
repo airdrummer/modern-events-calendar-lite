@@ -206,8 +206,20 @@ class MEC_book extends MEC_base
                     }
                     else $fee_amount += (($total_tickets_amount + $total_variations_amount) * $fee_amount_config) / 100;
                 }
-                else if ($fee['type'] == 'amount') $fee_amount += ($total_tickets_count * $fee_amount_config);
-                else if ($fee['type'] == 'amount_per_booking') $fee_amount += $fee_amount_config;
+                else if ($fee['type'] == 'amount') {
+                    $fee_amount += ($total_tickets_count * $fee_amount_config);
+                    if ($tax_inclusion_type === 'included')
+                    {
+                        $total_ticket_percent_fee_amount +=$fee_amount;
+                    }
+                }
+                else if ($fee['type'] == 'amount_per_booking') {
+                    $fee_amount += $fee_amount_config;
+                    if ($tax_inclusion_type === 'included')
+                    {
+                        $total_ticket_percent_fee_amount +=$fee_amount;
+                    }
+                }
                 else continue;
 
                 // Add to Total

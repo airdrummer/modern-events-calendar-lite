@@ -1547,7 +1547,7 @@ jQuery(window).on('load', function()
         }
 
         // Set The Week
-        setThisWeek(settings.month_id + settings.week, true);
+        setThisWeek(settings.month_id + settings.week);
 
         // Set Listeners
         setListeners();
@@ -1647,8 +1647,7 @@ jQuery(window).on('load', function()
         }
 
         function initMonthNavigator(month_id) {
-            $('#mec_month_navigator' + settings.id + '_' + month_id + ' .mec-load-month').off('click');
-            $('#mec_month_navigator' + settings.id + '_' + month_id + ' .mec-load-month').on('click', function () {
+            $('#mec_month_navigator' + settings.id + '_' + month_id + ' .mec-load-month').off('click').on('click', function () {
                 var year = $(this).data('mec-year');
                 var month = $(this).data('mec-month');
 
@@ -1775,9 +1774,9 @@ jQuery(window).on('load', function()
             $("#mec_skin_" + settings.id + " .mec-event-title a").off('click').on('click', function (e) {
                 var sed_method = $(this).attr('target');
                 if ('_blank' === sed_method) {
-
                     return;
                 }
+
                 e.preventDefault();
                 var href = $(this).attr('href');
 
@@ -5392,40 +5391,99 @@ function mec_focus_week(id, skin) {
 
         $('a').on('click', function () { });
 
-        // FES Speakers Adding
+        // FES Speakers Adding - Name Only
         $('#mec_add_speaker_button').on('click', function () {
-            var $this = this;
-            var content = $($this).parent().find('input');
-            var list = $('#mec-fes-speakers-list');
-            var key = list.find('.mec-error').length;
+            const $this = this;
+            const content = $($this).parent().find('input');
+            const list = $('#mec-fes-speakers-list');
+            const key = list.find('.mec-error').length;
 
             $($this).prop("disabled", true).css('cursor', 'wait');
             $.post(ajaxurl, {
-                action: "speaker_adding",
+                action: "mec_speaker_adding",
                 content: content.val(),
                 key: key
             })
-                .done(function (data) {
-                    if ($(data).hasClass('mec-error')) {
-                        list.prepend(data);
-                        setTimeout(function () {
-                            $('#mec-speaker-error-${key}').remove();
-                        }, 1500);
-                    } else {
-                        list.html(data);
-                        content.val('');
-                    }
+            .done(function (data) {
+                if ($(data).hasClass('mec-error')) {
+                    list.prepend(data);
+                    setTimeout(function () {
+                        $('#mec-speaker-error-${key}').remove();
+                    }, 1500);
+                } else {
+                    list.html(data);
+                    content.val('');
+                }
 
-                    $($this).prop("disabled", false).css('cursor', 'pointer');
-                });
+                $($this).prop("disabled", false).css('cursor', 'pointer');
+            });
         });
 
-        // FES Sponsor Adding
+        // FES Speaker Adding - Full Details
+        $('#mec_add_full_speaker_button').on('click', function () {
+            const $this = this;
+            const list = $('#mec-fes-speakers-list');
+            const name = $('#mec_speaker_full_info_name');
+            const type = $('#mec_speaker_full_info_type');
+            const job_title = $('#mec_speaker_full_info_job_title');
+            const tel = $('#mec_speaker_full_info_tel');
+            const email = $('#mec_speaker_full_info_email');
+            const website = $('#mec_speaker_full_info_website');
+            const facebook = $('#mec_speaker_full_info_facebook');
+            const instagram = $('#mec_speaker_full_info_instagram');
+            const linkedin = $('#mec_speaker_full_info_linkedin');
+            const twitter = $('#mec_speaker_full_info_twitter');
+            const image = $('#mec_fes_speaker_thumbnail');
+            const key = list.find('.mec-error').length;
+
+            $($this).prop("disabled", true).css('cursor', 'wait');
+            $.post(ajaxurl, {
+                action: "mec_speaker_adding",
+                name: name.val(),
+                type: type.val(),
+                job_title: job_title.val(),
+                tel: tel.val(),
+                email: email.val(),
+                website: website.val(),
+                facebook: facebook.val(),
+                instagram: instagram.val(),
+                linkedin: linkedin.val(),
+                twitter: twitter.val(),
+                image: image.val(),
+                key: key
+            })
+            .done(function (data) {
+                if ($(data).hasClass('mec-error')) {
+                    list.prepend(data);
+                    setTimeout(function () {
+                        $('#mec-speaker-error-${key}').remove();
+                    }, 1500);
+                } else {
+                    list.html(data);
+                    name.val('');
+                    type.val('');
+                    job_title.val('');
+                    tel.val('');
+                    email.val('');
+                    website.val('');
+                    facebook.val('');
+                    instagram.val('');
+                    linkedin.val('');
+                    twitter.val('');
+
+                    $('#mec_fes_speaker_remove_image_button').trigger('click');
+                }
+
+                $($this).prop("disabled", false).css('cursor', 'pointer');
+            });
+        });
+
+        // FES Sponsor Adding - Name Only
         $('#mec_add_sponsor_button').on('click', function () {
-            var $this = this;
-            var content = $($this).parent().find('input');
-            var list = $('#mec-fes-sponsors-list');
-            var key = list.find('.mec-error').length;
+            const $this = this;
+            const content = $($this).parent().find('input');
+            const list = $('#mec-fes-sponsors-list');
+            const key = list.find('.mec-error').length;
 
             $($this).prop("disabled", true).css('cursor', 'wait');
             $.post(ajaxurl, {
@@ -5442,6 +5500,41 @@ function mec_focus_week(id, skin) {
                 } else {
                     list.html(data);
                     content.val('');
+                }
+
+                $($this).prop("disabled", false).css('cursor', 'pointer');
+            });
+        });
+
+        // FES Sponsor Adding - Full Details
+        $('#mec_add_full_sponsor_button').on('click', function () {
+            const $this = this;
+            const list = $('#mec-fes-sponsors-list');
+            const name = $('#mec_sponsor_full_info_name');
+            const url = $('#mec_sponsor_full_info_url');
+            const image = $('#mec_fes_sponsor_thumbnail');
+            const key = list.find('.mec-error').length;
+
+            $($this).prop("disabled", true).css('cursor', 'wait');
+            $.post(ajaxurl, {
+                action: "mec_sponsor_adding",
+                name: name.val(),
+                url: url.val(),
+                image: image.val(),
+                key: key
+            })
+            .done(function (data) {
+                if ($(data).hasClass('mec-error')) {
+                    list.prepend(data);
+                    setTimeout(function () {
+                        $('#mec-sponsor-error-${key}').remove();
+                    }, 1500);
+                } else {
+                    list.html(data);
+                    name.val('');
+                    url.val('');
+
+                    $('#mec_fes_sponsor_remove_image_button').trigger('click');
                 }
 
                 $($this).prop("disabled", false).css('cursor', 'pointer');

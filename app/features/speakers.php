@@ -43,10 +43,8 @@ class MEC_feature_speakers extends MEC_base
         $this->factory->action('edited_mec_speaker', array($this, 'save_metadata'));
         $this->factory->action('created_mec_speaker', array($this, 'save_metadata'));
 
-        $this->factory->action('wp_ajax_speaker_adding', array($this, 'fes_speaker_adding'));
-        $this->factory->action('wp_ajax_nopriv_speaker_adding', array($this, 'fes_speaker_adding'));
-        $this->factory->action('wp_ajax_mec_sponsor_adding', array($this, 'fes_sponsor_adding'));
-        $this->factory->action('wp_ajax_nopriv_mec_sponsor_adding', array($this, 'fes_sponsor_adding'));
+        $this->factory->action('wp_ajax_mec_speaker_adding', array($this, 'fes_speaker_adding'));
+        $this->factory->action('wp_ajax_nopriv_mec_speaker_adding', array($this, 'fes_speaker_adding'));
         $this->factory->action('current_screen', array($this, 'show_notices'));
 
         $this->factory->filter('manage_edit-mec_speaker_columns', array($this, 'filter_columns'));
@@ -387,26 +385,73 @@ class MEC_feature_speakers extends MEC_base
      */
     public function fes_speaker_adding()
     {
-        $content = isset($_REQUEST['content']) ? sanitize_text_field($_REQUEST['content']) : NULL;
         $key = isset($_REQUEST['key']) ? sanitize_text_field($_REQUEST['key']) : NULL;
-
-        $content = wp_strip_all_tags($content);
-        $content = sanitize_text_field($content);
         $key = intval($key);
 
-        if(!trim($content))
+        if (isset($_REQUEST['content']))
         {
-            echo '<p class="mec-error" id="mec-speaker-error-' . esc_attr($key) . '">' . sprintf(esc_html__('Sorry, You must insert %s name!', 'modern-events-calendar-lite'), strtolower(\MEC\Base::get_main()->m('taxonomy_speaker', esc_html__('speaker', 'modern-events-calendar-lite')))) . '</p>';
-            exit;
-        }
+            $content = sanitize_text_field($_REQUEST['content']);
+            $content = wp_strip_all_tags($content);
+            $content = sanitize_text_field($content);
 
-        if(term_exists($content, 'mec_speaker'))
+            if (!trim($content))
+            {
+                echo '<p class="mec-error" id="mec-speaker-error-' . esc_attr($key) . '">' . sprintf(esc_html__('Sorry, You must insert %s name!', 'modern-events-calendar-lite'), strtolower(\MEC\Base::get_main()->m('taxonomy_speaker', esc_html__('speaker', 'modern-events-calendar-lite')))) . '</p>';
+                exit;
+            }
+
+            if (term_exists($content, 'mec_speaker'))
+            {
+                echo '<p class="mec-error" id="mec-speaker-error-' . esc_attr($key) . '">' . esc_html__("Sorry, $content already exists!", 'modern-events-calendar-lite') . '</p>';
+                exit;
+            }
+
+            wp_insert_term(trim($content), 'mec_speaker');
+        }
+        elseif(isset($_REQUEST['name']))
         {
-            echo '<p class="mec-error" id="mec-speaker-error-' . esc_attr($key) . '">' . esc_html__("Sorry, {$content} already exists!", 'modern-events-calendar-lite') . '</p>';
-            exit;
-        }
+            $name = sanitize_text_field($_REQUEST['name']);
+            $type = isset($_REQUEST['type']) ? sanitize_text_field($_REQUEST['type']) : 'person';
+            $job_title = isset($_REQUEST['job_title']) ? sanitize_text_field($_REQUEST['job_title']) : '';
+            $tel = isset($_REQUEST['tel']) ? sanitize_text_field($_REQUEST['tel']) : '';
+            $email = isset($_REQUEST['email']) ? sanitize_text_field($_REQUEST['email']) : '';
+            $website = isset($_REQUEST['website']) ? esc_url($_REQUEST['website']) : '';
+            $facebook = isset($_REQUEST['facebook']) ? esc_url($_REQUEST['facebook']) : '';
+            $instagram = isset($_REQUEST['instagram']) ? esc_url($_REQUEST['instagram']) : '';
+            $linkedin = isset($_REQUEST['linkedin']) ? esc_url($_REQUEST['linkedin']) : '';
+            $twitter = isset($_REQUEST['twitter']) ? esc_url($_REQUEST['twitter']) : '';
+            $image = isset($_REQUEST['image']) ? esc_url($_REQUEST['image']) : '';
 
-        wp_insert_term(trim($content), 'mec_speaker');
+            if (!trim($name))
+            {
+                echo '<p class="mec-error" id="mec-speaker-error-' . esc_attr($key) . '">' . sprintf(esc_html__('Sorry, You must insert %s name!', 'modern-events-calendar-lite'), strtolower(\MEC\Base::get_main()->m('taxonomy_speaker', esc_html__('speaker', 'modern-events-calendar-lite')))) . '</p>';
+                exit;
+            }
+
+            if (term_exists($name, 'mec_speaker'))
+            {
+                echo '<p class="mec-error" id="mec-speaker-error-' . esc_attr($key) . '">' . esc_html__("Sorry, $name already exists!", 'modern-events-calendar-lite') . '</p>';
+                exit;
+            }
+
+            $speaker = wp_insert_term(trim($name), 'mec_speaker');
+            if(is_array($speaker))
+            {
+                $speaker_id = $speaker['term_id'];
+
+                update_term_meta($speaker_id, 'type', $type);
+                update_term_meta($speaker_id, 'job_title', $job_title);
+                update_term_meta($speaker_id, 'tel', $tel);
+                update_term_meta($speaker_id, 'email', $email);
+                update_term_meta($speaker_id, 'website', $website);
+                update_term_meta($speaker_id, 'mec_index', 99);
+                update_term_meta($speaker_id, 'facebook', $facebook);
+                update_term_meta($speaker_id, 'twitter', $twitter);
+                update_term_meta($speaker_id, 'instagram', $instagram);
+                update_term_meta($speaker_id, 'linkedin', $linkedin);
+                update_term_meta($speaker_id, 'thumbnail', $image);
+            }
+        }
 
         $speakers = '';
         $speaker_terms = get_terms(array('taxonomy'=>'mec_speaker', 'hide_empty'=>false));
@@ -419,48 +464,6 @@ class MEC_feature_speakers extends MEC_base
         }
 
         echo MEC_kses::form($speakers);
-        exit;
-    }
-
-    /**
-     * Adding new sponsor
-     * @author Webnus <info@webnus.net>
-     * @return void
-     */
-    public function fes_sponsor_adding()
-    {
-        $content = isset($_REQUEST['content']) ? sanitize_text_field($_REQUEST['content']) : NULL;
-        $key = isset($_REQUEST['key']) ? sanitize_text_field($_REQUEST['key']) : NULL;
-
-        $content = wp_strip_all_tags($content);
-        $content = sanitize_text_field($content);
-        $key = intval($key);
-
-        if(!trim($content))
-        {
-            echo '<p class="mec-error" id="mec-sponsor-error-' . esc_attr($key) . '">' . sprintf(esc_html__('Sorry, You must insert %s name!', 'modern-events-calendar-lite'), strtolower(\MEC\Base::get_main()->m('taxonomy_sponsor', esc_html__('sponsor', 'modern-events-calendar-lite')))) . '</p>';
-            exit;
-        }
-
-        if(term_exists($content, 'mec_sponsor'))
-        {
-            echo '<p class="mec-error" id="mec-sponsor-error-' . esc_attr($key) . '">' . esc_html__("Sorry, {$content} already exists!", 'modern-events-calendar-lite') . '</p>';
-            exit;
-        }
-
-        wp_insert_term(trim($content), 'mec_sponsor');
-
-        $sponsors = '';
-        $sponsor_terms = get_terms(array('taxonomy'=>'mec_sponsor', 'hide_empty'=>false));
-        foreach($sponsor_terms as $sponsor_term)
-        {
-            $sponsors .= '<label for="mec_fes_sponsors'.esc_attr($sponsor_term->term_id).'">
-                <input type="checkbox" name="mec[sponsors]['.esc_attr($sponsor_term->term_id).']" id="mec_fes_sponsors'.esc_attr($sponsor_term->term_id).'" value="1">
-                '.esc_html($sponsor_term->name).'
-            </label>';
-        }
-
-        echo MEC_kses::form($sponsors);
         exit;
     }
 

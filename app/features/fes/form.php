@@ -162,13 +162,15 @@ FormBuilder::enqueue();
 
                 if((isset($this->settings['speakers_status']) and $this->settings['speakers_status']) and isset($this->settings['fes_section_speaker']) and $this->settings['fes_section_speaker']){
 
-                    FormBuilder::speakers( $post, array() );
+                    FormBuilder::speakers( $post, array(
+                        'add_speaker' => $this->settings['fes_add_speaker'] ?? 1
+                    ) );
                 }
 
                 if( $this->getPRO() && isset($this->settings['sponsors_status']) and $this->settings['sponsors_status'] and isset($this->settings['fes_section_sponsor']) and $this->settings['fes_section_sponsor'] ){
 
                     FormBuilder::sponsors( $post, array(
-                        'add_sponsors' => !isset($this->settings['fes_add_sponsor']) || $this->settings['fes_add_sponsor'] ? 1: 0,
+                        'add_sponsors' => $this->settings['fes_add_sponsor'] ?? 1,
                     ) );
                 }
 

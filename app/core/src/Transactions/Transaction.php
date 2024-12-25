@@ -1870,10 +1870,13 @@ class Transaction {
 				$fee_detail['product_id'] = $product_id;
 
 				if( !$product_id || $rebuild || $update ) {
+                    $tax_inclusion_type = \MEC\Settings\Settings::getInstance()->get_settings('tax_inclusion') !== null && trim(\MEC\Settings\Settings::getInstance()->get_settings( 'tax_inclusion' )) ? \MEC\Settings\Settings::getInstance()->get_settings( 'tax_inclusion' ) : 'excluded';
 
-					$product_id = $this->create_fee_product( $fee_detail, $related_products, $update );
-
-					$fees_product_ids[ $fee_key ] = $product_id;
+                    if (!(\MEC\Settings\Settings::getInstance()->get_settings('taxes_fees_status') !== null && \MEC\Settings\Settings::getInstance()->get_settings('taxes_fees_status') && $tax_inclusion_type === 'included'))
+                    {
+                        $product_id = $this->create_fee_product( $fee_detail, $related_products, $update );
+                        $fees_product_ids[ $fee_key ] = $product_id;
+                    }
 				}
 
 				$product_ids[] = $product_id;

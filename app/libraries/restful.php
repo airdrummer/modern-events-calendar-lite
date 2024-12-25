@@ -114,4 +114,12 @@ class MEC_restful extends MEC_base
 
         return false;
     }
+
+    public function get_user_token($user_id): string
+    {
+        $token = $this->main->str_random(40);
+        update_user_meta($user_id, 'mec_token', $token);
+
+        return $token;
+    }
 }
