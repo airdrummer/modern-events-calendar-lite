@@ -4,7 +4,7 @@ Donate link: https://webnus.net
 Tags: Event, Events, Calendar, Booking, Schedule, Organizer, Venue
 Requires at least: 4.0.0
 Tested up to: 6.7.1
-Stable tag: 7.18.0
+Stable tag: 7.18.0.2
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -472,10 +472,14 @@ You can see [plugin documentation](https://webnus.net/dox/modern-events-calendar
 43. WordPress Event Calendar - Daily view(Fluent View Layouts Addon)
 
 == Changelog ==
-v 7.18.1 – 25 December 2024 
-- fix countdown
 
-= v 7.18.0 – 23 December 2024 =
+v 7.18.0.2 – 28 December 2024
+- added missing timezone
+
+v 7.18.0.1 – 25 December 2024
+- fixed countdown
+
+v 7.18.0 – 23 December 2024
 - Added: An ability to insert full data of sponsors in Frontend Submission.
 - Added: An ability to insert full data of speakers in Frontend Submission.
 - Added: Login command to the restful API.
