@@ -76,7 +76,7 @@ $offset = $user_timezone->getOffset($gmt_datetime);
 $user_start_time = $gmt_start_time + $offset;
 $user_end_time = $gmt_end_time + $offset;
 ?>
-<div class="mec-localtime-details" id="mec_localtime_details">
+<div class="mec-localtime-details t2" id="mec_localtime_details">
     <div class="mec-localtime-wrap">
         <?php echo ((isset($icons) && $icons) ? $icons->display('clock') : '<i class="mec-sl-clock"></i>'); ?>
         <span class="mec-localtitle"><?php esc_html_e('Local Time:', 'modern-events-calendar-lite'); ?></span>

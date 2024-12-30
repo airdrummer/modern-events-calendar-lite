@@ -42,8 +42,8 @@ $allday = isset($event->data->meta['mec_allday']) ? $event->data->meta['mec_alld
 $hide_time = isset($event->data->meta['mec_hide_time']) ? $event->data->meta['mec_hide_time'] : 0;
 $hide_end_time = $this->hide_end_time_status($event->ID);
 ?>
-<div class="mec-local-time-details" id="mec_local_time_details">
-    <?php echo ((isset($icons) && $icons) ? $icons->display('clock') : '<i class="mec-sl-clock"></i>'); ?><span class="mec-local-title"><?php esc_html_e('Local Time', 'modern-events-calendar-lite'); ?></span>
+<div class="mec-local-time-details t1" id="mec_local_time_details">
+    <?php echo ((isset($icons) && $icons) ? $icons->display('clock') : '<i class="mec-sl-clock" style="margin-left: -1em; margin-right: 1em;"></i>'); ?><span class="mec-local-title"><?php esc_html_e('Local Time', 'modern-events-calendar-lite'); ?></span>
     <div class="mec-local-date"><?php echo sprintf(esc_html__('%s', 'modern-events-calendar-lite'), $this->date_label(array('date'=>date('Y-m-d', $user_start_time)), array('date'=>date('Y-m-d', $user_end_time)), $date_format1)); ?></div>
     <?php if(!$hide_time and trim($time_format)): ?>
     <div class="mec-local-time"><?php echo sprintf(esc_html__('%s', 'modern-events-calendar-lite'), 
