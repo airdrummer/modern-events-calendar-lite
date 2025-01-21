@@ -4,7 +4,7 @@ defined('MECEXEC') or die();
 
 /**
  * Webnus MEC User Events class.
- * @author Webnus <info@webnus.biz>
+ * @author Webnus <info@webnus.net>
  */
 class MEC_feature_userevents extends MEC_base
 {
@@ -20,7 +20,7 @@ class MEC_feature_userevents extends MEC_base
 
     /**
      * Constructor method
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      */
     public function __construct()
     {
@@ -33,12 +33,12 @@ class MEC_feature_userevents extends MEC_base
 
     /**
      * Initialize User Events Feature
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      */
     public function init()
     {
         // User Events Shortcode
-        $this->factory->shortcode('MEC_userevents', array($this, 'output'));
+        $this->factory->shortcode('MEC_userevents', [$this, 'output']);
     }
 
     /**
@@ -48,17 +48,14 @@ class MEC_feature_userevents extends MEC_base
      */
     public function output($atts = array())
     {
-        // Force to array
-        if(!is_array($atts)) $atts = array();
-
         // Show login/register message if user is not logged in and guest submission is not enabled.
         if(!is_user_logged_in())
         {
             // Show message
-            $message = sprintf(__('Please %s/%s in order to see your own events.', 'modern-events-calendar-lite'), '<a href="'.wp_login_url($this->main->get_full_url()).'">'.__('Login', 'modern-events-calendar-lite').'</a>', '<a href="'.wp_registration_url().'">'.__('Register', 'modern-events-calendar-lite').'</a>');
+            $message = sprintf(esc_html__('Please %s/%s in order to see your own events.', 'modern-events-calendar-lite'), '<a href="'.wp_login_url($this->main->get_full_url()).'">'.esc_html__('Login', 'modern-events-calendar-lite').'</a>', '<a href="'.wp_registration_url().'">'.esc_html__('Register', 'modern-events-calendar-lite').'</a>');
 
             return '<div class="mec-userevents-message">
-                <p>'.$message.'</p>
+                <p>'.MEC_kses::element($message).'</p>
             </div>';
         }
 
@@ -68,13 +65,20 @@ class MEC_feature_userevents extends MEC_base
         // Settings
         $settings = $this->main->get_settings();
 
-        $shortcode_id = (isset($settings['userevents_shortcode']) and trim($settings['userevents_shortcode'])) ? $settings['userevents_shortcode'] : NULL;
+        $shortcode_id = isset($settings['userevents_shortcode']) && trim($settings['userevents_shortcode']) ? $settings['userevents_shortcode'] : NULL;
 
-        $atts = apply_filters('mec_calendar_atts', $render->parse($shortcode_id, array(
+        $atts = apply_filters('mec_calendar_atts', $render->parse($shortcode_id, [
             'author' => get_current_user_id()
-        )));
+        ]));
 
-        $skin = isset($atts['skin']) ? $atts['skin'] : 'monthly_view';
+        $skin = $atts['skin'] ?? 'monthly_view';
+        if(!in_array($skin, ['monthly_view', 'daily_view', 'weekly_view', 'list', 'grid', 'agenda']))
+        {
+            return '<div class="mec-userevents-message">
+                <p>'.esc_html__('Invalid Skin!', 'modern-events-calendar-lite').'</p>
+            </div>';
+        }
+
         return $render->skin($skin, $atts);
     }
 }

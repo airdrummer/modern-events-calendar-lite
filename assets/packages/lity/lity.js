@@ -1,6 +1,6 @@
-/*! Lity - v2.1.0 - 2016-09-19
+/*! Lity - v2.4.1 - 2020-04-26
 * http://sorgalla.com/lity/
-* Copyright (c) 2015-2016 Jan Sorgalla; Licensed MIT */
+* Copyright (c) 2015-2020 Jan Sorgalla; Licensed MIT */
 (function(window, factory) {
     if (typeof define === 'function' && define.amd) {
         define(['jquery'], function($) {
@@ -27,6 +27,7 @@
     var _focusableElementsSelector = 'a[href],area[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),button:not([disabled]),iframe,object,embed,[contenteditable],[tabindex]:not([tabindex^="-"])';
 
     var _defaultOptions = {
+        esc: true,
         handler: null,
         handlers: {
             image: imageHandler,
@@ -34,6 +35,7 @@
             youtube: youtubeHandler,
             vimeo: vimeoHandler,
             googlemaps: googlemapsHandler,
+            facebookvideo: facebookvideoHandler,
             iframe: iframeHandler
         },
         template: '<div class="lity" role="dialog" aria-label="Dialog Window (Press escape to close)" tabindex="-1"><div class="lity-wrap" data-lity-close role="document"><div class="lity-loader" aria-hidden="true">Loading...</div><div class="lity-container"><div class="lity-content"></div><button class="lity-close" type="button" aria-label="Close (Press escape to close)" data-lity-close>&times;</button></div></div></div>'
@@ -43,6 +45,7 @@
     var _youtubeRegex = /(youtube(-nocookie)?\.com|youtu\.be)\/(watch\?v=|v\/|u\/|embed\/?)?([\w-]{11})(.*)?/i;
     var _vimeoRegex =  /(vimeo(pro)?.com)\/(?:[^\d]+)?(\d+)\??(.*)?$/;
     var _googlemapsRegex = /((maps|www)\.)?google\.([^\/\?]+)\/?((maps\/?)?\?)(.*)/i;
+    var _facebookvideoRegex = /(facebook\.com)\/([a-z0-9_-]*)\/videos\/([0-9]*)(.*)?$/i;
 
     var _transitionEndEvent = (function() {
         var el = document.createElement('div');
@@ -131,7 +134,7 @@
     }
 
     function error(msg) {
-        return $('<span class="lity-error"/>').append(msg);
+        return $('<span class="lity-error"></span>').append(msg);
     }
 
     function imageHandler(target, instance) {
@@ -173,7 +176,7 @@
             return false;
         }
 
-        placeholder = $('<i style="display:none !important"/>');
+        placeholder = $('<i style="display:none !important"></i>');
         hasHideClass = el.hasClass('lity-hide');
 
         instance
@@ -242,6 +245,33 @@
         );
     }
 
+    function facebookvideoHandler(target) {
+        var matches = _facebookvideoRegex.exec(target);
+
+        if (!matches) {
+            return false;
+        }
+
+        if (0 !== target.indexOf('http')) {
+            target = 'https:' + target;
+        }
+
+        return iframeHandler(
+            transferHash(
+                target,
+                appendQueryParams(
+                    'https://www.facebook.com/plugins/video.php?href=' + target,
+                    $.extend(
+                        {
+                            autoplay: 1
+                        },
+                        parseQueryParams(matches[4] || '')
+                    )
+                )
+            )
+        );
+    }
+
     function googlemapsHandler(target) {
         var matches = _googlemapsRegex.exec(target);
 
@@ -263,7 +293,7 @@
     }
 
     function iframeHandler(target) {
-        return '<div class="lity-iframe-container"><iframe frameborder="0" allowfullscreen src="' + target + '"/></div>';
+        return '<div class="lity-iframe-container"><iframe frameborder="0" allowfullscreen allow="autoplay; fullscreen" src="' + target + '"/></div>';
     }
 
     function winHeight() {
@@ -280,7 +310,7 @@
         }
 
         // ESC key
-        if (e.keyCode === 27) {
+        if (e.keyCode === 27 && !!current.options('esc')) {
             current.close();
         }
 
@@ -482,8 +512,19 @@
             var deferred = _deferred();
 
             // We return focus only if the current focus is inside this instance
-            if (activeElement && $.contains(element, document.activeElement)) {
-                activeElement.focus();
+            if (
+                activeElement &&
+                (
+                    document.activeElement === element[0] ||
+                    $.contains(element[0], document.activeElement)
+                )
+            ) {
+                try {
+                    activeElement.focus();
+                } catch (e) {
+                    // Ignore exceptions, eg. for SVG elements which can't be
+                    // focused in IE11
+                }
             }
 
             content.trigger('lity:close', [self]);
@@ -586,7 +627,7 @@
         }
     }
 
-    lity.version  = '2.1.0';
+    lity.version  = '2.4.1';
     lity.options  = $.proxy(settings, lity, _defaultOptions);
     lity.handlers = $.proxy(settings, lity, _defaultOptions.handlers);
     lity.current  = currentInstance;

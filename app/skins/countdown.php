@@ -4,7 +4,7 @@ defined('MECEXEC') or die();
 
 /**
  * Webnus MEC countdown class.
- * @author Webnus <info@webnus.biz>
+ * @author Webnus <info@webnus.net>
  */
 class MEC_skin_countdown extends MEC_skins
 {
@@ -23,7 +23,7 @@ class MEC_skin_countdown extends MEC_skins
 
     /**
      * Constructor method
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      */
     public function __construct()
     {
@@ -32,7 +32,7 @@ class MEC_skin_countdown extends MEC_skins
     
     /**
      * Registers skin actions into WordPress
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      */
     public function actions()
     {
@@ -40,13 +40,18 @@ class MEC_skin_countdown extends MEC_skins
     
     /**
      * Initialize the skin
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      * @param array $atts
      */
     public function initialize($atts)
     {
         $this->atts = $atts;
-        $this->skin_options = (isset($this->atts['sk-options']) and isset($this->atts['sk-options'][$this->skin])) ? $this->atts['sk-options'][$this->skin] : array();
+        $this->skin_options = (isset($this->atts['sk-options']) and isset($this->atts['sk-options'][$this->skin])) ? $this->atts['sk-options'][$this->skin] : [];
+
+        // Icons
+        $this->icons = $this->main->icons(
+            isset($this->atts['icons']) && is_array($this->atts['icons']) ? $this->atts['icons'] : []
+        );
         
         // Date Formats
         $this->date_format_style11 = (isset($this->skin_options['date_format_style11']) and trim($this->skin_options['date_format_style11'])) ? $this->skin_options['date_format_style11'] : 'j F Y';
@@ -68,14 +73,14 @@ class MEC_skin_countdown extends MEC_skins
         if(!isset($this->atts['id'])) $this->atts['id'] = $this->id;
         
         // The style
-        $this->style = isset($this->skin_options['style']) ? $this->skin_options['style'] : 'style1';
+        $this->style = $this->skin_options['style'] ?? 'style1';
         if($this->style == 'fluent' and !is_plugin_active('mec-fluent-layouts/mec-fluent-layouts.php')) $this->style = 'style1';
 
         // reason_for_cancellation
-        $this->reason_for_cancellation = isset($this->skin_options['reason_for_cancellation']) ? $this->skin_options['reason_for_cancellation'] : false;
+        $this->reason_for_cancellation = $this->skin_options['reason_for_cancellation'] ?? false;
 
         // display_label
-        $this->display_label = isset($this->skin_options['display_label']) ? $this->skin_options['display_label'] : false;
+        $this->display_label = $this->skin_options['display_label'] ?? false;
         
         // Override the style if the style forced by us in a widget etc
         if(isset($this->atts['style']) and trim($this->atts['style']) != '') $this->style = $this->atts['style'];
@@ -85,24 +90,24 @@ class MEC_skin_countdown extends MEC_skins
         if(isset($this->atts['html-class']) and trim($this->atts['html-class']) != '') $this->html_class = $this->atts['html-class'];
         
         // From Widget
-        $this->widget = (isset($this->atts['widget']) and trim($this->atts['widget'])) ? true : false;
+        $this->widget = isset($this->atts['widget']) && trim($this->atts['widget']);
         
         // Init MEC
         $this->args['mec-skin'] = $this->skin;
         
         // Event ID
-        $this->event_id = isset($this->skin_options['event_id']) ? $this->skin_options['event_id'] : '-1';
+        $this->event_id = $this->skin_options['event_id'] ?? '-1';
         if(!get_post($this->event_id)) $this->event_id = '-1';
     }
     
     /**
      * Search and returns the filtered events
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      * @return array of objects
      */
     public function search()
     {
-        $events = array();
+        $events = [];
         
         // Get next upcoming event ID
         if($this->event_id == '-1')
@@ -111,17 +116,27 @@ class MEC_skin_countdown extends MEC_skins
         }
         else
         {
-            $rendered = $this->render->data($this->event_id, (isset($this->atts['content']) ? $this->atts['content'] : ''));
+            $rendered = $this->render->data($this->event_id, ($this->atts['content'] ?? ''));
+
+            $now = current_time('Y-m-d H:i:s');
 
             $data = new stdClass();
             $data->ID = $this->event_id;
             $data->data = $rendered;
-            $data->dates = $this->render->dates($this->event_id, $rendered, $this->maximum_dates);
-            $data->date = isset($data->dates[0]) ? $data->dates[0] : array();
+            $data->dates = $this->render->dates($this->event_id, $rendered, $this->maximum_dates, $now);
+            $data->date = [];
+
+            foreach($data->dates as $date)
+            {
+                if($this->main->is_past($date['start']['timestamp'], $now)) continue;
+
+                $data->date = $date;
+                break;
+            }
 
             $events[] = $this->render->after_render($data, $this);
         }
-        
+
         return $events;
     }
 }

@@ -4,7 +4,7 @@ defined('MECEXEC') or die();
 
 /**
  * Webnus MEC update class.
- * @author Webnus <info@webnus.biz>
+ * @author Webnus <info@webnus.net>
  */
 class MEC_feature_update extends MEC_base
 {
@@ -14,7 +14,7 @@ class MEC_feature_update extends MEC_base
 
     /**
      * Constructor method
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      */
     public function __construct()
     {
@@ -30,7 +30,7 @@ class MEC_feature_update extends MEC_base
     
     /**
      * Initialize update feature
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      */
     public function init()
     {
@@ -38,7 +38,7 @@ class MEC_feature_update extends MEC_base
         if(!get_option('mec_installed', 0)) return;
 
         // Run the Update Function
-        $this->factory->action('wp_loaded', array($this, 'update'));
+        $this->factory->action('admin_init', array($this, 'update'));
     }
 
     public function update()
@@ -47,7 +47,7 @@ class MEC_feature_update extends MEC_base
 
         // It's updated to latest version
         if(version_compare($version, $this->main->get_version(), '>=')) return;
-
+     
         // Run the updates one by one
         if(version_compare($version, '1.0.3', '<')) $this->version103();
         if(version_compare($version, '1.3.0', '<')) $this->version130();
@@ -75,6 +75,19 @@ class MEC_feature_update extends MEC_base
         if(version_compare($version, '5.17.0', '<')) $this->version5170();
         if(version_compare($version, '5.17.1', '<')) $this->version5171();
         if(version_compare($version, '5.19.1', '<')) $this->version5191();
+        if(version_compare($version, '5.22.0', '<')) $this->version5220();
+        if(version_compare($version, '6.0.0', '<')) $this->version600();
+        // if(version_compare($version, '6.2.6', '>')) $this->version626();
+        if(version_compare($version, '6.4.0', '<')) $this->version640();
+        if(version_compare($version, '6.5.3', '<')) $this->version653();
+        if(version_compare($version, '6.6.11', '<')) $this->version6611();
+        if(version_compare($version, '6.7.5', '<')) $this->version675();
+        if(version_compare($version, '6.8.35', '<')) $this->version6835();
+        if(version_compare($version, '7.0.0', '<')) $this->version700();
+        if(version_compare($version, '7.2.0', '<')) $this->version720();
+        if(version_compare($version, '7.4.0', '<')) $this->version740();
+        if(version_compare($version, '7.11.0', '<')) $this->version7110();
+        if(version_compare($version, '7.13.0', '<')) $this->version7130();
 
         // Update to latest version to prevent running the code twice
         update_option('mec_version', $this->main->get_version());
@@ -111,13 +124,13 @@ class MEC_feature_update extends MEC_base
     
     /**
      * Update database to version 1.0.3
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      */
     public function version103()
     {
         // Get current MEC options
         $current = get_option('mec_options', array());
-        if(is_string($current) and trim($current) == '') $current = array();
+        if(is_string($current) and trim($current) == '') $current = [];
         
         // Merge new options with previous options
         $current['notifications']['new_event'] = array
@@ -144,7 +157,7 @@ class MEC_feature_update extends MEC_base
     
     /**
      * Update database to version 1.3.0
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      */
     public function version130()
     {
@@ -153,7 +166,7 @@ class MEC_feature_update extends MEC_base
     
     /**
      * Update database to version 1.5.0
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      */
     public function version150()
     {
@@ -163,13 +176,13 @@ class MEC_feature_update extends MEC_base
 
     /**
      * Update database to version 2.2.0
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      */
     public function version220()
     {
         // Get current MEC options
         $current = get_option('mec_options', array());
-        if(is_string($current) and trim($current) == '') $current = array();
+        if(is_string($current) and trim($current) == '') $current = [];
 
         // Merge new options with previous options
         $current['notifications']['booking_reminder'] = array
@@ -276,7 +289,7 @@ class MEC_feature_update extends MEC_base
     {
         // Get current MEC options
         $current = get_option('mec_options', array());
-        if(is_string($current) and trim($current) == '') $current = array();
+        if(is_string($current) and trim($current) == '') $current = [];
 
         // Merge new options with previous options
         $current['notifications']['cancellation_notification'] = array
@@ -312,7 +325,7 @@ class MEC_feature_update extends MEC_base
     {
         // Get current MEC options
         $current = get_option('mec_options', array());
-        if(is_string($current) and trim($current) == '') $current = array();
+        if(is_string($current) and trim($current) == '') $current = [];
 
         // Merge new options with previous options
         $current['notifications']['user_event_publishing'] = array
@@ -342,8 +355,9 @@ class MEC_feature_update extends MEC_base
     {
         // Get Booking Posts
         $bookings = get_posts(array(
-            'post_type'  => 'mec-books',
+            'post_type'  => $this->main->get_book_post_type(),
             'numberposts'  => '-1',
+            'post_status'  => 'any',
         ));
 
         foreach($bookings as $id => $booking)
@@ -364,8 +378,9 @@ class MEC_feature_update extends MEC_base
     {
         // Get Booking Posts
         $bookings = get_posts(array(
-            'post_type'  => 'mec-books',
+            'post_type'  => $this->main->get_book_post_type(),
             'numberposts'  => '-1',
+            'post_status'  => 'any',
         ));
 
         foreach($bookings as $id => $booking)
@@ -406,7 +421,7 @@ class MEC_feature_update extends MEC_base
     {
         // Get current MEC options
         $current = get_option('mec_options', array());
-        if(is_string($current) and trim($current) == '') $current = array();
+        if(is_string($current) and trim($current) == '') $current = [];
 
         if(!isset($current['notifications']['booking_reminder'])) return;
         if(isset($current['notifications']['booking_reminder']['hours'])) return;
@@ -491,7 +506,7 @@ class MEC_feature_update extends MEC_base
     {
         // Get current MEC options
         $current = get_option('mec_options', array());
-        if(is_string($current) and trim($current) == '') $current = array();
+        if(is_string($current) and trim($current) == '') $current = [];
 
         // Merge new options with previous options
         $current['notifications']['booking_rejection'] = array
@@ -587,5 +602,329 @@ class MEC_feature_update extends MEC_base
     public function version5191()
     {
         $this->version5170();
+    }
+
+    public function version5220()
+    {
+        // All Events
+        $events = $this->main->get_events();
+
+        foreach($events as $event)
+        {
+            $start_time_hour = get_post_meta($event->ID, 'mec_start_time_hour', true);
+            $start_time_minutes = get_post_meta($event->ID, 'mec_start_time_minutes', true);
+            $start_time_ampm = get_post_meta($event->ID, 'mec_start_time_ampm', true);
+            $end_time_hour = get_post_meta($event->ID, 'mec_end_time_hour', true);
+            $end_time_minutes = get_post_meta($event->ID, 'mec_end_time_minutes', true);
+            $end_time_ampm = get_post_meta($event->ID, 'mec_end_time_ampm', true);
+
+            $day_start_seconds = $this->main->time_to_seconds($this->main->to_24hours($start_time_hour, $start_time_ampm), $start_time_minutes);
+            $day_end_seconds = $this->main->time_to_seconds($this->main->to_24hours($end_time_hour, $end_time_ampm), $end_time_minutes);
+
+            update_post_meta($event->ID, 'mec_start_day_seconds', $day_start_seconds);
+            update_post_meta($event->ID, 'mec_end_day_seconds', $day_end_seconds);
+        }
+    }
+
+    public function version600()
+    {
+        $this->db->q("CREATE TABLE IF NOT EXISTS `#__mec_bookings` (
+          `id` int UNSIGNED NOT NULL,
+          `booking_id` int UNSIGNED NOT NULL,
+          `event_id` int UNSIGNED NOT NULL,
+          `ticket_ids` varchar(255) NOT NULL,
+          `status` varchar(20) NOT NULL DEFAULT 'pending',
+          `confirmed` tinyint NOT NULL DEFAULT '0',
+          `verified` tinyint NOT NULL DEFAULT '0',
+          `all_occurrences` tinyint NOT NULL DEFAULT '0',
+          `date` datetime NOT NULL,
+          `timestamp` int UNSIGNED NOT NULL
+        ) DEFAULT CHARSET=[:CHARSET:] COLLATE=[:COLLATE:];");
+
+        $this->db->q("ALTER TABLE `#__mec_bookings` ADD PRIMARY KEY (`id`);");
+        $this->db->q("ALTER TABLE `#__mec_bookings` MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;");
+        $this->db->q("ALTER TABLE `#__mec_bookings` ADD KEY `event_id` (`event_id`,`ticket_ids`,`status`,`confirmed`,`verified`,`date`);");
+        $this->db->q("ALTER TABLE `#__mec_bookings` ADD KEY `booking_id` (`booking_id`);");
+        $this->db->q("ALTER TABLE `#__mec_bookings` ADD KEY `timestamp` (`timestamp`);");
+        $this->db->q("ALTER TABLE `#__mec_bookings` ADD `transaction_id` VARCHAR(20) NULL AFTER `booking_id`;");
+
+        $this->db->q("ALTER TABLE `#__mec_bookings` ADD `user_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `booking_id`;");
+        $this->db->q("ALTER TABLE `#__mec_bookings` ADD INDEX (`user_id`);");
+
+        // Get Booking Posts
+        $bookings = get_posts(array(
+            'post_type' => $this->main->get_book_post_type(),
+            'numberposts' => '-1',
+            'post_status' => 'any',
+        ));
+
+        // Booking Record
+        $bookingRecord = $this->getBookingRecord();
+
+        // Add Records for Existing Bookings
+        foreach($bookings as $booking) $bookingRecord->insert($booking);
+    }
+
+    public function version626()
+    {
+        if(!$this->getPRO()) return;
+
+        // Get Options
+        $options = get_option('mec_options');
+        $code = $options['purchase_code'] ?? '';
+        $item_id = $options['product_id'] ?? '';
+        $url = get_home_url();
+
+        $reActivationOption = get_option('reActivationOption');
+        if(empty($code) || $reActivationOption) return;
+        
+        if(!$reActivationOption)
+        {
+            $verify_url = MEC_API_ACTIVATION . '/activation/verify?category=mec&license=' . $code . '&url=' . $url . '&item_id=' . $item_id;
+            $JSON = wp_remote_retrieve_body(wp_remote_get($verify_url, array(
+                'body' => null,
+                'timeout' => '120',
+                'redirection' => '10',
+                'user-agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36',
+            )));
+
+            if($JSON != '')
+            {
+                $data = json_decode($JSON);
+                if($data and isset($data->item_link))
+                {
+                    $options['product_id'] = $data->item_id;
+
+                    update_option('mec_license_status', 'active');
+                    update_option('mec_options', $options);
+                    update_option('reActivationOption', '1');
+                }
+                else
+                {
+                    update_option('mec_license_status', 'faild');
+                    update_option('reActivationOption', '1');
+                }
+            }
+            else update_option('reActivationOption', '1');
+        }
+    }
+
+    public function version640()
+    {
+        $this->db->q("ALTER TABLE `#__mec_dates` ADD `status` VARCHAR(20) NOT NULL DEFAULT 'publish' AFTER `tend`;");
+    }
+
+    public function version653()
+    {
+        $this->db->q("ALTER TABLE `#__mec_bookings` CHANGE `ticket_ids` `ticket_ids` VARCHAR(655) NOT NULL;");
+    }
+
+    public function version6611()
+    {
+        // Add Seats Columns If Not Exists
+        if(!$this->db->columns('mec_bookings', 'seats'))
+        {
+            $this->db->q("ALTER TABLE `#__mec_bookings` ADD `seats` INT(10) UNSIGNED NOT NULL DEFAULT 0 AFTER `ticket_ids`;");
+
+            // Booking Records
+            $bookings = $this->db->select("SELECT `id`, `ticket_ids` FROM `#__mec_bookings` ORDER BY `date` DESC LIMIT 2000", 'loadObjectList');
+            foreach($bookings as $booking)
+            {
+                $ticket_ids = trim($booking->ticket_ids, ', ');
+                $seats = substr_count($ticket_ids, ',') + 1;
+
+                $this->db->q("UPDATE `#__mec_bookings` SET `seats`='".esc_sql($seats)."' WHERE `id`=".esc_sql($booking->id));
+            }
+        }
+    }
+
+    public function version675()
+    {
+        $bookings = get_posts([
+            'post_type' => $this->main->get_book_post_type(),
+            'numberposts' => 300,
+            'post_status' => 'publish'
+        ]);
+
+        // MEC Booking
+        $book = $this->getBook();
+
+        foreach($bookings as $booking)
+        {
+            $price = get_post_meta($booking->ID, 'mec_price', true);
+
+            // Payable Data Exists
+            $existing_payable = get_post_meta($booking->ID, 'mec_payable', true);
+            if($existing_payable) continue;
+
+            update_post_meta($booking->ID, 'mec_payable', $price);
+
+            $transaction_id = get_post_meta($booking->ID, 'mec_transaction_id', true);
+            $transaction = $book->get_transaction($transaction_id);
+
+            if(isset($transaction['price']))
+            {
+                $transaction['price_details']['payable'] = $transaction['price'];
+                $transaction['payable'] = $transaction['price'];
+
+                $book->update_transaction($transaction_id, $transaction);
+            }
+        }
+    }
+
+    public function version6835()
+    {
+        if(!wp_next_scheduled('mec_maintenance')) wp_schedule_event(time(), 'daily', 'mec_maintenance');
+    }
+
+    public function version700()
+    {
+        // Table already exists
+        if($this->db->exists('mec_booking_attendees')) return;
+
+        $this->db->q("CREATE TABLE IF NOT EXISTS `#__mec_booking_attendees` (
+          `id` int UNSIGNED NOT NULL,
+          `mec_booking_id` int UNSIGNED NOT NULL,
+          `user_id` int UNSIGNED NOT NULL,
+          `ticket_id` int UNSIGNED NOT NULL
+        ) CHARSET=[:CHARSET:] COLLATE=[:COLLATE:];");
+
+        $this->db->q("ALTER TABLE `#__mec_booking_attendees` ADD PRIMARY KEY (`id`);");
+        $this->db->q("ALTER TABLE `#__mec_booking_attendees` ADD KEY `mec_booking_id` (`mec_booking_id`);");
+        $this->db->q("ALTER TABLE `#__mec_booking_attendees` MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;");
+        $this->db->q("ALTER TABLE `#__mec_booking_attendees` ADD CONSTRAINT `mec_booking_id` FOREIGN KEY (`mec_booking_id`) REFERENCES `#__mec_bookings`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;");
+    }
+
+    public function version720()
+    {
+        // Get current MEC options
+        $current = get_option('mec_options', array());
+        if(is_string($current) and trim($current) == '') $current = [];
+
+        // Merge new options with previous options
+        $current['notifications']['certificate_send'] = array
+        (
+            'status'=>'1',
+            'subject'=>'Event Attendee Certificates',
+            'recipients'=>'',
+            'content'=>"Hi %%name%%,
+
+            Congratulations for successfully attending / completing the event %%event_title%%.
+            Click the following link to download or print your PDF certificate.
+            
+            %%certificate_link%%
+
+            Regards,
+            %%blog_name%%"
+        );
+
+        // Update it only if options already exists.
+        if(get_option('mec_options') !== false)
+        {
+            // Save new options
+            update_option('mec_options', $current);
+        }
+    }
+
+    public function version740()
+    {
+        $settings = $this->main->get_settings();
+
+        // Speaker Status
+        if(isset($settings['speakers_status']) && $settings['speakers_status'])
+        {
+            $speakers = get_terms('mec_speaker', [
+                'orderby' => 'name',
+                'order' => 'ASC',
+                'hide_empty' => '0',
+            ]);
+
+            $i = 1;
+            foreach($speakers as $speaker)
+            {
+                update_term_meta($speaker->term_id, 'mec_index', $i);
+            }
+        }
+    }
+
+    public function version7110()
+    {
+        // Get current MEC options
+        $current = get_option('mec_options', array());
+        if(is_string($current) && trim($current) == '') $current = [];
+
+        // Booking Moved Notification
+        $current['notifications']['booking_moved'] = array
+        (
+            'status'=>'0',
+            'subject'=>'Your booking has been rescheduled',
+            'recipients'=>'',
+            'content'=>"Hi %%name%%,
+
+            We are writing to inform you that your booking for %%event_title%%, %%book_datetime_prev%% has been moved to a new date. Please find the updated booking details below:
+
+            New Booking Details:
+            
+            Event/Service Name: %%event_title%%
+            New Date: %%book_date%%
+            New Time: %%book_time%%
+            
+            We apologize for any inconvenience this may cause and appreciate your understanding. If the new date and time do not work for you, you can cancel the booking using following link:
+            
+            %%cancellation_link%%
+
+            Regards,
+            %%blog_name%%"
+        );
+
+        // Suggest Event Notification
+        $current['notifications']['suggest_event'] = array
+        (
+            'subject'=>"Discover more events you'll love!",
+            'recipients'=>'',
+            'content'=>"Hi %%name%%,
+
+            We thought you'd be interested in the following event coming up that we think you'll love.
+            
+            %%event_title%%
+            %%event_description%%
+            
+            You can find more details and book your tickets on our website: %%event_link%% 
+
+            Regards,
+            %%blog_name%%"
+        );
+
+        // Update it only if options already exists.
+        if(get_option('mec_options') !== false)
+        {
+            // Save new options
+            update_option('mec_options', $current);
+        }
+    }
+
+    public function version7130()
+    {
+        // Get current MEC options
+        $current = get_option('mec_options', array());
+        if(is_string($current) && trim($current) == '') $current = [];
+
+        $settings = $current['settings'] ?? [];
+
+        $trash_interval = isset($settings['events_trash_interval']) ? (int) $settings['events_trash_interval'] : 0;
+        $purge_interval = isset($settings['events_purge_interval']) ? (int) $settings['events_purge_interval'] : 0;
+
+        if($trash_interval && $trash_interval <= 36) $trash_interval = $trash_interval * 30;
+        if($purge_interval && $purge_interval <= 36) $purge_interval = $purge_interval * 30;
+
+        $current['settings']['events_trash_interval'] = $trash_interval;
+        $current['settings']['events_purge_interval'] = $purge_interval;
+
+        // Update it only if options already exists.
+        if(get_option('mec_options') !== false)
+        {
+            // Save new options
+            update_option('mec_options', $current);
+        }
     }
 }

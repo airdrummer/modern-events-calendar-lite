@@ -4,7 +4,7 @@ defined('MECEXEC') or die();
 
 /**
  * Webnus MEC schedule class.
- * @author Webnus <info@webnus.biz>
+ * @author Webnus <info@webnus.net>
  */
 class MEC_schedule extends MEC_base
 {
@@ -30,8 +30,8 @@ class MEC_schedule extends MEC_base
             $maximum = 50;
             $repeat_type = get_post_meta($event->ID, 'mec_repeat_type', true);
 
-            // Reschedule Schedule for Custom Days Events
-            if($repeat_type === 'custom_days') $this->reschedule($event->ID, 200);
+            // Reschedule Schedule for Normal and Custom Days Events
+            if($repeat_type === '' or $repeat_type === 'custom_days') $this->reschedule($event->ID, 200);
             else $this->append($event->ID, $maximum);
         }
     }
@@ -69,7 +69,7 @@ class MEC_schedule extends MEC_base
         $dates = $this->render->dates($event_id, NULL, $maximum, $start);
 
         // No new date found!
-        if(!is_array($dates) or (is_array($dates) and !count($dates))) return false;
+        if(!is_array($dates) || !count($dates)) return false;
 
         // All Day Event
         $allday = get_post_meta($event_id, 'mec_allday', true);
@@ -88,7 +88,7 @@ class MEC_schedule extends MEC_base
 
             $start_hour = isset($date['start']['hour']) ? sprintf("%02d", $date['start']['hour']) : '08';
             $start_minute = isset($date['start']['minutes']) ? sprintf("%02d", $date['start']['minutes']) : '00';
-            $start_ampm = isset($date['start']['ampm']) ? $date['start']['ampm'] : 'AM';
+            $start_ampm = $date['start']['ampm'] ?? 'AM';
 
             if($start_hour == '00')
             {
@@ -101,7 +101,7 @@ class MEC_schedule extends MEC_base
 
             $end_hour = isset($date['end']['hour']) ? sprintf("%02d", $date['end']['hour']) : '06';
             $end_minute = isset($date['end']['minutes']) ? sprintf("%02d", $date['end']['minutes']) : '00';
-            $end_ampm = isset($date['end']['ampm']) ? $date['end']['ampm'] : 'PM';
+            $end_ampm = $date['end']['ampm'] ?? 'PM';
 
             if($end_hour == '00')
             {
