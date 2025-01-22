@@ -1,4 +1,8 @@
-﻿v 7.19.0 - 19 January 2025
+v 7.19.0.1 - 22 January 2025
+- added missing timezone display, reformat
+- fixed countdown
+
+v 7.19.0 - 19 January 2025
 - Added: Event Create endpoint to the RESTful API.
 - Added: Enhanced dropdown to the dropdown fields of search module.
 - Added: An option to load global tickets for existing events when all other tickets are removed.
