@@ -86,6 +86,7 @@ class MEC_skins extends MEC_base
     public $sf_reset_button;
     public $sf_refine;
     public $sf_options;
+    public $sf_dropdown_method = '1';
     public $id;
     public $events;
     public $widget;
@@ -1022,7 +1023,7 @@ class MEC_skins extends MEC_base
         foreach($dates as $date=>$IDs)
         {
             // No Event
-            if(!is_array($IDs) or (is_array($IDs) and !count($IDs))) continue;
+            if(!is_array($IDs) || !count($IDs)) continue;
 
             // Check Finish Date
             if(isset($this->maximum_date) and trim($this->maximum_date) and ((strtotime($date) > strtotime($this->maximum_date) and $this->order_method === 'ASC') or (strtotime($date) < strtotime($this->maximum_date) and $this->order_method === 'DESC'))) break;
@@ -1311,15 +1312,15 @@ class MEC_skins extends MEC_base
         $form = '';
         if(trim($fields) && (in_array('dropdown', $display_form) || in_array('simple-checkboxes', $display_form) || in_array('checkboxes', $display_form) || in_array('text_input', $display_form) || in_array('address_input', $display_form) || in_array('minmax', $display_form) || in_array('local-time-picker', $display_form) || in_array('fields', $display_form)))
         {
-            $form .= '<div id="mec_search_form_'.esc_attr($this->id).'" class="mec-search-form mec-totalcal-box">';
+            $form .= '<form id="mec_search_form_'.esc_attr($this->id).'" class="mec-search-form mec-totalcal-box mec-dropdown-'.($this->sf_dropdown_method == '2' ? 'enhanced' : 'classic').'" autocomplete="off">';
             $form .= $fields;
 
             // Reset Button
-            if($this->sf_reset_button) $form .='<div class="mec-search-reset-button"><button class="button mec-button" id="mec_search_form_'.esc_attr($this->id).'_reset" type="button">'.esc_html__('Reset', 'modern-events-calendar-lite').'</button></div>';
+            if($this->sf_reset_button) $form .='<div class="mec-search-reset-button col-md-2"><button class="button mec-button" id="mec_search_form_'.esc_attr($this->id).'_reset" type="button">'.esc_html__('Reset', 'modern-events-calendar-lite').'</button></div>';
 
             $form = apply_filters('mec_sf_search_form_end', $form, $this);
 
-            $form .= '</div>';
+            $form .= '</form>';
         }
 
         return apply_filters('mec_sf_search_form', $form, $this);

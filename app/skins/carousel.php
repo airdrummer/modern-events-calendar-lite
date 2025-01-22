@@ -73,7 +73,7 @@ class MEC_skin_carousel extends MEC_skins
 
         $this->navigation = isset($this->skin_options['navigation']) && $this->skin_options['navigation'];
 
-        // Generate an ID for the sking
+        // Generate an ID for the skin
         $this->id = $this->atts['id'] ?? mt_rand(100, 999);
 
         // Set the ID

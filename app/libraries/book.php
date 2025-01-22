@@ -251,7 +251,7 @@ class MEC_book extends MEC_base
         $payable = $total;
 
         // Calculate Payable
-        if ($this->partial_payment->is_enabled()) $payable = $this->partial_payment->calculate($total, $event_id);
+        if ($this->partial_payment->is_enabled() && !$this->partial_payment->is_flexible_enabled()) $payable = $this->partial_payment->calculate($total, $event_id);
 
         return [
             'total' => $total,

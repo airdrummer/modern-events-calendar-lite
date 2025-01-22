@@ -62,6 +62,7 @@ class MEC_skin_single extends MEC_skins
         // Search Form Status
         $this->sf_status = false;
         $this->sf_display_label = false;
+        $this->sf_dropdown_method = '1';
         $this->sf_reset_button = false;
         $this->sf_refine = false;
 

@@ -19,14 +19,14 @@ class MEC_feature_popup extends MEC_base
     {
         // Import MEC Factory
         $this->factory = $this->getFactory();
-        
+
         // Import MEC Main
         $this->main = $this->getMain();
 
         // MEC Settings
         $this->settings = $this->main->get_settings();
     }
-    
+
     /**
      * Initialize popup feature
      * @author Webnus <info@webnus.net>
@@ -34,26 +34,26 @@ class MEC_feature_popup extends MEC_base
     public function init()
     {
         // Shortcode & Event Popup
-        $this->factory->action('restrict_manage_posts', array($this, 'add_popup'));
+        $this->factory->action('restrict_manage_posts', [$this, 'add_popup']);
 
         // Shortcode Save
-        $this->factory->action('wp_ajax_mec_popup_shortcode', array($this, 'shortcode_save'));
+        $this->factory->action('wp_ajax_mec_popup_shortcode', [$this, 'shortcode_save']);
 
         // Event Save
-        $this->factory->action('wp_ajax_mec_popup_event', array($this, 'event_save'));
-        $this->factory->action('wp_ajax_mec_popup_event_category', array($this, 'save_category'));
+        $this->factory->action('wp_ajax_mec_popup_event', [$this, 'event_save']);
+        $this->factory->action('wp_ajax_mec_popup_event_category', [$this, 'save_category']);
     }
 
     public function add_popup($post_type)
     {
         // Shortcode Popup
-        if($post_type == $this->main->get_shortcode_post_type())
+        if ($post_type == $this->main->get_shortcode_post_type())
         {
             $path = MEC::import('app.features.popup.shortcode', true, true);
             include $path;
         }
         //Event Popup
-        elseif($post_type == $this->main->get_main_post_type())
+        else if ($post_type == $this->main->get_main_post_type())
         {
             $path = MEC::import('app.features.popup.event', true, true);
             include $path;
@@ -63,13 +63,13 @@ class MEC_feature_popup extends MEC_base
     public function shortcode_save()
     {
         // Security Nonce
-        $wpnonce = isset($_POST['_mecnonce']) ? sanitize_text_field($_POST['_mecnonce']) : NULL;
+        $wpnonce = isset($_POST['_mecnonce']) ? sanitize_text_field($_POST['_mecnonce']) : null;
 
         // Check if our nonce is set.
-        if(!trim($wpnonce)) $this->main->response(array('success'=>0, 'code'=>'NONCE_MISSING'));
+        if (!trim($wpnonce)) $this->main->response(['success' => 0, 'code' => 'NONCE_MISSING']);
 
         // Verify that the nonce is valid.
-        if(!wp_verify_nonce($wpnonce, 'mec_shortcode_popup')) $this->main->response(array('success'=>0, 'code'=>'NONCE_IS_INVALID'));
+        if (!wp_verify_nonce($wpnonce, 'mec_shortcode_popup')) $this->main->response(['success' => 0, 'code' => 'NONCE_IS_INVALID']);
 
         $params = (isset($_POST['shortcode']) and is_array($_POST['shortcode'])) ? $this->main->sanitize_deep_array($_POST['shortcode']) : [];
 
@@ -85,8 +85,8 @@ class MEC_feature_popup extends MEC_base
         $event = isset($params['event']) ? sanitize_text_field($params['event']) : 0;
         $custom_style = isset($params['custom_style']) ? sanitize_text_field($params['custom_style']) : '';
 
-        $skin_options = array(
-            'list' => array(
+        $skin_options = [
+            'list' => [
                 'style' => $style,
                 'start_date_type' => 'today',
                 'start_date' => '',
@@ -97,8 +97,8 @@ class MEC_feature_popup extends MEC_base
                 'map_on_top' => 0,
                 'set_geolocation' => 0,
                 'toggle_month_divider' => 0,
-            ),
-            'grid' => array(
+            ],
+            'grid' => [
                 'style' => $style,
                 'start_date_type' => 'today',
                 'start_date' => '',
@@ -107,16 +107,16 @@ class MEC_feature_popup extends MEC_base
                 'pagination_method' => 'loadmore',
                 'map_on_top' => 0,
                 'set_geolocation' => 0,
-            ),
-            'agenda' => array(
+            ],
+            'agenda' => [
                 'style' => $style,
                 'start_date_type' => 'today',
                 'start_date' => '',
                 'maximum_date_range' => '',
                 'month_divider' => 1,
                 'pagination_method' => 'loadmore',
-            ),
-            'full_calendar' => array(
+            ],
+            'full_calendar' => [
                 'start_date_type' => 'start_current_month',
                 'default_view' => 'list',
                 'monthly_style' => $style,
@@ -126,36 +126,36 @@ class MEC_feature_popup extends MEC_base
                 'weekly' => 1,
                 'daily' => 1,
                 'display_price' => 0,
-            ),
-            'yearly_view' => array(
+            ],
+            'yearly_view' => [
                 'style' => $style,
                 'start_date_type' => 'start_current_year',
                 'start_date' => '',
                 'next_previous_button' => 1,
-            ),
-            'monthly_view' => array(
+            ],
+            'monthly_view' => [
                 'style' => $style,
                 'start_date_type' => 'start_current_month',
                 'start_date' => '',
                 'next_previous_button' => 1,
-            ),
-            'map' => array(
+            ],
+            'map' => [
                 'start_date_type' => 'today',
                 'start_date' => '',
                 'limit' => 200,
                 'geolocation' => 0,
-            ),
-            'daily_view' => array(
+            ],
+            'daily_view' => [
                 'start_date_type' => 'today',
                 'start_date' => '',
                 'next_previous_button' => 1,
-            ),
-            'weekly_view' => array(
+            ],
+            'weekly_view' => [
                 'start_date_type' => 'start_current_week',
                 'start_date' => '',
                 'next_previous_button' => 1,
-            ),
-            'timetable' => array(
+            ],
+            'timetable' => [
                 'style' => $style,
                 'start_date_type' => 'start_current_week',
                 'start_date' => '',
@@ -164,8 +164,8 @@ class MEC_feature_popup extends MEC_base
                 'start_time' => 8,
                 'end_time' => 20,
                 'next_previous_button' => 1,
-            ),
-            'masonry' => array(
+            ],
+            'masonry' => [
                 'start_date_type' => 'today',
                 'start_date' => '',
                 'maximum_date_range' => '',
@@ -173,48 +173,48 @@ class MEC_feature_popup extends MEC_base
                 'fit_to_row' => 0,
                 'masonry_like_grid' => 0,
                 'pagination_method' => 'loadmore',
-            ),
-            'cover' => array(
+            ],
+            'cover' => [
                 'style' => $style,
                 'event_id' => $event,
-            ),
-            'countdown' => array(
+            ],
+            'countdown' => [
                 'style' => $style,
                 'event_id' => $event,
-            ),
-            'available_spot' => array(
+            ],
+            'available_spot' => [
                 'event_id' => $event,
-            ),
-            'carousel' => array(
+            ],
+            'carousel' => [
                 'style' => $style,
                 'start_date_type' => 'today',
                 'start_date' => '',
                 'count' => 3,
                 'autoplay' => 1,
-            ),
-            'slider' => array(
+            ],
+            'slider' => [
                 'style' => $style,
                 'start_date_type' => 'today',
                 'start_date' => '',
                 'autoplay' => 1,
-            ),
-            'timeline' => array(
+            ],
+            'timeline' => [
                 'start_date_type' => 'today',
                 'start_date' => '',
                 'maximum_date_range' => '',
                 'pagination_method' => 'loadmore',
                 'month_divider' => 0,
-            ),
-            'tile' => array(
+            ],
+            'tile' => [
                 'start_date_type' => 'start_current_month',
                 'start_date' => '',
                 'count' => 4,
                 'next_previous_button' => 1,
-            ),
-            'custom' => array(
+            ],
+            'custom' => [
                 'style' => $custom_style,
-            ),
-        );
+            ],
+        ];
 
         $sk = $skin_options[$skin] ?? ['style' => $style, 'start_date_type' => 'today', 'start_date' => ''];
 
@@ -225,14 +225,14 @@ class MEC_feature_popup extends MEC_base
         $sf_status = 0;
         $sf_display_label = '';
 
-        if($skin == 'full_calendar')
+        if ($skin == 'full_calendar')
         {
-            $sf = array('month_filter'=>array('type'=>'dropdown'), 'text_search'=>array('type'=>'text_input'));
+            $sf = ['month_filter' => ['type' => 'dropdown'], 'text_search' => ['type' => 'text_input']];
             $sf_status = 1;
         }
 
         // Create Default Calendars
-        $metas = array(
+        $metas = [
             'label' => '',
             'category' => '',
             'location' => '',
@@ -240,37 +240,37 @@ class MEC_feature_popup extends MEC_base
             'tag' => '',
             'author' => '',
             'skin' => $skin,
-            'sk-options' => array(
-                $skin => $sk
-            ),
-            'sf-options' => array($skin => $sf),
+            'sk-options' => [
+                $skin => $sk,
+            ],
+            'sf-options' => [$skin => $sf],
             'sf_status' => $sf_status,
             'sf_display_label' => $sf_display_label,
             'show_past_events' => $show_past_events,
             'show_only_past_events' => $show_only_past_events,
             'show_only_ongoing_events' => $show_only_ongoing_events,
-        );
+        ];
 
-        $post = array('post_title'=>$title, 'post_content'=>'', 'post_type'=>'mec_calendars', 'post_status'=>'publish');
+        $post = ['post_title' => $title, 'post_content' => '', 'post_type' => 'mec_calendars', 'post_status' => 'publish'];
         $post_id = wp_insert_post($post);
 
-        foreach($metas as $key=>$value) update_post_meta($post_id, $key, $value);
+        foreach ($metas as $key => $value) update_post_meta($post_id, $key, $value);
 
-        $this->main->response(array('success'=>1, 'id'=>$post_id));
+        $this->main->response(['success' => 1, 'id' => $post_id]);
     }
 
     public function event_save()
     {
         // Security Nonce
-        $wpnonce = isset($_POST['_mecnonce']) ? sanitize_text_field($_POST['_mecnonce']) : NULL;
+        $wpnonce = isset($_POST['_mecnonce']) ? sanitize_text_field($_POST['_mecnonce']) : null;
 
         // Check if our nonce is set.
-        if(!trim($wpnonce)) $this->main->response(array('success'=>0, 'code'=>'NONCE_MISSING'));
+        if (!trim($wpnonce)) $this->main->response(['success' => 0, 'code' => 'NONCE_MISSING']);
 
         // Verify that the nonce is valid.
-        if(!wp_verify_nonce($wpnonce, 'mec_event_popup')) $this->main->response(array('success'=>0, 'code'=>'NONCE_IS_INVALID'));
+        if (!wp_verify_nonce($wpnonce, 'mec_event_popup')) $this->main->response(['success' => 0, 'code' => 'NONCE_IS_INVALID']);
 
-        $mec = (isset($_POST['mec']) and is_array($_POST['mec'])) ? $this->main->sanitize_deep_array($_POST['mec'], 'text', array('content', 'excerpt')) : [];
+        $mec = (isset($_POST['mec']) and is_array($_POST['mec'])) ? $this->main->sanitize_deep_array($_POST['mec'], 'text', ['content', 'excerpt']) : [];
 
         $post_title = isset($mec['title']) ? sanitize_text_field($mec['title']) : '';
         $post_content = isset($mec['content']) ? MEC_kses::page($mec['content']) : '';
@@ -278,9 +278,9 @@ class MEC_feature_popup extends MEC_base
 
         // Post Status
         $status = 'pending';
-        if(current_user_can('publish_posts')) $status = 'publish';
+        if (current_user_can('publish_posts')) $status = 'publish';
 
-        $post = array('post_title'=>$post_title, 'post_content'=>$post_content, 'post_type'=>$this->main->get_main_post_type(), 'post_status'=>$status);
+        $post = ['post_title' => $post_title, 'post_content' => $post_content, 'post_type' => $this->main->get_main_post_type(), 'post_status' => $status];
         $post_id = wp_insert_post($post);
 
         // Categories
@@ -292,13 +292,13 @@ class MEC_feature_popup extends MEC_base
         update_post_meta($post_id, 'mec_color', $color);
 
         // Featured Image
-        if($featured_image) set_post_thumbnail($post_id, $featured_image);
+        if ($featured_image) set_post_thumbnail($post_id, $featured_image);
 
         // Location
         $location_id = isset($mec['location_id']) ? sanitize_text_field($mec['location_id']) : 0;
 
         // Selected a saved location
-        if($location_id)
+        if ($location_id)
         {
             // Set term to the post
             wp_set_object_terms($post_id, (int) $location_id, 'mec_location');
@@ -311,7 +311,7 @@ class MEC_feature_popup extends MEC_base
             $term = get_term_by('name', $name, 'mec_location');
 
             // Term already exists
-            if(is_object($term) and isset($term->term_id))
+            if (is_object($term) and isset($term->term_id))
             {
                 // Set term to the post
                 wp_set_object_terms($post_id, (int) $term->term_id, 'mec_location');
@@ -323,7 +323,7 @@ class MEC_feature_popup extends MEC_base
                 $term = wp_insert_term($name, 'mec_location');
 
                 $location_id = $term['term_id'];
-                if($location_id)
+                if ($location_id)
                 {
                     // Set term to the post
                     wp_set_object_terms($post_id, (int) $location_id, 'mec_location');
@@ -332,7 +332,7 @@ class MEC_feature_popup extends MEC_base
                     $longitude = (isset($mec['location']['longitude']) and trim($mec['location']['longitude'])) ? sanitize_text_field($mec['location']['longitude']) : 0;
                     $thumbnail = (isset($mec['location']['thumbnail']) and trim($mec['location']['thumbnail'])) ? sanitize_text_field($mec['location']['thumbnail']) : '';
 
-                    if(!trim($latitude) or !trim($longitude))
+                    if (!trim($latitude) or !trim($longitude))
                     {
                         $geo_point = $this->main->get_lat_lng($address);
 
@@ -357,10 +357,10 @@ class MEC_feature_popup extends MEC_base
         // Organizer
         $organizer_id = isset($mec['organizer_id']) ? sanitize_text_field($mec['organizer_id']) : 0;
 
-        if(!isset($this->settings['organizers_status']) || $this->settings['organizers_status'])
+        if (!isset($this->settings['organizers_status']) || $this->settings['organizers_status'])
         {
             // Selected a saved organizer
-            if($organizer_id)
+            if ($organizer_id)
             {
                 // Set term to the post
                 wp_set_object_terms($post_id, (int) $organizer_id, 'mec_organizer');
@@ -372,7 +372,7 @@ class MEC_feature_popup extends MEC_base
                 $term = get_term_by('name', $name, 'mec_organizer');
 
                 // Term already exists
-                if(is_object($term) and isset($term->term_id))
+                if (is_object($term) and isset($term->term_id))
                 {
                     // Set term to the post
                     wp_set_object_terms($post_id, (int) $term->term_id, 'mec_organizer');
@@ -383,7 +383,7 @@ class MEC_feature_popup extends MEC_base
                     $term = wp_insert_term($name, 'mec_organizer');
 
                     $organizer_id = $term['term_id'];
-                    if($organizer_id)
+                    if ($organizer_id)
                     {
                         // Set term to the post
                         wp_set_object_terms($post_id, (int) $organizer_id, 'mec_organizer');
@@ -419,7 +419,7 @@ class MEC_feature_popup extends MEC_base
         $start_time_ampm = (isset($date['start']) and isset($date['start']['ampm'])) ? sanitize_text_field($date['start']['ampm']) : 'AM';
 
         // Fix end_date if it's smaller than start_date
-        if(strtotime($end_date) < strtotime($start_date)) $end_date = $start_date;
+        if (strtotime($end_date) < strtotime($start_date)) $end_date = $start_date;
 
         // Set the end date
         $date['end']['date'] = $end_date;
@@ -428,10 +428,10 @@ class MEC_feature_popup extends MEC_base
         $end_time_minutes = isset($date['end']) ? sanitize_text_field($date['end']['minutes']) : '00';
         $end_time_ampm = (isset($date['end']) and isset($date['end']['ampm'])) ? sanitize_text_field($date['end']['ampm']) : 'PM';
 
-        if(isset($this->settings['time_format']) and $this->settings['time_format'] == 24)
+        if (isset($this->settings['time_format']) and $this->settings['time_format'] == 24)
         {
-            $day_start_seconds = $this->main->time_to_seconds($this->main->to_24hours($start_time_hour, NULL, 'start'), $start_time_minutes);
-            $day_end_seconds = $this->main->time_to_seconds($this->main->to_24hours($end_time_hour, NULL, 'end'), $end_time_minutes);
+            $day_start_seconds = $this->main->time_to_seconds($this->main->to_24hours($start_time_hour, null, 'start'), $start_time_minutes);
+            $day_end_seconds = $this->main->time_to_seconds($this->main->to_24hours($end_time_hour, null, 'end'), $end_time_minutes);
         }
         else
         {
@@ -439,7 +439,7 @@ class MEC_feature_popup extends MEC_base
             $day_end_seconds = $this->main->time_to_seconds($this->main->to_24hours($end_time_hour, $end_time_ampm, 'end'), $end_time_minutes);
         }
 
-        if($end_date === $start_date and $day_end_seconds < $day_start_seconds)
+        if ($end_date === $start_date and $day_end_seconds < $day_start_seconds)
         {
             $day_end_seconds = $day_start_seconds;
 
@@ -453,29 +453,29 @@ class MEC_feature_popup extends MEC_base
         }
 
         // If 24 hours format is enabled then convert it back to 12 hours
-        if(isset($this->settings['time_format']) and $this->settings['time_format'] == 24)
+        if (isset($this->settings['time_format']) and $this->settings['time_format'] == 24)
         {
-            if($start_time_hour < 12) $start_time_ampm = 'AM';
-            elseif($start_time_hour == 12) $start_time_ampm = 'PM';
-            elseif($start_time_hour > 12)
+            if ($start_time_hour < 12) $start_time_ampm = 'AM';
+            else if ($start_time_hour == 12) $start_time_ampm = 'PM';
+            else if ($start_time_hour > 12)
             {
                 $start_time_hour -= 12;
                 $start_time_ampm = 'PM';
             }
-            elseif($start_time_hour == 0)
+            else if ($start_time_hour == 0)
             {
                 $start_time_hour = 12;
                 $start_time_ampm = 'AM';
             }
 
-            if($end_time_hour < 12) $end_time_ampm = 'AM';
-            elseif($end_time_hour == 12) $end_time_ampm = 'PM';
-            elseif($end_time_hour > 12)
+            if ($end_time_hour < 12) $end_time_ampm = 'AM';
+            else if ($end_time_hour == 12) $end_time_ampm = 'PM';
+            else if ($end_time_hour > 12)
             {
                 $end_time_hour -= 12;
                 $end_time_ampm = 'PM';
             }
-            elseif($end_time_hour == 0)
+            else if ($end_time_hour == 0)
             {
                 $end_time_hour = 12;
                 $end_time_ampm = 'AM';
@@ -492,7 +492,7 @@ class MEC_feature_popup extends MEC_base
         $allday = isset($date['allday']) ? 1 : 0;
 
         // Set start time and end time if event is all day
-        if($allday == 1)
+        if ($allday == 1)
         {
             $start_time_hour = '8';
             $start_time_minutes = '00';
@@ -503,8 +503,8 @@ class MEC_feature_popup extends MEC_base
             $end_time_ampm = 'PM';
         }
 
-        $start_datetime = $start_date.' '.sprintf('%02d', $start_time_hour).':'.sprintf('%02d', $start_time_minutes).' '.$start_time_ampm;
-        $end_datetime = $end_date.' '.sprintf('%02d', $end_time_hour).':'.sprintf('%02d', $end_time_minutes).' '.$end_time_ampm;
+        $start_datetime = $start_date . ' ' . sprintf('%02d', $start_time_hour) . ':' . sprintf('%02d', $start_time_minutes) . ' ' . $start_time_ampm;
+        $end_datetime = $end_date . ' ' . sprintf('%02d', $end_time_hour) . ':' . sprintf('%02d', $end_time_minutes) . ' ' . $end_time_ampm;
 
         update_post_meta($post_id, 'mec_start_date', $start_date);
         update_post_meta($post_id, 'mec_start_time_hour', $start_time_hour);
@@ -522,7 +522,7 @@ class MEC_feature_popup extends MEC_base
 
         // Repeat Options
         $repeat = [];
-        $repeat_type = NULL;
+        $repeat_type = null;
         $repeat_status = 0;
 
         $repeat_end = '';
@@ -545,14 +545,14 @@ class MEC_feature_popup extends MEC_base
         update_post_meta($post_id, 'mec_advanced_days', '');
 
         // Creating $event array for inserting in mec_events table
-        $event = array('post_id'=>$post_id, 'start'=>$start_date, 'repeat'=>$repeat_status, 'rinterval'=>NULL, 'time_start'=>$day_start_seconds, 'time_end'=>$day_end_seconds);
+        $event = ['post_id' => $post_id, 'start' => $start_date, 'repeat' => $repeat_status, 'rinterval' => null, 'time_start' => $day_start_seconds, 'time_end' => $day_end_seconds];
 
-        $year = NULL;
-        $month = NULL;
-        $day = NULL;
-        $week = NULL;
-        $weekday = NULL;
-        $weekdays = NULL;
+        $year = null;
+        $month = null;
+        $day = null;
+        $week = null;
+        $weekday = null;
+        $weekdays = null;
 
         $in_days = '';
         $not_in_days = '';
@@ -578,34 +578,34 @@ class MEC_feature_popup extends MEC_base
         $db = $this->getDB();
 
         // Update MEC Events Table
-        $mec_event_id = $db->select("SELECT `id` FROM `#__mec_events` WHERE `post_id`='".$db->escape($post_id)."'", 'loadResult');
+        $mec_event_id = $db->select("SELECT `id` FROM `#__mec_events` WHERE `post_id`='" . $db->escape($post_id) . "'", 'loadResult');
 
-        if(!$mec_event_id)
+        if (!$mec_event_id)
         {
             $q1 = "";
             $q2 = "";
 
-            foreach($event as $key=>$value)
+            foreach ($event as $key => $value)
             {
                 $q1 .= "`$key`,";
 
-                if(is_null($value)) $q2 .= "NULL,";
+                if (is_null($value)) $q2 .= "NULL,";
                 else $q2 .= "'$value',";
             }
 
-            $db->q("INSERT INTO `#__mec_events` (".trim($q1, ', ').") VALUES (".trim($q2, ', ').")", 'INSERT');
+            $db->q("INSERT INTO `#__mec_events` (" . trim($q1, ', ') . ") VALUES (" . trim($q2, ', ') . ")", 'INSERT');
         }
         else
         {
             $q = "";
 
-            foreach($event as $key=>$value)
+            foreach ($event as $key => $value)
             {
-                if(is_null($value)) $q .= "`$key`=NULL,";
+                if (is_null($value)) $q .= "`$key`=NULL,";
                 else $q .= "`$key`='$value',";
             }
 
-            $db->q("UPDATE `#__mec_events` SET ".trim($q, ', ')." WHERE `id`='$mec_event_id'");
+            $db->q("UPDATE `#__mec_events` SET " . trim($q, ', ') . " WHERE `id`='$mec_event_id'");
         }
 
         // Update Schedule
@@ -657,11 +657,11 @@ class MEC_feature_popup extends MEC_base
         // Save Event Data
         do_action('mec_save_event_data', $post_id, $mec);
 
-        $this->main->response(array(
+        $this->main->response([
             'success' => 1,
             'id' => $post_id,
             'link' => get_post_permalink($post_id),
-        ));
+        ]);
     }
 
     public function save_category()
@@ -669,13 +669,13 @@ class MEC_feature_popup extends MEC_base
         $category = isset($_POST['category']) ? sanitize_text_field($_POST['category']) : '';
 
         $term = term_exists($category, 'mec_category');
-        if(!$term)
+        if (!$term)
         {
             $term = wp_insert_term($category, 'mec_category');
             $category_id = $term['term_id'];
         }
         else $category_id = $term['term_id'];
 
-        $this->main->response(array('success' => 1, 'id' => $category_id, 'name' => $category));
+        $this->main->response(['success' => 1, 'id' => $category_id, 'name' => $category]);
     }
 }

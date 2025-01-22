@@ -74,6 +74,10 @@ var mec_search_callbacks = [];
         if(typeof mec_search_callbacks[settings.id] === 'undefined') mec_search_callbacks[settings.id] = [];
         mec_search_callbacks[settings.id].push(settings.callback);
 
+        $('#mec_search_form_'+settings.id).on('submit', (e) => {
+            e.preventDefault();
+        });
+
         var $event_cost_min = $("#mec_sf_event_cost_min_" + settings.id);
         var $event_cost_max = $("#mec_sf_event_cost_max_" + settings.id);
         var $time_start = $("#mec_sf_timepicker_start_" + settings.id);
@@ -86,6 +90,7 @@ var mec_search_callbacks = [];
         var $event_type_2 = $('#mec_sf_event_type_2_' + settings.id);
         var $attribute = $('#mec_sf_attribute_' + settings.id);
         var $custom_fields = $('.mec-custom-event-field');
+        const $wrapper = $("#mec_search_form_" + settings.id);
         var $reset = $("#mec_search_form_" + settings.id + '_reset');
         var $event_status = $(".mec_sf_event_status_" + settings.id );
         var last_field;
@@ -154,7 +159,7 @@ var mec_search_callbacks = [];
         var $year = $("#mec_sf_year_" + settings.id);
         var $month_or_year = $("#mec_sf_month_" + settings.id + ', ' + "#mec_sf_year_" + settings.id);
 
-        $month_or_year.off('change').on('change', function (e) {
+        $month_or_year.on('change', function (e) {
             last_field = 'date-dropdown';
 
             var mec_month_val = $month.val();
@@ -217,39 +222,47 @@ var mec_search_callbacks = [];
         }
 
         function trigger() {
-            $("#mec_sf_category_" + settings.id).off('change').on('change', function (e) {
+            if ($wrapper.hasClass('mec-dropdown-enhanced'))
+            {
+                $wrapper.find($('select')).each(function()
+                {
+                    $(this).select2();
+                });
+            }
+
+            $("#mec_sf_category_" + settings.id).on('change', function (e) {
                 last_field = 'category';
                 search();
             });
 
-            $("#mec_sf_location_" + settings.id).off('change').on('change', function (e) {
+            $("#mec_sf_location_" + settings.id).on('change', function (e) {
                 last_field = 'location';
                 search();
             });
 
-            $("#mec_sf_organizer_" + settings.id).off('change').on('change', function (e) {
+            $("#mec_sf_organizer_" + settings.id).on('change', function (e) {
                 last_field = 'organizer';
                 search();
             });
 
-            $("#mec_sf_speaker_" + settings.id).off('change').on('change', function (e) {
+            $("#mec_sf_speaker_" + settings.id).on('change', function (e) {
                 last_field = 'speaker';
                 search();
             });
 
-            $("#mec_sf_tag_" + settings.id).off('change').on('change', function (e) {
+            $("#mec_sf_tag_" + settings.id).on('change', function (e) {
                 last_field = 'tag';
                 search();
             });
 
-            $("#mec_sf_label_" + settings.id).off('change').on('change', function (e) {
+            $("#mec_sf_label_" + settings.id).on('change', function (e) {
                 last_field = 'label';
                 search();
             });
 
             var fields = get_fields();
             $.each(fields, function(i, field) {
-                $("#mec_sf_"+ field +"_" + settings.id).off('change').on('change', function (e) {
+                $("#mec_sf_"+ field +"_" + settings.id).on('change', function (e) {
                     last_field = field;
                     search();
                 });

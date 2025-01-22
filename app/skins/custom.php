@@ -53,18 +53,19 @@ class MEC_skin_custom extends MEC_skins
         $this->style = $this->skin_options['style'] ?? 'modern';
         if($this->style == 'fluent' and !is_plugin_active('mec-fluent-layouts/mec-fluent-layouts.php')) $this->style = 'modern';
 
-        $this->month_divider = isset($this->skin_options['month_divider']) ? $this->skin_options['month_divider'] : true;
+        $this->month_divider = $this->skin_options['month_divider'] ?? true;
 
         // Search Form Options
         $this->sf_options = (isset($this->atts['sf-options']) and isset($this->atts['sf-options'][$this->skin])) ? $this->atts['sf-options'][$this->skin] : [];
 
         // Search Form Status
-        $this->sf_status = isset($this->atts['sf_status']) ? $this->atts['sf_status'] : true;
-        $this->sf_display_label = isset($this->atts['sf_display_label']) ? $this->atts['sf_display_label'] : false;
-        $this->sf_reset_button = isset($this->atts['sf_reset_button']) ? $this->atts['sf_reset_button'] : false;
-        $this->sf_refine = isset($this->atts['sf_refine']) ? $this->atts['sf_refine'] : false;
+        $this->sf_status = $this->atts['sf_status'] ?? true;
+        $this->sf_display_label = $this->atts['sf_display_label'] ?? false;
+        $this->sf_dropdown_method = $this->atts['sf_dropdown_method'] ?? '1';
+        $this->sf_reset_button = $this->atts['sf_reset_button'] ?? false;
+        $this->sf_refine = $this->atts['sf_refine'] ?? false;
 
-        // Generate an ID for the sking
+        // Generate an ID for the skin
         $this->id = isset($this->atts['id']) ? $this->atts['id'] : mt_rand(100, 999);
 
         // Set the ID

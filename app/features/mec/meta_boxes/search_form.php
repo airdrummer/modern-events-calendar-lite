@@ -17,7 +17,7 @@ $sf_options = get_post_meta($post->ID, 'sf-options', true);
         </div>
         <div class="mec-col-4">
             <input type="hidden" name="mec[sf_status]" value="0" />
-            <input type="checkbox" name="mec[sf_status]" id="mec_sf_status" value="1" <?php if($sf_status == '' or $sf_status == 1) echo 'checked="checked"'; ?> />
+            <input type="checkbox" name="mec[sf_status]" id="mec_sf_status" value="1" <?php if($sf_status == '' || $sf_status == 1) echo 'checked="checked"'; ?> />
             <label for="mec_sf_status"></label>
         </div>
     </div>
@@ -52,6 +52,18 @@ $sf_options = get_post_meta($post->ID, 'sf-options', true);
             <input type="hidden" name="mec[sf_refine]" value="0" />
             <input type="checkbox" name="mec[sf_refine]" id="mec_sf_refine" value="1" <?php if($sf_refine == 1) echo 'checked="checked"'; ?> />
             <label for="mec_sf_refine"></label>
+        </div>
+    </div>
+    <div class="mec-form-row" id="mec_shortcode_dropdown_method_wrapper">
+        <?php $sf_dropdown_method = get_post_meta($post->ID, 'sf_dropdown_method', true); ?>
+        <div class="mec-col-12">
+            <label><?php esc_html_e('Dropdown Method', 'modern-events-calendar-lite'); ?></label>
+        </div>
+        <div class="mec-col-12">
+            <select class="mec-col-12" name="mec[sf_dropdown_method]" id="mec_sf_dropdown_method">
+                <option value="1" <?php if ($sf_dropdown_method == '1') echo 'selected="selected"'; ?>><?php esc_html_e('Classic', 'modern-events-calendar-lite'); ?></option>
+                <option value="2" <?php if ($sf_dropdown_method == '2') echo 'selected="selected"'; ?>><?php esc_html_e('Enhanced', 'modern-events-calendar-lite'); ?></option>
+            </select>
         </div>
     </div>
 

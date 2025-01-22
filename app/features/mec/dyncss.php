@@ -42,6 +42,17 @@ if (isset($styling['primary_border_radius']) && $styling['primary_border_radius'
 	}
 }
 
+$mec_secondary_border_radius = '';
+
+if (isset($styling['secondary_border_radius']) && $styling['secondary_border_radius']) {
+	$mec_secondary_border_radius = trim($styling['secondary_border_radius']);
+	if ($mec_secondary_border_radius) {
+		if (is_numeric($mec_secondary_border_radius)) {
+			$mec_secondary_border_radius .= 'px';
+		}
+	}
+}
+
 // Typography
 $mec_h_fontfamily_arr = $mec_p_fontfamily_arr = $fonts_url = $mec_container_normal_width = $mec_container_large_width = '';
 
@@ -160,6 +171,12 @@ if ($mec_primary_border_radius): ?>
 	--mec-primary-border-radius: <?php echo esc_html($mec_primary_border_radius); ?>;
 <?php else: ?>
 	--mec-primary-border-radius: 3px;
+<?php endif;
+
+if ($mec_secondary_border_radius): ?>
+	--mec-secondary-border-radius: <?php echo esc_html($mec_secondary_border_radius); ?>;
+<?php else: ?>
+	--mec-secondary-border-radius: 3px;
 <?php endif;
 
 // Render Container Width
@@ -327,10 +344,6 @@ if (isset($styling['fes_color']) && $styling['fes_color']) {
 	.mec-fes-form #mec_reg_form_field_types .button.red:before, .mec-fes-form #mec_reg_form_field_types .button.red {
 	border-color: #ffd2dd;
 	color: #ea6485;
-	}
-
-	.mec-fes-form #mec_reg_form_field_types .button.red:hover, .mec-fes-form #mec_reg_form_field_types .button.red:before, .mec-fes-form #mec_reg_form_field_types .button:hover, .mec-fes-form #mec_bfixed_form_field_types .button:hover:before, .mec-fes-form #mec_reg_form_field_types .button:hover:before, .mec-fes-form #mec_bfixed_form_field_types .button:hover, .mec-fes-form .mec-form-row .button:not(.wp-color-result):hover {
-	color: #fff;
 	}
 
 	.mec-fes-form .mec-meta-box-fields h4 label {

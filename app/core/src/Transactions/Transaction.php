@@ -1822,6 +1822,7 @@ class Transaction {
 	public function create_products_from_items( $rebuild = false, $update = false ) {
 
 		$product_ids = [];
+        $tax_inclusion_type = \MEC\Settings\Settings::getInstance()->get_settings('tax_inclusion') !== null && trim(\MEC\Settings\Settings::getInstance()->get_settings( 'tax_inclusion' )) ? \MEC\Settings\Settings::getInstance()->get_settings( 'tax_inclusion' ) : 'excluded';
 
 		$saved_data = $this->get_saved_data();
 		$tickets_details = $this->get_tickets_details();
@@ -1832,6 +1833,14 @@ class Transaction {
 			$ex_date = explode( ':', $date );
 			$start_timestamp = $ex_date[0];
 			$product_id = $ticket_detail['product_id'] ?? 0;
+
+            if ($tax_inclusion_type === 'included')
+            {
+                $ticket_detail['fees_per_ticket_amount'] = 0;
+                $ticket_detail['fees_amount'] = 0;
+                $ticket_detail['fees_details'][0]['amount'] = 0;
+                $ticket_detail['fees_details'][0]['fee_amount'] = 0;
+            }
 
 			if( !$product_id || $rebuild || $update ) {
 
@@ -1857,9 +1866,10 @@ class Transaction {
 				// 'date' => $timestamp,
 			);
 			$fees_details = $this->get_fees_details( $filters );
-			$fees_product_ids = [];
-			foreach( $fees_details as $fee_key => $fee_detail ) {
 
+            $fees_product_ids = [];
+
+        foreach( $fees_details as $fee_key => $fee_detail ) {
 				$fee_type = $fee_detail['fee_type'];
 				if( in_array( $fee_type, $per_ticket_fee_types ) ) {
 
@@ -1870,8 +1880,6 @@ class Transaction {
 				$fee_detail['product_id'] = $product_id;
 
 				if( !$product_id || $rebuild || $update ) {
-                    $tax_inclusion_type = \MEC\Settings\Settings::getInstance()->get_settings('tax_inclusion') !== null && trim(\MEC\Settings\Settings::getInstance()->get_settings( 'tax_inclusion' )) ? \MEC\Settings\Settings::getInstance()->get_settings( 'tax_inclusion' ) : 'excluded';
-
                     if (!(\MEC\Settings\Settings::getInstance()->get_settings('taxes_fees_status') !== null && \MEC\Settings\Settings::getInstance()->get_settings('taxes_fees_status') && $tax_inclusion_type === 'included'))
                     {
                         $product_id = $this->create_fee_product( $fee_detail, $related_products, $update );
@@ -1883,9 +1891,15 @@ class Transaction {
 			}
 		// }
 
-		$saved_data['fees_product_ids'] = $fees_product_ids;
+        if ($tax_inclusion_type === 'included')
+        {
+            $saved_data['price_details']['details'][1]['fee_amount'] = 0;
+            $saved_data['price_details']['details'][1]['amount'] = 0;
+        }
 
-		$this->set_data( $saved_data ); // new data
+        $saved_data['fees_product_ids'] = $fees_product_ids;
+
+        $this->set_data( $saved_data ); // new data
 		$this->update_data();
 
 		return $product_ids;
