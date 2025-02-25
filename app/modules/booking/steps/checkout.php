@@ -180,18 +180,18 @@ $paid_booking = !$free_booking;
     <?php if(isset($this->settings['booking_payable_both']) && $this->settings['booking_payable_both']): ?>
     <div class="mec-booking-checkout-partial-full-payment">
         <ul class="mec-partial-full-payment">
-            <li class="mec-partial-payment-booking-tab mec-active" onclick="mec_partial_or_full_payment<?php echo esc_attr($uniqueid); ?>('<?php echo $transaction_id; ?>', 'partial');">
-                <span class="mec-book-form-partial-full-svg"><?php echo $this->main->svg('form/partial-payment-i'); ?></span>
-                <span class="mec-book-form-partial-full-title"><?php esc_html_e('Partial Payment', 'modern-events-calendar-lite'); ?></span>
-                <span class="mec-book-form-partial-full-radio">
-                    <input type="radio" id="mec_partial_payment_booking_radio" checked>
-                </span>
-            </li>
-            <li class="mec-full-payment-booking-tab" onclick="mec_partial_or_full_payment<?php echo esc_attr($uniqueid); ?>('<?php echo $transaction_id; ?>', 'full');">
+            <li class="mec-full-payment-booking-tab mec-active" onclick="mec_partial_or_full_payment<?php echo esc_attr($uniqueid); ?>('<?php echo $transaction_id; ?>', 'full');">
                 <span class="mec-book-form-partial-full-svg"><?php echo $this->main->svg('form/full-payment-i'); ?></span>
                 <span class="mec-book-form-partial-full-title"><?php esc_html_e('Full Payment', 'modern-events-calendar-lite'); ?></span>
                 <span class="mec-book-form-partial-full-radio">
-                    <input type="radio" id="mec_full_payment_booking_radio">
+                    <input type="radio" id="mec_full_payment_booking_radio" checked>
+                </span>
+            </li>
+            <li class="mec-partial-payment-booking-tab" onclick="mec_partial_or_full_payment<?php echo esc_attr($uniqueid); ?>('<?php echo $transaction_id; ?>', 'partial');">
+                <span class="mec-book-form-partial-full-svg"><?php echo $this->main->svg('form/partial-payment-i'); ?></span>
+                <span class="mec-book-form-partial-full-title"><?php esc_html_e('Partial Payment', 'modern-events-calendar-lite'); ?></span>
+                <span class="mec-book-form-partial-full-radio">
+                    <input type="radio" id="mec_partial_payment_booking_radio">
                 </span>
             </li>
         </ul>

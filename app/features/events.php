@@ -326,7 +326,7 @@ class MEC_feature_events extends MEC_base
             <div id="mec_thumbnail_img"></div>
             <input type="hidden" name="fallback" id="mec_thumbnail" value="" />
             <button type="button" class="mec_upload_image_button button" id="mec_thumbnail_button"><?php echo esc_html__('Upload/Add image', 'modern-events-calendar-lite'); ?></button>
-            <button type="button" class="mec_remove_image_button button mec-util-hidden"><?php echo esc_html__('Remove image', 'modern-events-calendar-lite'); ?></button>
+            <button type="button" class="mec_remove_image_button button mec-util-hidden"><?php echo esc_html__('Remove', 'modern-events-calendar-lite'); ?></button>
         </div>
         <?php endif; ?>
         <?php
@@ -384,7 +384,7 @@ class MEC_feature_events extends MEC_base
                 <div id="mec_thumbnail_img"><?php if(trim($fallback_image) != '') echo '<img src="'.esc_url($fallback_image).'" />'; ?></div>
                 <input type="hidden" name="fallback" id="mec_thumbnail" value="<?php echo esc_attr($fallback_image); ?>" />
                 <button type="button" class="mec_upload_image_button button" id="mec_thumbnail_button"><?php echo esc_html__('Upload/Add image', 'modern-events-calendar-lite'); ?></button>
-                <button type="button" class="mec_remove_image_button button <?php echo (!trim($fallback_image) ? 'mec-util-hidden' : ''); ?>"><?php echo esc_html__('Remove image', 'modern-events-calendar-lite'); ?></button>
+                <button type="button" class="mec_remove_image_button button <?php echo (!trim($fallback_image) ? 'mec-util-hidden' : ''); ?>"><?php echo esc_html__('Remove', 'modern-events-calendar-lite'); ?></button>
             </td>
         </tr>
         <?php endif; ?>
@@ -777,7 +777,6 @@ class MEC_feature_events extends MEC_base
                                 'time_ampm' => $start_time_ampm,
                                 'name' => 'mec[date][start]',
                                 'id_key' => 'start_',
-                                'include_h0' => true,
                             )); ?>
                         </div>
                     </div>
@@ -998,15 +997,14 @@ class MEC_feature_events extends MEC_base
                                     <div class="mec-col-4">
                                         <input type="text" id="mec_exceptions_in_days_start_date" value="" placeholder="<?php esc_html_e('Start', 'modern-events-calendar-lite'); ?>" title="<?php esc_html_e('Start', 'modern-events-calendar-lite'); ?>" class="mec_date_picker_dynamic_format widefat" autocomplete="off"/>
                                     </div>
-                                    <div class="mec-col-5 mec-time-picker <?php echo ($allday == 1) ? 'mec-util-hidden' : ''; ?>">
+                                    <div class="mec-col-5 mec-time-picker <?php echo $allday == 1 ? 'mec-util-hidden' : ''; ?>">
                                         <?php $this->main->timepicker(array(
-                                            'method' => (isset($this->settings['time_format']) ? $this->settings['time_format'] : 12),
+                                            'method' => $this->settings['time_format'] ?? 12,
                                             'time_hour' => $start_time_hour,
                                             'time_minutes' => $start_time_minutes,
                                             'time_ampm' => $start_time_ampm,
                                             'name' => 'mec[exceptionsdays][start]',
                                             'id_key' => 'exceptions_in_days_start_',
-                                            'include_h0' => true,
                                         )); ?>
                                     </div>
                                     <div class="mec-col-3">

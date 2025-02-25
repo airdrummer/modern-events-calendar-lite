@@ -35,6 +35,7 @@ class MEC_tickets extends MEC_base
         $basic_class = $args['basic_class'] ?? 'mec-basvanced-basic';
         $advanced_class = $args['advanced_class'] ?? 'mec-basvanced-advanced w-hidden';
         $price_per_date_display = $args['perice_per_date_display'] ?? true;
+        $display_global_tickets = $args['display_global_tickets'] ?? true;
 
         // MEC Main
         $main = $this->getMain();
@@ -61,10 +62,38 @@ class MEC_tickets extends MEC_base
 
         // Family Tickets Status
         $family_ticket_status = isset($settings['booking_family_ticket']) && $settings['booking_family_ticket'];
+        $global_tickets_status = isset($settings['default_tickets_status']) && $settings['default_tickets_status'];
+
+        $global_tickets = isset($settings['tickets']) && is_array($settings['tickets']) ? $settings['tickets'] : [];
+        if (isset($global_tickets[':i:'])) unset($global_tickets[':i:']);
+
+        if (isset($_REQUEST['mec_add_global_tickets']) && $_REQUEST['mec_add_global_tickets'])
+        {
+            foreach ($global_tickets as $global_ticket)
+            {
+                if (!count($tickets)) $tickets[1] = $global_ticket;
+                else $tickets[] = $global_ticket;
+            }
+
+            echo '<script>
+                const url = new URL(window.location.href);
+                url.searchParams.delete("mec_add_global_tickets");
+                window.history.replaceState({}, "", url);
+                
+                jQuery(document).ready(function()
+                {
+                    jQuery(".mec-add-booking-tabs-wrap a[data-href=mec-tickets]").trigger("click");
+                    setTimeout(() => jQuery("#mec-tickets")[0].scrollIntoView({behavior: "smooth", block: "start"}), 300);
+                });
+            </script>';
+        }
         ?>
         <div id="mec_meta_box_tickets_form">
             <div class="mec-form-row">
                 <button class="button" type="button" id="mec_add_ticket_button"><?php esc_html_e('Add Ticket', 'modern-events-calendar-lite'); ?></button>
+                <?php if ($display_global_tickets && $global_tickets_status && count($global_tickets) && !count($tickets)): ?>
+                <a class="button" href="<?php echo $main->add_qs_var('mec_add_global_tickets', 1); ?>" id="mec_add_global_tickets_button"><?php esc_html_e('Add Global Tickets', 'modern-events-calendar-lite'); ?></a>
+                <?php endif; ?>
             </div>
             <div id="mec_tickets">
                 <?php
@@ -100,8 +129,7 @@ class MEC_tickets extends MEC_base
                                         'name' => $name_prefix.'['.esc_attr($key).']',
                                         'hour_key' => 'ticket_start_time_hour',
                                         'minutes_key' => 'ticket_start_time_minute',
-                                        'ampm_key' => 'ticket_start_time_ampm',
-                                        'include_h0' => true,
+                                        'ampm_key' => 'ticket_start_time_ampm'
                                     )); ?>
                                 </div>
                                 <div class="mec-ticket-end-time mec-ticket-start-time mec-col-12">
@@ -427,7 +455,6 @@ class MEC_tickets extends MEC_base
                                 'hour_key' => 'ticket_start_time_hour',
                                 'minutes_key' => 'ticket_start_time_minute',
                                 'ampm_key' => 'ticket_start_time_ampm',
-                                'include_h0' => true,
                             )); ?>
                         </div>
                         <div class="mec-ticket-end-time mec-ticket-start-time mec-col-12">
@@ -565,7 +592,7 @@ class MEC_tickets extends MEC_base
                 <?php if($price_per_date_display): ?>
                 <div id="mec_price_per_dates_container_:i:" class="<?php echo $advanced_class; ?>">
                     <div class="mec-form-row">
-                        <h4><?php esc_html_e('Price per Date', 'modern-events-calendar-lite'); ?></h4>
+                        <h5><?php esc_html_e('Price per Date', 'modern-events-calendar-lite'); ?></h5>
                         <button class="button mec_add_price_date_button" type="button"
                                 data-key=":i:"><?php esc_html_e('Add', 'modern-events-calendar-lite'); ?></button>
                     </div>

@@ -65,7 +65,7 @@ class MEC_feature_schema extends MEC_base
         ?>
         <div class="mec-meta-box-fields mec-event-tab-content" id="mec-schema">
             <h4><?php echo esc_html__('SEO Schema', 'modern-events-calendar-lite'); ?></h4>
-            <p><?php esc_html_e("Following statuses are for informing search engines (Google, bing, etc) about your events so they can manage your events better. Therefore you can use these statuses to be more Search Engine Friendly.", 'modern-events-calendar-lite'); ?></p>
+            <p class="description"><?php esc_html_e("Following statuses are for informing search engines (Google, bing, etc) about your events so they can manage your events better. Therefore you can use these statuses to be more Search Engine Friendly.", 'modern-events-calendar-lite'); ?></p>
 
 			<div class="mec-form-row">
                 <label>

@@ -120,7 +120,7 @@ function mec_init_gmap'.esc_js($uniqueid).'()
     p'.esc_js($uniqueid).'.init();
 }
 </script>';
-$javascript = apply_filters('mec_map_load_script', $javascript, $map_data, $settings);
+$javascript = apply_filters('mec_map_load_script', $javascript, $map_data, $settings,true);
 
 if(!function_exists('is_plugin_active')) include_once(ABSPATH . 'wp-admin/includes/plugin.php');
 

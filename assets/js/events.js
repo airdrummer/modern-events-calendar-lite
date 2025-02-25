@@ -1072,6 +1072,9 @@ function mec_additional_organizers_listeners()
     jQuery('#mec_additional_organizers_add').off('click').on('click', function()
     {
         var value = jQuery('.mec-additional-organizers select').val();
+        console.log(value);
+        if (!value) return;
+
         var text = jQuery('.mec-additional-organizers select option:selected').text();
 
         var sortLabel = jQuery(this).data('sort-label');

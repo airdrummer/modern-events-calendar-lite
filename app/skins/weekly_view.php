@@ -57,17 +57,18 @@ class MEC_skin_weekly_view extends MEC_skins
         // Search Form Status
         $this->sf_status = $this->atts['sf_status'] ?? true;
         $this->sf_display_label = $this->atts['sf_display_label'] ?? false;
+        $this->sf_dropdown_method = $this->atts['sf_dropdown_method'] ?? '1';
         $this->sf_reset_button = $this->atts['sf_reset_button'] ?? false;
         $this->sf_refine = $this->atts['sf_refine'] ?? false;
 
         // Generate an ID for the skin
-        $this->id = isset($this->atts['id']) ? $this->atts['id'] : mt_rand(100, 999);
+        $this->id = $this->atts['id'] ?? mt_rand(100, 999);
 
         // Set the ID
         if (!isset($this->atts['id'])) $this->atts['id'] = $this->id;
 
         // Next/Previous Month
-        $this->next_previous_button = isset($this->skin_options['next_previous_button']) ? $this->skin_options['next_previous_button'] : true;
+        $this->next_previous_button = $this->skin_options['next_previous_button'] ?? true;
 
         // HTML class
         $this->html_class = '';

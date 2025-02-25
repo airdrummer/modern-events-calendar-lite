@@ -929,6 +929,11 @@ function mec_skin_toggle() {
 
   // Trigger change event of skin style in order to show/hide related fields
   jQuery("#mec_skin_" + skin + "_style").trigger("change");
+
+  // Show/Hide Dropdown Method
+  if (skin === "general_calendar") {
+    jQuery("#mec_shortcode_dropdown_method_wrapper").hide();
+  } else jQuery("#mec_shortcode_dropdown_method_wrapper").show();
 }
 
 function mec_skin_style_changed(skin, style, context) {

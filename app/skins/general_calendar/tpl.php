@@ -89,17 +89,17 @@ wp_enqueue_script('mec-niceselect-script');
 	<div id="mec-gCalendar-wrap"></div>
 	<div class="mec-gCalendar-filters">
 		<div class="mec-gCalendar-filters-wrap">
-		<?php
-		echo ((is_array($this->sf_options) && isset($this->sf_options['category']) && $this->sf_options['category']['type'] != '0') ? MEC_kses::form($this->sf_search_field('category', array('type' => $this->sf_options['category']['type']))) : '');
-		echo ((is_array($this->sf_options) && isset($this->sf_options['location']) && $this->sf_options['location']['type'] != '0') ? MEC_kses::form($this->sf_search_field('location', array('type' => $this->sf_options['location']['type']))) : '');
-		echo ((is_array($this->sf_options) && isset($this->sf_options['organizer']) && $this->sf_options['organizer']['type'] != '0') ? MEC_kses::form($this->sf_search_field('organizer', array('type' => $this->sf_options['organizer']['type']))) : '');
-		echo ((is_array($this->sf_options) && isset($this->sf_options['speaker']) && $this->sf_options['speaker']['type'] != '0') ? MEC_kses::form($this->sf_search_field('speaker', array('type' => $this->sf_options['speaker']['type']))) : '');
-		echo ((is_array($this->sf_options) && isset($this->sf_options['tag']) && $this->sf_options['tag']['type'] != '0') ? MEC_kses::form($this->sf_search_field('tag', array('type' => $this->sf_options['tag']['type']))) : '');
-		echo ((is_array($this->sf_options) && isset($this->sf_options['label']) && $this->sf_options['label']['type'] != '0') ? MEC_kses::form($this->sf_search_field('label', array('type' => $this->sf_options['label']['type']))) : '');
-		echo ((is_array($this->sf_options) && isset($this->sf_options['address_search']) && $this->sf_options['address_search']['type'] != '0') ? MEC_kses::form($this->sf_search_field('address_search', array('type' => $this->sf_options['address_search']['type']))) : '');
-		echo ((is_array($this->sf_options) && isset($this->sf_options['event_cost']) && $this->sf_options['event_cost']['type'] != '0') ? MEC_kses::form($this->sf_search_field('event_cost', array('type' => $this->sf_options['event_cost']['type']))) : '');
-		echo ($this->sf_reset_button ? '<div class="mec-search-reset-button"><button class="button mec-button" id="mec_search_form_'.esc_attr($this->id).'_reset" type="button">'.esc_html__('Reset', 'modern-events-calendar-lite').'</button></div>' : '');
-		?>
+			<?php
+			echo ((is_array($this->sf_options) && isset($this->sf_options['category']) && $this->sf_options['category']['type'] != '0') ? MEC_kses::form($this->sf_search_field('category', array('type' => $this->sf_options['category']['type']))) : '');
+			echo ((is_array($this->sf_options) && isset($this->sf_options['location']) && $this->sf_options['location']['type'] != '0') ? MEC_kses::form($this->sf_search_field('location', array('type' => $this->sf_options['location']['type']))) : '');
+			echo ((is_array($this->sf_options) && isset($this->sf_options['organizer']) && $this->sf_options['organizer']['type'] != '0') ? MEC_kses::form($this->sf_search_field('organizer', array('type' => $this->sf_options['organizer']['type']))) : '');
+			echo ((is_array($this->sf_options) && isset($this->sf_options['speaker']) && $this->sf_options['speaker']['type'] != '0') ? MEC_kses::form($this->sf_search_field('speaker', array('type' => $this->sf_options['speaker']['type']))) : '');
+			echo ((is_array($this->sf_options) && isset($this->sf_options['tag']) && $this->sf_options['tag']['type'] != '0') ? MEC_kses::form($this->sf_search_field('tag', array('type' => $this->sf_options['tag']['type']))) : '');
+			echo ((is_array($this->sf_options) && isset($this->sf_options['label']) && $this->sf_options['label']['type'] != '0') ? MEC_kses::form($this->sf_search_field('label', array('type' => $this->sf_options['label']['type']))) : '');
+			echo ((is_array($this->sf_options) && isset($this->sf_options['address_search']) && $this->sf_options['address_search']['type'] != '0') ? MEC_kses::form($this->sf_search_field('address_search', array('type' => $this->sf_options['address_search']['type']))) : '');
+			echo ((is_array($this->sf_options) && isset($this->sf_options['event_cost']) && $this->sf_options['event_cost']['type'] != '0') ? MEC_kses::form($this->sf_search_field('event_cost', array('type' => $this->sf_options['event_cost']['type']))) : '');
+			echo ($this->sf_reset_button ? '<div class="mec-search-reset-button col-md-2"><button class="button mec-button" id="mec_search_form_'.esc_attr($this->id).'_reset" type="button">'.esc_html__('Reset', 'modern-events-calendar-lite').'</button></div>' : '');
+			?>
 		</div>
 	</div>
 </div>

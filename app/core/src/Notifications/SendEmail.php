@@ -452,6 +452,8 @@ class SendEmail{
         $content = str_replace('%%virtual_password%%', get_post_meta($this->event_id, 'mec_virtual_password', true), $content);
         $content = str_replace('%%virtual_embed%%', get_post_meta($this->event_id, 'mec_virtual_embed', true), $content);
 
+        $zoom_meeting_id = get_post_meta($this->event_id, 'mec_zoom_meeting_id', true);
+        $content = str_replace('%%zoom_meeting_id%%', $zoom_meeting_id ? esc_html($zoom_meeting_id) : '', $content);
         $content = str_replace('%%zoom_join%%', get_post_meta($this->event_id, 'mec_zoom_join_url', true), $content);
         $content = str_replace('%%zoom_link%%', get_post_meta($this->event_id, 'mec_zoom_link_url', true), $content);
         $content = str_replace('%%zoom_password%%', get_post_meta($this->event_id, 'mec_zoom_password', true), $content);

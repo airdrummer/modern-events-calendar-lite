@@ -27,6 +27,11 @@ class MEC_partial extends MEC_base
         $this->settings = $this->main->get_settings();
     }
 
+    public function is_flexible_enabled()
+    {
+        return isset($this->settings['booking_payable_both']) && $this->settings['booking_payable_both'];
+    }
+
     public function is_enabled()
     {
         return isset($this->settings['booking_partial_payment']) && $this->settings['booking_partial_payment'];

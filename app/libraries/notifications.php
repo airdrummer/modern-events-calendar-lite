@@ -1098,6 +1098,7 @@ class MEC_notifications extends MEC_base
         $message = str_replace('%%zoom_join%%', get_post_meta($event_id, 'mec_zoom_join_url', true), $message);
         $message = str_replace('%%zoom_link%%', get_post_meta($event_id, 'mec_zoom_link_url', true), $message);
         $message = str_replace('%%zoom_password%%', get_post_meta($event_id, 'mec_zoom_password', true), $message);
+        $message = str_replace('%%zoom_meeting_id%%', get_post_meta($event_id, 'mec_zoom_meeting_id', true), $message);
         $message = str_replace('%%zoom_embed%%', get_post_meta($event_id, 'mec_zoom_embed', true), $message);
 
         // Remove remained placeholders
@@ -1353,6 +1354,7 @@ class MEC_notifications extends MEC_base
             $message = str_replace('%%zoom_join%%', get_post_meta($post->ID, 'mec_zoom_join_url', true), $message);
             $message = str_replace('%%zoom_link%%', get_post_meta($post->ID, 'mec_zoom_link_url', true), $message);
             $message = str_replace('%%zoom_password%%', get_post_meta($post->ID, 'mec_zoom_password', true), $message);
+            $message = str_replace('%%zoom_meeting_id%%', get_post_meta($post->ID, 'mec_zoom_meeting_id', true), $message);
             $message = str_replace('%%zoom_embed%%', get_post_meta($post->ID, 'mec_zoom_embed', true), $message);
 
             $message = apply_filters('mec_notifications_user_event_publishing_render_content', $message, $post->ID, $post, $new, $old);
@@ -1568,6 +1570,7 @@ class MEC_notifications extends MEC_base
             $message = str_replace('%%zoom_join%%', get_post_meta($event_id, 'mec_zoom_join_url', true), $message);
             $message = str_replace('%%zoom_link%%', get_post_meta($event_id, 'mec_zoom_link_url', true), $message);
             $message = str_replace('%%zoom_password%%', get_post_meta($event_id, 'mec_zoom_password', true), $message);
+            $message = str_replace('%%zoom_meeting_id%%', get_post_meta($event_id, 'mec_zoom_meeting_id', true), $message);
             $message = str_replace('%%zoom_embed%%', get_post_meta($event_id, 'mec_zoom_embed', true), $message);
 
             $message = $this->content($this->get_content($message, 'event_finished', $event_id, $book_id), $book_id, $attendee, $timestamps);
@@ -2192,9 +2195,11 @@ class MEC_notifications extends MEC_base
 
         $google_calendar_link = '<a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=' . urlencode($event_title) . '&dates=' . gmdate('Ymd\\THi00\\Z', ($start_timestamp - $gmt_offset_seconds)) . '/' . gmdate('Ymd\\THi00\\Z', ($end_timestamp - $gmt_offset_seconds)) . '&details=' . urlencode($event_content) . (trim($google_calendar_location) ? '&location=' . urlencode($google_calendar_location) : '') . ((trim($rrule) ? '&recur=' . urlencode($rrule) : '')) . '" target="_blank">' . esc_html__('+ Add to Google Calendar', 'modern-events-calendar-lite') . '</a>';
         $ical_export_link = '<a href="' . esc_url($this->main->ical_URL_email($event_id, $book_id, get_the_date('Y-m-d', $book_id))) . '">' . esc_html__('+ iCal / Outlook export', 'modern-events-calendar-lite') . '</a>';
+        $ical_export_link_all = '<a href="' . esc_url($this->main->ical_URL($event_id)) . '">' . esc_html__('+ iCal / Outlook export', 'modern-events-calendar-lite') . '</a>';
 
         $message = str_replace('%%google_calendar_link%%', $google_calendar_link, $message);
         $message = str_replace('%%ics_link%%', $ical_export_link, $message);
+        $message = str_replace('%%ics_link_all_occurrences%%', $ical_export_link_all, $message);
 
         // Next Occurrences
         $next_occurrences = $db->select("SELECT `tstart`, `tend` FROM `#__mec_dates` WHERE `post_id`='" . $event_id . "' AND `tstart`>='" . $start_timestamp . "' ORDER BY `tstart` ASC LIMIT 20", 'loadAssocList');
@@ -2390,6 +2395,7 @@ class MEC_notifications extends MEC_base
         $message = str_replace('%%zoom_join%%', get_post_meta($event_id, 'mec_zoom_join_url', true), $message);
         $message = str_replace('%%zoom_link%%', get_post_meta($event_id, 'mec_zoom_link_url', true), $message);
         $message = str_replace('%%zoom_password%%', get_post_meta($event_id, 'mec_zoom_password', true), $message);
+        $message = str_replace('%%zoom_meeting_id%%', get_post_meta($event_id, 'mec_zoom_meeting_id', true), $message);
         return str_replace('%%zoom_embed%%', get_post_meta($event_id, 'mec_zoom_embed', true), $message);
     }
 

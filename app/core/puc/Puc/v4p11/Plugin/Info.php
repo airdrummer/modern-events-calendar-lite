@@ -17,6 +17,10 @@ if ( !class_exists('Puc_v4p11_Plugin_Info', false) ):
 		public $homepage;
 		public $sections = [];
 		public $download_url;
+		public $requirements;
+		public $changelog_url;
+		public $demo_url;
+		public $buy_now_url;
 
 		public $banners;
 		public $icons = [];

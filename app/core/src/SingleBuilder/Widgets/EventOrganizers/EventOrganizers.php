@@ -101,7 +101,7 @@ class EventOrganizers extends WidgetBase {
 					<?php if(isset($organizer['thumbnail'])): ?>
 						<dd class="mec-organizer">
                             <?php if( is_plugin_active('mec-advanced-organizer/mec-advanced-organizer.php') && ( $settings['advanced_organizer']['organizer_enable_link_section_title'] ?? false ) ): ?>
-                                <a href="<?php echo get_permalink( $settings['advanced_organizer']['single_page'] ).'?fesection=organizer&feparam='.$organizer['id']; ?>" target="<?php echo $settings['advanced_organizer']['organizer_link_target']; ?>">
+                                <a href="<?php echo get_permalink( $settings['advanced_organizer']['single_page'] ).'?fesection=organizer&feparam='.$organizer['id']; ?>" target="<?php echo $settings['advanced_organizer']['organizer_link_target'] ?? '_blank'; ?>">
                                     <i class="mec-sl-link"></i>
                                     <h6><?php echo (isset($organizer['name']) ? esc_html($organizer['name']) : ''); ?></h6>
                                 </a>
@@ -129,7 +129,7 @@ class EventOrganizers extends WidgetBase {
 					<dd class="mec-organizer-url">
 						<i class="mec-sl-sitemap"></i>
 						<h6><?php esc_html_e('Website', 'modern-events-calendar-lite'); ?></h6>
-						<span><a href="<?php echo esc_url($organizer['url']); ?>" class="mec-color-hover" target="<?php echo $settings['advanced_organizer']['organizer_link_target']; ?>"><?php echo esc_url( $organizer['url'] ); ?></a></span>
+						<span><a href="<?php echo esc_url($organizer['url']); ?>" class="mec-color-hover" target="<?php echo $settings['advanced_organizer']['organizer_link_target'] ?? '_blank'; ?>"><?php echo esc_url( $organizer['url'] ); ?></a></span>
 					</dd>
 					<?php endif;
 					$organizer_description_setting = isset( $settings['organizer_description'] ) ? $settings['organizer_description'] : ''; $organizer_terms = get_the_terms($event_detail->data, 'mec_organizer');  if($organizer_description_setting == '1'): foreach($organizer_terms as $organizer_term) { if ($organizer_term->term_id == $organizer['id'] ) {  if(isset($organizer_term->description) && !empty($organizer_term->description)): ?>

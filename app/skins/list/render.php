@@ -198,6 +198,211 @@ $map_events = [];
                                 <?php echo MEC_kses::element($this->display_organizers($event)); ?>
                                 <?php echo MEC_kses::element($this->display_cost($event)); ?>
                                 <?php do_action('mec_list_standard_right_box', $event); ?>
+
+                                <?php
+                                include_once ABSPATH . 'wp-admin/includes/plugin.php';
+                                if (function_exists('is_plugin_active') && is_plugin_active('mec-customize/mec-customize.php')) {
+        ?>
+                                <style>
+                                    .mec-event-meta dl, .mec-event-meta dd{
+                                        margin: 0!important;
+                                    }
+                                    .mec-event-meta > div{
+                                        border-style: solid;
+                                        border-width: 0px 0px 1px 0px;
+                                        border-color: var(--e-global-color-primary);
+                                        padding-bottom: 10px;
+                                    }
+                                    .mec-event-meta .mec-event-data-fields-customize{
+                                        border-style: none;
+                                        border-width: 0px;
+                                        border-color: unset;
+                                        padding-bottom: 0px;
+                                    }
+                                    .mec-event-data-fields-customize{
+                                        padding: 0px 0px 0px 0px;
+                                        margin: 0px 0px 0px 0px;
+                                        border-style: none;
+                                    }
+                                    .mec-event-data-fields-customize ul{
+                                        overflow: hidden;
+                                        padding-left: 0;
+                                        margin-left: 0;
+                                        padding-top: 0px !important;
+                                    }
+                                    .mec-event-data-fields-customize ul li{
+                                        width: 100%;
+                                        display: block;
+                                        height: auto;
+                                        padding-bottom: 10px;
+                                        border-style: solid;
+                                        border-width: 0px 0px 1px 0px;
+                                        border-color: var(--e-global-color-primary);
+                                        list-style: none;
+                                        margin-bottom: 10px;
+                                    }
+                                    .mec-event-data-fields-customize ul li .mec-event-data-field-name
+                                    {
+                                        font-size: 18px !important;
+                                        font-weight: 900 !important;
+                                        line-height: 1.2em !important;
+                                        color: #000 !important;
+                                        padding: 0px 0px 0px 0px;
+                                        margin: 0px 0px 0px 0px;
+                                    }
+                                    .mec-event-data-fields-customize ul li .mec-event-data-field-value
+                                    {
+                                        font-size: 18px !important;
+                                        font-weight: 900 !important;
+                                        line-height: 1.2em !important;
+                                        color: #000 !important;
+                                        padding: 0px 0px 0px 0px;
+                                        margin: 0px 0px 0px 0px;
+                                    }
+                                    .mec-event-more-info-customize {
+                                        text-align: left;
+                                        padding: 0px 0px 18px 0px;
+                                        margin: 0px 0px 0px 0px;
+                                        border-style: solid;
+                                        border-width: 0px 0px 1px 0px;
+                                        border-color: var(--e-global-color-primary);
+                                    }
+
+                                    .mec-event-more-info-customize .mec-event-meta dd
+                                    {
+                                        display: inline-block;
+                                        margin: 0;
+                                    }
+                                </style>
+
+                                <?php
+
+                                $main = MEC::getInstance('app.libraries.main');
+                                $settings = $main->get_settings();
+                                $display = !isset($settings['display_event_fields']) || $settings['display_event_fields'];
+                                if(!$display and !$sidebar and !$shortcode) return;
+
+                                $fields = $main->get_event_fields();
+                                if(!is_array($fields) || !count($fields)) return;
+
+                                // Start Timestamp
+                                $start_timestamp = (isset($event->date) and isset($event->date['start']) and isset($event->date['start']['timestamp'])) ? $event->date['start']['timestamp'] : NULL;
+
+                                $data = (isset($event->data) and isset($event->data->meta) and isset($event->data->meta['mec_fields']) and is_array($event->data->meta['mec_fields'])) ? $event->data->meta['mec_fields'] : get_post_meta($event->ID, 'mec_fields', true);
+                                if($start_timestamp) $data = MEC_feature_occurrences::param($event->ID, $start_timestamp, 'fields', $data);
+
+                                if(!is_array($data) || !count($data)) return;
+
+                                foreach($fields as $n => $item)
+                                {
+                                    // n meaning number
+                                    if(!is_numeric($n)) continue;
+
+                                    $result = $data[$n] ?? '';
+                                    if((!is_array($result) && trim($result) == '') || (is_array($result) && !count($result))) continue;
+
+                                    $content = $item['type'] ?? 'text';
+                                    if($content === 'checkbox')
+                                    {
+                                        $cleaned = [];
+                                        foreach($result as $k => $v)
+                                        {
+                                            if(trim($v) !== '') $cleaned[] = $v;
+                                        }
+
+                                        $value = $cleaned;
+                                        if(!count($value))
+                                        {
+                                            $content = NULL;
+                                        }
+                                    }
+                                }
+
+                                if(isset($content) && $content != NULL && (isset($settings['display_event_fields_backend']) and $settings['display_event_fields_backend'] == 1) or !isset($settings['display_event_fields_backend']))
+                                {
+                                $date_format = get_option('date_format');
+                                ?>
+                    <div class="mec-event-data-fields-customize mec-frontbox">
+                        <div class="mec-data-fields-box">
+                            <ul class="mec-event-data-field-items">
+                                <?php foreach($fields as $f => $field): if(!is_numeric($f)) continue; ?>
+                                    <?php
+                                    $value = $data[$f] ?? '';
+                                    $type = $field['type'] ?? 'text';
+
+                                    if($type !== 'p' && ((!is_array($value) && trim($value) == '') || (is_array($value) && !count($value)))) continue;
+
+                                    if($type === 'checkbox')
+                                    {
+                                        $cleaned = [];
+                                        foreach($value as $k => $v)
+                                        {
+                                            if(trim($v) !== '') $cleaned[] = $v;
+                                        }
+
+                                        $value = $cleaned;
+                                        if(!count($value)) continue;
+                                    }
+
+                                    $icon = $field['icon'] ?? '';
+                                    ?>
+                                    <li class="mec-event-data-field-item mec-field-item-<?php echo esc_attr($type); ?>">
+                                        <?php if(trim($icon)): ?>
+                                            <img class="mec-custom-field-icon" src="<?php echo esc_url($icon); ?>" alt="<?php echo (isset($field['label']) ? esc_attr($field['label']) : ''); ?>">
+                                        <?php endif; ?>
+
+                                        <?php if(isset($field['label'])): ?>
+                                            <span class="mec-event-data-field-name"><?php esc_html_e(stripslashes($field['label']), 'modern-events-calendar-lite'); ?>: </span>
+                                        <?php endif; ?>
+
+                                        <?php if($type === 'email'): ?>
+                                            <span class="mec-event-data-field-value"><a href="mailto:<?php echo esc_attr($value); ?>"><?php echo esc_html($value); ?></a></span>
+                                        <?php elseif($type === 'tel'): ?>
+                                            <span class="mec-event-data-field-value"><a href="tel:<?php echo esc_attr($value); ?>"><?php echo esc_html($value); ?></a></span>
+                                        <?php elseif($type === 'p'): ?>
+                                            <span class="mec-event-data-field-value"><?php echo $field['content'] ?? '' ?></span>
+                                        <?php elseif($type === 'url'): ?>
+                                            <span class="mec-event-data-field-value"><a href="<?php echo esc_url($value); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html($value); ?></a></span>
+                                        <?php elseif($type === 'date'): $value = $this->main->to_standard_date($value); ?>
+                                            <span class="mec-event-data-field-value"><?php echo esc_html($this->main->date_i18n($date_format, strtotime($value))); ?></span>
+                                        <?php elseif($type === 'textarea'): ?>
+                                            <span class="mec-event-data-field-value"><?php echo !is_array($value) ? wpautop(stripslashes($value)) : ''; ?></span>
+                                        <?php else: ?>
+                                            <span class="mec-event-data-field-value"><?php echo (is_array($value) ? esc_html(stripslashes(implode(', ', $value))) : esc_html(stripslashes($value))); ?></span>
+                                        <?php endif; ?>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
+                    </div>
+                    <?php
+                    }
+
+                                $main = MEC::getInstance('app.libraries.main');
+                                $icons 	      = $main->icons($settings_mec['icons'] ?? []);
+                                $settings = $main->get_settings();
+
+                                $more_info = (isset($event->data->meta['mec_more_info']) and trim($event->data->meta['mec_more_info']) and $event->data->meta['mec_more_info'] != 'http://') ? $event->data->meta['mec_more_info'] : '';
+                                if(isset($event->date) and isset($event->date['start']) and isset($event->date['start']['timestamp'])) $more_info = MEC_feature_occurrences::param($event->ID, $event->date['start']['timestamp'], 'more_info', $more_info);
+
+                                $more_info_target = MEC_feature_occurrences::param($event->ID, $event->date['start']['timestamp'], 'more_info_target', $event->data->meta['mec_more_info_target'] ?? '');
+                                if(!trim($more_info_target) && isset($settings['fes_event_link_target']) && trim($settings['fes_event_link_target'])) $more_info_target = $settings['fes_event_link_target'];
+
+                                $more_info_title = MEC_feature_occurrences::param($event->ID, $event->date['start']['timestamp'], 'more_info_title', ((isset($event->data->meta['mec_more_info_title']) and trim($event->data->meta['mec_more_info_title'])) ? $event->data->meta['mec_more_info_title'] : esc_html__('Read More', 'modern-events-calendar-lite')));
+
+                                if($more_info)
+                                {
+                                ?>
+                                <div class="mec-event-more-info mec-event-more-info-customize">
+                                    <?php echo $icons->display('info'); ?>
+                                    <dl><dd class="mec-events-event-more-info"><a class="mec-more-info-button mec-color-hover" target="<?php echo esc_attr($more_info_target); ?>" href="<?php echo esc_url($more_info); ?>"><?php echo esc_html($more_info_title); ?></a></dd></dl>
+                                </div>
+                                <?php
+                                }
+                                }
+
+                                ?>
+<!--                                --><?php //do_action('mec_customize_fields', $event); ?>
                             </div>
                         </div>
                     </div>
@@ -361,7 +566,7 @@ if(isset($this->map_on_top) and $this->map_on_top and isset($map_events) and !em
     });
     </script>';
 
-    $map_javascript = apply_filters('mec_map_load_script', $map_javascript, $this, $settings);
+    $map_javascript = apply_filters('mec_map_load_script', $map_javascript, $this, $settings,$this->map_on_top);
 
     // Include javascript code into the page
     if($this->main->is_ajax()) echo MEC_kses::full($map_javascript);

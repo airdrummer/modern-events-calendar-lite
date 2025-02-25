@@ -58,8 +58,8 @@ else $set_dark = '';
                 </span>
 
                 <span class="mec-timetable-event-span mec-timetable-event-location">
-                    <?php echo $this->icons->display('location-pin'); ?>
                     <?php if(isset($location['name']) and trim($location['name'])): ?>
+                    <?php echo $this->icons->display('location-pin'); ?>
                     <span><?php echo esc_html($location['name']); ?></span>
                     <?php endif; ?>
                 </span>

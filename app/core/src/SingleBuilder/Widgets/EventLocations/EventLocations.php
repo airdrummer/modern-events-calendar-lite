@@ -73,7 +73,7 @@ class EventLocations extends WidgetBase {
 						<dd class="mec-location-url">
 							<i class="mec-sl-sitemap"></i>
 							<h6><?php esc_html_e('Website', 'modern-events-calendar-lite'); ?></h6>
-							<span><a href="<?php echo esc_url($location['url']); ?>" class="mec-color-hover" target="<?php echo $this->settings['advanced_location']['location_link_target']; ?>"><?php echo esc_url( $location['url'] ); ?></a></span>
+							<span><a href="<?php echo esc_url($location['url']); ?>" class="mec-color-hover" target="<?php echo $this->settings['advanced_location']['location_link_target'] ?? '_blank'; ?>"><?php echo esc_url( $location['url'] ); ?></a></span>
 						</dd>
 					<?php endif;?>
 
@@ -116,7 +116,7 @@ class EventLocations extends WidgetBase {
             return $location_name;
         }
 
-        if(!empty($location_link)) $location_html ='<i class="mec-sl-link"></i><a href="'.esc_url($location_link).'" target="'.$this->settings['advanced_location']['location_link_target'].'">'.esc_html($location_name).'</a>';
+        if(!empty($location_link)) $location_html ='<i class="mec-sl-link"></i><a href="'.esc_url($location_link).'" target="'.($this->settings['advanced_location']['location_link_target'] ?? '_blank').'">'.esc_html($location_name).'</a>';
         else $location_html = $location_name;
 
         return $location_html;

@@ -826,6 +826,7 @@ $gateways_options = $this->main->get_gateways_options();
                                     'tickets' => $settings['tickets'] ?? [],
                                     'name_prefix' => 'mec[settings][tickets]',
                                     'object_id' => null,
+                                    'display_global_tickets' => false,
                                 ]); ?>
                             </div>
                         </div>

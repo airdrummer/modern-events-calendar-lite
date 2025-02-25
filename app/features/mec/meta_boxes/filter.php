@@ -67,6 +67,9 @@ $MEC_tax_walker = new MEC_tax_walker();
                 <?php if(!isset($this->settings['organizers_status']) || $this->settings['organizers_status']): ?>
                 <a class="mec-create-shortcode-tabs-link" data-href="mec_select_organizers" href="#"><?php echo esc_html__('Organizers' , 'modern-events-calendar-lite'); ?></a>
                 <?php endif; ?>
+                <?php if(isset($this->settings['speakers_status']) && $this->settings['speakers_status']): ?>
+                    <a class="mec-create-shortcode-tabs-link" data-href="mec_select_speakers" href="#"><?php echo esc_html__('Speakers' , 'modern-events-calendar-lite'); ?></a>
+                <?php endif; ?>
                 <a class="mec-create-shortcode-tabs-link" data-href="mec_select_labels" href="#"><?php echo esc_html__('Labels' , 'modern-events-calendar-lite'); ?></a>
                 <?php if(isset($this->settings['sponsors_status']) and $this->settings['sponsors_status']): ?>
                 <a class="mec-create-shortcode-tabs-link" data-href="mec_select_sponsors" href="#"><?php echo esc_html__('Sponsors' , 'modern-events-calendar-lite'); ?></a>
@@ -81,7 +84,7 @@ $MEC_tax_walker = new MEC_tax_walker();
                 <div class="mec-form-row mec-create-shortcode-tab-content mec-tab-active" id="mec_select_categories">
                     <h3><?php echo esc_html($this->main->m('taxonomy_categories', esc_html__('Categories', 'modern-events-calendar-lite'))); ?></h3>
                     <h4 style="margin-bottom: 10px;"><?php echo esc_html__('Include', 'modern-events-calendar-lite'); ?></h4>
-                    <p style="line-height: normal; margin-bottom: 0;" class="description"><?php esc_html_e('Choose your desired categories for filtering the events.', 'modern-events-calendar-lite'); ?></p>
+                    <p class="description"><?php esc_html_e('Choose your desired categories for filtering the events.', 'modern-events-calendar-lite'); ?></p>
                     <p class="description" style="color: red;"><?php esc_html_e('You will see only those categories that are associated to at-least one event.', 'modern-events-calendar-lite'); ?></p>
                     <select name="mec_tax_input[mec_category][]" multiple="multiple" title="<?php esc_attr_e('Include categories', 'modern-events-calendar-lite'); ?>">
                         <?php
@@ -97,7 +100,7 @@ $MEC_tax_walker = new MEC_tax_walker();
                         ?>
                     </select>
                     <h4 style="margin-top: 50px; margin-bottom: 10px;"><?php echo esc_html__('Exclude', 'modern-events-calendar-lite'); ?></h4>
-                    <p style="line-height: normal; margin-bottom: 0;" class="description"><?php esc_html_e('Choose your desired categories to exclude from the results.', 'modern-events-calendar-lite'); ?></p>
+                    <p class="description"><?php esc_html_e('Choose your desired categories to exclude from the results.', 'modern-events-calendar-lite'); ?></p>
                     <p class="description" style="color: red;"><?php esc_html_e('You will see only those categories that are associated to at-least one event.', 'modern-events-calendar-lite'); ?></p>
                     <select name="mec_tax_input[mec_ex_category][]" multiple="multiple" title="<?php esc_attr_e('Exclude categories', 'modern-events-calendar-lite'); ?>">
                         <?php
@@ -116,7 +119,7 @@ $MEC_tax_walker = new MEC_tax_walker();
                 <div class="mec-form-row mec-create-shortcode-tab-content" id="mec_select_locations">
                     <h3><?php echo esc_html($this->main->m('taxonomy_locations', esc_html__('Locations', 'modern-events-calendar-lite'))); ?></h3>
                     <h4 style="margin-bottom: 10px;"><?php echo esc_html__('Include', 'modern-events-calendar-lite'); ?></h4>
-                    <p style="line-height: normal; margin-bottom: 0;" class="description"><?php esc_html_e('Choose your desired locations for filtering the events.', 'modern-events-calendar-lite'); ?></p>
+                    <p class="description"><?php esc_html_e('Choose your desired locations for filtering the events.', 'modern-events-calendar-lite'); ?></p>
                     <p class="description" style="color: red;"><?php esc_html_e('You will see only those locations that are associated to at-least one event.', 'modern-events-calendar-lite'); ?></p>
                     <select name="mec_tax_input[mec_location][]" multiple="multiple" title="<?php esc_attr_e('Include locations', 'modern-events-calendar-lite'); ?>">
                         <?php
@@ -132,7 +135,7 @@ $MEC_tax_walker = new MEC_tax_walker();
                         ?>
                     </select>
                     <h4 style="margin-top: 50px; margin-bottom: 10px;"><?php echo esc_html__('Exclude', 'modern-events-calendar-lite'); ?></h4>
-                    <p style="line-height: normal; margin-bottom: 0;" class="description"><?php esc_html_e('Choose your desired locations to exclude from the results.', 'modern-events-calendar-lite'); ?></p>
+                    <p class="description"><?php esc_html_e('Choose your desired locations to exclude from the results.', 'modern-events-calendar-lite'); ?></p>
                     <p class="description" style="color: red;"><?php esc_html_e('You will see only those locations that are associated to at-least one event.', 'modern-events-calendar-lite'); ?></p>
                     <select name="mec_tax_input[mec_ex_location][]" multiple="multiple" title="<?php esc_attr_e('Exclude locations', 'modern-events-calendar-lite'); ?>">
                         <?php
@@ -152,7 +155,7 @@ $MEC_tax_walker = new MEC_tax_walker();
                 <div class="mec-form-row mec-create-shortcode-tab-content" id="mec_select_organizers">
                     <h3><?php echo esc_html($this->main->m('taxonomy_organizers', esc_html__('Organizers', 'modern-events-calendar-lite'))); ?></h3>
                     <h4 style="margin-bottom: 10px;"><?php echo esc_html__('Include', 'modern-events-calendar-lite'); ?></h4>
-                    <p style="line-height: normal; margin-bottom: 0;" class="description"><?php esc_html_e('Choose your desired organizers for filtering the events.', 'modern-events-calendar-lite'); ?></p>
+                    <p class="description"><?php esc_html_e('Choose your desired organizers for filtering the events.', 'modern-events-calendar-lite'); ?></p>
                     <p class="description" style="color: red;"><?php esc_html_e('You will see only those organizers that are associated to at-least one event.', 'modern-events-calendar-lite'); ?></p>
                     <select name="mec_tax_input[mec_organizer][]" multiple="multiple" title="<?php esc_attr_e('Include organizers', 'modern-events-calendar-lite'); ?>">
                         <?php
@@ -168,7 +171,7 @@ $MEC_tax_walker = new MEC_tax_walker();
                         ?>
                     </select>
                     <h4 style="margin-top: 50px; margin-bottom: 10px;"><?php echo esc_html__('Exclude', 'modern-events-calendar-lite'); ?></h4>
-                    <p style="line-height: normal; margin-bottom: 0;" class="description"><?php esc_html_e('Choose your desired organizers to exclude from the results.', 'modern-events-calendar-lite'); ?></p>
+                    <p class="description"><?php esc_html_e('Choose your desired organizers to exclude from the results.', 'modern-events-calendar-lite'); ?></p>
                     <p class="description" style="color: red;"><?php esc_html_e('You will see only those organizers that are associated to at-least one event.', 'modern-events-calendar-lite'); ?></p>
                     <select name="mec_tax_input[mec_ex_organizer][]" multiple="multiple" title="<?php esc_attr_e('Exclude organizers', 'modern-events-calendar-lite'); ?>">
                         <?php
@@ -184,6 +187,43 @@ $MEC_tax_walker = new MEC_tax_walker();
                         ?>
                     </select>
                 </div>
+                <?php endif; ?>
+                <?php if(isset($this->settings['speakers_status']) && $this->settings['speakers_status']): ?>
+                    <div class="mec-form-row mec-create-shortcode-tab-content" id="mec_select_speakers">
+                        <h3><?php echo esc_html($this->main->m('taxonomy_speakers', esc_html__('Speakers', 'modern-events-calendar-lite'))); ?></h3>
+                        <h4 style="margin-bottom: 10px;"><?php echo esc_html__('Include', 'modern-events-calendar-lite'); ?></h4>
+                        <p class="description"><?php esc_html_e('Choose your desired speakers for filtering the events.', 'modern-events-calendar-lite'); ?></p>
+                        <p class="description" style="color: red;"><?php esc_html_e('You will see only those speakers that are associated to at-least one event.', 'modern-events-calendar-lite'); ?></p>
+                        <select name="mec_tax_input[mec_speaker][]" multiple="multiple" title="<?php esc_attr_e('Include speakers', 'modern-events-calendar-lite'); ?>">
+                            <?php
+                            $selected_speakers = explode(',', get_post_meta($post->ID, 'speaker', true));
+                            wp_terms_checklist(0, array(
+                                'descendants_and_self'=>0,
+                                'taxonomy'=>'mec_speaker',
+                                'selected_cats'=>$selected_speakers,
+                                'popular_cats'=>false,
+                                'checked_ontop'=>false,
+                                'walker'=>$MEC_tax_walker
+                            ));
+                            ?>
+                        </select>
+                        <h4 style="margin-top: 50px; margin-bottom: 10px;"><?php echo esc_html__('Exclude', 'modern-events-calendar-lite'); ?></h4>
+                        <p class="description"><?php esc_html_e('Choose your desired speakers to exclude from the results.', 'modern-events-calendar-lite'); ?></p>
+                        <p class="description" style="color: red;"><?php esc_html_e('You will see only those speakers that are associated to at-least one event.', 'modern-events-calendar-lite'); ?></p>
+                        <select name="mec_tax_input[mec_ex_speaker][]" multiple="multiple" title="<?php esc_attr_e('Exclude speakers', 'modern-events-calendar-lite'); ?>">
+                            <?php
+                            $ex_selected_speakers = explode(',', get_post_meta($post->ID, 'ex_speaker', true));
+                            wp_terms_checklist(0, array(
+                                'descendants_and_self'=>0,
+                                'taxonomy'=>'mec_speaker',
+                                'selected_cats'=>$ex_selected_speakers,
+                                'popular_cats'=>false,
+                                'checked_ontop'=>false,
+                                'walker'=>$MEC_tax_walker
+                            ));
+                            ?>
+                        </select>
+                    </div>
                 <?php endif; ?>
                 <div class="mec-form-row mec-create-shortcode-tab-content" id="mec_select_labels">
                     <h3><?php echo esc_html($this->main->m('taxonomy_labels', esc_html__('Labels', 'modern-events-calendar-lite'))); ?></h3>
@@ -223,7 +263,7 @@ $MEC_tax_walker = new MEC_tax_walker();
                 <?php if(isset($this->settings['sponsors_status']) and $this->settings['sponsors_status']): ?>
                 <div class="mec-form-row mec-create-shortcode-tab-content" id="mec_select_sponsors">
                     <h3><?php echo esc_html($this->main->m('taxonomy_sponsor', esc_html__('Sponsors', 'modern-events-calendar-lite'))); ?></h3>
-                    <p style="line-height: normal; margin-bottom: 0;" class="description"><?php esc_html_e('Choose your desired sponsors for filtering the events.', 'modern-events-calendar-lite'); ?></p>
+                    <p class="description"><?php esc_html_e('Choose your desired sponsors for filtering the events.', 'modern-events-calendar-lite'); ?></p>
                     <p class="description" style="color: red;"><?php esc_html_e('You will see only those sponsors that are associated to at-least one event.', 'modern-events-calendar-lite'); ?></p>
                     <select name="mec_tax_input[mec_sponsor][]" multiple="multiple" title="<?php echo esc_html($this->main->m('taxonomy_sponsor', esc_html__('Sponsors', 'modern-events-calendar-lite'))); ?>">
                         <?php

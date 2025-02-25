@@ -337,7 +337,7 @@ if(isset($this->map_on_top) and $this->map_on_top and isset($map_events) and !em
     $map_data->sf_status = null;
     $map_data->main = $this->main;
 
-    $map_javascript = apply_filters('mec_map_load_script', $map_javascript, $this, $settings);
+    $map_javascript = apply_filters('mec_map_load_script', $map_javascript, $this, $settings,$this->map_on_top);
 
     // Include javascript code into the page
     if($this->main->is_ajax()) echo MEC_kses::full($map_javascript);

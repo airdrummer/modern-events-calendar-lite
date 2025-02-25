@@ -112,19 +112,20 @@ class MEC_skin_grid extends MEC_skins
         $this->sf_options = (isset($this->atts['sf-options']) and isset($this->atts['sf-options'][$this->skin])) ? $this->atts['sf-options'][$this->skin] : [];
 
         // Search Form Status
-        $this->sf_status = isset($this->atts['sf_status']) ? $this->atts['sf_status'] : true;
-        $this->sf_display_label = isset($this->atts['sf_display_label']) ? $this->atts['sf_display_label'] : false;
-        $this->sf_reset_button = isset($this->atts['sf_reset_button']) ? $this->atts['sf_reset_button'] : false;
-        $this->sf_refine = isset($this->atts['sf_refine']) ? $this->atts['sf_refine'] : false;
+        $this->sf_status = $this->atts['sf_status'] ?? true;
+        $this->sf_display_label = $this->atts['sf_display_label'] ?? false;
+        $this->sf_dropdown_method = $this->atts['sf_dropdown_method'] ?? '1';
+        $this->sf_reset_button = $this->atts['sf_reset_button'] ?? false;
+        $this->sf_refine = $this->atts['sf_refine'] ?? false;
 
-        // Generate an ID for the sking
+        // Generate an ID for the skin
         $this->id = isset($this->atts['id']) ? $this->atts['id'] : mt_rand(100, 999);
 
         // Set the ID
         if(!isset($this->atts['id'])) $this->atts['id'] = $this->id;
 
         // Show "Load More" button or not
-        $this->load_more_button = isset($this->skin_options['load_more_button']) ? $this->skin_options['load_more_button'] : true;
+        $this->load_more_button = $this->skin_options['load_more_button'] ?? true;
 
         // Pagination
         $this->pagination = isset($this->skin_options['pagination']) ? $this->skin_options['pagination'] : (!$this->load_more_button ? '0' : 'loadmore');
@@ -307,7 +308,7 @@ class MEC_skin_grid extends MEC_skins
      */
     public function search()
     {
-        if( false === strpos($this->style, 'fluent' ) && false === strpos($this->style, 'liquid') )
+        if(strpos($this->style, 'fluent') === false && strpos($this->style, 'liquid') === false)
         {
             return parent::search();
         }
@@ -336,6 +337,9 @@ class MEC_skin_grid extends MEC_skins
             {
                 $start = $this->start_date;
                 $end = date('Y-m-t', strtotime($this->start_date));
+
+                // Set a certain maximum date from shortcode page.
+                if(trim($this->maximum_date) == '' and (isset($this->maximum_date_range) and trim($this->maximum_date_range))) $this->maximum_date = $this->maximum_date_range;
             }
 
             // Date Events

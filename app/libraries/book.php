@@ -251,7 +251,7 @@ class MEC_book extends MEC_base
         $payable = $total;
 
         // Calculate Payable
-        if ($this->partial_payment->is_enabled()) $payable = $this->partial_payment->calculate($total, $event_id);
+        if ($this->partial_payment->is_enabled() && !$this->partial_payment->is_flexible_enabled()) $payable = $this->partial_payment->calculate($total, $event_id);
 
         return [
             'total' => $total,
@@ -1779,7 +1779,7 @@ class MEC_book extends MEC_base
         $cached = get_transient($transient_key);
 
         // Return Cached Data
-        if ($cached) return $cached;
+        if ($cached !== false) return $cached;
 
         $query = new WP_Query([
             'post_type' => $this->PT,
@@ -1837,7 +1837,7 @@ class MEC_book extends MEC_base
         $user = $this->getUser();
         $booking_user = $user->booking($booking_id);
 
-        $ticket_price = $this->get_price_for_users($event_id, $ticket_price, $booking_user->ID);
+        $ticket_price = $this->get_price_for_users($event_id, $ticket_price, $booking_user ? $booking_user->ID : 0);
 
         // Price Per Date
         if (isset($tickets[$ticket_id]['dates']) and is_array($tickets[$ticket_id]['dates']) and count($tickets[$ticket_id]['dates']))

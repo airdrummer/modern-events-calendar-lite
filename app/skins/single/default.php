@@ -295,7 +295,7 @@ $banner_module = $this->can_display_banner_module($event);
                                         $skin = new \MEC_Advanced_Organizer\Core\Lib\MEC_Advanced_Organizer_Lib_Skin();
                                         $organizer_link = $skin->single_page_url($organizer['id']);
                                         ?>
-                                        <a href="<?php echo $organizer_link;?>" target="<?php echo $settings['advanced_organizer']['organizer_link_target']; ?>">
+                                        <a href="<?php echo $organizer_link;?>" target="<?php echo $settings['advanced_organizer']['organizer_link_target'] ?? '_blank'; ?>">
                                             <i class="mec-sl-link"></i>
                                             <h6><?php echo (isset($organizer['name']) ? esc_html($organizer['name']) : ''); ?></h6>
                                         </a>
@@ -323,7 +323,7 @@ $banner_module = $this->can_display_banner_module($event);
 								<dd class="mec-organizer-url">
 									<?php echo $this->icons->display('sitemap'); ?>
 									<h6><?php esc_html_e('Website', 'modern-events-calendar-lite'); ?></h6>
-                                    <span><a href="<?php echo esc_url($organizer['url']); ?>" class="mec-color-hover" target="<?php echo isset($settings['advanced_organizer']) ? $settings['advanced_organizer']['organizer_link_target'] : ''; ?>"><?php echo (isset($organizer['page_label']) and trim($organizer['page_label'])) ? esc_html($organizer['page_label']) : esc_html($organizer['url']); ?></a></span>
+                                    <span><a href="<?php echo esc_url($organizer['url']); ?>" class="mec-color-hover" target="<?php echo isset($settings['advanced_organizer']) ? $settings['advanced_organizer']['organizer_link_target'] : '_blank'; ?>"><?php echo (isset($organizer['page_label']) and trim($organizer['page_label'])) ? esc_html($organizer['page_label']) : esc_html($organizer['url']); ?></a></span>
                                     <?php do_action('mec_single_default_organizer', $organizer); ?>
 								</dd>
 							<?php endif;
@@ -346,7 +346,11 @@ $banner_module = $this->can_display_banner_module($event);
 					<!-- Register Booking Button -->
 					<?php if($this->main->can_show_booking_module($event, true)): ?>
 						<?php $data_lity_class = ''; if(isset($settings['single_booking_style']) and $settings['single_booking_style'] == 'modal' ){ $data_lity_class = 'mec-booking-data-lity'; }  ?>
-						<a class="mec-booking-button-register mec-booking-button mec-bg-color <?php echo esc_attr($data_lity_class); ?> <?php if(isset($settings['single_booking_style']) and $settings['single_booking_style'] != 'modal' ) echo 'simple-booking'; ?>" href="javascript:void(0)" data-bookingform="#mec-events-meta-group-booking-<?php echo esc_attr($this->uniqueid); ?>"><?php echo esc_html($this->main->m('register_button', esc_html__('REGISTER', 'modern-events-calendar-lite'))); ?></a>
+						<a class="mec-booking-button-register mec-booking-button mec-bg-color <?php echo esc_attr($data_lity_class); ?>"
+							data-action="<?php echo isset($settings['single_booking_style']) && $settings['single_booking_style'] == 'modal' ? 'modal' : 'scroll'; ?>"
+							data-target="#mec-events-meta-group-booking-<?php echo esc_attr($this->uniqueid); ?>">
+							<?php echo esc_html($this->main->m('register_button', esc_html__('REGISTER', 'modern-events-calendar-lite'))); ?>
+						</a>
 					<?php elseif($more_info and !$this->main->is_expired($event)): ?>
 						<a class="mec-booking-button mec-bg-color" target="<?php echo esc_attr($more_info_target); ?>" href="<?php echo esc_url($more_info); ?>"><?php if($more_info_title) echo esc_html__($more_info_title, 'modern-events-calendar-lite'); else echo esc_html($this->main->m('register_button', esc_html__('REGISTER', 'modern-events-calendar-lite'))); ?></a>
 					<?php endif; ?>
@@ -436,30 +440,27 @@ $this->factory->params('footer', function()
 			});
 
 			// Fix modal booking in some themes
-			jQuery(".mec-booking-button.mec-booking-data-lity").on('click', function(e)
-			{
-				e.preventDefault();
-				lity(jQuery(this).data('bookingform'));
+			jQuery(document).ready(function ($) {
+				$(".mec-booking-button-register").on("click", function (e) {
+					e.preventDefault();
 
-				return false;
-			});
+					const action = $(this).data("action");
+					const target = $(this).data("target");
 
-			jQuery(".mec-booking-button-register").on('click', function(e)
-			{
-				if(jQuery(".mec-booking-button.mec-booking-data-lity").length>0){
+					if (action === "modal") {
+						if (target) {
+							lity($(target));
+						}
+					} else if (action === "scroll") {
+						if (target && $(target).length) {
+							$("html, body").animate({
+								scrollTop: $(target).offset().top
+							}, 300);
+						}
+					}
+
 					return false;
-				}
-
-				e.preventDefault();
-				jQuery([document.documentElement, document.body]).animate({
-					scrollTop: jQuery(jQuery(this).data('bookingform')).offset().top
-				}, 300);
-
-				jQuery([parent.document.documentElement, parent.document.body]).animate({
-					scrollTop: jQuery(jQuery(this).data('bookingform')).offset().top
-				}, 300);
-
-				return false;
+				});
 			});
 		});
 	</script>

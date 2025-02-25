@@ -140,12 +140,6 @@ $pages = get_pages();
                                         <input type="checkbox" name="mec[settings][addintional_locations_description]" id="mec_settings_additional_locations_description" <?php echo ((isset($settings['addintional_locations_description']) and $settings['addintional_locations_description']) ? 'checked="checked"' : ''); ?> value="1" /><?php esc_html_e('Enable Description For Other Locations', 'modern-events-calendar-lite'); ?>
                                     </label>
                                 </div>
-                                <div class="mec-form-row">
-                                    <label id="mec_settings_additional_locations_disable_title">
-                                        <input type="hidden" name="mec[settings][additional_locations_disable_title]" value="0" />
-                                        <input type="checkbox" name="mec[settings][additional_locations_disable_title]" id="mec_settings_additional_locations_disable_title" <?php echo ((isset($settings['additional_locations_disable_title']) and $settings['additional_locations_disable_title']) ? 'checked="checked"' : ''); ?> value="1" /><?php esc_html_e('Disable Title For Other Locations', 'modern-events-calendar-lite'); ?>
-                                    </label>
-                                </div>
                             </div>
                         </div>
 

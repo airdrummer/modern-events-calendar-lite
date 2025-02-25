@@ -203,7 +203,7 @@ class FormBuilder extends Singleton {
                         <label for="mec_start_date"><?php esc_html_e('Start Date', 'modern-events-calendar-lite'); ?> <?php echo ($required ? '<span class="mec-required">*</span>' : ''); ?></label>
                     </div>
                     <div class="mec-form-row">
-                        <div class="mec-col-4">
+                        <div class="mec-col-6">
                             <input type="text" name="mec[date][start][date]" id="mec_start_date" value="<?php echo esc_attr(\MEC\Base::get_main()->standardize_format($start_date, $datepicker_format)); ?>" placeholder="<?php esc_html_e('Start Date', 'modern-events-calendar-lite'); ?>" autocomplete="off" />
                         </div>
                         <div class="mec-col-6 mec-time-picker <?php echo ($allday == 1) ? 'mec-util-hidden' : ''; ?>">
@@ -223,7 +223,7 @@ class FormBuilder extends Singleton {
                         <label for="mec_end_date"><?php esc_html_e('End Date', 'modern-events-calendar-lite'); ?> <?php echo ($required ? '<span class="mec-required">*</span>' : ''); ?></label>
                     </div>
                     <div class="mec-form-row">
-                        <div class="mec-col-4">
+                        <div class="mec-col-6">
                             <input type="text" name="mec[date][end][date]" id="mec_end_date" value="<?php echo esc_attr(\MEC\Base::get_main()->standardize_format($end_date, $datepicker_format)); ?>" placeholder="<?php esc_html_e('End Date', 'modern-events-calendar-lite'); ?>" autocomplete="off" />
                         </div>
                         <div class="mec-col-6 mec-time-picker <?php echo ($allday == 1) ? 'mec-util-hidden' : ''; ?>">
@@ -247,7 +247,7 @@ class FormBuilder extends Singleton {
                         <input <?php if($hide_end_time == '1') echo 'checked="checked"'; ?> type="checkbox" name="mec[date][hide_end_time]" id="mec_hide_end_time" value="1" /><label for="mec_hide_end_time"><?php esc_html_e('Hide Event End Time', 'modern-events-calendar-lite'); ?></label>
                     </div>
                     <div class="mec-form-row">
-                        <div class="mec-col-4">
+                        <div class="mec-col-12">
                             <input type="text" class="" name="mec[date][comment]" id="mec_comment" placeholder="<?php esc_html_e('Notes on the time', 'modern-events-calendar-lite'); ?>" value="<?php echo esc_attr($comment); ?>" />
                             <p class="description"><?php esc_html_e('It appears next to the event time on the Single Event Page. You can enter notes such as the timezone name in this field.', 'modern-events-calendar-lite'); ?></p>
                         </div>
@@ -280,12 +280,12 @@ class FormBuilder extends Singleton {
                         <div class="mec-form-row" id="mec_repeat_certain_weekdays_container">
                             <label class="mec-col-3"><?php esc_html_e('Week Days', 'modern-events-calendar-lite'); ?></label>
                             <label class="label-checkbox"><input type="checkbox" name="mec[date][repeat][certain_weekdays][]" value="1" <?php echo (in_array(1, $certain_weekdays) ? 'checked="checked"' : ''); ?> /><?php esc_html_e('Monday', 'modern-events-calendar-lite'); ?></label>
-                            <label class="label-checkbox">&nbsp;<input type="checkbox" name="mec[date][repeat][certain_weekdays][]" value="2" <?php echo (in_array(2, $certain_weekdays) ? 'checked="checked"' : ''); ?> /><?php esc_html_e('Tuesday', 'modern-events-calendar-lite'); ?></label>
-                            <label class="label-checkbox">&nbsp;<input type="checkbox" name="mec[date][repeat][certain_weekdays][]" value="3" <?php echo (in_array(3, $certain_weekdays) ? 'checked="checked"' : ''); ?> /><?php esc_html_e('Wednesday', 'modern-events-calendar-lite'); ?></label>
-                            <label class="label-checkbox">&nbsp;<input type="checkbox" name="mec[date][repeat][certain_weekdays][]" value="4" <?php echo (in_array(4, $certain_weekdays) ? 'checked="checked"' : ''); ?> /><?php esc_html_e('Thursday', 'modern-events-calendar-lite'); ?></label>
-                            <label class="label-checkbox">&nbsp;<input type="checkbox" name="mec[date][repeat][certain_weekdays][]" value="5" <?php echo (in_array(5, $certain_weekdays) ? 'checked="checked"' : ''); ?> /><?php esc_html_e('Friday', 'modern-events-calendar-lite'); ?></label>
-                            <label class="label-checkbox">&nbsp;<input type="checkbox" name="mec[date][repeat][certain_weekdays][]" value="6" <?php echo (in_array(6, $certain_weekdays) ? 'checked="checked"' : ''); ?> /><?php esc_html_e('Saturday', 'modern-events-calendar-lite'); ?></label>
-                            <label class="label-checkbox">&nbsp;<input type="checkbox" name="mec[date][repeat][certain_weekdays][]" value="7" <?php echo (in_array(7, $certain_weekdays) ? 'checked="checked"' : ''); ?> /><?php esc_html_e('Sunday', 'modern-events-calendar-lite'); ?></label>
+                            <label class="label-checkbox"><input type="checkbox" name="mec[date][repeat][certain_weekdays][]" value="2" <?php echo (in_array(2, $certain_weekdays) ? 'checked="checked"' : ''); ?> /><?php esc_html_e('Tuesday', 'modern-events-calendar-lite'); ?></label>
+                            <label class="label-checkbox"><input type="checkbox" name="mec[date][repeat][certain_weekdays][]" value="3" <?php echo (in_array(3, $certain_weekdays) ? 'checked="checked"' : ''); ?> /><?php esc_html_e('Wednesday', 'modern-events-calendar-lite'); ?></label>
+                            <label class="label-checkbox"><input type="checkbox" name="mec[date][repeat][certain_weekdays][]" value="4" <?php echo (in_array(4, $certain_weekdays) ? 'checked="checked"' : ''); ?> /><?php esc_html_e('Thursday', 'modern-events-calendar-lite'); ?></label>
+                            <label class="label-checkbox"><input type="checkbox" name="mec[date][repeat][certain_weekdays][]" value="5" <?php echo (in_array(5, $certain_weekdays) ? 'checked="checked"' : ''); ?> /><?php esc_html_e('Friday', 'modern-events-calendar-lite'); ?></label>
+                            <label class="label-checkbox"><input type="checkbox" name="mec[date][repeat][certain_weekdays][]" value="6" <?php echo (in_array(6, $certain_weekdays) ? 'checked="checked"' : ''); ?> /><?php esc_html_e('Saturday', 'modern-events-calendar-lite'); ?></label>
+                            <label class="label-checkbox"><input type="checkbox" name="mec[date][repeat][certain_weekdays][]" value="7" <?php echo (in_array(7, $certain_weekdays) ? 'checked="checked"' : ''); ?> /><?php esc_html_e('Sunday', 'modern-events-calendar-lite'); ?></label>
                         </div>
                         <div class="mec-form-row" id="mec_exceptions_in_days_container">
                             <div class="mec-form-row">
@@ -294,7 +294,7 @@ class FormBuilder extends Singleton {
                                         <div class="mec-col-4">
                                             <input type="text" id="mec_exceptions_in_days_start_date" value="" placeholder="<?php esc_html_e('Start', 'modern-events-calendar-lite'); ?>" title="<?php esc_html_e('Start', 'modern-events-calendar-lite'); ?>" class="mec_date_picker_dynamic_format widefat" autocomplete="off"/>
                                         </div>
-                                        <div class="mec-col-8">
+                                        <div class="mec-col-6 mec-time-picker">
                                             <?php \MEC\Base::get_main()->timepicker(array(
                                                 'method' => $time_format,
                                                 'time_hour' => $start_time_hour,
@@ -310,7 +310,7 @@ class FormBuilder extends Singleton {
                                         <div class="mec-col-4">
                                             <input type="text" id="mec_exceptions_in_days_end_date" value="" placeholder="<?php esc_html_e('End', 'modern-events-calendar-lite'); ?>" title="<?php esc_html_e('End', 'modern-events-calendar-lite'); ?>" class="mec_date_picker_dynamic_format" autocomplete="off"/>
                                         </div>
-                                        <div class="mec-col-8">
+                                        <div class="mec-col-6 mec-time-picker">
                                             <?php \MEC\Base::get_main()->timepicker(array(
                                                 'method' => $time_format,
                                                 'time_hour' => $end_time_hour,
@@ -683,7 +683,7 @@ class FormBuilder extends Singleton {
             <div id="mec-fes-countdown-status" class="mec-meta-box-fields">
                 <h4><?php esc_html_e('Countdown Method', 'modern-events-calendar-lite'); ?></h4>
                 <div class="mec-form-row">
-                    <div class="mec-col-4">
+                    <div class="mec-col-6">
                         <select name="mec[countdown_method]" id="mec_countdown_method" title="<?php esc_attr_e('Countdown Method', 'modern-events-calendar-lite'); ?>">
                             <option value="global" <?php if('global' == $countdown_method) echo 'selected="selected"'; ?>><?php esc_html_e('Inherit from global options', 'modern-events-calendar-lite'); ?></option>
                             <option value="start" <?php if('start' == $countdown_method) echo 'selected="selected"'; ?>><?php esc_html_e('Count to Event Start', 'modern-events-calendar-lite'); ?></option>
@@ -717,7 +717,7 @@ class FormBuilder extends Singleton {
         <div id="mec-fes-style-per-event" class="mec-meta-box-fields">
             <h4><?php esc_html_e('Details Page Style', 'modern-events-calendar-lite'); ?></h4>
             <div class="mec-form-row">
-                <div class="mec-col-4">
+                <div class="mec-col-6">
                     <select name="mec[style_per_event]" id="mec_style_per_event" title="<?php esc_attr_e('Event Style', 'modern-events-calendar-lite'); ?>">
                         <option value="global"><?php esc_html_e('Inherit from global options', 'modern-events-calendar-lite'); ?></option>
                         <option value="default" <?php echo $style_per_event === 'default' ? 'selected="selected"' : ''; ?>><?php esc_html_e('Default Style', 'modern-events-calendar-lite'); ?></option>
@@ -783,7 +783,7 @@ class FormBuilder extends Singleton {
             <div id="mec-fes-visibility" class="mec-meta-box-fields">
                 <h4><?php esc_html_e('Visibility', 'modern-events-calendar-lite'); ?></h4>
                 <div class="mec-form-row">
-                    <div class="mec-col-4">
+                    <div class="mec-col-6">
                         <select name="mec[public]" id="mec_public" title="<?php esc_attr_e('Event Visibility', 'modern-events-calendar-lite'); ?>">
                             <option value="1" <?php if('1' == $public) echo 'selected="selected"'; ?>><?php esc_html_e('Show on Shortcodes', 'modern-events-calendar-lite'); ?></option>
                             <option value="0" <?php if('0' == $public) echo 'selected="selected"'; ?>><?php esc_html_e('Hide on Shortcodes', 'modern-events-calendar-lite'); ?></option>
@@ -815,7 +815,7 @@ class FormBuilder extends Singleton {
         <div id="mec-fes-timezone" class="mec-meta-box-fields">
             <h4><?php esc_html_e('Timezone', 'modern-events-calendar-lite'); ?></h4>
             <div class="mec-form-row mec-timezone-event">
-                <div class="mec-col-4">
+                <div class="mec-col-6">
                     <select name="mec[timezone]" id="mec_event_timezone">
                         <option value="global"><?php esc_html_e('Inherit from global options'); ?></option>
                         <?php echo \MEC_kses::form(\MEC\Base::get_main()->timezones($event_timezone)); ?>
@@ -896,12 +896,12 @@ class FormBuilder extends Singleton {
             <div class="mec-meta-box-fields mec-fes-user-data" id="mec-guest-email-link">
                 <h4><?php esc_html_e('User Data', 'modern-events-calendar-lite'); ?></h4>
                 <div class="mec-form-row">
-                    <label class="mec-col-2" for="mec_guest_email"><?php esc_html_e('Email', 'modern-events-calendar-lite'); ?><span>*</span></label>
-                    <input class="mec-col-7" type="email" required="required" name="mec[fes_guest_email]" id="mec_guest_email" value="<?php echo esc_attr($guest_email); ?>" placeholder="<?php esc_html_e('eg. yourname@gmail.com', 'modern-events-calendar-lite'); ?>" />
+                    <label class="mec-col-12" for="mec_guest_email"><?php esc_html_e('Email', 'modern-events-calendar-lite'); ?><span>*</span></label>
+                    <input class="mec-col-12" type="email" required="required" name="mec[fes_guest_email]" id="mec_guest_email" value="<?php echo esc_attr($guest_email); ?>" placeholder="<?php esc_html_e('eg. yourname@gmail.com', 'modern-events-calendar-lite'); ?>" />
                 </div>
                 <div class="mec-form-row">
-                    <label class="mec-col-2" for="mec_guest_name"><?php esc_html_e('Name', 'modern-events-calendar-lite'); ?><span>*</span></label>
-                    <input class="mec-col-7" type="text" required="required" name="mec[fes_guest_name]" id="mec_guest_name" value="<?php echo esc_attr($guest_name); ?>" placeholder="<?php esc_html_e('eg. John Smith', 'modern-events-calendar-lite'); ?>" />
+                    <label class="mec-col-12" for="mec_guest_name"><?php esc_html_e('Name', 'modern-events-calendar-lite'); ?><span>*</span></label>
+                    <input class="mec-col-12" type="text" required="required" name="mec[fes_guest_name]" id="mec_guest_name" value="<?php echo esc_attr($guest_name); ?>" placeholder="<?php esc_html_e('eg. John Smith', 'modern-events-calendar-lite'); ?>" />
                 </div>
             </div>
         <?php
@@ -930,14 +930,14 @@ class FormBuilder extends Singleton {
         <div class="mec-meta-box-fields mec-fes-event-links" id="mec-event-links">
             <h4><?php esc_html_e('Event Links', 'modern-events-calendar-lite'); ?></h4>
             <div class="mec-form-row">
-                <label class="mec-col-2" for="mec_read_more_link"><?php echo esc_html(\MEC\Base::get_main()->m('read_more_link', esc_html__('Event Link', 'modern-events-calendar-lite'))); ?> <?php echo ($event_link_required ? '<span class="mec-required">*</span>' : ''); ?></label>
-                <input class="mec-col-9" type="text" name="mec[read_more]" id="mec_read_more_link" value="<?php echo esc_attr($read_more); ?>" placeholder="<?php esc_html_e('eg. http://yoursite.com/your-event', 'modern-events-calendar-lite'); ?>" <?php echo ($event_link_required ? 'required' : ''); ?> />
+                <label class="mec-col-12" for="mec_read_more_link"><?php echo esc_html(\MEC\Base::get_main()->m('read_more_link', esc_html__('Event Link', 'modern-events-calendar-lite'))); ?> <?php echo ($event_link_required ? '<span class="mec-required">*</span>' : ''); ?></label>
+                <input class="mec-col-12" type="text" name="mec[read_more]" id="mec_read_more_link" value="<?php echo esc_attr($read_more); ?>" placeholder="<?php esc_html_e('eg. http://yoursite.com/your-event', 'modern-events-calendar-lite'); ?>" <?php echo ($event_link_required ? 'required' : ''); ?> />
                 <p class="description"><?php esc_html_e('If you fill it, it will replace the default event page link. Insert full link including http(s)://', 'modern-events-calendar-lite'); ?></p>
             </div>
             <div class="mec-form-row">
-                <label class="mec-col-2" for="mec_more_info_link"><?php echo esc_html(\MEC\Base::get_main()->m('more_info_link', esc_html__('More Info', 'modern-events-calendar-lite'))); ?> <?php echo $more_info_required ? '<span class="mec-required">*</span>' : ''; ?></label>
-                <input class="mec-col-5" type="text" name="mec[more_info]" id="mec_more_info_link" value="<?php echo esc_attr($more_info); ?>" placeholder="<?php esc_html_e('eg. http://yoursite.com/your-event', 'modern-events-calendar-lite'); ?>" <?php echo ( $more_info_required ? 'required' : ''); ?> />
-                <input class="mec-col-2" type="text" name="mec[more_info_title]" id="mec_more_info_title" value="<?php echo esc_attr($more_info_title); ?>" placeholder="<?php esc_html_e('More Information', 'modern-events-calendar-lite'); ?>" />
+                <label class="mec-col-12" for="mec_more_info_link"><?php echo esc_html(\MEC\Base::get_main()->m('more_info_link', esc_html__('More Info', 'modern-events-calendar-lite'))); ?> <?php echo $more_info_required ? '<span class="mec-required">*</span>' : ''; ?></label>
+                <input class="mec-col-12" type="text" name="mec[more_info]" id="mec_more_info_link" value="<?php echo esc_attr($more_info); ?>" placeholder="<?php esc_html_e('eg. http://yoursite.com/your-event', 'modern-events-calendar-lite'); ?>" <?php echo ( $more_info_required ? 'required' : ''); ?> />
+                <input class="mec-col-12" type="text" name="mec[more_info_title]" id="mec_more_info_title" value="<?php echo esc_attr($more_info_title); ?>" placeholder="<?php esc_html_e('More Information', 'modern-events-calendar-lite'); ?>" />
                 <p class="description"><?php esc_html_e('This link will appear on the single event page. Insert full link including http(s)://', 'modern-events-calendar-lite'); ?></p>
             </div>
         </div>
@@ -979,7 +979,7 @@ class FormBuilder extends Singleton {
                 <h4><?php echo esc_html(\MEC\Base::get_main()->m('event_cost', esc_html__('Event Cost', 'modern-events-calendar-lite'))); ?> <?php echo $required ? '<span class="mec-required">*</span>' : ''; ?></h4>
                 <div id="mec_meta_box_cost_form" class="<?php echo ($cost_auto_calculate ? 'mec-util-hidden' : ''); ?>">
                     <div class="mec-form-row">
-                        <input type="<?php echo ($cost_type === 'alphabetic' ? 'text' : 'number'); ?>" <?php echo ($cost_type === 'numeric' ? 'min="0" step="any"' : ''); ?> class="mec-col-3" name="mec[cost]" id="mec_cost" value="<?php echo esc_attr($cost); ?>" placeholder="<?php esc_html_e('Cost', 'modern-events-calendar-lite'); ?>" <?php echo ($required ? 'required' : ''); ?> />
+                        <input type="<?php echo ($cost_type === 'alphabetic' ? 'text' : 'number'); ?>" <?php echo ($cost_type === 'numeric' ? 'min="0" step="any"' : ''); ?> class="mec-col-12" name="mec[cost]" id="mec_cost" value="<?php echo esc_attr($cost); ?>" placeholder="<?php esc_html_e('Cost', 'modern-events-calendar-lite'); ?>" <?php echo ($required ? 'required' : ''); ?> />
                     </div>
                 </div>
 
@@ -996,8 +996,8 @@ class FormBuilder extends Singleton {
                 <?php if($currency_per_event): ?>
                 <h4 class="mec-form-subtitle"><?php echo esc_html__('Currency Options', 'modern-events-calendar-lite'); ?></h4>
                 <div class="mec-form-row">
-                    <label class="mec-col-3" for="mec_currency_currency"><?php esc_html_e('Currency', 'modern-events-calendar-lite'); ?></label>
-                    <div class="mec-col-4">
+                    <label class="mec-col-12" for="mec_currency_currency"><?php esc_html_e('Currency', 'modern-events-calendar-lite'); ?></label>
+                    <div class="mec-col-12">
                         <select name="mec[currency][currency]" id="mec_currency_currency">
                             <?php foreach($currencies as $c=>$currency_name): ?>
                                 <option value="<?php echo esc_attr($c); ?>" <?php echo (($current_currency == $c) ? 'selected="selected"' : ''); ?>><?php echo esc_html($currency_name); ?></option>
@@ -1006,8 +1006,8 @@ class FormBuilder extends Singleton {
                     </div>
                 </div>
                 <div class="mec-form-row">
-                    <label class="mec-col-3" for="mec_currency_currency_symptom"><?php esc_html_e('Currency Sign', 'modern-events-calendar-lite'); ?></label>
-                    <div class="mec-col-4">
+                    <label class="mec-col-12" for="mec_currency_currency_symptom"><?php esc_html_e('Currency Sign', 'modern-events-calendar-lite'); ?></label>
+                    <div class="mec-col-12">
                         <input type="text" name="mec[currency][currency_symptom]" id="mec_currency_currency_symptom" value="<?php echo (isset($currency['currency_symptom']) ? esc_attr($currency['currency_symptom']) : ''); ?>" />
                         <span class="mec-tooltip">
                             <div class="box left">
@@ -1019,8 +1019,8 @@ class FormBuilder extends Singleton {
                     </div>
                 </div>
                 <div class="mec-form-row">
-                    <label class="mec-col-3" for="mec_currency_currency_sign"><?php esc_html_e('Currency Position', 'modern-events-calendar-lite'); ?></label>
-                    <div class="mec-col-4">
+                    <label class="mec-col-12" for="mec_currency_currency_sign"><?php esc_html_e('Currency Position', 'modern-events-calendar-lite'); ?></label>
+                    <div class="mec-col-12">
                         <select name="mec[currency][currency_sign]" id="mec_currency_currency_sign">
                             <option value="before" <?php echo ((isset($currency['currency_sign']) and $currency['currency_sign'] == 'before') ? 'selected="selected"' : ''); ?>><?php esc_html_e('$10 (Before)', 'modern-events-calendar-lite'); ?></option>
                             <option value="before_space" <?php echo ((isset($currency['currency_sign']) and $currency['currency_sign'] == 'before_space') ? 'selected="selected"' : ''); ?>><?php esc_html_e('$ 10 (Before with Space)', 'modern-events-calendar-lite'); ?></option>
@@ -1030,14 +1030,14 @@ class FormBuilder extends Singleton {
                     </div>
                 </div>
                 <div class="mec-form-row">
-                    <label class="mec-col-3" for="mec_currency_thousand_separator"><?php esc_html_e('Thousand Separator', 'modern-events-calendar-lite'); ?></label>
-                    <div class="mec-col-4">
+                    <label class="mec-col-12" for="mec_currency_thousand_separator"><?php esc_html_e('Thousand Separator', 'modern-events-calendar-lite'); ?></label>
+                    <div class="mec-col-12">
                         <input type="text" name="mec[currency][thousand_separator]" id="mec_currency_thousand_separator" value="<?php echo (isset($currency['thousand_separator']) ? esc_attr($currency['thousand_separator']) : ','); ?>" />
                     </div>
                 </div>
                 <div class="mec-form-row">
-                    <label class="mec-col-3" for="mec_currency_decimal_separator"><?php esc_html_e('Decimal Separator', 'modern-events-calendar-lite'); ?></label>
-                    <div class="mec-col-4">
+                    <label class="mec-col-12" for="mec_currency_decimal_separator"><?php esc_html_e('Decimal Separator', 'modern-events-calendar-lite'); ?></label>
+                    <div class="mec-col-12">
                         <input type="text" name="mec[currency][decimal_separator]" id="mec_currency_decimal_separator" value="<?php echo (isset($currency['decimal_separator']) ? esc_attr($currency['decimal_separator']) : '.'); ?>" />
                     </div>
                 </div>
@@ -1146,7 +1146,8 @@ class FormBuilder extends Singleton {
                 </div>
                 <input type="hidden" id="mec_thumbnail" name="mec[featured_image]" value="<?php if(isset($attachment_id) and intval($attachment_id)) the_guid($attachment_id); ?>" />
                 <button type="button" class="mec_upload_image_button button" data-post-id="<?php echo esc_attr($post->ID); ?>" id="mec_thumbnail_button"><?php echo esc_html__('Choose image', 'modern-events-calendar-lite'); ?></button>
-                <button type="button" class="mec_remove_image_button button <?php echo (trim($featured_image) ? '' : 'mec-util-hidden'); ?>"><?php echo esc_html__('Remove image', 'modern-events-calendar-lite'); ?></button>
+                <p class="description"><?php esc_html_e('png, jpg, gif, and webp files are allowed.', 'modern-events-calendar-lite'); ?></p>
+                <button type="button" class="mec_remove_image_button button <?php echo (trim($featured_image) ? '' : 'mec-util-hidden'); ?>"><?php echo esc_html__('Remove', 'modern-events-calendar-lite'); ?></button>
             </div>
             <?php else: ?>
             <div class="mec-form-row">
@@ -1385,13 +1386,13 @@ class FormBuilder extends Singleton {
             <?php if(isset($atts['add_speaker']) && $atts['add_speaker'] == '1'): ?>
                 <div class="mec-form-row">
                     <input type="text" name="mec[speakers][datas][names]" id="mec_speaker_input_names" placeholder="<?php echo sprintf(esc_attr__('%s Name', 'modern-events-calendar-lite'), $singular_label); ?>">
-                    <p><?php echo sprintf(esc_html__('Insert name of one %s: Chris Taylor', 'modern-events-calendar-lite'), strtolower($singular_label)); ?></p>
+                    <p class="description"><?php echo sprintf(esc_html__('Insert name of one %s: Chris Taylor', 'modern-events-calendar-lite'), strtolower($singular_label)); ?></p>
                     <button class="button" type="button" id="mec_add_speaker_button"><?php esc_html_e('Add Speaker', 'modern-events-calendar-lite'); ?></button>
                 </div>
             <?php elseif(isset($atts['add_speaker']) && $atts['add_speaker'] == '2'): ?>
                 <div class="mec-form-row mec-add-speaker-row">
                     <input type="text" name="mec[speakers][data][name]" id="mec_speaker_full_info_name" placeholder="<?php echo sprintf(esc_attr__('%s Name', 'modern-events-calendar-lite'), $singular_label); ?>">
-                    <p><?php echo sprintf(esc_html__('Insert name of one %s: Chris Taylor', 'modern-events-calendar-lite'), strtolower($singular_label)); ?></p>
+                    <p class="description"><?php echo sprintf(esc_html__('Insert name of one %s: Chris Taylor', 'modern-events-calendar-lite'), strtolower($singular_label)); ?></p>
                 </div>
                 <div class="mec-form-row mec-add-speaker-row">
                     <label><?php esc_html_e('Type', 'modern-events-calendar-lite'); ?></label>
@@ -1504,7 +1505,7 @@ class FormBuilder extends Singleton {
             <?php elseif(isset($atts['add_sponsors']) && $atts['add_sponsors'] == '2'): ?>
             <div class="mec-form-row mec-add-sponsor-row">
                 <input type="text" name="mec[sponsors][data][name]" id="mec_sponsor_full_info_name" placeholder="<?php echo sprintf(esc_html__('%s Name', 'modern-events-calendar-lite'), $singular_label); ?>">
-                <p><?php echo sprintf(esc_html__('Insert name of one %s: Company A', 'modern-events-calendar-lite'), strtolower($singular_label)); ?></p>
+                <p class="description"><?php echo sprintf(esc_html__('Insert name of one %s: Company A', 'modern-events-calendar-lite'), strtolower($singular_label)); ?></p>
             </div>
             <div class="mec-form-row mec-add-sponsor-row">
                 <input type="url" name="mec[sponsors][data][url]" id="mec_sponsor_full_info_url" placeholder="<?php echo sprintf(esc_html__('%s Link', 'modern-events-calendar-lite'), $singular_label); ?>">
@@ -1514,6 +1515,7 @@ class FormBuilder extends Singleton {
                     <span id="mec_fes_sponsor_thumbnail_img"></span>
                     <input type="hidden" name="mec[sponsors][data][thumbnail]" id="mec_fes_sponsor_thumbnail" value="">
                     <input type="file" id="mec_fes_sponsor_thumbnail_file" onchange="mec_fes_upload_sponsor_thumbnail();" />
+                    <p class="description"><?php esc_html_e('png, jpg, gif, and webp files are allowed.', 'modern-events-calendar-lite'); ?></p>
                     <span class="mec_fes_sponsor_remove_image_button button mec-util-hidden" id="mec_fes_sponsor_remove_image_button"><?php echo esc_html__('Remove image', 'modern-events-calendar-lite'); ?></span>
                 </div>
                 <button class="button" type="button" id="mec_add_full_sponsor_button"><?php esc_html_e('Add Sponsor', 'modern-events-calendar-lite'); ?></button>
@@ -1548,7 +1550,7 @@ class FormBuilder extends Singleton {
 
         $agreement_page = $atts['agreement_page'] ?? 0;
         $checked = $atts['checked'] ?? false;
-
+        $custom_text = $atts['agreement_text'] ?? esc_html__('I accept the Privacy Policy in order to submit an event.', 'modern-events-calendar-lite');
         ?>
         <div id="mec-fes-agreement">
             <div class="mec-form-row">
@@ -1556,11 +1558,10 @@ class FormBuilder extends Singleton {
                 <label>
                     <input type="hidden" name="mec[agreement]" value="0">
                     <input type="checkbox" name="mec[agreement]" required value="1" <?php echo $checked ? 'checked="checked"' : ''; ?>>
-
                     <?php if( $agreement_page ): ?>
-                    <span><?php echo sprintf(esc_html__('I accept the %s in order to submit an event.', 'modern-events-calendar-lite'), '<a href="'.get_permalink( $agreement_page ).'" target="_blank">'.esc_html__('Privacy Policy', 'modern-events-calendar-lite').'</a>'); ?> <span class="mec-required">*</span></span>
+                    <span><?php echo sprintf($custom_text, '<a href="'.get_permalink( $agreement_page ).'" target="_blank">'.esc_html__('Privacy Policy', 'modern-events-calendar-lite').'</a>'); ?> <span class="mec-required">*</span></span>
                     <?php else: ?>
-                    <span><?php esc_html_e('I accept the Privacy Policy in order to submit an event.', 'modern-events-calendar-lite'); ?> <span class="mec-required">*</span></span>
+                    <span><?php echo $custom_text; ?> <span class="mec-required">*</span></span>
                     <?php endif; ?>
                 </label>
             </div>
@@ -1858,6 +1859,7 @@ class FormBuilder extends Singleton {
                         <input type="checkbox" name="mec[banner][use_featured_image]" value="1" onchange="jQuery('#mec_event_banner_thumbnail_options').toggleClass('w-hidden');" <?php echo $mec_banner_featured_image ? 'checked' : ''; ?>>
                         <?php esc_html_e('Use featured image as banner image', 'modern-events-calendar-lite'); ?>
                     </label>
+                    <p class="description"><?php esc_html_e('Enabling this option forces the featured image to appear as the event banner, ignoring other event banner settings. Furthermore, the event gallery will also be hidden.', 'modern-events-calendar-lite'); ?></p>
                 </div>
                 <div class="mec-form-row mec-thumbnail-row <?php echo $mec_banner_featured_image ? 'w-hidden' : ''; ?>" id="mec_event_banner_thumbnail_options">
                     <div id="mec_banner_thumbnail_img">
@@ -1865,7 +1867,7 @@ class FormBuilder extends Singleton {
                     </div>
                     <input type="hidden" id="mec_banner_thumbnail" name="mec[banner][image]" value="<?php if(trim($mec_banner_image)) echo $mec_banner_image; ?>" />
                     <button type="button" class="mec_upload_image_button button" id="mec_banner_thumbnail_button" data-preview-id="mec_banner_thumbnail_img" data-input-id="mec_banner_thumbnail"><?php echo esc_html__('Choose image', 'modern-events-calendar-lite'); ?></button>
-                    <button type="button" class="mec_remove_image_button button mec-dash-remove-btn <?php echo (trim($mec_banner_image) ? '' : 'mec-util-hidden'); ?>" data-preview-id="mec_banner_thumbnail_img" data-input-id="mec_banner_thumbnail"><?php echo esc_html__('Remove image', 'modern-events-calendar-lite'); ?></button>
+                    <button type="button" class="mec_remove_image_button button mec-dash-remove-btn <?php echo (trim($mec_banner_image) ? '' : 'mec-util-hidden'); ?>" data-preview-id="mec_banner_thumbnail_img" data-input-id="mec_banner_thumbnail"><?php echo esc_html__('Remove', 'modern-events-calendar-lite'); ?></button>
 				</div>
             </div>
         </div>
@@ -2066,6 +2068,7 @@ class FormBuilder extends Singleton {
         $organizer_ids = array_unique($organizer_ids);
 
         $additional_organizers_status = !isset($settings['additional_organizers']) || $settings['additional_organizers'];
+        if(isset($settings['fes_section_other_organizers']) && !$settings['fes_section_other_organizers']) $additional_organizers_status = false;
 
         // FES Options
         $use_all_organizers = (($is_fes_form and isset($settings['fes_use_all_organizers']) and !$settings['fes_use_all_organizers']) ? false : true);
@@ -2141,7 +2144,7 @@ class FormBuilder extends Singleton {
             <div id="mec-additional-organizer-wrap" class="<?php echo !isset($selected) ? 'mec-util-hidden' : ''; ?>">
                 <h4><?php echo esc_html(\MEC\Base::get_main()->m('other_organizers', esc_html__('Other Organizers', 'modern-events-calendar-lite'))); ?></h4>
                 <div class="mec-form-row">
-                    <p><?php esc_html_e('You can select extra organizers in addition to main organizer if you like.', 'modern-events-calendar-lite'); ?></p>
+                    <p class="description"><?php esc_html_e('You can select extra organizers in addition to main organizer if you like.', 'modern-events-calendar-lite'); ?></p>
                     <div class="mec-additional-organizers">
                         <select class="mec-select2-dropdown">
                             <?php foreach($organizers as $organizer): ?>
@@ -2342,10 +2345,10 @@ class FormBuilder extends Singleton {
                 $role_discount = isset($booking_options['roles_discount_'.$role_key]) ? $booking_options['roles_discount_'.$role_key] : $loggedin_discount;
                 ?>
                 <div class="mec-form-row">
-                    <div class="mec-col-2">
+                    <div class="mec-col-6">
                         <label for="mec_bookings_roles_discount_<?php echo esc_attr($role_key); ?>"><?php echo esc_html($role_name); ?></label>
                     </div>
-                    <input class="mec-col-4" type="text" name="mec[booking][roles_discount_<?php echo esc_attr($role_key); ?>]" id="mec_bookings_roles_discount_<?php echo esc_attr($role_key); ?>" value="<?php echo esc_attr($role_discount); ?>" placeholder="<?php esc_html_e('e.g 5', 'modern-events-calendar-lite'); ?>">
+                    <input class="mec-col-6" type="text" name="mec[booking][roles_discount_<?php echo esc_attr($role_key); ?>]" id="mec_bookings_roles_discount_<?php echo esc_attr($role_key); ?>" value="<?php echo esc_attr($role_discount); ?>" placeholder="<?php esc_html_e('e.g 5', 'modern-events-calendar-lite'); ?>">
                 </div>
             <?php endforeach; ?>
         </div>
@@ -2403,7 +2406,7 @@ class FormBuilder extends Singleton {
                 </label>
             </div>
             <div class="mec-form-row <?php echo (!$bookings_all_occurrences ? 'mec-util-hidden' : ''); ?>" id="mec_bookings_all_occurrences_options">
-                <label class="mec-col-8" for="mec_bookings_all_occurrences_multiple">
+                <label class="mec-col-12" for="mec_bookings_all_occurrences_multiple">
                     <input type="hidden" name="mec[booking][bookings_all_occurrences_multiple]" value="0"/>
                     <input id="mec_bookings_all_occurrences_multiple"
                         <?php
@@ -2443,8 +2446,8 @@ class FormBuilder extends Singleton {
         <div class="mec-meta-box-fields" id="mec-interval-options">
             <h4 class="mec-title"><?php esc_html_e('Interval Options', 'modern-events-calendar-lite'); ?></h4>
             <div class="mec-form-row">
-                <label class="mec-col-4 mec_booking_show_booking_form_interval_label" for="mec_booking_show_booking_form_interval"><?php esc_html_e('Show Booking Form Interval', 'modern-events-calendar-lite'); ?></label>
-                <div class="mec-col-4">
+                <label class="mec-col-6 mec_booking_show_booking_form_interval_label" for="mec_booking_show_booking_form_interval"><?php esc_html_e('Show Booking Form Interval', 'modern-events-calendar-lite'); ?></label>
+                <div class="mec-col-6">
                     <input type="number" id="mec_booking_show_booking_form_interval" name="mec[booking][show_booking_form_interval]" value="<?php echo ((isset($booking_options['show_booking_form_interval']) and trim($booking_options['show_booking_form_interval']) != '') ? $booking_options['show_booking_form_interval'] : ''); ?>" placeholder="<?php esc_attr_e('Minutes (e.g 5)', 'modern-events-calendar-lite'); ?>" />
                     <span class="mec-tooltip">
                         <div class="box">
@@ -2495,8 +2498,8 @@ class FormBuilder extends Singleton {
         <div class="mec-meta-box-fields" id="mec-automatic-approval">
             <h4><?php esc_html_e('Automatic Approval', 'modern-events-calendar-lite'); ?></h4>
             <div class="mec-form-row">
-                <label class="mec-col-4" for="mec_booking_auto_verify"><?php esc_html_e('Email Verification', 'modern-events-calendar-lite'); ?></label>
-                <div class="mec-col-4">
+                <label class="mec-col-6" for="mec_booking_auto_verify"><?php esc_html_e('Email Verification', 'modern-events-calendar-lite'); ?></label>
+                <div class="mec-col-6">
                     <select name="mec[booking][auto_verify]" id="mec_booking_auto_verify">
                         <option value="global" <?php if(isset($booking_options['auto_verify']) and 'global' == $booking_options['auto_verify']) echo 'selected="selected"'; ?>><?php esc_html_e('Inherit from global options', 'modern-events-calendar-lite'); ?></option>
                         <option value="0" <?php if(isset($booking_options['auto_verify']) and '0' == $booking_options['auto_verify']) echo 'selected="selected"'; ?>><?php esc_html_e('Disabled', 'modern-events-calendar-lite'); ?></option>
@@ -2505,8 +2508,8 @@ class FormBuilder extends Singleton {
                 </div>
             </div>
             <div class="mec-form-row">
-                <label class="mec-col-4" for="mec_booking_auto_confirm"><?php esc_html_e('Booking Confirmation', 'modern-events-calendar-lite'); ?></label>
-                <div class="mec-col-4">
+                <label class="mec-col-6" for="mec_booking_auto_confirm"><?php esc_html_e('Booking Confirmation', 'modern-events-calendar-lite'); ?></label>
+                <div class="mec-col-6">
                     <select name="mec[booking][auto_confirm]" id="mec_booking_auto_confirm">
                         <option value="global" <?php if(isset($booking_options['auto_confirm']) and 'global' == $booking_options['auto_confirm']) echo 'selected="selected"'; ?>><?php esc_html_e('Inherit from global options', 'modern-events-calendar-lite'); ?></option>
                         <option value="0" <?php if(isset($booking_options['auto_confirm']) and '0' == $booking_options['auto_confirm']) echo 'selected="selected"'; ?>><?php esc_html_e('Disabled', 'modern-events-calendar-lite'); ?></option>
@@ -2547,7 +2550,7 @@ class FormBuilder extends Singleton {
             <div class="mec-form-row">
                 <h4 class="mec-title"><?php esc_html_e('Last Few Tickets Percentage', 'modern-events-calendar-lite'); ?></h4>
                 <div class="mec-form-row">
-                    <label class="mec-col-4" for="mec_bookings_last_few_tickets_percentage_inherit">
+                    <label class="mec-col-6" for="mec_bookings_last_few_tickets_percentage_inherit">
                         <input type="hidden" name="mec[booking][last_few_tickets_percentage_inherit]" value="0"/>
                         <input id="mec_bookings_last_few_tickets_percentage_inherit"
                             <?php
@@ -2592,7 +2595,7 @@ class FormBuilder extends Singleton {
         <div class="mec-meta-box-fields" id="mec-thankyou-page">
             <h4 class="mec-title"><?php esc_html_e('Thank You Page', 'modern-events-calendar-lite'); ?></h4>
             <div class="mec-form-row">
-                <label class="mec-col-4 mec_bookings_thankyou_page_inherit" for="mec_bookings_thankyou_page_inherit">
+                <label class="mec-col-6 mec_bookings_thankyou_page_inherit" for="mec_bookings_thankyou_page_inherit">
                     <input type="hidden" name="mec[booking][thankyou_page_inherit]" value="0"/>
                     <input id="mec_bookings_thankyou_page_inherit"
                         <?php
@@ -2607,8 +2610,8 @@ class FormBuilder extends Singleton {
             <div id="mec_booking_thankyou_page_options" <?php echo ($bookings_thankyou_page_inherit == 1) ? 'style="display: none;"' : ''; ?>>
                 <br>
                 <div class="mec-form-row">
-                    <label class="mec-col-3" for="mec_bookings_booking_thankyou_page"><?php esc_html_e('Thank You Page', 'modern-events-calendar-lite'); ?></label>
-                    <div class="mec-col-9">
+                    <label class="mec-col-6" for="mec_bookings_booking_thankyou_page"><?php esc_html_e('Thank You Page', 'modern-events-calendar-lite'); ?></label>
+                    <div class="mec-col-6">
                         <select id="mec_bookings_booking_thankyou_page" name="mec[booking][booking_thankyou_page]">
                             <option value="">----</option>
                             <?php foreach($pages as $page): ?>
@@ -2625,8 +2628,8 @@ class FormBuilder extends Singleton {
                     </div>
                 </div>
                 <div class="mec-form-row">
-                    <label class="mec-col-3" for="mec_bookings_booking_thankyou_page_time"><?php esc_html_e('Thank You Page Time Interval', 'modern-events-calendar-lite'); ?></label>
-                    <div class="mec-col-9">
+                    <label class="mec-col-6" for="mec_bookings_booking_thankyou_page_time"><?php esc_html_e('Thank You Page Time Interval', 'modern-events-calendar-lite'); ?></label>
+                    <div class="mec-col-6">
                         <input type="number" id="mec_bookings_booking_thankyou_page_time" name="mec[booking][booking_thankyou_page_time]" value="<?php echo ((isset($booking_options['booking_thankyou_page_time']) and trim($booking_options['booking_thankyou_page_time']) != '0') ? $booking_options['booking_thankyou_page_time'] : '2000'); ?>" placeholder="<?php esc_attr_e('2000 mean 2 seconds', 'modern-events-calendar-lite'); ?>" />
                         <span class="mec-tooltip">
                             <div class="box left">
@@ -2668,7 +2671,7 @@ class FormBuilder extends Singleton {
         <div class="mec-meta-box-fields" id="mec-booking-button-label">
             <h4 class="mec-title"><label for="mec_bookings_bbl"><?php esc_html_e('Booking Button Label', 'modern-events-calendar-lite'); ?></label></h4>
             <div class="mec-form-row">
-                <input class="mec-col-4" type="text" name="mec[booking][bookings_booking_button_label]" id="mec_bookings_bbl"
+                <input class="mec-col-6" type="text" name="mec[booking][bookings_booking_button_label]" id="mec_bookings_bbl"
                     value="<?php echo esc_attr($bookings_booking_button_label); ?>" placeholder="<?php esc_html_e('Book Now', 'modern-events-calendar-lite'); ?>">
             </div>
         </div>
@@ -2710,7 +2713,7 @@ class FormBuilder extends Singleton {
         <div class="mec-meta-box-fields" id="mec-booking-partial-payment">
             <h4 class="mec-title"><?php esc_html_e('Partial Payment', 'modern-events-calendar-lite'); ?></h4>
             <div class="mec-form-row">
-                <label class="mec-col-4 mec-bookings-payable-inherit" for="mec_bookings_payable_inherit">
+                <label class="mec-col-12 mec-bookings-payable-inherit" for="mec_bookings_payable_inherit">
                     <input type="hidden" name="mec[booking][bookings_payable_inherit]" value="0"/>
                     <input id="mec_bookings_payable_inherit"
                         <?php
@@ -2765,7 +2768,7 @@ class FormBuilder extends Singleton {
         <div class="mec-meta-box-fields" id="mec_bookings_user_limit">
             <h4 class="mec-title"><label for="mec_bookings_user_limit"><?php esc_html_e('Total User Booking Limits', 'modern-events-calendar-lite'); ?></label></h4>
             <div class="mec-form-row">
-                <label class="mec-col-4" for="mec_bookings_user_limit_unlimited" id="mec_bookings_user_limit_unlimited_label">
+                <label class="mec-col-6" for="mec_bookings_user_limit_unlimited" id="mec_bookings_user_limit_unlimited_label">
                     <input type="hidden" name="mec[booking][bookings_user_limit_unlimited]" value="0"/>
                     <input id="mec_bookings_user_limit_unlimited"
                         <?php
@@ -3724,7 +3727,7 @@ class FormBuilder extends Singleton {
         </script>
         <div class="mec-meta-box-fields mec-event-tab-content mec-form-row" id="mec-public-download-module-file">
             <h4><?php esc_html_e('Public File to Download', 'modern-events-calendar-lite'); ?></h4>
-            <div id="mec_meta_box_downloadable_file_options">
+            <div id="mec_meta_box_downloadable_file_options" class="mec-form-row">
                 <input type="hidden" id="mec_public_download_module_file" name="mec[public_download_module_file]" value="<?php echo esc_attr($file_id); ?>">
                 <input type="file" id="mec_public_download_module_file_uploader">
                 <p class="description"><?php esc_html_e('pdf,zip,png,jpg and gif files are allowed.', 'modern-events-calendar-lite'); ?></p>
@@ -3733,12 +3736,12 @@ class FormBuilder extends Singleton {
                 <div class="mec-error mec-util-hidden" id="mec_public_download_module_file_error"></div>
             </div>
             <div class="mec-form-row" style="margin-top: 30px;">
-                <label for="mec_public_download_module_title" class="mec-col-2"><?php esc_html_e('Title', 'modern-events-calendar-lite'); ?></label>
-                <input class="mec-col-5" type="text" id="mec_public_download_module_title" name="mec[public_download_module_title]" value="<?php echo esc_attr($title); ?>">
+                <label for="mec_public_download_module_title" class="mec-col-3"><?php esc_html_e('Title', 'modern-events-calendar-lite'); ?></label>
+                <input class="mec-col-6" type="text" id="mec_public_download_module_title" name="mec[public_download_module_title]" value="<?php echo esc_attr($title); ?>">
             </div>
             <div class="mec-form-row">
-                <label for="mec_public_download_module_description" class="mec-col-2"><?php esc_html_e('Description', 'modern-events-calendar-lite'); ?></label>
-                <textarea class="mec-col-5" id="mec_public_download_module_description" name="mec[public_download_module_description]" rows="5"><?php echo esc_textarea($description); ?></textarea>
+                <label for="mec_public_download_module_description" class="mec-col-3"><?php esc_html_e('Description', 'modern-events-calendar-lite'); ?></label>
+                <textarea class="mec-col-6" id="mec_public_download_module_description" name="mec[public_download_module_description]" rows="5"><?php echo esc_textarea($description); ?></textarea>
             </div>
         </div>
         <?php
@@ -3818,7 +3821,7 @@ class FormBuilder extends Singleton {
         </script>
         <div class="mec-meta-box-fields mec-booking-tab-content " id="mec-downloadable-file">
             <h4><?php esc_html_e('Downloadable File', 'modern-events-calendar-lite'); ?></h4>
-            <div id="mec_meta_box_downloadable_file_options">
+            <div id="mec_meta_box_downloadable_file_options" class="mec-form-row">
                 <input type="hidden" id="mec_downloadable_file" name="mec[downloadable_file]" value="<?php echo esc_attr($file_id); ?>">
                 <input type="file" id="mec_downloadable_file_uploader">
                 <p class="description"><?php esc_html_e('pdf,zip,png,jpg and gif files are allowed.', 'modern-events-calendar-lite'); ?></p>

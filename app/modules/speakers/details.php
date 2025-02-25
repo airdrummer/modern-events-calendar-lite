@@ -43,7 +43,7 @@ $type_link=$settings['advanced_speaker']['speaker_type_link']??'dialog';
                     $skin = new \MEC_Advanced_Speaker\Core\Lib\MEC_Advanced_Speaker_Lib_Skin();
                     $speaker_link = $skin->single_page_url($speaker['id']);
                 ?>
-                    <a class="mec-color-hover" href="<?php echo $speaker_link;?>" target="<?php echo $settings['advanced_speaker']['speaker_link_target'];?>">
+                    <a class="mec-color-hover" href="<?php echo $speaker_link;?>" target="<?php echo $settings['advanced_speaker']['speaker_link_target'] ?? '_blank'; ?>">
                 <?php }else {?>
                     <a class="mec-color-hover" href="#mec-speaker-info-<?php echo esc_attr($event->ID.'-'.$speaker['id']); ?>">
                 <?php } ?>
@@ -112,7 +112,7 @@ $type_link=$settings['advanced_speaker']['speaker_type_link']??'dialog';
                         <?php endif; ?>
                         <!-- Speaker Link -->
                         <?php if ($type_link=='dialog_link'): ?>
-                        <a href="<?php echo get_permalink( $settings['advanced_speaker']['single_page'] ).'?fesection=speaker&feparam='.esc_attr($speaker['id']); ?>" target="<?php echo $settings['advanced_speaker']['speaker_link_target'];?>"><i class="mec-fa-link"></i></a>
+                        <a href="<?php echo get_permalink( $settings['advanced_speaker']['single_page'] ).'?fesection=speaker&feparam='.esc_attr($speaker['id']); ?>" target="<?php echo $settings['advanced_speaker']['speaker_link_target'] ?? '_blank'; ?>"><i class="mec-fa-link"></i></a>
                         <?php endif; ?>
                     </div>
                     <!-- Speaker Description -->

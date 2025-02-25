@@ -765,6 +765,17 @@ class MEC_feature_mec extends MEC_base
         $organizers = sanitize_text_field(implode(',', $organizers_arr));
         $ex_organizers = sanitize_text_field(implode(',', $ex_organizers_arr));
 
+        $speakers_arr = (isset($terms['mec_speaker']) and is_array($terms['mec_speaker'])) ? $terms['mec_speaker'] : [];
+        $ex_speakers_arr = (isset($terms['mec_ex_speaker']) and is_array($terms['mec_ex_speaker'])) ? $terms['mec_ex_speaker'] : [];
+        foreach ($ex_speakers_arr as $ex_speaker)
+        {
+            $f = array_search($ex_speaker, $speakers_arr);
+            if (is_numeric($f)) unset($speakers_arr[$f]);
+        }
+
+        $speakers = sanitize_text_field(implode(',', $speakers_arr));
+        $ex_speakers = sanitize_text_field(implode(',', $ex_speakers_arr));
+
         $sponsors = (isset($terms['mec_sponsor']) and is_array($terms['mec_sponsor'])) ? sanitize_text_field(implode(',', $terms['mec_sponsor'])) : '';
 
         $labels_arr = (isset($terms['mec_label']) and is_array($terms['mec_label'])) ? $terms['mec_label'] : [];
@@ -817,6 +828,8 @@ class MEC_feature_mec extends MEC_base
         update_post_meta($post_id, 'ex_location', $ex_locations);
         update_post_meta($post_id, 'organizer', $organizers);
         update_post_meta($post_id, 'ex_organizer', $ex_organizers);
+        update_post_meta($post_id, 'speaker', $speakers);
+        update_post_meta($post_id, 'ex_speaker', $ex_speakers);
         update_post_meta($post_id, 'sponsor', $sponsors);
         update_post_meta($post_id, 'tag', $tags);
         update_post_meta($post_id, 'ex_tag', $ex_tags);

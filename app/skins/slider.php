@@ -90,7 +90,7 @@ class MEC_skin_slider extends MEC_skins
         // Search Form Status
         $this->sf_status = false;
         
-        // Generate an ID for the sking
+        // Generate an ID for the skin
         $this->id = isset($this->atts['id']) ? $this->atts['id'] : mt_rand(100, 999);
         
         // Set the ID

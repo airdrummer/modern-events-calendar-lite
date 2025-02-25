@@ -86,7 +86,7 @@ class MEC_formBuilder extends MEC_base
                                         <button class="button mec-remove-hourly-schedule-button mec-dash-remove-btn" type="button" onclick="mec_hourly_schedule_remove(<?php echo esc_attr($d); ?>, <?php echo esc_attr($key); ?>, '<?php echo esc_attr($prefix); ?>');"><?php esc_html_e('Remove', 'modern-events-calendar-lite'); ?></button>
                                         <?php if($speakers_status): ?>
                                         <div class="mec-col-12 mec-hourly-schedule-form-speakers" data-d="<?php echo esc_attr($d); ?>" data-key="<?php echo esc_attr($key); ?>" data-name-prefix="<?php echo esc_attr($name_prefix); ?>">
-                                            <strong class="mec-hourly-schedule-form-speakers-label"><?php echo esc_html($this->main->m('taxonomy_speakers', esc_html__('Speakers:', 'modern-events-calendar-lite'))); ?></strong>
+                                            <laabel class="mec-hourly-schedule-form-speakers-label"><?php echo esc_html($this->main->m('taxonomy_speakers', esc_html__('Speakers:', 'modern-events-calendar-lite'))); ?></laabel>
                                             <?php foreach($speakers as $speaker): ?>
                                             <label><input type="checkbox" name="<?php echo esc_attr($name_prefix); ?>[hourly_schedules][<?php echo esc_attr($d); ?>][schedules][<?php echo esc_attr($key); ?>][speakers][]" value="<?php echo esc_attr($speaker->term_id); ?>" <?php echo (isset($hourly_schedule['speakers']) and in_array($speaker->term_id, $hourly_schedule['speakers'])) ? 'checked="checked"' : ''; ?>><?php echo esc_html($speaker->name); ?></label>
                                             <?php endforeach; ?>
@@ -114,7 +114,7 @@ class MEC_formBuilder extends MEC_base
                                 <button class="button mec-remove-hourly-schedule-button mec-dash-remove-btn" type="button" onclick="mec_hourly_schedule_remove(<?php echo esc_attr($d); ?>, :i:, '<?php echo esc_attr($prefix); ?>');"><?php esc_html_e('Remove', 'modern-events-calendar-lite'); ?></button>
                                 <?php if($speakers_status): ?>
                                 <div class="mec-col-12 mec-hourly-schedule-form-speakers" data-d="<?php echo esc_attr($d); ?>" data-key=":i:" data-name-prefix="<?php echo esc_attr($name_prefix); ?>">
-                                    <strong class="mec-hourly-schedule-form-speakers-label"><?php echo esc_html($this->main->m('taxonomy_speakers', esc_html__('Speakers:', 'modern-events-calendar-lite'))); ?></strong>
+                                    <label class="mec-hourly-schedule-form-speakers-label"><?php echo esc_html($this->main->m('taxonomy_speakers', esc_html__('Speakers:', 'modern-events-calendar-lite'))); ?></label>
                                     <?php foreach($speakers as $speaker): ?>
                                     <label><input type="checkbox" name="<?php echo esc_attr($name_prefix); ?>[hourly_schedules][<?php echo esc_attr($d); ?>][schedules][:i:][speakers][]" value="<?php echo esc_attr($speaker->term_id); ?>"><?php echo esc_html($speaker->name); ?></label>
                                     <?php endforeach; ?>
@@ -166,7 +166,7 @@ class MEC_formBuilder extends MEC_base
                             <button class="button mec-remove-hourly-schedule-button mec-dash-remove-btn" type="button" onclick="mec_hourly_schedule_remove(:d:, :i:, '<?php echo esc_attr($prefix); ?>');"><?php esc_html_e('Remove', 'modern-events-calendar-lite'); ?></button>
                             <?php if($speakers_status): ?>
                             <div class="mec-col-12 mec-hourly-schedule-form-speakers" data-d=":d:" data-key=":i:" data-name-prefix="<?php echo esc_attr($name_prefix); ?>">
-                                <strong class="mec-hourly-schedule-form-speakers-label"><?php echo esc_html($this->main->m('taxonomy_speakers', esc_html__('Speakers:', 'modern-events-calendar-lite'))); ?></strong>
+                                <label class="mec-hourly-schedule-form-speakers-label"><?php echo esc_html($this->main->m('taxonomy_speakers', esc_html__('Speakers:', 'modern-events-calendar-lite'))); ?></label>
                                 <?php foreach($speakers as $speaker): ?>
                                 <label><input type="checkbox" name="<?php echo esc_attr($name_prefix); ?>[hourly_schedules][:d:][schedules][:i:][speakers][]" value="<?php echo esc_attr($speaker->term_id); ?>"><?php echo esc_html($speaker->name); ?></label>
                                 <?php endforeach; ?>
@@ -193,7 +193,7 @@ class MEC_formBuilder extends MEC_base
         ?>
         <div>
             <div class="mec-form-row">
-                <div class="mec-col-4">
+                <div class="mec-col-6">
                     <input type="text" id="<?php echo esc_attr($prefix); ?>_exceptions_not_in_days_date" value=""
                         placeholder="<?php esc_html_e('Date', 'modern-events-calendar-lite'); ?>" class="mec_date_picker_dynamic_format" autocomplete="off"/>
                 </div>
@@ -202,7 +202,7 @@ class MEC_formBuilder extends MEC_base
                         id="<?php echo esc_attr($prefix); ?>_add_not_in_days"><?php esc_html_e('Add', 'modern-events-calendar-lite'); ?></button>
                     <?php if($display_tooltip): ?>
                     <span class="mec-tooltip">
-                        <div class="box right">
+                        <div class="box top">
                             <h5 class="title"><?php esc_html_e('Exclude certain days', 'modern-events-calendar-lite'); ?></h5>
                             <div class="content">
                                 <p><?php esc_attr_e('Exclude certain days from event occurrence dates. Please note that you can exclude only single day occurrences and you cannot exclude one day from multiple day occurrences.', 'modern-events-calendar-lite'); ?>

@@ -61,7 +61,7 @@ $shortcodes = get_posts(array(
                             <div class="mec-form-row mec-basvanced-basic">
                                 <label class="mec-col-3" for="mec_settings_hide_time_method"><?php esc_html_e('Hide Events', 'modern-events-calendar-lite'); ?></label>
                                 <div class="mec-col-9">
-                                    <select id="mec_settings_time_format" name="mec[settings][hide_time_method]" onchange="if(this.value === 'plusn') jQuery('#mec_settings_hide_time_n_options').removeClass('w-hidden'); else jQuery('#mec_settings_hide_time_n_options').addClass('w-hidden');">
+                                    <select id="mec_settings_time_format" name="mec[settings][hide_time_method]" onchange="if(this.value === 'plusn') jQuery('#mec_settings_hide_time_n_options').show(); else jQuery('#mec_settings_hide_time_n_options').hide();">
                                         <option value="start" <?php if(isset($settings['hide_time_method']) && 'start' == $settings['hide_time_method']) echo 'selected="selected"'; ?>><?php esc_html_e('On Event Start', 'modern-events-calendar-lite'); ?></option>
                                         <option value="plus1" <?php if(isset($settings['hide_time_method']) && 'plus1' == $settings['hide_time_method']) echo 'selected="selected"'; ?>><?php esc_html_e('+1 Hour after start', 'modern-events-calendar-lite'); ?></option>
                                         <option value="plus2" <?php if(isset($settings['hide_time_method']) && 'plus2' == $settings['hide_time_method']) echo 'selected="selected"'; ?>><?php esc_html_e('+2 Hours after start', 'modern-events-calendar-lite'); ?></option>
@@ -78,7 +78,7 @@ $shortcodes = get_posts(array(
                                     </span>
                                 </div>
                             </div>
-                            <div class="mec-form-row mec-basvanced-basic <?php echo isset($settings['hide_time_method']) && 'plusn' == $settings['hide_time_method'] ? '' : 'w-hidden'; ?>" id="mec_settings_hide_time_n_options">
+                            <div class="mec-form-row mec-basvanced-basic" style="<?php echo isset($settings['hide_time_method']) && 'plusn' == $settings['hide_time_method'] ? '' : 'display: none;'; ?>" id="mec_settings_hide_time_n_options">
                                 <label class="mec-col-3" for="mec_settings_hide_time_n"><?php esc_html_e('Hide Events Hour', 'modern-events-calendar-lite'); ?></label>
                                 <div class="mec-col-9">
                                     <input type="number" min="2" step="1" id="mec_settings_hide_time_n" name="mec[settings][hide_time_n]" value="<?php echo isset($settings['hide_time_n']) && is_numeric($settings['hide_time_n']) && $settings['hide_time_n'] > 0 ? $settings['hide_time_n'] : 2; ?>">

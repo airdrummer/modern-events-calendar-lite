@@ -112,13 +112,26 @@ if(is_array($fonts))
                                 </div>
                             </div>
                             <div class="mec-form-row">
-                                <label class="mec-col-3" for="mec_styling_wrapper_edge-radius"><?php esc_html_e('Primary border-radius', 'modern-events-calendar-lite'); ?></label>
+                                <label class="mec-col-3" for="mec_styling_primary_border_radius"><?php esc_html_e('Primary border-radius', 'modern-events-calendar-lite'); ?></label>
                                 <div class="mec-col-9">
-                                    <input type="text" id="mec_styling_wrapper_edge-radius" name="mec[styling][primary_border_radius]" value="<?php echo ((isset($styling['container_normal_width']) and trim($styling['container_normal_width']) != '') ? $styling['container_normal_width'] : ''); ?>" />
+                                    <input type="text" id="mec_styling_primary_border_radius" name="mec[styling][primary_border_radius]" value="<?php echo ((isset($styling['primary_border_radius']) and trim($styling['primary_border_radius']) != '') ? $styling['primary_border_radius'] : ''); ?>" />
                                     <span class="mec-tooltip">
                                         <div class="box left">
                                             <h5 class="title"><?php esc_html_e('Primary border-radius', 'modern-events-calendar-lite'); ?></h5>
                                             <div class="content"><p><?php esc_attr_e('Customize the border-radius for wrappers, event items and event modules', 'modern-events-calendar-lite'); ?></p></div>
+                                        </div>
+                                        <i title="" class="dashicons-before dashicons-editor-help"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="mec-form-row">
+                                <label class="mec-col-3" for="mec_styling_secondary_border_radius"><?php esc_html_e('Secondary border-radius', 'modern-events-calendar-lite'); ?></label>
+                                <div class="mec-col-9">
+                                    <input type="text" id="mec_styling_secondary_border_radius" name="mec[styling][secondary_border_radius]" value="<?php echo ((isset($styling['secondary_border_radius']) and trim($styling['secondary_border_radius']) != '') ? $styling['secondary_border_radius'] : ''); ?>" />
+                                    <span class="mec-tooltip">
+                                        <div class="box left">
+                                            <h5 class="title"><?php esc_html_e('Secondary border-radius', 'modern-events-calendar-lite'); ?></h5>
+                                            <div class="content"><p><?php esc_attr_e('Customize the border-radius buttons and other smaller elements.', 'modern-events-calendar-lite'); ?></p></div>
                                         </div>
                                         <i title="" class="dashicons-before dashicons-editor-help"></i>
                                     </span>

@@ -284,7 +284,7 @@ ul#mec_export_module_options {
 .m-e-calendar_page_MEC-wizard #mec_settings_fes_thankyou_page_url,
 .m-e-calendar_page_MEC-wizard input[type=number],
 .m-e-calendar_page_MEC-wizard input[type=text],
-.m-e-calendar_page_MEC-wizard select,
+.m-e-calendar_page_MEC-wizard select:not(.ui-datepicker select),
 .m-e-calendar_page_MEC-wizard textarea,
 .m-e-calendar_page_MEC-wizard #mec_settings_default_skin_archive,
 .m-e-calendar_page_MEC-wizard #mec_settings_default_skin_category {

@@ -56,7 +56,7 @@ $organizer = ($organizer_id ? $this->main->get_organizer_data($organizer_id) : a
                                 $skin = new \MEC_Advanced_Organizer\Core\Lib\MEC_Advanced_Organizer_Lib_Skin();
                                 $organizer_link = $skin->single_page_url($organizer['id']);
                                 ?>
-                                <a href="<?php echo $organizer_link;?>" target="<?php echo $settings['advanced_organizer']['organizer_link_target']; ?>">
+                                <a href="<?php echo $organizer_link;?>" target="<?php echo $settings['advanced_organizer']['organizer_link_target'] ?? '_blank'; ?>">
                                     <i class="mec-sl-link"></i>
                                     <h6><?php echo (isset($organizer['name']) ? esc_html($organizer['name']) : ''); ?></h6>
                                 </a>
@@ -84,7 +84,7 @@ $organizer = ($organizer_id ? $this->main->get_organizer_data($organizer_id) : a
                         <dd class="mec-organizer-url">
                             <?php echo $this->icons->display('sitemap'); ?>
                             <h6><?php esc_html_e('Website', 'modern-events-calendar-lite'); ?></h6>
-                            <span><a href="<?php echo esc_url($organizer['url']); ?>" class="mec-color-hover" target="<?php echo $settings['advanced_organizer']['organizer_link_target']; ?>"><?php echo (isset($organizer['page_label']) and trim($organizer['page_label'])) ? esc_html($organizer['page_label']) : esc_html($organizer['url']); ?></a></span>
+                            <span><a href="<?php echo esc_url($organizer['url']); ?>" class="mec-color-hover" target="<?php echo $settings['advanced_organizer']['organizer_link_target'] ?? '_blank'; ?>"><?php echo (isset($organizer['page_label']) and trim($organizer['page_label'])) ? esc_html($organizer['page_label']) : esc_html($organizer['url']); ?></a></span>
                         </dd>
                         <?php endif;
                         $organizer_description_setting = isset($settings['organizer_description']) ? $settings['organizer_description'] : ''; $organizer_terms = get_the_terms($event->data, 'mec_organizer'); if($organizer_description_setting == '1' and is_array($organizer_terms) and count($organizer_terms)): foreach($organizer_terms as $organizer_term) { if ($organizer_term->term_id == $organizer['id'] ) {  if(isset($organizer_term->description) && !empty($organizer_term->description)): ?>
@@ -153,7 +153,7 @@ $organizer = ($organizer_id ? $this->main->get_organizer_data($organizer_id) : a
                         <dd class="mec-location-url">
                             <?php echo $this->icons->display('sitemap'); ?>
                             <h6><?php esc_html_e('Website', 'modern-events-calendar-lite'); ?></h6>
-                            <span><a href="<?php echo esc_url($location['url']); ?>" class="mec-color-hover" target="<?php echo $this->settings['advanced_location']['location_link_target']; ?>"><?php echo esc_html($location['url']); ?></a></span>
+                            <span><a href="<?php echo esc_url($location['url']); ?>" class="mec-color-hover" target="<?php echo $this->settings['advanced_location']['location_link_target'] ?? '_blank'; ?>"><?php echo esc_html($location['url']); ?></a></span>
                         </dd>
                         <?php endif;
                         $location_description_setting = $settings['location_description'] ?? ''; $location_terms = get_the_terms($event->data, 'mec_location');  if($location_description_setting == '1' and is_array($location_terms) and count($location_terms)): foreach($location_terms as $location_term) { if ($location_term->term_id == $location['id'] ) {  if(isset($location_term->description) && !empty($location_term->description)): ?>

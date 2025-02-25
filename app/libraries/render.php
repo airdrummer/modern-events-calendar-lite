@@ -543,13 +543,16 @@ class MEC_render extends MEC_base
         $c = 0;
         $break = false;
 
+        $original_year = $SKO->year;
+        $original_month = $SKO->month;
+
         do
         {
-            if($c > 12 || $skin !== 'monthly_view') $break = true;
+            if ($c > 12 || $skin !== 'monthly_view') $break = true;
 
-            if($c && !$break)
+            if ($c && !$break)
             {
-                if(intval($SKO->month) == 12)
+                if (intval($SKO->month) == 12)
                 {
                     $SKO->year = intval($SKO->year)+1;
                     $SKO->month = '01';
@@ -573,6 +576,14 @@ class MEC_render extends MEC_base
             $c++;
         }
         while(!count($events));
+
+        if ($skin === 'monthly_view' && (!isset($events) || !count($events)))
+        {
+            $SKO->month = $original_month;
+            $SKO->year = $original_year;
+            $SKO->start_date = date('Y-m-d', strtotime($SKO->year.'-'.$SKO->month.'-01'));
+            $SKO->active_day = $SKO->year.'-'.$SKO->month.'-'.current_time('d');
+        }
 
         // Return the output
         return $SKO->output();

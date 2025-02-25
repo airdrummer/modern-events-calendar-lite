@@ -49,10 +49,10 @@ class MEC_restful extends MEC_base
     public function permission(WP_REST_Request $request)
     {
         // Validate API Token
-        if(!$this->is_api_token_valid($request, $request->get_header('mec-token'))) return new WP_Error('invalid_api_token', esc_html__('Invalid API Token!', 'modern-events-calendar-lite'));
+        if (!$this->is_api_token_valid($request, $request->get_header('mec-token'))) return new WP_Error('invalid_api_token', esc_html__('Invalid API Token!', 'modern-events-calendar-lite'));
 
         // Validate User Token
-        if(!$this->is_user_token_valid($request, $request->get_header('mec-user'))) return new WP_Error('invalid_user_token', esc_html__('Invalid User Token!', 'modern-events-calendar-lite'));
+        if (!$this->is_user_token_valid($request, $request->get_header('mec-user'))) return new WP_Error('invalid_user_token', esc_html__('Invalid User Token!', 'modern-events-calendar-lite'));
 
         return true;
     }
@@ -60,7 +60,7 @@ class MEC_restful extends MEC_base
     public function guest(WP_REST_Request $request)
     {
         // Validate API Token
-        if(!$this->is_api_token_valid($request, $request->get_header('mec-token'))) return new WP_Error('invalid_api_token', esc_html__('Invalid API Token!', 'modern-events-calendar-lite'));
+        if (!$this->is_api_token_valid($request, $request->get_header('mec-token'))) return new WP_Error('invalid_api_token', esc_html__('Invalid API Token!', 'modern-events-calendar-lite'));
 
         // Set Current User if Token Provided
         $this->is_user_token_valid($request, $request->get_header('mec-user'));
@@ -82,18 +82,18 @@ class MEC_restful extends MEC_base
     public function is_api_token_valid(WP_REST_Request $request, $token = '')
     {
         // Check Token
-        if($token)
+        if ($token)
         {
             $settings = $this->main->get_settings();
 
             $tokens = [];
-            foreach($settings['api_keys'] as $k => $t)
+            foreach ($settings['api_keys'] as $k => $t)
             {
-                if(!is_numeric($k)) continue;
+                if (!is_numeric($k)) continue;
                 $tokens[] = $t['key'];
             }
 
-            if(in_array($token, $tokens)) return true;
+            if (in_array($token, $tokens)) return true;
         }
 
         return false;
@@ -102,10 +102,10 @@ class MEC_restful extends MEC_base
     public function is_user_token_valid(WP_REST_Request $request, $token = '')
     {
         // Check User
-        if($token)
+        if ($token)
         {
-            $user_id = $this->db->select("SELECT `user_id` FROM `#__usermeta` WHERE `meta_key`='mec_token' AND `meta_value`='".esc_sql($token)."'", 'loadResult');
-            if(!$user_id) return false;
+            $user_id = $this->db->select("SELECT `user_id` FROM `#__usermeta` WHERE `meta_key`='mec_token' AND `meta_value`='" . esc_sql($token) . "'", 'loadResult');
+            if (!$user_id) return false;
 
             // Set Current User
             wp_set_current_user($user_id);

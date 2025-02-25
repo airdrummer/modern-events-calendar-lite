@@ -87,7 +87,7 @@ $step = 1;
                                        value="<?php echo esc_attr( $this->main->standardize_format( $start_date, $datepicker_format ) ); ?>"
                                        placeholder="<?php esc_html_e('Start Date', 'modern-events-calendar-lite'); ?>" autocomplete="off"/>
                             </div>
-                            <div class="mec-col-6 mec-time-picker <?php echo ($allday == 1) ? 'mec-util-hidden' : ''; ?>">
+                            <div class="mec-col-6 mec-time-picker <?php echo $allday == 1 ? 'mec-util-hidden' : ''; ?>">
                             <?php $this->main->timepicker(array(
                                 'method' => $settings['time_format'] ?? 12,
                                 'time_hour' => $start_time_hour,
@@ -95,7 +95,6 @@ $step = 1;
                                 'time_ampm' => $start_time_ampm,
                                 'name' => 'mec[date][start]',
                                 'id_key' => 'start_',
-                                'include_h0' => true,
                             )); ?>
                         </div>
                         </div>

@@ -58,6 +58,7 @@ class MEC_skin_monthly_view extends MEC_skins
         // Search Form Status
         $this->sf_status = $this->atts['sf_status'] ?? true;
         $this->sf_display_label = $this->atts['sf_display_label'] ?? false;
+        $this->sf_dropdown_method = $this->atts['sf_dropdown_method'] ?? '1';
         $this->sf_reset_button = $this->atts['sf_reset_button'] ?? false;
         $this->sf_refine = $this->atts['sf_refine'] ?? false;
 
@@ -372,6 +373,9 @@ class MEC_skin_monthly_view extends MEC_skins
         // Search Events If Not Found In Current Month
         $c = 0;
         $break = false;
+
+        $original_year = $this->year;
+        $original_month = $this->month;
 
         do
         {

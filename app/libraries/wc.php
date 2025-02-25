@@ -126,7 +126,7 @@ class MEC_wc extends MEC_base
         $ticket = $tickets[$ticket_id] ?? [];
 
         $product = new WC_Product();
-        $product->set_name(get_the_title($event_id).': '.$ticket['name']);
+        $product->set_name(get_the_title($event_id).' - '.$ticket['name']);
         $product->set_description($ticket['description']);
         $product->set_short_description(get_the_title($event_id));
         $product->set_regular_price($ticket['price']);
@@ -156,7 +156,7 @@ class MEC_wc extends MEC_base
         $ticket = $tickets[$ticket_id] ?? [];
 
         $product = new WC_Product($product_id);
-        $product->set_name(get_the_title($event_id).': '.$ticket['name']);
+        $product->set_name(get_the_title($event_id).' - '.$ticket['name']);
         $product->set_description($ticket['description']);
         $product->set_short_description(get_the_title($event_id));
         $product->set_regular_price($ticket['price']);

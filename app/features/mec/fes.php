@@ -421,7 +421,7 @@ $mec_categories = get_terms(array(
                                     <input value="1" type="checkbox" name="mec[settings][fes_section_organizer]" <?php if(!isset($settings['fes_section_organizer']) or (isset($settings['fes_section_organizer']) and $settings['fes_section_organizer'])) echo 'checked="checked"'; ?> onchange="jQuery('#mec_settings_fes_organizer_options_wrapper').toggle();" /><?php esc_html_e('Event Organizer', 'modern-events-calendar-lite'); ?>
                                 </label>
                             </div>
-                            <div class="<?php echo ((!isset($settings['fes_section_organizer']) or (isset($settings['fes_section_organizer']) and $settings['fes_section_organizer'])) ? '' : 'mec-util-hidden'); ?>" id="mec_settings_fes_organizer_options_wrapper">
+                            <div class="<?php echo (!isset($settings['fes_section_organizer']) || $settings['fes_section_organizer']) ? '' : 'mec-util-hidden'; ?>" id="mec_settings_fes_organizer_options_wrapper">
                                 <div class="mec-form-row">
                                     <label class="mec-col-3" for="mec_settings_fes_use_all_organizers"><?php esc_html_e('Ability to Use All Organizers', 'modern-events-calendar-lite'); ?></label>
                                     <div class="mec-col-9">
@@ -453,6 +453,12 @@ $mec_categories = get_terms(array(
                                             <i title="" class="dashicons-before dashicons-editor-help"></i>
                                         </span>
                                     </div>
+                                </div>
+                                <div class="mec-form-row">
+                                    <label>
+                                        <input type="hidden" name="mec[settings][fes_section_other_organizers]" value="0" />
+                                        <input value="1" type="checkbox" name="mec[settings][fes_section_other_organizers]" <?php if(!isset($settings['fes_section_other_organizers']) || $settings['fes_section_other_organizers']) echo 'checked="checked"'; ?>><?php esc_html_e('Other Organizers', 'modern-events-calendar-lite'); ?>
+                                    </label>
                                 </div>
                             </div>
                             <div class="mec-form-row">

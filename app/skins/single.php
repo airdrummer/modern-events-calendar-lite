@@ -62,6 +62,7 @@ class MEC_skin_single extends MEC_skins
         // Search Form Status
         $this->sf_status = false;
         $this->sf_display_label = false;
+        $this->sf_dropdown_method = '1';
         $this->sf_reset_button = false;
         $this->sf_refine = false;
 
@@ -969,7 +970,7 @@ class MEC_skin_single extends MEC_skins
                     <dd class="mec-location-url">
                         <?php echo $this->icons->display('sitemap'); ?>
                         <h6><?php esc_html_e('Website', 'modern-events-calendar-lite'); ?></h6>
-                        <span><a href="<?php echo esc_url($location['url']); ?>" class="mec-color-hover" target="<?php echo $this->settings['advanced_location']['location_link_target']; ?>"><?php echo esc_html($location['url']); ?></a></span>
+                        <span><a href="<?php echo esc_url($location['url']); ?>" class="mec-color-hover" target="<?php echo (isset($this->settings['advanced_location']['location_link_target']) && trim($this->settings['advanced_location']['location_link_target'])) ? $this->settings['advanced_location']['location_link_target'] : '_blank'; ?>"><?php echo esc_html($location['url']); ?></a></span>
                     </dd>
                     <?php endif; ?>
                     <?php if(isset($location['tel']) and trim($location['tel'])): ?>
@@ -1350,7 +1351,7 @@ class MEC_skin_single extends MEC_skins
                 <?php if(isset($organizer['thumbnail'])): ?>
                     <dd class="mec-organizer">
                     <?php if( is_plugin_active('mec-advanced-organizer/mec-advanced-organizer.php') && ( $this->settings['advanced_organizer']['organizer_enable_link_section_title'] ?? false ) ): ?>
-                    <a href="<?php echo $organizer_link;?>" target="<?php echo $this->settings['advanced_organizer']['organizer_link_target']; ?>">
+                    <a href="<?php echo $organizer_link;?>" target="<?php echo (isset($this->settings['advanced_organizer']['organizer_link_target']) && trim($this->settings['advanced_organizer']['organizer_link_target'])) ? $this->settings['advanced_organizer']['organizer_link_target'] : '_blank'; ?>">
                     <i class="mec-sl-link"></i>
                     <h6><?php echo (isset($organizer['name']) ? esc_html($organizer['name']) : ''); ?></h6>
                     </a>
@@ -1378,7 +1379,7 @@ class MEC_skin_single extends MEC_skins
                 <dd class="mec-organizer-url">
                     <?php echo $this->icons->display('sitemap'); ?>
                     <h6><?php esc_html_e('Website', 'modern-events-calendar-lite'); ?></h6>
-                    <span><a href="<?php echo esc_url($organizer['url']); ?>" class="mec-color-hover" target="<?php echo $this->settings['advanced_organizer']['organizer_link_target']; ?>"><?php echo esc_html($organizer['url']); ?></a></span>
+                    <span><a href="<?php echo esc_url($organizer['url']); ?>" class="mec-color-hover" target="<?php echo (isset($this->settings['advanced_organizer']['organizer_link_target']) && trim($this->settings['advanced_organizer']['organizer_link_target'])) ? $this->settings['advanced_organizer']['organizer_link_target'] : '_blank'; ?>"><?php echo esc_html($organizer['url']); ?></a></span>
                 </dd>
                 <?php endif; ?>
                 </dl>
@@ -1430,7 +1431,7 @@ class MEC_skin_single extends MEC_skins
                              $skin = new \MEC_Advanced_Organizer\Core\Lib\MEC_Advanced_Organizer_Lib_Skin();
                              $organizer_link = $skin->single_page_url($organizer['id']);
                         ?>
-                                <a href="<?php echo $organizer_link;?>" target="<?php echo $this->settings['advanced_organizer']['organizer_link_target']; ?>">
+                                <a href="<?php echo $organizer_link;?>" target="<?php echo (isset($this->settings['advanced_organizer']['organizer_link_target']) && trim($this->settings['advanced_organizer']['organizer_link_target'])) ? $this->settings['advanced_organizer']['organizer_link_target'] : '_blank'; ?>">
                                      <i class="mec-sl-link"></i>
                                      <h6><?php echo (isset($organizer['name']) ? esc_html($organizer['name']) : ''); ?></h6>
                                 </a>
@@ -1458,7 +1459,7 @@ class MEC_skin_single extends MEC_skins
                         <dd class="mec-organizer-url">
                             <?php echo $this->icons->display('sitemap'); ?>
                             <h6><?php esc_html_e('Website', 'modern-events-calendar-lite'); ?></h6>
-                            <span><a href="<?php echo esc_url($organizer['url']); ?>" class="mec-color-hover" target="<?php echo $this->settings['advanced_organizer']['organizer_link_target']; ?>"><?php echo (isset($organizer['page_label']) and trim($organizer['page_label'])) ? esc_html($organizer['page_label']) : esc_html($organizer['url']); ?></a></span>
+                            <span><a href="<?php echo esc_url($organizer['url']); ?>" class="mec-color-hover" target="<?php echo (isset($this->settings['advanced_organizer']['organizer_link_target']) && trim($this->settings['advanced_organizer']['organizer_link_target'])) ? $this->settings['advanced_organizer']['organizer_link_target'] : '_blank'; ?>"><?php echo (isset($organizer['page_label']) and trim($organizer['page_label'])) ? esc_html($organizer['page_label']) : esc_html($organizer['url']); ?></a></span>
                         </dd>
                     <?php endif;
                     $organizer_description_setting = isset( $this->settings['addintional_organizers_description'] ) ? $this->settings['addintional_organizers_description'] : ''; $organizer_terms = get_the_terms($event->data, 'mec_organizer');  if($organizer_description_setting == '1'):
@@ -1497,8 +1498,6 @@ class MEC_skin_single extends MEC_skins
         $location_ids = get_post_meta($event->ID, 'mec_additional_location_ids', true);
         if(!is_array($location_ids)) $location_ids = [];
         $location_ids = array_unique($location_ids);
-
-        $display_title = !(isset($this->settings['additional_locations_disable_title']) && $this->settings['additional_locations_disable_title']);
         ?>
         <div class="mec-single-event-additional-locations">
             <?php echo $this->icons->display('location-pin'); ?>
@@ -1506,10 +1505,6 @@ class MEC_skin_single extends MEC_skins
             <?php $i = 2; ?>
             <?php foreach($location_ids as $l_id): $l_id = apply_filters('wpml_object_id', $l_id, 'mec_location', true); if($l_id == $location_id) continue; $location = (isset($locations[$l_id]) ? $locations[$l_id] : NULL); if(!$location) continue; ?>
                 <div class="mec-single-event-location">
-<!--                    --><?php //if($display_title): ?>
-<!--                    <h3 class="mec-events-single-section-title mec-location">--><?php //echo esc_html($this->main->m('taxonomy_location', esc_html__('Location', 'modern-events-calendar-lite'))); ?><!-- --><?php //echo esc_html($i); ?><!--</h3>-->
-<!--                    --><?php //endif; ?>
-
                     <?php if($location['thumbnail']): ?>
                     <img class="mec-img-location" src="<?php echo esc_url($location['thumbnail'] ); ?>" alt="<?php echo (isset($location['name']) ? esc_attr($location['name']) : ''); ?>">
                     <?php endif; ?>
@@ -1525,11 +1520,11 @@ class MEC_skin_single extends MEC_skins
                             <span><?php echo esc_html($location['opening_hour']); ?></span>
                         </dd>
                         <?php endif; ?>
-                        <?php if(isset($location['url']) and trim($location['url'])): ?>
+                        <?php if(isset($location['url']) && trim($location['url'])): ?>
                         <dd class="mec-location-url">
                             <?php echo $this->icons->display('sitemap'); ?>
                             <h6><?php esc_html_e('Website', 'modern-events-calendar-lite'); ?></h6>
-                            <span><a href="<?php echo esc_url($location['url']); ?>" class="mec-color-hover" target="<?php echo $this->settings['advanced_location']['location_link_target']; ?>"><?php echo esc_html($location['url']); ?></a></span>
+                            <span><a href="<?php echo esc_url($location['url']); ?>" class="mec-color-hover" target="<?php echo (isset($this->settings['advanced_location']['location_link_target']) && trim($this->settings['advanced_location']['location_link_target'])) ? $this->settings['advanced_location']['location_link_target'] : '_blank'; ?>"><?php echo esc_html($location['url']); ?></a></span>
                         </dd>
                         <?php endif; ?>
                         <?php if(isset($location['tel']) and trim($location['tel'])): ?>
@@ -1783,7 +1778,7 @@ class MEC_skin_single extends MEC_skins
             return $location_name;
         }
 
-        if(!empty($location_link)) $location_html ='<a href="'.esc_url($location_link).'" target="'.$this->settings['advanced_location']['location_link_target'].'">'.esc_html($location_name).'</a>';
+        if(!empty($location_link)) $location_html ='<a href="'.esc_url($location_link).'" target="'.((isset($this->settings['advanced_location']['location_link_target']) && trim($this->settings['advanced_location']['location_link_target'])) ? $this->settings['advanced_location']['location_link_target'] : '_blank').'">'.esc_html($location_name).'</a>';
         else $location_html = $location_name;
 
         return $location_html;

@@ -1,4 +1,36 @@
-﻿v 7.18.0 – 23 December 2024
+﻿ v 7.20.0 - 24 February 2025
+- Added: Update event route to the RESTful API.
+- Added: Upload image route to the RESTful API.
+- Added: Upload attachment route to the RESTful API.
+- Added: Get custom fields route to the RESTful API.
+- Added: Speaker to the shortcode filter options.
+- Added: %%ics_link_all_occurrences%% placeholder to download ics file of all occurrences of event.
+- Added: An option to manage other organizers field in Frontend Event Submission.
+- Improved: The location, organizer and speaker links to open in a new page by default.
+- Improved: The placeholders of admin notification.
+- Improved: The compatibility with PHP 8.3
+- Fixed: An issue in Pay By WooCommerce gateway.
+- Fixed: An issue in full calendar and monthly skin.
+- Fixed: An issue in default value of other organizers field.
+- Fixed: Some errors during import / export.
+- Fixed: Some issues in time picker fields.
+- Fixed: Issue with the Register button not working properly on Android
+- Fixed: Primary and Secondary Border-radius values resetting unexpectedly
+
+v 7.19.0 - 19 January 2025
+- Added: Event Create endpoint to the RESTful API.
+- Added: Enhanced dropdown to the dropdown fields of search module.
+- Added: An option to load global tickets for existing events when all other tickets are removed.
+- Added: An option to change the secondary border-radius in settings.
+- Improved: The tile skin.
+- Improved: The partial payment system.
+- Updated: Some language files.
+- Fixed: Some issues in the search module.
+- Fixed: Some issues in pay by WooCommerce system.
+- Fixed: Some issues in XML export / import.
+- Fixed: Some other minor issues.
+
+v 7.18.0 – 23 December 2024
 - Added: An ability to insert full data of sponsors in Frontend Submission.
 - Added: An ability to insert full data of speakers in Frontend Submission.
 - Added: Login command to the restful API.

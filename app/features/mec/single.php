@@ -363,7 +363,7 @@ $event_fields = $this->main->get_event_fields();
                                                 <input type="hidden" name="mec[settings][banner_force_featured_image]" value="0" />
                                                 <input value="1" type="checkbox" name="mec[settings][banner_force_featured_image]" <?php if(isset($settings['banner_force_featured_image']) and $settings['banner_force_featured_image']) echo 'checked="checked"'; ?> /><?php esc_html_e('Force Featured Image as Event Banner', 'modern-events-calendar-lite'); ?>
                                             </label>
-                                            <p class="description" style="border-left: none; padding-left: 0; line-height: 1.5;"><?php esc_html_e('If you enable this option, then the featured image of events will be displayed as event banner by force and event banner options will be ignored.', 'modern-events-calendar-lite'); ?></p>
+                                            <p class="description" style="border-left: none; padding-left: 0; line-height: 1.5;"><?php esc_html_e('Enabling this option forces the featured image to appear as the event banner, ignoring other event banner settings. Furthermore, the event gallery will also be hidden.', 'modern-events-calendar-lite'); ?></p>
                                         </div>
                                     </div>
                                 </div>

@@ -129,7 +129,7 @@ if($this->is_enabled('data_time') || $this->is_enabled('local_time') || $this->i
                             $skin = new \MEC_Advanced_Organizer\Core\Lib\MEC_Advanced_Organizer_Lib_Skin();
                             $organizer_link = $skin->single_page_url($organizer['id']);
                             ?>
-                                <a href="<?php echo $organizer_link;?>" target="<?php echo $settings['advanced_organizer']['organizer_link_target']; ?>">
+                                <a href="<?php echo $organizer_link;?>" target="<?php echo $settings['advanced_organizer']['organizer_link_target'] ?? '_blank'; ?>">
                                     <i class="mec-sl-link"></i>
                                     <h6><?php echo (isset($organizer['name']) ? esc_html($organizer['name']) : ''); ?></h6>
                                 </a>
@@ -157,7 +157,7 @@ if($this->is_enabled('data_time') || $this->is_enabled('local_time') || $this->i
                         <dd class="mec-organizer-url">
                             <?php echo $icons->display('sitemap'); ?>
                             <h6><?php esc_html_e('Website', 'modern-events-calendar-lite'); ?></h6>
-                            <span><a href="<?php echo esc_url($organizer['url']); ?>" class="mec-color-hover" target="<?php echo $settings['advanced_organizer']['organizer_link_target']; ?>"><?php echo (isset($organizer['page_label']) and trim($organizer['page_label'])) ? esc_html($organizer['page_label']) : esc_html($organizer['url']); ?></a></span>
+                            <span><a href="<?php echo esc_url($organizer['url']); ?>" class="mec-color-hover" target="<?php echo $settings['advanced_organizer']['organizer_link_target'] ?? '_blank'; ?>"><?php echo (isset($organizer['page_label']) and trim($organizer['page_label'])) ? esc_html($organizer['page_label']) : esc_html($organizer['url']); ?></a></span>
                             <?php do_action('mec_single_default_organizer', $organizer); ?>
                         </dd>
                     <?php endif;
@@ -175,8 +175,12 @@ if($this->is_enabled('data_time') || $this->is_enabled('local_time') || $this->i
         <!-- Register Booking Button -->
         <?php if($single->main->can_show_booking_module($event, true) and $this->is_enabled('register_btn')): ?>
             <?php $data_lity_class = ''; if(isset($settings['single_booking_style']) and $settings['single_booking_style'] == 'modal' ){ $data_lity_class = 'mec-booking-data-lity'; }  ?>
-            <a class="mec-booking-button-register mec-booking-button mec-bg-color <?php echo esc_attr($data_lity_class); ?> <?php if(isset($settings['single_booking_style']) and $settings['single_booking_style'] != 'modal' ) echo 'simple-booking'; ?>" href="javascript:void(0)" data-bookingform="#mec-events-meta-group-booking-<?php echo esc_attr($single->uniqueid); ?>"><?php echo esc_html($single->main->m('register_button', esc_html__('REGISTER', 'modern-events-calendar-lite'))); ?></a>
-        <?php elseif($this->is_enabled('register_btn') == 'on' and $more_info and !$single->main->is_expired($event)): ?>
+            <a class="mec-booking-button-register mec-booking-button mec-bg-color <?php echo esc_attr($data_lity_class); ?>"
+                data-action="<?php echo isset($settings['single_booking_style']) && $settings['single_booking_style'] == 'modal' ? 'modal' : 'scroll'; ?>"
+                data-target="#mec-events-meta-group-booking-<?php echo esc_attr($single->uniqueid); ?>">
+                <?php echo esc_html($single->main->m('register_button', esc_html__('REGISTER', 'modern-events-calendar-lite'))); ?>
+            </a>
+            <?php elseif($this->is_enabled('register_btn') == 'on' and $more_info and !$single->main->is_expired($event)): ?>
             <a class="mec-booking-button mec-bg-color" target="<?php echo esc_attr($more_info_target); ?>" href="<?php echo esc_url($more_info); ?>"><?php if($more_info_title) echo esc_html__($more_info_title, 'modern-events-calendar-lite'); else echo esc_html($single->main->m('register_button', esc_html__('REGISTER', 'modern-events-calendar-lite'))); ?></a>
         <?php endif; ?>
     </div>
