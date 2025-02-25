@@ -1,4 +1,9 @@
-﻿ v 7.20.0 - 24 February 2025
+ v 7.20.0.1 - 25 February 2025
+- reformat timezone
+- added missing timezone
+- fixed countdown
+
+ v 7.20.0 - 24 February 2025
 - Added: Update event route to the RESTful API.
 - Added: Upload image route to the RESTful API.
 - Added: Upload attachment route to the RESTful API.

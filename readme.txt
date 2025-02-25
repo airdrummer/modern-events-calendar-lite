@@ -1,4 +1,4 @@
-﻿=== Modern Events Calendar Lite ===
+=== Modern Events Calendar Lite ===
 Contributors: webnus
 Donate link: https://webnus.net
 Tags: Event, Events, Calendar, Booking, Schedule, Organizer, Venue
@@ -472,6 +472,11 @@ You can see [plugin documentation](https://webnus.net/dox/modern-events-calendar
 43. WordPress Event Calendar - Daily view(Fluent View Layouts Addon)
 
 == Changelog ==
+v 7.20.0.1 – 25 feb 2025
+- reformat timezone
+- added missing timezone
+- fixed countdown
+
 = v 7.20.0 - 24 February 2025 =
 - Added: Update event route to the RESTful API.
 - Added: Upload image route to the RESTful API.
