@@ -81,7 +81,6 @@ class MEC_feature_dlfile extends MEC_base
      */
     public function meta_box_downloadable_file($post)
     {
-
         FormBuilder::downloadable_file($post);
     }
 
@@ -161,7 +160,6 @@ class MEC_feature_dlfile extends MEC_base
      */
     public function meta_box_public_module($post)
     {
-
         FormBuilder::public_download($post);
     }
 

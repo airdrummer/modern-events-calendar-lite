@@ -38,6 +38,20 @@ class MEC_icons
         return isset($all[$key]['default']) && trim($all[$key]['default']) ? $all[$key]['default'] : '';
     }
 
+    public function list(): array
+    {
+        $all = $this->all();
+
+        $icons = [];
+        foreach ($all as $key => $icon)
+        {
+            $icon['value'] = $this->display($key);
+            $icons[] = $icon;
+        }
+
+        return $icons;
+    }
+
     public function all()
     {
         return apply_filters('mec_icons', [

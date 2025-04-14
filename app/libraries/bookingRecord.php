@@ -38,9 +38,9 @@ class MEC_bookingRecord extends MEC_base
     public function insert($booking)
     {
         // Get Booking by ID
-        if(is_numeric($booking)) $booking = get_post($booking);
+        if (is_numeric($booking)) $booking = get_post($booking);
 
-        if(!$booking || !is_a($booking, '\WP_Post')) return [];
+        if (!$booking || !is_a($booking, '\WP_Post')) return [];
 
         // User Library
         $u = $this->getUser();
@@ -56,11 +56,11 @@ class MEC_bookingRecord extends MEC_base
         $transaction_id = get_post_meta($booking->ID, 'mec_transaction_id', true);
 
         $event_tickets = get_post_meta($event_id, 'mec_tickets', true);
-        if(!is_array($event_tickets)) $event_tickets = [];
+        if (!is_array($event_tickets)) $event_tickets = [];
 
         $seats = 0;
         $booked_ticket_ids = explode(',', trim($ticket_ids, ', '));
-        foreach($booked_ticket_ids as $booked_ticket_id)
+        foreach ($booked_ticket_ids as $booked_ticket_id)
         {
             $booked_ticket_id = (int) trim($booked_ticket_id);
             $data = (isset($event_tickets[$booked_ticket_id]) and is_array($event_tickets[$booked_ticket_id])) ? $event_tickets[$booked_ticket_id] : [];
@@ -78,31 +78,31 @@ class MEC_bookingRecord extends MEC_base
         $timestamps = [];
 
         // Multiple Dates
-        if($all_dates and is_array($all_dates) and count($all_dates)) $timestamps = $all_dates;
+        if ($all_dates and is_array($all_dates) and count($all_dates)) $timestamps = $all_dates;
         // Single Date
         else $timestamps[] = get_post_meta($booking->ID, 'mec_date', true);
 
         $ids = [];
-        foreach($timestamps as $timestamp)
+        foreach ($timestamps as $timestamp)
         {
             $timestamp = is_array($timestamp) ? '' : explode(':', $timestamp)[0];
-            if($timestamp && !is_numeric($timestamp)) $timestamp = strtotime($timestamp);
+            if ($timestamp && !is_numeric($timestamp)) $timestamp = strtotime($timestamp);
 
-            if(!trim($timestamp)) continue;
+            if (!trim($timestamp)) continue;
 
             // Exists?
-            $exists = $this->db->select("SELECT `id` FROM `#__mec_bookings` WHERE `transaction_id`='".esc_sql($transaction_id)."' AND `timestamp`='".esc_sql($timestamp)."'", 'loadResult');
-            if($exists) continue;
+            $exists = $this->db->select("SELECT `id` FROM `#__mec_bookings` WHERE `transaction_id`='" . esc_sql($transaction_id) . "' AND `timestamp`='" . esc_sql($timestamp) . "'", 'loadResult');
+            if ($exists) continue;
 
             // Insert
-            $query = "INSERT INTO `#__mec_bookings` (`booking_id`,`user_id`,`transaction_id`,`event_id`,`ticket_ids`,`seats`,`status`,`confirmed`,`verified`,`all_occurrences`,`date`,`timestamp`) VALUES ('".esc_sql($booking->ID)."','".esc_sql($user_id)."','".esc_sql($transaction_id)."','".esc_sql($event_id)."','".esc_sql($ticket_ids)."','".esc_sql($seats)."','".$booking->post_status."','".esc_sql($confirmed)."','".esc_sql($verified)."','".esc_sql($all_occurrences)."','".date('Y-n-d H:i:s', $timestamp)."','".esc_sql($timestamp)."');";
+            $query = "INSERT INTO `#__mec_bookings` (`booking_id`,`user_id`,`transaction_id`,`event_id`,`ticket_ids`,`seats`,`status`,`confirmed`,`verified`,`all_occurrences`,`date`,`timestamp`) VALUES ('" . esc_sql($booking->ID) . "','" . esc_sql($user_id) . "','" . esc_sql($transaction_id) . "','" . esc_sql($event_id) . "','" . esc_sql($ticket_ids) . "','" . esc_sql($seats) . "','" . $booking->post_status . "','" . esc_sql($confirmed) . "','" . esc_sql($verified) . "','" . esc_sql($all_occurrences) . "','" . date('Y-n-d H:i:s', $timestamp) . "','" . esc_sql($timestamp) . "');";
             $id = $this->db->q($query, 'INSERT');
 
-            foreach($attendees as $k => $attendee)
+            foreach ($attendees as $k => $attendee)
             {
                 // No Attendee
-                if(!is_numeric($k)) continue;
-                if(!isset($attendee['id'])) continue;
+                if (!is_numeric($k)) continue;
+                if (!isset($attendee['id'])) continue;
 
                 // Ticket ID
                 $ticket_id = $attendee['id'];
@@ -113,7 +113,7 @@ class MEC_bookingRecord extends MEC_base
                 ]);
 
                 // Insert Booking Attendees
-                $query = "INSERT INTO `#__mec_booking_attendees` (`mec_booking_id`,`user_id`,`ticket_id`) VALUES ('".esc_sql($id)."','".esc_sql($attendee_id)."','".esc_sql($ticket_id)."');";
+                $query = "INSERT INTO `#__mec_booking_attendees` (`mec_booking_id`,`user_id`,`ticket_id`) VALUES ('" . esc_sql($id) . "','" . esc_sql($attendee_id) . "','" . esc_sql($ticket_id) . "');";
                 $this->db->q($query, 'INSERT');
             }
 
@@ -141,55 +141,55 @@ class MEC_bookingRecord extends MEC_base
     public function delete($booking)
     {
         // Get Booking by ID
-        if(is_numeric($booking)) $booking = get_post($booking);
+        if (is_numeric($booking)) $booking = get_post($booking);
 
-        $this->db->q("DELETE FROM `#__mec_bookings` WHERE `booking_id`='".$booking->ID."'");
+        $this->db->q("DELETE FROM `#__mec_bookings` WHERE `booking_id`='" . $booking->ID . "'");
     }
 
     public function confirm($booking)
     {
-        return $this->set($booking, array('confirmed' => 1));
+        return $this->set($booking, ['confirmed' => 1]);
     }
 
     public function reject($booking)
     {
-        return $this->set($booking, array('confirmed' => -1));
+        return $this->set($booking, ['confirmed' => -1]);
     }
 
     public function pending($booking)
     {
-        return $this->set($booking, array('confirmed' => 0));
+        return $this->set($booking, ['confirmed' => 0]);
     }
 
     public function verify($booking)
     {
-        return $this->set($booking, array('verified' => 1));
+        return $this->set($booking, ['verified' => 1]);
     }
 
     public function cancel($booking)
     {
-        return $this->set($booking, array('verified' => -1));
+        return $this->set($booking, ['verified' => -1]);
     }
 
     public function waiting($booking)
     {
-        return $this->set($booking, array('verified' => 0));
+        return $this->set($booking, ['verified' => 0]);
     }
 
     public function set($booking, $values)
     {
         // Get Booking by ID
-        if(is_numeric($booking)) $booking = get_post($booking);
+        if (is_numeric($booking)) $booking = get_post($booking);
 
         // Invalid Booking
-        if(!$booking || !is_a($booking, '\WP_Post')) return [];
+        if (!$booking || !is_a($booking, '\WP_Post')) return [];
 
         $q = "";
-        foreach($values as $key => $value) $q .= "`".esc_attr($key)."`='".esc_sql($value)."',";
+        foreach ($values as $key => $value) $q .= "`" . esc_attr($key) . "`='" . esc_sql($value) . "',";
 
         // Nothing to Update!
-        if(trim($q) == '') return false;
+        if (trim($q) == '') return false;
 
-        return $this->db->q("UPDATE `#__mec_bookings` SET ".trim($q, ', ')." WHERE `booking_id`='".esc_sql($booking->ID)."'");
+        return $this->db->q("UPDATE `#__mec_bookings` SET " . trim($q, ', ') . " WHERE `booking_id`='" . esc_sql($booking->ID) . "'");
     }
 }

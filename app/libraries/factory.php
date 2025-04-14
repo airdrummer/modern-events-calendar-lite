@@ -248,7 +248,6 @@ class MEC_factory extends MEC_base
 
     public function register_styles_and_scripts()
     {
-
         // Get Current Screen
         global $current_screen;
         if (!isset($current_screen) && function_exists('get_current_screen')) $current_screen = get_current_screen();
@@ -258,6 +257,7 @@ class MEC_factory extends MEC_base
             'wp-color-picker',
             'jquery-ui-datepicker',
         );
+
         if (is_a($current_screen, '\WP_Screen') && method_exists($current_screen, 'is_block_editor') and $current_screen->is_block_editor()) {
             $backend_js_dependencies[] = 'wp-blocks';
         }
@@ -265,6 +265,7 @@ class MEC_factory extends MEC_base
         $js_dependencies = array(
             'jquery',
         );
+
         $scripts = array(
             'mec-typekit-script' => $this->main->asset('js/jquery.typewatch.js'),
             'mec-niceselect-script' => $this->main->asset('js/jquery.nice-select.min.js'),

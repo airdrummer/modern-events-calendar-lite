@@ -134,6 +134,9 @@ class MEC_wc extends MEC_base
         $product->set_catalog_visibility('hidden');
         $product->set_virtual(true);
 
+        $featured_image_id = get_post_thumbnail_id($event_id);
+        if ($featured_image_id) $product->set_image_id($featured_image_id);
+
         $product_id = $product->save();
 
         // Set the relation
@@ -162,6 +165,10 @@ class MEC_wc extends MEC_base
         $product->set_regular_price($ticket['price']);
         $product->set_price($ticket['price']);
         $product->set_catalog_visibility('hidden');
+        $product->set_status('publish');
+
+        $featured_image_id = get_post_thumbnail_id($event_id);
+        if ($featured_image_id) $product->set_image_id($featured_image_id);
 
         // Trigger Action
         do_action('mec_wc_product_updated', $product_id, $event_id, $ticket_id);

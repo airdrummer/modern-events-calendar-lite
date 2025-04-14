@@ -56,7 +56,7 @@ class MEC_feature_admincalendar extends MEC_base
 
         if($this->status)
         {
-            $HTML = $this->getRender()->vmonth(['sk-options' => ['monthly_view' => ['style' => 'admin']]]);
+            $HTML = $this->getRender()->vmonth(['sk-options' => ['monthly_view' => ['style' => 'admin']], 'show_past_events' => 1]);
             $this->factory->params('footer', function() use($HTML)
             {
                 ?>

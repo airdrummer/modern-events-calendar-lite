@@ -287,7 +287,7 @@ class MEC_feature_certificates extends MEC_base
         if(!current_user_can('manage_options')) $this->main->response(['success' => 0, 'code' => 'NO_ACCESS']);
 
         $template = isset($_POST['template']) ? sanitize_text_field($_POST['template']) : 0;
-        $attendee_ids = isset($_POST['attendee_ids']) ? sanitize_text_field($_POST['attendee_ids']) : NULL;
+        $attendee_ids = isset($_POST['attendee_ids']) ? sanitize_text_field($_POST['attendee_ids']) : '';
         $attendee_ids = trim($attendee_ids, ', ');
 
         $attendees = explode(',', $attendee_ids);

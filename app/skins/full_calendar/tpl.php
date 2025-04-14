@@ -105,7 +105,7 @@ do_action('mec_full_skin_head');
             if($this->sf_dropdown_method == '2') $wrapper_class .= ' mec-dropdown-enhanced';
             else $wrapper_class .= ' mec-dropdown-classic';
             ?>
-            <div id="mec_search_form_<?php echo esc_attr($this->id); ?>" class="<?php echo esc_attr($wrapper_class); ?>">
+            <form id="mec_search_form_<?php echo esc_attr($this->id); ?>" class="<?php echo esc_attr($wrapper_class); ?>" autocomplete="off">
                 <div>
 
                     <?php echo apply_filters('mec_filter_fields_search_form', '', $this); ?>
@@ -155,12 +155,12 @@ do_action('mec_full_skin_head');
                         <?php echo MEC_kses::form($this->sf_search_field('time_filter', $sf_local_time, $this->sf_display_label)); ?>
                     <?php endif; ?>
                     <?php if ($this->sf_reset_button): ?>
-                        <div class="mec-search-reset-button col-md-2">
+                        <div class="mec-search-reset-button">
                             <button class="button mec-button" id="mec_search_form_<?php echo esc_attr($this->id); ?>_reset"
                                     type="button"><?php echo esc_html__('Reset', 'modern-events-calendar-lite'); ?></button>
                         </div>
                     <?php endif; ?>
-                    <div class="col-md-4 mec-tab-loader">
+                    <div class="mec-tab-loader">
                         <div class="mec-totalcal-view">
                             <?php if ($this->yearly): ?><span
                                 class="mec-totalcal-yearlyview<?php if ($this->default_view == 'yearly') echo ' mec-totalcalview-selected'; ?>"
@@ -186,9 +186,9 @@ do_action('mec_full_skin_head');
                         </div>
                     </div>
                 </div>
-            </div>
+            </form>
         <?php else: ?>
-            <div class="col-md-4 mec-tab-loader">
+            <div class="mec-tab-loader">
                 <div class="mec-totalcal-view">
                     <?php if ($this->yearly): ?><span
                         class="mec-totalcal-yearlyview<?php if ($this->default_view == 'yearly') echo ' mec-totalcalview-selected'; ?>"

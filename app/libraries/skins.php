@@ -1102,7 +1102,7 @@ class MEC_skins extends MEC_base
 
                         $data = new stdClass();
                         $data->ID = $ID;
-                        $data->data = $rendered;
+                        $data->data = clone $rendered;
 
                         $data->date = array
                         (
@@ -1337,7 +1337,7 @@ class MEC_skins extends MEC_base
             $form .= $fields;
 
             // Reset Button
-            if($this->sf_reset_button) $form .='<div class="mec-search-reset-button col-md-2"><button class="button mec-button" id="mec_search_form_'.esc_attr($this->id).'_reset" type="button">'.esc_html__('Reset', 'modern-events-calendar-lite').'</button></div>';
+            if($this->sf_reset_button) $form .='<div class="mec-search-reset-button"><button class="button mec-button" id="mec_search_form_'.esc_attr($this->id).'_reset" type="button">'.esc_html__('Reset', 'modern-events-calendar-lite').'</button></div>';
 
             $form = apply_filters('mec_sf_search_form_end', $form, $this);
 
@@ -1374,6 +1374,8 @@ class MEC_skins extends MEC_base
         {
             $label = $this->main->m('taxonomy_category', esc_html__('Category', 'modern-events-calendar-lite'));
 
+            $label = apply_filters( 'mec_map_customize_label_category_filter', $label);
+
             if($type == 'dropdown')
             {
                 $output .='<div class="mec-dropdown-search">';
@@ -1383,7 +1385,7 @@ class MEC_skins extends MEC_base
                 $include = (isset($this->atts['category']) and trim($this->atts['category'])) ? explode(',', trim($this->atts['category'], ', ')) : [];
                 $include = $this->sf_only_valid_terms('mec_category', $include);
 
-                $output .= wp_dropdown_categories(array
+                $args = array
                 (
                     'echo'=>false,
                     'taxonomy'=>'mec_category',
@@ -1397,7 +1399,11 @@ class MEC_skins extends MEC_base
                     'orderby'=>'name',
                     'order'=>'ASC',
                     'show_count'=>0,
-                ));
+                );
+
+                $args = apply_filters( 'mec_map_customize_args_dropdown_categories', $args);
+
+                $output .= wp_dropdown_categories($args);
 
                 $output .= '</div>';
             }
@@ -2514,31 +2520,41 @@ class MEC_skins extends MEC_base
 
     public function get_pagination_bar()
     {
-        if($this->pagination === 'loadmore' and $this->found >= $this->limit)
+        global $wpdb;
+
+        $total_events = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}posts WHERE post_type = 'mec-events' AND post_status = 'publish'");
+
+        if ($this->pagination === 'loadmore' and $this->found >= $this->limit)
         {
             return '<div class="mec-load-more-wrap">
                 <div tabindex="0" onkeydown="if(event.keyCode===13){jQuery(this).trigger(\'click\');}" class="mec-load-more-button '.($this->has_more_events ? '' : 'mec-util-hidden').'">'.esc_html__('Load More', 'modern-events-calendar-lite').'</div>
             </div>';
         }
 
-        if($this->pagination === 'scroll' and $this->found >= $this->limit)
+        if ($this->pagination === 'scroll' and $this->found >= $this->limit)
         {
             return '<div class="mec-load-more-wrap"></div>';
         }
 
-        if($this->pagination === 'nextprev' and $this->found >= $this->limit)
+        if ($this->pagination === 'nextprev' and $this->found >= $this->limit)
         {
-            $offset = $this->end_date.':'.$this->next_offset;
-
-            return '<div class="mec-nextprev-wrap" id="mec-nextprev-wrap-'.esc_attr($this->id).'">
-                <span class="mec-nextprev-prev-button mec-util-hidden">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="10" viewBox="0 0 13 10"><path id="next-icon" d="M92.034,76.719l-.657.675,3.832,3.857H84v.937H95.208l-3.832,3.857.657.675,4.967-5Z" transform="translate(-84.001 -76.719)" fill="#07bbe9"/></svg>
+            return '
+            <div class="mec-nextprev-wrap" id="mec-nextprev-wrap-'.esc_attr($this->id).'">
+                <span class="mec-nextprev-prev-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="10" viewBox="0 0 13 10">
+                        <path id="next-icon" d="M92.034,76.719l-.657.675,3.832,3.857H84v.937H95.208l-3.832,3.857.657.675,4.967-5Z" transform="translate(-84.001 -76.719)" fill="#07bbe9"/>
+                    </svg>
                     '.esc_html__('Prev', 'modern-events-calendar-lite').'
                 </span>
-                <a class="mec-nextprev-next-button" href="'.esc_url($this->main->add_qs_var('mec_next_page', $offset)).'">
+                <a class="mec-nextprev-next-button" href="'.esc_url($this->main->add_qs_var('mec_next_page', $next_page)).'">
                     '.esc_html__('Next', 'modern-events-calendar-lite').'
-                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="10" viewBox="0 0 13 10"><path id="next-icon" d="M92.034,76.719l-.657.675,3.832,3.857H84v.937H95.208l-3.832,3.857.657.675,4.967-5Z" transform="translate(-84.001 -76.719)" fill="#07bbe9"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="10" viewBox="0 0 13 10">
+                        <path id="next-icon" d="M92.034,76.719l-.657.675,3.832,3.857H84v.937H95.208l-3.832,3.857.657.675,4.967-5Z" transform="translate(-84.001 -76.719)" fill="#07bbe9"/>
+                    </svg>
                 </a>
+            </div>
+            <div class="mec-total-events">
+                '.esc_html__('Total Events:', 'modern-events-calendar-lite').' '.$total_events.'
             </div>';
         }
 

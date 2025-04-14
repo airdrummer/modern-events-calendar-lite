@@ -32,7 +32,7 @@ class MEC_main extends MEC_base
     public function get_waiting_fields() {
         $options = get_option('mec_options');
         return isset($options['waiting_fields']) ? $options['waiting_fields'] : array();
-    } 
+    }
     /**
      * Returns full current URL of WordPress
      * @return string
@@ -328,13 +328,16 @@ class MEC_main extends MEC_base
      */
     public function get_post_content($event)
     {
-        if (is_object($event)) $event_id = $event->data->ID;
-        else $event_id = $event;
-
+        $event_id = is_object($event) ? $event->data->ID : $event;
         $post = get_post($event_id);
-        if (!$post) return null;
 
-        $content = apply_filters('the_content', str_replace('[MEC ', '', $post->post_content));
+        if (!$post || is_wp_error($post) || !isset($post->post_content) || !is_string($post->post_content)) {
+            return '';
+        }
+
+        $content = str_replace('[MEC ', '', $post->post_content);
+        $content = apply_filters('the_content', $content ?: '');
+
         return str_replace(']]>', ']]&gt;', do_shortcode($content));
     }
 
@@ -5652,7 +5655,7 @@ class MEC_main extends MEC_base
     public function debug_log($log_msg, $path = '')
     {
         if (trim($path) == '') $path = MEC_ABSPATH . 'log.txt';
-        if (is_array($log_msg) or is_object($log_msg)) $log_msg = print_r($log_msg, true);
+        if (is_array($log_msg) || is_object($log_msg)) $log_msg = print_r($log_msg, true);
 
         $log_msg .= "\n" . '========' . "\n";
 
@@ -6943,6 +6946,14 @@ class MEC_main extends MEC_base
         {
             // Event Permalink
             $url = $event->data->permalink;
+
+            if(str_contains($_SERVER['HTTP_REFERER'],'external=1')){
+                if(str_contains($url,'?')){
+                    $url .= '&external=1';
+                }else{
+                    $url .= '?external=1';
+                }
+            }
 
             // Return same URL if date is not provided
             if (is_null($date)) return apply_filters('mec_event_permalink', $url);
@@ -9988,7 +9999,7 @@ class MEC_main extends MEC_base
         $event_id = $event->ID;
 
         // Event Repeat Type
-        $repeat_type = (!empty($event->meta['mec_repeat_type']) ? $event->meta['mec_repeat_type'] : '');
+        $repeat_type = (!empty($event->meta['mec_repeat_type']) ? $event->meta['mec_repeat_type'] : get_post_meta($event_id, 'mec_repeat_type', true));
 
         $md_start = $this->get_start_of_multiple_days($event_id, $occurrence);
         if ($md_start) $occurrence = $md_start;
@@ -10000,7 +10011,7 @@ class MEC_main extends MEC_base
         else if (strtotime($occurrence))
         {
             $new_occurrence = date('Y-m-d', strtotime('-1 day', strtotime($occurrence)));
-            if (in_array($repeat_type, ['monthly']) and date('m', strtotime($new_occurrence)) != date('m', strtotime($occurrence))) $new_occurrence = date('Y-m-d', strtotime($occurrence));
+            if ($repeat_type === 'monthly' and date('m', strtotime($new_occurrence)) != date('m', strtotime($occurrence))) $new_occurrence = date('Y-m-d', strtotime($occurrence));
 
             $occurrence = $new_occurrence;
         }
@@ -10246,7 +10257,7 @@ class MEC_main extends MEC_base
         add_filter('mec_attendees_list_data', function($attendees, $id, $occurrence) {
             return $attendees;
         }, 10, 3);
-        
+
         usort($attendees, function ($a, $b)
         {
             return strcmp($a['name'], $b['name']);
@@ -10348,10 +10359,10 @@ class MEC_main extends MEC_base
         return $organizer_id;
     }
 
-    public function get_location_data($location_id)
+    public function get_location_data($location_id): array
     {
         $term = get_term($location_id);
-        if (!isset($term->term_id) or $location_id == 1) return [];
+        if (!isset($term->term_id) || $location_id == 1) return [];
 
         return [
             'id' => $term->term_id,
@@ -11043,6 +11054,8 @@ class MEC_main extends MEC_base
             $occurrence = $new_occurrence;
         }
         else $occurrence = null;
+
+        if ($occurrence && $repeat_type === 'custom_days') $occurrence = date('Y-m-d 00:00:00', strtotime($occurrence));
 
         return [$occurrence, $occurrence_time];
     }

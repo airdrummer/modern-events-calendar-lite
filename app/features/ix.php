@@ -1251,7 +1251,7 @@ class MEC_feature_ix extends MEC_base
 
                         foreach ($custom_dates as $custom_date)
                         {
-                            list($custom_date_start, $custom_date_end) = explode('/', $custom_date);
+                            [$custom_date_start, $custom_date_end] = explode('/', $custom_date);
 
                             $custom_start = new DateTime($custom_date_start, $UTC);
                             $custom_start->setTimezone($timezone);
@@ -1987,6 +1987,9 @@ class MEC_feature_ix extends MEC_base
      */
     public function thirdparty_tec_import_do($IDs)
     {
+        $wpml = false;
+        if (function_exists('wpml_get_content_trid')) $wpml = true;
+
         $count = 0;
         foreach ($IDs as $ID)
         {
@@ -2091,6 +2094,7 @@ class MEC_feature_ix extends MEC_base
                 $weekdays = null;
                 $days = null;
                 $advanced_days = null;
+                $end_occurrence = 10;
 
                 $rule = $metas['_EventRecurrence']['rules'][0];
 
@@ -2216,6 +2220,7 @@ class MEC_feature_ix extends MEC_base
                 $weekday = null;
                 $weekdays = null;
                 $days = null;
+                $advanced_days = null;
 
                 $end_type = 'date';
                 $end_occurrence = 10;
@@ -2288,6 +2293,38 @@ class MEC_feature_ix extends MEC_base
 
             // Insert the event into MEC
             $post_id = $this->main->save_event($args, $post_id);
+
+            // WPML Translations
+            if ($wpml)
+            {
+                // Original Post ID
+                $original_thirdparty_id = apply_filters('wpml_original_element_id', null, $third_party_id, 'post_' . $post->post_type);
+
+                $original_mec_id = $original_thirdparty_id
+                    ? $this->db->select("SELECT `post_id` FROM `#__postmeta` WHERE `meta_value`='$original_thirdparty_id' AND `meta_key`='mec_tec_id'", 'loadResult')
+                    : 0;
+
+                $original_mec_language_info = apply_filters('wpml_element_language_details', null, [
+                        'element_id' => $original_mec_id,
+                        'element_type' => 'post_' . $this->main->get_main_post_type(),
+                    ]
+                );
+
+                // Set the desired language
+                $event_lang = apply_filters('wpml_post_language_details', '', $third_party_id);
+                $language_code = is_array($event_lang) && isset($event_lang['language_code']) ? $event_lang['language_code'] : '';
+
+                // Update the post language info
+                $language_args = [
+                    'element_id' => $post_id,
+                    'element_type' => 'post_' . $this->main->get_main_post_type(),
+                    'trid' => $original_mec_language_info->trid ?? null,
+                    'language_code' => $language_code,
+                    'source_language_code' => $original_mec_language_info->language_code ?? '',
+                ];
+
+                do_action('wpml_set_element_language_details', $language_args);
+            }
 
             // Set location to the post
             if ($location_id) wp_set_object_terms($post_id, (int) $location_id, 'mec_location');

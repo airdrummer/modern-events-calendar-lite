@@ -97,6 +97,92 @@ class MEC_skin_single extends MEC_skins
 
         $limit = (isset($this->settings['related_events_limit']) and trim($this->settings['related_events_limit'])) ? $this->settings['related_events_limit'] : 30;
 
+        // Display Expired Events
+        $display_expired_events = (isset($this->settings['related_events_display_expireds']) && $this->settings['related_events_display_expireds']);
+
+        $now = current_time('timestamp');
+        $printed = 0;
+
+        $query = $this->get_related_events_query($event_id);
+
+        if($query->have_posts())
+        {
+            ?>
+            <div class="row mec-related-events-wrap">
+                <h3 class="mec-rec-events-title"><?php echo esc_html__('Related Events', 'modern-events-calendar-lite'); ?></h3>
+                <div class="mec-related-events">
+                    <?php while($query->have_posts()): if($printed >= min($limit, 4)) break; $query->the_post(); ?>
+                        <?php
+                            // Event Repeat Type
+                            $repeat_type = get_post_meta(get_the_ID(), 'mec_repeat_type', true);
+
+                            $occurrence = date('Y-m-d');
+                            if(!in_array($repeat_type, array('certain_weekdays', 'custom_days', 'weekday', 'weekend', 'advanced')))
+                            {
+                                $new_occurrence = date('Y-m-d', strtotime('-1 day', strtotime($occurrence)));
+                                if($repeat_type == 'monthly' and date('m', strtotime($new_occurrence)) != date('m', strtotime($occurrence))) $new_occurrence = date('Y-m-d', strtotime($occurrence));
+
+                                $occurrence = $new_occurrence;
+                            }
+
+                            $dates = $this->render->dates(get_the_ID(), NULL, 5, $occurrence);
+
+                            $t = 0;
+                            do {
+                                $d = $dates[$t] ?? [];
+
+                                $timestamp = (isset($d['start']) and isset($d['start']['timestamp'])) ? $d['start']['timestamp'] : 0;
+                                $t++;
+                            } while (isset($dates[$t]) and $t <= 5 and $timestamp < $now);
+
+                            // Don't show Expired Events
+                            if($display_expired_events or ($timestamp and $timestamp > $now)):
+
+                            $printed += 1;
+                            $mec_date = (isset($d['start']) and isset($d['start']['date'])) ? $d['start']['date'] : get_post_meta(get_the_ID(), 'mec_start_date', true);
+                            $date = $this->main->date_i18n(get_option('date_format'), strtotime($mec_date));
+
+                            $event_link = $this->main->get_event_date_permalink(get_the_permalink(), $mec_date);
+
+                            // Custom Link
+                            $read_more = get_post_meta(get_the_ID(), 'mec_read_more', true);
+                            $read_more_occ_url = MEC_feature_occurrences::param(get_the_ID(), $timestamp, 'read_more', $read_more);
+
+                            if($read_more_occ_url and filter_var($read_more_occ_url, FILTER_VALIDATE_URL)) $event_link = $read_more_occ_url;
+                        ?>
+                        <article class="mec-related-event-post col-md-3 col-sm-12">
+                            <figure>
+                                <a href="<?php echo esc_url($event_link); ?>">
+                                    <?php
+                                        if(get_the_post_thumbnail(get_the_ID(), 'thumblist')) echo get_the_post_thumbnail(get_the_ID(), $thumbnail_size, ['class' => 'img-responsive responsive--full'] );
+                                        else echo '<img src="' . esc_url($this->main->asset('img/no-image.png')).'" />';
+                                    ?>
+                                </a>
+                            </figure>
+                            <div class="mec-related-event-content">
+                                <span><?php echo esc_html($date); ?></span>
+                                <h5>
+                                    <a class="mec-color-hover" href="<?php echo esc_url($event_link); ?>"><?php echo get_the_title(); ?></a>
+                                    <?php if($display_expired_events && $timestamp && $timestamp < $now): ?>
+                                    <span class="mec-holding-status mec-holding-status-expired"><?php esc_html_e('Expired!', 'modern-events-calendar-lite'); ?></span>
+                                    <?php endif; ?>
+                                </h5>
+                            </div>
+                        </article>
+                        <?php endif; ?>
+                    <?php endwhile; ?>
+                </div>
+            </div>
+            <?php
+        }
+
+        wp_reset_postdata();
+    }
+
+    public function get_related_events_query(int $event_id): WP_Query
+    {
+        $limit = (isset($this->settings['related_events_limit']) and trim($this->settings['related_events_limit'])) ? $this->settings['related_events_limit'] : 30;
+
         $related_args = array(
             'post_type' => $this->main->get_main_post_type(),
             'posts_per_page' => max($limit, 30),
@@ -193,9 +279,6 @@ class MEC_skin_single extends MEC_skins
         $related_args['tax_query']['relation'] = 'OR';
         $related_args = apply_filters('mec_add_to_related_post_query', $related_args, $event_id);
 
-        $now = current_time('timestamp');
-        $printed = 0;
-
         $query = new WP_Query($related_args);
 
         if(isset($this->settings['related_events_per_event']) && $this->settings['related_events_per_event'])
@@ -228,89 +311,11 @@ class MEC_skin_single extends MEC_skins
             }
         }
 
-        if($query->have_posts())
-        {
-            ?>
-            <div class="row mec-related-events-wrap">
-                <h3 class="mec-rec-events-title"><?php echo esc_html__('Related Events', 'modern-events-calendar-lite'); ?></h3>
-                <div class="mec-related-events">
-                    <?php while($query->have_posts()): if($printed >= min($limit, 4)) break; $query->the_post(); ?>
-                        <?php
-                            // Event Repeat Type
-                            $repeat_type = get_post_meta(get_the_ID(), 'mec_repeat_type', true);
-
-                            $occurrence = date('Y-m-d');
-                            if(!in_array($repeat_type, array('certain_weekdays', 'custom_days', 'weekday', 'weekend', 'advanced')))
-                            {
-                                $new_occurrence = date('Y-m-d', strtotime('-1 day', strtotime($occurrence)));
-                                if($repeat_type == 'monthly' and date('m', strtotime($new_occurrence)) != date('m', strtotime($occurrence))) $new_occurrence = date('Y-m-d', strtotime($occurrence));
-
-                                $occurrence = $new_occurrence;
-                            }
-
-                            $dates = $this->render->dates(get_the_ID(), NULL, 5, $occurrence);
-
-                            $t = 0;
-                            do {
-                                $d = $dates[$t] ?? [];
-
-                                $timestamp = (isset($d['start']) and isset($d['start']['timestamp'])) ? $d['start']['timestamp'] : 0;
-                                $t++;
-                            } while (isset($dates[$t]) and $t <= 5 and $timestamp < $now);
-
-                            // Don't show Expired Events
-                            if($display_expired_events or ($timestamp and $timestamp > $now)):
-
-                            $printed += 1;
-                            $mec_date = (isset($d['start']) and isset($d['start']['date'])) ? $d['start']['date'] : get_post_meta(get_the_ID(), 'mec_start_date', true);
-                            $date = $this->main->date_i18n(get_option('date_format'), strtotime($mec_date));
-
-                            $event_link = $this->main->get_event_date_permalink(get_the_permalink(), $mec_date);
-
-                            // Custom Link
-                            $read_more = get_post_meta(get_the_ID(), 'mec_read_more', true);
-                            $read_more_occ_url = MEC_feature_occurrences::param(get_the_ID(), $timestamp, 'read_more', $read_more);
-
-                            if($read_more_occ_url and filter_var($read_more_occ_url, FILTER_VALIDATE_URL)) $event_link = $read_more_occ_url;
-                        ?>
-                        <article class="mec-related-event-post col-md-3 col-sm-12">
-                            <figure>
-                                <a href="<?php echo esc_url($event_link); ?>">
-                                    <?php
-                                        if(get_the_post_thumbnail(get_the_ID(), 'thumblist')) echo get_the_post_thumbnail(get_the_ID(), $thumbnail_size, ['class' => 'img-responsive responsive--full'] );
-                                        else echo '<img src="' . esc_url($this->main->asset('img/no-image.png')).'" />';
-                                    ?>
-                                </a>
-                            </figure>
-                            <div class="mec-related-event-content">
-                                <span><?php echo esc_html($date); ?></span>
-                                <h5>
-                                    <a class="mec-color-hover" href="<?php echo esc_url($event_link); ?>"><?php echo get_the_title(); ?></a>
-                                    <?php if($display_expired_events && $timestamp && $timestamp < $now): ?>
-                                    <span class="mec-holding-status mec-holding-status-expired"><?php esc_html_e('Expired!', 'modern-events-calendar-lite'); ?></span>
-                                    <?php endif; ?>
-                                </h5>
-                            </div>
-                        </article>
-                        <?php endif; ?>
-                    <?php endwhile; ?>
-                </div>
-            </div>
-            <?php
-        }
-
-        wp_reset_postdata();
+        return $query;
     }
 
-    public function display_next_previous_events($event)
+    public function get_next_prev_query(int $event_id, $date = []): array
     {
-        if(!isset($this->settings['next_previous_events'])) return;
-        if(isset($this->settings['next_previous_events']) && $this->settings['next_previous_events'] != '1') return;
-
-        if(is_numeric($event)) $event_id = $event;
-        elseif(is_object($event) and isset($event->ID)) $event_id = $event->ID;
-        else return;
-
         $p_exclude = array($event_id);
         $n_exclude = array($event_id);
 
@@ -320,8 +325,7 @@ class MEC_skin_single extends MEC_skins
         $nskip = (isset($_REQUEST['nskip']) and is_numeric($_REQUEST['nskip']) and $_REQUEST['nskip'] > 0) ? sanitize_text_field($_REQUEST['nskip']) : NULL;
         if($nskip) $n_exclude[] = $nskip;
 
-        $date = $event->date;
-        $timestamp = (isset($date['start']) and isset($date['start']['timestamp'])) ? $date['start']['timestamp'] : NULL;
+        $timestamp = $date['start']['timestamp'] ?? null;
 
         $args = array(
             'post_type' => $this->main->get_main_post_type(),
@@ -431,10 +435,23 @@ class MEC_skin_single extends MEC_skins
         }
 
         // No Event Found!
-        if(!count($p_IDs) && !count($n_IDs)) return;
+        if(!count($p_IDs) && !count($n_IDs)) return [];
 
         $p = count($p_IDs) ? $this->db->select("SELECT `post_id`, `tstart` FROM `#__mec_dates` WHERE `tstart`<='".$timestamp."' AND `post_id` IN (".implode(',', $p_IDs).") ORDER BY `tstart` DESC LIMIT 1", 'loadAssoc') : [];
         $n = count($n_IDs) ? $this->db->select("SELECT `post_id`, `tstart` FROM `#__mec_dates` WHERE `tstart`>='".$timestamp."' AND `post_id` IN (".implode(',', $n_IDs).") ORDER BY `tstart` ASC LIMIT 1", 'loadAssoc') : [];
+
+        return [$p, $n];
+    }
+
+    public function display_next_previous_events($event)
+    {
+        if (!isset($this->settings['next_previous_events']) || $this->settings['next_previous_events'] != '1') return;
+
+        if (is_numeric($event)) $event_id = $event;
+        elseif (is_object($event) and isset($event->ID)) $event_id = $event->ID;
+        else return;
+
+        list($p, $n) = $this->get_next_prev_query($event_id, $event->date);
 
         // No Event Found!
         if(is_array($p) && !isset($p['post_id']) && is_array($n) && !isset($n['post_id'])) return;

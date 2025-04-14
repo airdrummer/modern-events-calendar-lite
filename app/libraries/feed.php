@@ -86,7 +86,7 @@ class MEC_feed extends MEC_base
 
         return apply_filters('get_the_excerpt', $post->post_excerpt, $post);
     }
-    
+
     /**
      * @author Webnus <info@webnus.net>
      * @param int $post_id
@@ -95,14 +95,19 @@ class MEC_feed extends MEC_base
      */
     public function content($post_id, $feed_type = NULL)
     {
-        if(!$feed_type) $feed_type = get_default_feed();
-        
+        if (!$feed_type) $feed_type = get_default_feed();
+
         $post = get_post($post_id);
-        $content = str_replace(']]>', ']]&gt;', apply_filters('the_content', $post->post_content));
-        
+
+        if (!$post || is_wp_error($post) || !isset($post->post_content) || !is_string($post->post_content)) {
+            return '';
+        }
+
+        $content = str_replace(']]>', ']]&gt;', apply_filters('the_content', $post->post_content ?: ''));
+
         return apply_filters('the_content_feed', $content, $feed_type);
     }
-    
+
     /**
      * @author Webnus <info@webnus.net>
      * @param int $post_id

@@ -74,7 +74,9 @@ elseif($week_start == 5) // Friday
                     $occurrence = strtotime($today.' '.$start_time);
                     $event_unique = (isset($event->data->time) ? $event->data->ID.$event->data->time['start_timestamp'] : $event->data->ID);
 
-                    $attendees = $this->main->get_event_attendees($event->ID, $occurrence);
+                    $start = $this->main->get_start_time_of_multiple_days($event->ID, $occurrence);
+
+                    $attendees = $this->main->get_event_attendees($event->ID, $start);
                     $attendees_count = count($attendees);
 
                     echo '<div class="'.($this->main->is_expired($event) ? 'mec-past-event ' : '').'ended-relative simple-skin-ended">';

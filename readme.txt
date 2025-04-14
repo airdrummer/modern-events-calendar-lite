@@ -1,10 +1,10 @@
-=== Modern Events Calendar Lite ===
+﻿=== Modern Events Calendar Lite ===
 Contributors: webnus
 Donate link: https://webnus.net
 Tags: Event, Events, Calendar, Booking, Schedule, Organizer, Venue
 Requires at least: 4.0.0
 Tested up to: 6.7.1
-Stable tag: 7.20.0
+Stable tag: 7.21.0
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -472,10 +472,30 @@ You can see [plugin documentation](https://webnus.net/dox/modern-events-calendar
 43. WordPress Event Calendar - Daily view(Fluent View Layouts Addon)
 
 == Changelog ==
-v 7.20.0.1 – 25 feb 2025
-- reformat timezone
-- added missing timezone
-- fixed countdown
+= v 7.21.0 - 9 April 2025 =
+- Added: Icons endpoint to the Restful API.
+- Added: Weather endpoint to the Restful API.
+- Added: Related Events endpoint to the Restful API.
+- Added: Next / Previous Events endpoint to the Restful API.
+- Added: Next Occurrences endpoint to the Restful API.
+- Added: Attendee Fields endpoint to the Restful API.
+- Added: Booking Fields endpoint to the Restful API.
+- Added: Ticket Variations endpoint to the Restful API.
+- Improved: The navigation in admin calendar view of events.
+- Improved: The downloadable file feature to allow users to choose files from WordPress media system.
+- Fixed: An issue in importing multi-lingual WPML events from third party plugins.
+- Fixed: An image issue in WooCommerce payment system.
+- Fixed: Active day issue in timetable skin.
+- Fixed: Some issues in sending certificates.
+- Fixed: An issue in displaying wrong status and time for custom day events in rare conditions.
+- Fixed: Some issues in displaying next occurrences in the single event page.
+- Fixed: A product trash issue in WooCommerce payment system.
+- Fixed: Some issues in admin calendar view regarding displaying total attendees.
+- Fixed: An issue in style per event feature.
+- Fixed: Some issues in the search forms.
+- Fixed: An issue in booking of custom day events.
+- Fixed: Responsive styling issue in Countdown View
+- Fixed: Some other minor issues.
 
 = v 7.20.0 - 24 February 2025 =
 - Added: Update event route to the RESTful API.

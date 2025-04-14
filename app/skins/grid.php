@@ -412,7 +412,7 @@ class MEC_skin_grid extends MEC_skins
                         $query->the_post();
                         $ID = get_the_ID();
 
-                        $ID_count = isset($IDs_count[$ID]) ? $IDs_count[$ID] : 1;
+                        $ID_count = $IDs_count[$ID] ?? 1;
                         for($i = 1; $i <= $ID_count; $i++)
                         {
                             $rendered = $this->render->data($ID);

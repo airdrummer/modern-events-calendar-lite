@@ -497,18 +497,19 @@ global $wp_version;
             });
 
         })(jQuery);
-        jQuery('.support-button').on('click', function(event, data) {
-            event.preventDefault();
-            if (window.fcWidget.isOpen() != true) {
-                window.fcWidget.open();
-            }
-        });
+        // jQuery('.support-button').on('click', function(event, data) {
+        //     event.preventDefault();
+        //     if (window.fcWidget.isOpen() != true) {
+        //         window.fcWidget.open();
+        //     }
+        // });
     </script>
     <?php if ($this->getPRO()): ?>
         <script>
             window.intercomSettings = {
                 api_base: "https://api-iam.intercom.io",
                 app_id: "l0q7rr0s",
+                custom_launcher_selector: '.support-button'
             };
         </script>
 

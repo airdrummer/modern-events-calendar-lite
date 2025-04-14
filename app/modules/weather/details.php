@@ -14,12 +14,12 @@ $settings = $this->get_settings();
 // The module is disabled
 if(!isset($settings['weather_module_status']) || !$settings['weather_module_status']) return;
 
-$dark_sky = (isset($settings['weather_module_api_key']) and trim($settings['weather_module_api_key'])) ? $settings['weather_module_api_key'] : '';
-$visual_crossing = (isset($settings['weather_module_vs_api_key']) and trim($settings['weather_module_vs_api_key'])) ? $settings['weather_module_vs_api_key'] : '';
-$weather_api = (isset($settings['weather_module_wa_api_key']) and trim($settings['weather_module_wa_api_key'])) ? $settings['weather_module_wa_api_key'] : '';
+$dark_sky = isset($settings['weather_module_api_key']) && trim($settings['weather_module_api_key']) ? $settings['weather_module_api_key'] : '';
+$visual_crossing = isset($settings['weather_module_vs_api_key']) && trim($settings['weather_module_vs_api_key']) ? $settings['weather_module_vs_api_key'] : '';
+$weather_api = isset($settings['weather_module_wa_api_key']) && trim($settings['weather_module_wa_api_key']) ? $settings['weather_module_wa_api_key'] : '';
 
 // No API key
-if(!trim($dark_sky) and !trim($weather_api) and !trim($visual_crossing)) return;
+if(!trim($dark_sky) && !trim($weather_api) && !trim($visual_crossing)) return;
 
 // Location ID
 $location_id = $this->get_master_location_id($event);
@@ -34,7 +34,7 @@ $lat = $location['latitude'] ?? 0;
 $lng = $location['longitude'] ?? 0;
 
 // Cannot find the geo point
-if(!$lat or !$lng) return;
+if(!$lat || !$lng) return;
 
 if(trim($weather_api)) include MEC::import('app.modules.weather.weatherapi', true, true);
 elseif(trim($visual_crossing)) include MEC::import('app.modules.weather.visualcrossing', true, true);

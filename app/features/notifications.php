@@ -58,7 +58,7 @@ class MEC_feature_notifications extends MEC_base
     ?>
         <div class="mec-meta-box-fields mec-event-tab-content" id="mec-notifications">
             <?php foreach($notifications as $key => $notification): if(isset($this->notif_settings[$key]) and isset($this->notif_settings[$key]['status']) and !$this->notif_settings[$key]['status']) continue; ?>
-			<div class="mec-form-row">
+			<div>
                 <h4><?php echo esc_html($notification['label']); ?></h4>
                 <div class="mec-form-row">
                     <label>

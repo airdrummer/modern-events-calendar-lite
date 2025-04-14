@@ -136,8 +136,14 @@ class MEC_user extends MEC_base
             if($event_id) $this->save_mapped_data($event_id, $user_id, $reg);
 
             // Set the User Role
-            $role = (isset($this->settings['booking_user_role']) and trim($this->settings['booking_user_role'])) ? $this->settings['booking_user_role'] : 'subscriber';
-
+            $source = $args['source'] ?? 'booking';
+            if ($source === 'waiting') {
+                $role = (isset($this->settings['waiting_user_role']) && trim($this->settings['waiting_user_role']))
+                    ? $this->settings['waiting_user_role'] : 'subscriber';
+            } else {
+                $role = (isset($this->settings['booking_user_role']) && trim($this->settings['booking_user_role']))
+                    ? $this->settings['booking_user_role'] : 'subscriber';
+            }
             $wpuser = new WP_User($user_id);
             $wpuser->set_role($role);
         }

@@ -128,10 +128,66 @@ class MEC_feature_restful extends MEC_base
             'permission_callback' => [$this->restful, 'permission'],
         ]);
 
+        // Weather
+        register_rest_route($this->restful->get_namespace(), 'events/(?P<id>\d+)/weather', [
+            'methods' => 'GET',
+            'callback' => [$this, 'weather'],
+            'permission_callback' => [$this->restful, 'guest'],
+        ]);
+
+        // Related Events
+        register_rest_route($this->restful->get_namespace(), 'events/(?P<id>\d+)/related-events', [
+            'methods' => 'GET',
+            'callback' => [$this, 'related_events'],
+            'permission_callback' => [$this->restful, 'guest'],
+        ]);
+
+        // Next / Previous Events
+        register_rest_route($this->restful->get_namespace(), 'events/(?P<id>\d+)/next-previous-events', [
+            'methods' => 'GET',
+            'callback' => [$this, 'next_previous_events'],
+            'permission_callback' => [$this->restful, 'guest'],
+        ]);
+
+        // Next Occurrences
+        register_rest_route($this->restful->get_namespace(), 'events/(?P<id>\d+)/next-occurrences', [
+            'methods' => 'GET',
+            'callback' => [$this, 'next_occurrences'],
+            'permission_callback' => [$this->restful, 'guest'],
+        ]);
+
         // Custom Fields
         register_rest_route($this->restful->get_namespace(), 'config/custom-fields', [
             'methods' => 'GET',
             'callback' => [$this, 'custom_fields'],
+            'permission_callback' => [$this->restful, 'guest'],
+        ]);
+
+        // Attendee Fields
+        register_rest_route($this->restful->get_namespace(), 'config/attendee-fields', [
+            'methods' => 'GET',
+            'callback' => [$this, 'attendee_fields'],
+            'permission_callback' => [$this->restful, 'guest'],
+        ]);
+
+        // Fixed Fields
+        register_rest_route($this->restful->get_namespace(), 'config/fixed-fields', [
+            'methods' => 'GET',
+            'callback' => [$this, 'fixed_fields'],
+            'permission_callback' => [$this->restful, 'guest'],
+        ]);
+
+        // Ticket Variation
+        register_rest_route($this->restful->get_namespace(), 'config/ticket-variations', [
+            'methods' => 'GET',
+            'callback' => [$this, 'ticket_variations'],
+            'permission_callback' => [$this->restful, 'guest'],
+        ]);
+
+        // Icons
+        register_rest_route($this->restful->get_namespace(), 'config/icons', [
+            'methods' => 'GET',
+            'callback' => [$this, 'icons'],
             'permission_callback' => [$this->restful, 'guest'],
         ]);
     }
@@ -908,6 +964,341 @@ class MEC_feature_restful extends MEC_base
             'data' => [
                 'success' => 1,
                 'fields' => $fields,
+            ],
+            'status' => 200,
+        ]);
+    }
+
+    public function attendee_fields(): WP_REST_Response
+    {
+        $fields = $this->getMain()->get_reg_fields();
+
+        if (isset($fields[':i:'])) unset($fields[':i:']);
+        if (isset($fields[':fi:'])) unset($fields[':fi:']);
+
+        // Response
+        return $this->restful->response([
+            'data' => [
+                'success' => 1,
+                'fields' => $fields,
+            ],
+            'status' => 200,
+        ]);
+    }
+
+    public function fixed_fields(): WP_REST_Response
+    {
+        $fields = $this->getMain()->get_bfixed_fields();
+
+        if (isset($fields[':i:'])) unset($fields[':i:']);
+        if (isset($fields[':fi:'])) unset($fields[':fi:']);
+
+        // Response
+        return $this->restful->response([
+            'data' => [
+                'success' => 1,
+                'fields' => $fields,
+            ],
+            'status' => 200,
+        ]);
+    }
+
+    public function ticket_variations(): WP_REST_Response
+    {
+        $ticket_variations = $this->getMain()->ticket_variations();
+
+        // Response
+        return $this->restful->response([
+            'data' => [
+                'success' => 1,
+                'ticket_variations' => $ticket_variations,
+            ],
+            'status' => 200,
+        ]);
+    }
+
+    public function icons(): WP_REST_Response
+    {
+        $icons = $this->getMain()->icons(
+            (isset($this->settings['icons']) && is_array($this->settings['icons']) ? $this->settings['icons'] : [])
+        );
+
+        // Response
+        return $this->restful->response([
+            'data' => [
+                'success' => 1,
+                'icons' => $icons->list(),
+            ],
+            'status' => 200,
+        ]);
+    }
+
+    public function weather(WP_REST_Request $request): WP_REST_Response
+    {
+        // The module is disabled
+        if (!isset($this->settings['weather_module_status']) || !$this->settings['weather_module_status'])
+        {
+            return $this->restful->response([
+                'data' => [
+                    'success' => 0,
+                    'message' => esc_html__('Module is disabled.', 'modern-events-calendar-lite'),
+                ],
+                'status' => 503,
+            ]);
+        }
+
+        $visual_crossing = isset($this->settings['weather_module_vs_api_key']) && trim($this->settings['weather_module_vs_api_key']) ? $this->settings['weather_module_vs_api_key'] : '';
+        $weather_api = isset($this->settings['weather_module_wa_api_key']) && trim($this->settings['weather_module_wa_api_key']) ? $this->settings['weather_module_wa_api_key'] : '';
+
+        // Main
+        $main = $this->getMain();
+
+        // Event ID
+        $id = $request->get_param('id');
+
+        // Location ID
+        $location_id = $main->get_master_location_id($id);
+
+        // Location
+        $location = $main->get_location_data($location_id);
+
+        $lat = $location['latitude'] ?? 0;
+        $lng = $location['longitude'] ?? 0;
+
+        // Cannot find the geo point
+        if (!$location_id || !$lat || !$lng)
+        {
+            return $this->restful->response([
+                'data' => [
+                    'success' => 0,
+                    'message' => esc_html__('No location found for this event.', 'modern-events-calendar-lite'),
+                ],
+                'status' => 404,
+            ]);
+        }
+
+        $today = $request->get_param('date');
+        if (!$today) $today = current_time('Y-m-d H:i:s');
+
+        $weather = [];
+        if ($weather_api)
+        {
+            $response = $main->get_weather_wa($weather_api, $lat, $lng, $today);
+            $weather = [
+                'icon' => $response['condition']['icon'] ?? '',
+                'condition' => $response['condition']['text'] ?? '',
+                'temp_c' => $response['temp_c'] ?? '',
+                'temp_f' => $response['temp_f'] ?? '',
+                'wind_kph' => $response['wind_kph'] ?? '',
+                'wind_mph' => $response['wind_mph'] ?? '',
+                'humidity' => $response['humidity'] ?? '',
+                'feelslike_c' => $response['feelslike_c'] ?? '',
+                'feelslike_f' => $response['feelslike_f'] ?? '',
+            ];
+        }
+        else if ($visual_crossing)
+        {
+            $response = $main->get_weather_visualcrossing($visual_crossing, $lat, $lng, $today);
+            $weather = [
+                'icon' => $response['icon'] ?? '',
+                'condition' => $response['conditions'] ?? '',
+                'temp_c' => $response['temp'] ?? '',
+                'temp_f' => $main->weather_unit_convert($response['temp'] ?? '', 'C_TO_F'),
+                'wind_kph' => $response['windspeed'] ?? '',
+                'wind_mph' => $main->weather_unit_convert($response['windspeed'] ?? '', 'KM_TO_M'),
+                'humidity' => $response['humidity'] ?? '',
+                'visibility_km' => $response['visibility'] ?? '',
+                'visibility_m' => $main->weather_unit_convert($response['visibility'] ?? '', 'KM_TO_M'),
+            ];
+        }
+
+        // Response
+        return $this->restful->response([
+            'data' => [
+                'success' => 1,
+                'weather' => $weather,
+            ],
+            'status' => 200,
+        ]);
+    }
+
+    public function related_events(WP_REST_Request $request): WP_REST_Response
+    {
+        // Module Disabled
+        if (!isset($this->settings['related_events']) || $this->settings['related_events'] != '1')
+        {
+            return $this->restful->response([
+                'data' => [
+                    'success' => 0,
+                    'message' => esc_html__('Module is disabled.', 'modern-events-calendar-lite'),
+                ],
+                'status' => 503,
+            ]);
+        }
+
+        // Libraries
+        $main = $this->getMain();
+        $render = $this->getRender();
+        $single = new MEC_skin_single();
+
+        // Event ID
+        $id = $request->get_param('id');
+
+        $limit = isset($this->settings['related_events_limit']) && trim($this->settings['related_events_limit']) ? $this->settings['related_events_limit'] : 30;
+
+        // Display Expired Events
+        $display_expired_events = isset($this->settings['related_events_display_expireds']) && $this->settings['related_events_display_expireds'];
+
+        $now = current_time('timestamp');
+        $printed = 0;
+
+        // Events
+        $events = [];
+
+        // Query
+        $query = $single->get_related_events_query($id);
+
+        if ($query->have_posts())
+        {
+            while ($query->have_posts())
+            {
+                if ($printed >= min($limit, 4)) break;
+                $query->the_post();
+
+                // Event Repeat Type
+                $repeat_type = get_post_meta(get_the_ID(), 'mec_repeat_type', true);
+
+                $occurrence = date('Y-m-d');
+                if (!in_array($repeat_type, ['certain_weekdays', 'custom_days', 'weekday', 'weekend', 'advanced']))
+                {
+                    $new_occurrence = date('Y-m-d', strtotime('-1 day', strtotime($occurrence)));
+                    if ($repeat_type === 'monthly' && date('m', strtotime($new_occurrence)) != date('m', strtotime($occurrence))) $new_occurrence = date('Y-m-d', strtotime($occurrence));
+
+                    $occurrence = $new_occurrence;
+                }
+
+                $dates = $render->dates(get_the_ID(), null, 5, $occurrence);
+
+                $t = 0;
+                do
+                {
+                    $d = $dates[$t] ?? [];
+
+                    $timestamp = $d['start']['timestamp'] ?? 0;
+                    $t++;
+                } while (isset($dates[$t]) && $t <= 5 && $timestamp < $now);
+
+                // Don't show Expired Events
+                if ($display_expired_events || ($timestamp && $timestamp > $now))
+                {
+                    $printed += 1;
+                    $mec_date = $d['start']['date'] ?? get_post_meta(get_the_ID(), 'mec_start_date', true);
+                    $date = $main->date_i18n(get_option('date_format'), strtotime($mec_date));
+
+                    $event_link = $main->get_event_date_permalink(get_the_permalink(), $mec_date);
+
+                    // Custom Link
+                    $read_more = get_post_meta(get_the_ID(), 'mec_read_more', true);
+                    $read_more_occ_url = MEC_feature_occurrences::param(get_the_ID(), $timestamp, 'read_more', $read_more);
+
+                    if ($read_more_occ_url && filter_var($read_more_occ_url, FILTER_VALIDATE_URL)) $event_link = $read_more_occ_url;
+
+                    $events[] = [
+                        'id' => get_the_ID(),
+                        'title' => get_the_title(),
+                        'url' => $event_link,
+                        'timestamp' => $timestamp,
+                        'date' => $date,
+                    ];
+                }
+            }
+        }
+
+        // Response
+        return $this->restful->response([
+            'data' => [
+                'success' => 1,
+                'related_events' => $events,
+            ],
+            'status' => 200,
+        ]);
+    }
+
+    public function next_previous_events(WP_REST_Request $request): WP_REST_Response
+    {
+        // Module Disabled
+        if (!isset($this->settings['next_previous_events']) || $this->settings['next_previous_events'] != '1')
+        {
+            return $this->restful->response([
+                'data' => [
+                    'success' => 0,
+                    'message' => esc_html__('Module is disabled.', 'modern-events-calendar-lite'),
+                ],
+                'status' => 503,
+            ]);
+        }
+
+        // Event ID
+        $id = $request->get_param('id');
+
+        // Libraries
+        $main = $this->getMain();
+        $single = new MEC_skin_single();
+
+        list($p, $n) = $single->get_next_prev_query($id);
+
+        $next = [];
+        $previous = [];
+
+        // Previous
+        if (is_array($p))
+        {
+            $p_url = $main->get_event_date_permalink(get_permalink($p['post_id']), date('Y-m-d', $p['tstart']));
+            $previous = [
+                'id' => $p['post_id'],
+                'title' => get_the_title($p['post_id']),
+                'url' => $p_url,
+            ];
+        }
+
+        // Next
+        if (is_array($n))
+        {
+            $n_url = $main->get_event_date_permalink(get_permalink($n['post_id']), date('Y-m-d', $n['tstart']));
+            $next = [
+                'id' => $n['post_id'],
+                'title' => get_the_title($n['post_id']),
+                'url' => $n_url,
+            ];
+        }
+
+        // Response
+        return $this->restful->response([
+            'data' => [
+                'success' => 1,
+                'next' => $next,
+                'previous' => $previous,
+            ],
+            'status' => 200,
+        ]);
+    }
+
+    public function next_occurrences(WP_REST_Request $request): WP_REST_Response
+    {
+        // Libraries
+        $single = new MEC_skin_single();
+
+        // Event ID
+        $id = $request->get_param('id');
+
+        $events = $single->get_event_mec($id);
+        $event = $events[0] ?? null;
+
+        // Response
+        return $this->restful->response([
+            'data' => [
+                'success' => 1,
+                'occurrences' => $event->dates ?? [],
             ],
             'status' => 200,
         ]);

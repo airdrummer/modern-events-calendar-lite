@@ -66,6 +66,21 @@ if(!$mec_email)
 // Payment Gateways
 $gateways = $this->main->get_gateways();
 $gateways_options = $this->main->get_gateways_options();
+if(isset($_POST['mec']['settings']['booking_registration'])) {
+    $new_booking_registration = sanitize_text_field($_POST['mec']['settings']['booking_registration']);
+
+    $settings = get_option('mec_options', []);
+    $settings['settings']['booking_registration'] = $new_booking_registration;
+    update_option('mec_options', $settings);
+
+    global $wpdb;
+    $meta_value = get_post_meta($post_id, 'mec_options', true);
+    if(!is_array($meta_value)) $meta_value = [];
+
+    $meta_value['settings']['booking_registration'] = $new_booking_registration;
+    update_post_meta($post_id, 'mec_options', $meta_value);
+}
+
 ?>
 <div class="wns-be-container wns-be-container-sticky">
     <div id="wns-be-infobar">
@@ -198,11 +213,12 @@ $gateways_options = $this->main->get_gateways_options();
                                     <div class="mec-form-row">
                                         <label class="mec-col-3" for="mec_settings_booking_registration"><?php esc_html_e('Registration', 'modern-events-calendar-lite'); ?></label>
                                         <div class="mec-col-9">
-                                            <select id="mec_settings_booking_registration" name="mec[settings][booking_registration]">
-                                                <option <?php echo isset($settings['booking_registration']) && $settings['booking_registration'] == '1' ? 'selected="selected"' : ''; ?> value="1"><?php echo esc_html__('Enabled (Main Attendee)', 'modern-events-calendar-lite'); ?></option>
-                                                <option <?php echo isset($settings['booking_registration']) && $settings['booking_registration'] == '2' ? 'selected="selected"' : ''; ?> value="2"><?php echo esc_html__('Enabled (All Attendees)', 'modern-events-calendar-lite'); ?></option>
-                                                <option <?php echo isset($settings['booking_registration']) && $settings['booking_registration'] == '0' ? 'selected="selected"' : ''; ?> value="0"><?php echo esc_html__('Disabled', 'modern-events-calendar-lite'); ?></option>
-                                            </select>
+                                        <select id="mec_settings_booking_registration" name="mec[settings][booking_registration]">
+                                            <option value="1" <?php selected(get_option('mec_options')['settings']['booking_registration'], '1'); ?>><?php esc_html_e('Enabled (Main Attendee)', 'modern-events-calendar-lite'); ?></option>
+                                            <option value="2" <?php selected(get_option('mec_options')['settings']['booking_registration'], '2'); ?>><?php esc_html_e('Enabled (All Attendees)', 'modern-events-calendar-lite'); ?></option>
+                                            <option value="0" <?php selected(get_option('mec_options')['settings']['booking_registration'], '0'); ?>><?php esc_html_e('Disabled', 'modern-events-calendar-lite'); ?></option>
+                                        </select>
+
                                             <span class="mec-tooltip">
                                             <div class="box left">
                                                 <h5 class="title"><?php esc_html_e('Registration', 'modern-events-calendar-lite'); ?></h5>
@@ -1237,6 +1253,7 @@ $gateways_options = $this->main->get_gateways_options();
                                                 <li><?php esc_html_e('Ticket Variations', 'modern-events-calendar-lite'); ?></li>
                                                 <li><?php esc_html_e('Taxes / Fees', 'modern-events-calendar-lite'); ?></li>
                                                 <li><?php esc_html_e('Discount Per Roles', 'modern-events-calendar-lite'); ?></li>
+                                                <li><?php esc_html_e('Prices Per Occurences', 'modern-events-calendar-lite'); ?></li>
                                             </ul>
 
                                             <div class="mec-form-row" style="margin-top: 40px;">
@@ -1531,6 +1548,9 @@ jQuery("#mec_booking_form").on("submit", function(event)
     }
 
     var settings = jQuery("#mec_booking_form").serialize();
+    if(jQuery("#mec_settings_booking_registration").length) {
+        settings += "&mec[settings][booking_registration]=" + encodeURIComponent(jQuery("#mec_settings_booking_registration").val());
+    }
     jQuery.ajax(
     {
         type: "POST",

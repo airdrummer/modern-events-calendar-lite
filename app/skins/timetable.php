@@ -170,6 +170,8 @@ class MEC_skin_timetable extends MEC_skins
 
         $this->active_date = $this->today;
 
+        if (date('W', strtotime($this->active_date)) == date('W')) $this->active_date = current_time('Y-m-d');
+
         // Set the maximum date in current month
         if($this->show_only_expired_events) $this->maximum_date = date('Y-m-d', strtotime('Yesterday'));
 

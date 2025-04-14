@@ -11348,14 +11348,16 @@ body:has(.mec-search-form) .select2-results__option {
   width: calc(100% - 36px);
 }
 
-.mec-there-reset-button .mec-totalcal-box {
+.mec-there-reset-button.mec-totalcal-box {
   padding-bottom: 48px;
 }
 
 .mec-wrap .mec-totalcal-box .mec-search-reset-button .mec-button {
-  margin: 27.39px 0 0 0 !important;
-  padding: 0 25px !important;
-  border-radius: var(--mec-secondary-border-radius) !important;
+  position: absolute !important;
+  margin: 0 !important;
+  bottom: 0 !important;
+  right: 0 !important;
+  padding: 9px 25px !important;
   background: #fff !important;
   color: #767676 !important;
   border-top: 1px solid !important;
@@ -13481,8 +13483,19 @@ body:has(.mec-fes-form, .mec-search-form) .ui-datepicker .ui-datepicker-calendar
   padding: 0;
   background: #282828;
   display: flex;
+  flex-direction: row;
   width: 100%;
   border-radius: var(--mec-primary-border-radius);
+}
+
+@media only screen and (max-width: 768px) {
+  .mec-wrap .mec-event-countdown-style3 {
+    flex-direction: column;
+  }
+
+  .mec-wrap .mec-event-countdown-style3 .mec-event-countdown-part2 .mec-event-image img {
+    width: 100% !important;
+  }
 }
 
 .mec-wrap .mec-event-countdown-style3 .mec-event-countdown-part1 {
@@ -13809,7 +13822,7 @@ body:has(.mec-fes-form, .mec-search-form) .ui-datepicker .ui-datepicker-calendar
   }
 
   .mec-event-countdown-style3 .mec-event-countdown-part-details {
-    min-height: 300px;
+    min-height: 200px;
   }
 
   .mec-event-countdown-style3 .mec-event-countdown .block-w {
@@ -25047,7 +25060,7 @@ span.mec-booking-field-required {
 }
 
 .select2-container {
-  z-index: 999;
+  z-index: 9999;
 }
 
 @media (max-width: 1200px) {
@@ -27551,7 +27564,7 @@ span.mec-marker-wrap,
 .mec-fluent-wrap
   .mec-available-tickets-details
   span.mec-available-tickets-number {
-  color: var(--mec-fluent-bold-color) !important;
+  color: var(--mec-fluent-bold-color);
 }
 
 /* BORDER BOLD COLOR - SECOND COLOR */

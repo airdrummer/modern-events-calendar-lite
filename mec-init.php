@@ -69,7 +69,6 @@ class MEC
         // Initialize Auto Update Feature
         $factory->action('admin_init', array($factory, 'load_auto_update'));
 
-
         // Registering MEC actions
         $factory->load_actions();
 
@@ -117,7 +116,7 @@ class MEC
         $main = MEC::getInstance('app.libraries.main');
 
         $factory->action('wp_enqueue_scripts', array($factory, 'register_styles_and_scripts'), 0);
-        if($main and is_object($main) and method_exists($main, 'get_settings') and $settings = $main->get_settings() and isset($settings['assets_in_footer_status']) and $settings['assets_in_footer_status'] == '1') $factory->action('wp_footer', array($factory, 'load_frontend_assets'), 0);
+        if ($main and is_object($main) and method_exists($main, 'get_settings') and $settings = $main->get_settings() and isset($settings['assets_in_footer_status']) and $settings['assets_in_footer_status'] == '1') $factory->action('wp_footer', array($factory, 'load_frontend_assets'), 0);
         else $factory->action('wp_enqueue_scripts', array($factory, 'load_frontend_assets'), 0);
 
         // Register the shortcodes

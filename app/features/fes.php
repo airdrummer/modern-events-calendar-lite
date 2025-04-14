@@ -282,7 +282,7 @@ class MEC_feature_fes extends MEC_base
     switch ($type) {
         case 'ms-excel':
             header('Content-Type: application/vnd.ms-excel; charset=utf-8');
-            header('Content-Disposition: attachment; filename=attendees-' . md5(time() . mt_rand(100, 999)) . '.xls');
+            header('Content-Disposition: attachment; filename=attendees-' . md5(time() . mt_rand(100, 999)) . '.xlsx');
             break;
         default:
             header('Content-Type: text/csv; charset=utf-8');

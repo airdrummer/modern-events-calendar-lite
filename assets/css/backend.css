@@ -3,7 +3,8 @@ body.m-e-calendar_page_MEC-settings,
 body.mec_invoice_page_api-key-app,
 body.m-e-calendar_page_MEC-addons,
 body.m-e-calendar_page_MEC-report,
-body.m-e-calendar_page_MEC-ix {
+body.m-e-calendar_page_MEC-ix,
+body.m-e-calendar_page_mec-advanced-report {
   background: #fff;
 }
 
@@ -108,6 +109,7 @@ body.toplevel_page_mec-intro #webnus-dashboard .mec-cmsg-2-notification-box-wrap
   margin: 25px auto;
   overflow: visible;
   box-shadow: 0 1px 4px rgb(0 0 0 / 1%);
+  box-sizing: border-box;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
@@ -310,12 +312,6 @@ body:has(input[name="_wp_http_referer"][value*="/admin.php?page=MEC-settings&tab
   position: absolute;
   top: 9px;
   margin-left: 10px;
-}
-
-.wns-be-group-tab #booking_form_option h5 {
-  font-size: 16px;
-  font-weight: 400;
-  margin: 35px 5px 10px;
 }
 
 .wns-be-container .wns-be-group-tab p {
@@ -1341,7 +1337,7 @@ body.post-type-mec-books th.column-author {
 }
 
 .select2-container--default .select2-selection--multiple .select2-selection__rendered {
-  padding: 5px 0px;
+  padding: 5px 0px !important;
   min-height: 28px;
   display: inline-block;
   margin: 0;
@@ -1354,12 +1350,11 @@ body.post-type-mec-books th.column-author {
 .select2-container .select2-search--inline .select2-search__field {
   min-height: unset;
   margin: 0;
-  height: 39px;
 }
 
 .select2-container--default .select2-selection--multiple input[type="search"] {
   border-radius: unset;
-  min-height: 2;
+  min-height: 25px;
   border: none;
   background-color: transparent;
   box-shadow: none;
@@ -1372,6 +1367,10 @@ body.post-type-mec-books th.column-author {
 
 .select2-container--default .select2-selection--multiple .select2-selection__rendered li {
   margin-bottom: 0;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__rendered li.select2-selection__choice {
+  padding-left: 25px;
 }
 
 .post-type-mec-events .mec-add-event-tabs-wrap .select2-container,
@@ -1521,6 +1520,10 @@ body.post-type-mec-books th.column-author {
   width: 15px;
   float: none;
   margin: 0;
+  height: unset;
+  border: unset;
+  position: unset;
+  transform: unset;
 }
 
 .post-type-mec-events #mec_metabox_label input[type="checkbox"],
@@ -1708,19 +1711,11 @@ body.post-type-mec-books th.column-author {
 
 .mec-sed-methods li a {
   text-decoration: unset;
+  color: #3c434a;
+  font-weight: 600;
 }
 
-.mec-sed-methods li {
-  display: inline-block;
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  margin: 0 5px 5px 0;
-  cursor: pointer;
-  border-radius: 3px;
-  box-shadow: 0 2px 15px -2px rgba(0, 0, 0, 0.1);
-}
-
-.mec-sed-methods li a:hover,
+.mec-sed-methods li:hover a,
 .mec-sed-methods li:hover {
   border-color: #07bbe9;
   color: #07bbe9;
@@ -2020,6 +2015,7 @@ td:has(.mec-webnus-icon) a {
   border: 1px solid #ddd;
   margin: 0 5px 5px 0;
   cursor: pointer;
+  border-radius: 7px;
 }
 
 #wpwrap .mec-button-primary {
@@ -5162,7 +5158,7 @@ textarea.mec-import-settings-content {
   max-width: 575px;
 }
 
-.mec-booking-tab-content .mec-form-row textarea {
+.mec-booking-tab-content .mec-form-row textarea:not(#mec-invoice_event_descriptions) {
   max-width: 762px;
 }
 
@@ -6511,9 +6507,13 @@ li.wns-be-group-menu-li.mec-settings-menu:hover>.mec-settings-submenu {
   }
 }
 
+.mec-sed-methods {
+  margin: 0;
+}
+
 .mec-sed-methods li {
-  line-height: 28px;
-  padding-left: 38px;
+  line-height: 16px;
+  padding-left: 28px;
   position: relative;
 }
 
@@ -6563,11 +6563,10 @@ li.wns-be-group-menu-li.mec-settings-menu:hover>.mec-settings-submenu {
 
 .mec-custom-nice-select ul.list li.option.selected .wn-mec-text:after,
 .mec-sed-methods li.active:before {
-  width: 4px;
-  height: 4px;
-  border: 7px solid #07bbe9;
+  width: 6px;
+  height: 6px;
+  border: 5px solid #07bbe9;
   background: #fff;
-  box-shadow: 0 3px 16px -3px #07bbe9;
 }
 
 #menu-posts-mec-books .wp-menu-image img,
@@ -7178,13 +7177,12 @@ a.mec-create-shortcode-tabs-link {
 
 #mec_add_fee_button,
 #mec_add_ticket_variation_button,
-#mec_meta_box_downloadable_file_options #mec_downloadable_file_remove_image_button,
 #taxes_option #mec_fees_list .mec-form-row .button,
 #ticket_variations_option #mec_ticket_variations_list .mec-form-row .button,
 .mec-export-settings,
 .mec-import-settings,
-.mec-meta-box-fields .mec-form-row .button:not(.wp-color-result),
-.mec-form-row .button:not(.wp-color-result, .add_media, .wp-core-ui .quicktags-toolbar input.button.button-small),
+.mec-meta-box-fields .mec-form-row .button:not(.wp-color-result, [id*='qt_mec-invoice_event_descriptions_'], .add_media, .mec-dash-remove-btn),
+.mec-form-row .button:not(.wp-color-result,.add_media,.wp-core-ui .quicktags-toolbar input.button.button-small,.mec-image-picker-upload,.mec-image-picker-remove, .mec-dash-remove-btn),
 .mec-occurrences-wrapper .button:not(.wp-color-result),
 #database_setup_button {
   border-radius: 25px;
@@ -7204,10 +7202,27 @@ a.mec-create-shortcode-tabs-link {
   text-decoration: none;
 }
 
+.mec-form-row .mec-dash-remove-btn {
+  border-radius: 25px;
+  border: 1px solid #d1e5ec;
+  text-shadow: none;
+  padding: 0 12px;
+  height: 38px;
+  letter-spacing: 0.2px;
+  margin-right: 5px;
+  background: #fff;
+  color: #07bbe9;
+  box-shadow: 0 1px 5px -1px rgb(0 0 0 / 5%);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  line-height: 36px;
+  text-decoration: none;
+}
+
 #mec_add_fee_button:hover,
 #mec_add_ticket_variation_button:hover,
 #mec_meta_box_downloadable_file_options #mec_downloadable_file_remove_image_button:hover,
-.mec-meta-box-fields .mec-form-row .button:not(.wp-color-result):hover,
+.mec-meta-box-fields .mec-form-row .button:not(.wp-color-result, [id*='qt_mec-invoice_event_descriptions_'], .add_media):hover,
 .mec-occurrences-wrapper .button:not(.wp-color-result):hover,
 .button:not(.wp-color-result):hover .mec-export-settings:hover,
 .mec-import-settings:hover {
@@ -7249,31 +7264,30 @@ a.mec-create-shortcode-tabs-link {
 }
 
 #mec_meta_box_downloadable_file_options input[type="file"] {
-  max-width: 166px;
-  text-align: center;
+  border-radius: 25px;
+  border: 1px solid #d1e5ec;
+  text-shadow: none;
+  padding: 0 12px;
+  height: 38px;
+  letter-spacing: 0.2px;
+  margin-right: 5px;
+  background: #fff;
+  color: #07bbe9;
+  box-shadow: 0 1px 5px -1px rgb(0 0 0 / 5%);
   transition: all 0.2s ease;
-  border-radius: 5px !important;
-  border: 2px dashed #b8e9f3;
-  margin-bottom: 12px;
-  height: 44px;
+  cursor: pointer;
+  display: inline-block;
+  line-height: 36px;
   text-decoration: none;
-  padding: 0 15px 1px;
-  text-transform: none;
-  letter-spacing: 0;
-  font-weight: 600;
-  color: #40d9f1;
-  box-shadow: 0 2px 6px -3px #cfeff5;
-  display: block;
-}
-
-#mec_meta_box_downloadable_file_options input[type="file"]:hover {
-  box-shadow: 0 2px 16px -3px #cfeff5;
+  width: 118px;
 }
 
 #mec_meta_box_downloadable_file_options input[type="file"]::-webkit-file-upload-button {
   visibility: hidden;
-  width: 1px;
-  height: 38px;
+  display: none;
+  padding: 0;
+  margin: 0;
+  border: none;
 }
 
 #mec_meta_box_downloadable_file_options input[type="file"]::-moz-file-upload-button {
@@ -7987,10 +8001,10 @@ input.fserv-input-text {
 }
 
 .w-clearfix.mec-attendees-head span {
-  font-weight: 600;
-  color: #000;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-  font-size: 17px;
+  font-size: 14px;
+  line-height: 14px;
+  font-weight: 600;
 }
 
 .w-clearfix.mec-attendees-content {

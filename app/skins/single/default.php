@@ -109,71 +109,100 @@ $banner_module = $this->can_display_banner_module($event);
 			<?php do_action('mec_before_booking_form', get_the_ID()); ?>
 
 			<!-- Booking Module -->
-			<?php if(!empty($event->date)):
-			   if($this->main->is_sold($event) and count($event->dates) <= 1): ?>
-				  <?php
-				  $event_id        = $event->ID;
-				  $dates = (isset($event->dates) ? $event->dates : array($event->date));
-				  $occurrence_time = ($dates[0]['start']['timestamp'] ?? strtotime($dates[0]['start']['date']));
-				  $tickets         = get_post_meta( $event_id, 'mec_tickets', true );
-				  $book         = $this->getBook();
-				  $availability = $book->get_tickets_availability( $event_id, $occurrence_time );
+			<?php if(!empty($event->date)): ?>
+			    <?php if($this->main->is_sold($event) and count($event->dates) <= 1): ?>
+			        <?php
+			        $event_id = $event->ID;
+			        $category_ids = array_map(function($category) { return $category['id']; }, $event->data->categories);
 
-				  $sales_end                   = 0;
-                  $ticket_limit                = -1;
-				  $ticket_sales_ended_messages = [];
-				  $stop_selling                = '';
-				  foreach ( $tickets as $ticket_id => $ticket ) {
+			        $settings_serialized = get_option('mec_options', false);
+			        $category_restricted = false;
+			        if ($settings_serialized !== false) {
+			            $settings = maybe_unserialize($settings_serialized);
+			            if (isset($settings['settings']['pmp_booking']) && is_array($settings['settings']['pmp_booking'])) {
+			                foreach ($category_ids as $category_id) {
+			                    if (in_array($category_id, $settings['settings']['pmp_booking'][2])) {
+			                        $category_restricted = true;
+			                        break;
+			                    }
+			                }
+			            }
+			        }
 
-					 $ticket_limit = $availability[$ticket_id] ?? -1;
-					 $ticket_name  = isset( $ticket['name'] ) ? '<strong>' . esc_html($ticket['name']) . '</strong>' : '';
-
-					 $key          = 'stop_selling_' . $ticket_id;
-					 if ( !isset( $availability[ $key ] ) ) {
-
-						continue;
-					 }
-
-					 if ( true === $availability[ $key ] ) {
-
-						$sales_end++;
-						$ticket_sales_ended_messages[ $ticket_id ] = sprintf($availability['stop_selling_' . $ticket_id . '_message'], $ticket_name) ?? sprintf( esc_html__( 'The %s ticket sales has ended!', 'modern-events-calendar-lite'), $ticket_name );
-					 }
-				  }
-
-				  $tickets_sales_end = false;
-				  if(count($tickets) === $sales_end){
-
-					 $tickets_sales_end = true;
-				  }
-
-				  if ( !empty( $ticket_sales_ended_messages ) ):
-
-					 foreach ( $ticket_sales_ended_messages as $ticket_id => $message ) :
-
-						?>
-						<div id="mec-ticket-message-<?php echo esc_attr($ticket_id); ?>" class="mec-ticket-unavailable-spots mec-error <?php echo( $ticket_limit == '0' ? '' : 'mec-util-hidden' ); ?>"><div><?php echo MEC_kses::element($message); ?></div></div>
-					 <?php
-					 endforeach;
-					 ?>
-
-				  <?php else: ?>
-					 <div id="mec-events-meta-group-booking-<?php echo esc_attr($this->uniqueid); ?>" class="mec-sold-tickets warning-msg"><?php esc_html_e( 'Sold out!', 'modern-events-calendar-lite');do_action( 'mec_booking_sold_out', $event, null, null, array( $event->date ) ); ?> </div>
-				  <?php endif; ?>
-			<?php elseif($this->main->can_show_booking_module($event)): ?>
-				<?php $data_lity_class = ''; if(isset($settings['single_booking_style']) and $settings['single_booking_style'] == 'modal' ) $data_lity_class = 'lity-hide '; ?>
-				<div id="mec-events-meta-group-booking-<?php echo esc_attr($this->uniqueid); ?>" class="<?php echo esc_attr($data_lity_class); ?> mec-events-meta-group mec-events-meta-group-booking">
-					<?php
-					if(isset($settings['booking_user_login']) and $settings['booking_user_login'] == '1' and !is_user_logged_in() ) {
-						echo do_shortcode('[MEC_login]');
-					} elseif (!is_user_logged_in() and isset($booking_options['bookings_limit_for_users']) and $booking_options['bookings_limit_for_users'] == '1' ) {
-						echo do_shortcode('[MEC_login]');
-					} else {
-						echo MEC_kses::full($this->main->module('booking.default', array('event' => $this->events, 'icons' => $this->icons)));
-					}
-					?>
-				</div>
-			<?php endif; endif; ?>
+			        $dates = (isset($event->dates) ? $event->dates : array($event->date));
+			        $occurrence_time = ($dates[0]['start']['timestamp'] ?? strtotime($dates[0]['start']['date']));
+			        $tickets = get_post_meta($event_id, 'mec_tickets', true);
+			        $book = $this->getBook();
+			        $availability = $book->get_tickets_availability($event_id, $occurrence_time);
+			        $sales_end = 0;
+			        $ticket_limit = -1;
+			        $ticket_sales_ended_messages = [];
+			        $stop_selling = '';
+			        foreach ($tickets as $ticket_id => $ticket) {
+			            $ticket_limit = $availability[$ticket_id] ?? -1;
+			            $ticket_name = isset($ticket['name']) ? '<strong>' . esc_html($ticket['name']) . '</strong>' : '';
+			            $key = 'stop_selling_' . $ticket_id;
+			            if (!isset($availability[$key])) continue;
+			            if (true === $availability[$key]) {
+			                $sales_end++;
+			                $ticket_sales_ended_messages[$ticket_id] = sprintf($availability['stop_selling_' . $ticket_id . '_message'], $ticket_name) ?? 			sprintf(esc_html__('The %s ticket sales has ended!', 'modern-events-calendar-lite'), $ticket_name);
+			            }
+			        }
+			        $tickets_sales_end = (count($tickets) === $sales_end);
+			        ?>
+			        <?php if (!empty($ticket_sales_ended_messages)): ?>
+			            <?php foreach ($ticket_sales_ended_messages as $ticket_id => $message): ?>
+			                <div id="mec-ticket-message-<?php echo esc_attr($ticket_id); ?>" class="mec-ticket-unavailable-spots mec-error <?php echo 			($ticket_limit == '0' ? '' : 'mec-util-hidden'); ?>">
+			                    <div><?php echo MEC_kses::element($message); ?></div>
+			                </div>
+			            <?php endforeach; ?>
+			        <?php else: ?>
+			            <?php if ($category_restricted): ?>
+			                <div class="mec-event-restricted warning-msg">
+			                    <?php
+			                    if (function_exists('pmpro_get_no_access_message')) {
+			                        $restricted_message = pmpro_get_no_access_message('', array(2));
+			                        echo $restricted_message;
+			                    } else {
+			                        esc_html_e('This event is restricted due to category settings!', 'modern-events-calendar-lite');
+			                    }
+			                    ?>
+			                </div>
+			            <?php else: ?>
+			                <div id="mec-events-meta-group-booking-<?php echo esc_attr($this->uniqueid); ?>" class="mec-sold-tickets warning-msg">
+			                    <?php esc_html_e('Sold out!', 'modern-events-calendar-lite'); ?>
+			                    <?php do_action('mec_booking_sold_out', $event, null, null, array($event->date)); ?>
+			                </div>
+			                <?php if (shortcode_exists('MEC_waiting_list')): ?>
+			                    <?php echo do_shortcode('[MEC_waiting_list]'); ?>
+			                <?php endif; ?>
+			            <?php endif; ?>
+			        <?php endif; ?>
+			    <?php elseif ($this->main->can_show_booking_module($event)): ?>
+			        <?php $data_lity_class = ''; if (isset($settings['single_booking_style']) && $settings['single_booking_style'] == 'modal') $data_lity_class 			= 'lity-hide '; ?>
+			        <div id="mec-events-meta-group-booking-<?php echo esc_attr($this->uniqueid); ?>" class="<?php echo esc_attr($data_lity_class); ?> 			mec-events-meta-group mec-events-meta-group-booking">
+			            <?php
+			            if ($category_restricted): ?>
+			                <div class="mec-event-restricted warning-msg">
+			                    <?php
+			                    if (function_exists('pmpro_get_no_access_message')) {
+			                        $restricted_message = pmpro_get_no_access_message('', array(2));
+			                        echo $restricted_message;
+			                    } else {
+			                        esc_html_e('This event is restricted due to category settings!', 'modern-events-calendar-lite');
+			                    }
+			                    ?>
+			                </div>
+			            <?php elseif (isset($settings['booking_user_login']) && $settings['booking_user_login'] == '1' && !is_user_logged_in()): ?>
+			                <?php echo do_shortcode('[MEC_login]'); ?>
+			            <?php elseif (!is_user_logged_in() && isset($booking_options['bookings_limit_for_users']) && $booking_options			['bookings_limit_for_users'] == '1'): ?>
+			                <?php echo do_shortcode('[MEC_login]'); ?>
+			            <?php else: ?>
+			                <?php echo MEC_kses::full($this->main->module('booking.default', array('event' => $this->events, 'icons' => $this->icons))); ?>
+			            <?php endif; ?>
+			        </div>
+			    <?php endif; ?>
+			<?php endif; ?>
 
 			<!-- Tags -->
 			<div class="mec-events-meta-group mec-events-meta-group-tags">
@@ -295,7 +324,7 @@ $banner_module = $this->can_display_banner_module($event);
                                         $skin = new \MEC_Advanced_Organizer\Core\Lib\MEC_Advanced_Organizer_Lib_Skin();
                                         $organizer_link = $skin->single_page_url($organizer['id']);
                                         ?>
-                                        <a href="<?php echo $organizer_link;?>" target="<?php echo $settings['advanced_organizer']['organizer_link_target'] ?? '_blank'; ?>">
+                                        <a href="<?php echo $organizer_link;?>" target="<?php echo $settings['advanced_organizer']['organizer_link_target']; ?>">
                                             <i class="mec-sl-link"></i>
                                             <h6><?php echo (isset($organizer['name']) ? esc_html($organizer['name']) : ''); ?></h6>
                                         </a>
@@ -323,7 +352,7 @@ $banner_module = $this->can_display_banner_module($event);
 								<dd class="mec-organizer-url">
 									<?php echo $this->icons->display('sitemap'); ?>
 									<h6><?php esc_html_e('Website', 'modern-events-calendar-lite'); ?></h6>
-                                    <span><a href="<?php echo esc_url($organizer['url']); ?>" class="mec-color-hover" target="<?php echo isset($settings['advanced_organizer']) ? $settings['advanced_organizer']['organizer_link_target'] : '_blank'; ?>"><?php echo (isset($organizer['page_label']) and trim($organizer['page_label'])) ? esc_html($organizer['page_label']) : esc_html($organizer['url']); ?></a></span>
+                                    <span><a href="<?php echo esc_url($organizer['url']); ?>" class="mec-color-hover" target="<?php echo isset($settings['advanced_organizer']) ? $settings['advanced_organizer']['organizer_link_target'] : ''; ?>"><?php echo (isset($organizer['page_label']) and trim($organizer['page_label'])) ? esc_html($organizer['page_label']) : esc_html($organizer['url']); ?></a></span>
                                     <?php do_action('mec_single_default_organizer', $organizer); ?>
 								</dd>
 							<?php endif;

@@ -1155,7 +1155,6 @@ class FormBuilder extends Singleton {
                 <input type="hidden" id="mec_fes_thumbnail" name="mec[featured_image]" value="<?php if(isset($attachment_id) and intval($attachment_id)) the_guid($attachment_id); ?>" />
                 <input type="file" id="mec_featured_image_file" onchange="mec_fes_upload_featured_image();" />
                 <span id="mec_fes_remove_image_button" class="<?php echo (trim($featured_image) ? '' : 'mec-util-hidden'); ?>"><?php esc_html_e('Remove Image', 'modern-events-calendar-lite'); ?></span>
-
                 <div class="mec-error mec-util-hidden" id="mec_fes_thumbnail_error"></div>
             </div>
             <?php endif; ?>
@@ -3725,14 +3724,14 @@ class FormBuilder extends Singleton {
             });
         });
         </script>
-        <div class="mec-meta-box-fields mec-event-tab-content mec-form-row" id="mec-public-download-module-file">
+        <div class="mec-meta-box-fields mec-event-tab-content" id="mec-public-download-module-file">
             <h4><?php esc_html_e('Public File to Download', 'modern-events-calendar-lite'); ?></h4>
             <div id="mec_meta_box_downloadable_file_options" class="mec-form-row">
                 <input type="hidden" id="mec_public_download_module_file" name="mec[public_download_module_file]" value="<?php echo esc_attr($file_id); ?>">
                 <input type="file" id="mec_public_download_module_file_uploader">
                 <p class="description"><?php esc_html_e('pdf,zip,png,jpg and gif files are allowed.', 'modern-events-calendar-lite'); ?></p>
                 <div id="mec_public_download_module_file_link" class="<?php echo (trim($file_id) ? '' : 'mec-util-hidden'); ?>"><?php echo ($file_id ? '<a href="'.esc_url($file_url).'" target="_blank">'.esc_html($file_url).'</a>' : ''); ?></div>
-                <button type="button" id="mec_public_download_module_file_remove_image_button" class="button mec-dash-remove-btn<?php echo (trim($file_id) ? '' : 'mec-util-hidden'); ?>"><?php esc_html_e('Remove File', 'modern-events-calendar-lite'); ?></button>
+                <button type="button" id="mec_public_download_module_file_remove_image_button" class="button mec-dash-remove-btn <?php echo (trim($file_id) ? '' : 'mec-util-hidden'); ?>"><?php esc_html_e('Remove File', 'modern-events-calendar-lite'); ?></button>
                 <div class="mec-error mec-util-hidden" id="mec_public_download_module_file_error"></div>
             </div>
             <div class="mec-form-row" style="margin-top: 30px;">
@@ -3770,6 +3769,46 @@ class FormBuilder extends Singleton {
         <script>
         jQuery(document).ready(function()
         {
+            <?php if(current_user_can('upload_files')): ?>
+            jQuery('#mec_downloadable_file_uploader').on('click', function(event)
+            {
+                var real_ajax_url = wp.ajax.settings.url;
+                wp.ajax.settings.url = real_ajax_url + '?mec_fes=1';
+
+                var post_id = jQuery(this).data('post-id');
+                if(post_id && post_id !== -1) wp.media.model.settings.post.id = post_id;
+                if(post_id === -1) wp.media.model.settings.post.id = null;
+
+                event.preventDefault();
+
+                var frame;
+                if(frame)
+                {
+                    frame.open();
+                    return;
+                }
+
+                frame = wp.media({
+                    multiple: true
+                });
+
+                frame.on('select', function()
+                {
+                    frame.state().get('selection').map(function(attachment)
+                    {
+                        var file = attachment.toJSON();
+
+                        jQuery("#mec_downloadable_file").val(file.id);
+                        jQuery('#mec_downloadable_file_link').html(`<a href="${file.url}" target="_blank">${file.url}</a>`).removeClass("mec-util-hidden");
+                        jQuery("#mec_downloadable_file_remove_image_button").removeClass("mec-util-hidden");
+                    });
+
+                    frame.close();
+                });
+
+                frame.open();
+            });
+            <?php else: ?>
             jQuery("#mec_downloadable_file_uploader").on('change', function()
             {
                 var fd = new FormData();
@@ -3810,6 +3849,7 @@ class FormBuilder extends Singleton {
 
                 return false;
             });
+            <?php endif; ?>
 
             jQuery("#mec_downloadable_file_remove_image_button").on('click', function()
             {
@@ -3821,14 +3861,18 @@ class FormBuilder extends Singleton {
         </script>
         <div class="mec-meta-box-fields mec-booking-tab-content " id="mec-downloadable-file">
             <h4><?php esc_html_e('Downloadable File', 'modern-events-calendar-lite'); ?></h4>
-            <div id="mec_meta_box_downloadable_file_options" class="mec-form-row">
-                <input type="hidden" id="mec_downloadable_file" name="mec[downloadable_file]" value="<?php echo esc_attr($file_id); ?>">
-                <input type="file" id="mec_downloadable_file_uploader">
-                <p class="description"><?php esc_html_e('pdf,zip,png,jpg and gif files are allowed.', 'modern-events-calendar-lite'); ?></p>
-                <div id="mec_downloadable_file_link" class="<?php echo (trim($file_id) ? '' : 'mec-util-hidden'); ?>"><?php echo ($file_id ? '<a href="'.esc_url($file_url).'" target="_blank">'.esc_html($file_url).'</a>' : ''); ?></div>
-                <button type="button" id="mec_downloadable_file_remove_image_button" class="button mec-dash-remove-btn <?php echo (trim($file_id) ? '' : 'mec-util-hidden'); ?>"><?php esc_html_e('Remove File', 'modern-events-calendar-lite'); ?></button>
-                <div class="mec-error mec-util-hidden" id="mec_downloadable_file_error"></div>
-            </div>
+                <div id="mec_meta_box_downloadable_file_options" class="mec-form-row">
+                    <input type="hidden" id="mec_downloadable_file" name="mec[downloadable_file]" value="<?php echo esc_attr($file_id); ?>">
+                    <?php if(current_user_can('upload_files')): ?>
+                        <button type="button" class="mec_upload_file_button button" data-post-id="<?php echo esc_attr($post->ID); ?>" id="mec_downloadable_file_uploader"><?php echo esc_html__('Choose File', 'modern-events-calendar-lite'); ?></button>
+                    <?php else: ?>
+                    <input type="file" id="mec_downloadable_file_uploader">
+                    <?php endif; ?>
+                    <p class="description"><?php esc_html_e('pdf,zip,png,jpg and gif files are allowed.', 'modern-events-calendar-lite'); ?></p>
+                    <div id="mec_downloadable_file_link" class="<?php echo (trim($file_id) ? '' : 'mec-util-hidden'); ?>"><?php echo ($file_id ? '<a href="'.esc_url($file_url).'" target="_blank">'.esc_html($file_url).'</a>' : ''); ?></div>
+                    <button type="button" id="mec_downloadable_file_remove_image_button" class="button mec-dash-remove-btn <?php echo (trim($file_id) ? '' : 'mec-util-hidden'); ?>"><?php esc_html_e('Remove File', 'modern-events-calendar-lite'); ?></button>
+                    <div class="mec-error mec-util-hidden" id="mec_downloadable_file_error"></div>
+                </div>
         </div>
         <?php
     }

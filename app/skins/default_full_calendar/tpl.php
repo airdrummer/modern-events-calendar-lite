@@ -66,19 +66,19 @@ do_action('mec_full_skin_head');
 
             $sf_columns = 7;
         ?>
-        <div id="mec_search_form_<?php echo esc_attr($this->id); ?>">
-        <?php if($sf_month_filter_status): $sf_columns -= 3; ?>
-            <div class="col-md-3">
-                <?php echo MEC_kses::form($this->sf_search_field('month_filter', $sf_month_filter , 0)); ?>
-            </div>
-        <?php endif; ?>
-            <div class="col-md-<?php echo esc_attr($sf_columns); ?>">
-                <?php if($sf_text_search_status): ?>
-                    <?php echo MEC_kses::form($this->sf_search_field('text_search', $sf_text_search , 0)); ?>
-                <?php endif; ?>
-            </div>
-        <?php endif; ?>
-        </div>
+        <form id="mec_search_form_<?php echo esc_attr($this->id); ?>" autocomplete="off">
+            <?php if($sf_month_filter_status): $sf_columns -= 3; ?>
+                <div class="col-md-3">
+                    <?php echo MEC_kses::form($this->sf_search_field('month_filter', $sf_month_filter , 0)); ?>
+                </div>
+            <?php endif; ?>
+                <div class="col-md-<?php echo esc_attr($sf_columns); ?>">
+                    <?php if($sf_text_search_status): ?>
+                        <?php echo MEC_kses::form($this->sf_search_field('text_search', $sf_text_search , 0)); ?>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
+        </form>
         <div class="col-md-5">
             <div class="mec-totalcal-view">
                 <?php if($this->yearly): ?><span class="mec-totalcal-yearlyview<?php if($this->default_view == 'yearly') echo ' mec-totalcalview-selected'; ?>" data-skin="yearly"><?php esc_html_e('Yearly', 'modern-events-calendar-lite'); ?></span><?php endif; ?>

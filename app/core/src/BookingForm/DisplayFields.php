@@ -34,8 +34,9 @@ class DisplayFields {
 		?>
 		<!-- Custom fields begin -->
 		<?php
+			$inline_third_open = false;
+			$inline_third_counter = 0;
 		foreach ( $fields as $f_id => $field ) :
-
 			if(in_array($f_id, [':i:',':fi:','_i_','_fi_',], true)){
 
 				continue;
@@ -99,6 +100,30 @@ class DisplayFields {
 			if( $single_row ){
 
 				$classes[] = 'clearfix';
+			}
+			$is_col_4 = isset($field['inline_third']) && $field['inline_third'] === 'enable';
+
+			if ($is_col_4) {
+			    if (!$inline_third_open) {
+			        echo '<div class="mec-inline-third-row">';
+			        $inline_third_open = true;
+			        $inline_third_counter = 0;
+			    }
+			    $inline_third_counter++;
+			    if ($inline_third_counter === 3) {
+			        $inline_third_open = false;
+			        $inline_third_counter = 0;
+			        $close_row_after_li = true;
+			    } else {
+			        $close_row_after_li = false;
+			    }
+			} else {
+			    if ($inline_third_open) {
+			        echo '</div>';
+			        $inline_third_open = false;
+			        $inline_third_counter = 0;
+			    }
+			    $close_row_after_li = false;
 			}
 			?>
 			<li class="mec-<?php echo esc_attr( $group_id ); ?>-field-<?php echo esc_attr( $field['type'] ); ?> mec-<?php echo esc_attr( $group_id ); ?>-<?php echo esc_attr($form_type); ?>-field-<?php echo esc_attr( $field['type'] ); ?> <?php echo esc_attr( join( ' ', $classes ) ); ?>" data-field-id="<?php echo esc_attr( $f_id ); ?>" data-ticket-id="<?php echo esc_attr($j); ?>">
@@ -326,12 +351,18 @@ class DisplayFields {
 			</li>
 
 			<?php
+			if ($close_row_after_li) {
+				echo '</div>';
+			}
 			if( $single_row ){
 
 				echo '<span class="clearfix"></span>';
 			}
 			?>
 		<?php endforeach;
+		if ($inline_third_open) {
+		    echo '</div>';
+		}
 
 	}
 

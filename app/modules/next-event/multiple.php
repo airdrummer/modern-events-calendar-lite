@@ -63,9 +63,9 @@ $hide_end_time = $this->hide_end_time_status($event->ID);
             <li>
                 <a href="<?php echo esc_url($this->get_event_date_permalink($event, $date['start']['date'], true, array('start_raw' => date($time_format, $date['start']['timestamp'])))); ?>">
                     <?php if($midnight): $date['end']['date'] = date('Y-m-d', strtotime('Yesterday', strtotime($date['end']['date']))); ?>
-                    <span class="mec-date"><?php echo MEC_kses::element($this->date_label($date['start'], (isset($date['end']) ? $date['end'] : NULL), $date_format1)); ?></span>
+                    <span class="mec-date"><?php echo MEC_kses::element($this->date_label($date['start'], ($date['end'] ?? null), $date_format1)); ?></span>
                     <?php else: ?>
-                    <span class="mec-date"><?php echo MEC_kses::element($this->date_label($date['start'], (isset($date['end']) ? $date['end'] : NULL), $date_format1)); ?></span>
+                    <span class="mec-date"><?php echo MEC_kses::element($this->date_label($date['start'], ($date['end'] ?? null), $date_format1)); ?></span>
                     <?php endif; ?>
 
                     <?php if(!$hide_time): ?>

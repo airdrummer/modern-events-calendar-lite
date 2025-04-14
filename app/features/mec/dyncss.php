@@ -33,7 +33,7 @@ if (!empty($color)) $rgb_color = mec_dyn_hex2rgb($color);
 
 $mec_primary_border_radius = '';
 
-if (isset($styling['primary_border_radius']) && $styling['primary_border_radius']) {
+if (isset($styling['primary_border_radius']) && $styling['primary_border_radius'] !== '') {
 	$mec_primary_border_radius = trim($styling['primary_border_radius']);
 	if ($mec_primary_border_radius) {
 		if (is_numeric($mec_primary_border_radius)) {
@@ -44,7 +44,7 @@ if (isset($styling['primary_border_radius']) && $styling['primary_border_radius'
 
 $mec_secondary_border_radius = '';
 
-if (isset($styling['secondary_border_radius']) && $styling['secondary_border_radius']) {
+if (isset($styling['secondary_border_radius']) && $styling['secondary_border_radius'] !== '') {
 	$mec_secondary_border_radius = trim($styling['secondary_border_radius']);
 	if ($mec_secondary_border_radius) {
 		if (is_numeric($mec_secondary_border_radius)) {
@@ -167,13 +167,13 @@ if ($color && $color != '#40d9f1'): ?>
 	--mec-color-skin-rgba-4: rgba(64, 217, 241, .11);
 <?php endif;
 
-if ($mec_primary_border_radius): ?>
+if (isset($mec_primary_border_radius)): ?>
 	--mec-primary-border-radius: <?php echo esc_html($mec_primary_border_radius); ?>;
 <?php else: ?>
 	--mec-primary-border-radius: 3px;
 <?php endif;
 
-if ($mec_secondary_border_radius): ?>
+if (isset($mec_secondary_border_radius)): ?>
 	--mec-secondary-border-radius: <?php echo esc_html($mec_secondary_border_radius); ?>;
 <?php else: ?>
 	--mec-secondary-border-radius: 3px;
@@ -237,108 +237,6 @@ if (isset($styling['fes_color']) && $styling['fes_color']) {
 <?php
 }
 
-/**
- *
- * Fluent-view Layout Color Styles
- *
- */
-// Main Color
-$fluent_main_color = '#ade7ff';
-if (isset($styling['fluent_main_color']) && $styling['fluent_main_color']) {
-	$fluent_main_color = $styling['fluent_main_color'];
-	list($fluent_main_color_r, $fluent_main_color_g, $fluent_main_color_b) = sscanf($fluent_main_color, "#%02x%02x%02x");
-?>
-	--mec-fluent-main-color: <?php echo esc_html($fluent_main_color); ?>;
-	--mec-fluent-main-color-rgba-1: rgba<?php echo '(' . $fluent_main_color_r . ', ' . $fluent_main_color_g . ', ' . $fluent_main_color_b . ', ' . '0.3)'; ?>;
-	--mec-fluent-main-color-rgba-2: rgba<?php echo '(' . $fluent_main_color_r . ', ' . $fluent_main_color_g . ', ' . $fluent_main_color_b . ', ' . '0.8)'; ?>;
-	--mec-fluent-main-color-rgba-3: rgba<?php echo '(' . $fluent_main_color_r . ', ' . $fluent_main_color_g . ', ' . $fluent_main_color_b . ', ' . '0.1)'; ?>;
-	--mec-fluent-main-color-rgba-4: rgba<?php echo '(' . $fluent_main_color_r . ', ' . $fluent_main_color_g . ', ' . $fluent_main_color_b . ', ' . '0.2)'; ?>;
-	--mec-fluent-main-color-rgba-5: rgba<?php echo '(' . $fluent_main_color_r . ', ' . $fluent_main_color_g . ', ' . $fluent_main_color_b . ', ' . '0.7)'; ?>;
-	--mec-fluent-main-color-rgba-6: rgba<?php echo '(' . $fluent_main_color_r . ', ' . $fluent_main_color_g . ', ' . $fluent_main_color_b . ', ' . '0.7)'; ?>;
-<?php
-} else {
-	list($fluent_main_color_r, $fluent_main_color_g, $fluent_main_color_b) = sscanf($fluent_main_color, "#%02x%02x%02x");
-?>
-	--mec-fluent-main-color: <?php echo esc_html($fluent_main_color); ?>;
-	--mec-fluent-main-color-rgba-1: rgba<?php echo '(' . $fluent_main_color_r . ', ' . $fluent_main_color_g . ', ' . $fluent_main_color_b . ', ' . '0.3)'; ?>;
-	--mec-fluent-main-color-rgba-2: rgba<?php echo '(' . $fluent_main_color_r . ', ' . $fluent_main_color_g . ', ' . $fluent_main_color_b . ', ' . '0.8)'; ?>;
-	--mec-fluent-main-color-rgba-3: rgba<?php echo '(' . $fluent_main_color_r . ', ' . $fluent_main_color_g . ', ' . $fluent_main_color_b . ', ' . '0.1)'; ?>;
-	--mec-fluent-main-color-rgba-4: rgba<?php echo '(' . $fluent_main_color_r . ', ' . $fluent_main_color_g . ', ' . $fluent_main_color_b . ', ' . '0.2)'; ?>;
-	--mec-fluent-main-color-rgba-5: rgba<?php echo '(' . $fluent_main_color_r . ', ' . $fluent_main_color_g . ', ' . $fluent_main_color_b . ', ' . '0.7)'; ?>;
-	--mec-fluent-main-color-rgba-6: rgba<?php echo '(' . $fluent_main_color_r . ', ' . $fluent_main_color_g . ', ' . $fluent_main_color_b . ', ' . '0.7)'; ?>;
-<?php
-}
-
-// Bold Color - Second
-$fluent_bold_color = '#00acf8';
-if (isset($styling['fluent_bold_color']) && $styling['fluent_bold_color']) {
-	$fluent_bold_color = $styling['fluent_bold_color'];
-?>
-	--mec-fluent-bold-color: <?php echo esc_html($fluent_bold_color); ?>;
-<?php
-} else {
-?>
-	--mec-fluent-bold-color: <?php echo esc_html($fluent_bold_color); ?>;
-<?php
-}
-
-// Background Hover Color
-$fluent_bg_hover_color = '#ebf9ff';
-if (isset($styling['fluent_bg_hover_color']) && $styling['fluent_bg_hover_color']) {
-	$fluent_bg_hover_color = $styling['fluent_bg_hover_color'];
-?>
-	--mec-fluent-bg-hover-color: <?php echo esc_html($fluent_bg_hover_color); ?>;
-<?php
-} else {
-?>
-	--mec-fluent-bg-hover-color: <?php echo esc_html($fluent_bg_hover_color); ?>;
-<?php
-}
-
-// Background Color
-$fluent_bg_color = '#f5f7f8';
-if (isset($styling['fluent_bg_color']) && $styling['fluent_bg_color']) {
-	$fluent_bg_color = $styling['fluent_bg_color'];
-?>
-	--mec-fluent-bg-color: <?php echo esc_html($fluent_bg_color); ?>;
-<?php
-} else {
-?>
-	--mec-fluent-bg-color: <?php echo esc_html($fluent_bg_color); ?>;
-<?php
-}
-
-// Second Background Color
-$fluent_second_bg_color = '#d6eef9';
-if (isset($styling['fluent_second_bg_color']) && $styling['fluent_second_bg_color']) {
-	$fluent_second_bg_color = $styling['fluent_second_bg_color'];
-?>
-	--mec-fluent-second-bg-color: <?php echo esc_html($fluent_second_bg_color); ?>;
-<?php
-} else {
-?>
-	--mec-fluent-second-bg-color: <?php echo esc_html($fluent_second_bg_color); ?>;
-<?php
-}
-
-echo '}';
-
-if (isset($styling['disable_fluent_height_limitation']) && $styling['disable_fluent_height_limitation']) {
-?>
-	.mec-fluent-wrap.mec-skin-list-wrap .mec-calendar,
-	.mec-fluent-wrap .mec-skin-weekly-view-events-container,
-	.mec-fluent-wrap .mec-daily-view-events-left-side,
-	.mec-fluent-wrap .mec-daily-view-events-right-side,
-	.mec-fluent-wrap .mec-yearly-view-wrap .mec-yearly-calendar-sec,
-	.mec-fluent-wrap .mec-yearly-view-wrap .mec-yearly-agenda-sec,
-	.mec-fluent-wrap.mec-skin-grid-wrap .mec-calendar,
-	.mec-fluent-wrap.mec-skin-tile-container .mec-calendar,
-	.mec-fluent-wrap.mec-events-agenda-container .mec-events-agenda-wrap {
-	max-height: unset !important;
-	}
-<?php
-}
-
 if (isset($styling['fes_color']) && $styling['fes_color']) {
 ?>
 	.mec-fes-form #mec_reg_form_field_types .button.red:before, .mec-fes-form #mec_reg_form_field_types .button.red {
@@ -352,34 +250,139 @@ if (isset($styling['fes_color']) && $styling['fes_color']) {
 <?php
 }
 
-if (isset($styling['fluent_main_color']) && $styling['fluent_main_color']) {
-?>
-	.mec-fluent-wrap.mec-skin-cover-container .mec-event-cover-fluent-type2 .mec-event-sharing-wrap:hover li a, .mec-single-fluent-wrap .mec-booking-button, .mec-single-fluent-wrap .mec-booking-button, .mec-single-fluent-wrap .mec-booking-button, .mec-fluent-wrap.mec-skin-cover-container .mec-event-cover-fluent-type1 .mec-booking-button, .mec-fluent-wrap.mec-skin-cover-container .mec-event-cover-fluent-type4 .mec-booking-button, .mec-fluent-wrap.mec-skin-cover-container .mec-event-cover-fluent-type3 .mec-booking-button {
-	color: #fff !important;
+/**
+ *
+ * Fluent-view Layout Color Styles
+ *
+ */
+
+if (function_exists('is_plugin_active') && is_plugin_active('mec-fluent-layouts/mec-fluent-layouts.php')) {
+	// Main Color
+	$fluent_main_color = '#ade7ff';
+	if (isset($styling['fluent_main_color']) && $styling['fluent_main_color']) {
+		$fluent_main_color = $styling['fluent_main_color'];
+		list($fluent_main_color_r, $fluent_main_color_g, $fluent_main_color_b) = sscanf($fluent_main_color, "#%02x%02x%02x");
+	?>
+		--mec-fluent-main-color: <?php echo esc_html($fluent_main_color); ?>;
+		--mec-fluent-main-color-rgba-1: rgba<?php echo '(' . $fluent_main_color_r . ', ' . $fluent_main_color_g . ', ' . $fluent_main_color_b . ', ' . '0.3)'; ?>;
+		--mec-fluent-main-color-rgba-2: rgba<?php echo '(' . $fluent_main_color_r . ', ' . $fluent_main_color_g . ', ' . $fluent_main_color_b . ', ' . '0.8)'; ?>;
+		--mec-fluent-main-color-rgba-3: rgba<?php echo '(' . $fluent_main_color_r . ', ' . $fluent_main_color_g . ', ' . $fluent_main_color_b . ', ' . '0.1)'; ?>;
+		--mec-fluent-main-color-rgba-4: rgba<?php echo '(' . $fluent_main_color_r . ', ' . $fluent_main_color_g . ', ' . $fluent_main_color_b . ', ' . '0.2)'; ?>;
+		--mec-fluent-main-color-rgba-5: rgba<?php echo '(' . $fluent_main_color_r . ', ' . $fluent_main_color_g . ', ' . $fluent_main_color_b . ', ' . '0.7)'; ?>;
+		--mec-fluent-main-color-rgba-6: rgba<?php echo '(' . $fluent_main_color_r . ', ' . $fluent_main_color_g . ', ' . $fluent_main_color_b . ', ' . '0.7)'; ?>;
+	<?php
+	} else {
+		list($fluent_main_color_r, $fluent_main_color_g, $fluent_main_color_b) = sscanf($fluent_main_color, "#%02x%02x%02x");
+	?>
+		--mec-fluent-main-color: <?php echo esc_html($fluent_main_color); ?>;
+		--mec-fluent-main-color-rgba-1: rgba<?php echo '(' . $fluent_main_color_r . ', ' . $fluent_main_color_g . ', ' . $fluent_main_color_b . ', ' . '0.3)'; ?>;
+		--mec-fluent-main-color-rgba-2: rgba<?php echo '(' . $fluent_main_color_r . ', ' . $fluent_main_color_g . ', ' . $fluent_main_color_b . ', ' . '0.8)'; ?>;
+		--mec-fluent-main-color-rgba-3: rgba<?php echo '(' . $fluent_main_color_r . ', ' . $fluent_main_color_g . ', ' . $fluent_main_color_b . ', ' . '0.1)'; ?>;
+		--mec-fluent-main-color-rgba-4: rgba<?php echo '(' . $fluent_main_color_r . ', ' . $fluent_main_color_g . ', ' . $fluent_main_color_b . ', ' . '0.2)'; ?>;
+		--mec-fluent-main-color-rgba-5: rgba<?php echo '(' . $fluent_main_color_r . ', ' . $fluent_main_color_g . ', ' . $fluent_main_color_b . ', ' . '0.7)'; ?>;
+		--mec-fluent-main-color-rgba-6: rgba<?php echo '(' . $fluent_main_color_r . ', ' . $fluent_main_color_g . ', ' . $fluent_main_color_b . ', ' . '0.7)'; ?>;
+	<?php
 	}
 
-	.mec-fluent-wrap .mec-yearly-view-wrap .mec-agenda-events-wrap {
-	background-color: transparent !important;
-	}
-	.mec-fluent-wrap.mec-skin-cover-container .mec-event-cover-fluent-type1 .mec-date-wrap i, .mec-fluent-wrap.mec-skin-cover-container .mec-event-cover-fluent-type4 .mec-date-wrap i, .mec-fluent-wrap.mec-skin-cover-container .mec-event-cover-fluent-type2 .mec-date-wrap i {
-	background-color: #fff !important;
-	}
-	.mec-single-fluent-body .lity-content .mec-events-meta-group-booking button:hover, .mec-fluent-wrap.mec-single-fluent-wrap .mec-events-meta-group-booking button:hover {
-	background-color: #000 !important;
-	}
-<?php
-}
-
-if (isset($styling['fluent_bold_color']) && $styling['fluent_bold_color']) {
-?>
-	.mec-fluent-wrap.mec-skin-cover-container .mec-event-sharing-wrap>li:first-of-type i, .mec-single-fluent-wrap .mec-single-event-bar .mec-booking-button, .mec-fluent-wrap.mec-skin-cover-container .mec-event-cover-fluent-type2 span.mec-event-day-num, .mec-fluent-wrap.mec-skin-cover-container .mec-event-cover-fluent-type2 .mec-event-sharing-wrap:hover li:first-child a {
-	color: #fff;
+	// Bold Color - Second
+	$fluent_bold_color = '#00acf8';
+	if (isset($styling['fluent_bold_color']) && $styling['fluent_bold_color']) {
+		$fluent_bold_color = $styling['fluent_bold_color'];
+	?>
+		--mec-fluent-bold-color: <?php echo esc_html($fluent_bold_color); ?>;
+	<?php
+	} else {
+	?>
+		--mec-fluent-bold-color: <?php echo esc_html($fluent_bold_color); ?>;
+	<?php
 	}
 
-	.mec-fluent-wrap.mec-skin-cover-container .mec-event-cover-fluent-type1 .mec-booking-button:hover, .mec-fluent-wrap.mec-skin-cover-container .mec-event-cover-fluent-type4 .mec-booking-button:hover, .mec-fluent-wrap.mec-skin-cover-container .mec-event-cover-fluent-type3 .mec-booking-button:hover {
-	background-color: #fff;
+	// Background Hover Color
+	$fluent_bg_hover_color = '#ebf9ff';
+	if (isset($styling['fluent_bg_hover_color']) && $styling['fluent_bg_hover_color']) {
+		$fluent_bg_hover_color = $styling['fluent_bg_hover_color'];
+	?>
+		--mec-fluent-bg-hover-color: <?php echo esc_html($fluent_bg_hover_color); ?>;
+	<?php
+	} else {
+	?>
+		--mec-fluent-bg-hover-color: <?php echo esc_html($fluent_bg_hover_color); ?>;
+	<?php
 	}
-<?php
+
+	// Background Color
+	$fluent_bg_color = '#f5f7f8';
+	if (isset($styling['fluent_bg_color']) && $styling['fluent_bg_color']) {
+		$fluent_bg_color = $styling['fluent_bg_color'];
+	?>
+		--mec-fluent-bg-color: <?php echo esc_html($fluent_bg_color); ?>;
+	<?php
+	} else {
+	?>
+		--mec-fluent-bg-color: <?php echo esc_html($fluent_bg_color); ?>;
+	<?php
+	}
+
+	// Second Background Color
+	$fluent_second_bg_color = '#d6eef9';
+	if (isset($styling['fluent_second_bg_color']) && $styling['fluent_second_bg_color']) {
+		$fluent_second_bg_color = $styling['fluent_second_bg_color'];
+	?>
+		--mec-fluent-second-bg-color: <?php echo esc_html($fluent_second_bg_color); ?>;
+	<?php
+	} else {
+	?>
+		--mec-fluent-second-bg-color: <?php echo esc_html($fluent_second_bg_color); ?>;
+	<?php
+	}
+
+	echo '}';
+
+	if (isset($styling['disable_fluent_height_limitation']) && $styling['disable_fluent_height_limitation']) {
+	?>
+		.mec-fluent-wrap.mec-skin-list-wrap .mec-calendar,
+		.mec-fluent-wrap .mec-skin-weekly-view-events-container,
+		.mec-fluent-wrap .mec-daily-view-events-left-side,
+		.mec-fluent-wrap .mec-daily-view-events-right-side,
+		.mec-fluent-wrap .mec-yearly-view-wrap .mec-yearly-calendar-sec,
+		.mec-fluent-wrap .mec-yearly-view-wrap .mec-yearly-agenda-sec,
+		.mec-fluent-wrap.mec-skin-grid-wrap .mec-calendar,
+		.mec-fluent-wrap.mec-skin-tile-container .mec-calendar,
+		.mec-fluent-wrap.mec-events-agenda-container .mec-events-agenda-wrap {
+		max-height: unset !important;
+		}
+	<?php
+	}
+
+	if (isset($styling['fluent_main_color']) && $styling['fluent_main_color']) {
+	?>
+		.mec-fluent-wrap.mec-skin-cover-container .mec-event-cover-fluent-type2 .mec-event-sharing-wrap:hover li a, .mec-single-fluent-wrap .mec-booking-button, .mec-single-fluent-wrap .mec-booking-button, .mec-single-fluent-wrap .mec-booking-button, .mec-fluent-wrap.mec-skin-cover-container .mec-event-cover-fluent-type1 .mec-booking-button, .mec-fluent-wrap.mec-skin-cover-container .mec-event-cover-fluent-type4 .mec-booking-button, .mec-fluent-wrap.mec-skin-cover-container .mec-event-cover-fluent-type3 .mec-booking-button {
+		color: #fff !important;
+		}
+
+		.mec-fluent-wrap .mec-yearly-view-wrap .mec-agenda-events-wrap {
+		background-color: transparent !important;
+		}
+		.mec-fluent-wrap.mec-skin-cover-container .mec-event-cover-fluent-type1 .mec-date-wrap i, .mec-fluent-wrap.mec-skin-cover-container .mec-event-cover-fluent-type4 .mec-date-wrap i, .mec-fluent-wrap.mec-skin-cover-container .mec-event-cover-fluent-type2 .mec-date-wrap i {
+		background-color: #fff !important;
+		}
+		.mec-single-fluent-body .lity-content .mec-events-meta-group-booking button:hover, .mec-fluent-wrap.mec-single-fluent-wrap .mec-events-meta-group-booking button:hover {
+		background-color: #000 !important;
+		}
+	<?php
+	}
+
+	if (isset($styling['fluent_bold_color']) && $styling['fluent_bold_color']) {
+	?>
+		.mec-fluent-wrap.mec-skin-cover-container .mec-event-sharing-wrap>li:first-of-type i, .mec-single-fluent-wrap .mec-single-event-bar .mec-booking-button, .mec-fluent-wrap.mec-skin-cover-container .mec-event-cover-fluent-type2 span.mec-event-day-num, .mec-fluent-wrap.mec-skin-cover-container .mec-event-cover-fluent-type2 .mec-event-sharing-wrap:hover li:first-child a {
+		color: #fff;
+		}
+
+		.mec-fluent-wrap.mec-skin-cover-container .mec-event-cover-fluent-type1 .mec-booking-button:hover, .mec-fluent-wrap.mec-skin-cover-container .mec-event-cover-fluent-type4 .mec-booking-button:hover, .mec-fluent-wrap.mec-skin-cover-container .mec-event-cover-fluent-type3 .mec-booking-button:hover {
+		background-color: #fff;
+		}
+	<?php
+	}
 }
 
 // get render content

@@ -98,7 +98,7 @@ wp_enqueue_script('mec-niceselect-script');
 			echo ((is_array($this->sf_options) && isset($this->sf_options['label']) && $this->sf_options['label']['type'] != '0') ? MEC_kses::form($this->sf_search_field('label', array('type' => $this->sf_options['label']['type']))) : '');
 			echo ((is_array($this->sf_options) && isset($this->sf_options['address_search']) && $this->sf_options['address_search']['type'] != '0') ? MEC_kses::form($this->sf_search_field('address_search', array('type' => $this->sf_options['address_search']['type']))) : '');
 			echo ((is_array($this->sf_options) && isset($this->sf_options['event_cost']) && $this->sf_options['event_cost']['type'] != '0') ? MEC_kses::form($this->sf_search_field('event_cost', array('type' => $this->sf_options['event_cost']['type']))) : '');
-			echo ($this->sf_reset_button ? '<div class="mec-search-reset-button col-md-2"><button class="button mec-button" id="mec_search_form_'.esc_attr($this->id).'_reset" type="button">'.esc_html__('Reset', 'modern-events-calendar-lite').'</button></div>' : '');
+			echo ($this->sf_reset_button ? '<div class="mec-search-reset-button"><button class="button mec-button" id="mec_search_form_'.esc_attr($this->id).'_reset" type="button">'.esc_html__('Reset', 'modern-events-calendar-lite').'</button></div>' : '');
 			?>
 		</div>
 	</div>
