@@ -1,4 +1,8 @@
-﻿v 7.21.0 - 9 April 2025
+﻿v 7.21.0.1 - 14 apr 2025
+- added missing timezone display, reformat
+- fixed countdown
+
+- 7.21.0 - 9 April 2025
 - Added: Icons endpoint to the Restful API.
 - Added: Weather endpoint to the Restful API.
 - Added: Related Events endpoint to the Restful API.
