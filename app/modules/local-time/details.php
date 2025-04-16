@@ -55,7 +55,7 @@ $hide_end_time = $this->hide_end_time_status($event->ID);
 											: date($time_format, $user_start_time)
 												. ($hide_end_time 
 													?  ""
-													: . ' - '.date($time_format, $user_end_time)))
+													: ' - '.date($time_format, $user_end_time)))
 									.'</span>'); ?></li>
         <?php endif; ?>
         <li><?php echo sprintf(esc_html__('%s', 'modern-events-calendar-lite'), esc_html($timezone)); ?></li>

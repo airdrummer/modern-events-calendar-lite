@@ -92,7 +92,7 @@ else
 }
 
 $gmt_offset = $this->get_gmt_offset($event, strtotime($start_date . ' ' . $s_time));
-if (isset($_SERVER['HTTP_USER_AGENT']) 
+if (isset($_SERVER['HTTP_USER_AGENT']))
 {
 	if( strpos($_SERVER['HTTP_USER_AGENT'], 'Safari') === false)
 		$gmt_offset = ' : ' . $gmt_offset;
