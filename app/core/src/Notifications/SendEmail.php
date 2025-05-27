@@ -458,6 +458,7 @@ class SendEmail{
         $content = str_replace('%%zoom_link%%', get_post_meta($this->event_id, 'mec_zoom_link_url', true), $content);
         $content = str_replace('%%zoom_password%%', get_post_meta($this->event_id, 'mec_zoom_password', true), $content);
         $content = str_replace('%%zoom_embed%%', get_post_meta($this->event_id, 'mec_zoom_embed', true), $content);
+        $content = str_replace('%%zoom_meeting_id%%', get_post_meta($this->event_id, 'mec_zoom_meeting_id', true), $content);
 
         return $content;
     }

@@ -56,63 +56,64 @@ class MEC_factory extends MEC_base
     public function load_actions()
     {
         // Set CronJobs
-        $this->action('admin_init', array($this, 'mec_add_cron_jobs'), 9999);
+        $this->action('admin_init', [$this, 'mec_add_cron_jobs'], 9999);
 
         // Register MEC function to be called in WordPress footer hook
-        $this->action('wp_footer', array($this, 'load_footer'), 9999);
-        $this->action('admin_footer', array($this, 'load_footer'), 9999);
+        $this->action('wp_footer', [$this, 'load_footer'], 9999);
+        $this->action('admin_footer', [$this, 'load_footer'], 9999);
 
         // Parse WordPress query
-        $this->action('parse_query', array($this->parser, 'WPQ_parse'), 99);
+        $this->action('parse_query', [$this->parser, 'WPQ_parse'], 99);
 
         // Add custom styles to header
-        $this->action('wp_head', array($this, 'include_styles'), 9999999999);
+        $this->action('wp_head', [$this, 'include_styles'], 9999999999);
 
-        if (!is_admin()) {
+        if (!is_admin())
+        {
             // MEC iCal export
-            $this->action('init', array($this->main, 'ical'), 9999);
+            $this->action('init', [$this->main, 'ical'], 9999);
 
             // MEC iCal export in email
-            $this->action('init', array($this->main, 'ical_email'), 999);
+            $this->action('init', [$this->main, 'ical_email'], 999);
 
             // MEC Booking Invoice
-            $this->action('init', array($this->main, 'booking_invoice'), 9999);
+            $this->action('init', [$this->main, 'booking_invoice'], 9999);
 
             // MEC Cart Invoice
-            $this->action('init', array($this->main, 'cart_invoice'), 9999);
+            $this->action('init', [$this->main, 'cart_invoice'], 9999);
 
             // MEC Print Feature
-            $this->action('init', array($this->main, 'print_calendar'), 9999);
+            $this->action('init', [$this->main, 'print_calendar'], 9999);
 
             // MEC Print Feature
-            $this->action('wp', array($this->main, 'booking_modal'), 9999);
+            $this->action('wp', [$this->main, 'booking_modal'], 9999);
 
             // Add Events to Tag Archive Page
-            $this->action('pre_get_posts', array($this->main, 'add_events_to_tags_archive'));
+            $this->action('pre_get_posts', [$this->main, 'add_events_to_tags_archive']);
         }
 
         // Redirect to MEC Dashboard
-        $this->action('admin_init', array($this->main, 'mec_redirect_after_activate'));
+        $this->action('admin_init', [$this->main, 'mec_redirect_after_activate']);
 
         // MEC booking verification and cancellation
-        $this->action('mec_before_main_content', array($this->main, 'do_endpoints'), 9999);
+        $this->action('mec_before_main_content', [$this->main, 'do_endpoints'], 9999);
 
         // Add AJAX actions
-        $this->action('wp_ajax_mec_save_styles', array($this->main, 'save_options'));
-        $this->action('wp_ajax_mec_save_settings', array($this->main, 'save_options'));
-        $this->action('wp_ajax_mec_save_reg_form', array($this->main, 'save_options'));
-        $this->action('wp_ajax_mec_save_gateways', array($this->main, 'save_options'));
-        $this->action('wp_ajax_mec_save_styling', array($this->main, 'save_options'));
-        $this->action('wp_ajax_mec_save_notifications', array($this->main, 'save_notifications'));
-        $this->action('wp_ajax_mec_save_messages', array($this->main, 'save_messages'));
-        $this->action('wp_ajax_wizard_import_dummy_events', array($this->main, 'wizard_import_dummy_events'));
-        $this->action('wp_ajax_wizard_import_dummy_shortcodes', array($this->main, 'wizard_import_dummy_shortcodes'));
-        $this->action('wp_ajax_wizard_save_weekdays', array($this->main, 'save_wizard_options'));
-        $this->action('wp_ajax_wizard_save_slug', array($this->main, 'save_wizard_options'));
-        $this->action('wp_ajax_wizard_save_module', array($this->main, 'save_wizard_options'));
-        $this->action('wp_ajax_wizard_save_single', array($this->main, 'save_wizard_options'));
-        $this->action('wp_ajax_wizard_save_booking', array($this->main, 'save_wizard_options'));
-        $this->action('wp_ajax_wizard_save_styling', array($this->main, 'save_wizard_options'));
+        $this->action('wp_ajax_mec_save_styles', [$this->main, 'save_options']);
+        $this->action('wp_ajax_mec_save_settings', [$this->main, 'save_options']);
+        $this->action('wp_ajax_mec_save_reg_form', [$this->main, 'save_options']);
+        $this->action('wp_ajax_mec_save_gateways', [$this->main, 'save_options']);
+        $this->action('wp_ajax_mec_save_styling', [$this->main, 'save_options']);
+        $this->action('wp_ajax_mec_save_notifications', [$this->main, 'save_notifications']);
+        $this->action('wp_ajax_mec_save_messages', [$this->main, 'save_messages']);
+        $this->action('wp_ajax_wizard_import_dummy_events', [$this->main, 'wizard_import_dummy_events']);
+        $this->action('wp_ajax_wizard_import_dummy_shortcodes', [$this->main, 'wizard_import_dummy_shortcodes']);
+        $this->action('wp_ajax_wizard_save_weekdays', [$this->main, 'save_wizard_options']);
+        $this->action('wp_ajax_wizard_save_slug', [$this->main, 'save_wizard_options']);
+        $this->action('wp_ajax_wizard_save_module', [$this->main, 'save_wizard_options']);
+        $this->action('wp_ajax_wizard_save_single', [$this->main, 'save_wizard_options']);
+        $this->action('wp_ajax_wizard_save_booking', [$this->main, 'save_wizard_options']);
+        $this->action('wp_ajax_wizard_save_styling', [$this->main, 'save_wizard_options']);
     }
 
     /**
@@ -121,8 +122,8 @@ class MEC_factory extends MEC_base
      */
     public function load_hooks()
     {
-        register_activation_hook(MEC_ABSPATH . MEC_FILENAME, array($this, 'activate'));
-        register_deactivation_hook(MEC_ABSPATH . MEC_FILENAME, array($this, 'deactivate'));
+        register_activation_hook(MEC_ABSPATH . MEC_FILENAME, [$this, 'activate']);
+        register_deactivation_hook(MEC_ABSPATH . MEC_FILENAME, [$this, 'deactivate']);
     }
 
     /**
@@ -132,41 +133,41 @@ class MEC_factory extends MEC_base
     public function load_filters()
     {
         // Load MEC Plugin links
-        $this->filter('plugin_row_meta', array($this, 'load_plugin_links'), 10, 2);
-        $this->filter('plugin_action_links_' . plugin_basename(MEC_DIRNAME . DS . MEC_FILENAME), array($this, 'load_plugin_action_links'), 10, 1);
+        $this->filter('plugin_row_meta', [$this, 'load_plugin_links'], 10, 2);
+        $this->filter('plugin_action_links_' . plugin_basename(MEC_DIRNAME . DS . MEC_FILENAME), [$this, 'load_plugin_action_links'], 10, 1);
 
         // Add MEC rewrite rules
-        $this->filter('generate_rewrite_rules', array($this->parser, 'load_rewrites'));
-        $this->filter('query_vars', array($this->parser, 'add_query_vars'));
+        $this->filter('generate_rewrite_rules', [$this->parser, 'load_rewrites']);
+        $this->filter('query_vars', [$this->parser, 'add_query_vars']);
 
         // Manage MEC templates
-        $this->filter('template_include', array($this->parser, 'template'), 99);
+        $this->filter('template_include', [$this->parser, 'template'], 99);
 
         // Fetch Googlemap style JSON
-        $this->filter('mec_get_googlemap_style', array($this->main, 'fetch_googlemap_style'));
+        $this->filter('mec_get_googlemap_style', [$this->main, 'fetch_googlemap_style']);
 
         // Filter Request
-        $this->filter('request', array($this->main, 'filter_request'));
+        $this->filter('request', [$this->main, 'filter_request']);
 
         // Block Editor Category
-        if (function_exists('register_block_type')) $this->filter('block_categories_all', array($this->main, 'add_custom_block_cateogry'), 9999);
+        if (function_exists('register_block_type')) $this->filter('block_categories_all', [$this->main, 'add_custom_block_cateogry'], 9999);
 
         // Add Taxonomy etc to filters
-        $this->filter('mec_vyear_atts', array($this->main, 'add_search_filters'));
-        $this->filter('mec_vmonth_atts', array($this->main, 'add_search_filters'));
-        $this->filter('mec_vweek_atts', array($this->main, 'add_search_filters'));
-        $this->filter('mec_vday_atts', array($this->main, 'add_search_filters'));
-        $this->filter('mec_vfull_atts', array($this->main, 'add_search_filters'));
-        $this->filter('mec_vmap_atts', array($this->main, 'add_search_filters'));
-        $this->filter('mec_vlist_atts', array($this->main, 'add_search_filters'));
-        $this->filter('mec_vgrid_atts', array($this->main, 'add_search_filters'));
-        $this->filter('mec_vtimetable_atts', array($this->main, 'add_search_filters'));
-        $this->filter('mec_vmasonry_atts', array($this->main, 'add_search_filters'));
-        $this->filter('mec_vagenda_atts', array($this->main, 'add_search_filters'));
-        $this->filter('mce_buttons', array($this->main, 'add_mce_buttons'));
-        $this->filter('mce_external_plugins', array($this->main, 'add_mce_external_plugins'));
+        $this->filter('mec_vyear_atts', [$this->main, 'add_search_filters']);
+        $this->filter('mec_vmonth_atts', [$this->main, 'add_search_filters']);
+        $this->filter('mec_vweek_atts', [$this->main, 'add_search_filters']);
+        $this->filter('mec_vday_atts', [$this->main, 'add_search_filters']);
+        $this->filter('mec_vfull_atts', [$this->main, 'add_search_filters']);
+        $this->filter('mec_vmap_atts', [$this->main, 'add_search_filters']);
+        $this->filter('mec_vlist_atts', [$this->main, 'add_search_filters']);
+        $this->filter('mec_vgrid_atts', [$this->main, 'add_search_filters']);
+        $this->filter('mec_vtimetable_atts', [$this->main, 'add_search_filters']);
+        $this->filter('mec_vmasonry_atts', [$this->main, 'add_search_filters']);
+        $this->filter('mec_vagenda_atts', [$this->main, 'add_search_filters']);
+        $this->filter('mce_buttons', [$this->main, 'add_mce_buttons']);
+        $this->filter('mce_external_plugins', [$this->main, 'add_mce_external_plugins']);
 
-        $this->filter('pre_get_document_title', array($this->parser, 'archive_document_title'));
+        $this->filter('pre_get_document_title', [$this->parser, 'archive_document_title']);
     }
 
     /**
@@ -180,7 +181,7 @@ class MEC_factory extends MEC_base
             esc_html__('M.E. Calendar', 'modern-events-calendar-lite'),
             apply_filters('mec_menu_cap', 'edit_posts', 'mec-intro'),
             'mec-intro',
-            array($this->main, 'dashboard'),
+            [$this->main, 'dashboard'],
             plugin_dir_url(__FILE__) . '../../assets/img/mec.svg',
             26
         );
@@ -195,7 +196,8 @@ class MEC_factory extends MEC_base
         $path = MEC_ABSPATH . 'app' . DS . 'features' . DS;
         $files = $this->folder->files($path, '.php$');
 
-        foreach ($files as $file) {
+        foreach ($files as $file)
+        {
             $name = str_replace('.php', '', $file);
 
             $class = 'MEC_feature_' . $name;
@@ -210,15 +212,17 @@ class MEC_factory extends MEC_base
 
     /**
      * Inserting MEC plugin links
-     * @author Webnus <info@webnus.net>
      * @param array $links
      * @param string $file
      * @return array
+     * @author Webnus <info@webnus.net>
      */
     public function load_plugin_links($links, $file)
     {
-        if (strpos($file, MEC_DIRNAME) !== false) {
-            if (!$this->getPRO()) {
+        if (strpos($file, MEC_DIRNAME) !== false)
+        {
+            if (!$this->getPRO())
+            {
                 $upgrade = '<a href="' . esc_url($this->main->get_pro_link()) . '" target="_blank"><b>' . _x('Upgrade to Pro Version', 'plugin link', 'modern-events-calendar-lite') . '</b></a>';
                 $links[] = $upgrade;
             }
@@ -229,16 +233,17 @@ class MEC_factory extends MEC_base
 
     /**
      * Load MEC plugin action links
-     * @author Webnus <info@webnus.net>
      * @param array $links
      * @return array
+     * @author Webnus <info@webnus.net>
      */
     public function load_plugin_action_links($links)
     {
-        $settings = '<a href="' . esc_url($this->main->add_qs_vars(array('page' => 'MEC-settings'), $this->main->URL('admin') . 'admin.php')) . '">' . _x('Settings', 'plugin link', 'modern-events-calendar-lite') . '</a>';
+        $settings = '<a href="' . esc_url($this->main->add_qs_vars(['page' => 'MEC-settings'], $this->main->URL('admin') . 'admin.php')) . '">' . _x('Settings', 'plugin link', 'modern-events-calendar-lite') . '</a>';
         array_unshift($links, $settings);
 
-        if (!$this->getPRO()) {
+        if (!$this->getPRO())
+        {
             $upgrade = '<a href="' . esc_url($this->main->get_pro_link()) . '" target="_blank"><b>' . _x('Upgrade', 'plugin link', 'modern-events-calendar-lite') . '</b></a>';
             array_unshift($links, $upgrade);
         }
@@ -252,21 +257,22 @@ class MEC_factory extends MEC_base
         global $current_screen;
         if (!isset($current_screen) && function_exists('get_current_screen')) $current_screen = get_current_screen();
 
-        $backend_js_dependencies = array(
+        $backend_js_dependencies = [
             'jquery',
             'wp-color-picker',
             'jquery-ui-datepicker',
-        );
+        ];
 
-        if (is_a($current_screen, '\WP_Screen') && method_exists($current_screen, 'is_block_editor') and $current_screen->is_block_editor()) {
+        if (is_a($current_screen, '\WP_Screen') && method_exists($current_screen, 'is_block_editor') and $current_screen->is_block_editor())
+        {
             $backend_js_dependencies[] = 'wp-blocks';
         }
 
-        $js_dependencies = array(
+        $js_dependencies = [
             'jquery',
-        );
+        ];
 
-        $scripts = array(
+        $scripts = [
             'mec-typekit-script' => $this->main->asset('js/jquery.typewatch.js'),
             'mec-niceselect-script' => $this->main->asset('js/jquery.nice-select.min.js'),
             'mec-select2-script' => $this->main->asset('packages/select2/select2.full.min.js'),
@@ -274,37 +280,39 @@ class MEC_factory extends MEC_base
             'mec-nice-scroll' => $this->main->asset('js/jquery.nicescroll.min.js'),
             'featherlight' => $this->main->asset('packages/featherlight/featherlight.js'),
             'mec-owl-carousel-script' => $this->main->asset('packages/owl-carousel/owl.carousel.min.js'),
-            'mec-backend-script' => array(
+            'mec-backend-script' => [
                 'src' => $this->main->asset('js/backend.js'),
                 'deps' => $backend_js_dependencies,
                 'in_footer' => false,
-            ),
+            ],
             'mec-events-script' => $this->main->asset('js/events.js'), /// dep in front 'mec-frontend-script'
             'mec-general-calendar-script' => $this->main->asset('js/mec-general-calendar.js'),
             'mec-tooltip-script' => $this->main->asset('packages/tooltip/tooltip.js'),
             'mec-shuffle-script' => $this->main->asset('js/shuffle.min.js'),
-            'mec-frontend-script' => array(
+            'mec-frontend-script' => [
                 'src' => $this->main->asset('js/frontend.js'),
-                'deps' => array(
+                'deps' => [
                     'jquery',
-                    'mec-tooltip-script'
-                ),
-            ),
+                    'mec-tooltip-script',
+                ],
+            ],
             'mec-colorbrightness-script' => $this->main->asset('packages/colorbrightness/colorbrightness.min.js'),
             'mec-chartjs-script' => $this->main->asset('js/chartjs.min.js'),
             'mec-date-format-script' => $this->main->asset('js/date.format.min.js'),
-        );
+        ];
 
-        if (is_plugin_active('mec-single-builder/mec-single-builder.php')) {
-            $scripts['mec-flipcount-script'] = $this->main->asset('js/flipcount.js');
-        } elseif (is_plugin_active('divi-single-builder/divi-single-builder.php') || is_plugin_active('mec-divi-single-builder/divi-single-builder.php')) {
-            $scripts['mec-flipcount-script'] = $this->main->asset('js/flipcount-divi.js');
-        } else {
-            $scripts['mec-flipcount-script'] = $this->main->asset('js/flipcount.js');
-        }
+//        if (is_plugin_active('mec-single-builder/mec-single-builder.php')) {
+//            $scripts['mec-flipcount-script'] = $this->main->asset('js/flipcount.js');
+//        } elseif (is_plugin_active('divi-single-builder/divi-single-builder.php') || is_plugin_active('mec-divi-single-builder/divi-single-builder.php')) {
+//            $scripts['mec-flipcount-script'] = $this->main->asset('js/flipcount.js');
+//        } else {
+//            $scripts['mec-flipcount-script'] = $this->main->asset('js/flipcount.js');
+//        }
 
-        foreach ($scripts as $script_id => $script) {
+        $scripts['mec-flipcount-script'] = $this->main->asset('js/flipcount.js');
 
+        foreach ($scripts as $script_id => $script)
+        {
             $src = is_array($script) ? $script['src'] : $script;
             $deps = is_array($script) && isset($script['deps']) ? $script['deps'] : $js_dependencies;
             $version = $this->main->get_version();
@@ -313,23 +321,22 @@ class MEC_factory extends MEC_base
             wp_register_script($script_id, $src, $deps, $version, $in_footer);
         }
 
-        $backend_css_dependencies = array(
+        $backend_css_dependencies = [
             'wp-color-picker',
-        );
-        $css_dependencies = array();
-        $styles = array(
+        ];
+        $css_dependencies = [];
+        $styles = [
             'mec-select2-style' => $this->main->asset('packages/select2/select2.min.css'),
             'featherlight' => $this->main->asset('packages/featherlight/featherlight.css'),
             'mec-font-icons' => $this->main->asset('css/iconfonts.css'),
             'mec-backend-rtl-style' => $this->main->asset('css/mecrtl.min.css'),
-            'mec-backend-style' => array(
+            'mec-backend-style' => [
                 'src' => $this->main->asset('css/backend.min.css'),
                 'deps' => $backend_css_dependencies,
-            ),
+            ],
             'mec-lity-style' => $this->main->asset('packages/lity/lity.min.css'),
             'mec-owl-carousel-style' => $this->main->asset('packages/owl-carousel/owl.carousel.min.css'),
             'mec-niceselect-style' => $this->main->asset('css/nice-select.min.css'),
-
             'mec-frontend-style' => $this->main->asset('css/frontend.min.css'),
             'accessibility' => $this->main->asset('css/a11y.min.css'),
             'mec-tooltip-style' => $this->main->asset('packages/tooltip/tooltip.css'),
@@ -337,9 +344,10 @@ class MEC_factory extends MEC_base
             'mec-general-calendar-style' => $this->main->asset('css/mec-general-calendar.css'),
             'mec-google-fonts' => '//fonts.googleapis.com/css?family=Montserrat:400,700|Roboto:100,300,400,700',
             'mec-custom-google-font' => get_option('mec_gfont'),
-        );
-        foreach ($styles as $style_id => $style) {
+        ];
 
+        foreach ($styles as $style_id => $style)
+        {
             $src = is_array($style) ? $style['src'] : $style;
             $deps = is_array($style) && isset($style['deps']) ? $style['deps'] : $css_dependencies;
             $version = $this->main->get_version();
@@ -349,12 +357,12 @@ class MEC_factory extends MEC_base
 
         // Settings
         $settings = $this->main->get_settings();
-        wp_localize_script('mec-backend-script', 'mec_admin_localize', array(
+        wp_localize_script('mec-backend-script', 'mec_admin_localize', [
             'ajax_url' => admin_url('admin-ajax.php'),
             'ajax_nonce' => wp_create_nonce('mec_settings_nonce'),
             'mce_items' => $this->main->mce_get_shortcode_list(),
             'datepicker_format' => (isset($settings['datepicker_format']) and trim($settings['datepicker_format'])) ? trim($settings['datepicker_format']) : 'yy-mm-dd',
-        ));
+        ]);
 
         if (did_action('elementor/loaded')) $elementor_edit_mode = !\Elementor\Plugin::$instance->editor->is_edit_mode() ? 'no' : 'yes';
         else $elementor_edit_mode = 'no';
@@ -364,7 +372,7 @@ class MEC_factory extends MEC_base
         $fes_thankyou_page_time = (isset($settings['fes_thankyou_page_time']) and trim($settings['fes_thankyou_page_time']) != '') ? (int) $settings['fes_thankyou_page_time'] : 2000;
 
         // Localize Some Strings
-        $mecdata = apply_filters('mec_locolize_data', array(
+        $mecdata = apply_filters('mec_locolize_data', [
             'day' => __('day', 'modern-events-calendar-lite'),
             'days' => __('days', 'modern-events-calendar-lite'),
             'hour' => __('hour', 'modern-events-calendar-lite'),
@@ -384,7 +392,7 @@ class MEC_factory extends MEC_base
             'current_year' => date('Y', current_time('timestamp', 0)),
             'current_month' => date('m', current_time('timestamp', 0)),
             'datepicker_format' => (isset($settings['datepicker_format']) and trim($settings['datepicker_format'])) ? trim($settings['datepicker_format']) : 'yy-mm-dd',
-        ));
+        ]);
 
         // Localize Some Strings
         wp_localize_script('mec-frontend-script', 'mecdata', $mecdata);
@@ -396,7 +404,8 @@ class MEC_factory extends MEC_base
      */
     public function load_backend_assets()
     {
-        if ($this->should_include_assets('backend')) {
+        if ($this->should_include_assets('backend'))
+        {
             // Get Current Screen
             global $current_screen;
             if (!isset($current_screen)) $current_screen = get_current_screen();
@@ -427,13 +436,13 @@ class MEC_factory extends MEC_base
             wp_enqueue_script('mec-owl-carousel-script');
 
             // Backend Dependencies
-            $dependencies = array('jquery', 'wp-color-picker', 'jquery-ui-datepicker');
+            $dependencies = ['jquery', 'wp-color-picker', 'jquery-ui-datepicker'];
 
             // Add WP Blocks to the dependencies only when needed!
             if (method_exists($current_screen, 'is_block_editor') and $current_screen->is_block_editor()) $dependencies[] = 'wp-blocks';
 
             // Register New Block Editor
-            if (function_exists('register_block_type')) register_block_type('mec/blockeditor', array('editor_script' => 'block.editor'));
+            if (function_exists('register_block_type')) register_block_type('mec/blockeditor', ['editor_script' => 'block.editor']);
 
             // Include MEC backend script file
             wp_enqueue_script('mec-backend-script');
@@ -441,12 +450,12 @@ class MEC_factory extends MEC_base
             // Settings
             $settings = $this->main->get_settings();
 
-            wp_localize_script('mec-backend-script', 'mec_admin_localize', array(
+            wp_localize_script('mec-backend-script', 'mec_admin_localize', [
                 'ajax_url' => admin_url('admin-ajax.php'),
                 'ajax_nonce' => wp_create_nonce('mec_settings_nonce'),
                 'mce_items' => $this->main->mce_get_shortcode_list(),
                 'datepicker_format' => (isset($settings['datepicker_format']) and trim($settings['datepicker_format'])) ? trim($settings['datepicker_format']) : 'yy-mm-dd',
-            ));
+            ]);
 
             wp_enqueue_script('mec-events-script');
 
@@ -478,7 +487,8 @@ class MEC_factory extends MEC_base
      */
     public function load_frontend_assets()
     {
-        if ($this->should_include_assets('frontend')) {
+        if ($this->should_include_assets())
+        {
             // Styling
             $styling = $this->main->get_styling();
 
@@ -531,7 +541,7 @@ class MEC_factory extends MEC_base
             $fes_thankyou_page_time = (isset($settings['fes_thankyou_page_time']) and trim($settings['fes_thankyou_page_time']) != '') ? (int) $settings['fes_thankyou_page_time'] : 2000;
 
             // Localize Some Strings
-            $mecdata = apply_filters('mec_locolize_data', array(
+            $mecdata = apply_filters('mec_locolize_data', [
                 'day' => __('day', 'modern-events-calendar-lite'),
                 'days' => __('days', 'modern-events-calendar-lite'),
                 'hour' => __('hour', 'modern-events-calendar-lite'),
@@ -551,7 +561,7 @@ class MEC_factory extends MEC_base
                 'current_year' => date('Y', current_time('timestamp', 0)),
                 'current_month' => date('m', current_time('timestamp', 0)),
                 'datepicker_format' => (isset($settings['datepicker_format']) and trim($settings['datepicker_format'])) ? trim($settings['datepicker_format']) : 'yy-mm-dd',
-            ));
+            ]);
 
             // Localize Some Strings
             wp_localize_script('mec-frontend-script', 'mecdata', $mecdata);
@@ -587,21 +597,24 @@ class MEC_factory extends MEC_base
 
     /**
      * Prints custom styles in the page header
-     * @author Webnus <info@webnus.net>
      * @return void
+     * @author Webnus <info@webnus.net>
      */
     public function include_styles()
     {
-        if ($this->should_include_assets('frontend')) {
+        if ($this->should_include_assets('frontend'))
+        {
             // Include Dynamic CSS
-            if (get_option('mec_dyncss')) {
+            if (get_option('mec_dyncss'))
+            {
                 echo '<style>' . stripslashes(get_option('mec_dyncss')) . '</style>';
             }
 
             $styles = $this->main->get_styles();
 
             // Print custom styles
-            if (isset($styles['CSS']) and trim($styles['CSS']) != '') {
+            if (isset($styles['CSS']) and trim($styles['CSS']) != '')
+            {
                 $CSS = strip_tags($styles['CSS']);
                 echo '<style>' . stripslashes($CSS) . '</style>';
             }
@@ -615,15 +628,15 @@ class MEC_factory extends MEC_base
     public function load_widgets()
     {
         // register mec side bar
-        register_sidebar(array(
+        register_sidebar([
             'id' => 'mec-single-sidebar',
             'name' => esc_html__('MEC Single Sidebar', 'modern-events-calendar-lite'),
             'description' => esc_html__('Custom sidebar for single and modal page of MEC.', 'modern-events-calendar-lite'),
             'before_widget' => '<div id="%1$s" class="widget %2$s">',
             'after_widget' => '</div>',
             'before_title' => '<h4 class="widget-title">',
-            'after_title' => '</h4>'
-        ));
+            'after_title' => '</h4>',
+        ]);
 
         // Import MEC Widget Class
         $this->import('app.widgets.MEC');
@@ -643,16 +656,16 @@ class MEC_factory extends MEC_base
         $render = $this->getRender();
 
         // Events Archive Page
-        $this->shortcode('MEC', array($render, 'shortcode'));
+        $this->shortcode('MEC', [$render, 'shortcode']);
 
         // Event Single Page
-        $this->shortcode('MEC_single', array($render, 'vsingle'));
+        $this->shortcode('MEC_single', [$render, 'vsingle']);
 
         // MEC Render library
         $book = $this->getBook();
 
         // Booking Invoice
-        $this->shortcode('MEC_invoice_link', array($book, 'invoice_link_shortcode'));
+        $this->shortcode('MEC_invoice_link', [$book, 'invoice_link_shortcode']);
     }
 
     /**
@@ -754,16 +767,19 @@ class MEC_factory extends MEC_base
         $url = urlencode(get_home_url());
 
         require_once MEC_ABSPATH . 'app/core/puc/plugin-update-checker.php';
-        if (!$this->getPRO()) {
+        if (!$this->getPRO())
+        {
             $MyUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
-                add_query_arg(array('purchase_code' => '', 'url' => '', 'id' => '', 'category' => 'mec'), MEC_API_UPDATE . '/updates/?action=get_metadata&slug=modern-events-calendar-lite'), //Metadata URL.
+                add_query_arg(['purchase_code' => '', 'url' => '', 'id' => '', 'category' => 'mec'], MEC_API_UPDATE . '/updates/?action=get_metadata&slug=modern-events-calendar-lite'), //Metadata URL.
                 MEC_ABSPATH . 'modern-events-calendar-lite.php', //Full path to the main plugin file.
                 'modern-events-calendar-lite', //Plugin slug. Usually it's the same as the name of the directory.
                 24
             );
-        } else {
+        }
+        else
+        {
             $MyUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
-                add_query_arg(array('purchase_code' => $purchase_code, 'url' => $url, 'id' => $product_id, 'category' => 'mec'), MEC_API_UPDATE . '/updates/?action=get_metadata&slug=modern-events-calendar'), //Metadata URL.
+                add_query_arg(['purchase_code' => $purchase_code, 'url' => $url, 'id' => $product_id, 'category' => 'mec'], MEC_API_UPDATE . '/updates/?action=get_metadata&slug=modern-events-calendar'), //Metadata URL.
                 MEC_ABSPATH . 'mec.php', //Full path to the main plugin file.
                 'mec', //Plugin slug. Usually it's the same as the name of the directory.
                 24
@@ -771,7 +787,8 @@ class MEC_factory extends MEC_base
         }
 
         $name = $this->getPRO() ? 'mec' : 'modern-events-calendar-lite';
-        add_filter('puc_request_info_result-' . $name, function ($info) {
+        add_filter('puc_request_info_result-' . $name, function ($info)
+        {
             if (!$info) return;
 
             unset($info->sections['installation']);
@@ -802,16 +819,17 @@ class MEC_factory extends MEC_base
 
     /**
      * Add strings (CSS, JavaScript, etc.) to website sections such as footer etc.
-     * @author Webnus <info@webnus.net>
      * @param string $key
      * @param string|closure $string
      * @return boolean
+     * @author Webnus <info@webnus.net>
      */
     public function params($key, $string)
     {
         $key = (string) $key;
 
-        if ($string instanceof Closure) {
+        if ($string instanceof Closure)
+        {
             ob_start();
             call_user_func($string);
             $string = ob_get_clean();
@@ -832,7 +850,8 @@ class MEC_factory extends MEC_base
 
     public function printOnAjaxOrFooter($string)
     {
-        if ($string instanceof Closure) {
+        if ($string instanceof Closure)
+        {
             ob_start();
             call_user_func($string);
             $string = ob_get_clean();
@@ -844,8 +863,8 @@ class MEC_factory extends MEC_base
 
     /**
      * Insert MEC assets into the website footer
-     * @author Webnus <info@webnus.net>
      * @return void
+     * @author Webnus <info@webnus.net>
      */
     public function load_footer()
     {
@@ -860,12 +879,12 @@ class MEC_factory extends MEC_base
 
     /**
      * Add MEC actions to WordPress
-     * @author Webnus <info@webnus.net>
      * @param string $hook
      * @param string|array|Closure $function
      * @param int $priority
      * @param int $accepted_args
      * @return boolean
+     * @author Webnus <info@webnus.net>
      */
     public function action($hook, $function, $priority = 10, $accepted_args = 1)
     {
@@ -878,12 +897,12 @@ class MEC_factory extends MEC_base
 
     /**
      * Add MEC filters to WordPress filters
-     * @author Webnus <info@webnus.net>
      * @param string $tag
      * @param string|array $function
      * @param int $priority
      * @param int $accepted_args
      * @return boolean
+     * @author Webnus <info@webnus.net>
      */
     public function filter($tag, $function, $priority = 10, $accepted_args = 1)
     {
@@ -896,10 +915,10 @@ class MEC_factory extends MEC_base
 
     /**
      * Add MEC shortcodes to WordPress shortcodes
-     * @author Webnus <info@webnus.net>
      * @param string $shortcode
      * @param string|array $function
      * @return boolean
+     * @author Webnus <info@webnus.net>
      */
     public function shortcode($shortcode, $function)
     {
@@ -913,9 +932,9 @@ class MEC_factory extends MEC_base
 
     /**
      * Runs on plugin activation
-     * @author Webnus <info@webnus.net>
      * @param boolean $network
      * @return boolean
+     * @author Webnus <info@webnus.net>
      */
     public function activate($network = false)
     {
@@ -923,13 +942,14 @@ class MEC_factory extends MEC_base
         add_option('mec_activation_redirect', true);
 
         // Uninstall Hook
-        register_uninstall_hook(MEC_ABSPATH . MEC_FILENAME, array('MEC_factory', 'uninstall'));
+        register_uninstall_hook(MEC_ABSPATH . MEC_FILENAME, ['MEC_factory', 'uninstall']);
 
         $current_blog_id = get_current_blog_id();
 
         // Plugin activated only for one blog
         if (!function_exists('is_multisite') or (function_exists('is_multisite') and !is_multisite())) $network = false;
-        if (!$network) {
+        if (!$network)
+        {
             // Refresh WordPress rewrite rules
             $this->main->flush_rewrite_rules();
 
@@ -938,7 +958,8 @@ class MEC_factory extends MEC_base
 
         // Plugin activated for all blogs
         $blogs = $this->db->select("SELECT `blog_id` FROM `#__blogs`", 'loadColumn');
-        foreach ($blogs as $blog_id) {
+        foreach ($blogs as $blog_id)
+        {
             switch_to_blog($blog_id);
             $this->install($blog_id);
         }
@@ -952,9 +973,9 @@ class MEC_factory extends MEC_base
 
     /**
      * Runs on plugin deactivation
-     * @author Webnus <info@webnus.net>
      * @param boolean $network
      * @return void
+     * @author Webnus <info@webnus.net>
      */
     public function deactivate($network = false)
     {
@@ -967,8 +988,8 @@ class MEC_factory extends MEC_base
 
     /**
      * Runs on plugin uninstallation
-     * @author Webnus <info@webnus.net>
      * @return boolean
+     * @author Webnus <info@webnus.net>
      */
     public static function uninstall()
     {
@@ -988,7 +1009,8 @@ class MEC_factory extends MEC_base
 
         // Plugin activated for all blogs
         $blogs = $db->select("SELECT `blog_id` FROM `#__blogs`", 'loadColumn');
-        foreach ($blogs as $blog_id) {
+        foreach ($blogs as $blog_id)
+        {
             switch_to_blog($blog_id);
             self::purge($blog_id);
         }
@@ -1000,13 +1022,14 @@ class MEC_factory extends MEC_base
 
     /**
      * Install the plugin on s certain blog
-     * @author Webnus <info@webnus.net>
      * @param int $blog_id
+     * @author Webnus <info@webnus.net>
      */
     public function install($blog_id = 1)
     {
         // Plugin installed before
-        if (get_option('mec_installed', 0)) {
+        if (get_option('mec_installed', 0))
+        {
             // Create mec_events table if it's removed for any reason
             $this->main->create_mec_tables();
 
@@ -1015,38 +1038,43 @@ class MEC_factory extends MEC_base
 
         // Run Queries
         $query_file = MEC_ABSPATH . 'assets' . DS . 'sql' . DS . 'install.sql';
-        if ($this->file->exists($query_file)) {
+        if ($this->file->exists($query_file))
+        {
             $queries = $this->file->read($query_file);
             $sqls = explode(';', $queries);
 
-            foreach ($sqls as $sql) {
+            foreach ($sqls as $sql)
+            {
                 $sql = trim($sql, '; ');
                 if (trim($sql) == '') continue;
 
                 $sql .= ';';
 
-                try {
+                try
+                {
                     $this->db->q($sql);
-                } catch (Exception $e) {
+                }
+                catch (Exception $e)
+                {
                 }
             }
         }
 
         // Default Options
-        $options = array(
-            'settings' => array(
+        $options = [
+            'settings' => [
                 'multiple_day_show_method' => 'first_day_listgrid',
                 'google_maps_status' => 1,
                 'export_module_status' => 1,
-                'sn' => array('googlecal' => 1, 'ical' => 1, 'facebook' => 1, 'gplus' => 1, 'twitter' => 1, 'linkedin' => 1, 'email' => 1),
+                'sn' => ['googlecal' => 1, 'ical' => 1, 'facebook' => 1, 'gplus' => 1, 'twitter' => 1, 'linkedin' => 1, 'email' => 1],
                 'countdown_status' => 1,
                 'social_network_status' => 1,
                 'default_skin_archive' => 'full_calendar',
-            ),
-            'styles' => array('CSS' => ''),
-            'gateways' => array(1 => array('status' => 1)),
-            'notifications' => array(
-                'booking_notification' => array(
+            ],
+            'styles' => ['CSS' => ''],
+            'gateways' => [1 => ['status' => 1]],
+            'notifications' => [
+                'booking_notification' => [
                     'subject' => 'Your booking is received.',
                     'recipients' => '',
                     'content' => "Hello %%name%%,
@@ -1055,9 +1083,9 @@ class MEC_factory extends MEC_base
                     Thanks for your patience.
 
                     Regards,
-                    %%blog_name%%"
-                ),
-                'email_verification' => array(
+                    %%blog_name%%",
+                ],
+                'email_verification' => [
                     'subject' => 'Please verify your booking.',
                     'recipients' => '',
                     'content' => "Hi %%name%%,
@@ -1067,9 +1095,9 @@ class MEC_factory extends MEC_base
                     %%verification_link%%
 
                     Regards,
-                    %%blog_name%%"
-                ),
-                'booking_confirmation' => array(
+                    %%blog_name%%",
+                ],
+                'booking_confirmation' => [
                     'subject' => 'Your booking is confirmed.',
                     'recipients' => '',
                     'content' => "Hi %%name%%,
@@ -1079,9 +1107,9 @@ class MEC_factory extends MEC_base
                     You can contact to event organizer by calling %%event_organizer_tel%%.
 
                     Regards,
-                    %%blog_name%%"
-                ),
-                'cancellation_notification' => array(
+                    %%blog_name%%",
+                ],
+                'cancellation_notification' => [
                     'status' => '0',
                     'subject' => 'Your booking is canceled.',
                     'recipients' => '',
@@ -1093,9 +1121,9 @@ class MEC_factory extends MEC_base
                     For your information, your booking for %%event_title%% at %%book_date%% is canceled.
 
                     Regards,
-                    %%blog_name%%"
-                ),
-                'admin_notification' => array(
+                    %%blog_name%%",
+                ],
+                'admin_notification' => [
                     'subject' => 'A new booking is received.',
                     'recipients' => '',
                     'content' => "Dear Admin,
@@ -1107,9 +1135,9 @@ class MEC_factory extends MEC_base
                     %%attendees_full_info%%
 
                     Regards,
-                    %%blog_name%%"
-                ),
-                'new_event' => array(
+                    %%blog_name%%",
+                ],
+                'new_event' => [
                     'status' => '1',
                     'subject' => 'A new event is added.',
                     'recipients' => '',
@@ -1119,9 +1147,9 @@ class MEC_factory extends MEC_base
                     The new event may need to be published. Please use this link for managing your website events: %%admin_link%%
 
                     Regards,
-                    %%blog_name%%"
-                ),
-                'user_event_publishing' => array(
+                    %%blog_name%%",
+                ],
+                'user_event_publishing' => [
                     'status' => '1',
                     'subject' => 'Your event gets published',
                     'recipients' => '',
@@ -1132,9 +1160,9 @@ class MEC_factory extends MEC_base
                     <a href=\"%%event_link%%\">%%event_title%%</a>
 
                     Regards,
-                    %%blog_name%%"
-                ),
-                'event_soldout' => array(
+                    %%blog_name%%",
+                ],
+                'event_soldout' => [
                     'status' => '0',
                     'subject' => 'Your event is soldout!',
                     'recipients' => '',
@@ -1145,9 +1173,9 @@ class MEC_factory extends MEC_base
                     For your information, your %%event_title%% event at %%book_date%% is soldout.
 
                     Regards,
-                    %%blog_name%%"
-                ),
-                'booking_rejection' => array(
+                    %%blog_name%%",
+                ],
+                'booking_rejection' => [
                     'status' => '0',
                     'subject' => 'Your booking got rejected!',
                     'recipients' => '',
@@ -1159,10 +1187,10 @@ class MEC_factory extends MEC_base
                     For your information, your booking for %%event_title%% at %%book_date%% is rejected.
 
                     Regards,
-                    %%blog_name%%"
-                )
-            ),
-        );
+                    %%blog_name%%",
+                ],
+            ],
+        ];
 
         add_option('mec_options', $options);
 
@@ -1174,7 +1202,8 @@ class MEC_factory extends MEC_base
 
         // MEC Capabilities
         $role = get_role('administrator');
-        if ($role) {
+        if ($role)
+        {
             $role->add_cap('mec_bookings', true);
             $role->add_cap('mec_add_booking', true);
             $role->add_cap('mec_coupons', true);
@@ -1199,8 +1228,8 @@ class MEC_factory extends MEC_base
 
     /**
      * Remove MEC from a blog
-     * @author Webnus <info@webnus.net>
      * @param int $blog_id
+     * @author Webnus <info@webnus.net>
      */
     public static function purge($blog_id = 1)
     {
@@ -1211,7 +1240,8 @@ class MEC_factory extends MEC_base
         $settings = $main->get_settings();
 
         // Purge data on uninstall
-        if (isset($settings['remove_data_on_uninstall']) and $settings['remove_data_on_uninstall']) {
+        if (isset($settings['remove_data_on_uninstall']) and $settings['remove_data_on_uninstall'])
+        {
             // Database Object
             $db = MEC::getInstance('app.libraries.db');
 
@@ -1223,14 +1253,17 @@ class MEC_factory extends MEC_base
 
             // Removing MEC posts and postmeta data
             $posts = $db->select("SELECT ID FROM `#__posts` WHERE `post_type`='mec-events' OR `post_type`='mec_calendars' OR `post_type`='mec-books'", 'loadAssocList');
-            if (is_array($posts) and count($posts)) {
+            if (is_array($posts) and count($posts))
+            {
                 $post_ids = $meta_ids = '';
 
                 $remove_post_sql = "DELETE FROM `#__posts` WHERE";
                 $remove_post_meta_sql = "DELETE FROM `#__postmeta` WHERE";
 
-                foreach ($posts as $post) {
-                    if (isset($post['ID'])) {
+                foreach ($posts as $post)
+                {
+                    if (isset($post['ID']))
+                    {
                         $meta_ids .= ' `post_id`=' . $post['ID'] . ' OR ';
                         $post_ids .= ' `ID`=' . $post['ID'] . ' OR ';
                     }
@@ -1245,8 +1278,10 @@ class MEC_factory extends MEC_base
 
             // Removing all MEC taxonomy terms
             $terms = $db->select("SELECT #__term_taxonomy.`term_id`, #__term_taxonomy.`taxonomy` FROM `#__terms` INNER JOIN `#__term_taxonomy` ON #__terms.`term_id` = #__term_taxonomy.`term_id` WHERE #__term_taxonomy.`taxonomy` = 'mec_category' OR #__term_taxonomy.`taxonomy` = 'mec_label' OR #__term_taxonomy.`taxonomy` = 'mec_location' OR #__term_taxonomy.`taxonomy` = 'mec_organizer' OR #__term_taxonomy.`taxonomy` = 'mec_speaker' OR #__term_taxonomy.`taxonomy` = 'mec_coupon'", 'loadAssocList');
-            foreach ($terms as $term) {
-                if (isset($term['term_id']) and isset($term['taxonomy'])) {
+            foreach ($terms as $term)
+            {
+                if (isset($term['term_id']) and isset($term['taxonomy']))
+                {
                     wp_delete_term((int) $term['term_id'], trim($term['taxonomy']));
                 }
             }
@@ -1276,9 +1311,12 @@ class MEC_factory extends MEC_base
     {
         $class = 'mec-theme-' . get_template();
 
-        if (is_array($classes)) {
+        if (is_array($classes))
+        {
             $classes[] = $class;
-        } else {
+        }
+        else
+        {
             $classes .= ' ' . $class . ' ';
         }
         return $classes;
@@ -1319,7 +1357,8 @@ class MEC_factory extends MEC_base
     public function should_include_assets($client = 'frontend')
     {
         if ($client == 'frontend') return apply_filters('mec_include_frontend_assets', true);
-        else {
+        else
+        {
             // Current Screen
             $screen = get_current_screen();
 
@@ -1329,48 +1368,48 @@ class MEC_factory extends MEC_base
             $taxonomy = $screen->taxonomy;
 
             // It's one of MEC taxonomy pages
-            if (trim($taxonomy) and in_array($taxonomy, array(
-                apply_filters('mec_taxonomy_tag', ''),
-                'mec_category',
-                'mec_label',
-                'mec_location',
-                'mec_organizer',
-                'mec_speaker',
-                'mec_coupon'
-            ))) return true;
+            if (trim($taxonomy) and in_array($taxonomy, [
+                    apply_filters('mec_taxonomy_tag', ''),
+                    'mec_category',
+                    'mec_label',
+                    'mec_location',
+                    'mec_organizer',
+                    'mec_speaker',
+                    'mec_coupon',
+                ])) return true;
 
             // It's one of MEC post type pages
-            if (trim($post_type) and in_array($post_type, array(
-                $this->main->get_main_post_type(),
-                'mec_calendars',
-                $this->main->get_book_post_type()
-            ))) return true;
+            if (trim($post_type) and in_array($post_type, [
+                    $this->main->get_main_post_type(),
+                    'mec_calendars',
+                    $this->main->get_book_post_type(),
+                ])) return true;
 
             // It's Block Editor
             if (method_exists($screen, 'is_block_editor') and $screen->is_block_editor()) return true;
 
             // It's one of MEC pages or the pages that MEC should work fine
-            if ((trim($base) and in_array($base, array(
-                'toplevel_page_mec-intro',
-                'm-e-calendar_page_MEC-settings',
-                'm-e-calendar_page_MEC-addons',
-                'm-e-calendar_page_MEC-report',
-                'm-e-calendar_page_MEC-ix',
-                'm-e-calendar_page_MEC-support',
-                'm-e-calendar_page_MEC-wizard',
-                'm-e-calendar_page_MEC-go-pro',
-                'widgets',
-            ))) or (trim($page) and in_array($page, array(
-                'mec-intro',
-                'MEC-settings',
-                'MEC-addons',
-                'MEC-report',
-                'MEC-ix',
-                'MEC-support',
-                'MEC-wizard',
-                'MEC-go-pro',
-                'mec-advanced-report',
-            )))) return true;
+            if ((trim($base) and in_array($base, [
+                        'toplevel_page_mec-intro',
+                        'm-e-calendar_page_MEC-settings',
+                        'm-e-calendar_page_MEC-addons',
+                        'm-e-calendar_page_MEC-report',
+                        'm-e-calendar_page_MEC-ix',
+                        'm-e-calendar_page_MEC-support',
+                        'm-e-calendar_page_MEC-wizard',
+                        'm-e-calendar_page_MEC-go-pro',
+                        'widgets',
+                    ])) or (trim($page) and in_array($page, [
+                        'mec-intro',
+                        'MEC-settings',
+                        'MEC-addons',
+                        'MEC-report',
+                        'MEC-ix',
+                        'MEC-support',
+                        'MEC-wizard',
+                        'MEC-go-pro',
+                        'mec-advanced-report',
+                    ]))) return true;
 
             return apply_filters('mec_include_backend_assets', false);
         }
@@ -1380,13 +1419,14 @@ class MEC_factory extends MEC_base
     {
         // check "upgrade_notice"
 
-?>
+        ?>
         <div class="mec-update-warning" style="margin-bottom: 5px; max-width: 1000px;">
             <strong><?php echo esc_html__('Notice:', 'modern-events-calendar-lite'); ?></strong>
             <?php echo esc_html__('If you are unable to auto update, please check this article:  ', 'modern-events-calendar-lite'); ?>
-            <a href="https://webnus.net/dox/modern-events-calendar/manual-update/" target="_blank"><?php echo esc_html__('How to manually update', 'modern-events-calendar-lite'); ?></a>
+            <a href="https://webnus.net/dox/modern-events-calendar/manual-update/"
+               target="_blank"><?php echo esc_html__('How to manually update', 'modern-events-calendar-lite'); ?></a>
         </div>
-<?php
+        <?php
 
     }
 }

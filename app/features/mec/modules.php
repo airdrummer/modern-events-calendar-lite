@@ -291,9 +291,17 @@ $pages = get_pages();
                                 <h5 class="mec-form-subtitle"><?php esc_html_e('Related Events Per Event', 'modern-events-calendar-lite'); ?></h5>
                                 <div class="mec-form-row">
                                     <label>
-                                        <input type="hidden" name="mec[settings][related_events_per_event]" value="0" />
-                                        <input value="1" type="checkbox" name="mec[settings][related_events_per_event]" <?php if(isset($settings['related_events_per_event']) and $settings['related_events_per_event']) echo 'checked="checked"'; ?> /><?php esc_html_e('Set related events per event.', 'modern-events-calendar-lite'); ?>
+                                        <input type="hidden" name="mec[settings][related_events_per_event]" value="0">
+                                        <input onchange="jQuery('#mec_related_events_per_event_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][related_events_per_event]" <?php if(isset($settings['related_events_per_event']) and $settings['related_events_per_event']) echo 'checked="checked"'; ?>><?php esc_html_e('Set related events per event.', 'modern-events-calendar-lite'); ?>
                                     </label>
+                                </div>
+                                <div id="mec_related_events_per_event_container_toggle" class="<?php if(!isset($settings['related_events_per_event']) || !$settings['related_events_per_event']) echo 'mec-util-hidden'; ?>">
+                                    <div class="mec-form-row">
+                                        <label>
+                                            <input type="hidden" name="mec[settings][repe_current_user]" value="0">
+                                            <input value="1" type="checkbox" name="mec[settings][repe_current_user]" <?php if(isset($settings['repe_current_user']) && $settings['repe_current_user']) echo 'checked="checked"'; ?>><?php esc_html_e('Display events of current user only.', 'modern-events-calendar-lite'); ?>
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>

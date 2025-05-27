@@ -156,6 +156,20 @@ class MEC_feature_restful extends MEC_base
             'permission_callback' => [$this->restful, 'guest'],
         ]);
 
+        // Tickets
+        register_rest_route($this->restful->get_namespace(), 'events/(?P<id>\d+)/tickets', [
+            'methods' => 'GET',
+            'callback' => [$this, 'tickets'],
+            'permission_callback' => [$this->restful, 'guest'],
+        ]);
+
+        // Tax / Fees
+        register_rest_route($this->restful->get_namespace(), 'events/(?P<id>\d+)/fees', [
+            'methods' => 'GET',
+            'callback' => [$this, 'fees'],
+            'permission_callback' => [$this->restful, 'guest'],
+        ]);
+
         // Custom Fields
         register_rest_route($this->restful->get_namespace(), 'config/custom-fields', [
             'methods' => 'GET',
@@ -1028,6 +1042,46 @@ class MEC_feature_restful extends MEC_base
             'data' => [
                 'success' => 1,
                 'icons' => $icons->list(),
+            ],
+            'status' => 200,
+        ]);
+    }
+
+    public function tickets(WP_REST_Request $request): WP_REST_Response
+    {
+        // Event ID
+        $id = $request->get_param('id');
+
+        $today = $request->get_param('occurrence');
+        if (!$today) $today = current_time('Y-m-d H:i:s');
+
+        // Tickets
+        $tickets = $this->getMain()->get_full_tickets($id);
+
+        // Response
+        return $this->restful->response([
+            'data' => [
+                'success' => 1,
+                'tickets' => $tickets,
+                'availability' => $this->getBook()->get_tickets_availability($id, strtotime($today)),
+            ],
+            'status' => 200,
+        ]);
+    }
+
+    public function fees(WP_REST_Request $request): WP_REST_Response
+    {
+        // Event ID
+        $id = $request->get_param('id');
+
+        // Fees
+        $fees = $this->getBook()->get_fees($id);
+
+        // Response
+        return $this->restful->response([
+            'data' => [
+                'success' => 1,
+                'fees' => $fees,
             ],
             'status' => 200,
         ]);

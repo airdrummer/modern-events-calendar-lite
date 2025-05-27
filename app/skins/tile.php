@@ -169,7 +169,11 @@ class MEC_skin_tile extends MEC_skins
         $this->show_only_expired_events = (isset($this->atts['show_only_past_events']) and trim($this->atts['show_only_past_events'])) ? '1' : '0';
 
         // Show Past Events
-        if ($this->show_only_expired_events) $this->atts['show_past_events'] = '1';
+        if ($this->show_only_expired_events)
+        {
+            $this->order_method = 'DESC';
+            $this->atts['show_past_events'] = '1';
+        }
 
         // Show Past Events
         $this->args['mec-past-events'] = $this->atts['show_past_events'] ?? '0';
@@ -564,7 +568,7 @@ class MEC_skin_tile extends MEC_skins
 
         // Return the events
         $this->atts['return_only_items'] = true;
-        $this->loading_more = true;
+        if (!$apply_sf_date) $this->loading_more = true;
 
         // Fetch the events
         $this->fetch();

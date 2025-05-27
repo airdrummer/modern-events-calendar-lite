@@ -370,20 +370,20 @@ class MEC_feature_mec extends MEC_base
         $options = $this->main->sanitize_deep_array($_REQUEST['content']);
         if ($options == 'No-JSON')
         {
-            echo '<div class="mec-message-import-error">' . esc_html__('Your option is not in JSON format. Please insert correct options in this field and try again.', 'modern-events-calendar-lite') . '</div>';
+            echo '<div class="mec-message-import-error mec-error">' . esc_html__('Your option is not in JSON format. Please insert correct options in this field and try again.', 'modern-events-calendar-lite') . '</div>';
             exit();
         }
         else
         {
             if (empty($options))
             {
-                echo '<div class="mec-message-import-error">' . esc_html__('Your options field can not be empty!', 'modern-events-calendar-lite') . '</div>';
+                echo '<div class="mec-message-import-error mec-error">' . esc_html__('Your options field can not be empty!', 'modern-events-calendar-lite') . '</div>';
                 exit;
             }
             else
             {
                 update_option('mec_options', $options);
-                echo '<div class="mec-message-import-success">' . esc_html__('Your options imported successfuly.', 'modern-events-calendar-lite') . '</div>';
+                echo '<div class="mec-message-import-success mec-success">' . esc_html__('Your options imported successfuly.', 'modern-events-calendar-lite') . '</div>';
             }
         }
 
@@ -1598,12 +1598,15 @@ class MEC_feature_mec extends MEC_base
      */
     public function widget_news()
     {
+        $add_new_event_button = '';
+        if (current_user_can('edit_posts')) $add_new_event_button = '<a href="' . esc_html__(admin_url('post-new.php?post_type=mec-events')) . '" class="button"><span aria-hidden="true" class="dashicons dashicons-plus"></span> Create New Event</a>';
+
         // Head Section
         echo '<div class="mec-metabox-head-wrap">
             <div class="mec-metabox-head-version">
-                <img src="' . plugin_dir_url(__FILE__) . '../../assets/img/mec-logo-icon.png" with="32" height="32" />
+                <img alt="" src="' . plugin_dir_url(__FILE__) . '../../assets/img/mec-logo-icon.png" with="32" height="32" />
                 <p>' . ($this->getPRO() ? esc_html__('Modern Events Calendar', 'modern-events-calendar-lite') : esc_html__('Modern Events Calendar (Lite)', 'modern-events-calendar-lite')) . '</p>
-                <a href="' . esc_html__(admin_url('post-new.php?post_type=mec-events')) . '" class="button"><span aria-hidden="true" class="dashicons dashicons-plus"></span> Create New Event</a>
+                ' . $add_new_event_button . '
             </div>
             <div class="mec-metabox-head-button"></div>
             <div style="clear:both"></div>

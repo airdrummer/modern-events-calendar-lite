@@ -51,15 +51,15 @@ if(!function_exists('mec_general_calendar_find_event'))
 		if($find_filter === 'find' and is_array($sf_options))
 		{
 			if(
-                (isset($sf_options['category']) && $sf_options['category']['type'] != '0' && !is_null($sf_options['category']['type'])) ||
-                (isset($sf_options['location']) && $sf_options['location']['type'] != '0' && !is_null($sf_options['location']['type'])) ||
-                (isset($sf_options['organizer']) && $sf_options['organizer']['type'] != '0' && !is_null($sf_options['organizer']['type'])) ||
-                (isset($sf_options['speaker']) && $sf_options['speaker']['type'] != '0' && !is_null($sf_options['speaker']['type'])) ||
-                (isset($sf_options['tag']) && $sf_options['tag']['type'] != '0' && !is_null($sf_options['tag']['type'])) ||
-                (isset($sf_options['label']) && $sf_options['label']['type'] != '0' && !is_null($sf_options['label']['type'])) ||
-                (isset($sf_options['event_cost']) && $sf_options['event_cost']['type'] != '0' && !is_null($sf_options['event_cost']['type'])) ||
-                (isset($sf_options['text_search']) && $sf_options['text_search']['type'] != '0' && !is_null($sf_options['text_search']['type'])) ||
-                (isset($sf_options['address_search']) && $sf_options['address_search']['type'] != '0' && !is_null($sf_options['address_search']['type']))
+                (isset($sf_options['category']['type']) && $sf_options['category']['type'] != '0') ||
+                (isset($sf_options['location']['type']) && $sf_options['location']['type'] != '0') ||
+                (isset($sf_options['organizer']['type']) && $sf_options['organizer']['type'] != '0') ||
+                (isset($sf_options['speaker']['type']) && $sf_options['speaker']['type'] != '0') ||
+                (isset($sf_options['tag']['type']) && $sf_options['tag']['type'] != '0') ||
+                (isset($sf_options['label']['type']) && $sf_options['label']['type'] != '0') ||
+                (isset($sf_options['event_cost']['type']) && $sf_options['event_cost']['type'] != '0') ||
+                (isset($sf_options['text_search']['type']) && $sf_options['text_search']['type'] != '0') ||
+                (isset($sf_options['address_search']['type']) && $sf_options['address_search']['type'] != '0')
             ) return true;
 			else return false;
 		}
@@ -67,14 +67,14 @@ if(!function_exists('mec_general_calendar_find_event'))
 		if($find_filter === 'filter' and is_array($sf_options))
 		{
 			if(
-                (isset($sf_options['category']) && $sf_options['category']['type'] != '0' && !is_null($sf_options['category']['type'])) ||
-                (isset($sf_options['location']) && $sf_options['location']['type'] != '0' && !is_null($sf_options['location']['type'])) ||
-                (isset($sf_options['organizer']) && $sf_options['organizer']['type'] != '0' && !is_null($sf_options['organizer']['type'])) ||
-                (isset($sf_options['speaker']) && $sf_options['speaker']['type'] != '0' && !is_null($sf_options['speaker']['type'])) ||
-                (isset($sf_options['tag']) && $sf_options['tag']['type'] != '0' && !is_null($sf_options['tag']['type'])) ||
-                (isset($sf_options['label']) && $sf_options['label']['type'] != '0' && !is_null($sf_options['label']['type'])) ||
-                (isset($sf_options['event_cost']) && $sf_options['event_cost']['type'] != '0' && !is_null($sf_options['event_cost']['type'])) ||
-                (isset($sf_options['address_search']) && $sf_options['address_search']['type'] != '0' && !is_null($sf_options['address_search']['type']))
+                (isset($sf_options['category']['type']) && $sf_options['category']['type'] != '0') ||
+                (isset($sf_options['location']['type']) && $sf_options['location']['type'] != '0') ||
+                (isset($sf_options['organizer']['type']) && $sf_options['organizer']['type'] != '0') ||
+                (isset($sf_options['speaker']['type']) && $sf_options['speaker']['type'] != '0') ||
+                (isset($sf_options['tag']['type']) && $sf_options['tag']['type'] != '0') ||
+                (isset($sf_options['label']['type']) && $sf_options['label']['type'] != '0') ||
+                (isset($sf_options['event_cost']['type']) && $sf_options['event_cost']['type'] != '0') ||
+                (isset($sf_options['address_search']['type']) && $sf_options['address_search']['type'] != '0')
             ) return true;
 			else return false;
 		}
@@ -325,6 +325,9 @@ endif;
 $javascript .= '
 			},
 			dayMaxEvents: ' .esc_js($more_event) .',
+			moreLinkContent: function(arg) {
+			  return "+"+arg.num+" '.esc_js(__('more', 'listdom')).'";
+			},
 			timeZone:"' .get_option('gmt_offset') .'",
 			events: {
 				url: "'.get_rest_url() .'mec/v1/events",
@@ -459,7 +462,6 @@ $javascript .='
 						$category.niceSelect("update")
 					}
 				}
-
 
 				if ($location.length) $location.val(null);
 				if ($organizer.length) $organizer.val(null);

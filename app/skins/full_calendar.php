@@ -390,7 +390,7 @@ class MEC_skin_full_calendar extends MEC_skins
             case 'monthly':
 
                 // Month Rotation
-                $atts['auto_month_rotation'] = 1;
+                $atts['auto_month_rotation'] = 0;
 
                 $output = $this->render->vmonth($atts);
 

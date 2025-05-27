@@ -206,18 +206,20 @@ class MEC_book extends MEC_base
                     }
                     else $fee_amount += (($total_tickets_amount + $total_variations_amount) * $fee_amount_config) / 100;
                 }
-                else if ($fee['type'] == 'amount') {
+                else if ($fee['type'] == 'amount')
+                {
                     $fee_amount += ($total_tickets_count * $fee_amount_config);
                     if ($tax_inclusion_type === 'included')
                     {
-                        $total_ticket_percent_fee_amount +=$fee_amount;
+                        $total_ticket_percent_fee_amount += $fee_amount;
                     }
                 }
-                else if ($fee['type'] == 'amount_per_booking') {
+                else if ($fee['type'] == 'amount_per_booking')
+                {
                     $fee_amount += $fee_amount_config;
                     if ($tax_inclusion_type === 'included')
                     {
-                        $total_ticket_percent_fee_amount +=$fee_amount;
+                        $total_ticket_percent_fee_amount += $fee_amount;
                     }
                 }
                 else continue;
@@ -485,10 +487,10 @@ class MEC_book extends MEC_base
                 $a++;
 
                 // Skip Main Attendee
-                if($a === 1) continue;
+                if ($a === 1) continue;
 
                 $u->register($attendee, [
-                    'event_id' => $event_id
+                    'event_id' => $event_id,
                 ]);
             }
         }
@@ -502,8 +504,8 @@ class MEC_book extends MEC_base
         // Fires after adding a new booking to send notifications etc
         do_action('mec_booking_added', $book_id);
 
-        list($auto_verify_free, $auto_verify_paid) = $this->get_auto_verification_status($event_id, $book_id);
-        list($auto_confirm_free, $auto_confirm_paid) = $this->get_auto_confirmation_status($event_id, $book_id);
+        [$auto_verify_free, $auto_verify_paid] = $this->get_auto_verification_status($event_id, $book_id);
+        [$auto_confirm_free, $auto_confirm_paid] = $this->get_auto_confirmation_status($event_id, $book_id);
 
         $verified = false;
 
@@ -668,7 +670,10 @@ class MEC_book extends MEC_base
         $verified = -1;
         $verified = apply_filters('mec_verified_value', $verified, $book_id);
 
-        if ($verified != -1) return true;
+        if ($verified != -1)
+        {
+            return true;
+        }
 
         update_post_meta($book_id, 'mec_verified', -1);
         update_post_meta($book_id, 'mec_cancelled_date', date('Y-m-d H:i:s', current_time('timestamp')));
@@ -681,14 +686,25 @@ class MEC_book extends MEC_base
             $stripe = new MEC_gateway_stripe();
             $stripe->refund($book_id);
 
-            // Actions
             do_action('mec_booking_refunded', $book_id);
+
+        }
+        // New Auto Refund for Square
+        if ($gateway == 'MEC_gateway_square_payment' || $gateway == 'MEC_gateway_square')
+        {
+            $auto_refund_square = isset($this->settings['booking_auto_refund_square']) ? $this->settings['booking_auto_refund_square'] : 0;
+
+            if ($auto_refund_square)
+            {
+                $square = \MEC_Square\Core\Gateway\Init::instance();
+                $square->refundsquare($book_id);
+
+                do_action('mec_booking_refunded', $book_id);
+            }
         }
 
-        // Booking Records
         $this->getBookingRecord()->cancel($book_id);
 
-        // Fires after canceling a booking to send notifications etc.
         do_action('mec_booking_canceled', $book_id);
 
         return true;

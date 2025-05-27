@@ -12,10 +12,10 @@ $sf_options = get_post_meta($post->ID, 'sf-options', true);
 
     <div class="mec-form-row mec-switcher">
         <?php $sf_status = get_post_meta($post->ID, 'sf_status', true); ?>
-        <div class="mec-col-8">
+        <div class="mec-col-9">
             <label><?php esc_html_e('Show Search Form', 'modern-events-calendar-lite'); ?></label>
         </div>
-        <div class="mec-col-4">
+        <div class="mec-col-3">
             <input type="hidden" name="mec[sf_status]" value="0" />
             <input type="checkbox" name="mec[sf_status]" id="mec_sf_status" value="1" <?php if($sf_status == '' || $sf_status == 1) echo 'checked="checked"'; ?> />
             <label for="mec_sf_status"></label>
@@ -23,10 +23,10 @@ $sf_options = get_post_meta($post->ID, 'sf-options', true);
     </div>
     <div class="mec-form-row mec-switcher">
         <?php $sf_display_label = get_post_meta($post->ID, 'sf_display_label', true); ?>
-        <div class="mec-col-8">
+        <div class="mec-col-9">
             <label><?php esc_html_e('Show Labels', 'modern-events-calendar-lite'); ?></label>
         </div>
-        <div class="mec-col-4">
+        <div class="mec-col-3">
             <input type="hidden" name="mec[sf_display_label]" value="0" />
             <input type="checkbox" name="mec[sf_display_label]" id="mec_sf_display_label" value="1" <?php if($sf_display_label == 1) echo 'checked="checked"'; ?> />
             <label for="mec_sf_display_label"></label>
@@ -34,10 +34,10 @@ $sf_options = get_post_meta($post->ID, 'sf-options', true);
     </div>
     <div class="mec-form-row mec-switcher">
         <?php $sf_reset_button = get_post_meta($post->ID, 'sf_reset_button', true); ?>
-        <div class="mec-col-8">
+        <div class="mec-col-9">
             <label><?php esc_html_e('Show Reset Button', 'modern-events-calendar-lite'); ?></label>
         </div>
-        <div class="mec-col-4">
+        <div class="mec-col-3">
             <input type="hidden" name="mec[sf_reset_button]" value="0" />
             <input type="checkbox" name="mec[sf_reset_button]" id="mec_sf_reset_button" value="1" <?php if($sf_reset_button == 1) echo 'checked="checked"'; ?> />
             <label for="mec_sf_reset_button"></label>
@@ -45,10 +45,10 @@ $sf_options = get_post_meta($post->ID, 'sf-options', true);
     </div>
     <div class="mec-form-row mec-switcher">
         <?php $sf_refine = get_post_meta($post->ID, 'sf_refine', true); ?>
-        <div class="mec-col-8">
+        <div class="mec-col-9">
             <label><?php esc_html_e('Refine Search Parameters', 'modern-events-calendar-lite'); ?></label>
         </div>
-        <div class="mec-col-4">
+        <div class="mec-col-3">
             <input type="hidden" name="mec[sf_refine]" value="0" />
             <input type="checkbox" name="mec[sf_refine]" id="mec_sf_refine" value="1" <?php if($sf_refine == 1) echo 'checked="checked"'; ?> />
             <label for="mec_sf_refine"></label>

@@ -63,7 +63,7 @@ $date_format = get_option('date_format');
             // Print events
             if(isset($events[$today]) && count($events[$today]))
             {
-                echo '<dt class="mec-calendar-day mec-has-event '.esc_attr($selected_day).'" data-mec-cell="'.esc_attr($day_id).'" data-day="'.esc_attr($list_day).'" data-month="'.date('Ym', strtotime($year.'-'.$month.'-01')).'"><a href="'.($this->display_all ? '#mec-calendar-events-sec-'.esc_attr($this->id.'-'.$day_id) : '#').'" class="mec-has-event-a">'.MEC_kses::full(apply_filters('mec_filter_list_day_value', $list_day, $today, $this)).'</a></dt>';
+                echo '<dt class="mec-calendar-day mec-has-event mec-table-nullday '.esc_attr($selected_day).'" data-mec-cell="'.esc_attr($day_id).'" data-day="'.esc_attr($list_day).'" data-month="'.date('Ym', strtotime($year.'-'.$month.'-01')).'"><a href="'.($this->display_all ? '#mec-calendar-events-sec-'.esc_attr($this->id.'-'.$day_id) : '#').'" class="mec-has-event-a">'.MEC_kses::full(apply_filters('mec_filter_list_day_value', $list_day, $today, $this)).'</a></dt>';
                 $events_str .= '<div class="mec-calendar-events-sec" id="mec-calendar-events-sec-'.esc_attr($this->id.'-'.$day_id).'" data-mec-cell="'.esc_attr($day_id).'" '.((trim($selected_day) != '' or $this->display_all) ? ' style="display: block;"' : '').'>'.MEC_kses::element($this->day_label($time));
 
                 foreach($events[$today] as $event)
@@ -269,7 +269,7 @@ $date_format = get_option('date_format');
                 // Print events
                 if(isset($events[$today]) && count($events[$today]))
                 {
-                    echo '<dt class="mec-calendar-day mec-has-event '.esc_attr($selected_day).'" data-mec-cell="'.esc_attr($day_id).'" data-day="'.esc_attr($list_day).'" data-month="'.date('Ym', strtotime($year.'-'.$month.'-01')).'"><a href="'.($this->display_all ? '#mec-calendar-events-sec-'.esc_attr($this->id.'-'.$day_id) : '#').'" class="mec-has-event-a">'.MEC_kses::full(apply_filters('mec_filter_list_day_value', $list_day, $today, $this)).'</a></dt>';
+                    echo '<dt class="mec-calendar-day mec-has-event mec-table-nullday '.esc_attr($selected_day).'" data-mec-cell="'.esc_attr($day_id).'" data-day="'.esc_attr($list_day).'" data-month="'.date('Ym', strtotime($year.'-'.$month.'-01')).'"><a href="'.($this->display_all ? '#mec-calendar-events-sec-'.esc_attr($this->id.'-'.$day_id) : '#').'" class="mec-has-event-a">'.MEC_kses::full(apply_filters('mec_filter_list_day_value', $list_day, $today, $this)).'</a></dt>';
                     $events_str .= '<div class="mec-calendar-events-sec" id="mec-calendar-events-sec-'.esc_attr($this->id.'-'.$day_id).'" data-mec-cell="'.esc_attr($day_id).'" '.((trim($selected_day) != '' or $this->display_all) ? ' style="display: block;"' : '').'>'.MEC_kses::element($this->day_label($time));
 
                     foreach($events[$today] as $event)

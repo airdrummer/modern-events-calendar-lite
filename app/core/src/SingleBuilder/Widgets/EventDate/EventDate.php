@@ -33,6 +33,8 @@ class EventDate extends WidgetBase {
 		$start_datetime = !trim($occurrence) && isset($event_detail->date['start']) ? $event_detail->date['start'] : array( 'date' => $occurrence );
 		$occurrence_end_date = trim($occurrence) ? Base::get_main()->get_end_date_by_occurrence($event_detail->data->ID, $start_datetime['date']) : '';
 		$end_datetime = isset($event_detail->date['end']) ? $event_detail->date['end'] : array( 'date' => $occurrence_end_date );
+		$start_datetime['date'] = preg_replace("/[^0-9\-\s:apmAPM]/", "", $start_datetime['date']);
+		$end_datetime['date'] = preg_replace("/[^0-9\-\s:apmAPM]/", "", $end_datetime['date']);
 
 		$date_format = isset($settings['single_date_format1']) ? $settings['single_date_format1'] : get_option( 'date_format' );
 		$date_label = Base::get_main()->date_label( $start_datetime, $end_datetime, $date_format );

@@ -7,7 +7,7 @@ defined('MECEXEC') or die();
 $cart_id = $this->cart->get_cart_id();
 $cart = $this->cart->get_cart($cart_id);
 
-$empty = (count($cart) ? false : true);
+$empty = !count($cart);
 $free = $this->cart->is_free($cart);
 
 $gateways = $this->main->get_gateways();
@@ -37,7 +37,7 @@ jQuery(document).ready(function()
 </script>';
 
 // Redirect Cart ID
-$redirect_cart_id = isset($_REQUEST['mec_stripe_redirect_cart_id']) ? $_REQUEST['mec_stripe_redirect_cart_id'] : '';
+$redirect_cart_id = $_REQUEST['mec_stripe_redirect_cart_id'] ?? '';
 
 $redirect_message = '';
 if(trim($redirect_cart_id))
@@ -85,7 +85,7 @@ $this->factory->params('footer', $javascript);
                                         }
                                     }
                                 ?>
-                                <h3><?php echo MEC_kses::element($TO->get_event_link()); ?> (<?php echo MEC_kses::element($this->main->render_price( $ticket_price > 0 ? $ticket_price : 0 , $TO->get_event_id())); ?>)</h3>
+                                <h3><?php echo MEC_kses::element($TO->get_event_link()); ?> (<?php echo MEC_kses::element($this->main->render_price(max($ticket_price, 0), $TO->get_event_id())); ?>)</h3>
                                 <div class="mec-checkout-tickets-wrapper"><?php echo MEC_kses::element($TO->get_tickets_html()); ?></div>
                                 <ul class="mec-checkout-price-details">
                                     <?php foreach($price_details['details'] as $detail): ?>

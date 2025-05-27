@@ -42,7 +42,7 @@ $organizer = ($organizer_id ? $this->main->get_organizer_data($organizer_id) : a
                 {
                     ?>
                     <div class="mec-single-event-organizer">
-                        <?php echo $this->icons->display('home'); ?>
+                        <?php echo $this->icons->display('people'); ?>
                         <h3 class="mec-events-single-section-title"><?php echo esc_html($this->main->m('taxonomy_organizer', esc_html__('Organizer', 'modern-events-calendar-lite'))); ?></h3>
 
                         <?php if(isset($organizer['thumbnail']) and trim($organizer['thumbnail'])): ?>
@@ -61,7 +61,7 @@ $organizer = ($organizer_id ? $this->main->get_organizer_data($organizer_id) : a
                                     <h6><?php echo (isset($organizer['name']) ? esc_html($organizer['name']) : ''); ?></h6>
                                 </a>
                             <?php }else{ ?>
-                                <?php echo $this->icons->display('home'); ?>
+                                <?php echo $this->icons->display('people'); ?>
                                 <h6><?php echo (isset($organizer['name']) ? esc_html($organizer['name']) : ''); ?></h6>
                             <?php } ?>
                         </dd>
@@ -174,7 +174,7 @@ $organizer = ($organizer_id ? $this->main->get_organizer_data($organizer_id) : a
                     ?>
                     <div class="mec-single-event-category">
                         <?php echo $this->icons->display('folder'); ?>
-                        <dt><?php echo esc_html($this->main->m('taxonomy_categories', esc_html__('Category', 'modern-events-calendar-lite'))); ?></dt>
+                        <h3 class="mec-events-single-section-title mec-category"><?php echo esc_html($this->main->m('taxonomy_categories', esc_html__('Category', 'modern-events-calendar-lite'))); ?></h3>
                         <dl>
                         <?php
                             foreach($event->data->categories as $category)

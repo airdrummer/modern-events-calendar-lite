@@ -4639,29 +4639,25 @@ jQuery(window).on('load', function()
 (function ($) {
     $.fn.mecCountDown = function (options, callBack) {
         // Default Options
-        var settings = $.extend(
-		{
+        var settings = $.extend({
             // These are the defaults.
             date: null,
-            format: null,
-            interval: 1000
+            format: null
         }, options);
 
         var callback = callBack;
         var selector = $(this);
 
         startCountdown();
-        var intervalID = setInterval(startCountdown, settings.interval);
+        var interval = setInterval(startCountdown, 1000);
 
-        function startCountdown() 
-        {
+        function startCountdown() {
             var eventDate = Date.parse(settings.date) / 1000;
             var currentDate = Math.floor($.now() / 1000);
 
-            if (eventDate <= currentDate) 
-            {
+            if (eventDate <= currentDate) {
                 callback.call(this);
-                clearInterval(intervalID);
+                clearInterval(interval);
             }
 
             var seconds = eventDate - currentDate;
@@ -4675,18 +4671,17 @@ jQuery(window).on('load', function()
             var minutes = Math.floor(seconds / 60);
             seconds -= minutes * 60;
 
-            selector.find(".mec-timeRefDays").text((days == 1 
-            					? mecdata.day
-            					: mecdata.days));
-            selector.find(".mec-timeRefHours").text((hours == 1
-            					? mecdata.hour
-            					: mecdata.hours));
-			selector.find(".mec-timeRefMinutes").text((minutes == 1
-            					? mecdata.minute
-            					: mecdata.minutes));
-            selector.find(".mec-timeRefSeconds").text((seconds == 1
-								? mecdata.second
-								: mecdata.seconds));
+            if (days == 1) selector.find(".mec-timeRefDays").text(mecdata.day);
+            else selector.find(".mec-timeRefDays").text(mecdata.days);
+
+            if (hours == 1) selector.find(".mec-timeRefHours").text(mecdata.hour);
+            else selector.find(".mec-timeRefHours").text(mecdata.hours);
+
+            if (minutes == 1) selector.find(".mec-timeRefMinutes").text(mecdata.minute);
+            else selector.find(".mec-timeRefMinutes").text(mecdata.minutes);
+
+            if (seconds == 1) selector.find(".mec-timeRefSeconds").text(mecdata.second);
+            else selector.find(".mec-timeRefSeconds").text(mecdata.seconds);
 
             if (settings.format === "on") {
                 days = (String(days).length >= 2) ? days : "0" + days;
@@ -4701,7 +4696,7 @@ jQuery(window).on('load', function()
                 selector.find(".mec-minutes").text(minutes);
                 selector.find(".mec-seconds").text(seconds);
             } else {
-                clearInterval(intervalID);
+                clearInterval(interval);
             }
         }
     };
@@ -5422,19 +5417,19 @@ function mec_focus_week(id, skin) {
                 content: content.val(),
                 key: key
             })
-                .done(function (data) {
-                    if ($(data).hasClass('mec-error')) {
-                        list.prepend(data);
-                        setTimeout(function () {
-                            $('#mec-speaker-error-${key}').remove();
-                        }, 1500);
-                    } else {
-                        list.html(data);
-                        content.val('');
-                    }
+            .done(function (data) {
+                if ($(data).hasClass('mec-error')) {
+                    list.prepend(data);
+                    setTimeout(function () {
+                        $('#mec-speaker-error-${key}').remove();
+                    }, 1500);
+                } else {
+                    list.html(data);
+                    content.val('');
+                }
 
-                    $($this).prop("disabled", false).css('cursor', 'pointer');
-                });
+                $($this).prop("disabled", false).css('cursor', 'pointer');
+            });
         });
 
         // FES Speaker Adding - Full Details

@@ -37,8 +37,8 @@ class EventLocations extends WidgetBase {
 		if ( true === $this->is_editor_mode && ( empty($locations) || !isset($locations[$primary_location_id]) ) ) {
 
 			$html = '<div class="mec-content-notification"><p>'
-					.'<span>'. esc_html__('This widget is displayed if location is set. In order for the widget in this page to be displayed correctly, please set location for your last event.', 'modern-events-calendar-lite').'</span>'
-					. '<a href="https://webnus.net/dox/modern-events-calendar/location/" target="_blank">' . esc_html__('How to set location', 'modern-events-calendar-lite') . ' </a>'
+					.'<span>'. esc_html__('To show this widget, you need to set "Content" for your latest event.', 'modern-events-calendar-lite').'</span>'
+					. '<a href="https://webnus.net/dox/modern-events-calendar/add-event/#LocationVenue" target="_blank">' . esc_html__('Read More', 'modern-events-calendar-lite') . ' </a>'
 				.'</p></div>';
 		} elseif ( !empty($locations) && isset($locations[$primary_location_id]) and !empty($locations[$primary_location_id])) {
 

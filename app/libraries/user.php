@@ -45,32 +45,30 @@ class MEC_user extends MEC_base
         $raw = (isset($attendee['reg']) and is_array($attendee['reg'])) ? $attendee['reg'] : [];
 
         $email = $attendee['email'] ?? '';
-        if(!filter_var($email, FILTER_VALIDATE_EMAIL)) return false;
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return false;
 
         $reg = [];
-        foreach($raw as $k => $v) $reg[$k] = (is_array($v) ? $v : stripslashes($v));
+        foreach ($raw as $k => $v) $reg[$k] = (is_array($v) ? $v : stripslashes($v));
 
         $existed_user_id = $this->main->email_exists($email);
 
         // User already exist
-        if($existed_user_id !== false)
-        {
+        if ($existed_user_id !== false) {
             // Map Data
             $event_id = $args['event_id'] ?? 0;
-            if($event_id) $this->save_mapped_data($event_id, $existed_user_id, $reg);
+            if ($event_id) $this->save_mapped_data($event_id, $existed_user_id, $reg);
 
             return $existed_user_id;
         }
 
         // Update WordPress user first name and last name
-        if(strpos($name, ',') !== false) $ex = explode(',', $name);
+        if (strpos($name, ',') !== false) $ex = explode(',', $name);
         else $ex = explode(' ', $name);
 
         $first_name = $ex[0] ?? '';
         $last_name = '';
 
-        if(isset($ex[1]))
-        {
+        if (isset($ex[1])) {
             unset($ex[0]);
             $last_name = implode(' ', $ex);
         }
@@ -79,43 +77,51 @@ class MEC_user extends MEC_base
         $MEC_method = isset($args['register_in_mec']) && $args['register_in_mec'];
 
         // Registration is disabled
-        if($MEC_method || (isset($this->settings['booking_registration']) && !$this->settings['booking_registration']))
-        {
-            $existed_user_id = $this->db->select("SELECT `id` FROM `#__mec_users` WHERE `email`='".$this->db->escape($email)."'", 'loadResult');
+        if ($MEC_method || (isset($this->settings['booking_registration']) && !$this->settings['booking_registration'])) {
+            $existed_user_id = $this->db->select("SELECT `id` FROM `#__mec_users` WHERE `email`='" . $this->db->escape($email) . "'", 'loadResult');
 
             // User already exist
-            if($existed_user_id) return $existed_user_id;
+            if ($existed_user_id) return $existed_user_id;
 
             $now = date('Y-m-d H:i:s');
-            $user_id = (int) $this->db->q("INSERT INTO `#__mec_users` (`first_name`,`last_name`,`email`,`reg`,`created_at`,`updated_at`) VALUES ('".$this->db->escape($first_name)."','".$this->db->escape($last_name)."','".$this->db->escape($email)."','".$this->db->escape(json_encode($reg))."','".$now."','".$now."')", "INSERT");
+            $user_id = (int) $this->db->q("INSERT INTO `#__mec_users` (`first_name`,`last_name`,`email`,`reg`,`created_at`,`updated_at`) VALUES ('" . $this->db->escape($first_name) . "','" . $this->db->escape($last_name) . "','" . $this->db->escape($email) . "','" . $this->db->escape(json_encode($reg)) . "','" . $now . "','" . $now . "')", "INSERT");
 
             // Make sure we won't create MEC users with id lower than 1 million
             // To avoid conflicts with wp users of course
-            if($user_id < 1000000)
-            {
+            if ($user_id < 1000000) {
                 $new_id = $user_id + 1000000;
-                $this->db->q("UPDATE `#__mec_users` SET `id`='".esc_sql($new_id)."' WHERE `id`='".esc_sql($user_id)."'");
+                $this->db->q("UPDATE `#__mec_users` SET `id`='" . esc_sql($new_id) . "' WHERE `id`='" . esc_sql($user_id) . "'");
 
                 $user_id = $new_id;
             }
-        }
-        else
-        {
+        } else {
+            // 🔥 Extract username/password from $_POST and inject into $args if empty
+            if (!isset($args['username']) || !trim($args['username'])) {
+                $args['username'] = $_POST['waiting']['tickets'][1]['username'] ?? '';
+            }
+
+            if (!isset($args['password']) || !trim($args['password'])) {
+                $args['password'] = $_POST['waiting']['tickets'][1]['password'] ?? '';
+            }
+
             $username = $email;
             $password = wp_generate_password(12, true, true);
             $auto = true;
 
-            if(isset($args['username']) and trim($args['username'])) $username = $args['username'];
-            if(isset($args['password']) and trim($args['password']))
-            {
-                $password = $args['password'];
-                $auto = false;
+            $userpass_mode = isset($this->settings['waiting_userpass']) ? $this->settings['waiting_userpass'] : 'auto';
+
+            if ($userpass_mode === 'manual') {
+                if (isset($args['username']) and trim($args['username'])) $username = $args['username'];
+                if (isset($args['password']) and trim($args['password'])) {
+                    $password = $args['password'];
+                    $auto = false;
+                }
             }
 
-            if ( ! validate_username( $username ) ) {
-                $username = 'user-' . mt_rand( 100000000, 999999999999 );
-                while( username_exists( $username ) ) {
-                    $username = 'user-' . mt_rand( 100000000, 999999999999 );
+            if (! validate_username($username)) {
+                $username = 'user-' . mt_rand(100000000, 999999999999);
+                while (username_exists($username)) {
+                    $username = 'user-' . mt_rand(100000000, 999999999999);
                 }
             }
 
@@ -133,13 +139,12 @@ class MEC_user extends MEC_base
 
             // Map Data
             $event_id = $args['event_id'] ?? 0;
-            if($event_id) $this->save_mapped_data($event_id, $user_id, $reg);
+            if ($event_id) $this->save_mapped_data($event_id, $user_id, $reg);
 
             // Set the User Role
             $source = $args['source'] ?? 'booking';
             if ($source === 'waiting') {
-                $role = (isset($this->settings['waiting_user_role']) && trim($this->settings['waiting_user_role']))
-                    ? $this->settings['waiting_user_role'] : 'subscriber';
+                $role = 'subscriber';
             } else {
                 $role = (isset($this->settings['booking_user_role']) && trim($this->settings['booking_user_role']))
                     ? $this->settings['booking_user_role'] : 'subscriber';

@@ -11,6 +11,14 @@ defined('MECEXEC') or die();
  */
 class MEC_tax_walker extends Walker_Category_Checklist
 {
+    public function start_lvl( &$output, $depth = 0, $args = array() ) {
+        $output .= "";
+    }
+
+    public function end_lvl( &$output, $depth = 0, $args = array() ) {
+        $output .= "";
+    }
+
     public function start_el(&$output, $data_object, $depth = 0, $args = array(), $current_object_id = 0)
     {
 		$args['popular_cats'] = empty($args['popular_cats']) ? array() : $args['popular_cats'];
@@ -47,6 +55,10 @@ class MEC_tax_walker extends Walker_Category_Checklist
             }
 		}
 	}
+
+    public function end_el( &$output, $data_object, $depth = 0, $args = array() ) {
+        $output .= "</option>\n";
+    }
 }
 
 $MEC_tax_walker = new MEC_tax_walker();

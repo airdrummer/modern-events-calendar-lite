@@ -29,10 +29,13 @@ class MEC_main extends MEC_base
     {
         return $this->URL('site') . $this->get_main_slug() . '/' . $skin . '/';
     }
-    public function get_waiting_fields() {
+
+    public function get_waiting_fields()
+    {
         $options = get_option('mec_options');
-        return isset($options['waiting_fields']) ? $options['waiting_fields'] : array();
+        return isset($options['waiting_fields']) ? $options['waiting_fields'] : [];
     }
+
     /**
      * Returns full current URL of WordPress
      * @return string
@@ -331,7 +334,8 @@ class MEC_main extends MEC_base
         $event_id = is_object($event) ? $event->data->ID : $event;
         $post = get_post($event_id);
 
-        if (!$post || is_wp_error($post) || !isset($post->post_content) || !is_string($post->post_content)) {
+        if (!$post || is_wp_error($post) || !isset($post->post_content) || !is_string($post->post_content))
+        {
             return '';
         }
 
@@ -1448,6 +1452,25 @@ class MEC_main extends MEC_base
         if (!$event_inheritance and isset($ticket['variations']) and is_array($ticket['variations'])) $has = true;
 
         return $has;
+    }
+
+    public function get_full_tickets($event_id): array
+    {
+        // Tickets
+        $tickets = get_post_meta($event_id, 'mec_tickets', true);
+
+        if (!is_array($tickets)) $tickets = [];
+        if (isset($tickets[':i:'])) unset($tickets[':i:']);
+
+        $full_tickets = [];
+        foreach ($tickets as $ticket_id => $ticket)
+        {
+            $full_tickets[$ticket_id] = $ticket;
+
+            $full_tickets[$ticket_id]['variations'] = $this->ticket_variations($event_id, $ticket_id);
+        }
+
+        return $full_tickets;
     }
 
     /**
@@ -3688,7 +3711,7 @@ class MEC_main extends MEC_base
                 $pdf->Ln();
             }
 
-            // Geteway
+            // Gqteway
             $pdf->Ln();
             $pdf->SetFont('DejaVuBold', '', 12);
             $pdf->Write(5, esc_html__('Payment', 'modern-events-calendar-lite'));
@@ -3786,7 +3809,7 @@ class MEC_main extends MEC_base
             global $post;
 
             // Current Post is not Event
-            if ($post->post_type != $this->get_main_post_type()) return;
+            if (!isset($post->post_type) || $post->post_type != $this->get_main_post_type()) return;
 
             ob_start();
             ?>
@@ -3821,7 +3844,7 @@ class MEC_main extends MEC_base
             $id = sanitize_text_field($_GET['id']);
             $post = get_post($id);
 
-            if ($post->post_type == $this->get_main_post_type() and $post->post_status == 'publish')
+            if (isset($post->post_type) && $post->post_type == $this->get_main_post_type() && $post->post_status == 'publish')
             {
                 $occurrence = isset($_GET['occurrence']) ? sanitize_text_field($_GET['occurrence']) : '';
 
@@ -5998,6 +6021,9 @@ class MEC_main extends MEC_base
         $start_datetime = $start['date'];
         $end_datetime = $end['date'];
 
+        $start_datetime = preg_replace("/[^0-9\-\s:apmAPM]/", "", $start_datetime);
+        $end_datetime = preg_replace("/[^0-9\-\s:apmAPM]/", "", $end_datetime);
+
         $start_parsed = date_parse($start_datetime);
         $end_parsed = date_parse($end_datetime);
 
@@ -6086,8 +6112,29 @@ class MEC_main extends MEC_base
                     else if (strpos($format, 'y') !== false) $year_format = 'y';
 
                     $start_m = $this->date_i18n($month_format, $start_timestamp, $event);
-                    $start_y = (trim($year_format) ? $this->date_i18n($year_format, $start_timestamp, $event) : '');
-                    $end_y = (trim($year_format) ? $this->date_i18n($year_format, $end_timestamp, $event) : '');
+                    $start_y = trim($year_format) ? $this->date_i18n($year_format, $start_timestamp, $event) : '';
+                    $end_y = trim($year_format) ? $this->date_i18n($year_format, $end_timestamp, $event) : '';
+
+                    $f1 = '';
+                    if (strpos($format, 'l d') !== false)
+                    {
+                        $f1 = $this->date_i18n('l d', $start_timestamp, $event) . ' - ' . $this->date_i18n('l d', $end_timestamp, $event);
+                        $format = str_replace('l d', 'f1', $format);
+                    }
+
+                    $f2 = '';
+                    if (strpos($format, 'dS') !== false)
+                    {
+                        $f2 = $this->date_i18n('dS', $start_timestamp, $event) . ' - ' . $this->date_i18n('dS', $end_timestamp, $event);
+                        $format = str_replace('dS', 'f2', $format);
+                    }
+
+                    $f3 = '';
+                    if (strpos($format, 'jS') !== false)
+                    {
+                        $f3 = $this->date_i18n('jS', $start_timestamp, $event) . ' - ' . $this->date_i18n('jS', $end_timestamp, $event);
+                        $format = str_replace('jS', 'f3', $format);
+                    }
 
                     $chars = str_split($format);
 
@@ -6113,6 +6160,11 @@ class MEC_main extends MEC_base
                         }
                         else $date_label .= $char;
                     }
+
+                    // Custom Date Formats
+                    $date_label = str_replace('f1', $f1, $date_label);
+                    $date_label = str_replace('f2', $f2, $date_label);
+                    $date_label = str_replace('f3', $f3, $date_label);
 
                     return '<span class="mec-start-date-label">' . esc_html($date_label) . '</span>';
                 }
@@ -6947,10 +6999,14 @@ class MEC_main extends MEC_base
             // Event Permalink
             $url = $event->data->permalink;
 
-            if(str_contains($_SERVER['HTTP_REFERER'],'external=1')){
-                if(str_contains($url,'?')){
+            if (isset($_SERVER['HTTP_REFERER']) && str_contains($_SERVER['HTTP_REFERER'], 'external=1'))
+            {
+                if (str_contains($url, '?'))
+                {
                     $url .= '&external=1';
-                }else{
+                }
+                else
+                {
                     $url .= '?external=1';
                 }
             }
@@ -6959,7 +7015,7 @@ class MEC_main extends MEC_base
             if (is_null($date)) return apply_filters('mec_event_permalink', $url);
 
             // Single Page Date method is set to next date
-            if (!$force and (!isset($settings['single_date_method']) or (isset($settings['single_date_method']) and $settings['single_date_method'] == 'next'))) return apply_filters('mec_event_permalink', $url);
+            if (!$force && (!isset($settings['single_date_method']) || $settings['single_date_method'] === 'next')) return apply_filters('mec_event_permalink', $url);
 
             if (is_array($time) and isset($time['start_timestamp'])) $time_str = date('H:i:s', $time['start_timestamp']);
             else if (is_array($time) and isset($time['start_raw'])) $time_str = $time['start_raw'];
@@ -6974,14 +7030,13 @@ class MEC_main extends MEC_base
             $read_more = (isset($event->data->meta) and isset($event->data->meta['mec_read_more']) and filter_var($event->data->meta['mec_read_more'], FILTER_VALIDATE_URL)) ? $event->data->meta['mec_read_more'] : null;
             $read_more_occ_url = MEC_feature_occurrences::param($event->ID, $timestamp, 'read_more', $read_more);
 
-            if ($read_more_occ_url and filter_var($read_more_occ_url, FILTER_VALIDATE_URL)) $url = $read_more_occ_url;
-            if ($read_more_occ_url) return apply_filters('mec_event_permalink', $url);
+            if ($read_more_occ_url && filter_var($read_more_occ_url, FILTER_VALIDATE_URL)) $url = $read_more_occ_url;
 
             // Add Date to the URL
             $url = $this->add_qs_var('occurrence', $date, $url);
 
-            $repeat_type = (isset($event->data->meta['mec_repeat_type']) ? $event->data->meta['mec_repeat_type'] : '');
-            if ($repeat_type == 'custom_days' and isset($event->data->time) and isset($event->data->time['start_raw']))
+            $repeat_type = $event->data->meta['mec_repeat_type'] ?? '';
+            if ($repeat_type === 'custom_days' && isset($event->data->time['start_raw']))
             {
                 // Add Time
                 $url = $this->add_qs_var('time', $timestamp, $url);
@@ -6998,7 +7053,7 @@ class MEC_main extends MEC_base
             if (is_null($date)) return apply_filters('mec_event_permalink', $url);
 
             // Single Page Date method is set to next date
-            if (!$force and (!isset($settings['single_date_method']) or (isset($settings['single_date_method']) and $settings['single_date_method'] == 'next'))) return apply_filters('mec_event_permalink', $url);
+            if (!$force && (!isset($settings['single_date_method']) || $settings['single_date_method'] === 'next')) return apply_filters('mec_event_permalink', $url);
 
             return apply_filters('mec_event_permalink', $this->add_qs_var('occurrence', $date, $url));
         }
@@ -10254,7 +10309,8 @@ class MEC_main extends MEC_base
         }
 
         // $attendees = apply_filters('mec_attendees_list_data', $attendees, $id, $occurrence);
-        add_filter('mec_attendees_list_data', function($attendees, $id, $occurrence) {
+        add_filter('mec_attendees_list_data', function ($attendees, $id, $occurrence)
+        {
             return $attendees;
         }, 10, 3);
 

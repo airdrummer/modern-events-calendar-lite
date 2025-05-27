@@ -1909,9 +1909,10 @@ class Transaction {
 
 		$transaction_id = $this->transaction_id;
 
-		$product_type = \MEC\Settings\Settings::getInstance()->get_settings( 'ticket_product_type' );
-		$product_type = $product_type ? $product_type : 'virtual';
-        $is_virtual = ( 'virtual' === $product_type ) ? 'yes' : 'no';
+		// $product_type = \MEC\Settings\Settings::getInstance()->get_settings( 'ticket_product_type' );
+		// $product_type = $product_type ? $product_type : 'virtual';
+        // $is_virtual = ( 'virtual' === $product_type ) ? 'yes' : 'no';
+
 		$event_id = $this->get_event_id();
 
 		$meta_input = wp_parse_args(
@@ -1943,7 +1944,7 @@ class Transaction {
 				'event_name' => get_the_title( $event_id ),
 
 				'first_for_all' => $this->is_first_for_all() ? 'yes' : 'no',
-				'_virtual' => $is_virtual,
+				'_virtual' => 'yes',
 				'_regular_price' => '',
 				'_sale_price' => '',
 				'_price' => '',

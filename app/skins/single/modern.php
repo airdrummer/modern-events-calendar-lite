@@ -184,6 +184,7 @@ $cost = $this->main->get_event_cost($event);
             <?php elseif($this->main->can_show_booking_module($event)): ?>
             <?php $data_lity_class = ''; if(isset($settings['single_booking_style']) and $settings['single_booking_style'] == 'modal' ) $data_lity_class = 'lity-hide '; ?>
             <div class="mec-single-event <?php echo esc_attr($data_lity_class); ?>" id="mec-events-meta-group-booking-box-<?php echo esc_attr($this->uniqueid); ?>">
+                <div id="booking-form"></div>
                 <div id="mec-events-meta-group-booking-<?php echo esc_attr($this->uniqueid); ?>" class="mec-events-meta-group mec-events-meta-group-booking">
                     <?php
                         if(isset($settings['booking_user_login']) and $settings['booking_user_login'] == '1' and !is_user_logged_in()) echo do_shortcode('[MEC_login]');

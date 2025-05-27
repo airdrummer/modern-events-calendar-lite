@@ -1429,7 +1429,7 @@ class MEC_skin_single extends MEC_skins
         $organizer_ids = array_unique($organizer_ids);
         ?>
         <div class="mec-single-event-additional-organizers">
-            <?php echo $this->icons->display('home'); ?>
+            <?php echo $this->icons->display('people'); ?>
             <h3 class="mec-events-single-section-title"><?php echo esc_html($this->main->m('other_organizers', esc_html__('Other Organizers', 'modern-events-calendar-lite'))); ?></h3>
             <?php foreach($organizer_ids as $o_id): $o_id = apply_filters('wpml_object_id', $o_id, 'mec_organizer', true); if($o_id == $organizer_id) continue; $organizer = (isset($organizers[$o_id]) ? $organizers[$o_id] : NULL); if(!$organizer) continue; ?>
                 <div class="mec-single-event-additional-organizer">
@@ -1453,7 +1453,7 @@ class MEC_skin_single extends MEC_skins
                                      <h6><?php echo (isset($organizer['name']) ? esc_html($organizer['name']) : ''); ?></h6>
                                 </a>
                             <?php } else{ ?>
-                                <?php echo $this->icons->display('home'); ?>
+                                <?php echo $this->icons->display('people'); ?>
                                 <h6><?php echo (isset($organizer['name']) ? esc_html($organizer['name']) : ''); ?></h6>
                             <?php } ?>
                         </dd>

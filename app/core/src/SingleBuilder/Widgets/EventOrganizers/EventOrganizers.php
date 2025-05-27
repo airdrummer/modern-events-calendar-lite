@@ -81,8 +81,8 @@ class EventOrganizers extends WidgetBase {
 		if ( true === $this->is_editor_mode && ( empty($organizers) || !isset($organizers[$primary_organizer_id]) ) ) {
 
 			$html = '<div class="mec-content-notification"><p>'
-					.'<span>'. esc_html__('This widget is displayed if organizer is set. In order for the widget in this page to be displayed correctly, please set organizer for your last event.', 'modern-events-calendar-lite').'</span>'
-					. '<a href="https://webnus.net/dox/modern-events-calendar/organizer-and-other-organizer/" target="_blank">' . esc_html__('How to set organizer', 'modern-events-calendar-lite') . ' </a>'
+					.'<span>'. esc_html__('To show this widget, you need to set "Organizer" for your latest event.', 'modern-events-calendar-lite').'</span>'
+					. '<a href="https://webnus.net/dox/modern-events-calendar/add-event/#Organizer" target="_blank">' . esc_html__('Read More', 'modern-events-calendar-lite') . ' </a>'
 				.'</p></div>';
 		}  elseif ( !empty($organizers) && isset($organizers[$primary_organizer_id]) && !empty($organizers[$primary_organizer_id])) {
 
@@ -92,7 +92,7 @@ class EventOrganizers extends WidgetBase {
 			echo '<div class="mec-event-meta">';
 				?>
 				<div class="mec-single-event-organizer">
-					<i class="mec-sl-home"></i>
+					<i class="mec-sl-people"></i>
 					<h3 class="mec-events-single-section-title"><?php echo Base::get_main()->m('taxonomy_organizer', esc_html__('Organizer', 'modern-events-calendar-lite')); ?></h3>
 
 					<?php if(isset($organizer['thumbnail']) and trim($organizer['thumbnail'])): ?>
@@ -106,7 +106,7 @@ class EventOrganizers extends WidgetBase {
                                     <h6><?php echo (isset($organizer['name']) ? esc_html($organizer['name']) : ''); ?></h6>
                                 </a>
                             <?php else: ?>
-                                <i class="mec-sl-home"></i>
+                                <i class="mec-sl-people"></i>
                                 <h6><?php echo (isset($organizer['name']) ? esc_html($organizer['name']) : ''); ?></h6>
                             <?php endif; ?>
 						</dd>

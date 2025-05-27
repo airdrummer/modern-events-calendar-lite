@@ -43,8 +43,8 @@ class EventData extends WidgetBase {
 		if ( true === $this->is_editor_mode && empty( $html )  ) {
 
 			$html = '<div class="mec-content-notification"><p>'
-					.'<span>'. esc_html__('This widget is displayed if event data is set. In order for the widget in this page to be displayed correctly, please set event data for your last event.', 'modern-events-calendar-lite').'</span>'
-					. '<a href="https://webnus.net/dox/modern-events-calendar/custom-fields/" target="_blank">' . esc_html__('How to set Custom Fields', 'modern-events-calendar-lite') . ' </a>'
+					.'<span>'. esc_html__('To show this widget, you need to set "Event DataContent" for your latest event.', 'modern-events-calendar-lite').'</span>'
+					. '<a href="https://webnus.net/dox/modern-events-calendar/add-event/#Event_Data_Custom_Fields" target="_blank">' . esc_html__('Read More', 'modern-events-calendar-lite') . ' </a>'
 				.'</p></div>';
 		}
 

@@ -269,144 +269,209 @@ class MEC_feature_fes extends MEC_base
     }
 
     public function mec_fes_csv_export()
-{
-    if ((!isset($_REQUEST['mec_event_id'])) or (!isset($_REQUEST['fes_nonce'])) or (!wp_verify_nonce(sanitize_text_field($_REQUEST['fes_nonce']), 'mec_fes_nonce'))) {
-        die(json_encode(['ex' => "error"]));
-    }
-
-    $event_id = intval(sanitize_text_field($_REQUEST['mec_event_id']));
-    $timestamp = isset($_REQUEST['timestamp']) ? sanitize_text_field($_REQUEST['timestamp']) : 0;
-    $booking_ids = '';
-    $type = isset($_REQUEST['type']) ? sanitize_text_field($_REQUEST['type']) : 'csv';
-
-    switch ($type) {
-        case 'ms-excel':
-            header('Content-Type: application/vnd.ms-excel; charset=utf-8');
-            header('Content-Disposition: attachment; filename=attendees-' . md5(time() . mt_rand(100, 999)) . '.xlsx');
-            break;
-        default:
-            header('Content-Type: text/csv; charset=utf-8');
-            header('Content-Disposition: attachment; filename=attendees-' . md5(time() . mt_rand(100, 999)) . '.csv');
-            break;
-    }
-
-    if ($timestamp) {
-        $bookings = $this->main->get_bookings($event_id, $timestamp);
-        foreach ($bookings as $booking) {
-            $booking_ids .= $booking->ID . ',';
+    {
+        if ((!isset($_REQUEST['mec_event_id'])) or (!isset($_REQUEST['fes_nonce'])) or (!wp_verify_nonce(sanitize_text_field($_REQUEST['fes_nonce']), 'mec_fes_nonce')))
+        {
+            die(json_encode(['ex' => "error"]));
         }
-    }
 
-    $post_ids = trim($booking_ids) ? explode(',', trim($booking_ids, ', ')) : [];
+        $event_id = intval(sanitize_text_field($_REQUEST['mec_event_id']));
+        $timestamp = isset($_REQUEST['timestamp']) ? sanitize_text_field($_REQUEST['timestamp']) : 0;
+        $booking_ids = '';
+        $type = isset($_REQUEST['type']) ? sanitize_text_field($_REQUEST['type']) : 'csv';
 
-    if (!count($post_ids) && !$timestamp) {
-        $books = $this->db->select("SELECT `post_id` FROM `#__postmeta` WHERE `meta_key`='mec_event_id' AND `meta_value`={$event_id}", 'loadAssocList');
-        foreach ($books as $book) {
-            if (isset($book['post_id'])) {
-                $post_ids[] = $book['post_id'];
+        if ($timestamp)
+        {
+            $bookings = $this->main->get_bookings($event_id, $timestamp);
+            foreach ($bookings as $booking)
+            {
+                $booking_ids .= $booking->ID . ',';
             }
         }
-    }
 
-    $output = fopen('php://output', 'w');
-    fprintf($output, chr(0xEF) . chr(0xBB) . chr(0xBF));
+        $post_ids = trim($booking_ids) ? explode(',', trim($booking_ids, ', ')) : [];
 
-    $columns = [
-        __('ID', 'modern-events-calendar-lite'),
-        esc_html__('Event', 'modern-events-calendar-lite'),
-        esc_html__('Date', 'modern-events-calendar-lite'),
-        esc_html__('Order Time', 'modern-events-calendar-lite'),
-        $this->main->m('ticket', esc_html__('Ticket', 'modern-events-calendar-lite')),
-        esc_html__('Transaction ID', 'modern-events-calendar-lite'),
-        esc_html__('Total Price', 'modern-events-calendar-lite'),
-        esc_html__('Gateway', 'modern-events-calendar-lite'),
-        esc_html__('Name', 'modern-events-calendar-lite'),
-        esc_html__('Email', 'modern-events-calendar-lite'),
-        esc_html__('Ticket Variation', 'modern-events-calendar-lite'),
-        esc_html__('Confirmation', 'modern-events-calendar-lite'),
-        esc_html__('Verification', 'modern-events-calendar-lite')
-    ];
-
-    fputcsv($output, $columns);
-
-    $uniqueBookings = [];
-
-    foreach ($post_ids as $post_id) {
-        $post_id = (int) $post_id;
-
-        $event_id = get_post_meta($post_id, 'mec_event_id', true);
-        $transaction_id = get_post_meta($post_id, 'mec_transaction_id', true);
-        $order_time = get_post_meta($post_id, 'mec_booking_time', true);
-        $tickets = get_post_meta($event_id, 'mec_tickets', true);
-        $attendees = get_post_meta($post_id, 'mec_attendees', true);
-        if (!is_array($attendees) || !count($attendees)) {
-            $attendees = [get_post_meta($post_id, 'mec_attendee', true)];
+        if (!count($post_ids) && !$timestamp)
+        {
+            $books = $this->db->select("SELECT `post_id` FROM `#__postmeta` WHERE `meta_key`='mec_event_id' AND `meta_value`={$event_id}", 'loadAssocList');
+            foreach ($books as $book)
+            {
+                if (isset($book['post_id']))
+                {
+                    $post_ids[] = $book['post_id'];
+                }
+            }
         }
 
-        $price = get_post_meta($post_id, 'mec_price', true);
-        $gateway_label = get_post_meta($post_id, 'mec_gateway_label', true);
+        // Define columns for the CSV
+        $columns = [
+            esc_html__('ID', 'modern-events-calendar-lite'),
+            esc_html__('Event', 'modern-events-calendar-lite'),
+            esc_html__('Date', 'modern-events-calendar-lite'),
+            esc_html__('Order Time', 'modern-events-calendar-lite'),
+            $this->main->m('ticket', esc_html__('Ticket', 'modern-events-calendar-lite')),
+            esc_html__('Transaction ID', 'modern-events-calendar-lite'),
+            esc_html__('Total Price', 'modern-events-calendar-lite'),
+            esc_html__('Gateway', 'modern-events-calendar-lite'),
+            esc_html__('Name', 'modern-events-calendar-lite'),
+            esc_html__('Email', 'modern-events-calendar-lite'),
+            esc_html__('Ticket Variation', 'modern-events-calendar-lite'),
+            esc_html__('Confirmation', 'modern-events-calendar-lite'),
+            esc_html__('Verification', 'modern-events-calendar-lite'),
+        ];
 
-        foreach ($attendees as $key => $attendee) {
-            if ($key === 'attachments') continue;
-            if (isset($attendee[0]['MEC_TYPE_OF_DATA'])) continue;
+        // Get bfixed_fields
+        $bfixed_fields = $this->main->get_bfixed_fields($event_id);
+        $bfixed_field_labels = [];
+        foreach ($bfixed_fields as $bfixed_field_key => $bfixed_field)
+        {
+            if (!is_numeric($bfixed_field_key)) continue;
+            $label = isset($bfixed_field['label']) ? esc_html__($bfixed_field['label'], 'modern-events-calendar-lite') : '';
+            if (trim($label) == '') continue;
+            $bfixed_field_labels[$bfixed_field_key] = stripslashes($label);
+        }
 
-            $ticket_id = $attendee['id'] ?? get_post_meta($post_id, 'mec_ticket_id', true);
-            $transactionKey = $transaction_id . '-' . $ticket_id . '-' . ($attendee['email'] ?? '');
+        $columns = array_merge($columns, array_values($bfixed_field_labels));
 
-            $ticket_variations_output = '';
-            if (isset($attendee['variations']) && is_array($attendee['variations']) && count($attendee['variations'])) {
-                $ticket_variations = $this->main->ticket_variations($event_id, $ticket_id);
+        // Get reg_fields
+        $reg_fields = $this->main->get_reg_fields($event_id);
+        $reg_field_labels = [];
+        foreach ($reg_fields as $reg_field_key => $reg_field)
+        {
+            if (!is_numeric($reg_field_key)) continue;
+            $label = isset($reg_field['label']) ? esc_html__($reg_field['label'], 'modern-events-calendar-lite') : '';
+            if (trim($label) == '') continue;
+            $reg_field_labels[$reg_field_key] = stripslashes($label);
+        }
 
-                foreach ($attendee['variations'] as $variation_id => $variation_count) {
-                    if ((int) $variation_count > 0) {
-                        if (isset($ticket_variations[$variation_id]['title'])) {
-                            $ticket_variations_output .= $ticket_variations[$variation_id]['title'] . " x" . $variation_count . ", ";
-                        } else {
-                            error_log("Missing variation title for variation ID: " . $variation_id);
+        $columns = array_merge($columns, array_values($reg_field_labels));
+
+        $rows = [];
+
+        // Add columns to output
+        $rows[] = $columns;
+
+        foreach ($post_ids as $post_id)
+        {
+            $post_id = (int) $post_id;
+
+            $event_id = get_post_meta($post_id, 'mec_event_id', true);
+            $transaction_id = get_post_meta($post_id, 'mec_transaction_id', true);
+            $order_time = get_post_meta($post_id, 'mec_booking_time', true);
+            $tickets = get_post_meta($event_id, 'mec_tickets', true);
+            $attendees = get_post_meta($post_id, 'mec_attendees', true);
+            if (!is_array($attendees) || !count($attendees))
+            {
+                $attendees = [get_post_meta($post_id, 'mec_attendee', true)];
+            }
+
+            $price = get_post_meta($post_id, 'mec_price', true);
+            $gateway_label = get_post_meta($post_id, 'mec_gateway_label', true);
+
+            $transaction = get_option($transaction_id);
+
+            $bfixed_fields = [];
+            if ($transaction)
+            {
+                // The value is serialized, so we need to unserialize it
+                $transaction = maybe_unserialize($transaction);
+
+                // Check if 'fields' exists and is an array
+                if (isset($transaction['fields']) && is_array($transaction['fields']))
+                {
+                    $bfixed_fields = $transaction['fields'];
+                }
+            }
+
+            foreach ($attendees as $key => $attendee)
+            {
+                if ($key === 'attachments') continue;
+                if (isset($attendee[0]['MEC_TYPE_OF_DATA'])) continue;
+
+                $ticket_id = $attendee['id'] ?? get_post_meta($post_id, 'mec_ticket_id', true);
+                $transactionKey = $transaction_id . '-' . $ticket_id . '-' . ($attendee['email'] ?? '');
+
+                $ticket_variations_output = '';
+                if (isset($attendee['variations']) && is_array($attendee['variations']) && count($attendee['variations']))
+                {
+                    $ticket_variations = $this->main->ticket_variations($event_id, $ticket_id);
+
+                    foreach ($attendee['variations'] as $variation_id => $variation_count)
+                    {
+                        if ((int) $variation_count > 0)
+                        {
+                            if (isset($ticket_variations[$variation_id]['title']))
+                            {
+                                $ticket_variations_output .= $ticket_variations[$variation_id]['title'] . " x" . $variation_count . ", ";
+                            }
                         }
                     }
+                    $ticket_variations_output = rtrim($ticket_variations_output, ', ');
                 }
-                $ticket_variations_output = rtrim($ticket_variations_output, ', ');
-            } else {
-                error_log("No variations found for Ticket ID: {$ticket_id}");
-            }
 
-            if (!isset($uniqueBookings[$transactionKey])) {
-                $uniqueBookings[$transactionKey] = [
-                    'count' => 1,
-                    'booking' => [
-                        $post_id,
-                        html_entity_decode(get_the_title($event_id), ENT_QUOTES | ENT_HTML5),
-                        get_the_date('', $post_id),
-                        $order_time,
-                        ($tickets[$ticket_id]['name'] ?? esc_html__('Unknown', 'modern-events-calendar-lite')),
-                        $transaction_id,
-                        $this->main->render_price(($price ? $price : 0), $post_id),
-                        html_entity_decode($gateway_label, ENT_QUOTES | ENT_HTML5),
-                        ($attendee['name'] ?? ''),
-                        ($attendee['email'] ?? ''),
-                        $ticket_variations_output,
-                        esc_html__('Confirmed', 'modern-events-calendar-lite'),
-                        esc_html__('Verified', 'modern-events-calendar-lite')
-                    ]
+                // Prepare the final row data including bfixed fields
+                $bookingData = [
+                    $post_id,
+                    html_entity_decode(get_the_title($event_id), ENT_QUOTES | ENT_HTML5),
+                    get_the_date('', $post_id),
+                    $order_time,
+                    ($tickets[$ticket_id]['name'] ?? esc_html__('Unknown', 'modern-events-calendar-lite')),
+                    $transaction_id,
+                    $this->main->render_price(($price ? $price : 0), $post_id),
+                    html_entity_decode($gateway_label, ENT_QUOTES | ENT_HTML5),
+                    ($attendee['name'] ?? ''),
+                    ($attendee['email'] ?? ''),
+                    $ticket_variations_output,
+                    esc_html__('Confirmed', 'modern-events-calendar-lite'),
+                    esc_html__('Verified', 'modern-events-calendar-lite'),
                 ];
-            } else {
-                $uniqueBookings[$transactionKey]['count'] += 1;
+
+                // Add bfixed fields values
+                foreach ($bfixed_fields as $bfixed_field_value)
+                {
+                    if (is_array($bfixed_field_value))
+                    {
+                        $bfixed_field_value = implode(' | ', array_map('stripslashes', $bfixed_field_value));
+                    }
+                    else
+                    {
+                        $bfixed_field_value = stripslashes($bfixed_field_value);
+                    }
+
+                    $bookingData[] = $bfixed_field_value;
+                }
+
+                // Add reg_fields values
+                $reg_values = $attendee['reg'] ?? [];
+
+                foreach (array_keys($reg_field_labels) as $reg_field_id)
+                {
+                    if (is_array($reg_values[$reg_field_id]))
+                    {
+                        $bookingData[] = implode(' | ', array_map('stripslashes', $reg_values[$reg_field_id]));
+                    }
+                    else
+                    {
+                        $bookingData[] = stripslashes($reg_values[$reg_field_id] ?? '---');
+                    }
+                }
+
+                $rows[] = $bookingData;
             }
         }
 
+        switch ($type)
+        {
+            case 'ms-excel':
+                $filename = 'attendees-'.md5(time() . mt_rand(100, 999)) . '.xlsx';
+                $this->main->generate_download_excel($rows, $filename);
+                exit;
+            default:
+                $filename = 'attendees-'.md5(time() . mt_rand(100, 999)) . '.csv';
+                $this->main->generate_download_csv($rows, $filename);
+                exit;
+        }
     }
-
-    foreach ($uniqueBookings as $booking) {
-        $bookingData = $booking['booking'];
-        $bookingData[4] .= ' (x' . $booking['count'] . ')';
-        fputcsv($output, $bookingData);
-    }
-
-    fclose($output);
-    die();
-}
-
 
     public function fes_upload()
     {
@@ -562,6 +627,20 @@ class MEC_feature_fes extends MEC_base
             $location_add_request = (isset($mec['location'], $mec['location']['address']) and trim($mec['location']['address']));
 
             if (!$location_id_is_filled and !$location_add_request) $this->main->response(['success' => 0, 'message' => __('Please select the event location!', 'modern-events-calendar-lite'), 'code' => 'LOCATION_IS_EMPTY']);
+        }
+
+        // Organizer is Required
+        $is_required_organizer = apply_filters(
+            'mec_fes_form_is_required_fields',
+            (isset($this->settings['fes_section_organizer']) and $this->settings['fes_section_organizer'] and isset($this->settings['fes_required_organizer']) and $this->settings['fes_required_organizer']),
+            'organizer'
+        );
+        if ($is_required_organizer)
+        {
+            $organizer_id_is_filled = (isset($mec['organizer_id']) and trim($mec['organizer_id']) and $mec['organizer_id'] != 1);
+            $organizer_add_request = (isset($mec['organizer'], $mec['organizer']['name']) and trim($mec['organizer']['name']));
+
+            if (!$organizer_id_is_filled and !$organizer_add_request) $this->main->response(['success' => 0, 'message' => __('Please select the event organizer!', 'modern-events-calendar-lite'), 'code' => 'ORGANIZER_IS_EMPTY']);
         }
 
         // Label is Required

@@ -642,7 +642,14 @@ $mec_categories = get_terms(array(
                                 <?php endif; ?>
                             </div>
                             <?php endif; ?>
-
+                            <?php if(isset($settings['show_or_hide'])): ?>
+                                <div class="mec-form-row">
+                                    <label>
+                                        <input type="hidden" name="mec[settings][show_or_hide]" value="0" />
+                                        <input value="1" type="checkbox" name="mec[settings][show_or_hide]" <?php if(isset($settings['show_or_hide']) and $settings['show_or_hide'] == 'hide') echo 'checked="checked"'; ?> /><?php esc_html_e('Rsvp Options', 'modern-events-calendar-lite'); ?>
+                                    </label>
+                                </div>
+                            <?php endif; ?>
                             <div class="mec-form-row">
                                 <label>
                                     <input type="hidden" name="mec[settings][fes_section_schema]" value="0" />
@@ -782,6 +789,7 @@ $mec_categories = get_terms(array(
                                 'more_info_link' => esc_html__('More Info Link', 'modern-events-calendar-lite'),
                                 'category' => esc_html__('Category', 'modern-events-calendar-lite'),
                                 'location' => esc_html__('Location', 'modern-events-calendar-lite'),
+                                'organizer' => esc_html__('Organizer', 'modern-events-calendar-lite'),
                                 'featured_image' => esc_html__('Featured Image', 'modern-events-calendar-lite'),
                                 'label' => esc_html__('Label', 'modern-events-calendar-lite')) as $req_field => $label): ?>
                             <div class="mec-form-row">

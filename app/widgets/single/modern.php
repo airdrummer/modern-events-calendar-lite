@@ -27,7 +27,7 @@ if($this->is_enabled('event_orgnizer') || $this->is_enabled('register_btn')): ?>
         {
             ?>
             <div class="mec-single-event-organizer">
-                <?php echo $icons->display('home'); ?>
+                <?php echo $icons->display('people'); ?>
                 <h3 class="mec-events-single-section-title"><?php echo esc_html($single->main->m('taxonomy_organizer', esc_html__('Organizer', 'modern-events-calendar-lite'))); ?></h3>
 
                 <?php if(isset($organizer['thumbnail']) and trim($organizer['thumbnail'])): ?>
@@ -43,7 +43,7 @@ if($this->is_enabled('event_orgnizer') || $this->is_enabled('register_btn')): ?>
                                 <h6><?php echo (isset($organizer['name']) ? esc_html($organizer['name']) : ''); ?></h6>
                             </a>
                         <?php else: ?>
-                            <?php echo $icons->display('home'); ?>
+                            <?php echo $icons->display('people'); ?>
                             <h6><?php echo (isset($organizer['name']) ? esc_html($organizer['name']) : ''); ?></h6>
                         <?php endif; ?>
                         </dd>
@@ -126,7 +126,7 @@ if($this->is_enabled('event_orgnizer') || $this->is_enabled('register_btn')): ?>
             ?>
             <div class="mec-single-event-category">
                 <?php echo $icons->display('folder'); ?>
-                <dt><?php echo esc_html($single->main->m('taxonomy_categories', esc_html__('Category', 'modern-events-calendar-lite'))); ?></dt>
+                <h3 class="mec-events-single-section-title mec-category"><?php echo esc_html($single->main->m('taxonomy_categories', esc_html__('Category', 'modern-events-calendar-lite'))); ?></h3>
                 <dl>
                 <?php
                 foreach($event->data->categories as $category)

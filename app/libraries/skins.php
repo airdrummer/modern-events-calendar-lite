@@ -1047,7 +1047,7 @@ class MEC_skins extends MEC_base
             if(!is_array($IDs) || !count($IDs)) continue;
 
             // Check Finish Date
-            if(isset($this->maximum_date) and trim($this->maximum_date) and ((strtotime($date) > strtotime($this->maximum_date) and $this->order_method === 'ASC') or (strtotime($date) < strtotime($this->maximum_date) and $this->order_method === 'DESC'))) break;
+            if(isset($this->maximum_date) && trim($this->maximum_date) && ((strtotime($date) > strtotime($this->maximum_date) && $this->order_method === 'ASC') || (strtotime($date) < strtotime($this->maximum_date) && ($this->order_method === 'DESC' || $this->show_only_expired_events)))) break;
 
             // Include Available Events
             $this->args['post__in'] = array_unique($IDs);
@@ -2546,7 +2546,7 @@ class MEC_skins extends MEC_base
                     </svg>
                     '.esc_html__('Prev', 'modern-events-calendar-lite').'
                 </span>
-                <a class="mec-nextprev-next-button" href="'.esc_url($this->main->add_qs_var('mec_next_page', $next_page)).'">
+                <a class="mec-nextprev-next-button" href="'.esc_url($this->main->add_qs_var('mec_next_page', '')).'">
                     '.esc_html__('Next', 'modern-events-calendar-lite').'
                     <svg xmlns="http://www.w3.org/2000/svg" width="13" height="10" viewBox="0 0 13 10">
                         <path id="next-icon" d="M92.034,76.719l-.657.675,3.832,3.857H84v.937H95.208l-3.832,3.857.657.675,4.967-5Z" transform="translate(-84.001 -76.719)" fill="#07bbe9"/>

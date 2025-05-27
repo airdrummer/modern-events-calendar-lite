@@ -612,7 +612,7 @@ class MEC_render extends MEC_base
     public function data($post_id, $content = null)
     {
         $cached = wp_cache_get($post_id, 'mec-events-data');
-        if($cached) return $cached;
+        if ($cached) return $cached;
 
         $data = new stdClass();
 

@@ -34,8 +34,8 @@ class EventSocialShare extends WidgetBase {
 		if ( true === $this->is_editor_mode && ( !isset($settings['social_network_status']) || !$settings['social_network_status'] ) ) {
 
 			$html = '<div class="mec-content-notification"><p>'
-				.'<span>'. esc_html__('This widget is displayed if social networks is set. In order for the widget in this page to be displayed correctly, please set label for your last event.', 'modern-events-calendar-lite').'</span>'
-				. '<a href="https://webnus.net/dox/modern-events-calendar/social-networks/" target="_blank">' . esc_html__('How to set social networks', 'modern-events-calendar-lite') . ' </a>'
+				.'<span>'. esc_html__('To show this widget, you need to enable "Social Networks" module.', 'modern-events-calendar-lite').'</span>'
+				. '<a href="https://webnus.net/dox/modern-events-calendar/event-modules/#Social_Networks" target="_blank">' . esc_html__('Read More', 'modern-events-calendar-lite') . ' </a>'
 			.'</p></div>';
 		} else {
 

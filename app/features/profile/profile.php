@@ -53,7 +53,7 @@ $id = 1;
     <table class="mec-profile-bookings">
         <tr>
             <td>
-                <?php esc_html_e('#' , 'modern-events-calendar-lite'); ?>
+                <?php esc_html_e('ID' , 'modern-events-calendar-lite'); ?>
             </td>
             <td>
                 <?php esc_html_e('Event' , 'modern-events-calendar-lite'); ?>

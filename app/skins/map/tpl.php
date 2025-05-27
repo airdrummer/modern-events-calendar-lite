@@ -7,6 +7,8 @@ defined('MECEXEC') or die();
 // MEC Settings
 $settings = $this->main->get_settings();
 $settings['view_mode'] = $this->atts['location_view_mode'] ?? 'normal';
+$settings['view_mode'] = $this->atts['sk-options']['map']['view_mode'] ?? $settings['view_mode'];
+
 $settings['map'] = $settings['default_maps_view'] ?? 'google';
 
 // Return the data if called by AJAX

@@ -33,8 +33,8 @@ class EventRelated extends WidgetBase {
 		if ( true === $this->is_editor_mode && ( !isset($settings['related_events']) || !$settings['related_events'] ) ) {
 
 			$html = '<div class="mec-content-notification"><p>'
-					.'<span>'. esc_html__('This widget is displayed if related events is set. In order for the widget in this page to be displayed correctly, please set Related Event for your last event.', 'modern-events-calendar-lite').'</span>'
-					. '<a href="https://webnus.net/dox/modern-events-calendar/related-events/" target="_blank">' . esc_html__('How to set related events', 'modern-events-calendar-lite') . ' </a>'
+					.'<span>'. esc_html__('To show this widget, you need to enable "Related Events" module.', 'modern-events-calendar-lite').'</span>'
+					. '<a href="https://webnus.net/dox/modern-events-calendar/event-modules/#Related_Events" target="_blank">' . esc_html__('Read More', 'modern-events-calendar-lite') . ' </a>'
 				.'</p></div>';
 		} else {
 

@@ -52,9 +52,9 @@ class BookingForm extends WidgetBase {
 			$html = '<div class="mec-content-notification">
 					<p>'
 						.'<span>'
-							. esc_html__('This widget is displayed if label is set. In order for the widget in this page to be displayed correctly, please set Booking module for your last event.', 'modern-events-calendar-lite')
+							. esc_html__('To show this widget, you need to set "Tickets" for your latest event.', 'modern-events-calendar-lite')
 						.'</span>'
-						.'<a href="https://webnus.net/dox/modern-events-calendar/booking/" target="_blank">' . esc_html__('How to set booking module', 'modern-events-calendar-lite') . ' </a>'
+						.'<a href="https://webnus.net/dox/modern-events-calendar/add-event/#Tickets" target="_blank">' . esc_html__('Read More', 'modern-events-calendar-lite') . ' </a>'
 					.'</p>'
 				.'</div>';
 		} else {
@@ -77,9 +77,9 @@ class BookingForm extends WidgetBase {
 
 				$html .= '<div class="mec-content-notification"><p>'
 						.'<span>'
-							. esc_html__('This widget is displayed if Booking is set. In order for the widget in this page to be displayed correctly, please set Booking module for your last event.', 'modern-events-calendar-lite')
+							. esc_html__('To show this widget, you need to set "Tickets" for your latest event.', 'modern-events-calendar-lite')
 						.'</span>'
-						.'<a href="https://webnus.net/dox/modern-events-calendar/add-a-booking-system/" target="_blank">' . esc_html__('How to set Booking module', 'modern-events-calendar-lite') . ' </a>'
+						.'<a href="https://webnus.net/dox/modern-events-calendar/add-event/#Tickets" target="_blank">' . esc_html__('Read More', 'modern-events-calendar-lite') . ' </a>'
 					.'</p></div>';
 			}elseif ( true === $this->is_editor_mode ){
 

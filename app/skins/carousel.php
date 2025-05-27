@@ -178,6 +178,7 @@ class MEC_skin_carousel extends MEC_skins
         // Show Past Events
         if($this->show_only_expired_events)
         {
+            $this->order_method = 'DESC';
             $this->atts['show_past_events'] = '1';
             $this->args['order'] = 'DESC';
         }

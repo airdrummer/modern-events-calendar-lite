@@ -1290,10 +1290,6 @@ body.post-type-mec-books th.column-author {
   margin-bottom: 0;
 }
 
-.wns-be-main .mec-form-row textarea:not([name*="mec[settings][tickets]"], [name*="mec[settings][fes_disclaimer]"]) {
-  max-width: unset;
-}
-
 .wns-be-main .mec-form-row .wp-editor-area {
   max-width: 100%;
   background: #fff;
@@ -1402,9 +1398,9 @@ body.post-type-mec-books th.column-author {
   border: 1px solid #ddd !important;
 }
 
-.post-type-mec-events .select2-container--default .select2-selection--single .select2-selection__rendered {
+/* .post-type-mec-events .select2-container--default .select2-selection--single .select2-selection__rendered {
   padding-left: 0;
-}
+} */
 
 .wns-be-main .mec-form-row input[type="search"] {
   line-height: 2 !important;
@@ -1605,6 +1601,10 @@ body.post-type-mec-books th.column-author {
 
 .mec-meta-box-fields {
   margin: 30px 10px;
+}
+
+.mec-meta-box-fields#mec_meta_box_calendar_search_form_options {
+  margin: 0;
 }
 
 .mec-meta-box-fields>.mec-meta-box-fields {
@@ -4228,23 +4228,19 @@ textarea.mec-import-settings-content {
 .mec-import-options-notification .mec-message-import-error,
 .mec-import-options-notification .mec-message-import-success {
   display: inline-block;
-  padding: 15px 12px;
   margin-left: 12px;
   opacity: 0;
   visibility: hidden;
-  font-weight: 700;
 }
 
 .mec-import-options-notification .mec-message-import-success {
   opacity: 1;
   visibility: visible;
-  border: 2px solid green;
 }
 
 .mec-import-options-notification .mec-message-import-error {
   opacity: 1;
   visibility: visible;
-  border: 2px solid #e62117;
 }
 
 .mec-export-settings:focus,
@@ -7090,7 +7086,10 @@ a.mec-create-shortcode-tabs-link {
 .mec-form-row textarea {
   height: auto;
   margin-bottom: 0;
-  min-height: 60px;
+  line-height: 1.5;
+  min-height: 100px;
+  padding-top: 8.5px;
+  padding-bottom: 8.5px;
 }
 
 .mec-form-row .wp-picker-container {
@@ -7639,7 +7638,13 @@ a.mec-create-shortcode-tabs-link {
 
 #mec_organizer_user+.select2-container,
 #mec_speaker_user+.select2-container {
-  min-width: 224px !important;
+  min-width: 95% !important;
+}
+
+#mec_organizer_user+label span.mec-tooltip,
+#mec_speaker_user+label span.mec-tooltip {
+  line-height: 22.5px;
+  height: 22.5px;
 }
 
 .mec-add-event-tabs-wrap .select2-container,
@@ -7648,17 +7653,30 @@ a.mec-create-shortcode-tabs-link {
   min-height: 38px;
   height: auto;
   box-sizing: border-box;
-  padding: 0 6px 0 10px;
+  padding: 0 24px 0 2px;
   border-radius: 5px;
-  box-shadow: inset 0 1px 2px rgb(0 0 0 / 7%);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 2%);
   background-color: #f7f8f9;
   color: #32373c;
   outline: 0;
-  transition: 50ms border-color ease-in-out;
+  transition: 50ms border-colorease-in-out;
   min-width: 200px;
   width: 100% !important;
   max-width: 290px !important;
   font-size: 14px;
+  border: 1px solid #e6e9eb;
+}
+
+.mec-add-event-tabs-wrap .select2-container.select2-container--above.select2-container--open,
+.mec-create-shortcode-tab-content .select2-container.select2-container--above.select2-container--open,
+.wns-be-main .mec-form-row .select2-container.select2-container--above.select2-container--open {
+  border-radius: 0 0 5px 5px;
+}
+
+.mec-add-event-tabs-wrap .select2-container.select2-container--below.select2-container--open,
+.mec-create-shortcode-tab-content .select2-container.select2-container--below.select2-container--open,
+.wns-be-main .mec-form-row .select2-container.select2-container--below.select2-container--open {
+  border-radius: 5px 5px 0 0;
 }
 
 .mec-add-event-tabs-wrap .select2-selection,
@@ -8175,6 +8193,7 @@ input.fserv-input-text {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02) inset;
   border-color: #e3e5e7;
   border-radius: 4px;
+  line-height: 20px;
 }
 
 .mec-report-select-event-wrap input,
@@ -10622,7 +10641,9 @@ div#mec_popup_event_form {
   margin-right: 6px;
 }
 
-.tablenav .actions .input-field .select2-selection {
+.tablenav .actions .input-field .select2-selection,
+.taxonomy-mec_organizer .select2-selection,
+.taxonomy-mec_speaker .select2-selection {
   height: 30px;
 }
 
@@ -13781,4 +13802,21 @@ body[class*="m-e-calendar_page_"] .ui-datepicker .ui-datepicker-next {
 
 .form-wrap .wp-picker-input-wrap label {
   padding: 0;
+}
+
+.mec-notice-content {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 20px;
+}
+
+.mec-notice-content h3,
+.mec-notice-content p {
+  margin: 0;
+  padding: 0;
+}
+
+.mec-notice-content .button-primary {
+  margin-block-start: 15px;
 }

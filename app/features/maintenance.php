@@ -54,6 +54,9 @@ class MEC_feature_maintenance extends MEC_base
 
         // Do Events Purge
         if ($purge_interval) $this->events('purge', $purge_interval);
+
+        // QR Code Remove
+        $this->qrcode_images();
     }
 
     public function events($type, $interval)
@@ -78,6 +81,33 @@ class MEC_feature_maintenance extends MEC_base
 
             if ($type === 'trash') wp_trash_post($event_id);
             else if ($type === 'purge') wp_delete_post($event_id, true);
+        }
+    }
+
+    public function qrcode_images()
+    {
+        $upload_dir = wp_upload_dir();
+        $dir_path = $upload_dir['basedir'] . DIRECTORY_SEPARATOR . 'mec' . DIRECTORY_SEPARATOR;
+
+        if (is_dir($dir_path))
+        {
+            $files = glob($dir_path . '*.png');
+
+            $now = time();
+            $seven_days = 7 * DAY_IN_SECONDS;
+
+            foreach ($files as $file)
+            {
+                if (is_file($file))
+                {
+                    $file_mtime = filemtime($file);
+
+                    if ($file_mtime && ($now - $file_mtime) >= $seven_days)
+                    {
+                        unlink($file);
+                    }
+                }
+            }
         }
     }
 }

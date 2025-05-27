@@ -301,6 +301,10 @@ jQuery(document).ready(function ($) {
     width: "33%",
   });
 
+  jQuery("#mec_h_fontfamily").select2();
+
+  jQuery("#mec_p_fontfamily").select2();
+
   $(".mec-import-settings").on("click", function (e) {
     e.preventDefault();
     var value = $(".mec-import-settings-content").val();

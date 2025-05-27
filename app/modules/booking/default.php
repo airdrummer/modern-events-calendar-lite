@@ -548,6 +548,10 @@ function mec_book_form_submit'.esc_js($uniqueid).'()
         
         jQuery("#mec_book_form'.esc_js($uniqueid).' .mec-book-ticket-container .mec-book-reg-field-tel").filter(":visible").each(function(i)
         {
+            if ( jQuery(this).find(".mec-booking-field-required").length) {
+                return;
+            }
+        
             var ticket_id = jQuery(this).data("ticket-id");
             var field_id = jQuery(this).data("field-id");
             
@@ -567,6 +571,40 @@ function mec_book_form_submit'.esc_js($uniqueid).'()
                 
                 if ( jQuery(this).find(".mec-booking-field-required").length < 1) {
                     jQuery(this).find("label").append("<span class=\'mec-booking-field-required\'>'.esc_html__('Tel format is not valid.', 'modern-events-calendar-lite').'</span>");
+                }
+            }
+            else
+            {
+                jQuery(this).find(".mec-booking-field-required").remove();
+                jQuery(this).removeClass("mec-red-notification");
+            }
+        });
+        
+        jQuery("#mec_book_form'.esc_js($uniqueid).' .mec-book-ticket-container .mec-book-reg-field-email").filter(":visible").each(function(i)
+        {
+            if ( jQuery(this).find(".mec-booking-field-required").length) {
+                return;
+            }
+            
+            var ticket_id = jQuery(this).data("ticket-id");
+            var field_id = jQuery(this).data("field-id");
+            
+            const email_format_regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const email_value = jQuery("#mec_book_form'.esc_js($uniqueid).' input[name=\'book[tickets]["+ticket_id+"][reg]["+field_id+"]\']").val();
+        
+            if(email_value && !email_format_regex.test(email_value))
+            {
+                valid = false;
+                jQuery(this).addClass("mec-red-notification");
+        
+                if(!focused)
+                {
+                    jQuery(this).find(":input").focus();
+                    focused = true;
+                }
+        
+                if ( jQuery(this).find(".mec-booking-field-required").length < 1) {
+                    jQuery(this).find("label").append("<span class=\'mec-booking-field-required\'>'.esc_html__('Email format is not valid.', 'modern-events-calendar-lite').'</span>");
                 }
             }
             else

@@ -35,8 +35,8 @@ class EventBanner extends WidgetBase {
 
         if ( true === $this->is_editor_mode && !$single->can_display_banner_module($event)) {
             $html = '<div class="mec-content-notification"><p>'
-                .'<span>'. esc_html__('This widget is displayed if Enabled Banner is set. please set Enable Event Banner Feature for Single Event Page.', 'modern-events-calendar-lite').'</span>'
-                . '<a href="https://webnus.net/dox/modern-events-calendar/add-event/#Event_Banner" target="_blank">' . esc_html__('How to set Enable Event Banner Feature', 'modern-events-calendar-lite') . ' </a>'
+                .'<span>'. esc_html__('To show this widget, you need to set "Event Banner" for your latest event.', 'modern-events-calendar-lite').'</span>'
+                . '<a href="https://webnus.net/dox/modern-events-calendar/add-event/#Event_Banner" target="_blank">' . esc_html__('Read More', 'modern-events-calendar-lite') . ' </a>'
                 .'</p></div>';
 		} else {
 

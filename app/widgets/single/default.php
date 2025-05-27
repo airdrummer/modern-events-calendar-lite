@@ -88,7 +88,7 @@ if($this->is_enabled('data_time') || $this->is_enabled('local_time') || $this->i
             ?>
             <div class="mec-single-event-category">
                 <?php echo $icons->display('folder'); ?>
-                <dt><?php echo esc_html($single->main->m('taxonomy_categories', esc_html__('Category', 'modern-events-calendar-lite'))); ?></dt>
+                <h3 class="mec-events-single-section-title mec-category"><?php echo esc_html($single->main->m('taxonomy_categories', esc_html__('Category', 'modern-events-calendar-lite'))); ?></h3>
                 <dl>
                 <?php
                 foreach($event->data->categories as $category)
@@ -116,7 +116,7 @@ if($this->is_enabled('data_time') || $this->is_enabled('local_time') || $this->i
         {
             ?>
             <div class="mec-single-event-organizer">
-                <?php echo $icons->display('home'); ?>
+                <?php echo $icons->display('people'); ?>
                 <h3 class="mec-events-single-section-title"><?php echo esc_html($single->main->m('taxonomy_organizer', esc_html__('Organizer', 'modern-events-calendar-lite'))); ?></h3>
 
                 <?php if(isset($organizer['thumbnail']) and trim($organizer['thumbnail'])): ?>
@@ -134,7 +134,7 @@ if($this->is_enabled('data_time') || $this->is_enabled('local_time') || $this->i
                                     <h6><?php echo (isset($organizer['name']) ? esc_html($organizer['name']) : ''); ?></h6>
                                 </a>
                             <?php }else{ ?>
-                                <?php echo $icons->display('home'); ?>
+                                <?php echo $icons->display('people'); ?>
                                 <h6><?php echo (isset($organizer['name']) ? esc_html($organizer['name']) : ''); ?></h6>
                             <?php } ?>
                         </dd>
@@ -175,7 +175,7 @@ if($this->is_enabled('data_time') || $this->is_enabled('local_time') || $this->i
         <!-- Register Booking Button -->
         <?php if($single->main->can_show_booking_module($event, true) and $this->is_enabled('register_btn')): ?>
             <?php $data_lity_class = ''; if(isset($settings['single_booking_style']) and $settings['single_booking_style'] == 'modal' ){ $data_lity_class = 'mec-booking-data-lity'; }  ?>
-            <a class="mec-booking-button-register mec-booking-button mec-bg-color <?php echo esc_attr($data_lity_class); ?>"
+            <a class="mec-booking-button-register mec-booking-button mec-bg-color <?php echo esc_attr($data_lity_class); ?>" href="#booking-form"
                 data-action="<?php echo isset($settings['single_booking_style']) && $settings['single_booking_style'] == 'modal' ? 'modal' : 'scroll'; ?>"
                 data-target="#mec-events-meta-group-booking-<?php echo esc_attr($single->uniqueid); ?>">
                 <?php echo esc_html($single->main->m('register_button', esc_html__('REGISTER', 'modern-events-calendar-lite'))); ?>

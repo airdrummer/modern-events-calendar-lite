@@ -216,4 +216,24 @@ class MEC_transaction extends MEC_base
         $html .= '</ul>';
         return $html;
     }
+
+    public function get_main_attendee_email()
+    {
+        $tickets = $this->get_tickets();
+
+        $email = '';
+        if (is_array($tickets) && count($tickets))
+        {
+            foreach($tickets as $ticket)
+            {
+                if (isset($ticket['email']) && is_email($ticket['email']))
+                {
+                    $email = $ticket['email'];
+                    break;
+                }
+            }
+        }
+
+        return $email;
+    }
 }

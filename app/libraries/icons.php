@@ -85,6 +85,11 @@ class MEC_icons
                 'default' => '<i class="mec-sl-home"></i>',
                 'modules' => ['single'],
             ],
+            'people' => [
+                'name' => __('People Icon', 'modern-events-calendar-lite'),
+                'default' => '<i class="mec-sl-people"></i>',
+                'modules' => ['single'],
+            ],
             'phone' => [
                 'name' => __('Phone Icon', 'modern-events-calendar-lite'),
                 'default' => '<i class="mec-sl-phone"></i>',

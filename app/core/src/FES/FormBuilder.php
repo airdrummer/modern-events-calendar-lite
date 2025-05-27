@@ -28,9 +28,9 @@ class FormBuilder extends Singleton {
 			echo '<div class="mec-content-notification">
 					<p>'
 						.'<span>'
-							. esc_html__('This widget is displayed if booking module is active. In order for the widget in this page to be displayed correctly, please activate Booking module.', 'modern-events-calendar-lite')
+							. esc_html__('To show this widget, you need to set "Tickets" for your latest event.', 'modern-events-calendar-lite')
 						.'</span>'
-						.'<a href="https://webnus.net/dox/modern-events-calendar/booking/" target="_blank">' . esc_html__('How to set booking module', 'modern-events-calendar-lite') . ' </a>'
+						.'<a href="https://webnus.net/dox/modern-events-calendar/add-event/#Tickets" target="_blank">' . esc_html__('Read More', 'modern-events-calendar-lite') . ' </a>'
 					.'</p>'
 				.'</div>';
 
@@ -849,7 +849,6 @@ class FormBuilder extends Singleton {
 						.'<span>'
 							. esc_html__('The output cannot be displayed.', 'modern-events-calendar-lite')
 						.'</span>'
-						.'<a href="#" target="_blank">' . esc_html__('How to set', 'modern-events-calendar-lite') . ' </a>'
 					.'</p>'
 				.'</div>';
             }
@@ -1238,8 +1237,8 @@ class FormBuilder extends Singleton {
         if( $is_edit_mode && empty( $label_terms ) ){
 
             echo '<div class="mec-content-notification"><p>'
-					.'<span>'. esc_html__('This widget is displayed if label is set. In order for the widget in this page to be displayed correctly, please set label for your last event.', 'modern-events-calendar-lite').'</span>'
-					. '<a href="https://webnus.net/dox/modern-events-calendar/label/" target="_blank">' . esc_html__('How to set label', 'modern-events-calendar-lite') . ' </a>'
+					.'<span>'. esc_html__('To show this widget, you need to set "Label" for your latest event.', 'modern-events-calendar-lite').'</span>'
+					. '<a href="https://webnus.net/dox/modern-events-calendar/label/" target="_blank">' . esc_html__('Read More', 'modern-events-calendar-lite') . ' </a>'
 				.'</p></div>';
         }
 
@@ -1357,8 +1356,8 @@ class FormBuilder extends Singleton {
             if( $is_edit_mode ){
 
                 echo '<div class="mec-content-notification"><p>'
-					.'<span>'. esc_html__('This widget is displayed if speaker is set. In order for the widget in this page to be displayed correctly, please set speaker for your last event.', 'modern-events-calendar-lite').'</span>'
-					. '<a href="https://webnus.net/dox/modern-events-calendar/speaker/" target="_blank">' . esc_html__('How to set speaker', 'modern-events-calendar-lite') . ' </a>'
+					.'<span>'. esc_html__('To show this widget, you need to enable "Speakers" module.', 'modern-events-calendar-lite').'</span>'
+					. '<a href="https://webnus.net/dox/modern-events-calendar/event-modules/#Speakers" target="_blank">' . esc_html__('Read More', 'modern-events-calendar-lite') . ' </a>'
 				.'</p></div>';
             }
 
@@ -1465,7 +1464,6 @@ class FormBuilder extends Singleton {
 						.'<span>'
 							. esc_html__('The output cannot be displayed.', 'modern-events-calendar-lite')
 						.'</span>'
-						.'<a href="#" target="_blank">' . esc_html__('How to set', 'modern-events-calendar-lite') . ' </a>'
 					.'</p>'
 				.'</div>';
             }
@@ -1549,7 +1547,7 @@ class FormBuilder extends Singleton {
 
         $agreement_page = $atts['agreement_page'] ?? 0;
         $checked = $atts['checked'] ?? false;
-        $custom_text = $atts['agreement_text'] ?? esc_html__('I accept the Privacy Policy in order to submit an event.', 'modern-events-calendar-lite');
+        $custom_text = $atts['agreement_text'] ?? ($agreement_page ? esc_html__('I accept the %s in order to submit an event.', 'modern-events-calendar-lite') : esc_html__('I accept the Privacy Policy in order to submit an event.', 'modern-events-calendar-lite'));
         ?>
         <div id="mec-fes-agreement">
             <div class="mec-form-row">
@@ -1801,6 +1799,8 @@ class FormBuilder extends Singleton {
         // Main
         $main = \MEC\Base::get_main();
 
+        $settings = $main->get_settings();
+
         // All Upcoming Events
         $all_events = $main->get_upcoming_event_ids();
         if(!is_array($all_events)) $all_events = [];
@@ -1820,7 +1820,7 @@ class FormBuilder extends Singleton {
             <h4><?php esc_html_e('Related Events', 'modern-events-calendar-lite'); ?></h4>
             <div id="mec_meta_box_related_events_options">
                 <select id="mec_related_events" class="mec-related_events-dropdown-select2" name="mec[related_events][]" multiple="multiple">
-                <?php foreach($all_events as $all_event_id): if($all_event_id == $post->ID) continue; $title = get_post($all_event_id)->post_title; ?>
+                <?php foreach($all_events as $all_event_id): if($all_event_id == $post->ID) continue; if(isset($settings['repe_current_user']) && $settings['repe_current_user'] && get_post($all_event_id)->post_author != get_current_user_id()) continue; $title = get_post($all_event_id)->post_title; ?>
                     <option value="<?php echo esc_attr($all_event_id); ?>" <?php echo in_array($all_event_id, $related_events) ? 'selected="selected"' : ''; ?>><?php echo esc_html($title); ?></option>
                 <?php endforeach; ?>
                 </select>
@@ -2081,12 +2081,16 @@ class FormBuilder extends Singleton {
         }
 
         $add_new_organizer = ($is_fes_form and isset($settings['fes_add_organizer'])) ? $settings['fes_add_organizer'] : 1;
+        $required = ($is_fes_form and isset($settings['fes_required_organizer']) and $settings['fes_required_organizer']);
+        $optional = !$required;
         ?>
         <div class="mec-meta-box-fields mec-event-tab-content" id="mec-organizer">
-            <h4><?php echo sprintf(esc_html__('Event Main %s', 'modern-events-calendar-lite'), \MEC\Base::get_main()->m('taxonomy_organizer', esc_html__('Organizer', 'modern-events-calendar-lite'))); ?></h4>
+            <h4><?php echo sprintf(esc_html__('Event Main %s', 'modern-events-calendar-lite'), \MEC\Base::get_main()->m('taxonomy_organizer', esc_html__('Organizer', 'modern-events-calendar-lite'))); ?> <?php echo ($required ? '<span class="mec-required">*</span>' : ''); ?></h4>
 			<div class="mec-form-row">
 				<select name="mec[organizer_id]" id="mec_organizer_id" title="<?php echo esc_attr__(\MEC\Base::get_main()->m('taxonomy_organizer', esc_html__('Organizer', 'modern-events-calendar-lite')), 'modern-events-calendar-lite'); ?>">
+                    <?php if($optional): ?>
                     <option value="1"><?php esc_html_e('Hide organizer', 'modern-events-calendar-lite'); ?></option>
+                    <?php endif; ?>
                     <?php if($add_new_organizer): ?>
 					<option value="0"><?php esc_html_e('Insert a new organizer', 'modern-events-calendar-lite'); ?></option>
                     <?php endif; ?>
@@ -2809,7 +2813,6 @@ class FormBuilder extends Singleton {
 						.'<span>'
 							. esc_html__('Payment gateways per event is disabled.', 'modern-events-calendar-lite')
 						.'</span>'
-						.'<a href="#" target="_blank">' . esc_html__('How to set', 'modern-events-calendar-lite') . ' </a>'
 					.'</p>'
 				.'</div>';
             }
@@ -2832,7 +2835,6 @@ class FormBuilder extends Singleton {
                     .'<span>'
                         . esc_html__('There is no payment gateway to show.', 'modern-events-calendar-lite')
                     .'</span>'
-                    .'<a href="#" target="_blank">' . esc_html__('How to set', 'modern-events-calendar-lite') . ' </a>'
                 .'</p>'
             .'</div>';
 
@@ -4154,7 +4156,6 @@ class FormBuilder extends Singleton {
                     .'<span>'
                         . esc_html__('Captcha is not enabled.', 'modern-events-calendar-lite')
                     .'</span>'
-                    .'<a href="#" target="_blank">' . esc_html__('How to set', 'modern-events-calendar-lite') . ' </a>'
                 .'</p>'
             .'</div>';
         }

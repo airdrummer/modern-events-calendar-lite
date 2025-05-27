@@ -810,8 +810,14 @@ class MEC_notifications extends MEC_base
             }
         }
 
+        // Attendees
+        $attendees = get_post_meta($book_id, 'mec_attendees', true);
+        if (!is_array($attendees) || !count($attendees)) $attendees = [get_post_meta($book_id, 'mec_attendee', true)];
+
+        $main_attendee = $attendees[0] ?? [];
+
         $message = $notif_settings['admin_notification']['content'] ?? '';
-        $message = $this->content($this->get_content($message, 'admin_notification', $event_id, $book_id), $book_id);
+        $message = $this->content($this->get_content($message, 'admin_notification', $event_id, $book_id), $book_id, $main_attendee);
 
         // Book Data
         $message = str_replace('%%admin_link%%', $this->link(['post_type' => $this->main->get_book_post_type()], $this->main->URL('admin') . 'edit.php'), $message);
@@ -925,6 +931,7 @@ class MEC_notifications extends MEC_base
             $message = str_replace('%%zoom_link%%', get_post_meta($event_id, 'mec_zoom_link_url', true), $message);
             $message = str_replace('%%zoom_password%%', get_post_meta($event_id, 'mec_zoom_password', true), $message);
             $message = str_replace('%%zoom_embed%%', get_post_meta($event_id, 'mec_zoom_embed', true), $message);
+            $message = str_replace('%%zoom_meeting_id%%', get_post_meta($event_id, 'mec_zoom_meeting_id', true), $message);
 
             $message = $this->content($this->get_content($message, 'booking_reminder', $event_id, $book_id), $book_id, $attendee, $timestamps);
 
@@ -1098,8 +1105,8 @@ class MEC_notifications extends MEC_base
         $message = str_replace('%%zoom_join%%', get_post_meta($event_id, 'mec_zoom_join_url', true), $message);
         $message = str_replace('%%zoom_link%%', get_post_meta($event_id, 'mec_zoom_link_url', true), $message);
         $message = str_replace('%%zoom_password%%', get_post_meta($event_id, 'mec_zoom_password', true), $message);
-        $message = str_replace('%%zoom_meeting_id%%', get_post_meta($event_id, 'mec_zoom_meeting_id', true), $message);
         $message = str_replace('%%zoom_embed%%', get_post_meta($event_id, 'mec_zoom_embed', true), $message);
+        $message = str_replace('%%zoom_meeting_id%%', get_post_meta($event_id, 'mec_zoom_meeting_id', true), $message);
 
         // Remove remained placeholders
         $message = preg_replace('/%%.*%%/', '', $message);
@@ -1354,8 +1361,8 @@ class MEC_notifications extends MEC_base
             $message = str_replace('%%zoom_join%%', get_post_meta($post->ID, 'mec_zoom_join_url', true), $message);
             $message = str_replace('%%zoom_link%%', get_post_meta($post->ID, 'mec_zoom_link_url', true), $message);
             $message = str_replace('%%zoom_password%%', get_post_meta($post->ID, 'mec_zoom_password', true), $message);
-            $message = str_replace('%%zoom_meeting_id%%', get_post_meta($post->ID, 'mec_zoom_meeting_id', true), $message);
             $message = str_replace('%%zoom_embed%%', get_post_meta($post->ID, 'mec_zoom_embed', true), $message);
+            $message = str_replace('%%zoom_meeting_id%%', get_post_meta($post->ID, 'mec_zoom_meeting_id', true), $message);
 
             $message = apply_filters('mec_notifications_user_event_publishing_render_content', $message, $post->ID, $post, $new, $old);
 
@@ -1570,8 +1577,8 @@ class MEC_notifications extends MEC_base
             $message = str_replace('%%zoom_join%%', get_post_meta($event_id, 'mec_zoom_join_url', true), $message);
             $message = str_replace('%%zoom_link%%', get_post_meta($event_id, 'mec_zoom_link_url', true), $message);
             $message = str_replace('%%zoom_password%%', get_post_meta($event_id, 'mec_zoom_password', true), $message);
-            $message = str_replace('%%zoom_meeting_id%%', get_post_meta($event_id, 'mec_zoom_meeting_id', true), $message);
             $message = str_replace('%%zoom_embed%%', get_post_meta($event_id, 'mec_zoom_embed', true), $message);
+            $message = str_replace('%%zoom_meeting_id%%', get_post_meta($event_id, 'mec_zoom_meeting_id', true), $message);
 
             $message = $this->content($this->get_content($message, 'event_finished', $event_id, $book_id), $book_id, $attendee, $timestamps);
 

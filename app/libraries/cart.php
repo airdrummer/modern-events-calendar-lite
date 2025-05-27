@@ -237,6 +237,29 @@ class MEC_cart extends MEC_base
         return $event_id;
     }
 
+    public function get_main_attendee_email($cart = NULL)
+    {
+        if(is_null($cart))
+        {
+            $cart_id = $this->get_cart_id();
+            $cart = $this->get_cart($cart_id);
+        }
+
+        // Booking Library
+        $book = $this->getBook();
+
+        $main_attendee_email = NULL;
+        foreach($cart as $transaction_id)
+        {
+            $TO = $book->get_TO($transaction_id);
+
+            $main_attendee_email = $TO->get_main_attendee_email();
+            break;
+        }
+
+        return $main_attendee_email;
+    }
+
     public function get_invoice_link($cart_id)
     {
         if(isset($this->settings['mec_cart_invoice']) and !$this->settings['mec_cart_invoice']) return '';

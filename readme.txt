@@ -3,8 +3,8 @@ Contributors: webnus
 Donate link: https://webnus.net
 Tags: Event, Events, Calendar, Booking, Schedule, Organizer, Venue
 Requires at least: 4.0.0
-Tested up to: 6.7.1
-Stable tag: 7.21.0.1
+Tested up to: 6.8.1
+Stable tag: 7.22.0
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -472,9 +472,26 @@ You can see [plugin documentation](https://webnus.net/dox/modern-events-calendar
 43. WordPress Event Calendar - Daily view(Fluent View Layouts Addon)
 
 == Changelog ==
-= v 7.21.0.1 - 14 apr 2025 =
-- added missing timezone display, reformat
-- fixed countdown
+= v 7.22.0 - 7 May 2025 =
+- Added: Tickets endpoint to the restful API.
+- Added: Tax / fees endpoint to the restful API.
+- Added: An ability to make the organizer field required in “Frontend Submission”.
+- Added: An option to restrict the related events in “Frontend Submission” to current user only.
+- Added: Translation ability for the more text in general skin.
+- Enhanced: The QR code generation and storage.
+- Fixed: An issue in displaying only expired events.
+- Fixed: Some PHP warning and notices.
+- Fixed: An issue in downloading event attendees from frontend dashboard.
+- Fixed: Issue of displaying “Create New Event” button in WordPress dashboard for non authorized users.
+- Fixed: An issue with events external links.
+- Fixed: An issue in the include / exclude filters for the hierarchical categories and locations.
+- Fixed: An issue in admin notification for displaying main attendee information.
+- Fixed: An issue in agreement checkbox for the “Frontend Submission”.
+- Fixed: An issue in stripe invoice for MEC cart system.
+- Fixed: Email validation issue in booking form.
+- Fixed: Some date and hour display issue for custom day events in special conditions.
+- Fixed: An issue in filtering ongoing events in grid skin.
+- Fixed: Some issues for single event date formats.
 
 = v 7.21.0 - 9 April 2025 =
 - Added: Icons endpoint to the Restful API.

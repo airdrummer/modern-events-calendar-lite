@@ -44,8 +44,8 @@ class EventTags extends WidgetBase
 		if (true === $this->is_editor_mode && empty($tags)) {
 
 			$html = '<div class="mec-content-notification"><p>'
-				. '<span>' . esc_html__('This widget is displayed if tags is set. In order for the widget in this page to be displayed correctly, please set tags for your last event.', 'modern-events-calendar-lite') . '</span>'
-				. '<a href="https://webnus.net/dox/modern-events-calendar/tags/" target="_blank">' . esc_html__('How to set tags', 'modern-events-calendar-lite') . ' </a>'
+				. '<span>' . esc_html__('To show this widget, you need to set "Tags" for your latest event.', 'modern-events-calendar-lite') . '</span>'
+				. '<a href="https://webnus.net/dox/modern-events-calendar/tags/" target="_blank">' . esc_html__('Read More', 'modern-events-calendar-lite') . ' </a>'
 				. '</p></div>';
 		} else {
 

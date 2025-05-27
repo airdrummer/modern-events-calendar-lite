@@ -170,6 +170,7 @@ class MEC_skin_timeline extends MEC_skins
         // Show Past Events
         if($this->show_only_expired_events)
         {
+            $this->order_method = 'DESC';
             $this->atts['show_past_events'] = '1';
             $this->args['order'] = 'DESC';
         }
@@ -280,7 +281,7 @@ class MEC_skin_timeline extends MEC_skins
         
         // Return the events
         $this->atts['return_items'] = true;
-        $this->loading_more = true;
+        if (!$apply_sf_date) $this->loading_more = true;
         
         // Fetch the events
         $this->fetch();

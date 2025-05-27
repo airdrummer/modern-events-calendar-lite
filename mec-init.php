@@ -41,13 +41,13 @@ class MEC
      * @return static
      */
     public static function instance()
-	{
+    {
         // Get an instance of Class
         if(!self::$instance) self::$instance = new self();
 
         // Return the instance
         return self::$instance;
-	}
+    }
 
     /**
      * This method initialize the MEC, This add WordPress Actions, Filters and Widgets
@@ -82,7 +82,9 @@ class MEC
         $factory->load_features();
 
         // Loading MEC skins
-        $factory->load_skins();
+        add_action('init', function () use ($factory) {
+            $factory->load_skins();
+        }, 11);
 
         // Loading MEC addons
         $factory->load_addons();
@@ -196,9 +198,9 @@ class MEC
                 $child_theme_path = get_stylesheet_directory() .DS. 'webnus' .DS. MEC_DIRNAME .DS. $file;
 
                 /**
-                * If overridden file exists on the child theme, then use it instead of normal or main theme file
-                * For example you can override /path/to/plugin/app/libraries/base.php file in your theme by adding a file into the /path/to/child/theme/webnus/modern-events-calendar/app/libraries/base.php
-                */
+                 * If overridden file exists on the child theme, then use it instead of normal or main theme file
+                 * For example you can override /path/to/plugin/app/libraries/base.php file in your theme by adding a file into the /path/to/child/theme/webnus/modern-events-calendar/app/libraries/base.php
+                 */
                 if(file_exists($child_theme_path))
                 {
                     $overridden = true;
@@ -289,3 +291,4 @@ class MEC
         return $render->vcategory();
     }
 }
+

@@ -61,7 +61,7 @@ elseif($week_start == 5) // Friday
             // Print events
             if(isset($events[$today]) && count($events[$today]))
             {
-                echo '<dt class="mec-calendar-day '.esc_attr($selected_day).'" data-mec-cell="'.esc_attr($day_id).'" data-day="'.esc_attr($list_day).'" data-month="'.date('Ym', $time).'"><div class="mec-calendar-novel-selected-day '.esc_attr($selected_day_date).'">'.MEC_kses::full(apply_filters( 'mec_filter_list_day_value', $list_day, $today, $this)).'</div>';
+                echo '<dt class="mec-calendar-day mec-table-nullday '.esc_attr($selected_day).'" data-mec-cell="'.esc_attr($day_id).'" data-day="'.esc_attr($list_day).'" data-month="'.date('Ym', $time).'"><div class="mec-calendar-novel-selected-day '.esc_attr($selected_day_date).'">'.MEC_kses::full(apply_filters( 'mec_filter_list_day_value', $list_day, $today, $this)).'</div>';
                 foreach($events[$today] as $event)
                 {
                     $event_color = $this->get_event_color_dot($event, true);
@@ -176,7 +176,7 @@ elseif($week_start == 5) // Friday
                 // Print events
                 if(isset($events[$today]) && count($events[$today]))
                 {
-                    echo '<dt class="mec-calendar-day '.esc_attr($selected_day).'" data-mec-cell="'.esc_attr($day_id).'" data-day="'.esc_attr($list_day).'" data-month="'.date('Ym', $time).'"><div class="mec-calendar-novel-selected-day '.esc_attr($selected_day_date).'">'.MEC_kses::full(apply_filters( 'mec_filter_list_day_value', $list_day, $today, $this)).'</div>';
+                    echo '<dt class="mec-calendar-day mec-table-nullday '.esc_attr($selected_day).'" data-mec-cell="'.esc_attr($day_id).'" data-day="'.esc_attr($list_day).'" data-month="'.date('Ym', $time).'"><div class="mec-calendar-novel-selected-day '.esc_attr($selected_day_date).'">'.MEC_kses::full(apply_filters( 'mec_filter_list_day_value', $list_day, $today, $this)).'</div>';
                     foreach($events[$today] as $event)
                     {
                         $event_color = $this->get_event_color_dot($event, true);
