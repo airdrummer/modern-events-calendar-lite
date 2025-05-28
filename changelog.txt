@@ -1,4 +1,8 @@
-﻿v 7.22.0 - 7 May 2025
+﻿v 7.22.0.1 - 28 may 2025
+- added missing timezone display, reformat
+- fixed countdown
+
+v 7.22.0 - 7 May 2025
 - Added: Tickets endpoint to the restful API.
 - Added: Tax / fees endpoint to the restful API.
 - Added: An ability to make the organizer field required in “Frontend Submission”.
