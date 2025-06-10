@@ -1,10 +1,10 @@
-﻿=== Modern Events Calendar Lite ===
+=== Modern Events Calendar Lite ===
 Contributors: webnus
 Donate link: https://webnus.net
 Tags: Event, Events, Calendar, Booking, Schedule, Organizer, Venue
 Requires at least: 4.0.0
 Tested up to: 6.8.1
-Stable tag: 7.23.0
+Stable tag: 7.23.0.1
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -472,6 +472,12 @@ You can see [plugin documentation](https://webnus.net/dox/modern-events-calendar
 43. WordPress Event Calendar - Daily view(Fluent View Layouts Addon)
 
 == Changelog ==
+
+
+= v 7.23.0.1 - 10 june 2025 =
+- added missing timezone display, reformat
+- fixed countdown
+
 = v 7.23.0 - 7 June 2025 =
 - Added: An event search form to the frontend submission.
 - Improved: The backend booking menu date filter to support multiple date bookings in addition to single date bookings.

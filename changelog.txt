@@ -1,4 +1,8 @@
-﻿v 7.23.0 - 7 June 2025
+﻿v 7.23.0.1 - 10 june 2025
+- added missing timezone display, reformat
+- fixed countdown
+
+v 7.23.0 - 7 June 2025
 - Added: An event search form to the frontend submission.
 - Improved: The backend booking menu date filter to support multiple date bookings in addition to single date bookings.
 - Fixed: Some issues in family tickets.
