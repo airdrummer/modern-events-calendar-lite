@@ -4650,8 +4650,8 @@ jQuery(window).on('load', function()
         var callback = callBack;
         var selector = $(this);
 
-        startCountdown();
         var intervalID = setInterval(startCountdown, interval);
+        startCountdown();
 
         function startCountdown() 
         {

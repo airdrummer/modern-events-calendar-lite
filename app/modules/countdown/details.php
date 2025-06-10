@@ -103,6 +103,7 @@ if (isset($_SERVER['HTTP_USER_AGENT']))
 }
 
 // Generating javascript code of countdown default module
+$countdown_interval = 30000;  // setting tbd
 $defaultjs = '<script>
 jQuery(document).ready(function($)
 {
