@@ -1103,3 +1103,15 @@ function mec_faq_remove(key)
 {
     jQuery("#mec_faq_row"+key).remove();
 }
+
+jQuery(document).on('focus', '.mec_date_picker', function () {
+    if (!jQuery(this).hasClass('hasDatepicker')) {
+        jQuery(this).datepicker({
+            changeYear: true,
+            changeMonth: true,
+            dateFormat: 'yy-mm-dd',
+            gotoCurrent: true,
+            yearRange: 'c-3:c+5',
+        });
+    }
+});

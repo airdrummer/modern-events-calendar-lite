@@ -46,7 +46,7 @@ class EventLocations extends WidgetBase {
 			ob_start();
 			$location = $locations[$primary_location_id];
 
-			echo '<div class="mec-event-meta">';
+			echo '<div class="mec-event-meta mec-color-before">';
 				?>
 				<div class="mec-single-event-location">
                     <?php echo $this->icons->display('location-pin'); ?>
@@ -55,34 +55,36 @@ class EventLocations extends WidgetBase {
 					<?php if ($location['thumbnail']) : ?>
 						<img class="mec-img-location" src="<?php echo esc_url($location['thumbnail']); ?>" alt="<?php echo (isset($location['name']) ? esc_attr($location['name']) : ''); ?>">
 					<?php endif; ?>
-                    <dd class="author fn org"><?php echo MEC_kses::element($this->get_location_html($location)); ?></dd>
+					<dl>
+						<dd class="author fn org"><?php echo MEC_kses::element($this->get_location_html($location)); ?></dd>
 
-					<dd class="location">
-						<address class="mec-events-address"><span class="mec-address"><?php echo (isset($location['address']) ? esc_html($location['address']) : ''); ?></span></address>
-					</dd>
-
-                    <?php if(isset($location['opening_hour']) and trim($location['opening_hour'])): ?>
-                        <dd class="mec-location-opening-hour">
-                            <?php echo $this->icons->display('clock'); ?>
-                            <h6><?php esc_html_e('Opening Hour', 'modern-events-calendar-lite'); ?></h6>
-                            <span><?php echo esc_html($location['opening_hour']); ?></span>
-                        </dd>
-                    <?php endif; ?>
-
-					<?php if(isset($location['url']) and trim($location['url'])): ?>
-						<dd class="mec-location-url">
-							<i class="mec-sl-sitemap"></i>
-							<h6><?php esc_html_e('Website', 'modern-events-calendar-lite'); ?></h6>
-							<span><a href="<?php echo esc_url($location['url']); ?>" class="mec-color-hover" target="<?php echo $this->settings['advanced_location']['location_link_target'] ?? '_blank'; ?>"><?php echo esc_url( $location['url'] ); ?></a></span>
+						<dd class="location">
+							<address class="mec-events-address"><span class="mec-address"><?php echo (isset($location['address']) ? esc_html($location['address']) : ''); ?></span></address>
 						</dd>
-					<?php endif;?>
 
-                    <?php if(isset($location['tel']) and trim($location['tel'])): ?>
-                    <dd class="mec-location-tel">
-                        <?php echo $this->icons->display('phone'); ?>
-                        <h6><?php esc_html_e('Phone', 'modern-events-calendar-lite'); ?></h6>
-                        <span><a href="tel:<?php echo $location['tel']; ?>" class="mec-color-hover"><?php echo esc_html($location['tel']); ?></a></span>
-                    </dd>
+						<?php if(isset($location['opening_hour']) and trim($location['opening_hour'])): ?>
+							<dd class="mec-location-opening-hour">
+								<?php echo $this->icons->display('clock'); ?>
+								<h6><?php esc_html_e('Opening Hour', 'modern-events-calendar-lite'); ?></h6>
+								<span><?php echo esc_html($location['opening_hour']); ?></span>
+							</dd>
+						<?php endif; ?>
+
+						<?php if(isset($location['url']) and trim($location['url'])): ?>
+							<dd class="mec-location-url">
+								<i class="mec-sl-sitemap"></i>
+								<h6><?php esc_html_e('Website', 'modern-events-calendar-lite'); ?></h6>
+								<span><a href="<?php echo esc_url($location['url']); ?>" class="mec-color-hover" target="<?php echo $this->settings['advanced_location']['location_link_target'] ?? '_blank'; ?>"><?php echo esc_url( $location['url'] ); ?></a></span>
+							</dd>
+						<?php endif;?>
+
+						<?php if(isset($location['tel']) and trim($location['tel'])): ?>
+						<dd class="mec-location-tel">
+							<?php echo $this->icons->display('phone'); ?>
+							<h6><?php esc_html_e('Phone', 'modern-events-calendar-lite'); ?></h6>
+							<span><a href="tel:<?php echo $location['tel']; ?>" class="mec-color-hover"><?php echo esc_html($location['tel']); ?></a></span>
+						</dd>
+					</dl>
                     <?php endif;
 
 					$location_description_setting = $settings['location_description'] ?? '';

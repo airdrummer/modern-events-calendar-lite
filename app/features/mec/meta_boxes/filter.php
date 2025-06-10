@@ -83,7 +83,7 @@ $MEC_tax_walker = new MEC_tax_walker();
                     <a class="mec-create-shortcode-tabs-link" data-href="mec_select_speakers" href="#"><?php echo esc_html__('Speakers' , 'modern-events-calendar-lite'); ?></a>
                 <?php endif; ?>
                 <a class="mec-create-shortcode-tabs-link" data-href="mec_select_labels" href="#"><?php echo esc_html__('Labels' , 'modern-events-calendar-lite'); ?></a>
-                <?php if(isset($this->settings['sponsors_status']) and $this->settings['sponsors_status']): ?>
+                <?php if($this->getPro() && isset($this->settings['sponsors_status']) and $this->settings['sponsors_status']): ?>
                 <a class="mec-create-shortcode-tabs-link" data-href="mec_select_sponsors" href="#"><?php echo esc_html__('Sponsors' , 'modern-events-calendar-lite'); ?></a>
                 <?php endif; ?>
                 <a class="mec-create-shortcode-tabs-link" data-href="mec_select_tags" href="#"><?php echo esc_html__('Tags' , 'modern-events-calendar-lite'); ?></a>
@@ -272,7 +272,7 @@ $MEC_tax_walker = new MEC_tax_walker();
                         ?>
                     </select>
                 </div>
-                <?php if(isset($this->settings['sponsors_status']) and $this->settings['sponsors_status']): ?>
+                <?php if($this->getPro() && isset($this->settings['sponsors_status']) and $this->settings['sponsors_status']): ?>
                 <div class="mec-form-row mec-create-shortcode-tab-content" id="mec_select_sponsors">
                     <h3><?php echo esc_html($this->main->m('taxonomy_sponsor', esc_html__('Sponsors', 'modern-events-calendar-lite'))); ?></h3>
                     <p class="description"><?php esc_html_e('Choose your desired sponsors for filtering the events.', 'modern-events-calendar-lite'); ?></p>

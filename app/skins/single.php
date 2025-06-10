@@ -1755,7 +1755,7 @@ class MEC_skin_single extends MEC_skins
                             <?php endif; ?>
 
                             <?php if(isset($field['label'])): ?>
-                            <span class="mec-event-data-field-name"><?php esc_html_e(stripslashes($field['label']), 'modern-events-calendar-lite'); ?>: </span>
+                            <span class="mec-event-data-field-name"><?php esc_html_e(stripslashes($field['label']), 'modern-events-calendar-lite'); ?></span>
                             <?php endif; ?>
 
                             <?php if($type === 'email'): ?>
@@ -1975,17 +1975,33 @@ class MEC_skin_single extends MEC_skins
 
     public function display_datetime_widget($event, $occurrence_full, $occurrence_end_full)
     {
+        // Check if event data exists
+        if(!isset($event->data)) return;
+
+        // Get the date format
+        $this->date_format1 = (isset($this->ml_settings['single_date_format1']) and trim($this->ml_settings['single_date_format1'])) ? $this->ml_settings['single_date_format1'] : 'M d Y';
+
+        // Check if it's a midnight event
         $midnight_event = $this->main->is_midnight_event($event);
         ?>
         <div class="mec-single-event-date">
             <?php echo $this->icons->display('calendar'); ?>
             <h3 class="mec-date"><?php esc_html_e('Date', 'modern-events-calendar-lite'); ?></h3>
             <dl>
-                <?php if($midnight_event): ?>
-                    <dd><abbr class="mec-events-abbr"><?php echo MEC_kses::element($this->main->dateify($event, $this->date_format1)); ?></abbr></dd>
-                <?php else: ?>
-                    <dd><abbr class="mec-events-abbr"><?php echo MEC_kses::element($this->main->date_label($occurrence_full, $occurrence_end_full, $this->date_format1, ' - ', true, 0, $event)); ?></abbr></dd>
-                <?php endif; ?>
+            <?php if($midnight_event): ?>
+                <dd><abbr class="mec-events-abbr"><?php echo MEC_kses::element($this->main->dateify($event, $this->date_format1)); ?></abbr></dd>
+            <?php else: ?>
+                <?php 
+                // If occurrence dates are not provided, get them from event data
+                if(!$occurrence_full && isset($event->date['start'])) {
+                    $occurrence_full = $event->date['start'];
+                }
+                if(!$occurrence_end_full && isset($event->date['end'])) {
+                    $occurrence_end_full = $event->date['end'];
+                }
+                ?>
+                <dd><abbr class="mec-events-abbr"><?php echo MEC_kses::element($this->main->date_label($occurrence_full, $occurrence_end_full, $this->date_format1, ' - ', true, 0, $event)); ?></abbr></dd>
+            <?php endif; ?>
             </dl>
             <?php echo MEC_kses::element($this->main->holding_status($event)); ?>
         </div>
@@ -2001,11 +2017,11 @@ class MEC_skin_single extends MEC_skins
                 <h3 class="mec-time"><?php esc_html_e('Time', 'modern-events-calendar-lite'); ?></h3>
                 <i class="mec-time-comment"><?php echo (isset($time_comment) ? esc_html($time_comment) : ''); ?></i>
                 <dl>
-                    <?php if($allday == '0' and isset($event->data->time) and trim($event->data->time['start'])): ?>
-                        <dd><abbr class="mec-events-abbr"><?php echo esc_html($event->data->time['start']); ?><?php echo (trim($event->data->time['end']) ? ' - '.esc_html($event->data->time['end']) : ''); ?></abbr></dd>
-                    <?php else: ?>
-                        <dd><abbr class="mec-events-abbr"><?php echo esc_html($this->main->m('all_day', esc_html__('All Day' , 'modern-events-calendar-lite'))); ?></abbr></dd>
-                    <?php endif; ?>
+                <?php if($allday == '0' and isset($event->data->time) and trim($event->data->time['start'])): ?>
+                    <dd><abbr class="mec-events-abbr"><?php echo esc_html($event->data->time['start']); ?><?php echo (trim($event->data->time['end']) ? ' - '.esc_html($event->data->time['end']) : ''); ?></abbr></dd>
+                <?php else: ?>
+                    <dd><abbr class="mec-events-abbr"><?php echo esc_html($this->main->m('all_day', esc_html__('All Day' , 'modern-events-calendar-lite'))); ?></abbr></dd>
+                <?php endif; ?>
                 </dl>
             </div>
             <?php

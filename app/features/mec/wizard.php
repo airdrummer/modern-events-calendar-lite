@@ -10,25 +10,35 @@ $settings = $this->main->get_settings();
 $archive_skins = $this->main->get_archive_skins();
 ?>
 <style>
+
+html.wp-toolbar:has(.m-e-calendar_page_MEC-wizard) {
+    padding: 0;
+}
+
 .m-e-calendar_page_MEC-wizard {
     background: #F5F5F5;
 }
+
 .mec-wizard-wrap {
     background: #FFFFFF;
-    padding: 40px 130px;
-    max-width: 520px;
-    margin:100px auto 0;
+    padding: 40px 100px;
+    max-width: 720px;
+    margin: 20px auto;
     border-radius: 22px;
-    box-shadow: 0 3px 40px rgba(0,0,0,0.1);
+    box-shadow: 0 3px 20px rgba(0,0,0,0.1);
     position: relative;
+    box-sizing: border-box;
+}
+#mec_popup_settings_form {
+    height: calc(100% - 37px);
 }
 .mec-wizard-wrap > h3 {
     color: #393C40;
     text-align: center;
     font-weight: 400;
     font-size:21px;
-    margin-top: 5px;
-    margin-bottom: 41px;
+    margin-bottom: 25px;
+    margin-top: 0;
 }
 .mec-wizard-wrap .mec-wizard-starter-video a {
     padding: 33px 20px 19px;
@@ -64,7 +74,7 @@ $archive_skins = $this->main->get_archive_skins();
     color: #52595E;
 }
 .mec-wizard-import-dummy {
-    margin-top: 40px;
+    margin-top: 25px;
 }
 .mec-wizard-import-box svg {
     vertical-align: middle;
@@ -83,7 +93,7 @@ $archive_skins = $this->main->get_archive_skins();
     fill: #00B0DD;
 }
 .mec-wizard-open-popup-box {
-    margin-top: 40px;
+    margin-top: 25px;
 }
 button.mec-wizard-open-popup {
     background: #fff;
@@ -109,7 +119,7 @@ button.mec-wizard-open-popup span {
     text-align: center;
 }
 .mec-wizard-back-button {
-    margin-top: 55px;
+    margin-top: 25px;
     text-align: center;
     color: #959DA4;
     background: #fff;
@@ -140,7 +150,7 @@ button.mec-wizard-open-popup span {
     box-shadow: 0 3px 20px 0 rgb(204 204 204 / 55%)
     border-radius: 10px;
     max-width: 930px;
-    height: 620px;
+    height: 100%;
     margin: 0 auto;
 }
 .mec-wizard-content {
@@ -152,13 +162,13 @@ button.mec-wizard-open-popup span {
     height: 100%;
 }
 .mec-steps-container ul li {
-    height: 60px;
+    height: 46px;
 }
 .mec-wizard-content .mec-steps-container ul li:first-of-type {
-    height: 41px;
+    height: 34px;
 }
 .mec-wizard-content .mec-steps-container ul li:after, .mec-wizard-content .mec-steps-container ul li:before {
-    height: 19px;
+    height: 12px;
 }
 .mec-wizard-content .mec-steps-container ul {
     margin-top: 42px;
@@ -173,7 +183,7 @@ button.mec-wizard-open-popup span {
     display: block;
 }
 .mec-step-wizard-content .mec-form-row {
-    padding: 10px 0;
+    padding: 0;
 }
 .wp-picker-holder {
     position: absolute;
@@ -216,9 +226,7 @@ button.mec-wizard-open-popup span {
 .mec-button-next svg, .mec-button-next svg path {
     fill: #fff;
 }
-.mec-next-previous-buttons button.mec-button-next {
-    width: auto;
-}
+
 .mec-wizard-inner-button {
     background: #008aff;
     border: none;
@@ -242,11 +250,7 @@ button.mec-wizard-open-popup span {
     background: #000;
     box-shadow: 0 5px 10px 0 rgb(0 0 0 / 30%);
 }
-.mec-next-previous-buttons button.mec-button-next{
-    background: #2dcb73;
-    padding: 9px 38px 9px 18px;
-    box-shadow: 0 5px 10px 0 rgb(48 171 46 / 30%);
-}
+
 .mec-setup-wizard-wrap .mec-step-wizard-content[data-step="1"] {
     background: url(<?php echo plugin_dir_url(__FILE__ ) . '../../../assets/img/popup/add-event-first-step.png'; ?>) no-repeat 100% 40%
 }
@@ -281,16 +285,7 @@ ul#mec_export_module_options {
     margin: 0;
     padding: 0;
 }
-.m-e-calendar_page_MEC-wizard #mec_settings_fes_thankyou_page_url,
-.m-e-calendar_page_MEC-wizard input[type=number],
-.m-e-calendar_page_MEC-wizard input[type=text],
-.m-e-calendar_page_MEC-wizard select:not(.ui-datepicker select),
-.m-e-calendar_page_MEC-wizard textarea,
-.m-e-calendar_page_MEC-wizard #mec_settings_default_skin_archive,
-.m-e-calendar_page_MEC-wizard #mec_settings_default_skin_category {
-    min-width: 200px;
-    max-width: 200px;
-}
+
 @media(max-width: 480px) {
     .mec-steps-panel {
         overflow-y: scroll;
@@ -325,7 +320,7 @@ ul#mec_export_module_options {
     border-radius: 5px;
     box-shadow: 0 3px 22px 0 rgb(11 121 125 / 1%);
     padding: 12px 22px;
-    margin: -15px -15px 65px;
+    margin: -15px -15px 45px;
 }
 .mec-add-event-popup button.lity-close:hover, .mec-add-shortcode-popup button.lity-close:hover {
     background: #ff6262;
@@ -337,13 +332,6 @@ ul#mec_export_module_options {
     color: #778182;
     font-weight: 600;
     text-transform: capitalize;
-}
-#mec_popup_event label[for=mec_location_dont_show_map] {
-    font-size: 14px;
-    margin-left: 4px;
-    margin-top: 3px!important;
-    display: inline-block;
-    margin-bottom: 7px;
 }
 .mec-steps-container img {
     margin-top: 30px;
@@ -380,8 +368,8 @@ ul#mec_export_module_options {
     background-color: #b7e4e3;
 }
 .mec-settings button.lity-close {
-    right: 0;
-    top: -52px;
+    right: -52px;
+    top: 0px;
     border-radius: 50%;
     width: 37px;
     height: 37px;
@@ -418,7 +406,7 @@ ul#mec_export_module_options {
 .m-e-calendar_page_MEC-wizard #wpcontent, .m-e-calendar_page_MEC-wizard #wpbody-content {
     padding: 0;
     overflow-x: hidden!important;
-    min-height: calc(100vh - 32px);
+    min-height: 100vh;
 }
 @media (max-width: 860px) {
     .mec-wizard-wrap {padding: 30px 80px;}

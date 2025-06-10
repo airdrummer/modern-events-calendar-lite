@@ -856,7 +856,7 @@ class MEC_book extends MEC_base
         $booked = 0;
         foreach ($tickets as $ticket_id => $ticket)
         {
-            $limit = (isset($ticket['limit']) and trim($ticket['limit']) != '') ? $ticket['limit'] : -1;
+            $limit = isset($ticket['limit']) && trim($ticket['limit']) != '' ? $ticket['limit'] : -1;
 
             $ticket_seats = (isset($ticket['seats']) and is_numeric($ticket['seats'])) ? (int) $ticket['seats'] : 1;
             $ticket_seats = max(1, $ticket_seats);
@@ -1422,6 +1422,9 @@ class MEC_book extends MEC_base
     public function get_total_attendees($book_id)
     {
         $attendees = get_post_meta($book_id, 'mec_attendees', true);
+        $event_id = get_post_meta($book_id, 'mec_event_id', true);
+        $tickets = get_post_meta($event_id, 'mec_tickets', true);
+
         $count = 0;
 
         if (is_array($attendees))
@@ -1430,8 +1433,16 @@ class MEC_book extends MEC_base
             {
                 if ($key === 'attachments') continue;
 
-                if (!isset($attendee[0]['MEC_TYPE_OF_DATA'])) $count++;
-                else if ($attendee[0]['MEC_TYPE_OF_DATA'] != 'attachment') $count++;
+                $seats = 1;
+
+                $ticket_id = $attendee['id'] ?? 0;
+                if ($ticket_id && isset($tickets[$ticket_id]['seats']) && $tickets[$ticket_id]['seats'])
+                {
+                    $seats = $tickets[$ticket_id]['seats'];
+                }
+
+                if (!isset($attendee[0]['MEC_TYPE_OF_DATA'])) $count += $seats;
+                else if ($attendee[0]['MEC_TYPE_OF_DATA'] != 'attachment') $count += $seats;
             }
         }
 

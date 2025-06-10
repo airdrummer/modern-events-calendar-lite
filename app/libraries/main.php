@@ -5742,7 +5742,7 @@ class MEC_main extends MEC_base
     public function mce_get_shortcode_list($post_type = 'mec_calendars')
     {
         $shortcodes = [];
-        $shortcodes['mce_title'] = esc_html__('M.E. Calender', 'modern-events-calendar-lite');
+        $shortcodes['mce_title'] = esc_html__('M.E. Calendar', 'modern-events-calendar-lite');
         $shortcodes['shortcodes'] = [];
 
         if (post_type_exists($post_type))
@@ -5780,7 +5780,17 @@ class MEC_main extends MEC_base
      */
     public function date_diff($start_date, $end_date)
     {
-        if (version_compare(PHP_VERSION, '5.3.0', '>=')) return date_diff(date_create($start_date), date_create($end_date));
+        if (version_compare(PHP_VERSION, '5.3.0', '>='))
+        {
+            if (!empty($start_date) && !empty($end_date))
+            {
+                return date_diff(date_create($start_date), date_create($end_date));
+            }
+            else
+            {
+                return null;
+            }
+        }
         else
         {
             $start = new DateTime($start_date);
@@ -6998,8 +7008,9 @@ class MEC_main extends MEC_base
         {
             // Event Permalink
             $url = $event->data->permalink;
+            $referer = $_SERVER['HTTP_REFERER'] ?? '';
 
-            if (isset($_SERVER['HTTP_REFERER']) && str_contains($_SERVER['HTTP_REFERER'], 'external=1'))
+            if (str_contains($referer, 'external=1'))
             {
                 if (str_contains($url, '?'))
                 {
@@ -8830,7 +8841,7 @@ class MEC_main extends MEC_base
      */
     public function add_custom_block_cateogry($categories)
     {
-        $categories = array_merge([['slug' => 'mec.block.category', 'title' => esc_html__('M.E. Calender', 'modern-events-calendar-lite'), 'icon' => 'calendar-alt']], $categories);
+        $categories = array_merge([['slug' => 'mec.block.category', 'title' => esc_html__('M.E. Calendar', 'modern-events-calendar-lite'), 'icon' => 'calendar-alt']], $categories);
         return $categories;
     }
 

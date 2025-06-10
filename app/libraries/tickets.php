@@ -64,6 +64,9 @@ class MEC_tickets extends MEC_base
         $family_ticket_status = isset($settings['booking_family_ticket']) && $settings['booking_family_ticket'];
         $global_tickets_status = isset($settings['default_tickets_status']) && $settings['default_tickets_status'];
 
+        $available_tickets_placeholder = __('Available Tickets', 'modern-events-calendar-lite');
+        if ($family_ticket_status) $available_tickets_placeholder = __('Available Seats', 'modern-events-calendar-lite');
+
         $global_tickets = isset($settings['tickets']) && is_array($settings['tickets']) ? $settings['tickets'] : [];
         if (isset($global_tickets[':i:'])) unset($global_tickets[':i:']);
 
@@ -201,7 +204,7 @@ class MEC_tickets extends MEC_base
                         <div class="mec-form-row <?php echo $basic_class; ?>">
                             <div class="mec-col-10">
                                 <input class="mec-col-4 mec-available-tickets" type="text" name="<?php echo $name_prefix; ?>[<?php echo esc_attr($key); ?>][limit]"
-                                       placeholder="<?php esc_attr_e('Available Tickets', 'modern-events-calendar-lite'); ?>"
+                                       placeholder="<?php echo esc_attr($available_tickets_placeholder); ?>"
                                        value="<?php echo (isset($ticket['limit']) ? esc_attr($ticket['limit']) : '100'); ?>"/>
                                 <label class="mec-col-3 label-checkbox" for="mec_tickets_unlimited_<?php echo esc_attr($key); ?>"
                                        id="mec_bookings_limit_unlimited_label<?php echo esc_attr($key); ?>">
@@ -518,7 +521,7 @@ class MEC_tickets extends MEC_base
                 <div class="mec-form-row <?php echo $basic_class; ?>">
                     <div class="mec-col-10">
                         <input class="mec-col-4 mec-available-tickets" type="text" name="<?php echo $name_prefix; ?>[:i:][limit]"
-                               placeholder="<?php esc_attr_e('Available Tickets', 'modern-events-calendar-lite'); ?>"/>
+                               placeholder="<?php echo esc_attr($available_tickets_placeholder); ?>"/>
                         <label class="mec-col-3 label-checkbox" for="mec_tickets_unlimited_:i:"
                                id="mec_bookings_limit_unlimited_label">
                             <input type="hidden" name="<?php echo $name_prefix; ?>[:i:][unlimited]" value="0"/>

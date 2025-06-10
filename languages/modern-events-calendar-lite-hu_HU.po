@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Modern Events Calendar Lite\n"
-"POT-Creation-Date: 2025-05-07 14:13+0330\n"
-"PO-Revision-Date: 2025-05-07 14:15+0330\n"
+"POT-Creation-Date: 2025-06-07 16:23+0330\n"
+"PO-Revision-Date: 2025-06-07 16:24+0330\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: hu_HU\n"
@@ -26,7 +26,7 @@ msgstr ""
 #: app/features/ix/import.php:51 app/features/ix/import.php:80
 #: app/features/ix/thirdparty.php:27 app/features/mec.php:1581
 #: app/features/mec.php:1608 app/features/mec/dashboard.php:61
-#: app/features/mec/wizard.php:504 app/widgets/MEC.php:33
+#: app/features/mec/wizard.php:492 app/widgets/MEC.php:33
 msgid "Modern Events Calendar"
 msgstr "Modern eseménynaptár (MEC)"
 
@@ -79,13 +79,13 @@ msgstr "MEC Pro"
 msgid "Select one of created shortcodes."
 msgstr "A létrehozott kód alapján jeleníti meg az eseményeket."
 
-#: app/addons/divi/includes/modules/MECShortcodes/MECShortcodes.php:15
-#: app/addons/divi/includes/modules/MECShortcodes/MECShortcodes.php:25
+#: app/addons/divi/includes/modules/MECShortcodes/MECShortcodes.php:10
+#: app/addons/divi/includes/modules/MECShortcodes/MECShortcodes.php:21
 #: app/addons/mec-beaver-builder/mec-beaver-builder.php:8
 msgid "MEC Shortcodes"
 msgstr "MEC rövidkódok"
 
-#: app/addons/divi/includes/modules/MECShortcodes/MECShortcodes.php:28
+#: app/addons/divi/includes/modules/MECShortcodes/MECShortcodes.php:24
 msgid "Enter the shortcode_id of your choosing here."
 msgstr "Adja meg az Ön által választott shortcode_id-t."
 
@@ -109,8 +109,8 @@ msgid "LearnDash Course"
 msgstr "LearnDash tanfolyam"
 
 #: app/addons/mec-beaver-builder/mec-beaver-builder.php:9
-#: app/core/src/FES/FormBuilder.php:3638 app/features/events.php:774
-#: app/features/events.php:1491 app/features/events.php:2010
+#: app/core/src/FES/FormBuilder.php:3638 app/features/events.php:773
+#: app/features/events.php:1490 app/features/events.php:2009
 #: app/features/mec/booking.php:122 app/features/mec/booking.php:837
 #: app/features/mec/fes.php:50 app/features/mec/settings.php:56
 #: app/features/mec/settings.php:1064 app/features/mec/single.php:46
@@ -131,7 +131,7 @@ msgid "Click Here"
 msgstr "Kattints ide"
 
 #: app/addons/tnp/simple/options.php:18 app/features/cart/cart.php:44
-#: app/features/events.php:236 app/features/fes.php:309
+#: app/features/events.php:235 app/features/fes.php:393
 #: app/features/mec/meta_boxes/display_options.php:2144
 #: app/features/mec/meta_boxes/display_options.php:2259
 #: app/features/mec/meta_boxes/display_options.php:2360
@@ -221,10 +221,12 @@ msgstr "Jelentkezési űrlap"
 #: app/core/src/BookingForm/Attendees.php:268
 #: app/core/src/FES/FormBuilder.php:902 app/core/src/FES/FormBuilder.php:2111
 #: app/core/src/FES/FormBuilder.php:3063 app/core/src/ImportExport/Terms.php:39
-#: app/features/events.php:756 app/features/fes.php:316
-#: app/features/labels.php:189 app/features/mec/booking.php:49
-#: app/features/popup/event.php:198 app/features/profile/profile.php:203
-#: app/libraries/main.php:10850 app/libraries/notifications.php:2487
+#: app/features/events.php:755 app/features/fes.php:338
+#: app/features/fes.php:339 app/features/fes.php:378 app/features/fes.php:379
+#: app/features/fes.php:401 app/features/labels.php:189
+#: app/features/mec/booking.php:49 app/features/popup/event.php:198
+#: app/features/profile/profile.php:203 app/libraries/main.php:10861
+#: app/libraries/notifications.php:2487
 msgid "Name"
 msgstr "Név"
 
@@ -238,19 +240,20 @@ msgstr "Név"
 #: app/core/src/ImportExport/Terms.php:55
 #: app/core/src/ImportExport/Terms.php:58
 #: app/core/src/SingleBuilder/Widgets/EventOrganizers/EventOrganizers.php:124
-#: app/features/autoemails.php:60 app/features/events.php:758
-#: app/features/fes.php:317 app/features/login/login.php:5
-#: app/features/mec/booking.php:61 app/features/mec/booking.php:1073
-#: app/features/mec/booking.php:1171 app/features/mec/single.php:453
-#: app/features/organizers.php:128 app/features/organizers.php:209
-#: app/features/profile/profile.php:206 app/features/speakers.php:154
-#: app/features/speakers.php:247 app/libraries/main.php:2196
-#: app/libraries/main.php:2269 app/libraries/main.php:4513
-#: app/libraries/main.php:10853 app/libraries/notifications.php:2488
-#: app/skins/single.php:1391 app/skins/single.php:1471
-#: app/skins/single/default.php:347 app/skins/single/m1.php:131
-#: app/skins/single/m2.php:79 app/widgets/single/default.php:152
-#: app/widgets/single/modern.php:61
+#: app/features/autoemails.php:60 app/features/events.php:757
+#: app/features/fes.php:338 app/features/fes.php:339 app/features/fes.php:378
+#: app/features/fes.php:379 app/features/fes.php:402
+#: app/features/login/login.php:5 app/features/mec/booking.php:61
+#: app/features/mec/booking.php:1073 app/features/mec/booking.php:1171
+#: app/features/mec/single.php:453 app/features/organizers.php:128
+#: app/features/organizers.php:209 app/features/profile/profile.php:206
+#: app/features/speakers.php:154 app/features/speakers.php:247
+#: app/libraries/main.php:2196 app/libraries/main.php:2269
+#: app/libraries/main.php:4513 app/libraries/main.php:10864
+#: app/libraries/notifications.php:2488 app/skins/single.php:1391
+#: app/skins/single.php:1471 app/skins/single/default.php:347
+#: app/skins/single/m1.php:131 app/skins/single/m2.php:79
+#: app/widgets/single/default.php:152 app/widgets/single/modern.php:61
 msgid "Email"
 msgstr "Email"
 
@@ -281,7 +284,7 @@ msgid "2"
 msgstr "12"
 
 #: app/core/src/BookingForm/Attendees.php:338
-#: app/core/src/FES/FormBuilder.php:3397 app/features/events.php:3986
+#: app/core/src/FES/FormBuilder.php:3397 app/features/events.php:3985
 #: app/features/mec/fes.php:632 app/features/profile/profile.php:68
 #: app/libraries/main.php:3311 app/libraries/main.php:3621
 #: app/modules/booking/steps/checkout.php:74
@@ -319,7 +322,7 @@ msgstr "Fizetés"
 msgid "4"
 msgstr ""
 
-#: app/core/src/BookingForm/Attendees.php:343 app/features/fes.php:319
+#: app/core/src/BookingForm/Attendees.php:343 app/features/fes.php:404
 #: app/modules/booking/steps/checkout.php:76
 #: app/modules/booking/steps/message.php:35
 #: app/modules/booking/steps/tickets.php:140
@@ -343,8 +346,8 @@ msgid "Fill other attendees information like the first form."
 msgstr "Töltse ki a többi résztvevő adatait, az első résztvevő adataival."
 
 #: app/core/src/BookingForm/Attendees.php:440 app/features/mec/booking.php:214
-#: app/features/mec/booking.php:224 app/features/popup/settings.php:383
-#: app/features/popup/settings.php:392
+#: app/features/mec/booking.php:224 app/features/popup/settings.php:376
+#: app/features/popup/settings.php:385
 msgid "Registration"
 msgstr "Regisztráció"
 
@@ -390,40 +393,41 @@ msgid "First Name"
 msgstr "Keresztnév"
 
 #: app/core/src/Books/Book.php:106 app/features/ix.php:290
-#: app/libraries/main.php:8771 app/libraries/main.php:8798
+#: app/libraries/main.php:8782 app/libraries/main.php:8809
 msgid "Rejected"
 msgstr "Elutasítva"
 
-#: app/core/src/Books/Book.php:111 app/features/fes.php:425
+#: app/core/src/Books/Book.php:111 app/features/fes.php:481
 #: app/features/ix.php:289 app/libraries/main.php:3527
-#: app/libraries/main.php:8770 app/libraries/main.php:8790
+#: app/libraries/main.php:8781 app/libraries/main.php:8801
 msgid "Confirmed"
 msgstr "Megerősítve"
 
-#: app/core/src/Books/Book.php:117 app/features/mec/fes.php:87
-#: app/features/mec/fes.php:104 app/libraries/main.php:8772
-#: app/libraries/main.php:8794
+#: app/core/src/Books/Book.php:117 app/features/fes.php:481
+#: app/features/mec/fes.php:87 app/features/mec/fes.php:104
+#: app/libraries/main.php:8783 app/libraries/main.php:8805
 msgid "Pending"
 msgstr "Függőben"
 
 #: app/core/src/Books/Book.php:186 app/features/ix.php:295
 #: app/features/labels.php:124 app/features/labels.php:150
-#: app/libraries/main.php:8819
+#: app/libraries/main.php:8830
 msgid "Canceled"
 msgstr "Törölve"
 
-#: app/core/src/Books/Book.php:191 app/features/fes.php:426
+#: app/core/src/Books/Book.php:191 app/features/fes.php:482
 #: app/features/ix.php:294 app/features/mec/booking.php:1545
 #: app/features/mec/booking.php:1570 app/features/mec/integrations.php:473
 #: app/features/mec/integrations.php:495 app/features/mec/modules.php:836
 #: app/features/mec/modules.php:858 app/features/mec/notifications.php:2489
 #: app/features/mec/notifications.php:2512 app/features/mec/settings.php:1485
 #: app/features/mec/settings.php:1511 app/features/mec/single.php:720
-#: app/features/mec/single.php:742 app/libraries/main.php:8818
+#: app/features/mec/single.php:742 app/libraries/main.php:8829
 msgid "Verified"
 msgstr "Ellenőrzött"
 
-#: app/core/src/Books/Book.php:197 app/libraries/main.php:8820
+#: app/core/src/Books/Book.php:197 app/features/fes.php:482
+#: app/libraries/main.php:8831
 msgid "Waiting"
 msgstr "Várakozás"
 
@@ -483,9 +487,9 @@ msgstr ""
 #: app/core/src/SingleBuilder/Widgets/EventWeather/EventWeather.php:44
 #: app/core/src/SingleBuilder/Widgets/EventZoom/EventZoom.php:37
 #: app/core/src/SingleBuilder/Widgets/RSVPForm/RSVPForm.php:59
-#: app/features/dc.php:215 app/features/events.php:878
-#: app/features/events.php:1069 app/features/events.php:1440
-#: app/features/events.php:1554 app/features/events.php:1883
+#: app/features/dc.php:215 app/features/events.php:877
+#: app/features/events.php:1068 app/features/events.php:1439
+#: app/features/events.php:1553 app/features/events.php:1882
 #: app/features/mec/booking.php:135 app/features/mec/booking.php:148
 #: app/features/mec/booking.php:167 app/features/mec/booking.php:244
 #: app/features/mec/booking.php:309 app/features/mec/booking.php:398
@@ -497,8 +501,8 @@ msgstr ""
 #: app/features/mec/booking.php:926 app/features/mec/booking.php:1270
 #: app/features/mec/booking.php:1298 app/features/mec/fes.php:93
 #: app/features/mec/fes.php:146 app/features/mec/fes.php:226
-#: app/features/mec/fes.php:370 app/features/mec/fes.php:728
-#: app/features/mec/fes.php:744 app/features/mec/integrations.php:75
+#: app/features/mec/fes.php:370 app/features/mec/fes.php:734
+#: app/features/mec/fes.php:750 app/features/mec/integrations.php:75
 #: app/features/mec/meta_boxes/display_options.php:112
 #: app/features/mec/meta_boxes/display_options.php:125
 #: app/features/mec/meta_boxes/display_options.php:136
@@ -570,21 +574,20 @@ msgstr ""
 #: app/features/mec/styling.php:301 app/features/occurrences.php:343
 #: app/features/occurrences.php:373 app/features/popup/event.php:139
 #: app/features/popup/event.php:189 app/features/popup/settings.php:82
-#: app/features/popup/settings.php:186 app/features/popup/settings.php:207
-#: app/features/popup/settings.php:328 app/libraries/formBuilder.php:209
-#: app/libraries/ticketVariations.php:50 app/libraries/ticketVariations.php:65
-#: app/libraries/tickets.php:180 app/libraries/tickets.php:195
-#: app/libraries/tickets.php:500 app/libraries/tickets.php:512
-#: app/skins/list/render.php:391 app/skins/single.php:1199
-#: app/skins/single.php:1315 app/skins/single/default.php:33
-#: app/skins/single/m1.php:23 app/skins/single/m2.php:21
-#: app/skins/single/modern.php:34
+#: app/features/popup/settings.php:200 app/features/popup/settings.php:321
+#: app/libraries/formBuilder.php:209 app/libraries/ticketVariations.php:50
+#: app/libraries/ticketVariations.php:65 app/libraries/tickets.php:183
+#: app/libraries/tickets.php:198 app/libraries/tickets.php:503
+#: app/libraries/tickets.php:515 app/skins/list/render.php:391
+#: app/skins/single.php:1199 app/skins/single.php:1315
+#: app/skins/single/default.php:33 app/skins/single/m1.php:23
+#: app/skins/single/m2.php:21 app/skins/single/modern.php:34
 msgid "Read More"
 msgstr "Bővebben..."
 
 #: app/core/src/FES/FormBuilder.php:56 app/core/src/FES/FormBuilder.php:3740
-#: app/features/events.php:3122 app/features/events.php:3473
-#: app/features/events.php:3983 app/features/mec/styling.php:161
+#: app/features/events.php:3121 app/features/events.php:3472
+#: app/features/events.php:3982 app/features/mec/styling.php:161
 #: app/libraries/formBuilder.php:61 app/libraries/formBuilder.php:77
 #: app/libraries/formBuilder.php:105 app/libraries/formBuilder.php:137
 #: app/libraries/formBuilder.php:157 app/libraries/ticketVariations.php:39
@@ -601,20 +604,20 @@ msgstr "Opcionális eseménykivonat"
 msgid "Optional Event Excerpt"
 msgstr "Opcionális eseménykivonat"
 
-#: app/core/src/FES/FormBuilder.php:105 app/features/mec/fes.php:662
-#: app/features/mec/fes.php:785
+#: app/core/src/FES/FormBuilder.php:105 app/features/mec/fes.php:668
+#: app/features/mec/fes.php:791
 msgid "Excerpt"
 msgstr "Kivonat"
 
-#: app/core/src/FES/FormBuilder.php:199 app/features/events.php:778
+#: app/core/src/FES/FormBuilder.php:199 app/features/events.php:777
 #: app/libraries/main.php:3270
 msgid "Date and Time"
 msgstr "Dátum és idő"
 
 #: app/core/src/FES/FormBuilder.php:203 app/core/src/FES/FormBuilder.php:207
-#: app/features/events.php:782 app/features/events.php:789
-#: app/features/events.php:3018 app/features/events.php:3126
-#: app/features/events.php:3475 app/features/ix/import_g_calendar.php:39
+#: app/features/events.php:781 app/features/events.php:788
+#: app/features/events.php:3017 app/features/events.php:3125
+#: app/features/events.php:3474 app/features/ix/import_g_calendar.php:39
 #: app/features/mec.php:1809 app/features/mec/meta_boxes/display_options.php:58
 #: app/features/mec/meta_boxes/display_options.php:362
 #: app/features/mec/meta_boxes/display_options.php:676
@@ -636,8 +639,8 @@ msgid "Start Date"
 msgstr "Kezdés dátuma"
 
 #: app/core/src/FES/FormBuilder.php:223 app/core/src/FES/FormBuilder.php:227
-#: app/features/events.php:804 app/features/events.php:811
-#: app/features/events.php:3127 app/features/events.php:3477
+#: app/features/events.php:803 app/features/events.php:810
+#: app/features/events.php:3126 app/features/events.php:3476
 #: app/features/ix/import_g_calendar.php:45 app/features/mec.php:1812
 #: app/features/mec/meta_boxes/display_options.php:74
 #: app/features/mec/meta_boxes/display_options.php:378
@@ -650,26 +653,26 @@ msgstr "Kezdés dátuma"
 msgid "End Date"
 msgstr "Befejezés dátuma"
 
-#: app/core/src/FES/FormBuilder.php:241 app/features/events.php:836
+#: app/core/src/FES/FormBuilder.php:241 app/features/events.php:835
 #: app/features/popup/event.php:122
 msgid "All-day Event"
 msgstr "Egész napos esemény"
 
-#: app/core/src/FES/FormBuilder.php:244 app/features/events.php:851
+#: app/core/src/FES/FormBuilder.php:244 app/features/events.php:850
 msgid "Hide Event Time"
 msgstr "Elrejti az esemény idejét"
 
-#: app/core/src/FES/FormBuilder.php:247 app/features/events.php:864
+#: app/core/src/FES/FormBuilder.php:247 app/features/events.php:863
 #: app/features/mec/settings.php:131
 msgid "Hide Event End Time"
 msgstr "Elrejti az esemény befejezési idejét"
 
-#: app/core/src/FES/FormBuilder.php:251 app/features/events.php:870
-#: app/features/events.php:874
+#: app/core/src/FES/FormBuilder.php:251 app/features/events.php:869
+#: app/features/events.php:873
 msgid "Notes on the time"
 msgstr "Megjegyzések az időhöz"
 
-#: app/core/src/FES/FormBuilder.php:252 app/features/events.php:876
+#: app/core/src/FES/FormBuilder.php:252 app/features/events.php:875
 #, fuzzy
 #| msgid ""
 #| "It shows next to event time on the Single Event Page. You can enter notes "
@@ -681,81 +684,81 @@ msgstr ""
 "Az esemény ideje mellett jelenik meg az Szimpla esemény oldalon. Ebben a "
 "mezőben megjegyzéseket, például időzónát adhat meg."
 
-#: app/core/src/FES/FormBuilder.php:257 app/features/events.php:923
+#: app/core/src/FES/FormBuilder.php:257 app/features/events.php:922
 msgid "Repeating"
 msgstr "Ismétlődő"
 
-#: app/core/src/FES/FormBuilder.php:259 app/features/events.php:498
+#: app/core/src/FES/FormBuilder.php:259 app/features/events.php:497
 msgid "Event Repeating"
 msgstr "Ismétlődő esemény"
 
-#: app/core/src/FES/FormBuilder.php:263 app/features/events.php:939
+#: app/core/src/FES/FormBuilder.php:263 app/features/events.php:938
 msgid "Repeats"
 msgstr "Ismétlődés"
 
-#: app/core/src/FES/FormBuilder.php:265 app/features/events.php:948
+#: app/core/src/FES/FormBuilder.php:265 app/features/events.php:947
 #: app/features/mec.php:1816 app/libraries/skins.php:2374
 #: app/skins/default_full_calendar/tpl.php:87
 #: app/skins/full_calendar/tpl.php:176 app/skins/full_calendar/tpl.php:204
 msgid "Daily"
 msgstr "Naponta"
 
-#: app/core/src/FES/FormBuilder.php:266 app/features/events.php:956
+#: app/core/src/FES/FormBuilder.php:266 app/features/events.php:955
 #: app/libraries/skins.php:2389
 msgid "Every Weekday"
 msgstr "Minden hétköznap"
 
-#: app/core/src/FES/FormBuilder.php:267 app/features/events.php:964
+#: app/core/src/FES/FormBuilder.php:267 app/features/events.php:963
 #: app/libraries/skins.php:2386
 msgid "Every Weekend"
 msgstr "Minden hétvégén"
 
-#: app/core/src/FES/FormBuilder.php:268 app/features/events.php:972
+#: app/core/src/FES/FormBuilder.php:268 app/features/events.php:971
 msgid "Certain Weekdays"
 msgstr "Meghatározott napokon"
 
-#: app/core/src/FES/FormBuilder.php:269 app/features/events.php:980
+#: app/core/src/FES/FormBuilder.php:269 app/features/events.php:979
 #: app/libraries/skins.php:2377 app/skins/default_full_calendar/tpl.php:86
 #: app/skins/full_calendar/tpl.php:173 app/skins/full_calendar/tpl.php:201
 msgid "Weekly"
 msgstr "Hetente"
 
-#: app/core/src/FES/FormBuilder.php:270 app/features/events.php:988
+#: app/core/src/FES/FormBuilder.php:270 app/features/events.php:987
 #: app/features/mec.php:1818 app/libraries/skins.php:2380
 #: app/skins/default_full_calendar/tpl.php:85
 #: app/skins/full_calendar/tpl.php:170 app/skins/full_calendar/tpl.php:198
 msgid "Monthly"
 msgstr "Havonta"
 
-#: app/core/src/FES/FormBuilder.php:271 app/features/events.php:996
+#: app/core/src/FES/FormBuilder.php:271 app/features/events.php:995
 #: app/features/mec.php:1820 app/libraries/skins.php:2383
 #: app/skins/default_full_calendar/tpl.php:84
 #: app/skins/full_calendar/tpl.php:167 app/skins/full_calendar/tpl.php:195
 msgid "Yearly"
 msgstr "Évente"
 
-#: app/core/src/FES/FormBuilder.php:272 app/features/events.php:1004
+#: app/core/src/FES/FormBuilder.php:272 app/features/events.php:1003
 msgid "Custom Days"
 msgstr "Egyedi napokon"
 
 #: app/core/src/FES/FormBuilder.php:273 app/core/src/FES/FormBuilder.php:3639
-#: app/features/events.php:775 app/features/events.php:1012
-#: app/features/events.php:1492 app/features/events.php:2011
+#: app/features/events.php:774 app/features/events.php:1011
+#: app/features/events.php:1491 app/features/events.php:2010
 #: app/features/mec/booking.php:123 app/features/mec/booking.php:838
 #: app/features/mec/fes.php:51 app/features/mec/settings.php:57
 #: app/features/mec/settings.php:1065 app/features/mec/single.php:47
 msgid "Advanced"
 msgstr "Továbbiak"
 
-#: app/core/src/FES/FormBuilder.php:277 app/features/events.php:1017
+#: app/core/src/FES/FormBuilder.php:277 app/features/events.php:1016
 msgid "Repeat Interval"
 msgstr "Ismétlési időköz"
 
-#: app/core/src/FES/FormBuilder.php:278 app/features/events.php:1019
+#: app/core/src/FES/FormBuilder.php:278 app/features/events.php:1018
 msgid "Repeat interval"
 msgstr "Ismétlési időköz"
 
-#: app/core/src/FES/FormBuilder.php:281 app/features/events.php:1023
+#: app/core/src/FES/FormBuilder.php:281 app/features/events.php:1022
 msgid "Week Days"
 msgstr "Hét napjai"
 
@@ -801,35 +804,35 @@ msgstr "Szombat"
 msgid "Sunday"
 msgstr "Vasárnap"
 
-#: app/core/src/FES/FormBuilder.php:295 app/features/events.php:1040
-#: app/features/events.php:1041 app/features/ix/import_f_calendar.php:43
+#: app/core/src/FES/FormBuilder.php:295 app/features/events.php:1039
+#: app/features/events.php:1040 app/features/ix/import_f_calendar.php:43
 #: app/features/ix/import_g_calendar.php:52
 #: app/features/ix/import_meetup.php:51 app/features/ix/thirdparty.php:36
 #: app/libraries/skins.php:1812 app/libraries/skins.php:1927
-#: app/libraries/tickets.php:303 app/libraries/tickets.php:331
-#: app/libraries/tickets.php:608
+#: app/libraries/tickets.php:306 app/libraries/tickets.php:334
+#: app/libraries/tickets.php:611
 msgid "Start"
 msgstr "Kezdés"
 
-#: app/core/src/FES/FormBuilder.php:311 app/features/events.php:1080
-#: app/features/events.php:1081 app/libraries/skins.php:1815
-#: app/libraries/skins.php:1930 app/libraries/tickets.php:307
-#: app/libraries/tickets.php:335 app/libraries/tickets.php:612
+#: app/core/src/FES/FormBuilder.php:311 app/features/events.php:1079
+#: app/features/events.php:1080 app/libraries/skins.php:1815
+#: app/libraries/skins.php:1930 app/libraries/tickets.php:310
+#: app/libraries/tickets.php:338 app/libraries/tickets.php:615
 msgid "End"
 msgstr "Vége"
 
 #: app/core/src/FES/FormBuilder.php:326 app/core/src/FES/FormBuilder.php:2159
 #: app/core/src/FES/FormBuilder.php:2925 app/core/src/FES/FormBuilder.php:3327
-#: app/core/src/FES/FormBuilder.php:3926 app/features/events.php:1057
+#: app/core/src/FES/FormBuilder.php:3926 app/features/events.php:1056
 #: app/features/faq.php:77 app/features/mec/settings.php:1166
 #: app/libraries/formBuilder.php:69 app/libraries/formBuilder.php:146
-#: app/libraries/formBuilder.php:202 app/libraries/tickets.php:287
-#: app/libraries/tickets.php:370 app/libraries/tickets.php:597
-#: app/libraries/tickets.php:642
+#: app/libraries/formBuilder.php:202 app/libraries/tickets.php:290
+#: app/libraries/tickets.php:373 app/libraries/tickets.php:600
+#: app/libraries/tickets.php:645
 msgid "Add"
 msgstr "Hozzáadás"
 
-#: app/core/src/FES/FormBuilder.php:329 app/features/events.php:1064
+#: app/core/src/FES/FormBuilder.php:329 app/features/events.php:1063
 msgid "Custom Days Repeating"
 msgstr "Egyéni napok ismétlése"
 
@@ -849,47 +852,47 @@ msgstr ""
 "többnapos eseménye van, a kezdő és záró dátumoknak illeszkednie kell a "
 "kezdeti dátumhoz."
 
-#: app/core/src/FES/FormBuilder.php:405 app/features/events.php:1166
+#: app/core/src/FES/FormBuilder.php:405 app/features/events.php:1165
 msgid "First"
 msgstr "Első"
 
-#: app/core/src/FES/FormBuilder.php:447 app/features/events.php:1208
+#: app/core/src/FES/FormBuilder.php:447 app/features/events.php:1207
 msgid "Second"
 msgstr "Második"
 
-#: app/core/src/FES/FormBuilder.php:489 app/features/events.php:1250
+#: app/core/src/FES/FormBuilder.php:489 app/features/events.php:1249
 msgid "Third"
 msgstr "Harmadik"
 
-#: app/core/src/FES/FormBuilder.php:531 app/features/events.php:1292
+#: app/core/src/FES/FormBuilder.php:531 app/features/events.php:1291
 msgid "Fourth"
 msgstr "Negyedik"
 
-#: app/core/src/FES/FormBuilder.php:573 app/features/events.php:1334
+#: app/core/src/FES/FormBuilder.php:573 app/features/events.php:1333
 msgid "Last"
 msgstr "Utolsó"
 
-#: app/core/src/FES/FormBuilder.php:619 app/features/events.php:1380
+#: app/core/src/FES/FormBuilder.php:619 app/features/events.php:1379
 #, fuzzy
 #| msgid "Ends Repeat"
 msgid "End Repeat"
 msgstr "Ismétlés vége"
 
-#: app/core/src/FES/FormBuilder.php:623 app/features/events.php:1393
+#: app/core/src/FES/FormBuilder.php:623 app/features/events.php:1392
 msgid "Never"
 msgstr "Soha"
 
-#: app/core/src/FES/FormBuilder.php:628 app/features/events.php:1408
+#: app/core/src/FES/FormBuilder.php:628 app/features/events.php:1407
 msgid "On"
 msgstr "Be"
 
 #: app/core/src/FES/FormBuilder.php:635 app/features/emails/details.php:37
-#: app/features/events.php:1427 app/features/mec/booking.php:544
+#: app/features/events.php:1426 app/features/mec/booking.php:544
 msgid "After"
 msgstr "Utána"
 
 #: app/core/src/FES/FormBuilder.php:637 app/core/src/FES/FormBuilder.php:640
-#: app/features/events.php:1432 app/features/events.php:1436
+#: app/features/events.php:1431 app/features/events.php:1435
 msgid "Occurrences times"
 msgstr "Előfordulási alkalmak"
 
@@ -901,12 +904,12 @@ msgstr ""
 "Az esemény bizonyos ismétlések után befejeződik. Ha például 10-re állítja, "
 "az esemény 10 alkalom után fejeződik be."
 
-#: app/core/src/FES/FormBuilder.php:654 app/features/events.php:1458
+#: app/core/src/FES/FormBuilder.php:654 app/features/events.php:1457
 msgid "Show only one occurrence of this event"
 msgstr "Az eseménynek csak egy előfordulásának megjelenítése"
 
 #: app/core/src/FES/FormBuilder.php:684 app/core/src/FES/FormBuilder.php:687
-#: app/features/events.php:888 app/features/events.php:892
+#: app/features/events.php:887 app/features/events.php:891
 #: app/features/mec/fes.php:283
 msgid "Countdown Method"
 msgstr "Visszaszámlálás módja"
@@ -917,85 +920,85 @@ msgstr "Visszaszámlálás módja"
 #: app/core/src/FES/FormBuilder.php:2565 app/core/src/FES/FormBuilder.php:2610
 #: app/core/src/FES/FormBuilder.php:2728 app/core/src/FES/FormBuilder.php:2783
 #: app/core/src/FES/FormBuilder.php:2914 app/core/src/FES/FormBuilder.php:3094
-#: app/core/src/FES/FormBuilder.php:3322 app/features/events.php:621
-#: app/features/events.php:894 app/features/events.php:911
+#: app/core/src/FES/FormBuilder.php:3322 app/features/events.php:620
+#: app/features/events.php:893 app/features/events.php:910
 #: app/features/mec/single.php:305
 msgid "Inherit from global options"
 msgstr "Öröklés a globális beállításokból"
 
-#: app/core/src/FES/FormBuilder.php:689 app/features/events.php:896
+#: app/core/src/FES/FormBuilder.php:689 app/features/events.php:895
 msgid "Count to Event Start"
 msgstr "Számláló az esemény kezdetéig"
 
-#: app/core/src/FES/FormBuilder.php:690 app/features/events.php:898
+#: app/core/src/FES/FormBuilder.php:690 app/features/events.php:897
 msgid "Count to Event End"
 msgstr "Számláló az esemény végéig"
 
-#: app/core/src/FES/FormBuilder.php:718 app/features/events.php:616
+#: app/core/src/FES/FormBuilder.php:718 app/features/events.php:615
 #, fuzzy
 #| msgid "Default Style"
 msgid "Details Page Style"
 msgstr "Alapértelmezett stílus"
 
-#: app/core/src/FES/FormBuilder.php:721 app/features/events.php:620
+#: app/core/src/FES/FormBuilder.php:721 app/features/events.php:619
 #, fuzzy
 #| msgid "Event title"
 msgid "Event Style"
 msgstr "Esemény cím"
 
-#: app/core/src/FES/FormBuilder.php:723 app/features/events.php:623
+#: app/core/src/FES/FormBuilder.php:723 app/features/events.php:622
 #: app/features/mec/single.php:85 app/features/mec/single.php:306
-#: app/features/popup/settings.php:197
+#: app/features/popup/settings.php:190
 msgid "Default Style"
 msgstr "Alapértelmezett stílus"
 
-#: app/core/src/FES/FormBuilder.php:724 app/features/events.php:625
+#: app/core/src/FES/FormBuilder.php:724 app/features/events.php:624
 #: app/features/mec/single.php:86 app/features/mec/single.php:307
-#: app/features/popup/settings.php:198
+#: app/features/popup/settings.php:191
 msgid "Modern Style"
 msgstr "Modern stílus"
 
-#: app/core/src/FES/FormBuilder.php:727 app/features/events.php:629
+#: app/core/src/FES/FormBuilder.php:727 app/features/events.php:628
 #: app/features/mec/single.php:89 app/features/mec/single.php:310
-#: app/features/popup/settings.php:201
+#: app/features/popup/settings.php:194
 msgid "Elementor Single Builder"
 msgstr "Elementor oldal építő"
 
 #: app/core/src/FES/FormBuilder.php:751 app/core/src/FES/FormBuilder.php:754
-#: app/features/events.php:1891 app/features/events.php:1895
+#: app/features/events.php:1890 app/features/events.php:1894
 #: app/features/mec/fes.php:270
 msgid "Trailer URL"
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:757 app/features/events.php:1901
-#: app/features/events.php:1903
+#: app/core/src/FES/FormBuilder.php:757 app/features/events.php:1900
+#: app/features/events.php:1902
 #, fuzzy
 #| msgid "Page Title"
 msgid "Trailer Title"
 msgstr "Oldalcím"
 
-#: app/core/src/FES/FormBuilder.php:784 app/features/events.php:458
-#: app/features/events.php:602 app/modules/weather/darksky.php:63
+#: app/core/src/FES/FormBuilder.php:784 app/features/events.php:457
+#: app/features/events.php:601 app/modules/weather/darksky.php:63
 #: app/modules/weather/visualcrossing.php:63
 msgid "Visibility"
 msgstr "Láthatóság"
 
-#: app/core/src/FES/FormBuilder.php:787 app/features/events.php:606
+#: app/core/src/FES/FormBuilder.php:787 app/features/events.php:605
 #: app/features/mec/fes.php:365 app/features/mec/fes.php:369
 #: app/features/mec/single.php:335 app/features/mec/single.php:340
 #: app/features/mec/single.php:344
 msgid "Event Visibility"
 msgstr "Esemény láthatósága"
 
-#: app/core/src/FES/FormBuilder.php:788 app/features/events.php:608
+#: app/core/src/FES/FormBuilder.php:788 app/features/events.php:607
 msgid "Show on Shortcodes"
 msgstr "Rövidkódok megjelenítése"
 
-#: app/core/src/FES/FormBuilder.php:789 app/features/events.php:610
+#: app/core/src/FES/FormBuilder.php:789 app/features/events.php:609
 msgid "Hide on Shortcodes"
 msgstr "Rövidkódok elrejtése"
 
-#: app/core/src/FES/FormBuilder.php:816 app/features/events.php:906
+#: app/core/src/FES/FormBuilder.php:816 app/features/events.php:905
 msgid "Timezone"
 msgstr "Időzóna"
 
@@ -1020,20 +1023,20 @@ msgstr "pl. yourname@gmail.com"
 msgid "eg. John Smith"
 msgstr "pl. john@smith.com"
 
-#: app/core/src/FES/FormBuilder.php:930 app/features/events.php:1840
+#: app/core/src/FES/FormBuilder.php:930 app/features/events.php:1839
 #: app/features/mec/fes.php:295 app/features/occurrences.php:420
 msgid "Event Links"
 msgstr "Esemény hivatkozások"
 
-#: app/core/src/FES/FormBuilder.php:932 app/features/events.php:1843
-#: app/features/events.php:1851 app/features/mec/fes.php:788
-#: app/features/occurrences.php:422 app/libraries/main.php:8335
-#: app/libraries/main.php:8384
+#: app/core/src/FES/FormBuilder.php:932 app/features/events.php:1842
+#: app/features/events.php:1850 app/features/mec/fes.php:794
+#: app/features/occurrences.php:422 app/libraries/main.php:8346
+#: app/libraries/main.php:8395
 msgid "Event Link"
 msgstr "Esemény linkje"
 
 #: app/core/src/FES/FormBuilder.php:933 app/core/src/FES/FormBuilder.php:938
-#: app/features/events.php:1846 app/features/events.php:1867
+#: app/features/events.php:1845 app/features/events.php:1866
 msgid "eg. http://yoursite.com/your-event"
 msgstr "pl.: http://yoursite.com/your-event"
 
@@ -1047,21 +1050,21 @@ msgstr ""
 
 #: app/core/src/FES/FormBuilder.php:937
 #: app/core/src/SingleBuilder/Widgets/EventMoreInfo/EventMoreInfo.php:62
-#: app/features/events.php:1864 app/features/events.php:1879
+#: app/features/events.php:1863 app/features/events.php:1878
 #: app/features/mec/single.php:547 app/features/occurrences.php:427
-#: app/libraries/main.php:8336 app/libraries/main.php:8385
+#: app/libraries/main.php:8347 app/libraries/main.php:8396
 #: app/skins/single.php:1204 app/skins/single/default.php:254
 #: app/skins/single/m1.php:230 app/skins/single/m2.php:206
 #: app/widgets/single/default.php:56 app/widgets/single/modern.php:158
 msgid "More Info"
 msgstr "További Információk"
 
-#: app/core/src/FES/FormBuilder.php:939 app/features/events.php:1870
+#: app/core/src/FES/FormBuilder.php:939 app/features/events.php:1869
 #: app/features/occurrences.php:429
 msgid "More Information"
 msgstr "További információ"
 
-#: app/core/src/FES/FormBuilder.php:940 app/features/events.php:1881
+#: app/core/src/FES/FormBuilder.php:940 app/features/events.php:1880
 #, fuzzy
 #| msgid ""
 #| "If you fill it, it will replace the default event page link. Insert full "
@@ -1073,8 +1076,8 @@ msgstr ""
 "Ha kitölti, lecseréli az alapértelmezett eseményoldal-hivatkozást. A teljes "
 "hivatkozás beszúrása a http(s) -sel együtt://"
 
-#: app/core/src/FES/FormBuilder.php:978 app/features/events.php:1497
-#: app/features/events.php:3485 app/features/mec/fes.php:312
+#: app/core/src/FES/FormBuilder.php:978 app/features/events.php:1496
+#: app/features/events.php:3484 app/features/mec/fes.php:312
 #: app/features/mec/meta_boxes/search_form.php:140
 #: app/features/mec/meta_boxes/search_form.php:238
 #: app/features/mec/meta_boxes/search_form.php:336
@@ -1102,84 +1105,84 @@ msgstr ""
 #: app/features/mec/notifications.php:2237
 #: app/features/mec/notifications.php:2371 app/features/mec/single.php:540
 #: app/features/notifications.php:163 app/features/occurrences.php:382
-#: app/libraries/main.php:8337 app/libraries/main.php:8386
+#: app/libraries/main.php:8348 app/libraries/main.php:8397
 msgid "Event Cost"
 msgstr "Esemény költség"
 
 #: app/core/src/FES/FormBuilder.php:981
 #: app/core/src/SingleBuilder/Widgets/EventCost/EventCost.php:52
 #: app/core/src/SingleBuilder/Widgets/EventCost/EventCost.php:86
-#: app/features/events.php:505 app/features/events.php:1506
-#: app/features/events.php:1507 app/features/mec/fes.php:787
-#: app/features/occurrences.php:385 app/libraries/main.php:8338
-#: app/libraries/main.php:8387 app/libraries/skins.php:1864
+#: app/features/events.php:504 app/features/events.php:1505
+#: app/features/events.php:1506 app/features/mec/fes.php:793
+#: app/features/occurrences.php:385 app/libraries/main.php:8349
+#: app/libraries/main.php:8398 app/libraries/skins.php:1864
 #: app/skins/single.php:1105 app/skins/single/default.php:236
 #: app/skins/single/m1.php:58 app/skins/single/modern.php:123
 #: app/widgets/single/default.php:42
 msgid "Cost"
 msgstr "Költség"
 
-#: app/core/src/FES/FormBuilder.php:990 app/features/events.php:1520
+#: app/core/src/FES/FormBuilder.php:990 app/features/events.php:1519
 msgid "Show the minimum price based on tickets"
 msgstr "A minimális ár megjelenítése a jegyek alapján"
 
 #: app/core/src/FES/FormBuilder.php:996 app/features/contextual.php:166
-#: app/features/events.php:1529
+#: app/features/events.php:1528
 msgid "Currency Options"
 msgstr "Pénznem beállítások"
 
-#: app/core/src/FES/FormBuilder.php:998 app/features/events.php:1532
+#: app/core/src/FES/FormBuilder.php:998 app/features/events.php:1531
 #: app/features/mec/settings.php:878 app/features/mec/settings.php:880
 #: app/libraries/main.php:661
 msgid "Currency"
 msgstr "Pénznem"
 
 #: app/core/src/FES/FormBuilder.php:1008 app/core/src/FES/FormBuilder.php:1013
-#: app/features/events.php:1544 app/features/events.php:1550
+#: app/features/events.php:1543 app/features/events.php:1549
 #: app/features/mec/settings.php:890 app/features/mec/settings.php:895
 msgid "Currency Sign"
 msgstr "Pénznem jele"
 
-#: app/core/src/FES/FormBuilder.php:1014 app/features/events.php:1552
+#: app/core/src/FES/FormBuilder.php:1014 app/features/events.php:1551
 msgid "Default value will be \"currency\" if you leave it empty."
 msgstr "Ha üresen hagyja, az alapértelmezett érték \"pénznem\" lesz."
 
-#: app/core/src/FES/FormBuilder.php:1021 app/features/events.php:1564
+#: app/core/src/FES/FormBuilder.php:1021 app/features/events.php:1563
 #: app/features/mec/settings.php:903
 msgid "Currency Position"
 msgstr "Pénznem pozíció"
 
-#: app/core/src/FES/FormBuilder.php:1024 app/features/events.php:1568
+#: app/core/src/FES/FormBuilder.php:1024 app/features/events.php:1567
 #: app/features/mec/settings.php:906
 msgid "$10 (Before)"
 msgstr "$10 (előtte)"
 
-#: app/core/src/FES/FormBuilder.php:1025 app/features/events.php:1570
+#: app/core/src/FES/FormBuilder.php:1025 app/features/events.php:1569
 #: app/features/mec/settings.php:907
 msgid "$ 10 (Before with Space)"
 msgstr "$ 10 (Előtte szóközzel)"
 
-#: app/core/src/FES/FormBuilder.php:1026 app/features/events.php:1572
+#: app/core/src/FES/FormBuilder.php:1026 app/features/events.php:1571
 #: app/features/mec/settings.php:908
 msgid "10$ (After)"
 msgstr "10$ (utána)"
 
-#: app/core/src/FES/FormBuilder.php:1027 app/features/events.php:1574
+#: app/core/src/FES/FormBuilder.php:1027 app/features/events.php:1573
 #: app/features/mec/settings.php:909
 msgid "10 $ (After with Space)"
 msgstr "10 $ (Utána szóközzel)"
 
-#: app/core/src/FES/FormBuilder.php:1032 app/features/events.php:1580
+#: app/core/src/FES/FormBuilder.php:1032 app/features/events.php:1579
 #: app/features/mec/settings.php:914
 msgid "Thousand Separator"
 msgstr "Ezres elválasztó"
 
-#: app/core/src/FES/FormBuilder.php:1038 app/features/events.php:1589
+#: app/core/src/FES/FormBuilder.php:1038 app/features/events.php:1588
 #: app/features/mec/settings.php:920
 msgid "Decimal Separator"
 msgstr "Tizedes elválasztó"
 
-#: app/core/src/FES/FormBuilder.php:1048 app/features/events.php:1611
+#: app/core/src/FES/FormBuilder.php:1048 app/features/events.php:1610
 #: app/features/mec/settings.php:936
 msgid "No decimal"
 msgstr "Nincs tizedesjegy"
@@ -1196,8 +1199,8 @@ msgstr "Típus választás"
 msgid "Group not found!"
 msgstr "Nem találtunk eseményt!"
 
-#: app/core/src/FES/FormBuilder.php:1139 app/features/events.php:3486
-#: app/features/mec/fes.php:318 app/features/mec/fes.php:793
+#: app/core/src/FES/FormBuilder.php:1139 app/features/events.php:3485
+#: app/features/mec/fes.php:318 app/features/mec/fes.php:799
 msgid "Featured Image"
 msgstr "Kiemelt kép"
 
@@ -1208,7 +1211,7 @@ msgid "Choose image"
 msgstr "Kép kiválasztása"
 
 #: app/core/src/FES/FormBuilder.php:1148 app/core/src/FES/FormBuilder.php:1515
-#: app/core/src/FES/FormBuilder.php:1778 app/features/events.php:1803
+#: app/core/src/FES/FormBuilder.php:1778 app/features/events.php:1802
 #, fuzzy
 #| msgid "pdf,zip,png,jpg and gif files are allowed."
 msgid "png, jpg, gif, and webp files are allowed."
@@ -1224,8 +1227,8 @@ msgstr "pdf,zip,png,jpg és gif fájlok engedélyezettek."
 #: app/core/src/Forms/FormFields.php:357 app/core/src/Forms/FormFields.php:380
 #: app/core/src/Forms/FormFields.php:413 app/core/src/Forms/FormFields.php:460
 #: app/core/src/Forms/FormFields.php:514 app/core/src/Forms/FormFields.php:564
-#: app/core/src/Forms/FormFields.php:607 app/features/events.php:331
-#: app/features/events.php:394 app/features/faq.php:84 app/features/faq.php:114
+#: app/core/src/Forms/FormFields.php:607 app/features/events.php:330
+#: app/features/events.php:393 app/features/faq.php:84 app/features/faq.php:114
 #: app/features/locations.php:188 app/features/locations.php:248
 #: app/features/mec/booking.php:909 app/features/mec/booking.php:939
 #: app/features/organizers.php:190 app/features/organizers.php:241
@@ -1241,8 +1244,8 @@ msgstr "pdf,zip,png,jpg és gif fájlok engedélyezettek."
 #: app/libraries/main.php:4746 app/libraries/main.php:4795
 #: app/libraries/main.php:4851 app/libraries/main.php:4903
 #: app/libraries/main.php:4943 app/libraries/ticketVariations.php:72
-#: app/libraries/tickets.php:317 app/libraries/tickets.php:343
-#: app/libraries/tickets.php:618
+#: app/libraries/tickets.php:320 app/libraries/tickets.php:346
+#: app/libraries/tickets.php:621
 msgid "Remove"
 msgstr "Eltávolítás"
 
@@ -1256,12 +1259,12 @@ msgstr "Kép eltávolítása"
 msgid "Image Caption"
 msgstr "Kiemelt kép aláírása"
 
-#: app/core/src/FES/FormBuilder.php:1187 app/features/events.php:263
-#: app/features/events.php:3079 app/features/events.php:3488
+#: app/core/src/FES/FormBuilder.php:1187 app/features/events.php:262
+#: app/features/events.php:3078 app/features/events.php:3487
 #: app/features/ix/test_data.php:49 app/features/mec.php:524
 #: app/features/mec/meta_boxes/filter.php:77
-#: app/features/mec/meta_boxes/filter.php:97 app/libraries/main.php:8289
-#: app/libraries/main.php:8354
+#: app/features/mec/meta_boxes/filter.php:97 app/libraries/main.php:8300
+#: app/libraries/main.php:8365
 msgid "Categories"
 msgstr "Kategóriák"
 
@@ -1272,13 +1275,13 @@ msgstr ""
 
 #: app/core/src/FES/FormBuilder.php:1249
 #: app/core/src/SingleBuilder/Widgets/EventLabels/EventLabels.php:51
-#: app/features/events.php:3487 app/features/labels.php:61
+#: app/features/events.php:3486 app/features/labels.php:61
 #: app/features/labels.php:232 app/features/mec.php:525
 #: app/features/mec/meta_boxes/filter.php:85
 #: app/features/mec/meta_boxes/filter.php:241
-#: app/features/mec/meta_boxes/filter.php:245 app/libraries/main.php:8291
-#: app/libraries/main.php:8356 app/skins/single.php:1234
-#: app/skins/single.php:2021 app/skins/single/m1.php:73
+#: app/features/mec/meta_boxes/filter.php:245 app/libraries/main.php:8302
+#: app/libraries/main.php:8367 app/skins/single.php:1234
+#: app/skins/single.php:2037 app/skins/single/m1.php:73
 msgid "Labels"
 msgstr "Címkék"
 
@@ -1287,7 +1290,7 @@ msgstr "Címkék"
 msgid "Event Color"
 msgstr "Esemény színe"
 
-#: app/core/src/FES/FormBuilder.php:1326 app/features/events.php:3489
+#: app/core/src/FES/FormBuilder.php:1326 app/features/events.php:3488
 #: app/features/ix/test_data.php:60 app/features/mec.php:523
 #: app/features/mec/meta_boxes/filter.php:89
 #: app/features/mec/meta_boxes/filter.php:296
@@ -1305,14 +1308,14 @@ msgstr "Helyezze be a kívánt címkéket, vesszővel elválasztva."
 msgid "To show this widget, you need to enable \"Speakers\" module."
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:1378 app/features/events.php:3493
+#: app/core/src/FES/FormBuilder.php:1378 app/features/events.php:3492
 #: app/features/mec.php:537 app/features/mec/fes.php:467
 #: app/features/mec/meta_boxes/filter.php:83
 #: app/features/mec/meta_boxes/filter.php:205 app/features/mec/modules.php:34
-#: app/features/mec/modules.php:44 app/features/popup/settings.php:327
+#: app/features/mec/modules.php:44 app/features/popup/settings.php:320
 #: app/features/speakers.php:69 app/libraries/main.php:700
-#: app/libraries/main.php:760 app/libraries/main.php:8297
-#: app/libraries/main.php:8362 app/modules/speakers/details.php:31
+#: app/libraries/main.php:760 app/libraries/main.php:8308
+#: app/libraries/main.php:8373 app/modules/speakers/details.php:31
 msgid "Speakers"
 msgstr "Házigazdák"
 
@@ -1330,10 +1333,10 @@ msgstr "Házigazdák"
 #: app/features/mec/meta_boxes/search_form.php:1112
 #: app/features/mec/meta_boxes/search_form.php:1209
 #: app/features/mec/modules.php:267 app/features/mec/modules.php:335
-#: app/features/mec/settings.php:1115 app/features/popup/settings.php:261
-#: app/features/popup/settings.php:300 app/features/search.php:109
+#: app/features/mec/settings.php:1115 app/features/popup/settings.php:254
+#: app/features/popup/settings.php:293 app/features/search.php:109
 #: app/features/speakers.php:68 app/features/speakers.php:337
-#: app/libraries/main.php:8298 app/libraries/main.php:8363
+#: app/libraries/main.php:8309 app/libraries/main.php:8374
 #: app/libraries/search.php:384 app/libraries/skins.php:1591
 #: app/modules/speakers/details.php:31
 msgid "Speaker"
@@ -1391,7 +1394,7 @@ msgid "Tel"
 msgstr "Tel"
 
 #: app/core/src/FES/FormBuilder.php:1412
-#: app/core/src/SingleBuilder/Widgets/EventLocations/EventLocations.php:75
+#: app/core/src/SingleBuilder/Widgets/EventLocations/EventLocations.php:76
 #: app/core/src/SingleBuilder/Widgets/EventOrganizers/EventOrganizers.php:131
 #: app/features/speakers.php:162 app/features/speakers.php:251
 #: app/skins/single.php:989 app/skins/single.php:1398 app/skins/single.php:1478
@@ -1437,13 +1440,13 @@ msgstr "Kép eltávolítása"
 #: app/features/mec/meta_boxes/filter.php:277
 #: app/features/mec/meta_boxes/filter.php:280 app/features/mec/modules.php:149
 #: app/features/mec/modules.php:159 app/features/sponsors.php:62
-#: app/libraries/main.php:762 app/libraries/main.php:8299
+#: app/libraries/main.php:762 app/libraries/main.php:8310
 #: app/modules/sponsors/details.php:23
 msgid "Sponsors"
 msgstr ""
 
 #: app/core/src/FES/FormBuilder.php:1491 app/features/sponsors.php:61
-#: app/libraries/main.php:8300 app/modules/sponsors/details.php:23
+#: app/libraries/main.php:8311 app/modules/sponsors/details.php:23
 msgid "Sponsor"
 msgstr ""
 
@@ -1482,29 +1485,29 @@ msgstr "Az esemény beküldéséhez elfogadom az Adatvédelmi szabályzatot."
 msgid "Privacy Policy"
 msgstr "Adatvédelmi irányelvek"
 
-#: app/core/src/FES/FormBuilder.php:1616 app/libraries/render.php:691
+#: app/core/src/FES/FormBuilder.php:1616 app/libraries/render.php:695
 msgid "Day 1"
 msgstr "Nap 1"
 
-#: app/core/src/FES/FormBuilder.php:1771 app/features/events.php:464
+#: app/core/src/FES/FormBuilder.php:1771 app/features/events.php:463
 msgid "Gallery"
 msgstr ""
 
 #: app/core/src/FES/FormBuilder.php:1774 app/core/src/FES/FormBuilder.php:1776
-#: app/features/events.php:1798 app/features/events.php:1801
+#: app/features/events.php:1797 app/features/events.php:1800
 #, fuzzy
 #| msgid "Add events to Google Calendar"
 msgid "Add event gallery images"
 msgstr "Esemény hozzáadása Google Naptárhoz"
 
-#: app/core/src/FES/FormBuilder.php:1820 app/features/events.php:509
+#: app/core/src/FES/FormBuilder.php:1820 app/features/events.php:508
 #: app/features/mec/fes.php:335 app/features/mec/modules.php:242
 #: app/libraries/main.php:711 app/libraries/main.php:772
 #: app/skins/single.php:112 app/skins/single.php:570
 msgid "Related Events"
 msgstr "Kapcsolódó események"
 
-#: app/core/src/FES/FormBuilder.php:1843 app/features/events.php:510
+#: app/core/src/FES/FormBuilder.php:1843 app/features/events.php:509
 #: app/features/mec/fes.php:344 app/features/mec/single.php:353
 #, fuzzy
 #| msgid "Event Organizer"
@@ -1542,9 +1545,9 @@ msgstr "Fő esemény %s"
 #: app/core/src/FES/FormBuilder.php:1918 app/core/src/FES/FormBuilder.php:1920
 #: app/core/src/FES/FormBuilder.php:1933
 #: app/core/src/SingleBuilder/Widgets/EventLocations/EventLocations.php:53
-#: app/features/events.php:3124 app/features/events.php:3480
+#: app/features/events.php:3123 app/features/events.php:3479
 #: app/features/locations.php:61 app/features/locations.php:305
-#: app/features/mec/fes.php:791
+#: app/features/mec/fes.php:797
 #: app/features/mec/meta_boxes/display_options.php:1982
 #: app/features/mec/meta_boxes/search_form.php:88
 #: app/features/mec/meta_boxes/search_form.php:186
@@ -1562,10 +1565,10 @@ msgstr "Fő esemény %s"
 #: app/features/mec/settings.php:1102 app/features/occurrences.php:331
 #: app/features/occurrences.php:333 app/features/occurrences.php:342
 #: app/features/popup/event.php:130 app/features/popup/event.php:138
-#: app/features/popup/settings.php:256 app/features/popup/settings.php:295
+#: app/features/popup/settings.php:249 app/features/popup/settings.php:288
 #: app/features/search.php:97 app/libraries/main.php:3225
-#: app/libraries/main.php:3533 app/libraries/main.php:8294
-#: app/libraries/main.php:8359 app/libraries/search.php:316
+#: app/libraries/main.php:3533 app/libraries/main.php:8305
+#: app/libraries/main.php:8370 app/libraries/search.php:316
 #: app/libraries/skins.php:1471 app/skins/single.php:971
 #: app/skins/single/m2.php:141
 msgid "Location"
@@ -1586,7 +1589,7 @@ msgstr "Új helyszín beszúrása"
 msgid "Choose one of saved locations or insert a new one."
 msgstr "Válasszon a mentett helyszínek közül, vagy adjon meg új helyszínt."
 
-#: app/core/src/FES/FormBuilder.php:1941 app/features/fes.php:852
+#: app/core/src/FES/FormBuilder.php:1941 app/features/fes.php:1043
 #: app/features/locations.php:386 app/features/popup.php:309
 #: app/features/popup/event.php:155
 msgid "Location Name"
@@ -1597,7 +1600,7 @@ msgid "eg. City Hall"
 msgstr "pl. városháza"
 
 #: app/core/src/FES/FormBuilder.php:1945 app/core/src/ImportExport/Terms.php:75
-#: app/features/events.php:3481 app/features/locations.php:121
+#: app/features/events.php:3480 app/features/locations.php:121
 #: app/features/locations.php:207 app/features/locations.php:306
 #: app/features/mec/meta_boxes/search_form.php:132
 #: app/features/mec/meta_boxes/search_form.php:230
@@ -1625,7 +1628,7 @@ msgid "Opening hour in text format like 09:15 or 18:30"
 msgstr ""
 
 #: app/core/src/FES/FormBuilder.php:1967 app/core/src/ImportExport/Terms.php:76
-#: app/core/src/SingleBuilder/Widgets/EventLocations/EventLocations.php:67
+#: app/core/src/SingleBuilder/Widgets/EventLocations/EventLocations.php:68
 #: app/features/locations.php:141 app/features/locations.php:223
 #: app/skins/single.php:982 app/skins/single.php:1536
 #, fuzzy
@@ -1678,8 +1681,8 @@ msgid "Don't show map in single event page"
 msgstr "Ne mutasson térképet a szimpla esemény oldalon"
 
 #: app/core/src/FES/FormBuilder.php:2010 app/features/mec/fes.php:414
-#: app/features/mec/modules.php:129 app/libraries/main.php:8340
-#: app/libraries/main.php:8389 app/skins/single.php:1521
+#: app/features/mec/modules.php:129 app/libraries/main.php:8351
+#: app/libraries/main.php:8400 app/skins/single.php:1521
 msgid "Other Locations"
 msgstr "Más helyek"
 
@@ -1692,9 +1695,9 @@ msgstr ""
 #: app/core/src/FES/FormBuilder.php:2088 app/core/src/FES/FormBuilder.php:2090
 #: app/core/src/FES/FormBuilder.php:2103
 #: app/core/src/SingleBuilder/Widgets/EventOrganizers/EventOrganizers.php:96
-#: app/features/events.php:504 app/features/events.php:3125
-#: app/features/events.php:3482 app/features/events.php:3483
-#: app/features/events.php:3484 app/features/mec/fes.php:792
+#: app/features/events.php:503 app/features/events.php:3124
+#: app/features/events.php:3481 app/features/events.php:3482
+#: app/features/events.php:3483 app/features/mec/fes.php:798
 #: app/features/mec/meta_boxes/display_options.php:1983
 #: app/features/mec/meta_boxes/search_form.php:99
 #: app/features/mec/meta_boxes/search_form.php:197
@@ -1713,9 +1716,9 @@ msgstr ""
 #: app/features/occurrences.php:363 app/features/occurrences.php:372
 #: app/features/organizers.php:64 app/features/organizers.php:294
 #: app/features/popup/event.php:180 app/features/popup/event.php:188
-#: app/features/popup/settings.php:251 app/features/popup/settings.php:291
-#: app/features/search.php:103 app/libraries/main.php:8296
-#: app/libraries/main.php:8361 app/libraries/search.php:350
+#: app/features/popup/settings.php:244 app/features/popup/settings.php:284
+#: app/features/search.php:103 app/libraries/main.php:8307
+#: app/libraries/main.php:8372 app/libraries/search.php:350
 #: app/libraries/skins.php:1531 app/skins/single.php:1362
 #: app/skins/single/default.php:315 app/skins/single/m1.php:99
 #: app/skins/single/m2.php:46 app/widgets/single/default.php:120
@@ -1740,31 +1743,31 @@ msgstr ""
 "Válasszon egyet a mentett szervezők közül, vagy szúrjon be újat az "
 "alábbiakból."
 
-#: app/core/src/FES/FormBuilder.php:2115 app/features/popup/event.php:202
+#: app/core/src/FES/FormBuilder.php:2115 app/features/popup/event.php:204
 msgid "Phone number."
 msgstr "Telefonszám"
 
-#: app/core/src/FES/FormBuilder.php:2116 app/features/popup/event.php:203
+#: app/core/src/FES/FormBuilder.php:2116 app/features/popup/event.php:205
 msgid "eg. +1 (234) 5678"
 msgstr "pl. + 1 234 5678"
 
-#: app/core/src/FES/FormBuilder.php:2119 app/features/popup/event.php:207
+#: app/core/src/FES/FormBuilder.php:2119 app/features/popup/event.php:209
 msgid "Email address."
 msgstr "Email cím."
 
-#: app/core/src/FES/FormBuilder.php:2120 app/features/popup/event.php:208
+#: app/core/src/FES/FormBuilder.php:2120 app/features/popup/event.php:210
 msgid "eg. john@smith.com"
 msgstr "például john@smith.com"
 
 #: app/core/src/FES/FormBuilder.php:2123 app/core/src/ImportExport/Terms.php:56
 #: app/features/organizers.php:136 app/features/organizers.php:213
-#: app/features/popup/event.php:212
+#: app/features/popup/event.php:213
 #, fuzzy
 #| msgid "API URL"
 msgid "Page URL"
 msgstr "API URL"
 
-#: app/core/src/FES/FormBuilder.php:2124 app/features/popup/event.php:213
+#: app/core/src/FES/FormBuilder.php:2124 app/features/popup/event.php:214
 msgid "eg. https://webnus.net"
 msgstr "pl. https://webnus.net"
 
@@ -1781,7 +1784,7 @@ msgid "eg. Website name or any text"
 msgstr ""
 
 #: app/core/src/FES/FormBuilder.php:2148 app/features/mec/fes.php:460
-#: app/libraries/main.php:8339 app/libraries/main.php:8388
+#: app/libraries/main.php:8350 app/libraries/main.php:8399
 #: app/skins/single.php:1433
 msgid "Other Organizers"
 msgstr "További szervezők"
@@ -1814,8 +1817,8 @@ msgstr "Rendezés"
 msgid "Total booking limit"
 msgstr "Teljes foglalási korlát"
 
-#: app/core/src/FES/FormBuilder.php:2228 app/libraries/book.php:1786
-#: app/libraries/tickets.php:217 app/libraries/tickets.php:527
+#: app/core/src/FES/FormBuilder.php:2228 app/libraries/book.php:1797
+#: app/libraries/tickets.php:220 app/libraries/tickets.php:530
 #: app/modules/booking/default.php:135 app/modules/booking/default.php:240
 #: app/modules/booking/steps/tickets.php:266
 #: app/skins/available_spot/tpl.php:136
@@ -1844,7 +1847,7 @@ msgstr "100"
 
 #: app/core/src/FES/FormBuilder.php:2271 app/core/src/FES/FormBuilder.php:2273
 #: app/features/mec/booking.php:156 app/features/mec/booking.php:166
-#: app/features/popup/settings.php:374
+#: app/features/popup/settings.php:367
 msgid "Date Selection"
 msgstr "Dátumkijelölés"
 
@@ -1933,13 +1936,13 @@ msgstr "Dátumkijelölés"
 #: app/features/mec/meta_boxes/search_form.php:1220
 #: app/features/mec/meta_boxes/search_form.php:1227
 #: app/features/mec/meta_boxes/search_form.php:1250
-#: app/features/mec/single.php:461 app/features/popup/settings.php:377
+#: app/features/mec/single.php:461 app/features/popup/settings.php:370
 #: app/libraries/main.php:4833
 msgid "Dropdown"
 msgstr "Legördülő"
 
 #: app/core/src/FES/FormBuilder.php:2278 app/features/mec/booking.php:160
-#: app/features/popup/settings.php:378
+#: app/features/popup/settings.php:371
 msgid "Calendar"
 msgstr "Naptár"
 
@@ -2232,7 +2235,7 @@ msgstr "Email megerősítés"
 #: app/features/mec/meta_boxes/search_form.php:1256
 #: app/features/mec/modules.php:530 app/features/mec/settings.php:416
 #: app/features/mec/settings.php:436 app/features/mec/settings.php:539
-#: app/features/mec/settings.php:821 app/features/popup/settings.php:388
+#: app/features/mec/settings.php:821 app/features/popup/settings.php:381
 msgid "Disabled"
 msgstr "Kikapcsolva"
 
@@ -2299,7 +2302,7 @@ msgstr ""
 msgid "Booking Button Label"
 msgstr "Foglalás gomb"
 
-#: app/core/src/FES/FormBuilder.php:2678 app/libraries/main.php:8324
+#: app/core/src/FES/FormBuilder.php:2678 app/libraries/main.php:8335
 msgid "Book Now"
 msgstr "Foglaljon most"
 
@@ -2363,7 +2366,7 @@ msgstr ""
 "A következő fizetési átjárók közül néhányat letilthat, ha ellenőrzi őket, "
 "ellenkező esetben engedélyezve lesznek."
 
-#: app/core/src/FES/FormBuilder.php:2902 app/features/events.php:1929
+#: app/core/src/FES/FormBuilder.php:2902 app/features/events.php:1928
 msgid "Fees"
 msgstr "Díjak"
 
@@ -2409,7 +2412,7 @@ msgid "Amount (Per Booking)"
 msgstr "Összeg (Foglalásonként)"
 
 #: app/core/src/FES/FormBuilder.php:3077 app/features/contextual.php:62
-#: app/features/events.php:1936 app/features/mec/booking.php:1035
+#: app/features/events.php:1935 app/features/mec/booking.php:1035
 #: app/features/mec/booking.php:1296 app/features/mec/fes.php:614
 #: app/features/mec/support.php:29
 msgid "Booking Form"
@@ -2451,12 +2454,12 @@ msgstr "Szöveg"
 #: app/core/src/FES/FormBuilder.php:3140 app/core/src/FES/FormBuilder.php:3230
 #: app/core/src/Forms/FormFields.php:283 app/core/src/Forms/SettingsForm.php:98
 #: app/core/src/SingleBuilder/Widgets/EventDate/EventDate.php:52
-#: app/features/fes.php:310 app/features/mec/booking.php:1074
+#: app/features/fes.php:394 app/features/mec/booking.php:1074
 #: app/features/mec/booking.php:1172 app/features/mec/single.php:455
 #: app/features/profile/profile.php:62 app/features/wc.php:90
 #: app/libraries/formBuilder.php:198 app/libraries/main.php:4608
 #: app/libraries/skins.php:1747 app/modules/next-event/details.php:152
-#: app/skins/single.php:1170 app/skins/single.php:1982
+#: app/skins/single.php:1170 app/skins/single.php:1989
 msgid "Date"
 msgstr "Dátum"
 
@@ -2501,7 +2504,7 @@ msgstr "Bekezdés"
 msgid "Fixed Fields"
 msgstr "Rögzített mezők"
 
-#: app/core/src/FES/FormBuilder.php:3317 app/features/events.php:1933
+#: app/core/src/FES/FormBuilder.php:3317 app/features/events.php:1932
 #: app/features/mec/fes.php:626
 msgid "Ticket Variations / Options"
 msgstr "Jegyváltozatok/ opciók"
@@ -2550,7 +2553,7 @@ msgstr "A foglalások kezelése"
 msgid "Action"
 msgstr "Helyszín"
 
-#: app/core/src/FES/FormBuilder.php:3454 app/features/events.php:1061
+#: app/core/src/FES/FormBuilder.php:3454 app/features/events.php:1060
 #: app/features/occurrences.php:262 app/features/profile/profile.php:78
 msgid "Cancel"
 msgstr "Mégsem"
@@ -2574,8 +2577,8 @@ msgid "Please select an action"
 msgstr "Kérjük, válasszon eseményt."
 
 #: app/core/src/FES/FormBuilder.php:3644 app/features/cart/cart.php:45
-#: app/features/events.php:1926 app/features/events.php:3130
-#: app/features/occurrences.php:394 app/libraries/main.php:8326
+#: app/features/events.php:1925 app/features/events.php:3129
+#: app/features/occurrences.php:394 app/libraries/main.php:8337
 #: app/modules/booking/steps/tickets.php:266
 msgid "Tickets"
 msgstr "Jegyek"
@@ -2604,9 +2607,9 @@ msgid "Remove File"
 msgstr "Fájl eltávolítása"
 
 #: app/core/src/FES/FormBuilder.php:3744 app/core/src/ImportExport/Terms.php:40
-#: app/features/events.php:3474 app/libraries/formBuilder.php:84
+#: app/features/events.php:3473 app/libraries/formBuilder.php:84
 #: app/libraries/formBuilder.php:112 app/libraries/formBuilder.php:164
-#: app/libraries/tickets.php:154 app/libraries/tickets.php:477
+#: app/libraries/tickets.php:157 app/libraries/tickets.php:480
 msgid "Description"
 msgstr "Leírás"
 
@@ -2616,8 +2619,8 @@ msgstr "Leírás"
 msgid "An unknown error occurred during uploading the file."
 msgstr "Hiba történt a fájl feltöltése közben! Ellenőrizze az engedélyeket!"
 
-#: app/core/src/FES/FormBuilder.php:3865 app/features/events.php:1943
-#: app/features/mec/booking.php:805 app/features/mec/fes.php:670
+#: app/core/src/FES/FormBuilder.php:3865 app/features/events.php:1942
+#: app/features/mec/booking.php:805 app/features/mec/fes.php:676
 msgid "Downloadable File"
 msgstr "Letölthető fájl"
 
@@ -2627,7 +2630,7 @@ msgstr "Letölthető fájl"
 msgid "Choose File"
 msgstr "Kép kiválasztása"
 
-#: app/core/src/FES/FormBuilder.php:3914 app/features/mec/fes.php:697
+#: app/core/src/FES/FormBuilder.php:3914 app/features/mec/fes.php:703
 #: app/features/mec/meta_boxes/filter.php:91
 #: app/features/mec/meta_boxes/filter.php:360 app/features/occurrences.php:76
 msgid "Occurrences"
@@ -2726,7 +2729,7 @@ msgstr "Egyetértek a következővel: %s"
 msgid "Instead of %s, the page title with a link will be show."
 msgstr "%s helyett a linkkel ellátott oldalcím jelenik meg."
 
-#: app/core/src/Forms/FormFields.php:569 app/features/mec/fes.php:765
+#: app/core/src/Forms/FormFields.php:569 app/features/mec/fes.php:771
 #: app/libraries/main.php:4908
 msgid "Agreement Page"
 msgstr "Megállapodási oldal"
@@ -2748,15 +2751,15 @@ msgstr "Alapértelmezés szerint nincs bejelölve"
 msgid "Insert a label for this option"
 msgstr "Címke beszúrása ehhez az opcióhoz"
 
-#: app/core/src/Forms/FormFields.php:616 app/libraries/main.php:10164
+#: app/core/src/Forms/FormFields.php:616 app/libraries/main.php:10175
 msgid "Mapping with Profile Fields"
 msgstr "Feltérképezés a profil mezőkkel"
 
-#: app/core/src/ImportExport/Terms.php:38 app/features/events.php:3472
-#: app/features/fes.php:308 app/features/labels.php:188
+#: app/core/src/ImportExport/Terms.php:38 app/features/events.php:3471
+#: app/features/fes.php:392 app/features/labels.php:188
 #: app/features/locations.php:304 app/features/organizers.php:293
 #: app/features/profile/profile.php:56 app/features/speakers.php:336
-#: app/libraries/tickets.php:109 app/libraries/tickets.php:437
+#: app/libraries/tickets.php:112 app/libraries/tickets.php:440
 msgid "ID"
 msgstr "ID (azonosító)"
 
@@ -3131,8 +3134,8 @@ msgid ""
 msgstr ""
 
 #: app/core/src/SingleBuilder/Widgets/EventCategories/EventCategories.php:49
-#: app/features/events.php:262 app/features/events.php:3123
-#: app/features/mec/fes.php:790
+#: app/features/events.php:261 app/features/events.php:3122
+#: app/features/mec/fes.php:796
 #: app/features/mec/meta_boxes/display_options.php:1980
 #: app/features/mec/meta_boxes/search_form.php:79
 #: app/features/mec/meta_boxes/search_form.php:177
@@ -3147,9 +3150,9 @@ msgstr ""
 #: app/features/mec/meta_boxes/search_form.php:1082
 #: app/features/mec/meta_boxes/search_form.php:1179
 #: app/features/mec/modules.php:254 app/features/mec/modules.php:322
-#: app/features/mec/settings.php:1096 app/features/popup/settings.php:246
-#: app/features/popup/settings.php:287 app/features/search.php:91
-#: app/libraries/main.php:8290 app/libraries/main.php:8355
+#: app/features/mec/settings.php:1096 app/features/popup/settings.php:239
+#: app/features/popup/settings.php:280 app/features/search.php:91
+#: app/libraries/main.php:8301 app/libraries/main.php:8366
 #: app/libraries/search.php:268 app/libraries/skins.php:1375
 #: app/skins/single.php:1073 app/skins/single/default.php:285
 #: app/skins/single/m1.php:202 app/skins/single/m2.php:177
@@ -3195,7 +3198,7 @@ msgstr ""
 msgid "To show this widget, you need to enable \"Local Time\" module."
 msgstr ""
 
-#: app/core/src/SingleBuilder/Widgets/EventLocations/EventLocations.php:83
+#: app/core/src/SingleBuilder/Widgets/EventLocations/EventLocations.php:84
 #: app/core/src/SingleBuilder/Widgets/EventOrganizers/EventOrganizers.php:117
 #: app/skins/single.php:996 app/skins/single.php:1384 app/skins/single.php:1464
 #: app/skins/single.php:1550 app/skins/single/default.php:340
@@ -3235,7 +3238,7 @@ msgid "To show this widget, you need to enable \"QR Code\" module."
 msgstr ""
 
 #: app/core/src/SingleBuilder/Widgets/EventRegisterButton/EventRegisterButton.php:48
-#: app/libraries/main.php:8332 app/libraries/main.php:8381
+#: app/libraries/main.php:8343 app/libraries/main.php:8392
 #: app/libraries/skins.php:2317 app/skins/available_spot/tpl.php:204
 #: app/skins/carousel/render.php:104 app/skins/carousel/render.php:143
 #: app/skins/grid/render.php:93 app/skins/grid/render.php:153
@@ -3289,22 +3292,22 @@ msgstr ""
 #: app/core/src/SingleBuilder/Widgets/EventTime/EventTime.php:47
 #: app/features/emails/details.php:26 app/features/emails/details.php:29
 #: app/libraries/skins.php:1821 app/modules/next-event/details.php:158
-#: app/skins/single.php:1278 app/skins/single.php:2001
+#: app/skins/single.php:1278 app/skins/single.php:2017
 msgid "Time"
 msgstr "Idő"
 
 #: app/core/src/SingleBuilder/Widgets/EventTime/EventTime.php:55
 #: app/features/booking/calendar_novel.php:150
-#: app/features/search_bar/search_result.php:14 app/libraries/main.php:8341
-#: app/libraries/main.php:8390 app/libraries/notifications.php:1960
-#: app/libraries/render.php:663 app/libraries/render.php:927
-#: app/libraries/render.php:1175 app/libraries/render.php:1202
+#: app/features/search_bar/search_result.php:14 app/libraries/main.php:8352
+#: app/libraries/main.php:8401 app/libraries/notifications.php:1960
+#: app/libraries/render.php:667 app/libraries/render.php:931
+#: app/libraries/render.php:1187 app/libraries/render.php:1214
 #: app/libraries/skins.php:1213 app/libraries/skins.php:1218
 #: app/modules/local-time/details.php:54 app/modules/local-time/type1.php:52
 #: app/modules/local-time/type2.php:85 app/modules/local-time/type3.php:49
 #: app/modules/next-event/details.php:164
 #: app/modules/next-event/multiple.php:77 app/skins/single.php:1284
-#: app/skins/single.php:2007
+#: app/skins/single.php:2023
 msgid "All Day"
 msgstr "Egész nap"
 
@@ -3406,10 +3409,10 @@ msgstr ""
 msgid "There is no attendee for booking!"
 msgstr "Az aktuális foglalás összes résztvevője"
 
-#: app/core/src/Transactions/Transaction.php:2027 app/features/fes.php:312
+#: app/core/src/Transactions/Transaction.php:2027 app/features/fes.php:396
 #: app/features/profile/profile.php:209 app/libraries/cart.php:64
 #: app/libraries/main.php:3327 app/libraries/main.php:3638
-#: app/libraries/main.php:8325 app/libraries/main.php:10856
+#: app/libraries/main.php:8336 app/libraries/main.php:10867
 msgid "Ticket"
 msgstr "Jegy"
 
@@ -3455,7 +3458,7 @@ msgid "No %s found!"
 msgstr "%s Nem található!"
 
 #: app/features/autoemails.php:74 app/features/certificates.php:77
-#: app/features/events.php:273 app/features/labels.php:71
+#: app/features/events.php:272 app/features/labels.php:71
 #: app/features/locations.php:72 app/features/organizers.php:75
 #: app/features/speakers.php:78 app/features/sponsors.php:72
 #: app/features/tag.php:69 app/features/webhooks.php:85
@@ -3519,15 +3522,15 @@ msgstr "A kosár üres!"
 msgid "Go to events page"
 msgstr "Ugrás az események oldalra"
 
-#: app/features/cart/cart.php:43 app/features/events.php:3989
-#: app/features/fes.php:313 app/features/mec/booking.php:423
+#: app/features/cart/cart.php:43 app/features/events.php:3988
+#: app/features/fes.php:397 app/features/mec/booking.php:423
 #: app/features/mec/modules.php:464 app/features/wc.php:92
 #: app/libraries/main.php:3277 app/libraries/main.php:3422
 #: app/libraries/main.php:3525 app/libraries/main.php:3734
 msgid "Transaction ID"
 msgstr "Tranzakcióazonosító"
 
-#: app/features/cart/cart.php:46 app/features/mec/fes.php:786
+#: app/features/cart/cart.php:46 app/features/mec/fes.php:792
 #: app/modules/booking/steps/tickets.php:184
 msgid "Dates"
 msgstr "Dátumok"
@@ -3556,14 +3559,14 @@ msgid "Free %s"
 msgstr "Szabad %s"
 
 #: app/features/cart/checkout.php:147 app/features/contextual.php:296
-#: app/features/events.php:470 app/features/mec/booking.php:107
+#: app/features/events.php:469 app/features/mec/booking.php:107
 #: app/features/mec/integrations.php:346 app/features/mec/notifications.php:104
 #: app/features/mec/support-page.php:149 app/features/mec/support-page.php:153
 #: app/libraries/main.php:688 app/libraries/main.php:689
 #: app/libraries/main.php:691 app/libraries/main.php:737
 #: app/libraries/main.php:897 app/libraries/main.php:3285
-#: app/libraries/main.php:3589 app/libraries/main.php:8316
-#: app/libraries/main.php:8318 app/modules/booking/steps/checkout.php:242
+#: app/libraries/main.php:3589 app/libraries/main.php:8327
+#: app/libraries/main.php:8329 app/modules/booking/steps/checkout.php:242
 msgid "Booking"
 msgstr "Foglalás"
 
@@ -3601,8 +3604,8 @@ msgstr "A legutóbbi színek"
 
 #: app/features/contextual.php:55 app/features/mec.php:572
 #: app/features/mec/dashboard.php:203 app/features/mec/support.php:20
-#: app/features/mec/wizard.php:536 app/features/popup/event.php:72
-#: app/features/popup/settings.php:35 app/features/popup/shortcode.php:43
+#: app/features/mec/wizard.php:524 app/features/popup/event.php:72
+#: app/features/popup/settings.php:36 app/features/popup/shortcode.php:43
 #: app/libraries/main.php:790
 msgid "Settings"
 msgstr "Beállítások"
@@ -3622,7 +3625,7 @@ msgstr ""
 "www.youtube.com/embed/YM8cCOvgpk0\" frameborder=\"0\" allowfullscreen></"
 "iframe>"
 
-#: app/features/contextual.php:70 app/features/events.php:1948
+#: app/features/contextual.php:70 app/features/events.php:1947
 #: app/features/mec/booking.php:1231 app/features/mec/booking.php:1250
 #: app/features/mec/support-page.php:154 app/features/mec/support.php:36
 #: app/libraries/main.php:692
@@ -3639,7 +3642,7 @@ msgstr ""
 "height=\"300\" src=\"https://www.youtube.com/embed/Hpg4chWlxoQ\" frameborder="
 "\"0\" allowfullscreen></iframe>"
 
-#: app/features/contextual.php:77 app/features/events.php:507
+#: app/features/contextual.php:77 app/features/events.php:506
 #: app/features/mec/modules.php:400 app/features/mec/support-page.php:156
 #: app/features/mec/support.php:45 app/libraries/main.php:991
 msgid "Notifications"
@@ -3759,7 +3762,7 @@ msgstr "Következő esemény modul"
 msgid "Frontend Event Submission"
 msgstr "Frontend esemény benyújtása"
 
-#: app/features/contextual.php:286 app/features/events.php:500
+#: app/features/contextual.php:286 app/features/events.php:499
 #: app/libraries/main.php:705 app/libraries/main.php:766
 msgid "Exceptional Days"
 msgstr "Kivétel napok"
@@ -3831,16 +3834,16 @@ msgstr "Előtte"
 msgid "event occurrence."
 msgstr "esemény bekövetkezése."
 
-#: app/features/emails/details.php:42 app/features/events.php:235
+#: app/features/emails/details.php:42 app/features/events.php:234
 #: app/features/ix/export.php:39 app/features/mec/dashboard.php:300
-#: app/libraries/main.php:7146 app/libraries/main.php:7168
+#: app/libraries/main.php:7157 app/libraries/main.php:7179
 #: app/skins/daily_view/tpl.php:89 app/skins/monthly_view/calendar_clean.php:47
 #: app/skins/monthly_view/tpl.php:81 app/skins/tile/tpl.php:91
 #: app/skins/yearly_view/tpl.php:78
 msgid "Events"
 msgstr "Események"
 
-#: app/features/emails/details.php:46 app/features/events.php:240
+#: app/features/emails/details.php:46 app/features/events.php:239
 msgid "All Events"
 msgstr "Minden esemény"
 
@@ -3848,7 +3851,7 @@ msgstr "Minden esemény"
 msgid "Placeholders"
 msgstr "Helyőrzők"
 
-#: app/features/events.php:215
+#: app/features/events.php:214
 msgid ""
 "It is advisable to utilize a geographic timezone, such as \"America/"
 "Los_Angeles\" instead of a UTC timezone offset, like \"UTC+0,\" while using "
@@ -3856,35 +3859,35 @@ msgid ""
 "events or with Daylight Saving Time."
 msgstr ""
 
-#: app/features/events.php:237 app/features/mec.php:522
-#: app/features/mec/wizard.php:526
+#: app/features/events.php:236 app/features/mec.php:522
+#: app/features/mec/wizard.php:514
 msgid "Add Event"
 msgstr "Esemény hozzáadása"
 
-#: app/features/events.php:238 app/features/mec/dashboard.php:202
+#: app/features/events.php:237 app/features/mec/dashboard.php:202
 msgid "Add New Event"
 msgstr "Új esemény hozzáadása"
 
-#: app/features/events.php:239 app/features/fes/list.php:173
+#: app/features/events.php:238 app/features/fes/list.php:209
 #: app/features/ix.php:5017 app/features/ix/thirdparty.php:45
-#: app/skins/map/tpl.php:75 app/skins/map/tpl.php:95
+#: app/skins/map/tpl.php:171 app/skins/map/tpl.php:191
 msgid "No events found!"
 msgstr "Nem találtunk eseményt!"
 
-#: app/features/events.php:241 app/features/fes/list.php:118
+#: app/features/events.php:240 app/features/fes/list.php:154
 msgid "Edit Event"
 msgstr "Esemény szerkesztése"
 
-#: app/features/events.php:242 app/features/fes/list.php:117
+#: app/features/events.php:241 app/features/fes/list.php:153
 #: app/features/popup/event.php:275
 msgid "View Event"
 msgstr "Esemény megtekintése"
 
-#: app/features/events.php:243
+#: app/features/events.php:242
 msgid "No events found in Trash!"
 msgstr "Esemény nem található a kukában"
 
-#: app/features/events.php:272 app/features/labels.php:70
+#: app/features/events.php:271 app/features/labels.php:70
 #: app/features/locations.php:71 app/features/organizers.php:74
 #: app/features/speakers.php:77 app/features/sponsors.php:71
 #: app/features/tag.php:68
@@ -3892,7 +3895,7 @@ msgstr "Esemény nem található a kukában"
 msgid "All %s"
 msgstr "Összes %s"
 
-#: app/features/events.php:274 app/features/labels.php:72
+#: app/features/events.php:273 app/features/labels.php:72
 #: app/features/locations.php:73 app/features/organizers.php:76
 #: app/features/speakers.php:79 app/features/sponsors.php:73
 #: app/features/tag.php:70
@@ -3900,7 +3903,7 @@ msgstr "Összes %s"
 msgid "View %s"
 msgstr "Megtekintés %s"
 
-#: app/features/events.php:275 app/features/labels.php:73
+#: app/features/events.php:274 app/features/labels.php:73
 #: app/features/locations.php:74 app/features/organizers.php:77
 #: app/features/speakers.php:80 app/features/sponsors.php:74
 #: app/features/tag.php:71
@@ -3908,7 +3911,7 @@ msgstr "Megtekintés %s"
 msgid "Update %s"
 msgstr "Frissítés %s"
 
-#: app/features/events.php:276 app/features/labels.php:74
+#: app/features/events.php:275 app/features/labels.php:74
 #: app/features/locations.php:75 app/features/organizers.php:78
 #: app/features/speakers.php:81 app/features/sponsors.php:75
 #: app/features/tag.php:72
@@ -3916,7 +3919,7 @@ msgstr "Frissítés %s"
 msgid "Add New %s"
 msgstr "Új hozzáadása %s"
 
-#: app/features/events.php:277 app/features/labels.php:75
+#: app/features/events.php:276 app/features/labels.php:75
 #: app/features/locations.php:76 app/features/organizers.php:79
 #: app/features/speakers.php:82 app/features/sponsors.php:76
 #: app/features/tag.php:73
@@ -3924,7 +3927,7 @@ msgstr "Új hozzáadása %s"
 msgid "New %s Name"
 msgstr "Új %s neve"
 
-#: app/features/events.php:278 app/features/labels.php:76
+#: app/features/events.php:277 app/features/labels.php:76
 #: app/features/locations.php:77 app/features/organizers.php:80
 #: app/features/speakers.php:83 app/features/sponsors.php:77
 #: app/features/tag.php:74
@@ -3932,7 +3935,7 @@ msgstr "Új %s neve"
 msgid "Popular %s"
 msgstr "Népszerű %s"
 
-#: app/features/events.php:279 app/features/labels.php:77
+#: app/features/events.php:278 app/features/labels.php:77
 #: app/features/locations.php:78 app/features/organizers.php:81
 #: app/features/speakers.php:84 app/features/sponsors.php:78
 #: app/features/tag.php:75
@@ -3940,29 +3943,29 @@ msgstr "Népszerű %s"
 msgid "Search %s"
 msgstr "Keresés %s"
 
-#: app/features/events.php:313 app/features/events.php:360
+#: app/features/events.php:312 app/features/events.php:359
 msgid "Category Icon"
 msgstr "Kategória ikon"
 
-#: app/features/events.php:316 app/features/events.php:365
+#: app/features/events.php:315 app/features/events.php:364
 msgid "Select icon"
 msgstr "Ikon kiválasztása"
 
-#: app/features/events.php:319 app/features/events.php:373
+#: app/features/events.php:318 app/features/events.php:372
 #: app/features/labels.php:109 app/features/labels.php:141
 #: app/features/labels.php:190
 msgid "Color"
 msgstr "Szín"
 
-#: app/features/events.php:321 app/features/events.php:378
+#: app/features/events.php:320 app/features/events.php:377
 msgid "Optional category color"
 msgstr "Választható kategória szín"
 
-#: app/features/events.php:325 app/features/events.php:384
+#: app/features/events.php:324 app/features/events.php:383
 msgid "Fallback Image"
 msgstr "Hamis/tartalék kép"
 
-#: app/features/events.php:329 app/features/events.php:392
+#: app/features/events.php:328 app/features/events.php:391
 #: app/features/locations.php:187 app/features/locations.php:247
 #: app/features/organizers.php:189 app/features/organizers.php:240
 #: app/features/speakers.php:216 app/features/speakers.php:279
@@ -3970,53 +3973,53 @@ msgstr "Hamis/tartalék kép"
 msgid "Upload/Add image"
 msgstr "Kép feltöltése/hozzáadása"
 
-#: app/features/events.php:450
+#: app/features/events.php:449
 msgid "Event Details"
 msgstr "Esemény részletek"
 
-#: app/features/events.php:496
+#: app/features/events.php:495
 msgid "FES Details"
 msgstr "FES részletei"
 
-#: app/features/events.php:497
+#: app/features/events.php:496
 msgid "Date And Time"
 msgstr "Dátum és idő"
 
-#: app/features/events.php:499 app/features/mec/single.php:420
+#: app/features/events.php:498 app/features/mec/single.php:420
 #: app/libraries/eventFields.php:44
 msgid "Event Data"
 msgstr "Esemény adatok"
 
-#: app/features/events.php:501 app/features/mec/fes.php:517
+#: app/features/events.php:500 app/features/mec/fes.php:517
 #: app/libraries/formBuilder.php:48 app/skins/single.php:1590
 msgid "Hourly Schedule"
 msgstr "Óraterv"
 
-#: app/features/events.php:502
+#: app/features/events.php:501
 msgid "Location/Venue"
 msgstr "Helyszín/környék"
 
-#: app/features/events.php:503
+#: app/features/events.php:502
 msgid "Links"
 msgstr "Linkek"
 
-#: app/features/events.php:506 app/features/occurrences.php:208
+#: app/features/events.php:505 app/features/occurrences.php:208
 msgid "SEO Schema / Event Status"
 msgstr "SEO séma / esemény állapota"
 
-#: app/features/events.php:508 app/features/mec/single.php:647
+#: app/features/events.php:507 app/features/mec/single.php:647
 msgid "Public Download"
 msgstr "Nyilvános letöltés"
 
-#: app/features/events.php:749
+#: app/features/events.php:748
 msgid "Note for reviewer"
 msgstr "Megjegyzés az értékelőnek"
 
-#: app/features/events.php:755
+#: app/features/events.php:754
 msgid "Guest Data"
 msgstr "Vendégadatok"
 
-#: app/features/events.php:768
+#: app/features/events.php:767
 msgid ""
 "This event is imported from Google calendar so if you modify it, it would "
 "overwrite in the next import from Google."
@@ -4024,17 +4027,17 @@ msgstr ""
 "Ezt az eseményt a Google naptárából importálták, így ha módosítja, akkor a "
 "következő Google-importálás felülírja."
 
-#: app/features/events.php:934
+#: app/features/events.php:933
 msgid "Event Repeating (Recurring events)"
 msgstr "Ismétlődő esemény"
 
-#: app/features/events.php:1059
+#: app/features/events.php:1058
 #, fuzzy
 #| msgid "Update %s"
 msgid "Update"
 msgstr "Frissítés %s"
 
-#: app/features/events.php:1067
+#: app/features/events.php:1066
 #, fuzzy
 #| msgid ""
 #| "Add certain days to event occurrence dates. If you have a single day "
@@ -4050,13 +4053,13 @@ msgstr ""
 "többnapos eseménye van, a kezdő és záró dátumoknak illeszkednie kell a "
 "kezdeti dátumhoz."
 
-#: app/features/events.php:1146 app/features/events.php:1157
+#: app/features/events.php:1145 app/features/events.php:1156
 #, fuzzy
 #| msgid "Back to list"
 msgid "Click to edit"
 msgstr "Vissza a listához"
 
-#: app/features/events.php:1438
+#: app/features/events.php:1437
 #, fuzzy
 #| msgid ""
 #| "The event will finish after certain repeats. For example if you set it to "
@@ -4068,19 +4071,19 @@ msgstr ""
 "Az esemény bizonyos ismétlések után befejeződik. Ha például 10-re állítja, "
 "az esemény 10 alkalom után fejeződik be."
 
-#: app/features/events.php:1598 app/features/mec/settings.php:926
+#: app/features/events.php:1597 app/features/mec/settings.php:926
 msgid "Decimals"
 msgstr "Tizedesjel"
 
-#: app/features/events.php:1639
+#: app/features/events.php:1638
 msgid "Exceptional Days (Exclude Dates)"
 msgstr "Kivétel Napok (dátumok kizárása)"
 
-#: app/features/events.php:1645 app/libraries/formBuilder.php:206
+#: app/features/events.php:1644 app/libraries/formBuilder.php:206
 msgid "Exclude certain days"
 msgstr "Bizonyos napok kizárása"
 
-#: app/features/events.php:1853
+#: app/features/events.php:1852
 #, fuzzy
 #| msgid ""
 #| "If you fill it, it will replace the default event page link. Insert full "
@@ -4095,177 +4098,177 @@ msgstr ""
 "be a teljes hivatkozást, amely tartalmazza a http(s):// - Továbbá, ha a "
 "hirdetési URL-t használja, használhatja az URL Shortener-t"
 
-#: app/features/events.php:1855
+#: app/features/events.php:1854
 msgid "URL Shortener"
 msgstr "URL rövidítő"
 
-#: app/features/events.php:1873 app/features/mec.php:1244
+#: app/features/events.php:1872 app/features/mec.php:1244
 #: app/features/mec/fes.php:303 app/features/occurrences.php:431
 #: app/features/popup/shortcode.php:486
 msgid "Current Window"
 msgstr "Aktuális ablak"
 
-#: app/features/events.php:1875 app/features/mec.php:1245
+#: app/features/events.php:1874 app/features/mec.php:1245
 #: app/features/mec/fes.php:304 app/features/occurrences.php:432
 #: app/features/popup/shortcode.php:490
 msgid "New Window"
 msgstr "Új ablak"
 
-#: app/features/events.php:1924 app/features/mec/fes.php:525
+#: app/features/events.php:1923 app/features/mec/fes.php:525
 msgid "Booking Options"
 msgstr "Foglalási beállítások"
 
-#: app/features/events.php:1939 app/features/mec/booking.php:1327
+#: app/features/events.php:1938 app/features/mec/booking.php:1327
 #: app/features/mec/support-page.php:157
 msgid "Organizer Payment"
 msgstr "Fizetés szervezője"
 
-#: app/features/events.php:1951 app/features/events.php:3670
+#: app/features/events.php:1950 app/features/events.php:3669
 #: app/features/ix/export.php:61 app/features/occurrences.php:255
-#: app/libraries/main.php:8319
+#: app/libraries/main.php:8330
 msgid "Bookings"
 msgstr "Foglalások"
 
-#: app/features/events.php:3000 app/features/mec/meta_boxes/filter.php:375
+#: app/features/events.php:2999 app/features/mec/meta_boxes/filter.php:375
 #: app/features/mec/settings.php:804
 msgid "Expired Events"
 msgstr "Lejárt események"
 
-#: app/features/events.php:3001 app/features/mec.php:1617
+#: app/features/events.php:3000 app/features/mec.php:1617
 #: app/features/mec/dashboard.php:332 app/features/mec/settings.php:803
 msgid "Upcoming Events"
 msgstr "Közelgő események"
 
-#: app/features/events.php:3025 app/features/events.php:3043
-#: app/features/events.php:3061 app/features/events.php:3079
+#: app/features/events.php:3024 app/features/events.php:3042
+#: app/features/events.php:3060 app/features/events.php:3078
 #, php-format
 msgid "Show all %s"
 msgstr "Összes %s mutatása"
 
-#: app/features/events.php:3025
+#: app/features/events.php:3024
 msgid "labels"
 msgstr "Címkék"
 
-#: app/features/events.php:3043
+#: app/features/events.php:3042
 msgid "locations"
 msgstr "Helyszínek"
 
-#: app/features/events.php:3061
+#: app/features/events.php:3060
 msgid "organizers"
 msgstr "Szervezők"
 
-#: app/features/events.php:3095
+#: app/features/events.php:3094
 msgid "Attendees List"
 msgstr "Résztvevők listája"
 
-#: app/features/events.php:3132
+#: app/features/events.php:3131
 msgid "Repeat"
 msgstr "Ismétlés"
 
-#: app/features/events.php:3336 app/features/events.php:3337
+#: app/features/events.php:3335 app/features/events.php:3336
 msgid "iCal / Outlook Export"
 msgstr "iCal / Outlook exportálás"
 
-#: app/features/events.php:3339 app/features/events.php:3340
+#: app/features/events.php:3338 app/features/events.php:3339
 msgid "CSV Export"
 msgstr "CSV export"
 
-#: app/features/events.php:3342 app/features/events.php:3343
+#: app/features/events.php:3341 app/features/events.php:3342
 #, fuzzy
 #| msgid "Google Cal. Export"
 msgid "Google Cal. CSV Export"
 msgstr "Google Cal. Exportálás"
 
-#: app/features/events.php:3345 app/features/events.php:3346
+#: app/features/events.php:3344 app/features/events.php:3345
 msgid "MS Excel Export"
 msgstr "MS Excel export"
 
-#: app/features/events.php:3348 app/features/events.php:3349
+#: app/features/events.php:3347 app/features/events.php:3348
 msgid "XML Export"
 msgstr "XML Exportálás"
 
-#: app/features/events.php:3351 app/features/events.php:3352
+#: app/features/events.php:3350 app/features/events.php:3351
 msgid "JSON Export"
 msgstr "JSON Exportálás"
 
-#: app/features/events.php:3354 app/features/events.php:3355
-#: app/features/events.php:3666 app/features/mec.php:691
+#: app/features/events.php:3353 app/features/events.php:3354
+#: app/features/events.php:3665 app/features/mec.php:691
 msgid "Duplicate"
 msgstr "Duplikálás"
 
-#: app/features/events.php:3476 app/libraries/skins.php:1829
-#: app/libraries/tickets.php:123 app/libraries/tickets.php:448
+#: app/features/events.php:3475 app/libraries/skins.php:1829
+#: app/libraries/tickets.php:126 app/libraries/tickets.php:451
 msgid "Start Time"
 msgstr "Esemény kezdete"
 
-#: app/features/events.php:3478 app/libraries/skins.php:1830
-#: app/libraries/tickets.php:136 app/libraries/tickets.php:461
+#: app/features/events.php:3477 app/libraries/skins.php:1830
+#: app/libraries/tickets.php:139 app/libraries/tickets.php:464
 msgid "End Time"
 msgstr "Esemény vége"
 
-#: app/features/events.php:3479 app/features/sponsors.php:112
+#: app/features/events.php:3478 app/features/sponsors.php:112
 #: app/features/sponsors.php:141
 msgid "Link"
 msgstr "Link"
 
-#: app/features/events.php:3483
+#: app/features/events.php:3482
 #, php-format
 msgid "%s Tel"
 msgstr "Tel %s"
 
-#: app/features/events.php:3484
+#: app/features/events.php:3483
 #, php-format
 msgid "%s Email"
 msgstr "%s Email"
 
-#: app/features/events.php:3673
+#: app/features/events.php:3672
 msgid "Send Certificates"
 msgstr ""
 
-#: app/features/events.php:3992 app/features/occurrences.php:403
+#: app/features/events.php:3991 app/features/occurrences.php:403
 #: app/libraries/ticketVariations.php:43 app/libraries/ticketVariations.php:46
-#: app/libraries/tickets.php:173 app/libraries/tickets.php:177
-#: app/libraries/tickets.php:311 app/libraries/tickets.php:338
-#: app/libraries/tickets.php:494 app/libraries/tickets.php:497
-#: app/libraries/tickets.php:614 app/modules/booking/steps/checkout.php:89
+#: app/libraries/tickets.php:176 app/libraries/tickets.php:180
+#: app/libraries/tickets.php:314 app/libraries/tickets.php:341
+#: app/libraries/tickets.php:497 app/libraries/tickets.php:500
+#: app/libraries/tickets.php:617 app/modules/booking/steps/checkout.php:89
 msgid "Price"
 msgstr "Ár"
 
-#: app/features/events.php:4035
+#: app/features/events.php:4034
 #, php-format
 msgid "for %s dates"
 msgstr ""
 
-#: app/features/events.php:4047
+#: app/features/events.php:4046
 msgid "No Bookings Found!"
 msgstr "Nem található foglalás!"
 
-#: app/features/events.php:4067 app/features/fes.php:490
+#: app/features/events.php:4066 app/features/fes.php:681
 msgid "Please upload an image."
 msgstr "Tölts fel egy képet."
 
-#: app/features/events.php:4128
+#: app/features/events.php:4127
 #, fuzzy
 #| msgid "Image uploaded!"
 msgid "The images are uploaded!"
 msgstr "A kép feltöltve!"
 
-#: app/features/events.php:4128
+#: app/features/events.php:4127
 msgid "An error occurred!"
 msgstr ""
 
-#: app/features/events.php:4157
+#: app/features/events.php:4156
 #, php-format
 msgid "%s bookings moved to new date"
 msgstr ""
 
-#: app/features/events.php:4185
+#: app/features/events.php:4184
 #, fuzzy, php-format
 #| msgid "booking canceled."
 msgid "%s bookings canceled (and refunded)."
 msgstr "foglalás lemondva."
 
-#: app/features/events.php:4186
+#: app/features/events.php:4185
 #, fuzzy, php-format
 #| msgid "booking canceled."
 msgid "%s bookings canceled."
@@ -4325,7 +4328,7 @@ msgstr "Nincs hozzáférése esemény létrehozásához"
 msgid "Sorry! Selected post is not an event."
 msgstr "Sajnálom! A kiválasztott poszt nem esemény típusú."
 
-#: app/features/fes.php:174 app/features/fes.php:217 app/features/fes.php:540
+#: app/features/fes.php:174 app/features/fes.php:217 app/features/fes.php:731
 msgid "Sorry! You don't have access to modify this event."
 msgstr "Sajnáljom! Nincs hozzáférésed az esemény módosításához."
 
@@ -4343,159 +4346,187 @@ msgstr "Nincs hozzáférése az események listájának megtekintéséhez"
 msgid "Event removed!"
 msgstr "Az esemény eltávolítva!"
 
-#: app/features/fes.php:311
+#: app/features/fes.php:395
 msgid "Order Time"
 msgstr "Rendelés ideje"
 
-#: app/features/fes.php:314 app/modules/booking/steps/checkout.php:165
+#: app/features/fes.php:398 app/modules/booking/steps/checkout.php:165
 msgid "Total Price"
 msgstr "Teljes ár"
 
-#: app/features/fes.php:315 app/libraries/main.php:3417
+#: app/features/fes.php:399
+#, fuzzy
+#| msgid "Disable Ticket Times"
+msgid "Single Ticket Price"
+msgstr "Jegy időpontok letiltása"
+
+#: app/features/fes.php:400 app/libraries/main.php:3417
 #: app/libraries/main.php:3729
 msgid "Gateway"
 msgstr "Átjáró"
 
-#: app/features/fes.php:318
+#: app/features/fes.php:403
 msgid "Ticket Variation"
 msgstr "Jegyváltozat"
 
-#: app/features/fes.php:320
+#: app/features/fes.php:405
 msgid "Verification"
 msgstr "Ellenőrzés"
 
-#: app/features/fes.php:418 app/features/webhooks.php:319
-#: app/libraries/main.php:10887
+#: app/features/fes.php:492 app/features/fes.php:656 app/features/fes.php:661
+#: app/features/fes.php:664 app/features/webhooks.php:319
+#: app/libraries/main.php:10898
 msgid "Unknown"
 msgstr "Ismeretlen"
 
-#: app/features/fes.php:498
+#: app/features/fes.php:689
 #, php-format
 msgid "image extension is invalid. You can upload %s images."
 msgstr "a képkiterjesztés érvénytelen. Feltölthet %s képet."
 
-#: app/features/fes.php:504
+#: app/features/fes.php:695
 #, php-format
 msgid "Image is too big. Maximum size is %s KB."
 msgstr "A kép túl nagy. A maximális méret %s KB."
 
-#: app/features/fes.php:514
+#: app/features/fes.php:705
 msgid "Image uploaded!"
 msgstr "A kép feltöltve!"
 
-#: app/features/fes.php:545
+#: app/features/fes.php:736
 msgid "Invalid Captcha! Please try again."
 msgstr "Érvénytelen Captcha! Próbálja újra."
 
-#: app/features/fes.php:553
+#: app/features/fes.php:744
 msgid "You should accept the terms and conditions."
 msgstr "El kell fogadnia a feltételeket."
 
-#: app/features/fes.php:577
+#: app/features/fes.php:768
 msgid "Please fill event title field!"
 msgstr "Kérlek töltsd ki az esemény címe mezőt!"
 
-#: app/features/fes.php:585
+#: app/features/fes.php:776
 msgid "Please fill event body field!"
 msgstr "Kérjük, töltse ki az esemény törzsmezőjét!"
 
-#: app/features/fes.php:593
+#: app/features/fes.php:784
 #, fuzzy
 #| msgid "Please fill event title field!"
 msgid "Please fill event excerpt field!"
 msgstr "Kérlek töltsd ki az esemény címe mezőt!"
 
-#: app/features/fes.php:606
+#: app/features/fes.php:797
 #, fuzzy
 #| msgid "Please fill event title field!"
 msgid "Please fill event start date!"
 msgstr "Kérlek töltsd ki az esemény címe mezőt!"
 
-#: app/features/fes.php:607
+#: app/features/fes.php:798
 #, fuzzy
 #| msgid "Please fill event body field!"
 msgid "Please fill event end date!"
 msgstr "Kérjük, töltse ki az esemény törzsmezőjét!"
 
-#: app/features/fes.php:616
+#: app/features/fes.php:807
 msgid "Please select at-least one category!"
 msgstr "Kérjük, válasszon legalább egy kategóriát!"
 
-#: app/features/fes.php:629
+#: app/features/fes.php:820
 #, fuzzy
 #| msgid "Please select events to import!"
 msgid "Please select the event location!"
 msgstr "Kérjük, válassza ki az importálandó eseményeket!"
 
-#: app/features/fes.php:643
+#: app/features/fes.php:834
 #, fuzzy
 #| msgid "Please select events to import!"
 msgid "Please select the event organizer!"
 msgstr "Kérjük, válassza ki az importálandó eseményeket!"
 
-#: app/features/fes.php:652
+#: app/features/fes.php:843
 msgid "Please select at-least one label!"
 msgstr "Válasszon legalább egy címkét!"
 
-#: app/features/fes.php:660
+#: app/features/fes.php:851
 #, fuzzy
 #| msgid "Please upload an image."
 msgid "Please upload a featured image!"
 msgstr "Tölts fel egy képet."
 
-#: app/features/fes.php:668
+#: app/features/fes.php:859
 #, fuzzy
 #| msgid "Please fill event title field!"
 msgid "Please fill event link!"
 msgstr "Kérlek töltsd ki az esemény címe mezőt!"
 
-#: app/features/fes.php:676
+#: app/features/fes.php:867
 #, fuzzy
 #| msgid "Please fill event title field!"
 msgid "Please fill more info!"
 msgstr "Kérlek töltsd ki az esemény címe mezőt!"
 
-#: app/features/fes.php:684
+#: app/features/fes.php:875
 #, fuzzy
 #| msgid "Please fill event body field!"
 msgid "Please fill cost!"
 msgstr "Kérjük, töltse ki az esemény törzsmezőjét!"
 
-#: app/features/fes.php:919 app/features/organizers.php:376
+#: app/features/fes.php:1110 app/features/organizers.php:376
 #: app/features/popup.php:370
 msgid "Organizer Name"
 msgstr "Szervező neve"
 
-#: app/features/fes.php:1640
+#: app/features/fes.php:1831
 msgid "Event submitted. It will publish as soon as possible."
 msgstr "Esemény beküldve. A lehető leghamarabb közzé lesz téve."
 
-#: app/features/fes.php:1641
+#: app/features/fes.php:1832
 msgid "The event published."
 msgstr "Az esemény publikálva."
 
-#: app/features/fes/list.php:46
+#: app/features/fes/list.php:72
 msgid "Click again to remove!"
 msgstr "Kattintson újra az eltávolításhoz!"
 
-#: app/features/fes/list.php:89 app/features/fes/list.php:175
+#: app/features/fes/list.php:114
 msgid "Add new"
 msgstr "Új hozzáadása"
 
-#: app/features/fes/list.php:114 app/skins/list/render.php:518
+#: app/features/fes/list.php:116
+#, fuzzy
+#| msgid "Search Bar"
+msgid "Search Query"
+msgstr "Keresősáv"
+
+#: app/features/fes/list.php:117
+#, fuzzy
+#| msgid "Event Categories"
+msgid "Event Category"
+msgstr "Esemény kategóriák"
+
+#: app/features/fes/list.php:118 app/features/popup/event.php:240
+msgid "All Categories"
+msgstr "Összes kategória"
+
+#: app/features/fes/list.php:123 app/features/mec.php:1828
+#: app/skins/general_calendar/tpl.php:190
+msgid "Filter"
+msgstr "Szűrő"
+
+#: app/features/fes/list.php:150 app/skins/list/render.php:518
 msgid "Download Attendees"
 msgstr "Résztvevők letöltése"
 
-#: app/features/fes/list.php:120
+#: app/features/fes/list.php:156
 msgid "Remove Event"
 msgstr "Esemény eltávolítása"
 
-#: app/features/fes/list.php:155 app/features/ix/export.php:30
+#: app/features/fes/list.php:191 app/features/ix/export.php:30
 #: app/features/ix/export.php:55
 msgid "CSV"
 msgstr "CSV"
 
-#: app/features/fes/list.php:156
+#: app/features/fes/list.php:192
 msgid "MS EXCEL"
 msgstr "MS EXCEL"
 
@@ -4719,7 +4750,7 @@ msgid ""
 msgstr "Ez exportálja az összes webhelyesemény adatait a kívánt formátumba."
 
 #: app/features/ix/export.php:29 app/features/mec/modules.php:592
-#: app/features/popup/settings.php:346
+#: app/features/popup/settings.php:339
 msgid "iCal"
 msgstr "iCal"
 
@@ -5305,7 +5336,7 @@ msgstr ""
 #: app/features/mec/meta_boxes/filter.php:78
 #: app/features/mec/meta_boxes/filter.php:132 app/features/mec/modules.php:112
 #: app/libraries/main.php:702 app/libraries/main.php:763
-#: app/libraries/main.php:8293 app/libraries/main.php:8358
+#: app/libraries/main.php:8304 app/libraries/main.php:8369
 msgid "Locations"
 msgstr "Helyszínek"
 
@@ -5313,8 +5344,8 @@ msgstr "Helyszínek"
 #: app/features/mec/dashboard.php:321 app/features/mec/meta_boxes/filter.php:80
 #: app/features/mec/meta_boxes/filter.php:168 app/features/mec/modules.php:56
 #: app/features/organizers.php:65 app/libraries/main.php:701
-#: app/libraries/main.php:761 app/libraries/main.php:8295
-#: app/libraries/main.php:8360
+#: app/libraries/main.php:761 app/libraries/main.php:8306
+#: app/libraries/main.php:8371
 msgid "Organizers"
 msgstr "Szervezők"
 
@@ -5412,7 +5443,7 @@ msgstr ""
 msgid "The import is finished."
 msgstr "Az esemény véget ért."
 
-#: app/features/labels.php:60 app/features/mec/fes.php:794
+#: app/features/labels.php:60 app/features/mec/fes.php:800
 #: app/features/mec/meta_boxes/display_options.php:1981
 #: app/features/mec/meta_boxes/search_form.php:124
 #: app/features/mec/meta_boxes/search_form.php:222
@@ -5427,11 +5458,11 @@ msgstr "Az esemény véget ért."
 #: app/features/mec/meta_boxes/search_form.php:1127
 #: app/features/mec/meta_boxes/search_form.php:1224
 #: app/features/mec/modules.php:272 app/features/mec/modules.php:340
-#: app/features/mec/settings.php:1128 app/features/popup/settings.php:266
-#: app/features/popup/settings.php:305 app/features/search.php:121
+#: app/features/mec/settings.php:1128 app/features/popup/settings.php:259
+#: app/features/popup/settings.php:298 app/features/search.php:121
 #: app/libraries/search.php:438 app/libraries/skins.php:1684
-#: app/libraries/tickets.php:315 app/libraries/tickets.php:341
-#: app/libraries/tickets.php:616
+#: app/libraries/tickets.php:318 app/libraries/tickets.php:344
+#: app/libraries/tickets.php:619
 msgid "Label"
 msgstr "Címke"
 
@@ -5606,8 +5637,8 @@ msgstr "Kiegészítők:"
 msgid "MEC - Wizard"
 msgstr "MEC - Varázsló"
 
-#: app/features/mec.php:575 app/features/mec/wizard.php:527
-#: app/features/mec/wizard.php:532 app/features/mec/wizard.php:537
+#: app/features/mec.php:575 app/features/mec/wizard.php:515
+#: app/features/mec/wizard.php:520 app/features/mec/wizard.php:525
 msgid "Wizard"
 msgstr "Varázsló"
 
@@ -5620,7 +5651,7 @@ msgstr "MEC - Frissítés Pro-ra"
 msgid "Go Pro"
 msgstr "Váltás PRO verzióra"
 
-#: app/features/mec.php:618 app/features/mec/wizard.php:531
+#: app/features/mec.php:618 app/features/mec/wizard.php:519
 msgid "Add Shortcode"
 msgstr "Helyezzen be egy rövid kódot"
 
@@ -5816,10 +5847,6 @@ msgstr "Sáv"
 msgid "Line"
 msgstr "Sor"
 
-#: app/features/mec.php:1828 app/skins/general_calendar/tpl.php:178
-msgid "Filter"
-msgstr "Szűrő"
-
 #: app/features/mec.php:1852
 msgid "Print Calendar"
 msgstr "A naptár kinyomtatása"
@@ -5910,8 +5937,8 @@ msgstr "Keresés…"
 #: app/features/mec/booking.php:1391 app/features/mec/booking.php:1472
 #: app/features/mec/booking.php:1482 app/features/mec/booking.php:1567
 #: app/features/mec/booking.php:1581 app/features/mec/fes.php:30
-#: app/features/mec/fes.php:809 app/features/mec/fes.php:819
-#: app/features/mec/fes.php:856 app/features/mec/fes.php:866
+#: app/features/mec/fes.php:815 app/features/mec/fes.php:825
+#: app/features/mec/fes.php:862 app/features/mec/fes.php:872
 #: app/features/mec/integrations.php:27 app/features/mec/integrations.php:420
 #: app/features/mec/integrations.php:431 app/features/mec/integrations.php:492
 #: app/features/mec/integrations.php:506 app/features/mec/messages.php:20
@@ -5937,7 +5964,7 @@ msgstr "Keresés…"
 msgid "Save Changes"
 msgstr "Módosítások mentése"
 
-#: app/features/mec/booking.php:115 app/features/popup/settings.php:369
+#: app/features/mec/booking.php:115 app/features/popup/settings.php:362
 msgid "Enable booking module"
 msgstr "Foglalási modul engedélyezése"
 
@@ -6030,13 +6057,13 @@ msgstr ""
 msgid "User Registration"
 msgstr "Felhasználói Regisztráció"
 
-#: app/features/mec/booking.php:217 app/features/popup/settings.php:386
+#: app/features/mec/booking.php:217 app/features/popup/settings.php:379
 #, fuzzy
 #| msgid "Enabled Only for Main Attendee"
 msgid "Enabled (Main Attendee)"
 msgstr "Csak a fő résztvevő számára engedélyezve"
 
-#: app/features/mec/booking.php:218 app/features/popup/settings.php:387
+#: app/features/mec/booking.php:218 app/features/popup/settings.php:380
 #, fuzzy
 #| msgid "Enabled Only for Main Attendee"
 msgid "Enabled (All Attendees)"
@@ -6212,7 +6239,7 @@ msgid ""
 msgstr ""
 
 #: app/features/mec/booking.php:355 app/features/mec/booking.php:359
-#: app/libraries/tickets.php:415 app/libraries/tickets.php:665
+#: app/libraries/tickets.php:418 app/libraries/tickets.php:668
 #, fuzzy
 #| msgid "Available Spot"
 msgid "Availability Date"
@@ -6319,19 +6346,19 @@ msgstr "Minden felhasználó"
 msgid "Email verification"
 msgstr "E-mail ellenőrzés"
 
-#: app/features/mec/booking.php:488 app/features/popup/settings.php:405
+#: app/features/mec/booking.php:488 app/features/popup/settings.php:398
 msgid "Auto verification for free bookings"
 msgstr "Automatikus ellenőrzés ingyenes foglalások esetén"
 
-#: app/features/mec/booking.php:497 app/features/popup/settings.php:414
+#: app/features/mec/booking.php:497 app/features/popup/settings.php:407
 msgid "Auto verification for paid bookings"
 msgstr "Fizetett foglalások automatikus ellenőrzése"
 
-#: app/features/mec/booking.php:507 app/features/popup/settings.php:423
+#: app/features/mec/booking.php:507 app/features/popup/settings.php:416
 msgid "Auto confirmation for free bookings"
 msgstr "Ingyenes foglalások automatikus megerősítése"
 
-#: app/features/mec/booking.php:516 app/features/popup/settings.php:432
+#: app/features/mec/booking.php:516 app/features/popup/settings.php:425
 msgid "Auto confirmation for paid bookings"
 msgstr "A fizetett foglalások automatikus megerősítése"
 
@@ -6975,7 +7002,7 @@ msgstr "Megrendelési oldal"
 msgid "Enable Cart Invoice"
 msgstr "Kosár számla engedélyezése"
 
-#: app/features/mec/booking.php:1542 app/features/mec/fes.php:839
+#: app/features/mec/booking.php:1542 app/features/mec/fes.php:845
 #: app/features/mec/integrations.php:470 app/features/mec/messages.php:94
 #: app/features/mec/modules.php:833 app/features/mec/notifications.php:2486
 #: app/features/mec/settings.php:1482 app/features/mec/single.php:717
@@ -6983,7 +7010,7 @@ msgstr "Kosár számla engedélyezése"
 msgid "Saved"
 msgstr "Mentve"
 
-#: app/features/mec/booking.php:1543 app/features/mec/fes.php:840
+#: app/features/mec/booking.php:1543 app/features/mec/fes.php:846
 #: app/features/mec/integrations.php:471 app/features/mec/messages.php:95
 #: app/features/mec/modules.php:834 app/features/mec/notifications.php:2487
 #: app/features/mec/settings.php:1483 app/features/mec/single.php:718
@@ -7400,9 +7427,9 @@ msgstr "Teljes foglalási korlát"
 msgid "Minimum Tickets Per Booking"
 msgstr "Minimális jegyek foglalásonként"
 
-#: app/features/mec/fes.php:608 app/libraries/tickets.php:160
-#: app/libraries/tickets.php:163 app/libraries/tickets.php:482
-#: app/libraries/tickets.php:485
+#: app/features/mec/fes.php:608 app/libraries/tickets.php:163
+#: app/libraries/tickets.php:166 app/libraries/tickets.php:485
+#: app/libraries/tickets.php:488
 msgid "Private Description"
 msgstr "Privát leírás"
 
@@ -7416,43 +7443,43 @@ msgstr "Díjak / Adók opciók"
 msgid "Partial Payment Options"
 msgstr "Megjelenítési beállítások"
 
-#: app/features/mec/fes.php:649
+#: app/features/mec/fes.php:649 app/features/mec/fes.php:656
 #, fuzzy
 #| msgid "Display Options"
 msgid "Rsvp Options"
 msgstr "Megjelenítési beállítások"
 
-#: app/features/mec/fes.php:656 app/features/schema.php:67
+#: app/features/mec/fes.php:662 app/features/schema.php:67
 msgid "SEO Schema"
 msgstr "SEO-séma"
 
-#: app/features/mec/fes.php:679 app/features/mec/single.php:238
+#: app/features/mec/fes.php:685 app/features/mec/single.php:238
 #: app/features/mec/single.php:246
 msgid "Public Download Module"
 msgstr "Nyilvános letöltési modul"
 
-#: app/features/mec/fes.php:688
+#: app/features/mec/fes.php:694
 #, fuzzy
 #| msgid "Event"
 msgid "Event FAQ"
 msgstr "Esemény"
 
-#: app/features/mec/fes.php:706 app/features/mec/single.php:664
+#: app/features/mec/fes.php:712 app/features/mec/single.php:664
 msgid "Virtual Event"
 msgstr "Virtuális esemény"
 
-#: app/features/mec/fes.php:715
+#: app/features/mec/fes.php:721
 msgid "Zoom Event"
 msgstr "Zoom esemény"
 
-#: app/features/mec/fes.php:723 app/features/mec/fes.php:727
+#: app/features/mec/fes.php:729 app/features/mec/fes.php:733
 #: app/features/mec/notifications.php:1974
 #: app/features/mec/notifications.php:2091
 #: app/features/mec/notifications.php:2377 app/features/notifications.php:207
 msgid "Event Note"
 msgstr "Esemény megjegyzés"
 
-#: app/features/mec/fes.php:728
+#: app/features/mec/fes.php:734
 #, fuzzy, php-format
 #| msgid ""
 #| "Users can put a note for editors while they're submitting the event. Also "
@@ -7467,35 +7494,35 @@ msgstr ""
 "közben. A(z) %%event_note%% szót is elhelyezheti az új eseményértesítésben, "
 "hogy e-mailben megkapja a felhasználók megjegyzését."
 
-#: app/features/mec/fes.php:735 app/features/mec/fes.php:743
+#: app/features/mec/fes.php:741 app/features/mec/fes.php:749
 msgid "Note visibility"
 msgstr "Megjegyzés láthatósága"
 
-#: app/features/mec/fes.php:738
+#: app/features/mec/fes.php:744
 msgid "Always"
 msgstr "Mindig"
 
-#: app/features/mec/fes.php:739
+#: app/features/mec/fes.php:745
 msgid "While event is not published"
 msgstr "Amíg az esemény nincs közzétéve"
 
-#: app/features/mec/fes.php:744
+#: app/features/mec/fes.php:750
 msgid "When should event note be displayed in FES Form and Backend?"
 msgstr ""
 
-#: app/features/mec/fes.php:754
+#: app/features/mec/fes.php:760
 msgid "Agreement Checkbox (GDPR Compatibility)"
 msgstr "Megállapodás jelölőnégyzet (GDPR-kompatibilitás)"
 
-#: app/features/mec/fes.php:761
+#: app/features/mec/fes.php:767
 msgid "Checked by Default"
 msgstr "Alapértelmezetten bejelölt"
 
-#: app/features/mec/fes.php:781 app/libraries/main.php:722
+#: app/features/mec/fes.php:787 app/libraries/main.php:722
 msgid "Required Fields"
 msgstr "Kötelező mezők"
 
-#: app/features/mec/fes.php:784 app/features/mec/notifications.php:231
+#: app/features/mec/fes.php:790 app/features/mec/notifications.php:231
 #: app/features/mec/notifications.php:391
 #: app/features/mec/notifications.php:568
 #: app/features/mec/notifications.php:776
@@ -7512,8 +7539,8 @@ msgstr "Kötelező mezők"
 msgid "Event Description"
 msgstr "Esemény leírása"
 
-#: app/features/mec/fes.php:789 app/libraries/main.php:8336
-#: app/libraries/main.php:8385
+#: app/features/mec/fes.php:795 app/libraries/main.php:8347
+#: app/libraries/main.php:8396
 msgid "More Info Link"
 msgstr "További információ Link"
 
@@ -7937,7 +7964,7 @@ msgstr "Lenyíló"
 #: app/features/mec/meta_boxes/display_options.php:2825
 #: app/features/mec/meta_boxes/display_options.php:2842
 #: app/features/mec/meta_boxes/display_options.php:2982
-#: app/skins/general_calendar/tpl.php:207
+#: app/skins/general_calendar/tpl.php:219
 msgid "Today"
 msgstr "Ma"
 
@@ -9372,8 +9399,8 @@ msgstr "Több választási lehetőség"
 #: app/features/mec/meta_boxes/search_form.php:1120
 #: app/features/mec/meta_boxes/search_form.php:1217
 #: app/features/mec/modules.php:276 app/features/mec/modules.php:344
-#: app/features/mec/settings.php:1122 app/features/popup/settings.php:270
-#: app/features/popup/settings.php:309 app/features/search.php:115
+#: app/features/mec/settings.php:1122 app/features/popup/settings.php:263
+#: app/features/popup/settings.php:302 app/features/search.php:115
 #: app/features/tag.php:58 app/libraries/search.php:418
 #: app/libraries/skins.php:1651
 msgid "Tag"
@@ -9523,7 +9550,7 @@ msgstr "Nincsenek keresési beállítások"
 msgid "Click to copy shortcode"
 msgstr "Kattintson ide a shortcode másolásához"
 
-#: app/features/mec/modules.php:40 app/features/popup/settings.php:324
+#: app/features/mec/modules.php:40 app/features/popup/settings.php:317
 msgid "Enable speakers feature"
 msgstr "Házigazdák engedélyezése funkció"
 
@@ -9630,19 +9657,19 @@ msgstr ""
 msgid "Countdown"
 msgstr "Visszaszámlálás"
 
-#: app/features/mec/modules.php:176 app/features/popup/settings.php:221
+#: app/features/mec/modules.php:176 app/features/popup/settings.php:214
 msgid "Show countdown module on event page"
 msgstr "Visszaszámláló modul megjelenítése az eseményoldalon"
 
-#: app/features/mec/modules.php:181 app/features/popup/settings.php:225
+#: app/features/mec/modules.php:181 app/features/popup/settings.php:218
 msgid "Countdown Style"
 msgstr "Visszaszámláló stílusa"
 
-#: app/features/mec/modules.php:184 app/features/popup/settings.php:228
+#: app/features/mec/modules.php:184 app/features/popup/settings.php:221
 msgid "Plain Style"
 msgstr "Egyszerű stílus"
 
-#: app/features/mec/modules.php:185 app/features/popup/settings.php:229
+#: app/features/mec/modules.php:185 app/features/popup/settings.php:222
 msgid "Flip Style"
 msgstr "Átforduló stílus"
 
@@ -9686,14 +9713,14 @@ msgstr "Kivétel napok"
 msgid "You may use this option to add your organization's off days."
 msgstr ""
 
-#: app/features/mec/modules.php:246 app/features/popup/settings.php:239
+#: app/features/mec/modules.php:246 app/features/popup/settings.php:232
 msgid "Display related events based on taxonomy in single event page."
 msgstr ""
 "Kapcsolódó események megjelenítése a rendszerezés alapján egyedi "
 "eseményoldalon."
 
 #: app/features/mec/modules.php:251 app/features/mec/modules.php:319
-#: app/features/popup/settings.php:243 app/features/popup/settings.php:284
+#: app/features/popup/settings.php:236 app/features/popup/settings.php:277
 msgid "Select Taxonomies:"
 msgstr "Taxonómiák kiválasztása:"
 
@@ -9728,7 +9755,7 @@ msgstr "Az összes esemény megjelenítése a jobb oldali szakaszban"
 msgid "Next / Previous Events"
 msgstr "Következő / Korábbi események"
 
-#: app/features/mec/modules.php:314 app/features/popup/settings.php:279
+#: app/features/mec/modules.php:314 app/features/popup/settings.php:272
 msgid "Display next / previous events based on taxonomy in single event page."
 msgstr ""
 "A következő / korábbi események megjelenítése a taxonómia alapján egyetlen "
@@ -9850,13 +9877,13 @@ msgstr "Résztvevők"
 msgid "Attendee Name"
 msgstr "Résztvevő neve"
 
-#: app/features/mec/modules.php:462 app/libraries/tickets.php:109
-#: app/libraries/tickets.php:437
+#: app/features/mec/modules.php:462 app/libraries/tickets.php:112
+#: app/libraries/tickets.php:440
 msgid "Ticket ID"
 msgstr "Jegy ID"
 
-#: app/features/mec/modules.php:463 app/libraries/tickets.php:112
-#: app/libraries/tickets.php:440
+#: app/features/mec/modules.php:463 app/libraries/tickets.php:115
+#: app/libraries/tickets.php:443
 msgid "Ticket Name"
 msgstr "Jegy Neve"
 
@@ -9949,14 +9976,14 @@ msgstr ""
 msgid "Fullscreen Button"
 msgstr "Teljes képernyő gomb"
 
-#: app/features/mec/modules.php:586 app/features/popup/settings.php:338
+#: app/features/mec/modules.php:586 app/features/popup/settings.php:331
 msgid ""
 "Show export module (iCal export and add to Google calendars) on event page"
 msgstr ""
 "Exportálási modul megjelenítése (iCal exportálás és hozzáadás a Google "
 "naptárakhoz) az eseményoldalon"
 
-#: app/features/mec/modules.php:592 app/features/popup/settings.php:346
+#: app/features/mec/modules.php:592 app/features/popup/settings.php:339
 #: app/libraries/skins.php:2606
 msgid "Google Calendar"
 msgstr "Google Naptár"
@@ -11091,8 +11118,8 @@ msgstr ""
 msgid "only once per hour"
 msgstr "óránként csak egyszer"
 
-#: app/features/mec/notifications.php:1451 app/libraries/main.php:9805
-#: app/libraries/main.php:9831
+#: app/features/mec/notifications.php:1451 app/libraries/main.php:9816
+#: app/libraries/main.php:9842
 msgid "Hours"
 msgstr "Órák"
 
@@ -11231,8 +11258,8 @@ msgstr ""
 "nem küldi el az értesítéseket. Kérjük, vegye figyelembe, hogy hívja meg ezt "
 "a fájlt (%s), különben többször is elküldheti az értesítéseket."
 
-#: app/features/mec/notifications.php:2191 app/libraries/tickets.php:268
-#: app/libraries/tickets.php:578
+#: app/features/mec/notifications.php:2191 app/libraries/tickets.php:271
+#: app/libraries/tickets.php:581
 msgid "Hour"
 msgstr "Óra"
 
@@ -11377,8 +11404,8 @@ msgid "This option will enable Event Schema Markup on your site."
 msgstr ""
 
 #: app/features/mec/settings.php:156 app/features/mec/settings.php:167
-#: app/features/popup/settings.php:44 app/libraries/main.php:8304
-#: app/libraries/main.php:8367
+#: app/features/popup/settings.php:44 app/libraries/main.php:8315
+#: app/libraries/main.php:8378
 msgid "Weekdays"
 msgstr "Hétköznap"
 
@@ -11766,7 +11793,7 @@ msgstr ""
 msgid "Not Found Message"
 msgstr ""
 
-#: app/features/mec/settings.php:529 app/libraries/main.php:11178
+#: app/features/mec/settings.php:529 app/libraries/main.php:11189
 msgid "No event found!"
 msgstr "Nem találtunk eseményt!"
 
@@ -11957,7 +11984,7 @@ msgid ""
 msgstr ""
 
 #: app/features/mec/settings.php:848 app/features/mec/settings.php:853
-#: app/features/popup/settings.php:180 app/features/popup/settings.php:185
+#: app/features/popup/settings.php:180
 msgid "Main Slug"
 msgstr "Fő Slug"
 
@@ -11969,7 +11996,7 @@ msgid ""
 msgstr ""
 
 #: app/features/mec/settings.php:858 app/features/mec/settings.php:872
-#: app/features/popup/settings.php:190
+#: app/features/popup/settings.php:183
 msgid "Valid characters are lowercase a-z, - character and numbers."
 msgstr "Az érvényes karakterek kis a-z, - karakter és számok."
 
@@ -12189,7 +12216,7 @@ msgid ""
 msgstr ""
 
 #: app/features/mec/single.php:82 app/features/mec/single.php:94
-#: app/features/popup/settings.php:194 app/features/popup/settings.php:206
+#: app/features/popup/settings.php:187 app/features/popup/settings.php:199
 msgid "Single Event Style"
 msgstr "Szimpla esemény stílus"
 
@@ -12538,8 +12565,8 @@ msgstr "Esemény házigazdái"
 msgid "Event Sponsors"
 msgstr "Esemény színe"
 
-#: app/features/mec/single.php:598 app/libraries/main.php:8332
-#: app/libraries/main.php:8381
+#: app/features/mec/single.php:598 app/libraries/main.php:8343
+#: app/libraries/main.php:8392
 msgid "Register Button"
 msgstr "Regisztrálás gomb"
 
@@ -12592,18 +12619,18 @@ msgstr "Stilizálás"
 msgid "Color Skin"
 msgstr "Színes kinézet"
 
-#: app/features/mec/styling.php:59 app/features/popup/settings.php:455
-#: app/features/popup/settings.php:518
+#: app/features/mec/styling.php:59 app/features/popup/settings.php:448
+#: app/features/popup/settings.php:511
 msgid "Predefined Color Skin"
 msgstr "Előre definiált színű kinézet"
 
-#: app/features/mec/styling.php:105 app/features/popup/settings.php:444
-#: app/features/popup/settings.php:507
+#: app/features/mec/styling.php:105 app/features/popup/settings.php:437
+#: app/features/popup/settings.php:500
 msgid "Custom Color Skin"
 msgstr "Egyedi színű kinézet"
 
-#: app/features/mec/styling.php:111 app/features/popup/settings.php:450
-#: app/features/popup/settings.php:513
+#: app/features/mec/styling.php:111 app/features/popup/settings.php:443
+#: app/features/popup/settings.php:506
 msgid ""
 "If you want to select a predefined color skin, you must clear the color of "
 "this item"
@@ -13292,23 +13319,23 @@ msgstr "Hogyan lehet felülbírálni a MEC sablonfájlokat?"
 msgid "How to add/manage shortcodes?"
 msgstr "Hogyan adjunk hozzá / kezeljünk shortcode-okat?"
 
-#: app/features/mec/wizard.php:506
+#: app/features/mec/wizard.php:494
 msgid "Getting Started Video"
 msgstr "Első lépések videó"
 
-#: app/features/mec/wizard.php:512
+#: app/features/mec/wizard.php:500
 msgid "Import Dummy Events"
 msgstr "Teszt adatok importálása"
 
-#: app/features/mec/wizard.php:518
+#: app/features/mec/wizard.php:506
 msgid "Import Dummy Shortcodes"
 msgstr "Teszt rövidkódok importálása"
 
-#: app/features/mec/wizard.php:544
+#: app/features/mec/wizard.php:532
 msgid "Back to WordPress Dashboard"
 msgstr "Vissza a WordPress irányítópultjára"
 
-#: app/features/mec/wizard.php:547
+#: app/features/mec/wizard.php:535
 msgid "close"
 msgstr "bezár"
 
@@ -13460,9 +13487,9 @@ msgstr "Válasszon egyet a mentett helyek közül."
 msgid "No Name"
 msgstr "Név"
 
-#: app/features/occurrences.php:408 app/libraries/tickets.php:187
-#: app/libraries/tickets.php:192 app/libraries/tickets.php:506
-#: app/libraries/tickets.php:509
+#: app/features/occurrences.php:408 app/libraries/tickets.php:190
+#: app/libraries/tickets.php:195 app/libraries/tickets.php:509
+#: app/libraries/tickets.php:512
 msgid "Price Label"
 msgstr "Árcímke"
 
@@ -13566,10 +13593,6 @@ msgstr "Szervező hozzáadása"
 msgid "eg. website name or any text"
 msgstr ""
 
-#: app/features/popup/event.php:240
-msgid "All Categories"
-msgstr "Összes kategória"
-
 #: app/features/popup/event.php:241
 msgid "Most Used"
 msgstr "Legnépszerűbb"
@@ -13586,13 +13609,13 @@ msgstr "Kiemelt kép beállítása"
 msgid "Your Event Has Been Created."
 msgstr "Az esemény létrejött."
 
-#: app/features/popup/event.php:284 app/features/popup/settings.php:566
+#: app/features/popup/event.php:284 app/features/popup/settings.php:560
 #: app/features/popup/shortcode.php:558 app/libraries/factory.php:385
 #: app/libraries/factory.php:554 app/libraries/skins.php:2547
 msgid "Prev"
 msgstr "Előző"
 
-#: app/features/popup/settings.php:32
+#: app/features/popup/settings.php:33
 msgid "Dashboard"
 msgstr "Vezérlőpult"
 
@@ -13600,22 +13623,11 @@ msgstr "Vezérlőpult"
 msgid "Default value is Events - It's title of the page"
 msgstr "Az alapértelmezett érték az Események – ez a lap címe"
 
-#: app/features/popup/settings.php:186
-msgid ""
-"Default value is events. You can not have a page with this name. MEC allows "
-"you to create custom URLs for the permalinks and archives to enhance the "
-"applicability and forward-compatibility of the links."
-msgstr ""
-"Az alapértelmezett érték az események. Nem lehet ilyen nevű oldalad. A MEC "
-"lehetővé teszi, hogy egyedi URL-eket hozz létre a permalinkekhez és "
-"archívumokhoz, hogy javítsa az alkalmazhatóságát és előre kompatibilitását a "
-"linkeknek."
-
-#: app/features/popup/settings.php:207
+#: app/features/popup/settings.php:200
 msgid "Choose your single event style."
 msgstr "Válaszd ki az egyedi eseménystílusodat."
 
-#: app/features/popup/settings.php:328
+#: app/features/popup/settings.php:321
 msgid ""
 "Enable this option to have speaker in Hourly Schedule in Single. Refresh "
 "after enabling it to see the Speakers menu under MEC dashboard."
@@ -13624,7 +13636,7 @@ msgstr ""
 "legyen egy egy színben. Frissítsen, miután engedélyezte a MEC "
 "irányítópultján található házigazdák menü megtekintését."
 
-#: app/features/popup/settings.php:393
+#: app/features/popup/settings.php:386
 msgid ""
 "If enabled MEC would create a WordPress User for main attendees. It's "
 "recommended to keep it enabled."
@@ -13632,15 +13644,15 @@ msgstr ""
 "Ha engedélyezve van, a MEC létrehoz egy WordPress felhasználót a fő "
 "résztvevők számára. Javasoljuk, hogy engedélyezze."
 
-#: app/features/popup/settings.php:567
+#: app/features/popup/settings.php:561
 msgid "Go to Dashboard"
 msgstr "A vezérlőpulthoz"
 
-#: app/features/popup/settings.php:568
+#: app/features/popup/settings.php:562
 msgid "Skip"
 msgstr ""
 
-#: app/features/popup/settings.php:569
+#: app/features/popup/settings.php:563
 msgid "Save & Next"
 msgstr ""
 
@@ -13751,7 +13763,7 @@ msgstr "N/A"
 msgid "#"
 msgstr "#"
 
-#: app/features/profile/profile.php:212 app/libraries/main.php:10859
+#: app/features/profile/profile.php:212 app/libraries/main.php:10870
 msgid "Variations"
 msgstr "Változatok"
 
@@ -14100,7 +14112,7 @@ msgid "Other Dates"
 msgstr "Egyéb dátumok"
 
 #: app/features/wc.php:114 app/features/wc.php:137 app/libraries/main.php:3260
-#: app/libraries/main.php:3568 app/libraries/main.php:11240
+#: app/libraries/main.php:3568 app/libraries/main.php:11251
 #: app/libraries/notifications.php:1945 app/libraries/notifications.php:1960
 #: app/libraries/notifications.php:1979 app/libraries/notifications.php:2226
 #: app/libraries/notifications.php:2227 app/libraries/transaction.php:186
@@ -14118,7 +14130,7 @@ msgstr "%s jegyek elfogytak!"
 msgid "Only %s slots remained for %s ticket so you cannot book %s ones."
 msgstr "Csak %s bővítőhely maradt a(z) %s jegyhez, így nem foglalhat %s-t."
 
-#: app/features/wc.php:261 app/libraries/main.php:8323
+#: app/features/wc.php:261 app/libraries/main.php:8334
 #, php-format
 msgid "Maximum allowed number of tickets that you can book is %s."
 msgstr "A lefoglalható jegyek maximális megengedett száma%s."
@@ -14199,6 +14211,7 @@ msgstr[0] "%s került hozzáadásra a kosárba."
 msgstr[1] "%s került hozzáadásra a kosárba."
 
 #: app/libraries/factory.php:180 app/libraries/factory.php:181
+#: app/libraries/main.php:5745 app/libraries/main.php:8844
 msgid "M.E. Calendar"
 msgstr "M. E. Calendar"
 
@@ -14269,15 +14282,15 @@ msgstr "MEC szimpla oldalsáv"
 msgid "Custom sidebar for single and modal page of MEC."
 msgstr "Egyedi oldalsáv a MEC egyedi és modális oldalához."
 
-#: app/libraries/factory.php:1424
+#: app/libraries/factory.php:1427
 msgid "Notice:"
 msgstr "Megjegyzés:"
 
-#: app/libraries/factory.php:1425
+#: app/libraries/factory.php:1428
 msgid "If you are unable to auto update, please check this article:  "
 msgstr ""
 
-#: app/libraries/factory.php:1427
+#: app/libraries/factory.php:1430
 msgid "How to manually update"
 msgstr ""
 
@@ -14512,38 +14525,38 @@ msgstr "Idővonal nézet"
 msgid "General Calendar"
 msgstr "Általános naptár"
 
-#: app/libraries/main.php:462 app/libraries/main.php:8306
-#: app/libraries/main.php:8369
+#: app/libraries/main.php:462 app/libraries/main.php:8317
+#: app/libraries/main.php:8380
 msgid "SU"
 msgstr "VA"
 
-#: app/libraries/main.php:463 app/libraries/main.php:8307
-#: app/libraries/main.php:8370
+#: app/libraries/main.php:463 app/libraries/main.php:8318
+#: app/libraries/main.php:8381
 msgid "MO"
 msgstr "HÉ"
 
-#: app/libraries/main.php:464 app/libraries/main.php:8308
-#: app/libraries/main.php:8371
+#: app/libraries/main.php:464 app/libraries/main.php:8319
+#: app/libraries/main.php:8382
 msgid "TU"
 msgstr "KE"
 
-#: app/libraries/main.php:465 app/libraries/main.php:8309
-#: app/libraries/main.php:8372
+#: app/libraries/main.php:465 app/libraries/main.php:8320
+#: app/libraries/main.php:8383
 msgid "WE"
 msgstr "SZE"
 
-#: app/libraries/main.php:466 app/libraries/main.php:8310
-#: app/libraries/main.php:8373
+#: app/libraries/main.php:466 app/libraries/main.php:8321
+#: app/libraries/main.php:8384
 msgid "TH"
 msgstr "CS"
 
-#: app/libraries/main.php:467 app/libraries/main.php:8311
-#: app/libraries/main.php:8374
+#: app/libraries/main.php:467 app/libraries/main.php:8322
+#: app/libraries/main.php:8385
 msgid "FR"
 msgstr "PÉ"
 
-#: app/libraries/main.php:468 app/libraries/main.php:8312
-#: app/libraries/main.php:8375
+#: app/libraries/main.php:468 app/libraries/main.php:8323
+#: app/libraries/main.php:8386
 msgid "SA"
 msgstr "SZO"
 
@@ -14923,125 +14936,121 @@ msgstr "Tekintsük az első elemet helyőrzőnek"
 msgid "Free"
 msgstr "Ingyenes"
 
-#: app/libraries/main.php:5745 app/libraries/main.php:8833
-msgid "M.E. Calender"
-msgstr "M.E. Calendar"
-
-#: app/libraries/main.php:5966
+#: app/libraries/main.php:5976
 #, php-format
 msgid "Copy of %s"
 msgstr "%s Másolata"
 
-#: app/libraries/main.php:7071
+#: app/libraries/main.php:7082
 msgid "Booked an event."
 msgstr "Lefoglalt egy eseményt."
 
-#: app/libraries/main.php:7111
+#: app/libraries/main.php:7122
 #, php-format
 msgid "%s booked %s event."
 msgstr "%s lefoglalt %s esemény."
 
-#: app/libraries/main.php:8287 app/libraries/main.php:8352
+#: app/libraries/main.php:8298 app/libraries/main.php:8363
 msgid "Taxonomies"
 msgstr "Taxonómiák"
 
-#: app/libraries/main.php:8289 app/libraries/main.php:8354
+#: app/libraries/main.php:8300 app/libraries/main.php:8365
 msgid "Category Plural Label"
 msgstr "Kategória többes számú tipusa"
 
-#: app/libraries/main.php:8290 app/libraries/main.php:8355
+#: app/libraries/main.php:8301 app/libraries/main.php:8366
 msgid "Category Singular Label"
 msgstr "Egyedi kategória tipus"
 
-#: app/libraries/main.php:8291 app/libraries/main.php:8356
+#: app/libraries/main.php:8302 app/libraries/main.php:8367
 msgid "Label Plural Label"
 msgstr "Címke többes száma"
 
-#: app/libraries/main.php:8292 app/libraries/main.php:8357
+#: app/libraries/main.php:8303 app/libraries/main.php:8368
 msgid "Label Singular Label"
 msgstr "Címke egyes száma"
 
-#: app/libraries/main.php:8292 app/libraries/main.php:8357
+#: app/libraries/main.php:8303 app/libraries/main.php:8368
 msgid "label"
 msgstr "címke"
 
-#: app/libraries/main.php:8293 app/libraries/main.php:8358
+#: app/libraries/main.php:8304 app/libraries/main.php:8369
 msgid "Location Plural Label"
 msgstr "Hely Többes szám címkéje"
 
-#: app/libraries/main.php:8294 app/libraries/main.php:8359
+#: app/libraries/main.php:8305 app/libraries/main.php:8370
 msgid "Location Singular Label"
 msgstr "Hely egyes számú címke"
 
-#: app/libraries/main.php:8295 app/libraries/main.php:8360
+#: app/libraries/main.php:8306 app/libraries/main.php:8371
 msgid "Organizer Plural Label"
 msgstr "Szervező Többes szám címke"
 
-#: app/libraries/main.php:8296 app/libraries/main.php:8361
+#: app/libraries/main.php:8307 app/libraries/main.php:8372
 msgid "Organizer Singular Label"
 msgstr "Szervező egyes címkéje"
 
-#: app/libraries/main.php:8297 app/libraries/main.php:8362
+#: app/libraries/main.php:8308 app/libraries/main.php:8373
 msgid "Speaker Plural Label"
 msgstr "Házigazda többes számú címke"
 
-#: app/libraries/main.php:8298 app/libraries/main.php:8363
+#: app/libraries/main.php:8309 app/libraries/main.php:8374
 msgid "Speaker Singular Label"
 msgstr "Házigazda egyes számú címke"
 
-#: app/libraries/main.php:8299
+#: app/libraries/main.php:8310
 #, fuzzy
 #| msgid "Speaker Plural Label"
 msgid "Sponsor Plural Label"
 msgstr "Házigazda többes számú címke"
 
-#: app/libraries/main.php:8300
+#: app/libraries/main.php:8311
 #, fuzzy
 #| msgid "Speaker Singular Label"
 msgid "Sponsor Singular Label"
 msgstr "Házigazda egyes számú címke"
 
-#: app/libraries/main.php:8306 app/libraries/main.php:8369
+#: app/libraries/main.php:8317 app/libraries/main.php:8380
 msgid "Sunday abbreviation"
 msgstr "Vasárnap rövidítése"
 
-#: app/libraries/main.php:8307 app/libraries/main.php:8370
+#: app/libraries/main.php:8318 app/libraries/main.php:8381
 msgid "Monday abbreviation"
 msgstr "Hétfő rövidítés"
 
-#: app/libraries/main.php:8308 app/libraries/main.php:8371
+#: app/libraries/main.php:8319 app/libraries/main.php:8382
 msgid "Tuesday abbreviation"
 msgstr "Kedd rövidítése"
 
-#: app/libraries/main.php:8309 app/libraries/main.php:8372
+#: app/libraries/main.php:8320 app/libraries/main.php:8383
 msgid "Wednesday abbreviation"
 msgstr "Szerda rövidítése"
 
-#: app/libraries/main.php:8310 app/libraries/main.php:8373
+#: app/libraries/main.php:8321 app/libraries/main.php:8384
 msgid "Thursday abbreviation"
 msgstr "Csütörtök rövidítése"
 
-#: app/libraries/main.php:8311 app/libraries/main.php:8374
+#: app/libraries/main.php:8322 app/libraries/main.php:8385
 msgid "Friday abbreviation"
 msgstr "Péntek rövidítése"
 
-#: app/libraries/main.php:8312 app/libraries/main.php:8375
+#: app/libraries/main.php:8323 app/libraries/main.php:8386
 msgid "Saturday abbreviation"
 msgstr "Szombat rövidítése"
 
-#: app/libraries/main.php:8318
+#: app/libraries/main.php:8329
 msgid "Booking (Singular)"
 msgstr "Foglalás (egyes szám)"
 
-#: app/libraries/main.php:8319
+#: app/libraries/main.php:8330
 msgid "Bookings (Plural)"
 msgstr "Foglalások (többes számban)"
 
-#: app/libraries/main.php:8320
+#: app/libraries/main.php:8331
 msgid "Booking Success Message"
 msgstr "Foglalási siker üzenet"
 
-#: app/libraries/main.php:8320
+#: app/libraries/main.php:8331
 msgid ""
 "Thank you for booking. Your tickets are booked, booking verification might "
 "be needed, please check your email."
@@ -15049,11 +15058,11 @@ msgstr ""
 "Köszönjük a foglalást! A jegyek foglalásra kerültek, ellenőrizze emailjeit, "
 "lehetséges, hogy jóváhagyásra lesz szükség."
 
-#: app/libraries/main.php:8321
+#: app/libraries/main.php:8332
 msgid "Booking Restriction Message 1"
 msgstr "Foglalás korlátozási üzenet 1"
 
-#: app/libraries/main.php:8321
+#: app/libraries/main.php:8332
 #, php-format
 msgid ""
 "You selected %s tickets to book but maximum number of tikets per user is %s "
@@ -15062,11 +15071,11 @@ msgstr ""
 "%s jegyet választott ki a foglaláshoz, de felhasználónként a tiketek "
 "maximális száma %s jegy."
 
-#: app/libraries/main.php:8322
+#: app/libraries/main.php:8333
 msgid "Booking Restriction Message 2"
 msgstr "Foglalás korlátozási üzenet 2"
 
-#: app/libraries/main.php:8322
+#: app/libraries/main.php:8333
 #, fuzzy, php-format
 #| msgid ""
 #| "You booked %s tickets till now but maximum number of tickets per user is "
@@ -15078,31 +15087,31 @@ msgstr ""
 "Eddig %s jegyet foglalt, de felhasználónként a jegyek maximális száma %s "
 "jegy."
 
-#: app/libraries/main.php:8323
+#: app/libraries/main.php:8334
 msgid "Booking IP Restriction Message"
 msgstr "Foglalási IP-korlátozási üzenet"
 
-#: app/libraries/main.php:8324
+#: app/libraries/main.php:8335
 msgid "Booking Button"
 msgstr "Foglalás gomb"
 
-#: app/libraries/main.php:8325
+#: app/libraries/main.php:8336
 msgid "Ticket (Singular)"
 msgstr "Jegy (Egyes szám)"
 
-#: app/libraries/main.php:8326
+#: app/libraries/main.php:8337
 msgid "Tickets (Plural)"
 msgstr "Jegy (Többes szám"
 
-#: app/libraries/main.php:8330 app/libraries/main.php:8379
+#: app/libraries/main.php:8341 app/libraries/main.php:8390
 msgid "Others"
 msgstr "Egyebek"
 
-#: app/libraries/main.php:8333 app/libraries/main.php:8382
+#: app/libraries/main.php:8344 app/libraries/main.php:8393
 msgid "View Detail Button"
 msgstr "Részletek gomb"
 
-#: app/libraries/main.php:8333 app/libraries/main.php:8382
+#: app/libraries/main.php:8344 app/libraries/main.php:8393
 #: app/libraries/skins.php:2321 app/skins/carousel/render.php:104
 #: app/skins/carousel/render.php:143 app/skins/grid/render.php:93
 #: app/skins/grid/render.php:153 app/skins/grid/render.php:216
@@ -15114,150 +15123,150 @@ msgstr "Részletek gomb"
 msgid "View Detail"
 msgstr "Részletek megtekintése"
 
-#: app/libraries/main.php:8334 app/libraries/main.php:8383
+#: app/libraries/main.php:8345 app/libraries/main.php:8394
 msgid "Event Detail Button"
 msgstr "Esemény részletei gomb"
 
-#: app/libraries/main.php:8334 app/libraries/main.php:8383
+#: app/libraries/main.php:8345 app/libraries/main.php:8394
 msgid "Event Detail"
 msgstr "Esemény részletei"
 
-#: app/libraries/main.php:8342 app/libraries/main.php:8391
-#: app/libraries/main.php:9716
+#: app/libraries/main.php:8353 app/libraries/main.php:8402
+#: app/libraries/main.php:9727
 msgid "Expired"
 msgstr "Lejárt"
 
-#: app/libraries/main.php:8343 app/libraries/main.php:8392
-#: app/libraries/main.php:9714
+#: app/libraries/main.php:8354 app/libraries/main.php:8403
+#: app/libraries/main.php:9725
 msgid "Ongoing"
 msgstr "Jelenleg futó"
 
-#: app/libraries/main.php:8605
+#: app/libraries/main.php:8616
 msgid "EventON"
 msgstr "EventON"
 
-#: app/libraries/main.php:8606
+#: app/libraries/main.php:8617
 msgid "The Events Calendar"
 msgstr "The Events Calendar"
 
-#: app/libraries/main.php:8607
+#: app/libraries/main.php:8618
 msgid "Events Schedule WP Plugin"
 msgstr "Events Schedule WP Plugin"
 
-#: app/libraries/main.php:8608
+#: app/libraries/main.php:8619
 msgid "Calendarize It"
 msgstr "Calendarize It"
 
-#: app/libraries/main.php:8609
+#: app/libraries/main.php:8620
 msgid "Event Espresso"
 msgstr "Event Espresso"
 
-#: app/libraries/main.php:8610
+#: app/libraries/main.php:8621
 msgid "Events Manager (Recurring)"
 msgstr "Eseménykezelő (ismétlődő)"
 
-#: app/libraries/main.php:8611
+#: app/libraries/main.php:8622
 msgid "Events Manager (Single)"
 msgstr "Eseménykezelő (egyszeri)"
 
-#: app/libraries/main.php:8612
+#: app/libraries/main.php:8623
 msgid "WP Event Manager"
 msgstr "WP eseménykezelő"
 
-#: app/libraries/main.php:8863
+#: app/libraries/main.php:8874
 msgid "Sun"
 msgstr "Vas"
 
-#: app/libraries/main.php:8863
+#: app/libraries/main.php:8874
 msgid "Mon"
 msgstr "Hé"
 
-#: app/libraries/main.php:8863
+#: app/libraries/main.php:8874
 msgid "Tue"
 msgstr "Ke"
 
-#: app/libraries/main.php:8863
+#: app/libraries/main.php:8874
 msgid "Wed"
 msgstr "Sze"
 
-#: app/libraries/main.php:8863
+#: app/libraries/main.php:8874
 msgid "Thu"
 msgstr "Csü"
 
-#: app/libraries/main.php:8863
+#: app/libraries/main.php:8874
 msgid "Fri"
 msgstr "Pén"
 
-#: app/libraries/main.php:8863
+#: app/libraries/main.php:8874
 msgid "Sat"
 msgstr "Szo"
 
-#: app/libraries/main.php:9108 app/libraries/render.php:85
+#: app/libraries/main.php:9119 app/libraries/render.php:85
 #: app/libraries/render.php:532
 msgid "Skin controller does not exist."
 msgstr "A kinézet vezérlője nem létezik."
 
-#: app/libraries/main.php:9356
+#: app/libraries/main.php:9367
 msgid "Sale has ended"
 msgstr ""
 
-#: app/libraries/main.php:9364
+#: app/libraries/main.php:9375
 msgid "Sold Out"
 msgstr "Elfogyott"
 
-#: app/libraries/main.php:9401
+#: app/libraries/main.php:9412
 msgid "Last Few Tickets"
 msgstr "Utolsó néhány jegy"
 
-#: app/libraries/main.php:9730
+#: app/libraries/main.php:9741
 #, fuzzy, php-format
 #| msgid "This Month"
 msgid "%s months"
 msgstr "Ebben a hónapban"
 
-#: app/libraries/main.php:9732
+#: app/libraries/main.php:9743
 #, fuzzy, php-format
 #| msgid "days"
 msgid "%s days"
 msgstr "napok"
 
-#: app/libraries/main.php:9734
+#: app/libraries/main.php:9745
 #, fuzzy, php-format
 #| msgid "hours"
 msgid "%s hours"
 msgstr "órák"
 
-#: app/libraries/main.php:9736
+#: app/libraries/main.php:9747
 #, fuzzy, php-format
 #| msgid "minutes"
 msgid "%s minutes"
 msgstr "percek"
 
-#: app/libraries/main.php:9814 app/libraries/main.php:9840
+#: app/libraries/main.php:9825 app/libraries/main.php:9851
 msgid "Minutes"
 msgstr "Percek"
 
-#: app/libraries/main.php:9848
+#: app/libraries/main.php:9859
 msgid "AM / PM"
 msgstr "DE / DU"
 
-#: app/libraries/main.php:9850
+#: app/libraries/main.php:9861
 msgid "AM"
 msgstr "DE"
 
-#: app/libraries/main.php:9852
+#: app/libraries/main.php:9863
 msgid "PM"
 msgstr "DU"
 
-#: app/libraries/main.php:9860
+#: app/libraries/main.php:9871
 msgid "Ongoing..."
 msgstr "Folyamatban..."
 
-#: app/libraries/main.php:9861 app/skins/single.php:167
+#: app/libraries/main.php:9872 app/skins/single.php:167
 msgid "Expired!"
 msgstr "Lejárt!"
 
-#: app/libraries/main.php:10457
+#: app/libraries/main.php:10468
 msgid "Uncategorized"
 msgstr "Kategorizálatlan"
 
@@ -15344,7 +15353,7 @@ msgid "Invalid User Token!"
 msgstr ""
 
 #: app/libraries/skins.php:1340 app/skins/full_calendar/tpl.php:160
-#: app/skins/general_calendar/tpl.php:101
+#: app/skins/general_calendar/tpl.php:107
 msgid "Reset"
 msgstr "Visszaállítás"
 
@@ -15473,17 +15482,27 @@ msgstr "Jegyenként maximum. Hagyja üresen a korlátlanhoz."
 msgid "Notification Placeholders"
 msgstr "Értesítési sablon"
 
-#: app/libraries/tickets.php:93
+#: app/libraries/tickets.php:67
+msgid "Available Tickets"
+msgstr "Elérhető jegyek:"
+
+#: app/libraries/tickets.php:68
+#, fuzzy
+#| msgid "Available Spot"
+msgid "Available Seats"
+msgstr "Rendelkezésre álló hely(ek)"
+
+#: app/libraries/tickets.php:96
 msgid "Add Ticket"
 msgstr "Jegy hozzáadása"
 
-#: app/libraries/tickets.php:95
+#: app/libraries/tickets.php:98
 #, fuzzy
 #| msgid "Sold Tickets"
 msgid "Add Global Tickets"
 msgstr "Eladott jegyek"
 
-#: app/libraries/tickets.php:164 app/libraries/tickets.php:486
+#: app/libraries/tickets.php:167 app/libraries/tickets.php:489
 #, fuzzy, php-format
 #| msgid ""
 #| "You can show it on the email notifications by placing "
@@ -15495,7 +15514,7 @@ msgstr ""
 "Megjelenítheti az e-mail értesítésekben, ha %%ticket_private_description%% -"
 "t helyez el az e-mail sablonban."
 
-#: app/libraries/tickets.php:178 app/libraries/tickets.php:498
+#: app/libraries/tickets.php:181 app/libraries/tickets.php:501
 #, fuzzy
 #| msgid ""
 #| "Insert 0 for free ticket. Only numbers please — Enter only the price "
@@ -15507,120 +15526,116 @@ msgstr ""
 "Helyezzen be 0-t az ingyenes jegyhez. Csak számokat — Csak az árat adja meg "
 "szimbólumok és karakterek nélkül."
 
-#: app/libraries/tickets.php:193
+#: app/libraries/tickets.php:196
 msgid ""
 "How shoould the price  be displayed in the booking module? Here you can "
 "insert the price with a currency symbol. e.g. $16"
 msgstr ""
 
-#: app/libraries/tickets.php:204 app/libraries/tickets.php:521
-msgid "Available Tickets"
-msgstr "Elérhető jegyek:"
-
-#: app/libraries/tickets.php:221 app/libraries/tickets.php:225
-#: app/libraries/tickets.php:531 app/libraries/tickets.php:535
+#: app/libraries/tickets.php:224 app/libraries/tickets.php:228
+#: app/libraries/tickets.php:534 app/libraries/tickets.php:538
 #, fuzzy
 #| msgid "Number of Days Per Week"
 msgid "Number of Seats"
 msgstr "Heti napok száma"
 
-#: app/libraries/tickets.php:227 app/libraries/tickets.php:537
+#: app/libraries/tickets.php:230 app/libraries/tickets.php:540
 msgid ""
 "The number of seats that take off from the total availability when booked. "
 "If you are creating a family ticket for 4 people then you can set it to 4."
 msgstr ""
 
-#: app/libraries/tickets.php:239 app/libraries/tickets.php:549
+#: app/libraries/tickets.php:242 app/libraries/tickets.php:552
 msgid "Minimum Ticket e.g. 3"
 msgstr "Minimum jegy, pl. 3"
 
-#: app/libraries/tickets.php:242 app/libraries/tickets.php:552
+#: app/libraries/tickets.php:245 app/libraries/tickets.php:555
 #, fuzzy
 #| msgid "MinimumTicket"
 msgid "Minimum Ticket"
 msgstr "Minimális jegy"
 
-#: app/libraries/tickets.php:244
+#: app/libraries/tickets.php:247
 #, fuzzy
 #| msgid "Maximum allowed number of tickets that you can book is %s."
 msgid "The minimum number of tickets a user needs to book."
 msgstr "A lefoglalható jegyek maximális megengedett száma%s."
 
-#: app/libraries/tickets.php:251 app/libraries/tickets.php:561
+#: app/libraries/tickets.php:254 app/libraries/tickets.php:564
 #, fuzzy
 #| msgid "Minimum Ticket e.g. 3"
 msgid "Maximum Ticket e.g. 1"
 msgstr "Minimum jegy, pl. 3"
 
-#: app/libraries/tickets.php:254 app/libraries/tickets.php:564
+#: app/libraries/tickets.php:257 app/libraries/tickets.php:567
 #, fuzzy
 #| msgid "Maximum Per Ticket"
 msgid "Maximum Ticket"
 msgstr "Jegyenkénti maximális összeg"
 
-#: app/libraries/tickets.php:256 app/libraries/tickets.php:566
+#: app/libraries/tickets.php:259 app/libraries/tickets.php:569
 #, fuzzy
 #| msgid "Maximum allowed number of tickets that you can book is %s."
 msgid "The maximum number of tickets a user can book."
 msgstr "A lefoglalható jegyek maximális megengedett száma%s."
 
-#: app/libraries/tickets.php:265 app/libraries/tickets.php:575
+#: app/libraries/tickets.php:268 app/libraries/tickets.php:578
 msgid "e.g. 0"
 msgstr "pl. 0"
 
-#: app/libraries/tickets.php:267 app/libraries/tickets.php:577
+#: app/libraries/tickets.php:270 app/libraries/tickets.php:580
 msgid "Day"
 msgstr "Nap"
 
-#: app/libraries/tickets.php:271 app/libraries/tickets.php:581
+#: app/libraries/tickets.php:274 app/libraries/tickets.php:584
 #, fuzzy, php-format
 #| msgid "Stop selling ticket %s before event start."
 msgid "%s Stop selling ticket %s %s %s before event start. %s"
 msgstr "%s esemény kezdete előtt hagyja abba a jegy értékesítését"
 
-#: app/libraries/tickets.php:285 app/libraries/tickets.php:595
+#: app/libraries/tickets.php:288 app/libraries/tickets.php:598
 msgid "Price per Date"
 msgstr "Ár dátumonként"
 
-#: app/libraries/tickets.php:360 app/libraries/tickets.php:632
+#: app/libraries/tickets.php:363 app/libraries/tickets.php:635
 msgid "Variations Per Ticket"
 msgstr "Változatok jegyenként"
 
-#: app/libraries/tickets.php:365 app/libraries/tickets.php:637
+#: app/libraries/tickets.php:368 app/libraries/tickets.php:640
 msgid "Inherit from event options"
 msgstr "Öröklés az eseményopciókból"
 
-#: app/libraries/tickets.php:416 app/libraries/tickets.php:666
+#: app/libraries/tickets.php:419 app/libraries/tickets.php:669
 msgid ""
 "If you leave the following fields empty then the ticket will be available at "
 "any time."
 msgstr ""
 
-#: app/libraries/tickets.php:417 app/libraries/tickets.php:667
+#: app/libraries/tickets.php:420 app/libraries/tickets.php:670
 msgid ""
 "Please note that this is just a timeframe, and if your events or occurrences "
 "fall within this period, the ticket will be displayed."
 msgstr ""
 
-#: app/libraries/tickets.php:419 app/libraries/tickets.php:669
+#: app/libraries/tickets.php:422 app/libraries/tickets.php:672
 #, fuzzy
 #| msgid "Available Spot"
 msgid "Availability Start"
 msgstr "Rendelkezésre álló hely(ek)"
 
-#: app/libraries/tickets.php:420 app/libraries/tickets.php:670
+#: app/libraries/tickets.php:423 app/libraries/tickets.php:673
 #, fuzzy
 #| msgid "Available Tickets"
 msgid "Availability End"
 msgstr "Elérhető jegyek:"
 
-#: app/libraries/tickets.php:510
+#: app/libraries/tickets.php:513
 msgid ""
 "How should the price  be displayed in the booking module? Here you can "
 "insert the price with a currency symbol. e.g. $16"
 msgstr ""
 
-#: app/libraries/tickets.php:554
+#: app/libraries/tickets.php:557
 #, fuzzy
 #| msgid "Maximum allowed number of tickets that you can book is %s."
 msgid "The minimum number of tickets  a user needs to book."
@@ -15770,11 +15785,15 @@ msgstr "Az esemény véget ért."
 msgid "The event is ongoing."
 msgstr "Az esemény folyamatban."
 
-#: app/modules/googlemap/details.php:145
+#: app/modules/googlemap/details.php:134 app/skins/map/tpl.php:101
+msgid "Show on OpenstreetMap"
+msgstr ""
+
+#: app/modules/googlemap/details.php:173
 msgid "Address from ..."
 msgstr "Küldő címe …"
 
-#: app/modules/googlemap/details.php:149
+#: app/modules/googlemap/details.php:177
 msgid "Get Directions"
 msgstr "Útvonal"
 
@@ -15934,15 +15953,15 @@ msgstr "Rács"
 msgid "Tile"
 msgstr "Mozaik"
 
-#: app/skins/general_calendar/tpl.php:128
+#: app/skins/general_calendar/tpl.php:134
 msgid "Find Events"
 msgstr "Eseménykeresés"
 
-#: app/skins/general_calendar/tpl.php:329
+#: app/skins/general_calendar/tpl.php:341
 msgid "more"
 msgstr ""
 
-#: app/skins/general_calendar/tpl.php:385
+#: app/skins/general_calendar/tpl.php:403
 msgid "Search for events"
 msgstr "Események keresése.."
 
@@ -16494,6 +16513,19 @@ msgstr "http://webnus.net"
 
 #~ msgid "How to set RSVP module"
 #~ msgstr "Az RSVP-modul beállítása"
+
+#~ msgid ""
+#~ "Default value is events. You can not have a page with this name. MEC "
+#~ "allows you to create custom URLs for the permalinks and archives to "
+#~ "enhance the applicability and forward-compatibility of the links."
+#~ msgstr ""
+#~ "Az alapértelmezett érték az események. Nem lehet ilyen nevű oldalad. A "
+#~ "MEC lehetővé teszi, hogy egyedi URL-eket hozz létre a permalinkekhez és "
+#~ "archívumokhoz, hogy javítsa az alkalmazhatóságát és előre "
+#~ "kompatibilitását a linkeknek."
+
+#~ msgid "M.E. Calender"
+#~ msgstr "M.E. Calendar"
 
 #, fuzzy
 #~| msgid "Disable Title For Other Locations."

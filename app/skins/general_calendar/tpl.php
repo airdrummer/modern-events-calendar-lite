@@ -19,11 +19,17 @@ if(isset($this->skin_options['sed_method']) and !empty($this->skin_options['sed_
 
 // Shortcode Filters
 $filter_category = get_post_meta($this->id, 'category', true) ? get_post_meta($this->id, 'category', true) : '';
+$filter_ex_category = get_post_meta($this->id, 'ex_category', true) ? get_post_meta($this->id, 'ex_category', true) : '';
 $filter_location = get_post_meta($this->id, 'location', true) ? get_post_meta($this->id, 'location', true) : '';
+$filter_ex_location = get_post_meta($this->id, 'ex_location', true) ? get_post_meta($this->id, 'ex_location', true) : '';
 $filter_organizer = get_post_meta($this->id, 'organizer', true) ? get_post_meta($this->id, 'organizer', true) : '';
+$filter_ex_organizer = get_post_meta($this->id, 'ex_organizer', true) ? get_post_meta($this->id, 'ex_organizer', true) : '';
 $filter_label = get_post_meta($this->id, 'label', true) ? get_post_meta($this->id, 'label', true) : '';
+$filter_ex_label = get_post_meta($this->id, 'ex_label', true) ? get_post_meta($this->id, 'ex_label', true) : '';
 $filter_tag = get_post_meta($this->id, 'tag', true) ? get_post_meta($this->id, 'tag', true) : '';
+$filter_ex_tag = get_post_meta($this->id, 'ex_tag', true) ? get_post_meta($this->id, 'ex_tag', true) : '';
 $filter_author = get_post_meta($this->id, 'author', true) ? get_post_meta($this->id, 'author', true) : '';
+$filter_ex_author = get_post_meta($this->id, 'ex_author', true) ? get_post_meta($this->id, 'ex_author', true) : '';
 $show_past_events = ($this->atts['show_past_events'] ?? '0');
 $show_only_past_events = ($this->atts['show_only_past_events'] ?? '0');
 $show_only_one_occurrence = (isset($this->atts['show_only_one_occurrence']) && $this->atts['show_only_one_occurrence'] != '0')  ?  '1' : '0';
@@ -159,11 +165,17 @@ $javascript .='
 								cat_id: "'. esc_js($cat_id) .'",
 								local_time: "'. esc_js($local_time) .'",
 								filter_category: "'. esc_js($filter_category) .'",
+								filter_ex_category: "'. esc_js($filter_ex_category) .'",
 								filter_location: "'. esc_js($filter_location) .'",
+								filter_ex_location: "'. esc_js($filter_ex_location) .'",
 								filter_organizer: "'. esc_js($filter_organizer) .'",
+								filter_ex_organizer: "'. esc_js($filter_ex_organizer) .'",
 								filter_label: "'. esc_js($filter_label) .'",
+								filter_ex_label: "'. esc_js($filter_ex_label) .'",
 								filter_tag: "'. esc_js($filter_tag) .'",
+								filter_ex_tag: "'. esc_js($filter_ex_tag) .'",
 								filter_author: "'. esc_js($filter_author) .'",
+								filter_ex_author: "'. esc_js($filter_ex_author) .'",
 								locale: "'. esc_js($lang) .'",
 								lang: "'. esc_js($lang) .'",
 							},
@@ -326,7 +338,7 @@ $javascript .= '
 			},
 			dayMaxEvents: ' .esc_js($more_event) .',
 			moreLinkContent: function(arg) {
-			  return "+"+arg.num+" '.esc_js(__('more', 'listdom')).'";
+			  return "+"+arg.num+" '.esc_js(__('more', 'modern-events-calendar-lite')).'";
 			},
 			timeZone:"' .get_option('gmt_offset') .'",
 			events: {
@@ -355,11 +367,17 @@ $javascript .= '
 					cat_id: "' . esc_js($cat_id) . '",
 					local_time: "' . esc_js($local_time) . '",
 					filter_category: "' . esc_js($filter_category) . '",
+					filter_ex_category: "' . esc_js($filter_ex_category) . '",
 					filter_location: "' . esc_js($filter_location) . '",
+					filter_ex_location: "' . esc_js($filter_ex_location) . '",
 					filter_organizer: "' . esc_js($filter_organizer) . '",
+					filter_ex_organizer: "' . esc_js($filter_ex_organizer) . '",
 					filter_label: "' . esc_js($filter_label) . '",
+					filter_ex_label: "' . esc_js($filter_ex_label) . '",
 					filter_tag: "' . esc_js($filter_tag) . '",
+					filter_ex_tag: "' . esc_js($filter_ex_tag) . '",
 					filter_author: "' . esc_js($filter_author) . '",
+					filter_ex_author: "' . esc_js($filter_ex_author) . '",
 					locale: "' . esc_js($lang) . '",
 					lang: "' . esc_js($lang) . '",
 				},

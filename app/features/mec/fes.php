@@ -652,6 +652,12 @@ $mec_categories = get_terms(array(
                             <?php endif; ?>
                             <div class="mec-form-row">
                                 <label>
+                                    <input type="hidden" name="mec[settings][fes_section_rsvp]" value="0" />
+                                    <input value="1" type="checkbox" name="mec[settings][fes_section_rsvp]" <?php if(!isset($settings['fes_section_rsvp']) or (isset($settings['fes_section_rsvp']) and $settings['fes_section_rsvp'])) echo 'checked="checked"'; ?> /><?php esc_html_e('Rsvp Options', 'modern-events-calendar-lite'); ?>
+                                </label>
+                            </div>
+                            <div class="mec-form-row">
+                                <label>
                                     <input type="hidden" name="mec[settings][fes_section_schema]" value="0" />
                                     <input value="1" type="checkbox" name="mec[settings][fes_section_schema]" <?php if(!isset($settings['fes_section_schema']) or (isset($settings['fes_section_schema']) and $settings['fes_section_schema'])) echo 'checked="checked"'; ?> /><?php esc_html_e('SEO Schema', 'modern-events-calendar-lite'); ?>
                                 </label>

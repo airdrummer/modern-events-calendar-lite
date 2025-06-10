@@ -1411,6 +1411,9 @@ class MEC_factory extends MEC_base
                         'mec-advanced-report',
                     ]))) return true;
 
+                    // It's the main dashboard screen (index.php)
+                    if ($screen->base === 'dashboard') return true;
+
             return apply_filters('mec_include_backend_assets', false);
         }
     }

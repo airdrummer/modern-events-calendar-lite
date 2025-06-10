@@ -1,6 +1,13 @@
-﻿v 7.22.0.1 - 28 may 2025
-- added missing timezone display, reformat
-- fixed countdown
+﻿v 7.23.0 - 7 June 2025
+- Added: An event search form to the frontend submission.
+- Improved: The backend booking menu date filter to support multiple date bookings in addition to single date bookings.
+- Fixed: Some issues in family tickets.
+- Fixed: An issue in displaying booked tickets in multi-lingual events.
+- Added: Exclude filter to the general skin.
+- Fixed: An issue regarding sponsor filter.
+- Fixed: An issue in booking export.
+- Fixed: Some PHP errors and notices.
+- Fixed: Some minor issues.
 
 v 7.22.0 - 7 May 2025
 - Added: Tickets endpoint to the restful API.

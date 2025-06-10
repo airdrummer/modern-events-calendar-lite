@@ -198,6 +198,8 @@ $step = 1;
                                     <input type="text" name="mec[organizer][name]" id="mec_organizer_name" value="" placeholder="<?php esc_html_e('Name', 'modern-events-calendar-lite'); ?>" />
                                     <p class="description"><?php esc_html_e('eg. John Smith', 'modern-events-calendar-lite'); ?></p>
                                 </div>
+                            </div>
+                            <div class="mec-form-row">
                                 <div class="mec-col-6">
                                     <input type="text" name="mec[organizer][tel]" id="mec_organizer_tel" value="" placeholder="<?php esc_attr_e('Phone number.', 'modern-events-calendar-lite'); ?>" />
                                     <p class="description"><?php esc_html_e('eg. +1 (234) 5678', 'modern-events-calendar-lite'); ?></p>
@@ -208,10 +210,8 @@ $step = 1;
                                 <p class="description"><?php esc_html_e('eg. john@smith.com', 'modern-events-calendar-lite'); ?></p>
                             </div>
                             <div class="mec-form-row">
-                                <div class="mec-col-12">
-                                    <input type="url" name="mec[organizer][url]" id="mec_organizer_url" value="" placeholder="<?php esc_html_e('Page URL', 'modern-events-calendar-lite'); ?>" />
-                                    <p class="description"><?php esc_html_e('eg. https://webnus.net', 'modern-events-calendar-lite'); ?></p>
-                                </div>
+                                <input type="url" name="mec[organizer][url]" id="mec_organizer_url" value="" placeholder="<?php esc_html_e('Page URL', 'modern-events-calendar-lite'); ?>" />
+                                <p class="description"><?php esc_html_e('eg. https://webnus.net', 'modern-events-calendar-lite'); ?></p>
                             </div>
                             <div class="mec-form-row">
                                 <div class="mec-col-12">
@@ -220,13 +220,13 @@ $step = 1;
                                 </div>
                             </div>
                             <div class="mec-form-row">
-                                <div class="mec-col-5">
+                                <div class="mec-col-12">
                                     <div class="mec-form-row mec-thumbnail-row">
                                         <input type="hidden" name="mec[organizer][thumbnail]" id="mec_organizer_thumbnail" value="" />
                                         <button type="button" class="mec_organizer_upload_image_button button" id="mec_organizer_thumbnail_button"><?php echo esc_html__('Choose image', 'modern-events-calendar-lite'); ?></button>
                                     </div>
                                 </div>
-                                <div class="mec-col-7">
+                                <div class="mec-col-12">
                                     <div id="mec_organizer_thumbnail_img"></div>
                                 </div>
                             </div>

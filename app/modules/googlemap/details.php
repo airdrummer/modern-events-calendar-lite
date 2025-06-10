@@ -81,45 +81,73 @@ $map_data->events = apply_filters('mec_location_load_additional', $current_event
 
 $scrollwheel = apply_filters( 'mec_google_map_scroll_wheel', false );
 
-// Initialize MEC Google Maps jQuery plugin
-$javascript = '<script>
-var p'.esc_js($uniqueid).';
-jQuery(document).ready(function()
-{
-    p'.esc_js($uniqueid).' = jQuery("#mec_map_canvas'.esc_js($uniqueid).'").mecGoogleMaps(
+// Check if OpenStreetMap is selected
+$map_type = (isset($settings['default_maps_view']) ? $settings['default_maps_view'] : 'google');
+if($map_type === 'google') {
+    // Initialize MEC Google Maps jQuery plugin
+    $javascript = '<script>
+    var p'.esc_js($uniqueid).';
+    jQuery(document).ready(function()
     {
-        scrollwheel: '. json_encode( $scrollwheel ? true : false ) .',
-        latitude: "'.esc_js($latitude).'",
-        longitude: "'.esc_js($longitude).'",
-        autoinit: '.((!isset($auto_init) || $auto_init) ? 'true' : 'false').',
-        zoom: '.(isset($settings['google_maps_zoomlevel']) ? esc_js($settings['google_maps_zoomlevel']) : 14).',
-        icon: "'.esc_js(apply_filters('mec_marker_icon', $this->asset('img/m-04.png'))).'",
-        styles: '.((isset($settings['google_maps_style']) and trim($settings['google_maps_style']) != '') ? $this->get_googlemap_style($settings['google_maps_style']) : "''").',
-        fullscreen_button: '.((isset($settings['google_maps_fullscreen_button']) and trim($settings['google_maps_fullscreen_button'])) ? 'true' : 'false').',
-        markers: '.json_encode($render->markers($map_data->events)).',
-        clustering_images: "'.esc_js($this->asset('img/cluster1/m')).'",
-        getDirection: '.esc_js($get_direction).',
-        directionOptions:
-        {
-            form: "#mec_get_direction_form'.esc_js($uniqueid).'",
-            reset: "#mec_map_get_direction_reset'.esc_js($uniqueid).'",
-            addr: "#mec_get_direction_addr'.esc_js($uniqueid).'",
-            destination:
-            {
-                latitude: "'.esc_js($latitude).'",
-                longitude: "'.esc_js($longitude).'",
-            },
-            startMarker: "'.esc_js(apply_filters('mec_start_marker_icon', $this->asset('img/m-03.png'))).'",
-            endMarker: "'.esc_js(apply_filters('mec_end_marker_icon', $this->asset('img/m-04.png'))).'"
+        if(typeof jQuery.fn.mecGoogleMaps === "undefined") {
+            console.error("Google Maps plugin not loaded");
+            return;
         }
+        
+        p'.esc_js($uniqueid).' = jQuery("#mec_map_canvas'.esc_js($uniqueid).'").mecGoogleMaps(
+        {
+            scrollwheel: '. json_encode( $scrollwheel ? true : false ) .',
+            latitude: "'.esc_js($latitude).'",
+            longitude: "'.esc_js($longitude).'",
+            autoinit: '.((!isset($auto_init) || $auto_init) ? 'true' : 'false').',
+            zoom: '.(isset($settings["google_maps_zoomlevel"]) ? esc_js($settings["google_maps_zoomlevel"]) : 14).',
+            icon: "'.esc_js(apply_filters("mec_marker_icon", $this->asset("img/m-04.png"))).'",
+            styles: '.((isset($settings["google_maps_style"]) and trim($settings["google_maps_style"]) != "") ? $this->get_googlemap_style($settings["google_maps_style"]) : "''").',
+            fullscreen_button: '.((isset($settings["google_maps_fullscreen_button"]) and trim($settings["google_maps_fullscreen_button"])) ? "true" : "false").',
+            markers: '.json_encode($render->markers($map_data->events)).',
+            clustering_images: "'.esc_js($this->asset("img/cluster1/m")).'",
+            getDirection: '.esc_js($get_direction).',
+            directionOptions: {
+                form: "#mec_get_direction_form'.esc_js($uniqueid).'",
+                reset: "#mec_map_get_direction_reset'.esc_js($uniqueid).'",
+                addr: "#mec_get_direction_addr'.esc_js($uniqueid).'",
+                destination: {
+                    latitude: "'.esc_js($latitude).'",
+                    longitude: "'.esc_js($longitude).'"
+                },
+                startMarker: "'.esc_js(apply_filters("mec_start_marker_icon", $this->asset("img/m-03.png"))).'",
+                endMarker: "'.esc_js(apply_filters("mec_end_marker_icon", $this->asset("img/m-04.png"))).'"
+            }
+        });
     });
-});
-
-function mec_init_gmap'.esc_js($uniqueid).'()
-{
-    p'.esc_js($uniqueid).'.init();
+    </script>';
+} else {
+    // Initialize OpenStreetMap
+    $javascript = '<script>
+    jQuery(document).ready(function() {
+        if(typeof jQuery.fn.mecOpenstreetMaps === "undefined") {
+            console.error("OpenStreetMap plugin not loaded");
+            return;
+        }
+        
+        jQuery("#mec_map_canvas'.esc_js($uniqueid).'").mecOpenstreetMaps({
+            show_on_openstreetmap_text: "' . __('Show on OpenstreetMap', 'mec-map') . '",
+            id: "'.esc_js($uniqueid).'",
+            latitude: "'.esc_js($latitude).'",
+            longitude: "'.esc_js($longitude).'",
+            zoom: '.(isset($settings["google_maps_zoomlevel"]) ? esc_js($settings["google_maps_zoomlevel"]) : 14).',
+            scrollwheel: '. json_encode( $scrollwheel ? true : false ) .',
+            markers: '.json_encode($render->markers($map_data->events)).',
+            getDirection: '.esc_js($get_direction).',
+            directionOptions: {
+                form: "#mec_get_direction_form'.esc_js($uniqueid).'",
+                reset: "#mec_map_get_direction_reset'.esc_js($uniqueid).'",
+                addr: "#mec_get_direction_addr'.esc_js($uniqueid).'"
+            }
+        });
+    });
+    </script>';
 }
-</script>';
 $javascript = apply_filters('mec_map_load_script', $javascript, $map_data, $settings,true);
 
 if(!function_exists('is_plugin_active')) include_once(ABSPATH . 'wp-admin/includes/plugin.php');

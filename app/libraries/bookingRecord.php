@@ -59,14 +59,16 @@ class MEC_bookingRecord extends MEC_base
         if (!is_array($event_tickets)) $event_tickets = [];
 
         $seats = 0;
-        $booked_ticket_ids = explode(',', trim($ticket_ids, ', '));
-        foreach ($booked_ticket_ids as $booked_ticket_id)
-        {
-            $booked_ticket_id = (int) trim($booked_ticket_id);
-            $data = (isset($event_tickets[$booked_ticket_id]) and is_array($event_tickets[$booked_ticket_id])) ? $event_tickets[$booked_ticket_id] : [];
+        $booked_ticket_ids = is_string($ticket_ids) ? explode(',', trim($ticket_ids, ', ')) : [];
+        if(is_array($booked_ticket_ids)) {
+            foreach ($booked_ticket_ids as $booked_ticket_id)
+            {
+                $booked_ticket_id = (int) trim($booked_ticket_id);
+                $data = (isset($event_tickets[$booked_ticket_id]) and is_array($event_tickets[$booked_ticket_id])) ? $event_tickets[$booked_ticket_id] : [];
 
-            $ticket_seats = (isset($data['seats']) and is_numeric($data['seats'])) ? (int) $data['seats'] : 1;
-            $seats += $ticket_seats;
+                $ticket_seats = (isset($data['seats']) and is_numeric($data['seats'])) ? (int) $data['seats'] : 1;
+                $seats += $ticket_seats;
+            }
         }
 
         $booking_options = get_post_meta($event_id, 'mec_booking', true);

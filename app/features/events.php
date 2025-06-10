@@ -1,9 +1,8 @@
 <?php
 /** no direct access **/
+defined('MECEXEC') or die();
 
 use MEC\FES\FormBuilder;
-
-defined('MECEXEC') or die();
 
 /**
  * Webnus MEC events class.
@@ -3186,7 +3185,7 @@ class MEC_feature_events extends MEC_base
         {
             $book = $this->getBook();
 
-            echo esc_html($book->get_all_sold_tickets($post_id)) . ' / ' . $book->get_total_tickets($post_id);
+            echo esc_html($book->get_all_sold_tickets($this->main->get_original_event($post_id))) . ' / ' . $book->get_total_tickets($post_id);
         }
         else if ($column_name == 'repeat')
         {

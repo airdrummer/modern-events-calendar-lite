@@ -22,32 +22,128 @@ $events_data = $this->render->markers($this->events, $this->style);
 if(count($this->events))
 {
     // Include Map Assets such as JS and CSS libraries
-    $this->main->load_map_assets(false, $settings);
+    $this->main->load_map_assets(true, $settings);
 
     $javascript = '<script>
-    jQuery(document).ready(function()
-    {
-        jQuery("#mec_map_canvas'.esc_js($this->id).'").mecGoogleMaps(
-        {
-            id: "'.esc_js($this->id).'",
-            atts: "'.http_build_query(array('atts' => $this->atts), '', '&').'",
-            zoom: '.(isset($settings['google_maps_zoomlevel']) ? esc_js($settings['google_maps_zoomlevel']) : 14).',
-            icon: "'.apply_filters('mec_marker_icon', $this->main->asset('img/m-04.png')).'",
-            styles: '.((isset($settings['google_maps_style']) and trim($settings['google_maps_style']) != '') ? $this->main->get_googlemap_style($settings['google_maps_style']) : "''").',
-            fullscreen_button: '.((isset($settings['google_maps_fullscreen_button']) and trim($settings['google_maps_fullscreen_button'])) ? 'true' : 'false').',
-            markers: '.json_encode($events_data).',
-            geolocation: '.esc_js($this->geolocation).',
-            geolocation_focus: '.esc_js($this->geolocation_focus).',
-            clustering_images: "'.esc_js($this->main->asset('img/cluster1/m')).'",
-            getDirection: 0,
-            ajax_url: "'.admin_url('admin-ajax.php', NULL).'",
-            sf:
-            {
-                container: "'.($this->sf_status ? '#mec_search_form_'.esc_js($this->id) : '').'",
-                reset: '.($this->sf_reset_button ? 1 : 0).',
-                refine: '.($this->sf_refine ? 1 : 0).',
-            },
-        });
+    var mecMapAttempts = 0;
+    var maxAttempts = 50; // Maximum 5 seconds (50 * 100ms)
+    var mapType = "'.esc_js($settings['map']).'";
+    
+    function checkScriptLoaded() {
+        var scripts = document.getElementsByTagName("script");
+        var mapScriptFound = false;
+        
+        for (var i = 0; i < scripts.length; i++) {
+            if (scripts[i].src) {
+                if (mapType === "openstreetmap" && scripts[i].src.includes("openstreetmap.js")) {
+                    mapScriptFound = true;
+                    break;
+                } else if (mapType === "google" && scripts[i].src.includes("googlemap.js")) {
+                    mapScriptFound = true;
+                    break;
+                }
+            }
+        }
+        
+    }
+    
+    function initMecMap() {
+        mecMapAttempts++;
+        
+        // Check scripts on first attempt
+        if (mecMapAttempts === 1) {
+            checkScriptLoaded();
+        }
+        
+        // After max attempts, try to initialize anyway
+        if (mecMapAttempts >= maxAttempts) {
+            checkScriptLoaded(); // Check again before forcing
+            initializeMap();
+            return;
+        }
+        
+        // Check if jQuery is loaded
+        if (typeof jQuery === "undefined") {
+            setTimeout(initMecMap, 100);
+            return;
+        }
+        
+        // Check based on map type
+        if (mapType === "openstreetmap") {
+            // Check if mecOpenstreetMaps plugin is loaded
+            if (typeof jQuery.fn.mecOpenstreetMaps === "undefined") {
+                setTimeout(initMecMap, 100);
+                return;
+            }
+        } else {
+            // Check if mecGoogleMaps plugin is loaded
+            if (typeof jQuery.fn.mecGoogleMaps === "undefined") {
+                setTimeout(initMecMap, 100);
+                return;
+            }
+            
+            // Check if Google Maps API is loaded (only for Google maps)
+            if (typeof google === "undefined") {
+                setTimeout(initMecMap, 100);
+                return;
+            }
+        }
+        
+        initializeMap();
+    }
+    
+    function initializeMap() {
+        try {
+            if (mapType === "openstreetmap") {
+                // Initialize OpenStreetMap
+                jQuery("#mec_map_canvas'.esc_js($this->id).'").mecOpenstreetMaps(
+                {
+                    show_on_openstreetmap_text: "'.__('Show on OpenstreetMap', 'mec-map').'",
+                    id: "'.esc_js($this->id).'",
+                    atts: "'.http_build_query(array('atts' => $this->atts), '', '&').'",
+                    zoom: '.(isset($settings['google_maps_zoomlevel']) ? esc_js($settings['google_maps_zoomlevel']) : 14).',
+                    scrollwheel: '.((isset($settings['default_maps_scrollwheel']) and $settings['default_maps_scrollwheel']) ? 'true' : 'false').',
+                    markers: '.json_encode($events_data).',
+                    HTML5geolocation: "'.esc_js($this->geolocation).'",
+                    ajax_url: "'.admin_url('admin-ajax.php', NULL).'",
+                    sf:
+                    {
+                        container: "'.($this->sf_status ? '#mec_search_form_'.esc_js($this->id) : '').'",
+                    },
+                    latitude: "",
+                    longitude: "",
+                    fields: '.json_encode(array()).'
+                });
+            } else {
+                // Initialize Google Maps
+                jQuery("#mec_map_canvas'.esc_js($this->id).'").mecGoogleMaps(
+                {
+                    id: "'.esc_js($this->id).'",
+                    atts: "'.http_build_query(array('atts' => $this->atts), '', '&').'",
+                    zoom: '.(isset($settings['google_maps_zoomlevel']) ? esc_js($settings['google_maps_zoomlevel']) : 14).',
+                    icon: "'.apply_filters('mec_marker_icon', $this->main->asset('img/m-04.png')).'",
+                    styles: '.((isset($settings['google_maps_style']) and trim($settings['google_maps_style']) != '') ? $this->main->get_googlemap_style($settings['google_maps_style']) : "''").',
+                    fullscreen_button: '.((isset($settings['google_maps_fullscreen_button']) and trim($settings['google_maps_fullscreen_button'])) ? 'true' : 'false').',
+                    markers: '.json_encode($events_data).',
+                    geolocation: '.esc_js($this->geolocation).',
+                    geolocation_focus: '.esc_js($this->geolocation_focus).',
+                    clustering_images: "'.esc_js($this->main->asset('img/cluster1/m')).'",
+                    getDirection: 0,
+                    ajax_url: "'.admin_url('admin-ajax.php', NULL).'",
+                    sf:
+                    {
+                        container: "'.($this->sf_status ? '#mec_search_form_'.esc_js($this->id) : '').'",
+                        reset: '.($this->sf_reset_button ? 1 : 0).',
+                        refine: '.($this->sf_refine ? 1 : 0).',
+                    },
+                });
+            }
+        } catch (error) {
+        }
+    }
+    
+    jQuery(document).ready(function() {
+        initMecMap();
     });
     </script>';
 
