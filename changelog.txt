@@ -1,4 +1,8 @@
-﻿v 7.24.0 - 9 July 2025
+v 7.24.0.1 - 9 july 2025
+- added missing timezone display, reformat
+- fixed countdown
+
+v 7.24.0 - 9 July 2025
 - Released: Appointment system phase 1.
 - Improved: The performance of some modules.
 - Improved: The booking CSV import to import custom fields too.
