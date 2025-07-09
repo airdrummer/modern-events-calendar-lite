@@ -43,7 +43,7 @@ class Google_Http_Request
   protected $baseComponent = null;
   protected $path;
   protected $postBody;
-  protected $userAgent;
+  protected $userAgent = '';
   protected $canGzip = null;
 
   protected $responseHttpCode;
@@ -318,7 +318,7 @@ class Google_Http_Request
       );
     }
     $this->path = isset($parts['path']) ? $parts['path'] : '';
-    $this->queryParams = array();
+    $this->queryParams = [];
     if (isset($parts['query'])) {
       $this->queryParams = $this->parseQuery($parts['query']);
     }
@@ -398,7 +398,7 @@ class Google_Http_Request
 
   public function getParsedCacheControl()
   {
-    $parsed = array();
+    $parsed = [];
     $rawCacheControl = $this->getResponseHeader('cache-control');
     if ($rawCacheControl) {
       $rawCacheControl = str_replace(', ', '&', $rawCacheControl);
@@ -446,7 +446,7 @@ class Google_Http_Request
    */
   private function parseQuery($string)
   {
-    $return = array();
+    $return = [];
     $parts = explode("&", $string);
     foreach ($parts as $part) {
       list($key, $value) = explode('=', $part, 2);
@@ -470,7 +470,7 @@ class Google_Http_Request
    */
   private function buildQuery($parts)
   {
-    $return = array();
+    $return = [];
     foreach ($parts as $key => $value) {
       if (is_array($value)) {
         foreach ($value as $v) {
@@ -498,7 +498,7 @@ class Google_Http_Request
           )
       );
       $this->setPostBody($this->buildQuery($this->queryParams));
-      $this->queryParams = array();
+      $this->queryParams = [];
     }
   }
 }

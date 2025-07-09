@@ -4,7 +4,7 @@ defined('MECEXEC') or die();
 
 /**
  * Webnus MEC Booking Calendar class.
- * @author Webnus <info@webnus.biz>
+ * @author Webnus <info@webnus.net>
  */
 class MEC_feature_bookingcalendar extends MEC_base
 {
@@ -25,7 +25,7 @@ class MEC_feature_bookingcalendar extends MEC_base
 
     /**
      * Constructor method
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      */
     public function __construct()
     {
@@ -41,7 +41,7 @@ class MEC_feature_bookingcalendar extends MEC_base
 
     /**
      * Initialize User Events Feature
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      */
     public function init()
     {
@@ -49,7 +49,7 @@ class MEC_feature_bookingcalendar extends MEC_base
         $this->factory->action('wp_ajax_nopriv_mec_booking_calendar_load_month', array($this, 'load_month'));
     }
 
-    public function display_calendar($event, $uniqueid, $start = NULL)
+    public function display_calendar($event, $uniqueid, $start = NULL, $selected_datetime = NULL)
     {
         $path = MEC::import('app.features.booking.calendar_novel', true, true);
 
@@ -60,22 +60,19 @@ class MEC_feature_bookingcalendar extends MEC_base
     }
 
     /**
-     * Load month for AJAX requert
-     * @author Webnus <info@webnus.biz>
+     * Load month for AJAX request
+     * @author Webnus <info@webnus.net>
      * @return void
      */
     public function load_month()
     {
-        // Request
-        $request = $this->getRequest();
-
         // Render
         $render = $this->getRender();
 
-        $event_id = $request->getVar('event_id');
-        $uniqueid = $request->getVar('uniqueid');
-        $year = $request->getVar('year');
-        $month = $request->getVar('month');
+        $event_id = isset($_REQUEST['event_id']) ? sanitize_text_field($_REQUEST['event_id']) : NULL;
+        $uniqueid = isset($_REQUEST['uniqueid']) ? sanitize_text_field($_REQUEST['uniqueid']) : NULL;
+        $year = isset($_REQUEST['year']) ? sanitize_text_field($_REQUEST['year']) : NULL;
+        $month = isset($_REQUEST['month']) ? sanitize_text_field($_REQUEST['month']) : NULL;
 
         // Start Date
         $start = $year.'-'.$month.'-01';
@@ -93,7 +90,7 @@ class MEC_feature_bookingcalendar extends MEC_base
         // Get Event Dates
         $records = $this->getDB()->select("SELECT * FROM `#__mec_dates` WHERE `post_id`='".$event_id."' AND ((`dstart` <= '".$start."' AND `dend` >= '".$end."') OR (`dstart` <= '".$start."' AND `dend` >= '".$start."' AND `dend` <= '".$end."') OR (`dstart` >= '".$start."' AND `dend` <= '".$end."') OR (`dstart` >= '".$start."' AND `dstart` <= '".$end."' AND `dend` >= '".$end."'))", 'loadAssocList');
 
-        $dates = array();
+        $dates = [];
         foreach($records as $record)
         {
             $dates[] = array(
@@ -133,7 +130,7 @@ class MEC_feature_bookingcalendar extends MEC_base
         }
 
         $data->dates = $dates;
-        $data->date = isset($data->dates[0]) ? $data->dates[0] : array();
+        $data->date = isset($data->dates[0]) ? $data->dates[0] : [];
 
         echo json_encode(array('html' => $this->display_calendar($data, $uniqueid, $start)));
         exit;

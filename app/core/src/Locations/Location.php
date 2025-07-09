@@ -23,7 +23,7 @@ class Locations extends Singleton {
     public function get_locations($query){
         $term_id = $this->ID;
         if(!$term_id){
-            return array();
+            return [];
         }
 
         return array(

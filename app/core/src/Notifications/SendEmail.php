@@ -30,13 +30,17 @@ class SendEmail{
 
         $options = Settings::getInstance()->get_options('notifications');
 
-        return isset($options[$this->group_id]) && is_array($options[$this->group_id]) ? $options[$this->group_id] : [];
+        return isset($options[$this->group_id]) && is_array($options[$this->group_id]) ? $options[$this->group_id] : $this->get_default_notification_settings();
+    }
+
+    public function get_default_notification_settings(){
+
+        return [];
     }
 
     public function get_notification_settings( $key = null ){
 
         if( empty($this->notifications_options) ){
-
             $global_options = $this->_get_notifications_settings();
             $this->notifications_options = $global_options;
 
@@ -49,6 +53,13 @@ class SendEmail{
 
                     $this->notifications_options['subject'] = $event_options['subject'];
                     $this->notifications_options['content'] = $event_options['content'];
+                }
+                if ( str_contains($this->group_id,'rsvp')){
+                    if( isset($event_options[$this->group_id]['status']) && (bool)$event_options[$this->group_id]['status'] ){
+
+                        $this->notifications_options['subject'] = $event_options[$this->group_id]['subject'];
+                        $this->notifications_options['content'] = $event_options[$this->group_id]['content'];
+                    }
                 }
             }
 
@@ -67,7 +78,7 @@ class SendEmail{
 
         $subject = $this->get_notification_settings( 'subject' );
 
-        return !is_null($subject) ? __($subject,'mec') : $default;
+        return !is_null($subject) ? esc_html__($subject, 'modern-events-calendar-lite') : $default;
     }
 
     public function get_content( $default = '' ){
@@ -94,6 +105,13 @@ class SendEmail{
     public function get_send_to_organizer_status(){
 
         $status = $this->get_notification_settings( 'send_to_organizer' );
+
+        return (bool)$status ;
+    }
+
+    public function get_send_to_event_author_status(){
+
+        $status = $this->get_notification_settings( 'send_to_author' );
 
         return (bool)$status ;
     }
@@ -149,6 +167,20 @@ class SendEmail{
         return trim($email) ? $email : false;
     }
 
+    public function get_event_author_email(){
+
+        $email = '';
+        $event = get_post( $this->event_id );
+        $author_id = isset( $event->post_author ) ? $event->post_author : 0;
+        $user = $author_id ? get_user_by( 'id', $author_id ) : false;
+        if( is_a( $user, '\WP_User' ) ) {
+
+            $email = isset( $user->user_email ) ? $user->user_email : '';
+        }
+
+        return trim($email) ? $email : false;
+    }
+
     public function get_all_recipients_emails(){
 
         $emails = array_merge(
@@ -175,7 +207,7 @@ class SendEmail{
 
     public function get_target_users_or_emails(){
 
-        $users_or_emails = array();
+        $users_or_emails = [];
 
 
         $allowed_check_settings_for_attendees = $this->allowed_check_settings_for_attendees();
@@ -208,6 +240,15 @@ class SendEmail{
             if(!empty($organizer_email)){
 
                 $users_or_emails[] = $organizer_email;
+            }
+        }
+
+        if($this->get_send_to_event_author_status()){
+
+            $author_email = $this->get_event_author_email();
+            if(!empty($author_email)){
+
+                $users_or_emails[] = $author_email;
             }
         }
 
@@ -265,7 +306,7 @@ class SendEmail{
         $date_format = get_option('date_format');
         $time_format = get_option('time_format');
 
-        if(!trim($timestamps)) {
+        if(!trim((string)$timestamps)) {
 
             $timestamps = $this->get_event_times();
         }
@@ -282,7 +323,7 @@ class SendEmail{
         // Data Fields
         $event_fields = \MEC\Base::get_main()->get_event_fields();
         $event_fields_data = get_post_meta($this->event_id, 'mec_fields', true);
-        if(!is_array($event_fields_data)) $event_fields_data = array();
+        if(!is_array($event_fields_data)) $event_fields_data = [];
 
         foreach($event_fields as $f => $event_field){
             if(!is_numeric($f)) {
@@ -341,7 +382,7 @@ class SendEmail{
 
         $featured_image = '';
         $thumbnail_url = \MEC\Base::get_main()->get_post_thumbnail_url($this->event_id, 'medium');
-        if(trim($thumbnail_url)) $featured_image = '<img src="'.$thumbnail_url.'">';
+        if(trim($thumbnail_url)) $featured_image = '<img src="'. esc_attr( $thumbnail_url ) .'">';
 
         $content = str_replace('%%event_featured_image%%', $featured_image, $content);
 
@@ -356,7 +397,7 @@ class SendEmail{
         $additional_organizers_url = '';
 
         $additional_organizers_ids = get_post_meta($this->event_id, 'mec_additional_organizer_ids', true);
-        if(!is_array($additional_organizers_ids)) $additional_organizers_ids = array();
+        if(!is_array($additional_organizers_ids)) $additional_organizers_ids = [];
 
         foreach($additional_organizers_ids as $additional_organizers_id)
         {
@@ -375,18 +416,18 @@ class SendEmail{
         $content = str_replace('%%event_other_organizers_email%%', trim($additional_organizers_email, ', '), $content);
         $content = str_replace('%%event_other_organizers_url%%', trim($additional_organizers_url, ', '), $content);
 
-        $speaker_name = array();
+        $speaker_name = [];
         foreach($speaker_id as $speaker) $speaker_name[] = isset($speaker->name) ? $speaker->name : null;
 
         $content = str_replace('%%event_speaker_name%%', (isset($speaker_name) ? implode(', ', $speaker_name): ''), $content);
-        $content = str_replace('%%event_location_name%%', (isset($location->name) ? $location->name : ''), $content);
+        $content = str_replace('%%event_location_name%%', (isset($location->name) ? $location->name : get_term_meta($location_id, 'address', true)), $content);
         $content = str_replace('%%event_location_address%%', get_term_meta($location_id, 'address', true), $content);
 
         $additional_locations_name = '';
         $additional_locations_address = '';
 
         $additional_locations_ids = get_post_meta($this->event_id, 'mec_additional_location_ids', true);
-        if(!is_array($additional_locations_ids)) $additional_locations_ids = array();
+        if(!is_array($additional_locations_ids)) $additional_locations_ids = [];
 
         foreach($additional_locations_ids as $additional_locations_id){
             $additional_location = get_term($additional_locations_id, 'mec_location');
@@ -411,10 +452,13 @@ class SendEmail{
         $content = str_replace('%%virtual_password%%', get_post_meta($this->event_id, 'mec_virtual_password', true), $content);
         $content = str_replace('%%virtual_embed%%', get_post_meta($this->event_id, 'mec_virtual_embed', true), $content);
 
+        $zoom_meeting_id = get_post_meta($this->event_id, 'mec_zoom_meeting_id', true);
+        $content = str_replace('%%zoom_meeting_id%%', $zoom_meeting_id ? esc_html($zoom_meeting_id) : '', $content);
         $content = str_replace('%%zoom_join%%', get_post_meta($this->event_id, 'mec_zoom_join_url', true), $content);
         $content = str_replace('%%zoom_link%%', get_post_meta($this->event_id, 'mec_zoom_link_url', true), $content);
         $content = str_replace('%%zoom_password%%', get_post_meta($this->event_id, 'mec_zoom_password', true), $content);
         $content = str_replace('%%zoom_embed%%', get_post_meta($this->event_id, 'mec_zoom_embed', true), $content);
+        $content = str_replace('%%zoom_meeting_id%%', get_post_meta($this->event_id, 'mec_zoom_meeting_id', true), $content);
 
         return $content;
     }
@@ -424,11 +468,11 @@ class SendEmail{
         $style = \MEC\Base::get_main()->get_styling();
         $bgnotifications = isset($style['notification_bg']) ? $style['notification_bg'] : '#f6f6f6';
 
-        return '<table border="0" cellpadding="0" cellspacing="0" class="wn-body" style="background-color: '.$bgnotifications.'; font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Oxygen,Open Sans, sans-serif;border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;">
+        return '<table border="0" cellpadding="0" cellspacing="0" class="wn-body" style="background-color: '.esc_attr($bgnotifications).'; font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Oxygen,Open Sans, sans-serif;border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;">
             <tr>
                 <td class="wn-container" style="display: block; margin: 0 auto !important; max-width: 680px; padding: 10px;font-family: sans-serif; font-size: 14px; vertical-align: top;">
                     <div class="wn-wrapper" style="box-sizing: border-box; padding: 38px 9% 50px; width: 100%; height: auto; background: #fff; background-size: contain; margin-bottom: 25px; margin-top: 30px; border-radius: 4px; box-shadow: 0 3px 55px -18px rgba(0,0,0,0.1);">
-                        '.$content.'
+                        '.\MEC_kses::page($content).'
                     </div>
                 </td>
             </tr>

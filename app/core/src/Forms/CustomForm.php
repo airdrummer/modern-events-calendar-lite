@@ -35,7 +35,7 @@ class CustomForm extends Singleton {
 		}
 
 		$options = Settings::getInstance()->get_options();
-		$fields  = isset( $options[ $group_id ] ) ? $options[ $group_id ] : array();
+		$fields  = isset( $options[ $group_id ] ) ? $options[ $group_id ] : [];
 
 
 		return apply_filters( 'mec_get_custom_form_fields', $fields, $event_id, $form_id, $group_id, $primary_group_id,$translated_event_id );
@@ -46,19 +46,27 @@ class CustomForm extends Singleton {
 
 		$group_id  .= '_reg';
 		$mec_email = false;
-		$mec_name  = false;
+		$mec_first_name = false;
+		$mec_last_name = false;
 
 		$fields = $this->get_fields( $group_id, $event_id, $translated_event_id );
 
 		if ( !is_array( $fields ) ) {
-			$fields = array();
+			$fields = [];
 		}
 
-		foreach ( $fields as $field ) {
+		foreach ( $fields as $k => $field ) {
 			if ( isset( $field['type'] ) ) {
-				if ( 'name' === $field['type'] ) {
-					$mec_name = true;
+				if ( 'first_name' === $field['type'] ) {
+					$mec_first_name = true;
+					$fields[$k]['mapping'] = 'first_name';
 				}
+
+				if ( 'last_name' === $field['type'] ) {
+					$mec_last_name = true;
+					$fields[$k]['mapping'] = 'last_name';
+				}
+
 				if ( 'mec_email' === $field['type'] ) {
 					$mec_email = true;
 				}
@@ -67,13 +75,26 @@ class CustomForm extends Singleton {
 			}
 		}
 
-		if ( !$mec_name ) {
+		if ( !$mec_last_name ) {
 			array_unshift(
 				$fields,
 				array(
 					'mandatory' => '0',
-					'type'      => 'name',
-					'label'     => esc_html__( 'Name', 'mec' ),
+					'type'      => 'last_name',
+					'mapping'   => 'last_name',
+					'label'     => esc_html__( 'Last Name', 'modern-events-calendar-lite'),
+				)
+			);
+		}
+
+		if ( !$mec_first_name ) {
+			array_unshift(
+				$fields,
+				array(
+					'mandatory' => '0',
+					'type'      => 'first_name',
+					'mapping'   => 'first_name',
+					'label'     => esc_html__( 'First Name', 'modern-events-calendar-lite'),
 				)
 			);
 		}
@@ -84,7 +105,7 @@ class CustomForm extends Singleton {
 				array(
 					'mandatory' => '0',
 					'type'      => 'mec_email',
-					'label'     => esc_html__( 'Email', 'mec' ),
+					'label'     => esc_html__( 'Email', 'modern-events-calendar-lite'),
 				)
 			);
 		}

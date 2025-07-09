@@ -218,7 +218,7 @@ class Google_Utils_URITemplate
           $value = $this->getValue($parameters[$key], $length);
           break;
         case self::TYPE_LIST:
-          $values = array();
+          $values = [];
           foreach ($parameters[$key] as $pkey => $pvalue) {
             $pvalue = $this->getValue($pvalue, $length);
             if ($combine && $explode) {
@@ -233,7 +233,7 @@ class Google_Utils_URITemplate
           }
           break;
         case self::TYPE_MAP:
-          $values = array();
+          $values = [];
           foreach ($parameters[$key] as $pkey => $pvalue) {
             $pvalue = $this->getValue($pvalue, $length);
             if ($explode) {
@@ -300,7 +300,7 @@ class Google_Utils_URITemplate
       $tag_empty,
       $combine_on_empty
   ) {
-    $ret = array();
+    $ret = [];
     foreach ($vars as $var) {
       $response = $this->combine(
           $var,

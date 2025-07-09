@@ -6,16 +6,7 @@ namespace Composer\Autoload;
 
 class ComposerStaticInitb7dce439a575ff5721c0c0e7d0a0abac
 {
-    public static $files = array (
-        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
-    );
-
     public static $prefixLengthsPsr4 = array (
-        'S' => 
-        array (
-            'Symfony\\Polyfill\\Mbstring\\' => 26,
-            'Symfony\\Component\\Translation\\' => 30,
-        ),
         'M' => 
         array (
             'MEC\\' => 4,
@@ -23,22 +14,10 @@ class ComposerStaticInitb7dce439a575ff5721c0c0e7d0a0abac
     );
 
     public static $prefixDirsPsr4 = array (
-        'Symfony\\Polyfill\\Mbstring\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
-        ),
-        'Symfony\\Component\\Translation\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/translation',
-        ),
         'MEC\\' => 
         array (
             0 => __DIR__ . '/../..' . '/core/src',
         ),
-    );
-
-    public static $fallbackDirsPsr4 = array (
-        0 => __DIR__ . '/..' . '/nesbot/carbon/src',
     );
 
     public static $prefixesPsr0 = array (
@@ -51,13 +30,17 @@ class ComposerStaticInitb7dce439a575ff5721c0c0e7d0a0abac
         ),
     );
 
+    public static $classMap = array (
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+    );
+
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInitb7dce439a575ff5721c0c0e7d0a0abac::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInitb7dce439a575ff5721c0c0e7d0a0abac::$prefixDirsPsr4;
-            $loader->fallbackDirsPsr4 = ComposerStaticInitb7dce439a575ff5721c0c0e7d0a0abac::$fallbackDirsPsr4;
             $loader->prefixesPsr0 = ComposerStaticInitb7dce439a575ff5721c0c0e7d0a0abac::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInitb7dce439a575ff5721c0c0e7d0a0abac::$classMap;
 
         }, null, ClassLoader::class);
     }

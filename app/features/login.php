@@ -3,7 +3,7 @@
 defined('MECEXEC') or die();
 
 /**
- * @author Webnus <info@webnus.biz>
+ * @author Webnus <info@webnus.net>
  */
 class MEC_feature_login extends MEC_base
 {
@@ -11,7 +11,7 @@ class MEC_feature_login extends MEC_base
 
     /**
      * Constructor method
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      */
     public function __construct()
     {
@@ -21,7 +21,7 @@ class MEC_feature_login extends MEC_base
     
     /**
      * Initialize search feature
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      */
     public function init()
     {
@@ -40,9 +40,9 @@ class MEC_feature_login extends MEC_base
         // Verify that the nonce is valid.
         if(!wp_verify_nonce(sanitize_text_field($_POST['mec_login_nonce']), 'mec-ajax-login-nonce')) return;
         
-        $info = array();
-        $info['user_login'] = $_POST['username'];
-        $info['user_password'] = $_POST['password'];
+        $info = [];
+        $info['user_login'] = sanitize_text_field($_POST['username']);
+        $info['user_password'] = sanitize_text_field($_POST['password']);
         $info['remember'] = true;
 
         $user_signon = wp_signon($info, true); // secure_cookie set true.

@@ -80,13 +80,13 @@ class TTFontFile {
 		$this->fh = fopen($file,'rb') or die('Can\'t open file ' . $file);
 		$this->_pos = 0;
 		$this->charWidths = '';
-		$this->glyphPos = array();
-		$this->charToGlyph = array();
-		$this->tables = array();
-		$this->otables = array();
+		$this->glyphPos = [];
+		$this->charToGlyph = [];
+		$this->tables = [];
+		$this->otables = [];
 		$this->ascent = 0;
 		$this->descent = 0;
-		$this->TTCFonts = array();
+		$this->TTCFonts = [];
 		$this->version = $version = $this->read_ulong();
 		if ($version==0x4F54544F) 
 			die("Postscript outlines are not supported");
@@ -105,9 +105,9 @@ class TTFontFile {
             $this->searchRange = $this->read_ushort();
             $this->entrySelector = $this->read_ushort();
             $this->rangeShift = $this->read_ushort();
-            $this->tables = array();	
+            $this->tables = [];
             for ($i=0;$i<$this->numTables;$i++) {
-                $record = array();
+                $record = [];
                 $record['tag'] = $this->read_tag();
                 $record['checksum'] = array($this->read_ushort(),$this->read_ushort());
                 $record['offset'] = $this->read_ulong();
@@ -476,8 +476,8 @@ class TTFontFile {
 			die('Font ('.$this->filename .') does not have cmap for Unicode (platform 3, encoding 1, format 4, or platform 0, any encoding, format 4)');
 
 
-		$glyphToChar = array();
-		$charToGlyph = array();
+		$glyphToChar = [];
+		$charToGlyph = [];
 		$this->getCMAP4($unicode_cmap_offset, $glyphToChar, $charToGlyph );
 
 		///////////////////////////////////
@@ -497,10 +497,10 @@ class TTFontFile {
 		$this->fh = fopen($file ,'rb') or die('Can\'t open file ' . $file);
 		$this->_pos = 0;
 		$this->charWidths = '';
-		$this->glyphPos = array();
-		$this->charToGlyph = array();
-		$this->tables = array();
-		$this->otables = array();
+		$this->glyphPos = [];
+		$this->charToGlyph = [];
+		$this->tables = [];
+		$this->otables = [];
 		$this->ascent = 0;
 		$this->descent = 0;
 		$this->skip(4);
@@ -558,8 +558,8 @@ class TTFontFile {
 			die('Font ('.$this->filename .') does not have cmap for Unicode (platform 3, encoding 1, format 4, or platform 0, any encoding, format 4)');
 
 
-		$glyphToChar = array();
-		$charToGlyph = array();
+		$glyphToChar = [];
+		$charToGlyph = [];
 		$this->getCMAP4($unicode_cmap_offset, $glyphToChar, $charToGlyph );
 
 		$this->charToGlyph = $charToGlyph;
@@ -576,7 +576,7 @@ class TTFontFile {
 		$this->getLOCA($indexToLocFormat, $numGlyphs);
 
 		$subsetglyphs = array(0=>0); 
-		$subsetCharToGlyph = array();
+		$subsetCharToGlyph = [];
 		foreach($subset AS $code) {
 			if (isset($this->charToGlyph[$code])) {
 				$subsetglyphs[$this->charToGlyph[$code]] = $code;	// Old Glyph ID => Unicode
@@ -588,7 +588,7 @@ class TTFontFile {
 
 		list($start,$dummy) = $this->get_table_pos('glyf');
 
-		$glyphSet = array();
+		$glyphSet = [];
 		ksort($subsetglyphs);
 		$n = 0;
 		$fsLastCharIndex = 0;	// maximum Unicode index (character code) in this font, according to the cmap subtable for platform ID 3 and platform- specific encoding ID 0 or 1.
@@ -629,7 +629,7 @@ class TTFontFile {
 		unset($codeToGlyph[0]);
 		//unset($codeToGlyph[65535]);
 		$rangeid = 0;
-		$range = array();
+		$range = [];
 		$prevcid = -2;
 		$prevglidx = -1;
 		// for each character
@@ -639,7 +639,7 @@ class TTFontFile {
 			} else {
 				// new range
 				$rangeid = $cid;
-				$range[$rangeid] = array();
+				$range[$rangeid] = [];
 				$range[$rangeid][] = $glidx;
 			}
 			$prevcid = $cid;
@@ -709,7 +709,7 @@ class TTFontFile {
 			$glyphData = $this->get_table('glyf');
 		}
 
-		$offsets = array();
+		$offsets = [];
 		$glyf = '';
 		$pos = 0;
 
@@ -728,7 +728,7 @@ class TTFontFile {
 		$maxComponentContours = 0;	// contours in compound glyph
 		$maxComponentElements = 0;	// number of glyphs referenced at top level
 		$maxComponentDepth = 0;		// levels of recursion, set to 0 if font has only simple glyphs
-		$this->glyphdata = array();
+		$this->glyphdata = [];
 
 		foreach($subsetglyphs AS $originalGlyphIdx => $uni) {
 			// hmtx - Horizontal Metrics
@@ -967,7 +967,7 @@ class TTFontFile {
 
 	function getLOCA($indexToLocFormat, $numGlyphs) {
 		$start = $this->seek_table('loca');
-		$this->glyphPos = array();
+		$this->glyphPos = [];
 		if ($indexToLocFormat == 0) {
 			$data = $this->get_chunk($start,($numGlyphs*2)+2);
 			$arr = unpack("n*", $data);
@@ -997,15 +997,15 @@ class TTFontFile {
 
 		$segCount = $this->read_ushort() / 2;
 		$this->skip(6);
-		$endCount = array();
+		$endCount = [];
 		for($i=0; $i<$segCount; $i++) { $endCount[] = $this->read_ushort(); }
 		$this->skip(2);
-		$startCount = array();
+		$startCount = [];
 		for($i=0; $i<$segCount; $i++) { $startCount[] = $this->read_ushort(); }
-		$idDelta = array();
+		$idDelta = [];
 		for($i=0; $i<$segCount; $i++) { $idDelta[] = $this->read_short(); }		// ???? was unsigned short
 		$idRangeOffset_start = $this->_pos;
-		$idRangeOffset = array();
+		$idRangeOffset = [];
 		for($i=0; $i<$segCount; $i++) { $idRangeOffset[] = $this->read_ushort(); }
 
 		for ($n=0;$n<$segCount;$n++) {

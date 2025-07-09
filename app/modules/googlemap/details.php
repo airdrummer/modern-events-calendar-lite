@@ -3,6 +3,8 @@
 defined('MECEXEC') or die();
 
 /** @var MEC_Main $this */
+/** @var array $event */
+/** @var MEC_factory $factory */
 
 // PRO Version is required
 if(!$this->getPRO()) return;
@@ -11,10 +13,10 @@ if(!$this->getPRO()) return;
 $settings = $this->get_settings();
 
 // Google Maps on single page is disabled
-if(!isset($settings['google_maps_status']) or (isset($settings['google_maps_status']) and !$settings['google_maps_status'])) return;
+if(!isset($settings['google_maps_status']) || !$settings['google_maps_status']) return;
 
 $event = $event[0];
-$uniqueid = (isset($uniqueid) ? $uniqueid : $event->data->ID);
+$uniqueid = $uniqueid ?? $event->data->ID;
 
 // Map is disabled for this event
 $dont_show_map = ((isset($event->data->meta['mec_dont_show_map']) and is_numeric($event->data->meta['mec_dont_show_map'])) ? $event->data->meta['mec_dont_show_map'] : 0);
@@ -29,9 +31,9 @@ $location_id = $this->get_master_location_id($event);
 $location = ($location_id ? $this->get_location_data($location_id) : array());
 
 // Event location geo point
-$latitude = isset($location['latitude']) ? $location['latitude'] : '';
-$longitude = isset($location['longitude']) ? $location['longitude'] : '';
-$address = isset($location['address']) ? $location['address'] : '';
+$latitude = $location['latitude'] ?? '';
+$longitude = $location['longitude'] ?? '';
+$address = $location['address'] ?? '';
 
 // Try to get the latitude and longitude on the fly
 if(!trim($latitude) or !trim($longitude))
@@ -63,7 +65,7 @@ $event_locations = array_keys((array)$event->data->locations);
 $map_data = new stdClass;
 $map_data->id = $uniqueid;
 $map_data->atts = array(
-    'location_map_zoom' => (isset($settings['google_maps_zoomlevel']) ? $settings['google_maps_zoomlevel'] : 14),
+    'location_map_zoom' => $settings['google_maps_zoomlevel'] ?? 14,
     'location_center_lat' => null,
     'location_center_long' => null,
     'use_orig_map' => true
@@ -77,66 +79,102 @@ $map_data->sf_status = null;
 $current_event = (isset($map_data->events[$event_id]) ? array($map_data->events[$event_id]) : array());
 $map_data->events = apply_filters('mec_location_load_additional', $current_event, $additional_location_ids, $event_locations);
 
-// Initialize MEC Google Maps jQuery plugin
-$javascript = '<script type="text/javascript">
-var p'.$uniqueid.';
-jQuery(document).ready(function()
-{
-    p'.$uniqueid.' = jQuery("#mec_map_canvas'.$uniqueid.'").mecGoogleMaps(
-    {
-        latitude: "'.$latitude.'",
-        longitude: "'.$longitude.'",
-        autoinit: '.((!isset($auto_init) or (isset($auto_init) and $auto_init)) ? 'true' : 'false').',
-        zoom: '.(isset($settings['google_maps_zoomlevel']) ? $settings['google_maps_zoomlevel'] : 14).',
-        icon: "'.apply_filters('mec_marker_icon', $this->asset('img/m-04.png')).'",
-        styles: '.((isset($settings['google_maps_style']) and trim($settings['google_maps_style']) != '') ? $this->get_googlemap_style($settings['google_maps_style']) : "''").',
-        fullscreen_button: '.((isset($settings['google_maps_fullscreen_button']) and trim($settings['google_maps_fullscreen_button'])) ? 'true' : 'false').',
-        markers: '.json_encode($render->markers($map_data->events)).',
-        clustering_images: "'.$this->asset('img/cluster1/m').'",
-        getDirection: '.$get_direction.',
-        directionOptions:
-        {
-            form: "#mec_get_direction_form'.$uniqueid.'",
-            reset: "#mec_map_get_direction_reset'.$uniqueid.'",
-            addr: "#mec_get_direction_addr'.$uniqueid.'",
-            destination:
-            {
-                latitude: "'.$latitude.'",
-                longitude: "'.$longitude.'",
-            },
-            startMarker: "'.apply_filters('mec_start_marker_icon', $this->asset('img/m-03.png')).'",
-            endMarker: "'.apply_filters('mec_end_marker_icon', $this->asset('img/m-04.png')).'"
-        }
-    });
-});
+$scrollwheel = apply_filters( 'mec_google_map_scroll_wheel', false );
 
-function mec_init_gmap'.$uniqueid.'()
-{
-    p'.$uniqueid.'.init();
+// Check if OpenStreetMap is selected
+$map_type = (isset($settings['default_maps_view']) ? $settings['default_maps_view'] : 'google');
+if($map_type === 'google') {
+    // Initialize MEC Google Maps jQuery plugin
+    $javascript = '<script>
+    var p'.esc_js($uniqueid).';
+    jQuery(document).ready(function()
+    {
+        if(typeof jQuery.fn.mecGoogleMaps === "undefined") {
+            console.error("Google Maps plugin not loaded");
+            return;
+        }
+        
+        p'.esc_js($uniqueid).' = jQuery("#mec_map_canvas'.esc_js($uniqueid).'").mecGoogleMaps(
+        {
+            scrollwheel: '. json_encode( $scrollwheel ? true : false ) .',
+            latitude: "'.esc_js($latitude).'",
+            longitude: "'.esc_js($longitude).'",
+            autoinit: '.((!isset($auto_init) || $auto_init) ? 'true' : 'false').',
+            zoom: '.(isset($settings["google_maps_zoomlevel"]) ? esc_js($settings["google_maps_zoomlevel"]) : 14).',
+            icon: "'.esc_js(apply_filters("mec_marker_icon", $this->asset("img/m-04.png"))).'",
+            styles: '.((isset($settings["google_maps_style"]) and trim($settings["google_maps_style"]) != "") ? $this->get_googlemap_style($settings["google_maps_style"]) : "''").',
+            fullscreen_button: '.((isset($settings["google_maps_fullscreen_button"]) and trim($settings["google_maps_fullscreen_button"])) ? "true" : "false").',
+            markers: '.json_encode($render->markers($map_data->events)).',
+            clustering_images: "'.esc_js($this->asset("img/cluster1/m")).'",
+            getDirection: '.esc_js($get_direction).',
+            directionOptions: {
+                form: "#mec_get_direction_form'.esc_js($uniqueid).'",
+                reset: "#mec_map_get_direction_reset'.esc_js($uniqueid).'",
+                addr: "#mec_get_direction_addr'.esc_js($uniqueid).'",
+                destination: {
+                    latitude: "'.esc_js($latitude).'",
+                    longitude: "'.esc_js($longitude).'"
+                },
+                startMarker: "'.esc_js(apply_filters("mec_start_marker_icon", $this->asset("img/m-03.png"))).'",
+                endMarker: "'.esc_js(apply_filters("mec_end_marker_icon", $this->asset("img/m-04.png"))).'"
+            }
+        });
+    });
+    </script>';
+} else {
+    // Initialize OpenStreetMap
+    $javascript = '<script>
+    jQuery(document).ready(function() {
+        if(typeof jQuery.fn.mecOpenstreetMaps === "undefined") {
+            console.error("OpenStreetMap plugin not loaded");
+            return;
+        }
+        
+        jQuery("#mec_map_canvas'.esc_js($uniqueid).'").mecOpenstreetMaps({
+            show_on_openstreetmap_text: "' . __('Show on OpenstreetMap', 'mec-map') . '",
+            id: "'.esc_js($uniqueid).'",
+            latitude: "'.esc_js($latitude).'",
+            longitude: "'.esc_js($longitude).'",
+            zoom: '.(isset($settings["google_maps_zoomlevel"]) ? esc_js($settings["google_maps_zoomlevel"]) : 14).',
+            scrollwheel: '. json_encode( $scrollwheel ? true : false ) .',
+            markers: '.json_encode($render->markers($map_data->events)).',
+            getDirection: '.esc_js($get_direction).',
+            directionOptions: {
+                form: "#mec_get_direction_form'.esc_js($uniqueid).'",
+                reset: "#mec_map_get_direction_reset'.esc_js($uniqueid).'",
+                addr: "#mec_get_direction_addr'.esc_js($uniqueid).'"
+            }
+        });
+    });
+    </script>';
 }
-</script>';
-$javascript = apply_filters('mec_map_load_script', $javascript, $map_data, $settings);
+$javascript = apply_filters('mec_map_load_script', $javascript, $map_data, $settings,true);
 
 if(!function_exists('is_plugin_active')) include_once(ABSPATH . 'wp-admin/includes/plugin.php');
 
 // Include javascript code into the footer
-if($this->is_ajax()) echo $javascript;
-elseif (is_plugin_active( 'mec-single-builder/mec-single-builder.php')) echo $javascript;
+if($this->is_ajax()) echo MEC_kses::full($javascript);
+elseif (is_plugin_active( 'mec-single-builder/mec-single-builder.php')) echo MEC_kses::full($javascript);
 else $factory->params('footer', $javascript);
 ?>
-<div class="mec-googlemap-details" id="mec_map_canvas<?php echo $uniqueid; ?>" style="height: 500px;">
-    <?php do_action('mec_map_inner_element_tools', $settings); ?>
+
+<div class="mec-googlemap-details" id="mec_map_canvas<?php echo esc_attr($uniqueid); ?>" style="height: 500px;">
+    <?php if (is_plugin_active( 'divi-single-builder/divi-single-builder.php')) : ?>
+         <img src="<?php echo plugin_dir_url(__FILE__ ); ?>../../../assets/img/map.jpg" />
+    <?php else : ?>
+        <?php do_action('mec_map_inner_element_tools', $settings); ?>
+    <?php endif; ?>
 </div>
 <?php do_action('mec_map_before_direction'); ?>
 <?php if($get_direction): ?>
 <div class="mec-get-direction">
-    <form method="post" action="#" id="mec_get_direction_form<?php echo $uniqueid; ?>" class="clearfix">
+    <form method="post" action="#" id="mec_get_direction_form<?php echo esc_attr($uniqueid); ?>" class="clearfix">
         <div class="mec-map-get-direction-address-cnt">
-            <input class="mec-map-get-direction-address" type="text" placeholder="<?php esc_attr_e('Address from ...', 'modern-events-calendar-lite') ?>" id="mec_get_direction_addr<?php echo $uniqueid; ?>" />
-            <span class="mec-map-get-direction-reset mec-util-hidden" id="mec_map_get_direction_reset<?php echo $uniqueid; ?>">X</span>
+            <input class="mec-map-get-direction-address" type="text" placeholder="<?php esc_attr_e('Address from ...', 'modern-events-calendar-lite') ?>" id="mec_get_direction_addr<?php echo esc_attr($uniqueid); ?>" />
+            <span class="mec-map-get-direction-reset mec-util-hidden" id="mec_map_get_direction_reset<?php echo esc_attr($uniqueid); ?>">X</span>
         </div>
         <div class="mec-map-get-direction-btn-cnt btn btn-primary">
-            <input type="submit" value="<?php _e('Get Directions', 'modern-events-calendar-lite'); ?>" />
+            <input type="submit" value="<?php esc_html_e('Get Directions', 'modern-events-calendar-lite'); ?>" />
         </div>
     </form>
 </div>

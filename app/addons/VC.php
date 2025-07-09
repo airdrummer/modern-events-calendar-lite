@@ -4,7 +4,7 @@ defined('MECEXEC') or die();
 
 /**
  * Webnus MEC VC addon class
- * @author Webnus <info@webnus.biz>
+ * @author Webnus <info@webnus.net>
  */
 class MEC_addon_VC extends MEC_base
 {
@@ -20,7 +20,7 @@ class MEC_addon_VC extends MEC_base
 
     /**
      * Constructor method
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      */
     public function __construct()
     {
@@ -33,7 +33,7 @@ class MEC_addon_VC extends MEC_base
     
     /**
      * Initialize the VC addon
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      */
     public function init()
     {
@@ -46,13 +46,13 @@ class MEC_addon_VC extends MEC_base
     
     /**
      * Register the addon in VC
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      */
     public function map()
     {
         $calendar_posts = get_posts(array('post_type'=>'mec_calendars', 'posts_per_page'=>'-1'));
         
-        $calendars = array();
+        $calendars = [];
         foreach($calendar_posts as $calendar_post) $calendars[$calendar_post->post_title] = $calendar_post->ID;
         
         vc_map(array(

@@ -29,7 +29,23 @@ if(jQuery('.mec-fes-form').length < 1)
                 text: items.mce_title,
                 icon: false,
                 type: 'menubutton',
-                menu: menu
+                menu: menu,
+                onPostRender: function() {
+                    const titleText = items.mce_title.trim();
+
+                    const interval = setInterval(() => {
+                        const buttons = document.querySelectorAll('.mce-menubtn');
+
+                        buttons.forEach(btn => {
+                            const span = btn.querySelector('.mce-txt');
+                            if (span && span.textContent.trim() === titleText) {
+                                if (!btn.classList.contains('mce-fixed-width')) {
+                                    btn.classList.add('mce-fixed-width', 'mce-listbox');
+                                }
+                            }
+                        });
+                    });
+                }
             });
         });
     }

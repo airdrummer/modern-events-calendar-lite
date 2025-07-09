@@ -4,7 +4,7 @@ defined('MECEXEC') or die();
 
 /**
  * Webnus MEC User class.
- * @author Webnus <info@webnus.biz>
+ * @author Webnus <info@webnus.net>
  */
 class MEC_user extends MEC_base
 {
@@ -18,11 +18,14 @@ class MEC_user extends MEC_base
      */
     public $db;
 
+    /**
+     * @var array
+     */
     public $settings;
 
     /**
      * Constructor method
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      */
     public function __construct()
     {
@@ -38,86 +41,167 @@ class MEC_user extends MEC_base
 
     public function register($attendee, $args)
     {
-        $name = isset($attendee['name']) ? $attendee['name'] : '';
-        $raw = (isset($attendee['reg']) and is_array($attendee['reg'])) ? $attendee['reg'] : array();
+        $name = $attendee['name'] ?? '';
+        $raw = (isset($attendee['reg']) and is_array($attendee['reg'])) ? $attendee['reg'] : [];
 
-        $email = isset($attendee['email']) ? $attendee['email'] : '';
-        if(!filter_var($email, FILTER_VALIDATE_EMAIL)) return false;
+        $email = $attendee['email'] ?? '';
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return false;
 
-        $reg = array();
-        foreach($raw as $k => $v) $reg[$k] = (is_array($v) ? $v : stripslashes($v));
+        $reg = [];
+        foreach ($raw as $k => $v) $reg[$k] = (is_array($v) ? $v : stripslashes($v));
 
         $existed_user_id = $this->main->email_exists($email);
 
         // User already exist
-        if($existed_user_id !== false) return $existed_user_id;
+        if ($existed_user_id !== false) {
+            // Map Data
+            $event_id = $args['event_id'] ?? 0;
+            if ($event_id) $this->save_mapped_data($event_id, $existed_user_id, $reg);
+
+            return $existed_user_id;
+        }
 
         // Update WordPress user first name and last name
-        $ex = explode(' ', $name);
-        $first_name = isset($ex[0]) ? $ex[0] : '';
+        if (strpos($name, ',') !== false) $ex = explode(',', $name);
+        else $ex = explode(' ', $name);
+
+        $first_name = $ex[0] ?? '';
         $last_name = '';
 
-        if(isset($ex[1]))
-        {
+        if (isset($ex[1])) {
             unset($ex[0]);
             $last_name = implode(' ', $ex);
         }
 
-        // Registration is disabled
-        if(isset($this->settings['booking_registration']) and !$this->settings['booking_registration'])
-        {
-            $existed_user_id = $this->db->select("SELECT `id` FROM `#__mec_users` WHERE `email`='".$this->db->escape($email)."'", 'loadResult');
-
-            // User already exist
-            if($existed_user_id) return $existed_user_id;
-
-            $now = date('Y-m-d H:i:s');
-            $user_id = $this->db->q("INSERT INTO `#__mec_users` (`first_name`,`last_name`,`email`,`reg`,`created_at`,`updated_at`) VALUES ('".$this->db->escape($first_name)."','".$this->db->escape($last_name)."','".$this->db->escape($email)."','".$this->db->escape(json_encode($reg))."','".$now."','".$now."')", "INSERT");
+        // ULTIMATE FORCE USERNAME CAPTURE WITH SESSION SUPPORT
+        
+        // Start session if not already started
+        if (!session_id()) {
+            session_start();
         }
-        else
-        {
-            $username = $email;
-            $password = wp_generate_password(12, true, true);
-
-            if(isset($args['username']) and trim($args['username'])) $username = $args['username'];
-            if(isset($args['password']) and trim($args['password'])) $password = $args['password'];
-
-            $user_id = $this->main->register_user($username, $email, $password);
-
-            $user = new stdClass();
-            $user->ID = $user_id;
-            $user->first_name = $first_name;
-            $user->last_name = $last_name;
-
-            wp_update_user($user);
-            update_user_meta($user_id, 'mec_name', $name);
-            update_user_meta($user_id, 'mec_reg', $reg);
-            update_user_meta($user_id, 'nickname', $name);
-
-            // Map Data
-            $event_id = (isset($args['event_id']) ? $args['event_id'] : 0);
-            if($event_id)
-            {
-                $reg_fields = $this->main->get_reg_fields($event_id);
-
-                foreach($reg as $reg_id => $reg_value)
-                {
-                    $reg_field = (isset($reg_fields[$reg_id]) ? $reg_fields[$reg_id] : array());
-                    if(isset($reg_field['mapping']) and trim($reg_field['mapping']))
-                    {
-                        update_user_meta($user_id, $reg_field['mapping'], (is_array($reg_value) ? implode(',', $reg_value) : $reg_value));
-                    }
-                }
+        
+        // Start with email as default
+        $username = sanitize_user($email);
+        
+        // FORCE check all possible username sources
+        $possible_usernames = array();
+        
+        if(isset($_POST['book']['username'])) {
+            $possible_usernames[] = 'POST[book][username]: "' . $_POST['book']['username'] . '"';
+        }
+        if(isset($_POST['username'])) {
+            $possible_usernames[] = 'POST[username]: "' . $_POST['username'] . '"';
+        }
+        if(isset($_REQUEST['book']['username'])) {
+            $possible_usernames[] = 'REQUEST[book][username]: "' . $_REQUEST['book']['username'] . '"';
+        }
+        if(isset($_SESSION['mec_form_username_' . $email])) {
+            $possible_usernames[] = 'SESSION[mec_form_username_' . $email . ']: "' . $_SESSION['mec_form_username_' . $email] . '"';
+        }
+        
+        
+        // PRIORITY 1: $_POST['book']['username']
+        if(isset($_POST['book']['username']) && !empty(trim($_POST['book']['username']))) {
+            $form_username = sanitize_user(trim($_POST['book']['username']));
+            if(!empty($form_username) && $form_username !== $email) {
+                $username = $form_username;
+                // Store in session for later use
+                $_SESSION['mec_form_username_' . $email] = $username;
             }
-
-            // Set the User Role
-            $role = (isset($this->settings['booking_user_role']) and trim($this->settings['booking_user_role'])) ? $this->settings['booking_user_role'] : 'subscriber';
-
-            $wpuser = new WP_User($user_id);
-            $wpuser->set_role($role);
         }
+        
+        // PRIORITY 2: $_POST['username'] 
+        elseif(isset($_POST['username']) && !empty(trim($_POST['username']))) {
+            $form_username = sanitize_user(trim($_POST['username']));
+            if(!empty($form_username) && $form_username !== $email) {
+                $username = $form_username;
+                // Store in session for later use
+                $_SESSION['mec_form_username_' . $email] = $username;
+            }
+        }
+        
+        // PRIORITY 3: $_REQUEST['book']['username']
+        elseif(isset($_REQUEST['book']['username']) && !empty(trim($_REQUEST['book']['username']))) {
+            $form_username = sanitize_user(trim($_REQUEST['book']['username']));
+            if(!empty($form_username) && $form_username !== $email) {
+                $username = $form_username;
+                // Store in session for later use
+                $_SESSION['mec_form_username_' . $email] = $username;
+            }
+        }
+        
+        // PRIORITY 4: Check session for previously stored username
+        elseif(isset($_SESSION['mec_form_username_' . $email]) && !empty($_SESSION['mec_form_username_' . $email])) {
+            $session_username = sanitize_user($_SESSION['mec_form_username_' . $email]);
+            if(!empty($session_username) && $session_username !== $email) {
+                $username = $session_username;
+            }
+        }
+        
+        
+        // Apply filter (but don't let it override our forced username)
+        $filter_username = apply_filters('mec_user_register_username', $username, $email);
+        if(!empty($filter_username) && $filter_username !== $email) {
+            $username = $filter_username;
+        }
+        
+        
+        // Clean up session after successful registration
+        if(isset($_SESSION['mec_form_username_' . $email])) {
+            unset($_SESSION['mec_form_username_' . $email]);
+        }
+        
+
+        // Generate password from form or auto-generate
+        $password = wp_generate_password(12); // Default password
+        if(isset($_POST['book']['password']) && !empty($_POST['book']['password'])) {
+            $password = sanitize_text_field($_POST['book']['password']);
+        }
+
+        // Register User
+        $user_id = wp_create_user($username, $password, $email);
+        if(is_wp_error($user_id)) return false;
+
+        // Update First Name, Last Name, and Nickname
+        $update_data = array('ID' => $user_id);
+        
+        if(trim($first_name) or trim($last_name)) {
+            $update_data['first_name'] = $first_name;
+            $update_data['last_name'] = $last_name;
+        }
+        
+        // FORCE nickname to be username instead of email
+        $update_data['nickname'] = $username;
+        
+        wp_update_user($update_data);
+
+        // Map Data
+        $event_id = $args['event_id'] ?? 0;
+        if($event_id) $this->save_mapped_data($event_id, $user_id, $reg);
+
+        // Trigger action for user registration (allows other plugins to hook in)
+        do_action('mec_user_registered', $user_id, $attendee, $args);
+
+        // BuddyBoss integration will be handled by the action hook
 
         return $user_id;
+    }
+
+    public function save_mapped_data($event_id, $user_id, $reg)
+    {
+        $reg_fields = $this->main->get_reg_fields($event_id);
+
+        foreach($reg as $reg_id => $reg_value)
+        {
+            $reg_field = $reg_fields[$reg_id] ?? [];
+            if(isset($reg_field['mapping']) and trim($reg_field['mapping']))
+            {
+                $reg_value = maybe_unserialize($reg_value);
+                $meta_value = is_array($reg_value) ? implode(',', $reg_value) : $reg_value;
+
+                update_user_meta($user_id, $reg_field['mapping'], $meta_value);
+            }
+        }
     }
 
     public function assign($booking_id, $user_id)

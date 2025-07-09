@@ -45,7 +45,7 @@ class Google_Auth_OAuth2 extends Google_Auth_Abstract
   /**
    * @var array The token bundle.
    */
-  private $token = array();
+  private $token = [];
 
   /**
    * @var Google_Client the base client

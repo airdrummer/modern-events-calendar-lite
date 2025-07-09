@@ -145,8 +145,8 @@ class Google_Http_REST
   public static function createRequestUri($servicePath, $restPath, $params)
   {
     $requestUrl = $servicePath . $restPath;
-    $uriTemplateVars = array();
-    $queryVars = array();
+    $uriTemplateVars = [];
+    $queryVars = [];
     foreach ($params as $paramName => $paramSpec) {
       if ($paramSpec['type'] == 'boolean') {
         $paramSpec['value'] = ($paramSpec['value']) ? 'true' : 'false';

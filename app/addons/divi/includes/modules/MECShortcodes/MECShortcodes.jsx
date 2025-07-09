@@ -19,7 +19,7 @@ class MECShortcodes extends Component {
 		}
 	});
     return (
-      <div class="mec-shortcode"></div>
+      <div className="mec-shortcode"></div>
     );
   }
 }

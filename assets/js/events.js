@@ -8,6 +8,19 @@ jQuery(document).ready(function($)
     {
         event.preventDefault();
 
+        var real_ajax_url = wp.ajax.settings.url;
+        wp.ajax.settings.url = real_ajax_url + '?mec_fes=1';
+
+        var post_id = $(this).data('post-id');
+        if(post_id && post_id !== -1) wp.media.model.settings.post.id = post_id;
+        if(post_id === -1) wp.media.model.settings.post.id = null;
+
+        var preview_id = 'mec_thumbnail_img';
+        var input_id = 'mec_thumbnail';
+
+        if($(this).data('preview-id')) preview_id = $(this).data('preview-id');
+        if($(this).data('input-id')) input_id = $(this).data('input-id');
+
         var frame;
         if(frame)
         {
@@ -21,8 +34,8 @@ jQuery(document).ready(function($)
             // Grab the selected attachment.
             var attachment = frame.state().get('selection').first();
 
-            $('#mec_thumbnail_img').html('<img src="'+attachment.attributes.url+'" />');
-            $('#mec_thumbnail').val(attachment.attributes.url);
+            $('#'+preview_id).html('<img src="'+attachment.attributes.url+'" style="max-width: 100%;" />');
+            $('#'+input_id).val(attachment.attributes.url);
 
             $('.mec_remove_image_button').toggleClass('mec-util-hidden');
 
@@ -37,8 +50,14 @@ jQuery(document).ready(function($)
     {
         event.preventDefault();
 
-        $('#mec_thumbnail_img').html('');
-        $('#mec_thumbnail').val('');
+        var preview_id = 'mec_thumbnail_img';
+        var input_id = 'mec_thumbnail';
+
+        if($(this).data('preview-id')) preview_id = $(this).data('preview-id');
+        if($(this).data('input-id')) input_id = $(this).data('input-id');
+
+        $('#'+preview_id).html('');
+        $('#'+input_id).val('');
 
         $('.mec_remove_image_button').toggleClass('mec-util-hidden');
     });
@@ -159,6 +178,30 @@ jQuery(document).ready(function($)
         $('#mec_fes_organizer_remove_image_button').addClass('mec-util-hidden');
     });
 
+    // Sponsor Image remover on frontend event submission menu
+    $('#mec_fes_sponsor_remove_image_button').click(function(event)
+    {
+        event.preventDefault();
+
+        $('#mec_fes_sponsor_thumbnail_img').html('');
+        $('#mec_fes_sponsor_thumbnail').val('');
+        $('#mec_fes_sponsor_thumbnail_file').val('');
+
+        $('#mec_fes_sponsor_remove_image_button').addClass('mec-util-hidden');
+    });
+
+    // Speaker Image remover on frontend event submission menu
+    $('#mec_fes_speaker_remove_image_button').click(function(event)
+    {
+        event.preventDefault();
+
+        $('#mec_fes_speaker_thumbnail_img').html('');
+        $('#mec_fes_speaker_thumbnail').val('');
+        $('#mec_fes_speaker_thumbnail_file').val('');
+
+        $('#mec_fes_speaker_remove_image_button').addClass('mec-util-hidden');
+    });
+
     var date_splite;
     if(typeof mec_admin_localize !== 'undefined')
     {
@@ -211,6 +254,19 @@ jQuery(document).ready(function($)
             dateFormat: datepicker_format,
             gotoCurrent: true,
             yearRange: 'c-3:c+5',
+            onSelect: function(value, i)
+            {
+                const end = $("#mec_end_date");
+                if(value !== i.lastVal)
+                {
+                    end.datepicker("option", "minDate", value);
+                }
+
+                if(end.val() === '')
+                {
+                    end.val(value);
+                }
+            }
         });
 
         $('#mec_end_date').datepicker(
@@ -220,6 +276,19 @@ jQuery(document).ready(function($)
             dateFormat: datepicker_format,
             gotoCurrent: true,
             yearRange: 'c-3:c+5',
+            onSelect: function(value, i)
+            {
+                const start = $("#mec_start_date");
+                if(value !== i.lastVal)
+                {
+                    start.datepicker("option", "maxDate", value);
+                }
+
+                if(start.val() === '')
+                {
+                    start.val(value);
+                }
+            }
         });
 
         $('#mec_date_repeat_end_at_date').datepicker(
@@ -275,7 +344,12 @@ jQuery(document).ready(function($)
             gotoCurrent: true,
             yearRange: 'c-1:c+5',
         });
+
+        trigger_period_picker();
     }
+
+    // Initialize WP Color Picker
+    if($.fn.wpColorPicker) jQuery('.mec-color-picker').wpColorPicker();
 
     $('#mec_location_id').on('change', function()
     {
@@ -357,30 +431,116 @@ jQuery(document).ready(function($)
         $key.val(parseInt(key)+1);
     });
 
+    $('#mec_edit_in_days').on('click', function()
+    {
+        // Form
+        const $form = $('#mec-in-days-form');
+
+        const modify_id = $form.data('modify');
+        const $row = $('#mec_in_days_row'+modify_id);
+
+        var allday = $(this).data('allday');
+
+        var start = $('#mec_exceptions_in_days_start_date').val();
+        if(start === '') return false;
+
+        var end = $('#mec_exceptions_in_days_end_date').val();
+        if(end === '') return false;
+
+        var start_hour = $('#mec_exceptions_in_days_start_hour').val();
+        if(start_hour.length === 1) start_hour = '0'+start_hour;
+
+        var start_minutes = $('#mec_exceptions_in_days_start_minutes').val();
+        if(start_minutes.length === 1) start_minutes = '0'+start_minutes;
+
+        var start_ampm = $('#mec_exceptions_in_days_start_ampm').val();
+        if(typeof start_ampm === 'undefined') start_ampm = '';
+
+        var end_hour = $('#mec_exceptions_in_days_end_hour').val();
+        if(end_hour.length === 1) end_hour = '0'+end_hour;
+
+        var end_minutes = $('#mec_exceptions_in_days_end_minutes').val();
+        if(end_minutes.length === 1) end_minutes = '0'+end_minutes;
+
+        var end_ampm = $('#mec_exceptions_in_days_end_ampm').val();
+        if(typeof end_ampm === 'undefined') end_ampm = '';
+
+        var value = start + ':' + end + ':' + start_hour + '-' + start_minutes + '-' + start_ampm + ':' + end_hour + '-' + end_minutes + '-' + end_ampm;
+        var label = start + ' <span class="mec-time-picker-label '+(allday ? 'mec-util-hidden' : '')+'">' + start_hour + ':' + start_minutes + ' ' + start_ampm + '</span> - ' + end + ' <span class="mec-time-picker-label '+(allday ? 'mec-util-hidden' : '')+'">' + end_hour + ':' + end_minutes + ' ' + end_ampm + '</span>';
+
+        $row.find($('input[type=hidden]')).val(value);
+        $row.find($('.mec-in-days-day')).html(label);
+
+        // Reset Dates
+        $form.parent().find($('input[type=text]')).val('');
+
+        // Modification Mode
+        $form.removeClass('mec-in-days-edit-mode').addClass('mec-in-days-add-mode').removeData('modify');
+    });
+
+    $('#mec_cancel_in_days').on('click', function()
+    {
+        // Form
+        let $form = $('#mec-in-days-form');
+
+        // Reset Dates
+        $form.parent().find($('input[type=text]')).val('');
+
+        // Modification Mode
+        $form.removeClass('mec-in-days-edit-mode').addClass('mec-in-days-add-mode').removeData('modify');
+    });
+
     $('#mec_add_not_in_days').on('click', function()
     {
-        var date = $('#mec_exceptions_not_in_days_date').val();
+        let date = $('#mec_exceptions_not_in_days_date').val();
         if(date === '') return false;
 
-        var key = $('#mec_new_not_in_days_key').val();
-        var html = $('#mec_new_not_in_days_raw').html().replace(/:i:/g, key).replace(/:val:/g, date);
+        let d = date.replaceAll('-', '');
+        d = d.replaceAll('/', '');
+        d = d.replaceAll('.', '');
 
-        $('#mec_not_in_days').append(html);
-        $('#mec_new_not_in_days_key').val(parseInt(key)+1);
+
+        let $wrapper = $('#mec_not_in_days');
+        let $key = $('#mec_new_not_in_days_key');
+
+        let c = 'mec-date-'+d;
+        if($wrapper.find($('.'+c)).length) return;
+
+        let key = $key.val();
+        let html = $('#mec_new_not_in_days_raw').html().replace(/:i:/g, key).replace(/:d:/g, d).replace(/:val:/g, date);
+
+        $wrapper.append(html);
+        $key.val(parseInt(key)+1);
     });
 
     $('#mec_add_ticket_button').on('click', function()
     {
-        var key = $('#mec_new_ticket_key').val();
-        var html = $('#mec_new_ticket_raw').html().replace(/:i:/g, key);
+        let $key = $('#mec_new_ticket_key');
+        let key = $key.val();
+        let html = $('#mec_new_ticket_raw').html().replace(/:i:/g, key);
 
         $('#mec_tickets').append(html);
-        $('#mec_new_ticket_key').val(parseInt(key)+1);
+        $key.val(parseInt(key)+1);
 
         $('.mec_add_price_date_button').off('click').on('click', function()
         {
             mec_handle_add_price_date_button(this);
         });
+
+        $.each($(".mec-select2"), function(i,v)
+        {
+            if($(v).attr('name').search(":i:") > 0)
+            {
+                return;
+            }
+
+            if(typeof $(v).data('select2-id') == 'undefined')
+            {
+                $(v).select2();
+            }
+        });
+
+        trigger_period_picker();
     });
 
     $('.mec_add_price_date_button').off('click').on('click', function()
@@ -488,7 +648,177 @@ jQuery(document).ready(function($)
 
     // Additional Organizers
     mec_additional_organizers_listeners();
+
+    // Show / Hide Password
+    $('.mec-show-hide-password').on('click', function()
+    {
+        var $input = $(this).siblings("input");
+        var current = $input.attr('type');
+
+        if(current === 'password') $input.attr('type', 'text');
+        else $input.attr('type', 'password');
+    });
+
+    // FAQ
+    $('#mec_add_faq_button').on('click', function()
+    {
+        const $key = $('#mec_new_faq_key');
+        const key = $key.val();
+        const html = $('#mec_new_faq_raw').html().replace(/:i:/g, key);
+
+        $('#mec_faq_list').append(html);
+        $key.val(parseInt(key)+1);
+    });
+
+    // Appointments
+    $('.mec-event-appointment-tab .mec-event-appointment-tab-item').on('click', function()
+    {
+        const $tab = $(this);
+        const $fes_form = $('#mec_fes_form');
+        const $metabox_details = $('#mec_metabox_details');
+        const $appointment_form_wrapper = $('.mec-appointment-form-wrap');
+
+        const entity_type = $(this).data('entity-type');
+
+        const $entity_type_input = $('#mec_entity_type_input');
+        $entity_type_input.val(entity_type);
+
+        $('.mec-event-appointment-tab-item').removeClass('mec-active-tab');
+        $tab.addClass('mec-active-tab');
+
+        if (entity_type === 'appointment')
+        {
+            $fes_form.removeClass('mec-entity-type-event').addClass('mec-entity-type-appointment');
+            $metabox_details.removeClass('mec-entity-type-event').addClass('mec-entity-type-appointment');
+
+            $appointment_form_wrapper.removeClass('mec-util-hidden');
+        }
+        else
+        {
+            $fes_form.removeClass('mec-entity-type-appointment').addClass('mec-entity-type-event');
+            $metabox_details.removeClass('mec-entity-type-appointment').addClass('mec-entity-type-event');
+
+            $appointment_form_wrapper.addClass('mec-util-hidden');
+        }
+    });
+
+    $('.mec-event-appointment-tab .mec-event-appointment-tab-item.mec-active-tab').trigger('click');
+
+    $(document).on('click', '.lsd-apt-day-icon-remove', function()
+    {
+        const $button = $(this);
+        const $timeslot = $button.parent();
+        const $timeslots = $button.parents('.lsd-apt-day-timeslots');
+
+        $timeslot.remove();
+        if ($timeslots.find('.lsd-apt-day-timeslot-wrapper').length === 0)
+        {
+            $timeslots.find('.lsd-apt-day-timeslots-unavailable').removeClass('mec-util-hidden');
+        }
+    });
+
+    $(document).on('click', '.lsd-apt-day-icon-plus', function()
+    {
+        const $button = $(this);
+        let key = $button.data('key');
+
+        const $day = $button.parents('.lsd-apt-day-wrapper');
+        const day = $day.data('key');
+
+        const $timeslots = $day.find('.lsd-apt-day-timeslots-wrapper');
+        const $template = $('#lsd-apt-day-templates-'+day+'-timeslot');
+
+        key = key + 1;
+        const html = $template.html().replace(/:t:/g, key);
+        $timeslots.append(html);
+
+        $button.data('key', key);
+        $day.find('.lsd-apt-day-timeslots-unavailable').addClass('mec-util-hidden');
+    });
+
+    $(document).on('click', '.lsd-apt-day-icon-copy', function ()
+    {
+        const $button = $(this);
+        const $sourceDay = $button.closest('.lsd-apt-day-wrapper');
+        const sourceDayKey = $sourceDay.data('key');
+
+        const $weekWrapper = $sourceDay.parent();
+        const $sourceTimeslots = $sourceDay.find('.lsd-apt-day-timeslots-wrapper .lsd-apt-day-timeslot-wrapper');
+
+        $weekWrapper.find('.lsd-apt-day-wrapper').each(function ()
+        {
+            const $targetDay = $(this);
+
+            const targetDayKey = $targetDay.data('key');
+            if (targetDayKey === sourceDayKey) return;
+
+            const isActive = $targetDay.find('.lsd-apt-day-timeslots-wrapper .lsd-apt-day-timeslot-wrapper').length > 0;
+            if (!isActive) return;
+
+            const $targetWrapper = $targetDay.find('.lsd-apt-day-timeslots-wrapper');
+            $targetWrapper.empty();
+
+            $sourceTimeslots.each(function ()
+            {
+                const $sourceSlot = $(this);
+                const $clone = $sourceSlot.clone(true);
+
+                $sourceSlot.find('select').each(function (i) {
+                    const value = $(this).val();
+                    $clone.find('select').eq(i).val(value);
+                });
+
+                $sourceSlot.find('input').each(function (i) {
+                    const value = $(this).val();
+                    $clone.find('input').eq(i).val(value);
+                });
+
+                $clone.find('[name], [id], [for]').each(function ()
+                {
+                    $.each(this.attributes, function () {
+                        if (this.name === 'name' || this.name === 'id' || this.name === 'for') {
+                            this.value = this.value
+                            .replace(`[availability][${sourceDayKey}]`, `[availability][${targetDayKey}]`)
+                            .replace(`availability_${sourceDayKey}_`, `availability_${targetDayKey}_`);
+                        }
+                    });
+                });
+
+                $targetWrapper.append($clone);
+            });
+        });
+    });
 });
+
+function trigger_period_picker()
+{
+    jQuery('.mec-date-picker-start').datepicker(
+    {
+        changeYear: true,
+        changeMonth: true,
+        dateFormat: 'yy-mm-dd',
+        gotoCurrent: true,
+        yearRange: 'c-1:c+5',
+        onSelect: function(date)
+        {
+            const selectedDate = new Date(date);
+            const endDate = new Date(selectedDate.getTime());
+
+            const $end_picker = jQuery(this).next();
+            $end_picker.datepicker("option", "minDate", endDate);
+            $end_picker.datepicker("option", "maxDate", '+5y');
+        }
+    });
+
+    jQuery('.mec-date-picker-end').datepicker(
+    {
+        changeYear: true,
+        changeMonth: true,
+        dateFormat: 'yy-mm-dd',
+        gotoCurrent: true,
+        yearRange: 'c-1:c+5',
+    });
+}
 
 function mec_location_toggle()
 {
@@ -559,6 +889,36 @@ function mec_in_days_remove(i)
     jQuery('#mec_in_days_row'+i).remove();
 }
 
+function mec_in_days_edit(i)
+{
+    // Date
+    let $row = jQuery('#mec_in_days_row'+i);
+    let value = $row.find(jQuery('input[type=hidden]')).val();
+
+    const values = value.split(':');
+    const start_times = values[2].split('-')
+    const end_times = values[3].split('-')
+
+    // Form
+    let $form = jQuery('#mec-in-days-form');
+
+    // Set Dates
+    jQuery('#mec_exceptions_in_days_start_date').val(values[0]);
+    jQuery('#mec_exceptions_in_days_end_date').val(values[1]);
+
+    // Set Times
+    jQuery('#mec_exceptions_in_days_start_hour').val(parseInt(start_times[0]));
+    jQuery('#mec_exceptions_in_days_start_minutes').val(parseInt(start_times[1]));
+    jQuery('#mec_exceptions_in_days_start_ampm').val(start_times[2]);
+
+    jQuery('#mec_exceptions_in_days_end_hour').val(parseInt(end_times[0]));
+    jQuery('#mec_exceptions_in_days_end_minutes').val(parseInt(end_times[1]));
+    jQuery('#mec_exceptions_in_days_end_ampm').val(end_times[2]);
+
+    // Modification Mode
+    $form.removeClass('mec-in-days-add-mode').addClass('mec-in-days-edit-mode').data('modify', i);
+}
+
 function mec_not_in_days_remove(i)
 {
     jQuery('#mec_not_in_days_row'+i).remove();
@@ -589,6 +949,25 @@ function mec_hourly_schedule_add_day_listener()
         });
 
         mec_hourly_schedule_listeners();
+    });
+}
+
+function mec_bookings_after_occurrence_cancel_listener()
+{
+    jQuery('.mec-occurrences-bookings-after-occurrences-cancel').off('change').on('change', function()
+    {
+        const $dropdown = jQuery(this);
+        const value = $dropdown.val();
+        const $moveWrapper = $dropdown.next();
+
+        if(value === 'move' || value === 'move_notify')
+        {
+            $moveWrapper.removeClass('w-hidden');
+        }
+        else
+        {
+            $moveWrapper.addClass('w-hidden');
+        }
     });
 }
 
@@ -654,9 +1033,20 @@ function mec_remove_fee(key)
     jQuery("#mec_fee_row"+key).remove();
 }
 
-function mec_remove_ticket_variation(key)
+function mec_remove_ticket_variation(key, id_prefix)
 {
-    jQuery("#mec_ticket_variation_row"+key).remove();
+    jQuery("#mec_"+id_prefix+"_row"+key).remove();
+}
+
+function add_variation_per_ticket(ticket_id)
+{
+    var $input = jQuery('#mec_new_variation_per_ticket_key');
+
+    var key = $input.val();
+    var html = jQuery('#mec_new_variation_per_ticket_raw'+ticket_id).html().replace(/:v:/g, key);
+
+    jQuery('#mec_ticket_variations_list'+ticket_id).append(html);
+    $input.val(parseInt(key)+1);
 }
 
 function mec_reg_fields_option_listeners()
@@ -682,6 +1072,13 @@ function mec_reg_fields_option_listeners()
         {
             handle: '.mec_reg_field_option_sort'
         });
+
+        jQuery(".mec-hourly-schedule-days").sortable(
+        {
+            handle: 'h4'
+        });
+
+        jQuery(".mec-hourly-schedule-schedules").sortable({});
     }
 }
 
@@ -795,6 +1192,9 @@ function mec_additional_organizers_listeners()
     jQuery('#mec_additional_organizers_add').off('click').on('click', function()
     {
         var value = jQuery('.mec-additional-organizers select').val();
+        console.log(value);
+        if (!value) return;
+
         var text = jQuery('.mec-additional-organizers select option:selected').text();
 
         var sortLabel = jQuery(this).data('sort-label');
@@ -818,3 +1218,20 @@ function mec_additional_organizers_remove(element)
 {
     jQuery(element).parent().remove();
 }
+
+function mec_faq_remove(key)
+{
+    jQuery("#mec_faq_row"+key).remove();
+}
+
+jQuery(document).on('focus', '.mec_date_picker', function () {
+    if (!jQuery(this).hasClass('hasDatepicker')) {
+        jQuery(this).datepicker({
+            changeYear: true,
+            changeMonth: true,
+            dateFormat: 'yy-mm-dd',
+            gotoCurrent: true,
+            yearRange: 'c-3:c+5',
+        });
+    }
+});

@@ -43,7 +43,7 @@ class Google_Service_Calendar extends Google_Service
   public $events;
   public $freebusy;
   public $settings;
-  
+  public $serviceName;
 
   /**
    * Constructs the internal representation of the Calendar service.
@@ -1148,7 +1148,7 @@ class Google_Service_Calendar_CalendarList_Resource extends Google_Service_Resou
    */
   public function listCalendarList($optParams = array())
   {
-    $params = array();
+    $params = [];
     $params = array_merge($params, $optParams);
     return $this->call('list', array($params), "Google_Service_Calendar_CalendarList");
   }
@@ -1390,7 +1390,7 @@ class Google_Service_Calendar_Colors_Resource extends Google_Service_Resource
    */
   public function get($optParams = array())
   {
-    $params = array();
+    $params = [];
     $params = array_merge($params, $optParams);
     return $this->call('get', array($params), "Google_Service_Calendar_Colors");
   }
@@ -1903,7 +1903,7 @@ class Google_Service_Calendar_Settings_Resource extends Google_Service_Resource
    */
   public function listSettings($optParams = array())
   {
-    $params = array();
+    $params = [];
     $params = array_merge($params, $optParams);
     return $this->call('list', array($params), "Google_Service_Calendar_Settings");
   }

@@ -4,16 +4,17 @@ defined('MECEXEC') or die();
 
 /**
  * Webnus MEC Cache class.
- * @author Webnus <info@webnus.biz>
+ * @author Webnus <info@webnus.net>
  */
 class MEC_cache
 {
     protected static $instance = null;
-    protected static $cache = array();
+    protected static $cache = [];
+    protected static $enabled = true;
 
     /**
      * Constructor method
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      */
     private function __construct()
     {
@@ -48,7 +49,7 @@ class MEC_cache
 
     public static function get($key)
     {
-        return (isset(self::$cache[$key]) ? self::$cache[$key] : NULL);
+        return self::$cache[$key] ?? NULL;
     }
 
     public static function delete($key)
@@ -60,5 +61,27 @@ class MEC_cache
         }
 
         return false;
+    }
+
+    public function disable()
+    {
+        return self::$enabled = false;
+    }
+
+    public function enable()
+    {
+        return self::$enabled = true;
+    }
+
+    public function rememberOnce($key, $callback)
+    {
+        if($this->has($key) and self::$enabled) $data = $this->get($key);
+        else
+        {
+            $data = call_user_func($callback);
+            $this->set($key, $data);
+        }
+
+        return $data;
     }
 }

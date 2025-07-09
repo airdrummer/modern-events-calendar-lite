@@ -4,7 +4,7 @@ defined('MECEXEC') or die();
 
 /**
  * Webnus MEC timeline class.
- * @author Webnus <info@webnus.biz>
+ * @author Webnus <info@webnus.net>
  */
 class MEC_skin_timeline extends MEC_skins
 {
@@ -17,7 +17,7 @@ class MEC_skin_timeline extends MEC_skins
 
     /**
      * Constructor method
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      */
     public function __construct()
     {
@@ -26,7 +26,7 @@ class MEC_skin_timeline extends MEC_skins
     
     /**
      * Registers skin actions into WordPress
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      */
     public function actions()
     {
@@ -36,7 +36,7 @@ class MEC_skin_timeline extends MEC_skins
     
     /**
      * Initialize the skin
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      * @param array $atts
      */
     public function initialize($atts)
@@ -44,10 +44,15 @@ class MEC_skin_timeline extends MEC_skins
         $this->atts = $atts;
         
         // Skin Options
-        $this->skin_options = (isset($this->atts['sk-options']) and isset($this->atts['sk-options'][$this->skin])) ? $this->atts['sk-options'][$this->skin] : array();
+        $this->skin_options = (isset($this->atts['sk-options']) and isset($this->atts['sk-options'][$this->skin])) ? $this->atts['sk-options'][$this->skin] : [];
+
+        // Icons
+        $this->icons = $this->main->icons(
+            isset($this->atts['icons']) && is_array($this->atts['icons']) ? $this->atts['icons'] : []
+        );
         
         // The style
-        $this->style = isset($this->skin_options['style']) ? $this->skin_options['style'] : 'modern';
+        $this->style = $this->skin_options['style'] ?? 'modern';
         if($this->style == 'fluent' and !is_plugin_active('mec-fluent-layouts/mec-fluent-layouts.php')) $this->style = 'modern';
         
         // Date Formats
@@ -60,15 +65,16 @@ class MEC_skin_timeline extends MEC_skins
         $this->display_label = isset($this->skin_options['display_label']) ? $this->skin_options['display_label'] : false;
 
         // Search Form Options
-        $this->sf_options = (isset($this->atts['sf-options']) and isset($this->atts['sf-options'][$this->skin])) ? $this->atts['sf-options'][$this->skin] : array();
+        $this->sf_options = (isset($this->atts['sf-options']) and isset($this->atts['sf-options'][$this->skin])) ? $this->atts['sf-options'][$this->skin] : [];
         
         // Search Form Status
-        $this->sf_status = isset($this->atts['sf_status']) ? $this->atts['sf_status'] : true;
-        $this->sf_display_label = isset($this->atts['sf_display_label']) ? $this->atts['sf_display_label'] : false;
-        $this->sf_reset_button = isset($this->atts['sf_reset_button']) ? $this->atts['sf_reset_button'] : false;
-        $this->sf_refine = isset($this->atts['sf_refine']) ? $this->atts['sf_refine'] : false;
+        $this->sf_status = $this->atts['sf_status'] ?? true;
+        $this->sf_display_label = $this->atts['sf_display_label'] ?? false;
+        $this->sf_dropdown_method = $this->atts['sf_dropdown_method'] ?? '1';
+        $this->sf_reset_button = $this->atts['sf_reset_button'] ?? false;
+        $this->sf_refine = $this->atts['sf_refine'] ?? false;
         
-        // Generate an ID for the sking
+        // Generate an ID for the skin
         $this->id = isset($this->atts['id']) ? $this->atts['id'] : mt_rand(100, 999);
         
         // Set the ID
@@ -76,6 +82,9 @@ class MEC_skin_timeline extends MEC_skins
         
         // Show "Load More" button or not
         $this->load_more_button = isset($this->skin_options['load_more_button']) ? $this->skin_options['load_more_button'] : true;
+
+        // Pagination
+        $this->pagination = isset($this->skin_options['pagination']) ? $this->skin_options['pagination'] : (!$this->load_more_button ? '0' : 'loadmore');
         
         // Override the style if the style forced by us in a widget etc
         if(isset($this->atts['style']) and trim($this->atts['style']) != '') $this->style = $this->atts['style'];
@@ -88,21 +97,25 @@ class MEC_skin_timeline extends MEC_skins
         $this->booking_button = isset($this->skin_options['booking_button']) ? (int) $this->skin_options['booking_button'] : 0;
 
         // SED Method
-        $this->sed_method = isset($this->skin_options['sed_method']) ? $this->skin_options['sed_method'] : '0';
+        $this->sed_method = $this->get_sed_method();
+
+        // Order Method
+        $this->order_method = (isset($this->skin_options['order_method']) and trim($this->skin_options['order_method'])) ? $this->skin_options['order_method'] : 'ASC';
         
         // From Widget
-        $this->widget = (isset($this->atts['widget']) and trim($this->atts['widget'])) ? true : false;
+        $this->widget = isset($this->atts['widget']) && trim($this->atts['widget']);
 		if($this->widget)
         {
 			$this->skin_options['count'] = '1';
 			$this->load_more_button = false;
+			$this->pagination = '0';
 		}
         
         // The count in row
-        $this->count = isset($this->skin_options['count']) ? $this->skin_options['count'] : '3';
+        $this->count = $this->skin_options['count'] ?? '3';
 
         // Show Month Divider or not
-        $this->month_divider = isset($this->skin_options['month_divider']) ? $this->skin_options['month_divider'] : true;
+        $this->month_divider = $this->skin_options['month_divider'] ?? true;
         
         // Init MEC
         $this->args['mec-init'] = true;
@@ -128,6 +141,7 @@ class MEC_skin_timeline extends MEC_skins
         
         // Author
         $this->args['author'] = $this->author_query();
+        $this->args['author__not_in'] = $this->author_query_ex();
         
         // Pagination Options
         $this->paged = get_query_var('paged', 1);
@@ -137,8 +151,8 @@ class MEC_skin_timeline extends MEC_skins
         $this->args['paged'] = $this->paged;
         
         // Sort Options
-        $this->args['orderby'] = 'meta_value_num';
-        $this->args['order'] = 'ASC';
+        $this->args['orderby'] = 'mec_start_day_seconds ID';
+        $this->args['order'] = (in_array($this->order_method, array('ASC', 'DESC')) ? $this->order_method : 'ASC');
         $this->args['meta_key'] = 'mec_start_day_seconds';
         
         // Exclude Posts
@@ -156,6 +170,7 @@ class MEC_skin_timeline extends MEC_skins
         // Show Past Events
         if($this->show_only_expired_events)
         {
+            $this->order_method = 'DESC';
             $this->atts['show_past_events'] = '1';
             $this->args['order'] = 'DESC';
         }
@@ -189,7 +204,9 @@ class MEC_skin_timeline extends MEC_skins
         }
         
         // Apply Maximum Date
-        if($this->request->getVar('apply_sf_date', 0) == 1 and isset($this->sf) and isset($this->sf['month']) and trim($this->sf['month'])) $this->maximum_date = date('Y-m-t', strtotime($this->start_date));
+        $apply_sf_date = isset($_REQUEST['apply_sf_date']) ? sanitize_text_field($_REQUEST['apply_sf_date']) : 0;
+        $month = (isset($this->sf) && isset($this->sf['month']) && trim($this->sf['month'])) ? $this->sf['month'] : (isset($_REQUEST['mec_month']) ? $_REQUEST['mec_month'] : '');
+        if($apply_sf_date == 1 and trim($month)) $this->maximum_date = date('Y-m-t', strtotime($this->start_date));
         
         // Found Events
         $this->found = 0;
@@ -197,7 +214,7 @@ class MEC_skin_timeline extends MEC_skins
     
     /**
      * Returns start day of skin for filtering events
-     * @author Webnus <info@webnus.biz>
+     * @author Webnus <info@webnus.net>
      * @return string
      */
     public function get_start_date()
@@ -223,37 +240,48 @@ class MEC_skin_timeline extends MEC_skins
         // Show only expired events
         if(isset($this->show_only_expired_events) and $this->show_only_expired_events)
         {
-            $now = date('Y-m-d H:i:s', current_time('timestamp', 0));
+            $now = date('Y-m-d H:i:s', current_time('timestamp'));
             if(strtotime($date) > strtotime($now)) $date = $now;
+        }
+
+        // MEC Next Page
+        if(isset($_REQUEST['mec_next_page']) and trim($_REQUEST['mec_next_page']))
+        {
+            $ex = explode(':', $_REQUEST['mec_next_page']);
+
+            if(strtotime($ex[0])) $date = $ex[0];
+            if(isset($ex[1])) $this->offset = $ex[1];
         }
         
         return $date;
     }
     
     /**
-     * Load more events for AJAX requert
-     * @author Webnus <info@webnus.biz>
+     * Load more events for AJAX request
+     * @author Webnus <info@webnus.net>
      * @return void
      */
     public function load_more()
     {
-        $this->sf = $this->request->getVar('sf', array());
-        $apply_sf_date = $this->request->getVar('apply_sf_date', 1);
-        $atts = $this->sf_apply($this->request->getVar('atts', array()), $this->sf, $apply_sf_date);
+        $this->sf = (isset($_REQUEST['sf']) and is_array($_REQUEST['sf'])) ? $this->main->sanitize_deep_array($_REQUEST['sf']) : [];
+        $apply_sf_date = isset($_REQUEST['apply_sf_date']) ? sanitize_text_field($_REQUEST['apply_sf_date']) : 1;
+        $atts = $this->sf_apply(((isset($_REQUEST['atts']) and is_array($_REQUEST['atts'])) ? $this->main->sanitize_deep_array($_REQUEST['atts']) : array()), $this->sf, $apply_sf_date);
         
         // Initialize the skin
         $this->initialize($atts);
         
         // Override variables
-        $this->start_date = sanitize_text_field($this->request->getVar('mec_start_date', date('y-m-d')));
+        $this->start_date = isset($_REQUEST['mec_start_date']) ? sanitize_text_field($_REQUEST['mec_start_date']) : date('y-m-d');
         $this->end_date = $this->start_date;
-        $this->offset = $this->request->getVar('mec_offset', 0);
+        $this->offset = isset($_REQUEST['mec_offset']) ? sanitize_text_field($_REQUEST['mec_offset']) : 0;
 		
         // Apply Maximum Date
-        if($apply_sf_date == 1 and isset($this->sf) and isset($this->sf['month']) and trim($this->sf['month'])) $this->maximum_date = date('Y-m-t', strtotime($this->start_date));
+        $month = (isset($this->sf) && isset($this->sf['month']) && trim($this->sf['month'])) ? $this->sf['month'] : (isset($_REQUEST['mec_month']) ? $_REQUEST['mec_month'] : '');
+        if($apply_sf_date == 1 and trim($month)) $this->maximum_date = date('Y-m-t', strtotime($this->start_date));
         
         // Return the events
         $this->atts['return_items'] = true;
+        if (!$apply_sf_date) $this->loading_more = true;
         
         // Fetch the events
         $this->fetch();

@@ -99,7 +99,7 @@ if (!class_exists('CS_REST_CurlTransport')) {
             curl_setopt($ch, CURLOPT_URL, $call_options['route']);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_HEADER, true);
-            $headers = array();
+            $headers = [];
             $headers[] = 'Content-Type: '.$call_options['contentType'];
             
 
