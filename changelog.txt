@@ -1,4 +1,8 @@
-﻿v 7.26.0 - 20 September 2025
+v 7.26.0.1 - 4 oct 2025
+- added missing timezone display, reformat
+- fixed countdown
+
+v 7.26.0 - 20 September 2025
 - Added: No Repeat type for the appointments.
 - Added: Maximum bookings per day option for the appointments.
 - Added: Image size option to the applicable skins.
