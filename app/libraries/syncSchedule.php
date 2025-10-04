@@ -22,22 +22,22 @@ class MEC_syncSchedule extends MEC_base
         // To run crons by force
         $internal_cron_system = true;
 
-        if(isset($ix['sync_g_import_auto']) and $ix['sync_g_import_auto'] == '1')
+        if (isset($ix['sync_g_import_auto']) and $ix['sync_g_import_auto'] == '1')
         {
-            $sync_g_import = MEC_ABSPATH.'app'.DS.'crons'.DS.'g-import.php';
-            if(file_exists($sync_g_import)) include_once $sync_g_import;
+            $sync_g_import = MEC_ABSPATH . 'app' . DS . 'crons' . DS . 'g-import.php';
+            if (file_exists($sync_g_import)) include_once $sync_g_import;
         }
 
-        if(isset($ix['sync_g_export_auto']) and $ix['sync_g_export_auto'] == '1')
+        if (isset($ix['sync_g_export_auto']) and $ix['sync_g_export_auto'] == '1')
         {
-            $sync_g_export = MEC_ABSPATH.'app'.DS.'crons'.DS.'g-export.php';
-            if(file_exists($sync_g_export)) include_once $sync_g_export;
+            $sync_g_export = MEC_ABSPATH . 'app' . DS . 'crons' . DS . 'g-export.php';
+            if (file_exists($sync_g_export)) include_once $sync_g_export;
         }
 
-        if(isset($ix['sync_meetup_import_auto']) and $ix['sync_meetup_import_auto'] == '1')
+        if (isset($ix['sync_meetup_import_auto']) and $ix['sync_meetup_import_auto'] == '1')
         {
-            $sync_meetup_import = MEC_ABSPATH.'app'.DS.'crons'.DS.'meetup-import.php';
-            if(file_exists($sync_meetup_import)) include_once $sync_meetup_import;
+            $sync_meetup_import = MEC_ABSPATH . 'app' . DS . 'crons' . DS . 'meetup-import.php';
+            if (file_exists($sync_meetup_import)) include_once $sync_meetup_import;
         }
     }
 }

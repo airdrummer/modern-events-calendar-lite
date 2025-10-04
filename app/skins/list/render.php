@@ -92,7 +92,8 @@ $map_events = [];
                         <?php do_action('mec_list_modern_style', $event); ?>
                     </div>
                 <?php elseif($this->style == 'classic'): ?>
-                    <div class="mec-event-image"><?php echo MEC_kses::element($this->display_link($event, $event->data->thumbnails['thumbnail'])); ?></div>
+                    <?php $thumbnail = $this->get_thumbnail_image($event, 'thumbnail'); ?>
+                    <div class="mec-event-image"><?php echo MEC_kses::element($this->display_link($event, $thumbnail)); ?></div>
                     <?php if(isset($settings['multiple_day_show_method']) && $settings['multiple_day_show_method'] == 'all_days'): ?>
                         <div class="mec-event-date mec-color"><?php echo $this->icons->display('calendar'); ?> <?php echo esc_html($this->main->date_i18n($this->date_format_classic_1, strtotime($event->date['start']['date']))); ?></div>
                     <?php else: ?>
@@ -159,13 +160,13 @@ $map_events = [];
                         }
                     ?>
                     <div class="mec-topsec">
-                        <?php if (!empty($event->data->thumbnails['thumblist'])) : ?>
-                        <div class="col-md-3 mec-event-image-wrap mec-col-table-c">
-                            <div class="mec-event-image"><?php echo MEC_kses::element($this->display_link($event, $event->data->thumbnails['thumblist'], '')); ?></div>
+                    <?php $thumblist = $this->get_thumbnail_image($event, 'thumblist'); if (!empty($thumblist)) : ?>
+                    <div class="col-md-3 mec-event-image-wrap mec-col-table-c">
+                            <div class="mec-event-image"><?php echo MEC_kses::element($this->display_link($event, $thumblist, '')); ?></div>
                         </div>
                         <?php endif; ?>
 
-                        <div class="<?php echo (!empty($event->data->thumbnails['thumblist'])) ? 'col-md-6' : 'col-md-9'; ?> mec-col-table-c mec-event-content-wrap">
+                        <div class="<?php echo (!empty($thumblist)) ? 'col-md-6' : 'col-md-9'; ?> mec-col-table-c mec-event-content-wrap">
                             <div class="mec-event-content">
                                 <?php $soldout = $this->main->get_flags($event); ?>
                                 <?php echo MEC_kses::element($this->display_status_bar($event)); ?>
@@ -434,7 +435,8 @@ $map_events = [];
                             <div class="mec-toggle-item-inner<?php if($this->toggle_month_divider == '1') echo ' mec-toogle-inner-month-divider'; ?>" tabindex="0">
                                 <?php if($this->toggle_month_divider == '1'): ?>
                                 <div class="mec-toggle-month-inner-image">
-                                    <a href="<?php echo esc_url($this->main->get_event_date_permalink($event, $event->date['start']['date'])); ?>"><?php echo MEC_kses::element($event->data->thumbnails['thumbnail']); ?></a>
+                                    <?php $thumb = $this->get_thumbnail_image($event, 'thumbnail'); ?>
+                                    <a href="<?php echo esc_url($this->main->get_event_date_permalink($event, $event->date['start']['date'])); ?>"><?php echo MEC_kses::element($thumb); ?></a>
                                 </div>
                                 <?php endif; ?>
                                 <div class="mec-toggle-item-col">

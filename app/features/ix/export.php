@@ -42,7 +42,7 @@ $settings = $this->main->get_settings();
             <?php if(isset($settings['ical_feed']) and $settings['ical_feed']): ?>
             <div class="mec-export-certain-events">
                 <h3><?php esc_html_e('iCal Feed', 'modern-events-calendar-lite'); ?></h3>
-                <p class="description"><?php echo sprintf(esc_html__('You can use %s URL to export all events. Also you can include the URL into your website so your website users can subscribe to events.', 'modern-events-calendar-lite'), '<a href="'.trim($this->main->URL('site'), '/ ').'/?mec-ical-feed=1" target="_blank">'.trim($this->main->URL('site'), '/ ').'/?mec-ical-feed=1</a>'); ?></p>
+                <p class="description"><?php echo sprintf(esc_html__('You can use %s URL to export all events. Also you can include the URL into your website so your website users can subscribe to events.', 'modern-events-calendar-lite'), '<a href="'.trim($this->main->URL('site'), '/ ').'/?mec-ical-feed=1&nc='.time().'" target="_blank">'.trim($this->main->URL('site'), '/ ').'/?mec-ical-feed=1</a>'); ?></p>
             </div>
             <?php endif; ?>
 

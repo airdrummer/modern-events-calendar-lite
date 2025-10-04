@@ -5,11 +5,11 @@ defined('MECEXEC') or die();
 /** @var MEC_skin_slider $this */
 
 $styling = $this->main->get_styling();
-$event_colorskin = (isset($styling['mec_colorskin']) or isset($styling['color'])) ? 'colorskin-custom' : '';
+$event_colorskin = isset($styling['mec_colorskin']) || isset($styling['color']) ? 'colorskin-custom' : '';
 $settings = $this->main->get_settings();
-$this->localtime = isset($this->skin_options['include_local_time']) ? $this->skin_options['include_local_time'] : false;
-$display_label = isset($this->skin_options['display_label']) ? $this->skin_options['display_label'] : false;
-$reason_for_cancellation = isset($this->skin_options['reason_for_cancellation']) ? $this->skin_options['reason_for_cancellation'] : false;
+$this->localtime = $this->skin_options['include_local_time'] ?? false;
+$display_label = $this->skin_options['display_label'] ?? false;
+$reason_for_cancellation = $this->skin_options['reason_for_cancellation'] ?? false;
 ?>
 <div class="mec-wrap <?php echo esc_attr($event_colorskin); ?>">
     <div class="mec-slider-<?php echo esc_attr($this->style); ?>-wrap" >
@@ -19,7 +19,7 @@ $reason_for_cancellation = isset($this->skin_options['reason_for_cancellation'])
                 foreach($date as $event):
 
                 // Featured Image
-                $src = $event->data->featured_image['large'];
+                $src = $this->get_featured_image_url($event, 'large');
 
                 $location_id = $this->main->get_master_location_id($event);
                 $location = ($location_id ? $this->main->get_location_data($location_id) : array());

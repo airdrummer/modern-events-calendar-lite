@@ -704,6 +704,36 @@ jQuery(document).ready(function($)
 
     $('.mec-event-appointment-tab .mec-event-appointment-tab-item.mec-active-tab').trigger('click');
 
+    const $repeatType = $('#mec_appointments_availability_repeat_type');
+    if($.fn.datepicker)
+    {
+        $('#mec_appointments_start_date').datepicker({
+            changeYear: true,
+            changeMonth: true,
+            dateFormat: datepicker_format,
+            gotoCurrent: true,
+            yearRange: 'c-3:c+5',
+        });
+    }
+    function mec_toggle_repeat_type()
+    {
+        const val = $repeatType.val();
+        if (val === 'no_repeat')
+        {
+            $('.lsd-apt-days-wrapper').addClass('mec-util-hidden');
+            $('.lsd-apt-adjusted-title').addClass('mec-util-hidden');
+            $('.lsd-apt-start-date-wrapper').addClass('mec-util-hidden');
+        }
+        else
+        {
+            $('.lsd-apt-days-wrapper').removeClass('mec-util-hidden');
+            $('.lsd-apt-adjusted-title').removeClass('mec-util-hidden');
+            $('.lsd-apt-start-date-wrapper').removeClass('mec-util-hidden');
+        }
+    }
+    $repeatType.on('change', mec_toggle_repeat_type);
+    mec_toggle_repeat_type();
+
     $(document).on('click', '.lsd-apt-day-icon-remove', function()
     {
         const $button = $(this);

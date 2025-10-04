@@ -744,6 +744,7 @@ class MEC_skin_single extends MEC_skins
         // Get Event Dates
         $dates = $this->render->dates($this->id, $rendered, $this->maximum_dates, ($occurrence_time ? date('Y-m-d H:i:s', $occurrence_time) : $occurrence));
         $dates = $this->main->adjust_event_dates_for_booking($data, $dates, $_GET['occurrence'] ?? '');
+        $dates = $this->main->adjust_appointment_days($data, $dates);
 
         $data->dates = $dates;
         $data->date = $data->dates[0] ?? [];
@@ -823,6 +824,7 @@ class MEC_skin_single extends MEC_skins
         // Get Event Dates
         $dates = $this->render->dates($event_ID, $rendered, $maximum_dates, ($occurrence_time ? date('Y-m-d H:i:s', $occurrence_time) : $occurrence));
         $dates = $this->main->adjust_event_dates_for_booking($data, $dates, $_GET['occurrence'] ?? '');
+        $dates = $this->main->adjust_appointment_days($data, $dates);
 
         $data->dates = $dates;
         $data->date = count($data->dates) ? current($data->dates) : [];
@@ -1865,7 +1867,7 @@ class MEC_skin_single extends MEC_skins
         // Featured Image
         else
         {
-            $featured_image = $event->data->thumbnails[ $single_thumbnail_size ];
+            $featured_image = $this->get_thumbnail_image($event, $single_thumbnail_size);
             if(isset($this->settings['featured_image_caption']) and $this->settings['featured_image_caption']) $featured_image .= MEC_kses::element($this->main->display_featured_image_caption($event));
 
             return $featured_image;

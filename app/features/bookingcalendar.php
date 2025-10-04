@@ -114,6 +114,9 @@ class MEC_feature_bookingcalendar extends MEC_base
             );
         }
 
+        // Respect scheduling window settings for appointments
+        $dates = $this->main->adjust_appointment_days($data, $dates);
+
         if(!count($dates))
         {
             $dates = array(

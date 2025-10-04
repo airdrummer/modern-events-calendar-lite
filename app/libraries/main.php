@@ -4019,10 +4019,8 @@ class MEC_main extends MEC_base
         $ical = "BEGIN:VEVENT" . $crlf;
         $ical .= "CLASS:PUBLIC" . $crlf;
         $ical .= "UID:MEC-" . md5($event_id) . "@" . $this->get_domain() . $crlf;
-        $start_dt = new DateTime('@' . $start_time);
-        $start_dt->setTimezone(new DateTimeZone($timezone));
-        $end_dt = new DateTime('@' . $end_time);
-        $end_dt->setTimezone(new DateTimeZone($timezone));
+        $start_dt = new DateTime(date('Y-m-d H:i:s', $start_time), new DateTimeZone($timezone));
+        $end_dt = new DateTime(date('Y-m-d H:i:s', $end_time), new DateTimeZone($timezone));
         $ical .= "DTSTART;TZID=" . $timezone . ":" . $start_dt->format($time_format) . $crlf;
         $ical .= "DTEND;TZID=" . $timezone . ":" . $end_dt->format($time_format) . $crlf;
         $ical .= "DTSTAMP:" . gmdate('Ymd\\THis\\Z', $stamp) . $crlf;
@@ -4107,13 +4105,11 @@ class MEC_main extends MEC_base
 
         $ical = "BEGIN:VEVENT" . $crlf;
         $ical .= "CLASS:PUBLIC" . $crlf;
-        $start_dt = new DateTime('@' . $start_time);
-        $start_dt->setTimezone(new DateTimeZone($timezone));
-        $end_dt = new DateTime('@' . $end_time);
-        $end_dt->setTimezone(new DateTimeZone($timezone));
+        $start_dt = new DateTime(date('Y-m-d H:i:s', $start_time), new DateTimeZone($timezone));
+        $end_dt = new DateTime(date('Y-m-d H:i:s', $end_time), new DateTimeZone($timezone));
         $ical .= "DTSTART;TZID=" . $timezone . ":" . $start_dt->format($time_format) . $crlf;
         $ical .= "DTEND;TZID=" . $timezone . ":" . $end_dt->format($time_format) . $crlf;
-        $ical .= "DTSTAMP:" . gmdate($time_format, $stamp_gmt) . $crlf;
+        $ical .= "DTSTAMP:" . gmdate('Ymd\\THis\\Z', $stamp_gmt) . $crlf;
         $ical .= "UID:MEC-" . md5($event->ID) . "@" . $this->get_domain() . $crlf;
 
         if (is_array($rrules) and count($rrules))
@@ -4290,7 +4286,7 @@ class MEC_main extends MEC_base
         $year = date('Y');
         $transitions = $tz->getTransitions(strtotime(($year - 1) . '-12-01'), strtotime(($year + 1) . '-01-01'));
 
-        $vtimezone = "BEGIN:VTIMEZONE" . $crlf . "TZID:" . $timezone . $crlf;
+        $vtimezone = "BEGIN:VTIMEZONE" . $crlf . "TZID:" . $timezone . $crlf . "X-LIC-LOCATION:" . $timezone . $crlf;
 
         $dst = $std = null;
         $prev = null;
@@ -7340,18 +7336,18 @@ class MEC_main extends MEC_base
         $settings = $this->get_settings();
         $ml_settings = $this->get_ml_settings();
 
-        // Mailchim integration is disabled
-        if (!isset($settings['mchimp_status']) or (isset($settings['mchimp_status']) and !$settings['mchimp_status'])) return false;
+        // Mailchimp's integration is disabled
+        if (!isset($settings['mchimp_status']) || !$settings['mchimp_status']) return false;
 
         $api_key = $settings['mchimp_api_key'] ?? '';
         $list_id = $settings['mchimp_list_id'] ?? '';
 
-        // Mailchim credentials are required
+        // Mailchimp credentials are required
         if (!trim($api_key) or !trim($list_id)) return false;
 
         // Options
-        $date_format = (isset($ml_settings['booking_date_format1']) and trim($ml_settings['booking_date_format1'])) ? $ml_settings['booking_date_format1'] : 'Y-m-d';
-        $segment_status = (isset($settings['mchimp_segment_status']) and $settings['mchimp_segment_status']);
+        $date_format = isset($ml_settings['booking_date_format1']) && trim($ml_settings['booking_date_format1']) ? $ml_settings['booking_date_format1'] : 'Y-m-d';
+        $segment_status = isset($settings['mchimp_segment_status']) && $settings['mchimp_segment_status'];
 
         // Booking Date
         $mec_date = get_post_meta($book_id, 'mec_date', true);
@@ -7365,8 +7361,11 @@ class MEC_main extends MEC_base
         $book = $this->getBook();
         $attendees = $book->get_attendees($book_id);
 
+        $attendee_mode = $settings['mchimp_attendee_mode'] ?? 'all';
+        if($attendee_mode === 'primary' && is_array($attendees)) $attendees = array_slice($attendees, 0, 1);
+
         $data_center = substr($api_key, strpos($api_key, '-') + 1);
-        $subscription_status = isset($settings['mchimp_subscription_status']) ? $settings['mchimp_subscription_status'] : 'subscribed';
+        $subscription_status = $settings['mchimp_subscription_status'] ?? 'subscribed';
 
         $member_response = null;
         $did = [];
@@ -7374,10 +7373,10 @@ class MEC_main extends MEC_base
         foreach ($attendees as $attendee)
         {
             // Name
-            $name = ((isset($attendee['name']) and trim($attendee['name'])) ? $attendee['name'] : '');
+            $name = isset($attendee['name']) && trim($attendee['name']) ? $attendee['name'] : '';
 
             // Email
-            $email = ((isset($attendee['email']) and trim($attendee['email'])) ? $attendee['email'] : '');
+            $email = isset($attendee['email']) && trim($attendee['email']) ? $attendee['email'] : '';
             if (!is_email($email)) continue;
 
             // No Duplicate
@@ -7392,34 +7391,40 @@ class MEC_main extends MEC_base
             $last_name = implode(' ', $names);
 
             // UPSERT
+            $body = [
+                'email_address' => $email,
+                'status' => $subscription_status,
+                'merge_fields' => [
+                    'FNAME' => $first_name,
+                    'LNAME' => $last_name,
+                ],
+            ];
+
+            if ($segment_status) $body['tags'] = [$booking_date, $event->post_title];
+
             $member_response = wp_remote_request('https://' . $data_center . '.api.mailchimp.com/3.0/lists/' . $list_id . '/members/' . md5(strtolower($email)), [
                 'method' => 'PUT',
-                'body' => json_encode([
-                    'email_address' => $email,
-                    'status' => $subscription_status,
-                    'merge_fields' => [
-                        'FNAME' => $first_name,
-                        'LNAME' => $last_name,
-                    ],
-                    'tags' => [$booking_date, $event->post_title],
-                ]),
+                'body' => json_encode($body),
                 'timeout' => '10',
                 'redirection' => '10',
-                'headers' => ['Content-Type' => 'application/json', 'Authorization' => 'Basic ' . base64_encode('user:' . $api_key)],
+                'headers' => ['Content-Type' => 'application/json', 'Authorization' => 'apikey ' . $api_key],
             ]);
 
-            // TAGS
-            wp_remote_post('https://' . $data_center . '.api.mailchimp.com/3.0/lists/' . $list_id . '/members/' . md5(strtolower($email)) . '/tags', [
-                'body' => json_encode([
-                    'tags' => [
-                        ['name' => $booking_date, 'status' => 'active'],
-                        ['name' => $event->post_title, 'status' => 'active'],
-                    ],
-                ]),
-                'timeout' => '10',
-                'redirection' => '10',
-                'headers' => ['Content-Type' => 'application/json', 'Authorization' => 'Basic ' . base64_encode('user:' . $api_key)],
-            ]);
+            if ($segment_status)
+            {
+                // TAGS
+                wp_remote_post('https://' . $data_center . '.api.mailchimp.com/3.0/lists/' . $list_id . '/members/' . md5(strtolower($email)) . '/tags', [
+                    'body' => json_encode([
+                        'tags' => [
+                            ['name' => $booking_date, 'status' => 'active'],
+                            ['name' => $event->post_title, 'status' => 'active'],
+                        ],
+                    ]),
+                    'timeout' => '10',
+                    'redirection' => '10',
+                    'headers' => ['Content-Type' => 'application/json', 'Authorization' => 'apikey ' . $api_key],
+                ]);
+            }
         }
 
         // Handle Segment
@@ -7435,11 +7440,11 @@ class MEC_main extends MEC_base
                 ]),
                 'timeout' => '10',
                 'redirection' => '10',
-                'headers' => ['Content-Type' => 'application/json', 'Authorization' => 'Basic ' . base64_encode('user:' . $api_key)],
+                'headers' => ['Content-Type' => 'application/json', 'Authorization' => 'apikey ' . $api_key],
             ]);
         }
 
-        return ($member_response ? wp_remote_retrieve_response_code($member_response) : false);
+        return $member_response ? wp_remote_retrieve_response_code($member_response) : false;
     }
 
     /**
@@ -11332,6 +11337,77 @@ class MEC_main extends MEC_base
 
         $dates = $this->remove_canceled_dates($event, array_values($dates));
         return $this->maybe_use_last_date($dates, $event);
+    }
+
+    public function adjust_appointment_days($event, $dates)
+    {
+        if ($this->getAppointments()->get_entity_type($event->data->ID) !== 'appointment') return $dates;
+
+        $appointments_config = get_post_meta($event->data->ID, 'mec_appointments', true);
+
+        // Filter by scheduling window
+        $now = current_time('timestamp');
+
+        $before_limit  = null;
+        $advance_limit = null;
+
+        if (isset($appointments_config['scheduling_before_status']) && $appointments_config['scheduling_before_status'] && isset($appointments_config['scheduling_before']) && trim($appointments_config['scheduling_before']))
+            $before_limit = $now + ((int) $appointments_config['scheduling_before']) * HOUR_IN_SECONDS;
+
+        if (isset($appointments_config['scheduling_advance_status']) && $appointments_config['scheduling_advance_status'] && isset($appointments_config['scheduling_advance']) && trim($appointments_config['scheduling_advance']))
+            $advance_limit = $now + ((int) $appointments_config['scheduling_advance']) * DAY_IN_SECONDS;
+
+        $filtered_dates = [];
+        foreach ($dates as $d)
+        {
+            if (!isset($d['start']['timestamp'])) continue;
+
+            $start = $d['start']['timestamp'];
+
+            if ($before_limit && $start < $before_limit) continue;
+            if ($advance_limit && $start > $advance_limit) continue;
+
+            $filtered_dates[] = $d;
+        }
+
+        $dates = $filtered_dates;
+
+        $max_bookings_per_day = isset($appointments_config['max_bookings_per_day']) ? (int) $appointments_config['max_bookings_per_day'] : 0;
+        if (!$max_bookings_per_day) return $dates;
+
+        $dates_by_day = [];
+        foreach ($dates as $d)
+        {
+            if (!isset($d['start']['date'])) continue;
+
+            $day = $d['start']['date'];
+            if (!isset($dates_by_day[$day])) $dates_by_day[$day] = [];
+            $dates_by_day[$day][] = $d;
+        }
+
+        $filtered_dates = [];
+        foreach ($dates_by_day as $day => $day_dates)
+        {
+            $day_start = strtotime($day . ' 00:00:00');
+            $day_end   = $day_start + DAY_IN_SECONDS;
+
+            $bookings = $this->get_bookings_for_occurrence([
+                $day_start,
+                $day_end,
+            ], [
+                'event_id' => $event->data->ID,
+                'status' => ['publish', 'pending', 'draft', 'future', 'private'],
+                'confirmed' => 1,
+                'verified' => 1,
+            ]);
+
+            if (count($bookings) < $max_bookings_per_day)
+            {
+                $filtered_dates = array_merge($filtered_dates, $day_dates);
+            }
+        }
+
+        return $filtered_dates;
     }
 
     public function display_not_found_message($echo = true)

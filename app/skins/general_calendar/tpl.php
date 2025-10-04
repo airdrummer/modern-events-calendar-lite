@@ -13,6 +13,7 @@ $local_time = (isset($this->skin_options['include_local_time']) and !empty( $thi
 $display_label = (isset($this->skin_options['display_label']) and !empty( $this->skin_options['display_label'] )) ? $this->skin_options['display_label'] : false;
 $reason_for_cancellation = (isset($this->skin_options['reason_for_cancellation']) and !empty( $this->skin_options['reason_for_cancellation'] )) ? $this->skin_options['reason_for_cancellation'] : false;
 $more_event = (isset($this->skin_options['more_event']) and !empty( $this->skin_options['more_event'] )) ? (int) $this->skin_options['more_event'] : 10;
+$image_size = $this->skin_options['image_size'] ?? 'default';
 
 $sed_method = '';
 if(isset($this->skin_options['sed_method']) and !empty($this->skin_options['sed_method'])) $sed_method = ($this->skin_options['sed_method']  == 'new') ? '_blank' : ($this->skin_options['sed_method']  == '0' ? '_self' : $this->skin_options['sed_method']);
@@ -163,8 +164,9 @@ $javascript .='
 								reason_for_cancellation: "'. esc_js($reason_for_cancellation) .'",
 								is_category_page: "'. esc_js($is_category_page) .'",
 								cat_id: "'. esc_js($cat_id) .'",
-								local_time: "'. esc_js($local_time) .'",
-								filter_category: "'. esc_js($filter_category) .'",
+                                                                local_time: "'. esc_js($local_time) .'",
+                                                                image_size: "'. esc_js($image_size) .'",
+                                                                filter_category: "'. esc_js($filter_category) .'",
 								filter_ex_category: "'. esc_js($filter_ex_category) .'",
 								filter_location: "'. esc_js($filter_location) .'",
 								filter_ex_location: "'. esc_js($filter_ex_location) .'",
@@ -365,8 +367,9 @@ $javascript .= '
 					reason_for_cancellation: "' . esc_js($reason_for_cancellation) . '",
 					is_category_page: "' . esc_js($is_category_page) . '",
 					cat_id: "' . esc_js($cat_id) . '",
-					local_time: "' . esc_js($local_time) . '",
-					filter_category: "' . esc_js($filter_category) . '",
+                                        local_time: "' . esc_js($local_time) . '",
+                                        image_size: "' . esc_js($image_size) . '",
+                                        filter_category: "' . esc_js($filter_category) . '",
 					filter_ex_category: "' . esc_js($filter_ex_category) . '",
 					filter_location: "' . esc_js($filter_location) . '",
 					filter_ex_location: "' . esc_js($filter_ex_location) . '",

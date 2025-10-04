@@ -156,6 +156,9 @@ class MEC_notifications extends MEC_base
             // Send the mail
             wp_mail($mail_arg['to'], html_entity_decode(stripslashes($mail_arg['subject']), ENT_QUOTES | ENT_HTML5), wpautop(stripslashes($mail_arg['message'])), $mail_arg['headers'], $mail_arg['attachments']);
 
+            // Send One Single Email Only To First Attendee
+            if (isset($notif_settings['email_verification']['send_single_one_email'])) break;
+
             // For prevention of email repeat send
             $done_emails[] = $to;
         }
@@ -393,6 +396,9 @@ class MEC_notifications extends MEC_base
             // Send the mail
             wp_mail($mail_arg['to'], html_entity_decode(stripslashes($mail_arg['subject']), ENT_QUOTES | ENT_HTML5), wpautop(stripslashes($mail_arg['message'])), $mail_arg['headers'], $mail_arg['attachments']);
 
+            // Send One Single Email Only To First Attendee
+            if (isset($notif_settings['booking_notification']['send_single_one_email'])) break;
+
             // For prevention of email repeat send
             $done_emails[] = $to;
         }
@@ -593,6 +599,9 @@ class MEC_notifications extends MEC_base
                     {
                         $tos[] = $attendee;
                         $done_emails[] = $attendee['email'];
+
+                        // Send One Single Email Only To First Attendee
+                        if (isset($notif_settings['cancellation_notification']['send_single_one_email'])) break;
                     }
                 }
             }
@@ -747,6 +756,9 @@ class MEC_notifications extends MEC_base
                     {
                         $tos[] = $attendee;
                         $done_emails[] = $attendee['email'];
+
+                        // Send One Single Email Only To First Attendee
+                        if (isset($notif_settings['booking_rejection']['send_single_one_email'])) break;
                     }
                 }
             }
@@ -1066,6 +1078,9 @@ class MEC_notifications extends MEC_base
 
             // Send the mail
             wp_mail($mail_arg['to'], html_entity_decode(stripslashes($mail_arg['subject']), ENT_QUOTES | ENT_HTML5), wpautop(stripslashes($mail_arg['message'])), $mail_arg['headers'], $mail_arg['attachments']);
+
+            // Send One Single Email Only To First Attendee
+            if (isset($notif_settings['booking_reminder']['send_single_one_email'])) break;
 
             $done_emails[] = $to;
         }
@@ -1955,6 +1970,9 @@ class MEC_notifications extends MEC_base
 
             // Send the mail
             wp_mail($mail_arg['to'], html_entity_decode(stripslashes($mail_arg['subject']), ENT_QUOTES | ENT_HTML5), wpautop(stripslashes($mail_arg['message'])), $mail_arg['headers'], $mail_arg['attachments']);
+
+            // Send One Single Email Only To First Attendee
+            if (isset($notif_settings['booking_moved']['send_single_one_email'])) break;
 
             // For prevention of email repeat send
             $done_emails[] = $to;

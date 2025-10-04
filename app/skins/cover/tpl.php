@@ -27,8 +27,8 @@ $event_organizer = ($organizer_id ? $this->main->get_organizer_data($organizer_i
 $event_date = (isset($event->date['start']) ? $event->date['start']['date'] : $event->data->meta['mec_start_date']);
 $event_link = (isset($event->data->permalink) and trim($event->data->permalink)) ? $this->main->get_event_date_permalink($event, $event_date) : get_permalink($event->data->ID);
 $event_color = $this->get_event_color_dot($event);
-$event_thumb = $event->data->thumbnails['large'];
-$event_thumb_url = $event->data->featured_image['large'];
+$event_thumb = $this->get_thumbnail_image($event, 'large');
+$event_thumb_url = $this->get_featured_image_url($event, 'large');
 $event_start_date = !empty($event->date['start']['date']) ? $event->date['start']['date'] : '';
 
 do_action('mec_start_skin', $this->id);

@@ -33,7 +33,8 @@ $map_events = [];
                 $start_time = (isset($event->data->time) ? $event->data->time['start'] : '');
                 $event_start_date = !empty($event->date['start']['date']) ? $event->date['start']['date'] : '';
                 $event_color = $this->get_event_color_dot($event, true);
-                $background_image = (isset($event->data->featured_image['tileview']) && trim($event->data->featured_image['tileview'])) ? ' url(\''.trim($event->data->featured_image['tileview']).'\')' : '';
+                $tile_url = $this->get_featured_image_url($event, 'tileview');
+                $background_image = $tile_url ? ' url(\''.trim($tile_url).'\')' : '';
 
                 $mec_data = $this->display_custom_data($event);
                 $custom_data_class = !empty($mec_data) ? 'mec-custom-data' : '';

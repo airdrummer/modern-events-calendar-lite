@@ -619,9 +619,12 @@ class MEC_render extends MEC_base
         // Post Data
         $data->ID = $post_id;
         $data->title = get_the_title($post_id);
-        if(is_plugin_active('divi-single-builder/divi-single-builder.php')) {
+        if (is_plugin_active('divi-single-builder/divi-single-builder.php'))
+        {
             $data->content = get_the_content($post_id);
-        } else {
+        }
+        else
+        {
             $content_fetched = $this->main->get_post_content($post_id);
             $data->content = is_null($content) ? (is_string($content_fetched) ? $content_fetched : '') : $content;
         }
@@ -1094,11 +1097,13 @@ class MEC_render extends MEC_base
             $start_time = '';
             $end_time = '';
 
-            if (isset($event->date['start']['date'])) {
+            if (isset($event->date['start']['date']))
+            {
                 $start_time = $event->date['start']['date'] . ' ' . sprintf("%02d", $s_hour) . ':' . sprintf("%02d", $s_minutes) . ' ' . $s_ampm;
             }
 
-            if (isset($event->date['end']['date'])) {
+            if (isset($event->date['end']['date']))
+            {
                 $end_time = $event->date['end']['date'] . ' ' . sprintf("%02d", $e_hour) . ':' . sprintf("%02d", $e_minutes) . ' ' . $e_ampm;
             }
 

@@ -42,7 +42,8 @@ $reason_for_cancellation = isset($this->skin_options['reason_for_cancellation'])
                     <div class="mec-event-date mec-color">
                         <div class="mec-event-image">
                             <?php
-                                if($event->data->thumbnails['meccarouselthumb']) echo MEC_kses::element($this->display_link($event, $event->data->thumbnails['meccarouselthumb'], ''));
+                                $image = $this->get_thumbnail_image($event, 'meccarouselthumb');
+                                if($image) echo MEC_kses::element($this->display_link($event, $image, ''));
                                 else echo '<img src="'. $this->main->asset('img/no-image.png') .'" />';
                             ?>
                             <?php echo MEC_kses::element($this->get_label_captions($event)); ?>
@@ -66,7 +67,8 @@ $reason_for_cancellation = isset($this->skin_options['reason_for_cancellation'])
                 <div class="event-carousel-type2-head clearfix">
                     <div class="mec-event-image">
                         <?php
-                            if($event->data->thumbnails['meccarouselthumb']) echo MEC_kses::element($this->display_link($event, $event->data->thumbnails['meccarouselthumb'], ''));
+                            $image = $this->get_thumbnail_image($event, 'meccarouselthumb');
+                            if($image) echo MEC_kses::element($this->display_link($event, $image, ''));
                             else echo '<img src="'. $this->main->asset('img/no-image.png') .'" />';
                         ?>
                         <?php echo MEC_kses::element($this->get_label_captions($event)); ?>
@@ -109,7 +111,8 @@ $reason_for_cancellation = isset($this->skin_options['reason_for_cancellation'])
                 <div class="event-carousel-type3-head clearfix">
                     <div class="mec-event-image">
                         <?php
-                            if($event->data->thumbnails['meccarouselthumb']) echo MEC_kses::element($this->display_link($event, $event->data->thumbnails['meccarouselthumb'], ''));
+                            $image = $this->get_thumbnail_image($event, 'meccarouselthumb');
+                            if($image) echo MEC_kses::element($this->display_link($event, $image, ''));
                             else echo '<img src="'. $this->main->asset('img/no-image.png') .'" />';
                         ?>
                         <?php echo MEC_kses::element($this->get_label_captions($event)); ?>
@@ -148,7 +151,8 @@ $reason_for_cancellation = isset($this->skin_options['reason_for_cancellation'])
                 <div class="event-carousel-type4-head clearfix">
                     <div class="mec-event-image">
                         <?php
-                            if($event->data->thumbnails['full']) echo MEC_kses::element($this->display_link($event, $event->data->thumbnails['full'], ''));
+                            $image = $this->get_thumbnail_image($event, 'full');
+                            if($image) echo MEC_kses::element($this->display_link($event, $image, ''));
                             else echo '<img src="'. $this->main->asset('img/no-image.png') .'" />';
                         ?>
                         <?php echo MEC_kses::element($this->get_label_captions($event)); ?>

@@ -199,6 +199,15 @@ $additional_organizers = (isset($settings['additional_organizers']) and $setting
                                 <?php endif; ?>
 
                                 <div class="mec-form-row">
+                                    <div class="mec-col-12">
+                                        <label for="mec_notifications_booking_notification_send_single_one_email">
+                                            <input type="checkbox" name="mec[notifications][booking_notification][send_single_one_email]" value="1" id="mec_notifications_booking_notification_send_single_one_email" <?php echo ((isset($notifications['booking_notification']['send_single_one_email']) and $notifications['booking_notification']['send_single_one_email'] == 1) ? 'checked="checked"' : ''); ?> />
+                                            <?php esc_html_e('Send one single email only to first attendee', 'modern-events-calendar-lite'); ?>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="mec-form-row">
                                     <label for="mec_notifications_booking_notification_content"><?php esc_html_e('Email Content', 'modern-events-calendar-lite'); ?></label>
                                     <?php wp_editor((isset($notifications['booking_notification']) ? stripslashes($notifications['booking_notification']['content']) : ''), 'mec_notifications_booking_notification_content', array('textarea_name'=>'mec[notifications][booking_notification][content]')); ?>
                                 </div>
@@ -356,6 +365,14 @@ $additional_organizers = (isset($settings['additional_organizers']) and $setting
                                         </div>
                                         <i title="" class="dashicons-before dashicons-editor-help"></i>
                                     </span>
+                                </div>
+                            </div>
+                            <div class="mec-form-row">
+                                <div class="mec-col-12">
+                                    <label for="mec_notifications_email_verification_send_single_one_email">
+                                        <input type="checkbox" name="mec[notifications][email_verification][send_single_one_email]" value="1" id="mec_notifications_email_verification_send_single_one_email" <?php echo ((isset($notifications['email_verification']['send_single_one_email']) and $notifications['email_verification']['send_single_one_email'] == 1) ? 'checked="checked"' : ''); ?> />
+                                        <?php esc_html_e('Send one single email only to first attendee', 'modern-events-calendar-lite'); ?>
+                                    </label>
                                 </div>
                             </div>
                             <div class="mec-form-row">
@@ -743,6 +760,15 @@ $additional_organizers = (isset($settings['additional_organizers']) and $setting
                                 </div>
 
                                 <div class="mec-form-row">
+                                    <div class="mec-col-12">
+                                        <label for="mec_notifications_booking_rejection_send_single_one_email">
+                                            <input type="checkbox" name="mec[notifications][booking_rejection][send_single_one_email]" value="1" id="mec_notifications_booking_rejection_send_single_one_email" <?php echo ((isset($notifications['booking_rejection']['send_single_one_email']) and $notifications['booking_rejection']['send_single_one_email'] == 1) ? 'checked="checked"' : ''); ?> />
+                                            <?php esc_html_e('Send one single email only to first attendee', 'modern-events-calendar-lite'); ?>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="mec-form-row">
                                     <label for="mec_notifications_booking_rejection_content"><?php esc_html_e('Email Content', 'modern-events-calendar-lite'); ?></label>
                                     <?php wp_editor((isset($notifications['booking_rejection']) ? stripslashes($notifications['booking_rejection']['content']) : ''), 'mec_notifications_booking_rejection_content', array('textarea_name'=>'mec[notifications][booking_rejection][content]')); ?>
                                 </div>
@@ -944,6 +970,14 @@ $additional_organizers = (isset($settings['additional_organizers']) and $setting
                                         <label for="mec_notifications_cancellation_notification_send_to_user">
                                             <input type="checkbox" name="mec[notifications][cancellation_notification][send_to_user]" value="1" id="mec_notifications_cancellation_notification_send_to_user" <?php echo ((isset($notifications['cancellation_notification']['send_to_user']) and $notifications['cancellation_notification']['send_to_user'] == 1) ? 'checked="checked"' : ''); ?> />
                                             <?php esc_html_e('Send the email to the booked user', 'modern-events-calendar-lite'); ?>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="mec-form-row">
+                                    <div class="mec-col-12">
+                                        <label for="mec_notifications_cancellation_notification_send_single_one_email">
+                                            <input type="checkbox" name="mec[notifications][cancellation_notification][send_single_one_email]" value="1" id="mec_notifications_cancellation_notification_send_single_one_email" <?php echo ((isset($notifications['cancellation_notification']['send_single_one_email']) and $notifications['cancellation_notification']['send_single_one_email'] == 1) ? 'checked="checked"' : ''); ?> />
+                                            <?php esc_html_e('Send one single email only to first attendee', 'modern-events-calendar-lite'); ?>
                                         </label>
                                     </div>
                                 </div>
@@ -1462,6 +1496,14 @@ $additional_organizers = (isset($settings['additional_organizers']) and $setting
                                     </div>
                                 </div>
                                 <div class="mec-form-row">
+                                    <div class="mec-col-12">
+                                        <label for="mec_notifications_booking_reminder_send_single_one_email">
+                                            <input type="checkbox" name="mec[notifications][booking_reminder][send_single_one_email]" value="1" id="mec_notifications_booking_reminder_send_single_one_email" <?php echo ((isset($notifications['booking_reminder']['send_single_one_email']) and $notifications['booking_reminder']['send_single_one_email'] == 1) ? 'checked="checked"' : ''); ?> />
+                                            <?php esc_html_e('Send one single email only to first attendee', 'modern-events-calendar-lite'); ?>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="mec-form-row">
                                     <label for="mec_notifications_booking_reminder_content"><?php esc_html_e('Email Content', 'modern-events-calendar-lite'); ?></label>
                                     <?php wp_editor((isset($notifications['booking_reminder']) ? stripslashes($notifications['booking_reminder']['content']) : ''), 'mec_notifications_booking_reminder_content', array('textarea_name'=>'mec[notifications][booking_reminder][content]')); ?>
                                 </div>
@@ -1739,6 +1781,14 @@ $additional_organizers = (isset($settings['additional_organizers']) and $setting
                                         </div>
                                         <i title="" class="dashicons-before dashicons-editor-help"></i>
                                     </span>
+                                    </div>
+                                </div>
+                                <div class="mec-form-row">
+                                    <div class="mec-col-12">
+                                        <label for="mec_notifications_booking_moved_send_single_one_email">
+                                            <input type="checkbox" name="mec[notifications][booking_moved][send_single_one_email]" value="1" id="mec_notifications_booking_moved_send_single_one_email" <?php echo ((isset($notifications['booking_moved']['send_single_one_email']) and $notifications['booking_moved']['send_single_one_email'] == 1) ? 'checked="checked"' : ''); ?> />
+                                            <?php esc_html_e('Send one single email only to first attendee', 'modern-events-calendar-lite'); ?>
+                                        </label>
                                     </div>
                                 </div>
                                 <div class="mec-form-row">

@@ -97,11 +97,12 @@ elseif($week_start == 5) // Friday
                         '.MEC_kses::element($this->display_organizers($event)).'
                     </div>';
 
-                    $tooltip_content .= (!empty($event->data->thumbnails['thumbnail']) || !empty($event->data->content)) ? '<div class="mec-tooltip-event-content">' : '';
-                    $tooltip_content .= !empty($event->data->thumbnails['thumbnail']) ? '<div class="mec-tooltip-event-featured">'.MEC_kses::element($event->data->thumbnails['thumbnail']).'</div>' : '';
+                    $thumb = $this->get_thumbnail_image($event, 'thumbnail');
+                    $tooltip_content .= (!empty($thumb) || !empty($event->data->content)) ? '<div class="mec-tooltip-event-content">' : '';
+                    $tooltip_content .= !empty($thumb) ? '<div class="mec-tooltip-event-featured">'.MEC_kses::element($thumb).'</div>' : '';
                     $tooltip_content .= !empty($event->data->content) ? '<div class="mec-tooltip-event-desc">'.MEC_kses::full($event_content).' , ...</div>' : '';
                     if($this->localtime) $tooltip_content .= $this->main->module('local-time.type2', array('event' => $event));
-                    $tooltip_content .= (!empty($event->data->thumbnails['thumbnail']) || !empty($event->data->content)) ? '</div>' : '';
+                    $tooltip_content .= (!empty($thumb) || !empty($event->data->content)) ? '</div>' : '';
                     $tooltip_content .= $this->booking_button($event);
                     $tooltip_content .= '<span class="mec-wrap"><span id="mec_skin_events_'.esc_attr($this->id).'_monthly_simple_'.$event->data->ID.'">'.$this->display_custom_data($event).'</span></span>';
 
@@ -173,11 +174,12 @@ elseif($week_start == 5) // Friday
                         '.MEC_kses::element($this->display_organizers($event)).'
                     </div>';
 
-                    $tooltip_content .= (!empty($event->data->thumbnails['thumbnail']) || !empty($event->data->content)) ? '<div class="mec-tooltip-event-content">' : '';
-                    $tooltip_content .= !empty($event->data->thumbnails['thumbnail']) ? '<div class="mec-tooltip-event-featured">'.MEC_kses::element($event->data->thumbnails['thumbnail']).'</div>' : '';
+                    $thumb = $this->get_thumbnail_image($event, 'thumbnail');
+                    $tooltip_content .= (!empty($thumb) || !empty($event->data->content)) ? '<div class="mec-tooltip-event-content">' : '';
+                    $tooltip_content .= !empty($thumb) ? '<div class="mec-tooltip-event-featured">'.MEC_kses::element($thumb).'</div>' : '';
                     $tooltip_content .= !empty($event->data->content) ? '<div class="mec-tooltip-event-desc">'.MEC_kses::full($event_content).' , ...</div>' : '';
                     if($this->localtime) $tooltip_content .= $this->main->module('local-time.type2', array('event' => $event));
-                    $tooltip_content .= (!empty($event->data->thumbnails['thumbnail']) || !empty($event->data->content)) ? '</div>' : '';
+                    $tooltip_content .= (!empty($thumb) || !empty($event->data->content)) ? '</div>' : '';
                     $tooltip_content .= $this->booking_button($event);
                     $tooltip_content .= '<span class="mec-wrap"><span id="mec_skin_events_'.esc_attr($this->id).'_monthly_simple_'.$event->data->ID.'">'.$this->display_custom_data($event).'</span></span>';
 
@@ -266,11 +268,12 @@ elseif($week_start == 5) // Friday
                             '.MEC_kses::element($this->display_organizers($event)).'
                         </div>';
 
-                        $tooltip_content .= (!empty($event->data->thumbnails['thumbnail']) || !empty($event->data->content)) ? '<div class="mec-tooltip-event-content">' : '';
-                        $tooltip_content .= !empty($event->data->thumbnails['thumbnail']) ? '<div class="mec-tooltip-event-featured">'.MEC_kses::element($event->data->thumbnails['thumbnail']).'</div>' : '';
+                        $thumb = $this->get_thumbnail_image($event, 'thumbnail');
+                        $tooltip_content .= (!empty($thumb) || !empty($event->data->content)) ? '<div class="mec-tooltip-event-content">' : '';
+                        $tooltip_content .= !empty($thumb) ? '<div class="mec-tooltip-event-featured">'.MEC_kses::element($thumb).'</div>' : '';
                         $tooltip_content .= !empty($event->data->content) ? '<div class="mec-tooltip-event-desc">'.MEC_kses::full($event_content).' , ...</div>' : '';
                         if($this->localtime) $tooltip_content .= $this->main->module('local-time.type2', array('event' => $event));
-                        $tooltip_content .= (!empty($event->data->thumbnails['thumbnail']) || !empty($event->data->content)) ? '</div>' : '';
+                        $tooltip_content .= (!empty($thumb) || !empty($event->data->content)) ? '</div>' : '';
                         $tooltip_content .= $this->booking_button($event);
                         $tooltip_content .= '<span class="mec-wrap"><span id="mec_skin_events_'.esc_attr($this->id).'_monthly_simple_'.$event->data->ID.'">'.$this->display_custom_data($event).'</span></span>';
 

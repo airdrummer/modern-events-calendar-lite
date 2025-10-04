@@ -1,6 +1,8 @@
 // MEC GOOGLE MAPS PLUGIN
-(function ($) {
-    $.fn.mecGoogleMaps = function (options) {
+(function ($)
+{
+    $.fn.mecGoogleMaps = function (options)
+    {
         // Default Options
         var settings = $.extend({
             // These are the defaults.
@@ -21,7 +23,7 @@
                 destination: {}
             },
             month_navigator: 0,
-            sf:{},
+            sf: {},
         }, options);
 
         var getMarkersLock = false;
@@ -41,14 +43,17 @@
         // Init the Map
         if (settings.autoinit) init();
 
-        function init() {
+        function init()
+        {
             // Search Widget
-            if (settings.sf.container !== '' && false == $(settings.sf.container).hasClass('mec-skin-map-search-init') ) {
+            if (settings.sf.container !== '' && false == $(settings.sf.container).hasClass('mec-skin-map-search-init'))
+            {
 
                 $(settings.sf.container).mecSearchForm({
                     id: settings.id,
                     atts: settings.atts,
-                    callback: function (atts) {
+                    callback: function (atts)
+                    {
                         settings.atts = atts;
                         getMarkers();
                     }
@@ -57,7 +62,8 @@
                 $(settings.sf.container).addClass('mec-skin-map-search-init');
             }
 
-            if(typeof google === 'undefined') {
+            if (typeof google === 'undefined')
+            {
                 setTimeout(init, 1000);
                 return;
             }
@@ -86,10 +92,12 @@
             // Load Markers
             loadMarkers(settings.markers);
 
-            var clusterCalculator = function (markers, numStyles) {
+            var clusterCalculator = function (markers, numStyles)
+            {
                 var weight = 0;
 
-                for (var i = 0; i < markers.length; ++i) {
+                for (var i = 0; i < markers.length; ++i)
+                {
                     weight += markers[i].weight;
                 }
 
@@ -101,11 +109,11 @@
 
             var markerClusterOptions = {
                 styles: [{
-                        height: 53,
-                        url: settings.clustering_images + '1.png',
-                        width: 53,
-                        textColor: '#fff'
-                    },
+                    height: 53,
+                    url: settings.clustering_images + '1.png',
+                    width: 53,
+                    textColor: '#fff'
+                },
                     {
                         height: 56,
                         url: settings.clustering_images + '2.png',
@@ -145,27 +153,27 @@
             // Geolocation focus.
             var permission = false;
 
-            if(typeof navigator.permissions !== 'undefined')
+            if (typeof navigator.permissions !== 'undefined')
             {
                 navigator.permissions.query({
-                    name : 'geolocation'
-                }).then(function(result)
+                    name: 'geolocation'
+                }).then(function (result)
                 {
-                    if(!settings.geolocation_focus) permission = true;
+                    if (!settings.geolocation_focus) permission = true;
 
-                    result.onchange = function()
+                    result.onchange = function ()
                     {
-                        if(result.state === 'granted') permission = true;
+                        if (result.state === 'granted') permission = true;
                     }
                 });
             }
 
             // Geolocation
-            if((settings.geolocation !== 'undefined' && settings.geolocation) && navigator.geolocation)
+            if ((settings.geolocation !== 'undefined' && settings.geolocation) && navigator.geolocation)
             {
                 navigator.geolocation.getCurrentPosition(function (position)
                 {
-                    if(permission)
+                    if (permission)
                     {
                         var center = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
                         var zoom = map.getZoom();
@@ -182,12 +190,14 @@
             }
         }
 
-        function initMonthNavigator() {
+        function initMonthNavigator()
+        {
             // Remove the onclick event
             $("#mec_skin_" + settings.id + " .mec-load-month").off("click");
 
             // Add onclick event
-            $("#mec_skin_" + settings.id + " .mec-load-month").on("click", function () {
+            $("#mec_skin_" + settings.id + " .mec-load-month").on("click", function ()
+            {
                 var year = $(this).data("mec-year");
                 var month = $(this).data("mec-month");
 
@@ -195,38 +205,61 @@
             });
         }
 
-        function loadMarkers(markers) {
+        function loadMarkers(markers)
+        {
             var f = 0;
-            for (var i in markers) {
+            for (var i in markers)
+            {
                 f++;
                 var dataMarker = markers[i];
 
-                var marker = new RichMarker({
-                    position: new google.maps.LatLng(dataMarker.latitude, dataMarker.longitude),
-                    map: map,
-                    event_ids: dataMarker.event_ids,
-                    infowindow: dataMarker.infowindow,
-                    lightbox: dataMarker.lightbox,
-                    icon: (dataMarker.icon ? dataMarker.icon : settings.icon),
-                    content: '<div class="mec-marker-container"><span class="mec-marker-wrap"><span class="mec-marker">' + dataMarker.count + '</span><span class="mec-marker-pulse-wrap"><span class="mec-marker-pulse"></span></span></span></div>',
-                    shadow: 'none',
-                    weight: dataMarker.count
-                });
+                var marker;
+                if (typeof RichMarker !== 'undefined')
+                {
+                    marker = new RichMarker({
+                        position: new google.maps.LatLng(dataMarker.latitude, dataMarker.longitude),
+                        map: map,
+                        event_ids: dataMarker.event_ids,
+                        infowindow: dataMarker.infowindow,
+                        lightbox: dataMarker.lightbox,
+                        icon: (dataMarker.icon ? dataMarker.icon : settings.icon),
+                        content: '<div class="mec-marker-container"><span class="mec-marker-wrap"><span class="mec-marker">' + dataMarker.count + '</span><span class="mec-marker-pulse-wrap"><span class="mec-marker-pulse"></span></span></span></div>',
+                        shadow: 'none',
+                        weight: dataMarker.count
+                    });
+                } else
+                {
+                    marker = new google.maps.Marker({
+                        position: new google.maps.LatLng(dataMarker.latitude, dataMarker.longitude),
+                        map: map,
+                        icon: (dataMarker.icon ? dataMarker.icon : settings.icon),
+                        label: dataMarker.count.toString()
+                    });
+                    marker.event_ids = dataMarker.event_ids;
+                    marker.infowindow = dataMarker.infowindow;
+                    marker.lightbox = dataMarker.lightbox;
+                    marker.weight = dataMarker.count;
+                }
 
                 // Marker Info-Window
-                if (Math.max(document.documentElement.clientWidth, window.innerWidth || 0) > 960) {
-                google.maps.event.addListener(marker, 'mouseover', function (event) {
-                    infowindow.close();
-                    infowindow.setContent(this.infowindow);
-                    infowindow.open(map, this);
-                });
+                if (Math.max(document.documentElement.clientWidth, window.innerWidth || 0) > 960)
+                {
+                    google.maps.event.addListener(marker, 'mouseover', function (event)
+                    {
+                        infowindow.close();
+                        infowindow.setContent(this.infowindow);
+                        infowindow.open(map, this);
+                    });
 
-                // Marker Lightbox
-                google.maps.event.addListener(marker, 'click', function (event) {
-                    lity(this.lightbox);
-                });
-                } else if (Math.max(document.documentElement.clientWidth, window.innerWidth || 0) <= 960){
-                    google.maps.event.addListener(marker, 'click', function (event) {
+                    // Marker Lightbox
+                    google.maps.event.addListener(marker, 'click', function (event)
+                    {
+                        lity(this.lightbox);
+                    });
+                } else if (Math.max(document.documentElement.clientWidth, window.innerWidth || 0) <= 960)
+                {
+                    google.maps.event.addListener(marker, 'click', function (event)
+                    {
                         infowindow.close();
                         infowindow.setContent(this.infowindow);
                         infowindow.open(map, this);
@@ -244,29 +277,32 @@
             if (f > 1) map.fitBounds(bounds);
 
             // Set map center if only 1 marker found
-            if (f === 1) {
+            if (f === 1)
+            {
                 map.setCenter(new google.maps.LatLng(dataMarker.latitude, dataMarker.longitude));
             }
 
-            $(document).trigger( 'mec_map_load_markers', [ markers, settings ] );
+            $(document).trigger('mec_map_load_markers', [markers, settings]);
         }
 
-        function renderMarkers(markers){
-                // Remove Markers
-                removeMarkers();
+        function renderMarkers(markers)
+        {
+            // Remove Markers
+            removeMarkers();
 
-                // Load Markers
-                loadMarkers(markers);
+            // Load Markers
+            loadMarkers(markers);
 
-                markerCluster.clearMarkers();
-                markerCluster.addMarkers(loadedMarkers, false);
-                markerCluster.redraw();
+            markerCluster.clearMarkers();
+            markerCluster.addMarkers(loadedMarkers, false);
+            markerCluster.redraw();
         }
 
-        function getMarkers( year = null, month = null ) {
+        function getMarkers(year = null, month = null)
+        {
 
             // Already Locked
-            if(getMarkersLock) return;
+            if (getMarkersLock) return;
 
             // Lock it
             getMarkersLock = true;
@@ -275,17 +311,18 @@
             $("#mec_googlemap_canvas" + settings.id).addClass("mec-loading");
 
             // Add Loading Class
-            if($('.mec-modal-result').length === 0) $('.mec-wrap').append('<div class="mec-modal-result"></div>');
+            if ($('.mec-modal-result').length === 0) $('.mec-wrap').append('<div class="mec-modal-result"></div>');
             $('.mec-modal-result').addClass('mec-month-navigator-loading');
 
             $.ajax({
                 url: settings.ajax_url,
-                data: "action=mec_map_get_markers&mec_year="+ year + "&mec_month=" + month + "&" + settings.atts,
+                data: "action=mec_map_get_markers&mec_year=" + year + "&mec_month=" + month + "&" + settings.atts,
                 dataType: "json",
                 type: "post",
-                success: function (response) {
+                success: function (response)
+                {
 
-                    renderMarkers( response.markers );
+                    renderMarkers(response.markers);
 
                     // Append Month
                     $("#mec_skin_events_" + settings.id).append('<div class="mec-month-container" id="mec_monthly_view_month_' + settings.id + '_' + response.current_month + '" data-month-id="' + response.current_month + '">' + response.month + '</div>');
@@ -301,7 +338,8 @@
                     // Release the Lock
                     getMarkersLock = false;
                 },
-                error: function () {
+                error: function ()
+                {
                     // Remove loader
                     $("#mec_googlemap_canvas" + settings.id).removeClass("mec-loading");
                     $('.mec-modal-result').removeClass('mec-month-navigator-loading');
@@ -312,10 +350,12 @@
             });
         }
 
-        function removeMarkers() {
+        function removeMarkers()
+        {
             bounds = new google.maps.LatLngBounds();
 
-            if (loadedMarkers) {
+            if (loadedMarkers)
+            {
                 for (i = 0; i < loadedMarkers.length; i++) loadedMarkers[i].setMap(null);
                 loadedMarkers.length = 0;
             }
@@ -326,15 +366,18 @@
         var startMarker;
         var endMarker;
 
-        function initSimpleGetDirection() {
-            $(settings.directionOptions.form).on('submit', function (event) {
+        function initSimpleGetDirection()
+        {
+            $(settings.directionOptions.form).on('submit', function (event)
+            {
                 event.preventDefault();
 
                 var from = $(settings.directionOptions.addr).val();
                 var dest = new google.maps.LatLng(settings.directionOptions.destination.latitude, settings.directionOptions.destination.longitude);
 
                 // Reset the direction
-                if (typeof directionsDisplay !== 'undefined') {
+                if (typeof directionsDisplay !== 'undefined')
+                {
                     directionsDisplay.setMap(null);
                     startMarker.setMap(null);
                     endMarker.setMap(null);
@@ -354,8 +397,10 @@
                     travelMode: google.maps.DirectionsTravelMode.DRIVING
                 };
 
-                directionsService.route(request, function (response, status) {
-                    if (status === google.maps.DirectionsStatus.OK) {
+                directionsService.route(request, function (response, status)
+                {
+                    if (status === google.maps.DirectionsStatus.OK)
+                    {
                         directionsDisplay.setDirections(response);
                         directionsDisplay.setMap(map);
 
@@ -381,7 +426,8 @@
                 $(settings.directionOptions.reset).removeClass('mec-util-hidden');
             });
 
-            $(settings.directionOptions.reset).on('click', function (event) {
+            $(settings.directionOptions.reset).on('click', function (event)
+            {
                 $(settings.directionOptions.addr).val('');
                 $(settings.directionOptions.form).submit();
 
@@ -390,8 +436,10 @@
             });
         }
 
-        function initAdvancedGetDirection() {
-            $(settings.directionOptions.form).on('submit', function (event) {
+        function initAdvancedGetDirection()
+        {
+            $(settings.directionOptions.form).on('submit', function (event)
+            {
                 event.preventDefault();
 
                 var from = $(settings.directionOptions.addr).val();
@@ -402,7 +450,8 @@
         }
 
         return {
-            init: function () {
+            init: function ()
+            {
                 init();
             }
         };

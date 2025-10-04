@@ -60,7 +60,10 @@ class MEC_feature_appointments extends MEC_base
 
         $duration = isset($config['duration']) && $config['duration'] ? $config['duration'] : 60;
         $buffer   = isset($config['buffer']) ? (int) $config['buffer'] : 0;
+        $max_bookings_per_day = $config['max_bookings_per_day'] ?? '';
+        $start_date = $config['start_date'] ?? '';
         $adjusted = isset($config['adjusted_availability']) && is_array($config['adjusted_availability']) ? $config['adjusted_availability'] : [];
+        $availability_repeat_type = $config['availability_repeat_type'] ?? 'weekly';
         ?>
         <div class="mec-event-appointment-tab-wrap">
             <div class="mec-event-appointment-tab">
@@ -90,14 +93,23 @@ class MEC_feature_appointments extends MEC_base
                 <input type="number" id="mec_appointments_buffer" name="mec[appointments][buffer]" min="0" max="240" step="1" value="<?php echo esc_attr($buffer); ?>">
                 <p class="description"><?php esc_html_e('Buffer time between appointments (minutes)', 'modern-events-calendar-lite'); ?></p>
             </div>
+            <div class="mec-form-row">
+                <input type="number" id="mec_appointments_max_per_day" name="mec[appointments][max_bookings_per_day]" min="0" step="1" value="<?php echo esc_attr($max_bookings_per_day); ?>">
+                <p class="description"><?php esc_html_e('Maximum bookings per day', 'modern-events-calendar-lite'); ?></p>
+            </div>
             <h4><?php esc_html_e('Availability', 'modern-events-calendar-lite'); ?></h4>
             <div class="mec-form-row">
                 <select id="mec_appointments_availability_repeat_type" name="mec[appointments][availability_repeat_type]">
-                    <option value="weekly" <?php echo (isset($config['availability_repeat_type']) && $config['availability_repeat_type'] == 'weekly' ? 'selected' : ''); ?>><?php esc_html_e('Repeat Weekly', 'modern-events-calendar-lite'); ?></option>
+                    <option value="weekly" <?php echo ($availability_repeat_type == 'weekly' ? 'selected' : ''); ?>><?php esc_html_e('Repeat Weekly', 'modern-events-calendar-lite'); ?></option>
+                    <option value="no_repeat" <?php echo ($availability_repeat_type == 'no_repeat' ? 'selected' : ''); ?>><?php esc_html_e('Does Not Repeat', 'modern-events-calendar-lite'); ?></option>
                 </select>
                 <p class="description"><?php esc_html_e("Set when you're available for appointments.", 'modern-events-calendar-lite'); ?></p>
             </div>
-            <div class="lsd-apt-days-wrapper">
+            <div class="mec-form-row lsd-apt-start-date-wrapper <?php echo ($availability_repeat_type === 'no_repeat' ? 'mec-util-hidden' : ''); ?>">
+                <input type="text" id="mec_appointments_start_date" class="mec-apt-date-picker" name="mec[appointments][start_date]" value="<?php echo esc_attr($start_date); ?>">
+                <p class="description"><?php esc_html_e('Start date', 'modern-events-calendar-lite'); ?></p>
+            </div>
+            <div class="lsd-apt-days-wrapper <?php echo ($availability_repeat_type === 'no_repeat' ? 'mec-util-hidden' : ''); ?>">
                 <?php foreach($days as $key => $day): ?>
                     <?php
                         $day_availability = isset($config['availability'][$key]) && is_array($config['availability'][$key]) ? $config['availability'][$key] : [];
@@ -203,7 +215,7 @@ class MEC_feature_appointments extends MEC_base
                 <?php endforeach; ?>
             </div>
 
-            <h4><?php esc_html_e('Adjusted Availability', 'modern-events-calendar-lite'); ?></h4>
+            <h4 class="lsd-apt-adjusted-title <?php echo ($availability_repeat_type === 'no_repeat' ? 'mec-util-hidden' : ''); ?>"><?php esc_html_e('Adjusted Availability', 'modern-events-calendar-lite'); ?></h4>
             <?php $last_adjusted_key = count($adjusted) ? max(array_map('intval', array_keys($adjusted))) : 0; ?>
             <div class="lsd-apt-adjusted-days-wrapper" data-key="<?php echo esc_attr($last_adjusted_key); ?>">
                 <?php if (count($adjusted)): ?>
@@ -253,7 +265,7 @@ class MEC_feature_appointments extends MEC_base
                     <?php endforeach; ?>
                 <?php endif; ?>
             </div>
-            <div class="mec-form-row"><span class="button lsd-apt-adjusted-day-add"><?php esc_html_e('Add Day', 'modern-events-calendar-lite'); ?></span></div>
+            <div class="mec-form-row"><span class="button lsd-apt-adjusted-day-add"><?php esc_html_e('Add a date', 'modern-events-calendar-lite'); ?></span></div>
             <div class="mec-util-hidden">
                 <div id="lsd-apt-adjusted-template-day">
                     <div class="lsd-apt-day-wrapper mec-form-row" data-day=":i:">
@@ -324,34 +336,39 @@ class MEC_feature_appointments extends MEC_base
                     </div>
                 </div>
             </div>
-            <div class="mec-apt-scheduling-window-wrapper mec-util-hidden">
+            <div class="mec-apt-scheduling-window-wrapper">
                 <h4><?php esc_html_e('Scheduling Window', 'modern-events-calendar-lite'); ?></h4>
                 <div class="mec-form-row">
-                    <p class="description" ><?php esc_html_e('Limit the time range that appointments can be booked.', 'modern-events-calendar-lite'); ?></p>
-                    <p class="description"><?php esc_html_e('Maximum time in advance that an appointment can be booked', 'modern-events-calendar-lite'); ?></p>
+                    <p class="description"><?php esc_html_e('Limit the time range that appointments can be booked.', 'modern-events-calendar-lite'); ?></p>
                     <span class="mec-tooltip">
-                    <div class="box top">
-                        <h5 class="title"><?php esc_html_e('Scheduling Window', 'modern-events-calendar-lite'); ?></h5>
-                        <div class="content"><p><?php esc_attr_e('This is the maximum time into the future that someone can schedule an appointment with you. Uncheck this option to allow people to book indefinitely into the future.', 'modern-events-calendar-lite'); ?></p></div>
-                    </div>
-                    <i title="" class="dashicons-before dashicons-editor-help"></i>
-                </span>
+                        <div class="box top">
+                            <h5 class="title"><?php esc_html_e('Scheduling Window', 'modern-events-calendar-lite'); ?></h5>
+                            <div class="content"><p><?php esc_attr_e('This is the maximum time into the future that someone can schedule an appointment with you. Uncheck this option to allow people to book indefinitely into the future.', 'modern-events-calendar-lite'); ?></p></div>
+                        </div>
+                        <i title="" class="dashicons-before dashicons-editor-help"></i>
+                    </span>
                 </div>
 
+                <div>
+                    <p class="description"><?php esc_html_e('Maximum time in advance that an appointment can be booked', 'modern-events-calendar-lite'); ?></p>
+                </div>
                 <div class="mec-form-row sw-apt">
-                <span>
-                    <input type="hidden" name="mec[appointments][scheduling_advance_status]" value="0">
-                    <input title="" type="checkbox" name="mec[appointments][scheduling_advance_status]" value="1" <?php echo !isset($config['scheduling_advance_status']) || $config['scheduling_advance_status'] ? 'checked' : ''; ?> onchange="jQuery('#mec_appointments_scheduling_advance').prop('readonly', !jQuery(this).is(':checked'));">
-                </span>
+                    <span>
+                        <input type="hidden" name="mec[appointments][scheduling_advance_status]" value="0">
+                        <input title="" type="checkbox" name="mec[appointments][scheduling_advance_status]" value="1" <?php echo !isset($config['scheduling_advance_status']) || $config['scheduling_advance_status'] ? 'checked' : ''; ?> onchange="jQuery('#mec_appointments_scheduling_advance').prop('readonly', !jQuery(this).is(':checked'));">
+                    </span>
                     <input title="" class="mec-col-2" id="mec_appointments_scheduling_advance" <?php echo isset($config['scheduling_advance_status']) && !$config['scheduling_advance_status'] ? 'readonly' : ''; ?> type="number" name="mec[appointments][scheduling_advance]" value="<?php echo isset($config['scheduling_advance']) && $config['scheduling_advance'] ? $config['scheduling_advance'] : 60; ?>">
                     <span><?php esc_html_e('days', 'modern-events-calendar-lite'); ?></span>
                 </div>
 
+                <div>
+                    <p class="description"><?php esc_html_e('Minimum time before the appointment start that it can be booked.', 'modern-events-calendar-lite'); ?></p>
+                </div>
                 <div class="mec-form-row sw-apt">
-                <span>
-                    <input type="hidden" name="mec[appointments][scheduling_before_status]" value="0">
-                    <input title="" type="checkbox" name="mec[appointments][scheduling_before_status]" value="1" <?php echo !isset($config['scheduling_before_status']) || $config['scheduling_before_status'] ? 'checked' : ''; ?> onchange="jQuery('#mec_appointments_scheduling_before').prop('readonly', !jQuery(this).is(':checked'));">
-                </span>
+                    <span>
+                        <input type="hidden" name="mec[appointments][scheduling_before_status]" value="0">
+                        <input title="" type="checkbox" name="mec[appointments][scheduling_before_status]" value="1" <?php echo !isset($config['scheduling_before_status']) || $config['scheduling_before_status'] ? 'checked' : ''; ?> onchange="jQuery('#mec_appointments_scheduling_before').prop('readonly', !jQuery(this).is(':checked'));">
+                    </span>
                     <input title="" class="mec-col-2" id="mec_appointments_scheduling_before" <?php echo isset($config['scheduling_before_status']) && !$config['scheduling_before_status'] ? 'readonly' : ''; ?> type="number" name="mec[appointments][scheduling_before]" value="<?php echo isset($config['scheduling_before']) && $config['scheduling_before'] ? $config['scheduling_before'] : 4; ?>">
                     <span><?php esc_html_e('hours', 'modern-events-calendar-lite'); ?></span>
                 </div>

@@ -80,8 +80,10 @@ $events_str = '';
                     do_action('mec_schema', $event);
 
                     $events_str .= '<article class="'.($this->main->is_expired($event) ? 'mec-past-event ' : '').'ended-relative mec-event-article '.esc_attr($this->get_event_classes($event)).'">';
-                    $content_style = !empty($event->data->thumbnails['thumblist']) ? 'width: calc(100% - 85px)' : 'width: 100%';
-                    $events_str .= '<div class="mec-event-image">'.MEC_kses::element($event->data->thumbnails['thumbnail']).'</div><div class="mec-monthly-contents" style="'. $content_style .'">';
+                    $thumb = $this->get_thumbnail_image($event, 'thumbnail');
+                    $check = $this->get_thumbnail_image($event, 'thumblist');
+                    $content_style = !empty($check) ? 'width: calc(100% - 85px)' : 'width: 100%';
+                    $events_str .= '<div class="mec-event-image">'.MEC_kses::element($thumb).'</div><div class="mec-monthly-contents" style="'. $content_style .'">';
                     $events_str .= MEC_kses::element($this->get_label_captions($event));
 
                     if($this->display_detailed_time and $this->main->is_multipleday_occurrence($event)) $events_str .= '<div class="mec-event-detailed-time mec-event-time mec-color">'.$this->icons->display('clock-o').' '.MEC_kses::element($this->display_detailed_time($event)).'</div>';
@@ -144,8 +146,10 @@ $events_str = '';
                     do_action('mec_schema', $event);
 
                     $events_str .= '<article class="'.($this->main->is_expired($event) ? 'mec-past-event ' : '').'ended-relative mec-event-article '.esc_attr($this->get_event_classes($event)).'">';
-                    $content_style = !empty($event->data->thumbnails['thumblist']) ? 'width: calc(100% - 85px)' : 'width: 100%';
-                    $events_str .= '<div class="mec-event-image">'.MEC_kses::element($event->data->thumbnails['thumbnail']).'</div><div class="mec-monthly-contents" style="'. $content_style .'">';
+                    $thumb = $this->get_thumbnail_image($event, 'thumbnail');
+                    $check = $this->get_thumbnail_image($event, 'thumblist');
+                    $content_style = !empty($check) ? 'width: calc(100% - 85px)' : 'width: 100%';
+                    $events_str .= '<div class="mec-event-image">'.MEC_kses::element($thumb).'</div><div class="mec-monthly-contents" style="'. $content_style .'">';
                     $events_str .= MEC_kses::element($this->get_label_captions($event));
 
                     if($this->display_detailed_time and $this->main->is_multipleday_occurrence($event)) $events_str .= '<div class="mec-event-detailed-time mec-event-time mec-color">'.$this->icons->display('clock-o').' '.MEC_kses::element($this->display_detailed_time($event)).'</div>';
@@ -235,8 +239,10 @@ $events_str = '';
                         do_action('mec_schema', $event);
 
                         $events_str .= '<article class="'.($this->main->is_expired($event) ? 'mec-past-event ' : '').'ended-relative mec-event-article '.esc_attr($this->get_event_classes($event)).'">';
-                        $content_style = !empty($event->data->thumbnails['thumblist']) ? 'width: calc(100% - 85px)' : 'width: 100%';
-                        $events_str .= '<div class="mec-event-image">'.MEC_kses::element($event->data->thumbnails['thumbnail']).'</div><div class="mec-monthly-contents" style="'. $content_style .'">';
+                        $thumb = $this->get_thumbnail_image($event, 'thumbnail');
+                        $check = $this->get_thumbnail_image($event, 'thumblist');
+                        $content_style = !empty($check) ? 'width: calc(100% - 85px)' : 'width: 100%';
+                        $events_str .= '<div class="mec-event-image">'.MEC_kses::element($thumb).'</div><div class="mec-monthly-contents" style="'. $content_style .'">';
                         $events_str .= MEC_kses::element($this->get_label_captions($event));
 
                         if($this->display_detailed_time and $this->main->is_multipleday_occurrence($event)) $events_str .= '<div class="mec-event-detailed-time mec-event-time mec-color">'.$this->icons->display('clock-o').' '.MEC_kses::element($this->display_detailed_time($event)).'</div>';

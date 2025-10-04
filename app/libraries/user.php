@@ -112,11 +112,28 @@ class MEC_user extends MEC_base
                 session_start();
             }
 
-            // Start with email as default
-            $username = function_exists('sanitize_user') ? sanitize_user($email) : $email;
-
-            // PRIORITY 1: $_POST['book']['username']
-            if (isset($_POST['book']['username']) && !empty(trim($_POST['book']['username']))) {
+            // Start with name as default for auto mode, email as fallback
+            $username = '';
+            
+            // PRIORITY 1: Use name field when in auto mode
+            if (!empty($name) && trim($name) !== $email) {
+                // Clean the name: replace spaces with dashes and remove special characters
+                $clean_name = trim($name);
+                $clean_name = preg_replace('/\s+/', '-', $clean_name); // Replace spaces with dashes
+                $clean_name = preg_replace('/[^a-zA-Z0-9\-]/', '', $clean_name); // Remove special characters except letters, numbers, and dashes
+                $clean_name = preg_replace('/-+/', '-', $clean_name); // Replace multiple dashes with single dash
+                $clean_name = trim($clean_name, '-'); // Remove leading/trailing dashes
+                
+                $name_username = function_exists('sanitize_user') ? sanitize_user($clean_name) : $clean_name;
+                if (!empty($name_username) && $name_username !== $email) {
+                    $username = $name_username;
+                    // Store in session for later use
+                    $_SESSION['mec_form_username_' . $email] = $username;
+                }
+            }
+            
+            // PRIORITY 2: $_POST['book']['username'] (manual mode)
+            if (empty($username) && isset($_POST['book']['username']) && !empty(trim($_POST['book']['username']))) {
                 $form_username = function_exists('sanitize_user') ? sanitize_user(trim($_POST['book']['username'])) : trim($_POST['book']['username']);
                 if (!empty($form_username) && $form_username !== $email) {
                     $username = $form_username;
@@ -125,8 +142,8 @@ class MEC_user extends MEC_base
                 }
             }
 
-            // PRIORITY 2: $_POST['username'] 
-            elseif (isset($_POST['username']) && !empty(trim($_POST['username']))) {
+            // PRIORITY 3: $_POST['username'] 
+            if (empty($username) && isset($_POST['username']) && !empty(trim($_POST['username']))) {
                 $form_username = function_exists('sanitize_user') ? sanitize_user(trim($_POST['username'])) : trim($_POST['username']);
                 if (!empty($form_username) && $form_username !== $email) {
                     $username = $form_username;
@@ -135,8 +152,8 @@ class MEC_user extends MEC_base
                 }
             }
 
-            // PRIORITY 3: $_REQUEST['book']['username']
-            elseif (isset($_REQUEST['book']['username']) && !empty(trim($_REQUEST['book']['username']))) {
+            // PRIORITY 4: $_REQUEST['book']['username']
+            if (empty($username) && isset($_REQUEST['book']['username']) && !empty(trim($_REQUEST['book']['username']))) {
                 $form_username = function_exists('sanitize_user') ? sanitize_user(trim($_REQUEST['book']['username'])) : trim($_REQUEST['book']['username']);
                 if (!empty($form_username) && $form_username !== $email) {
                     $username = $form_username;
@@ -145,12 +162,17 @@ class MEC_user extends MEC_base
                 }
             }
 
-            // PRIORITY 4: Check session for previously stored username
-            elseif (isset($_SESSION['mec_form_username_' . $email]) && !empty($_SESSION['mec_form_username_' . $email])) {
+            // PRIORITY 5: Check session for previously stored username
+            if (empty($username) && isset($_SESSION['mec_form_username_' . $email]) && !empty($_SESSION['mec_form_username_' . $email])) {
                 $session_username = function_exists('sanitize_user') ? sanitize_user($_SESSION['mec_form_username_' . $email]) : $_SESSION['mec_form_username_' . $email];
                 if (!empty($session_username) && $session_username !== $email) {
                     $username = $session_username;
                 }
+            }
+            
+            // PRIORITY 6: Fallback to email if no valid username found
+            if (empty($username)) {
+                $username = function_exists('sanitize_user') ? sanitize_user($email) : $email;
             }
 
             // Apply filter (but don't let it override our forced username)

@@ -83,10 +83,19 @@ class MEC_skin_general_calendar extends MEC_skins
         $filter_ex_author = $request->get_param('filter_ex_author') ? explode(',', $request->get_param('filter_ex_author')) : null;
         $locale = $request->get_param('locale');
         $type_event = $request->get_param('type_event');
+        $image_size = $request->get_param('image_size');
 
         $this->switch_language();
 
         // Attributes
+        $skin_options = [
+            'limit' => 100,
+        ];
+
+        if (!is_null($image_size)) {
+            $skin_options['image_size'] = sanitize_text_field($image_size);
+        }
+
         $atts = [
             'show_past_events' => $show_past_events,
             'show_only_past_events' => $show_only_past_events,
@@ -94,7 +103,7 @@ class MEC_skin_general_calendar extends MEC_skins
             'start_date_type' => 'start_current_month',
             'show_ongoing_events' => '1',
             'sk-options' => [
-                'general_calendar' => ['limit' => 100],
+                'general_calendar' => $skin_options,
             ],
         ];
 
@@ -160,8 +169,8 @@ class MEC_skin_general_calendar extends MEC_skins
                 $event_date_start_str = $event->date['start']['timestamp'];
                 $event_date_end = $this->main->date_i18n('c', $event->date['end']['timestamp']);
                 $event_date_end_str = $event->date['end']['timestamp'];
-                $event_image = $event->data->featured_image['full'];
-                $gridsquare = get_the_post_thumbnail($event->data->ID, 'gridsquare', ['data-mec-postid' => $event->data->ID]);
+                $event_image = $this->get_featured_image_url($event, 'full');
+                $gridsquare = $this->get_thumbnail_image($event, 'gridsquare');
                 $event_time = $event->data->time;
 
                 $event_a['id'] = $event->data->ID;

@@ -74,9 +74,57 @@ $box_stats = apply_filters('mec_dashboard_box_stats', true);
     </div>
     <!-- remove update notification section for high request -->
     <div class="welcome-content w-clearfix extra">
+        <?php if (!$this->getPRO()): ?>
+            <div class="w-row mec-lite-notification" style="margin-bottom: 30px;margin-top: 30px;">
+                <div class="w-col-sm-12">
+                    <?php
+                    $response_lite = wp_remote_get(
+                        add_query_arg(
+                            array( // posts from 101 to 200
+                                'per_page' => 1,
+                                'page' => 1,
+                                'categories' => 3,
+                            ),
+                            'https://notifications.webnus.site/wp-json/wp/v2/posts'
+                        ),
+                        array(
+                            'timeout' => 50, // Fix for: cURL error 28: Operation timed out after...
+                        )
+                    );
+
+                    $body = null;
+                    if (!is_wp_error($response_lite) && isset($response_lite['body'])) {
+                        $decoded = json_decode($response_lite['body']);
+                        if (is_array($decoded)) {
+                            $body = $decoded;
+                        }
+                    }
+
+                    if (!empty($body) && is_array($body) && count($body) > 0) :
+                        $featured_media = $body[0]->featured_media ?? '';
+                        $title          = $body[0]->title->rendered ?? '';
+                        $content        = $body[0]->content->rendered ?? '';
+
+                        // Get featured image from $featured_media
+                        $featured_image = wp_remote_get(
+                            'https://notifications.webnus.site/wp-json/wp/v2/media/' . $featured_media,
+                            array(
+                                'timeout' => 50, // Fix for: cURL error 28: Operation timed out after...
+                            )
+                        );
+                        $body_featured_image = json_decode($featured_image['body']);
+                        $lite_featured_image = $body_featured_image->guid->rendered;
+
+                        echo '<link rel = "stylesheet" type = "text/css" href = "https://files.webnus.site/addons-api/mec-extra-content/style2.css" /><div class="mec-custom-msg-2-notification-set-box extra"><div style="margin: 0" class="w-row mec-custom-msg-notification-wrap"><div class="w-col-sm-12"><div class="w-clearfix w-box mec-cmsg-2-notification-box-wrap mec-new-addons-wrap" style="margin-top:0;"><div class="w-box-head">Announcement</div><div class="w-box-content"><div class="mec-addons-notification-box-image" style="width: 240px; margin-right: 10px;"><img src="' . $lite_featured_image . '" /></div><div class="mec-addons-notification-box-content mec-new-addons" style="width: calc(100% - 270px);"><div class="w-box-content"><div class="csm-message-notice" style="text-align: center; background: #BAF0FC57; border-radius: 6px;letter-spacing: 4.4px; color: #00CAE6; text-transform: uppercase; padding: 10px 5px; font-weight: bold; margin-bottom: 40px;">' . $title . '</div><p>' . $content . '</p><div style="clear:both"></div></div></div></div></div></div></div></div>';
+                    endif;
+                    ?>
+                </div>
+            </div>
+        <?php endif; ?>
+
         <div class="w-row" style="margin-bottom: 30px;">
             <div class="w-col-sm-12">
-                <script>
+                <!-- <script>
                     (function() {
                         var version = parseInt(Math.random() * 10000);
                         var webformKey = "8dd552ab6041bd25d23d8a8467819f701f9196106be0e25edc6870c9cc922bdc_" + version;
@@ -110,7 +158,7 @@ $box_stats = apply_filters('mec_dashboard_box_stats', true);
                             webformContainer.appendChild(script);
                         }
                     })();
-                </script>
+                </script> -->
             </div>
         </div>
         <?php if (!$this->getPRO()): ?>
@@ -147,44 +195,7 @@ $box_stats = apply_filters('mec_dashboard_box_stats', true);
                 </div>
             </div>
 
-            <div class="w-row mec-lite-notification" style="margin-bottom: 30px;">
-                <?php
-                $response_lite = wp_remote_get(
-                    add_query_arg(
-                        array( // posts from 101 to 200
-                            'per_page' => 1,
-                            'page' => 1,
-                        ),
-                        'https://notifications.webnus.site/wp-json/wp/v2/posts'
-                    ),
-                    array(
-                        'timeout' => 50, // Fix for: cURL error 28: Operation timed out after...
-                    )
-                );
 
-                $body = json_decode($response_lite['body']);
-
-                if (count($body) > 0) :
-                    $featured_media = $body[0]->featured_media;
-                    $title = $body[0]->title->rendered;
-                    $content = $body[0]->content->rendered;
-
-                    // Get featured image from $featured_media
-                    $featured_image = wp_remote_get(
-                        'https://notifications.webnus.site/wp-json/wp/v2/media/' . $featured_media,
-                        array(
-                            'timeout' => 50, // Fix for: cURL error 28: Operation timed out after...
-                        )
-                    );
-                    $body_featured_image = json_decode($featured_image['body']);
-                    $lite_featured_image = $body_featured_image->guid->rendered;
-
-
-
-                    echo '<link rel = "stylesheet" type = "text/css" href = "https://files.webnus.site/addons-api/mec-extra-content/style2.css" /><div class="mec-custom-msg-2-notification-set-box extra"><div style="margin: 0" class="w-row mec-custom-msg-notification-wrap"><div class="w-col-sm-12"><div class="w-clearfix w-box mec-cmsg-2-notification-box-wrap mec-new-addons-wrap" style="margin-top:0;"><div class="w-box-head">Announcement</div><div class="w-box-content"><div class="mec-addons-notification-box-image" style="width: 240px; margin-right: 10px;"><img src="' . $lite_featured_image . '" /></div><div class="mec-addons-notification-box-content mec-new-addons" style="width: calc(100% - 270px);"><div class="w-box-content"><div class="csm-message-notice" style="text-align: center; background: #BAF0FC57; border-radius: 6px;letter-spacing: 4.4px; color: #00CAE6; text-transform: uppercase; padding: 10px 5px; font-weight: bold; margin-bottom: 40px;">' . $title . '</div><p>' . $content . '</p><div style="clear:both"></div></div></div></div></div></div></div></div>';
-                endif;
-                ?>
-            </div>
         <?php endif; ?>
         <?php echo MEC_kses::full($this->mec_custom_msg_2('yes', 'yes')); ?>
         <?php echo MEC_kses::full($this->mec_custom_msg('yes', 'yes')); ?>

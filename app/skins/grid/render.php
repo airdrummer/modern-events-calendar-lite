@@ -108,7 +108,8 @@ if($this->style == 'colorful')
                 <?php endif; ?>
             </div>
         <?php elseif($this->style == 'classic'): ?>
-            <div class="mec-event-image"><?php echo MEC_kses::element($this->display_link($event, $event->data->thumbnails['medium'], '')); ?></div>
+            <?php $image = $this->get_thumbnail_image($event, 'medium'); ?>
+            <div class="mec-event-image"><?php echo MEC_kses::element($this->display_link($event, $image, '')); ?></div>
             <?php do_action('mec_grid_classic_image', $event); ?>
             <div class="mec-event-content">
                 <?php if(isset($settings['multiple_day_show_method']) && $settings['multiple_day_show_method'] == 'all_days') : ?>
@@ -188,7 +189,8 @@ if($this->style == 'colorful')
                     <?php echo MEC_kses::element($this->get_label_captions($event)); ?>
                 </div>
             </div>
-            <div class="mec-event-image"><?php do_action('display_mec_clean_image', $event ); ?><?php echo MEC_kses::element($this->display_link($event, $event->data->thumbnails['medium'], '')); ?></div>
+            <?php $image = $this->get_thumbnail_image($event, 'medium'); ?>
+            <div class="mec-event-image"><?php do_action('display_mec_clean_image', $event ); ?><?php echo MEC_kses::element($this->display_link($event, $image, '')); ?></div>
             <div class="mec-event-content">
                 <?php do_action('display_mec_tai', $event); ?>
                 <?php do_action('mec_clean_custom_head', $event, $event_color); ?>
@@ -218,7 +220,8 @@ if($this->style == 'colorful')
         <?php elseif($this->style == 'novel'): ?>
             <div class="novel-grad-bg"></div>
             <div class="mec-event-content">
-                <div class="mec-event-image"><?php echo MEC_kses::element($this->display_link($event, $event->data->thumbnails['thumblist'], '')); ?></div>
+                <?php $thumblist = $this->get_thumbnail_image($event, 'thumblist'); ?>
+                <div class="mec-event-image"><?php echo MEC_kses::element($this->display_link($event, $thumblist, '')); ?></div>
                 <div class="mec-event-detail-wrap">
                     <?php $soldout = $this->main->get_flags($event); ?>
                     <h4 class="mec-event-title"><?php echo MEC_kses::element($this->display_link($event)); ?><?php echo MEC_kses::embed($this->display_custom_data($event)); ?><?php echo MEC_kses::element($soldout.$event_color.$this->main->get_normal_labels($event, $display_label).$this->main->display_cancellation_reason($event, $reason_for_cancellation)); ?><?php do_action('mec_shortcode_virtual_badge', $event->data->ID ); ?></h4>

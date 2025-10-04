@@ -97,8 +97,9 @@ $date_format = get_option('date_format');
                     do_action('mec_schema', $event);
 
                     $events_str .= '<article class="'.($this->main->is_expired($event) ? 'mec-past-event ' : '').'mec-event-article '.esc_attr($this->get_event_classes($event)).'">';
-                    $content_style = !empty($event->data->thumbnails['thumblist']) ? 'width: calc(100% - 85px)' : 'width: 100%';
-                    $events_str .= '<div class="mec-event-image">'.MEC_kses::element($event->data->thumbnails['thumblist']).'</div><div class="mec-monthly-contents" style="'. $content_style .'">';
+                    $thumb = $this->get_thumbnail_image($event, 'thumblist');
+                    $content_style = !empty($thumb) ? 'width: calc(100% - 85px)' : 'width: 100%';
+                    $events_str .= '<div class="mec-event-image">'.MEC_kses::element($thumb).'</div><div class="mec-monthly-contents" style="'. $content_style .'">';
                     $events_str .= $this->get_label_captions($event);
 
                     if($this->display_all) $events_str .= '<div class="mec-event-date">'.MEC_kses::element( $event_date ).'</div>';
@@ -187,8 +188,9 @@ $date_format = get_option('date_format');
                     do_action('mec_schema', $event);
 
                     $events_str .= '<article class="'.($this->main->is_expired($event) ? 'mec-past-event ' : '').'mec-event-article '.esc_attr($this->get_event_classes($event)).'">';
-                    $content_style = !empty($event->data->thumbnails['thumblist']) ? 'width: calc(100% - 85px)' : 'width: 100%';
-                    $events_str .= '<div class="mec-event-image">'.MEC_kses::element($event->data->thumbnails['thumblist']).'</div><div class="mec-monthly-contents" style="'. $content_style .'">';
+                    $thumb = $this->get_thumbnail_image($event, 'thumblist');
+                    $content_style = !empty($thumb) ? 'width: calc(100% - 85px)' : 'width: 100%';
+                    $events_str .= '<div class="mec-event-image">'.MEC_kses::element($thumb).'</div><div class="mec-monthly-contents" style="'. $content_style .'">';
                     $events_str .= MEC_kses::element($this->get_label_captions($event));
 
                     if($this->display_all) $events_str .= '<div class="mec-event-date">'.MEC_kses::element( $event_date ).'</div>';
@@ -303,8 +305,9 @@ $date_format = get_option('date_format');
                         do_action('mec_schema', $event);
 
                         $events_str .= '<article class="'.($this->main->is_expired($event) ? 'mec-past-event ' : '').'mec-event-article '.esc_attr($this->get_event_classes($event)).'">';
-                        $content_style = !empty($event->data->thumbnails['thumblist']) ? 'width: calc(100% - 85px)' : 'width: 100%';
-                        $events_str .= '<div class="mec-event-image">'.MEC_kses::element($event->data->thumbnails['thumblist']).'</div><div class="mec-monthly-contents" style="'. $content_style .'">';
+                        $thumb = $this->get_thumbnail_image($event, 'thumblist');
+                        $content_style = !empty($thumb) ? 'width: calc(100% - 85px)' : 'width: 100%';
+                        $events_str .= '<div class="mec-event-image">'.MEC_kses::element($thumb).'</div><div class="mec-monthly-contents" style="'. $content_style .'">';
                         $events_str .= MEC_kses::element($this->get_label_captions($event));
 
                         if($this->display_all) $events_str .= '<div class="mec-event-date">'.MEC_kses::element( $event_date ).'</div>';

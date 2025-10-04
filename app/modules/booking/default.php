@@ -523,18 +523,19 @@ function mec_book_form_submit'.esc_js($uniqueid).'()
         {
             var ticket_id = jQuery(this).data("ticket-id");
             var field_id = jQuery(this).data("field-id");
+            var field_value = jQuery("#mec_book_form'.esc_js($uniqueid).' input[name=\'book[tickets]["+ticket_id+"][reg]["+field_id+"]\']").val();
 
-            if(!jQuery("#mec_book_form'.esc_js($uniqueid).' input[name=\'book[tickets]["+ticket_id+"][reg]["+field_id+"]\']").val())
+            if(!field_value || (jQuery(this).hasClass(\'mec-book-reg-field-date\') && field_value.toLowerCase() === \'mm/dd/yyyy\'))
             {
                 valid = false;
                 jQuery(this).addClass("mec-red-notification");
-                
+
                 if(!focused)
                 {
                     jQuery(this).find(":input").focus();
                     focused = true;
                 }
-                
+
                 if ( jQuery(this).find(".mec-booking-field-required").length < 1) {
                     jQuery(this).find("label").append("<span class=\'mec-booking-field-required\'>'.esc_html__('This field is required.', 'modern-events-calendar-lite').'</span>");
                 }
@@ -580,31 +581,135 @@ function mec_book_form_submit'.esc_js($uniqueid).'()
             }
         });
         
-        jQuery("#mec_book_form'.esc_js($uniqueid).' .mec-book-ticket-container .mec-book-reg-field-email").filter(":visible").each(function(i)
+        jQuery("#mec_book_form'.esc_js($uniqueid).' .mec-book-ticket-container .mec-book-reg-field-email, #mec_book_form'.esc_js($uniqueid).' .mec-book-ticket-container .mec-book-reg-field-mec_email").filter(":visible").each(function(i)
         {
-            if ( jQuery(this).find(".mec-booking-field-required").length) {
-                return;
+            var email_value = \'\';
+            const email_format_regex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+
+            if(jQuery(this).hasClass(\'mec-book-reg-field-mec_email\'))
+            {
+                var ticket_id = jQuery(this).data("ticket-id");
+                email_value = jQuery("#mec_book_form'.esc_js($uniqueid).' input[name=\'book[tickets]["+ticket_id+"][email]\']").val();
             }
-            
-            var ticket_id = jQuery(this).data("ticket-id");
-            var field_id = jQuery(this).data("field-id");
-            
-            const email_format_regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            const email_value = jQuery("#mec_book_form'.esc_js($uniqueid).' input[name=\'book[tickets]["+ticket_id+"][reg]["+field_id+"]\']").val();
-        
-            if(email_value && !email_format_regex.test(email_value))
+            else
+            {
+                var ticket_id = jQuery(this).data("ticket-id");
+                var field_id = jQuery(this).data("field-id");
+                email_value = jQuery("#mec_book_form'.esc_js($uniqueid).' input[name=\'book[tickets]["+ticket_id+"][reg]["+field_id+"]\']").val();
+            }
+
+            if(!email_value) return;
+
+            if(!email_format_regex.test(email_value))
             {
                 valid = false;
                 jQuery(this).addClass("mec-red-notification");
-        
+
                 if(!focused)
                 {
                     jQuery(this).find(":input").focus();
                     focused = true;
                 }
-        
+
                 if ( jQuery(this).find(".mec-booking-field-required").length < 1) {
                     jQuery(this).find("label").append("<span class=\'mec-booking-field-required\'>'.esc_html__('Email format is not valid.', 'modern-events-calendar-lite').'</span>");
+                }
+            }
+            else
+            {
+                jQuery(this).find(".mec-booking-field-required").remove();
+                jQuery(this).removeClass("mec-red-notification");
+            }
+        });
+
+        jQuery("#mec_book_form'.esc_js($uniqueid).' .mec-book-ticket-container .mec-book-reg-field-name").filter(":visible").each(function(i)
+        {
+            if ( jQuery(this).find(".mec-booking-field-required").length) {
+                return;
+            }
+
+            var ticket_id = jQuery(this).data("ticket-id");
+            var name_value = jQuery("#mec_book_form'.esc_js($uniqueid).' input[name=\'book[tickets]["+ticket_id+"][name]\']").val();
+            const name_format_regex = /^[\p{L}\p{N}\s.]+$/u;
+
+            if(name_value && !name_format_regex.test(name_value))
+            {
+                valid = false;
+                jQuery(this).addClass("mec-red-notification");
+
+                if(!focused)
+                {
+                    jQuery(this).find(":input").focus();
+                    focused = true;
+                }
+
+                if ( jQuery(this).find(".mec-booking-field-required").length < 1) {
+                    jQuery(this).find("label").append("<span class=\'mec-booking-field-required\'>'.esc_html__('This field contains invalid characters.', 'modern-events-calendar-lite').'</span>");
+                }
+            }
+            else
+            {
+                jQuery(this).find(".mec-booking-field-required").remove();
+                jQuery(this).removeClass("mec-red-notification");
+            }
+        });
+
+        jQuery("#mec_book_form'.esc_js($uniqueid).' .mec-book-ticket-container .mec-book-reg-field-text").filter(":visible").each(function(i)
+        {
+            if ( jQuery(this).find(".mec-booking-field-required").length) {
+                return;
+            }
+
+            var ticket_id = jQuery(this).data("ticket-id");
+            var field_id = jQuery(this).data("field-id");
+            const text_format_regex = /^[\\p{L}\\p{N}\\s.,!?\\-\'\u0022():&#$%*@]+$/u;
+            const text_value = jQuery("#mec_book_form'.esc_js($uniqueid).' input[name=\'book[tickets]["+ticket_id+"][reg]["+field_id+"]\']").val();
+
+            if(text_value && !text_format_regex.test(text_value))
+            {
+                valid = false;
+                jQuery(this).addClass("mec-red-notification");
+
+                if(!focused)
+                {
+                    jQuery(this).find(":input").focus();
+                    focused = true;
+                }
+
+                if ( jQuery(this).find(".mec-booking-field-required").length < 1) {
+                    jQuery(this).find("label").append("<span class=\'mec-booking-field-required\'>'.esc_html__('This field contains invalid characters.', 'modern-events-calendar-lite').'</span>");
+                }
+            }
+            else
+            {
+                jQuery(this).find(".mec-booking-field-required").remove();
+                jQuery(this).removeClass("mec-red-notification");
+            }
+        });
+
+        jQuery("#mec_book_form'.esc_js($uniqueid).' .mec-book-ticket-container .mec-book-reg-field-date").filter(":visible").each(function(i)
+        {
+            if ( jQuery(this).find(".mec-booking-field-required").length) {
+                return;
+            }
+
+            var ticket_id = jQuery(this).data("ticket-id");
+            var field_id = jQuery(this).data("field-id");
+            const date_value = jQuery("#mec_book_form'.esc_js($uniqueid).' input[name=\'book[tickets]["+ticket_id+"][reg]["+field_id+"]\']").val();
+
+            if(date_value && date_value.toLowerCase() !== \'mm/dd/yyyy\' && isNaN(Date.parse(date_value)))
+            {
+                valid = false;
+                jQuery(this).addClass("mec-red-notification");
+
+                if(!focused)
+                {
+                    jQuery(this).find(":input").focus();
+                    focused = true;
+                }
+
+                if ( jQuery(this).find(".mec-booking-field-required").length < 1) {
+                    jQuery(this).find("label").append("<span class=\'mec-booking-field-required\'>'.esc_html__('Please enter a valid date.', 'modern-events-calendar-lite').'</span>");
                 }
             }
             else
@@ -668,24 +773,151 @@ function mec_book_form_submit'.esc_js($uniqueid).'()
             }
         });
 
-        // Fixed Fields
-        jQuery("#mec_book_form'.esc_js($uniqueid).' .mec-book-bfixed-fields-container .mec-book-bfixed-field-text.mec-reg-mandatory, #mec_book_form'.esc_js($uniqueid).' .mec-book-bfixed-fields-container .mec-book-bfixed-field-date.mec-reg-mandatory, #mec_book_form'.esc_js($uniqueid).' .mec-book-bfixed-fields-container .mec-book-bfixed-field-email.mec-reg-mandatory, #mec_book_form'.esc_js($uniqueid).' .mec-book-bfixed-fields-container .mec-book-bfixed-field-tel.mec-reg-mandatory").filter(":visible").each(function(i)
+        jQuery("#mec_book_form'.esc_js($uniqueid).' .mec-book-ticket-container .mec-book-reg-field-textarea").filter(":visible").each(function(i)
         {
-            var field_id = jQuery(this).data("field-id");
+            if ( jQuery(this).find(".mec-booking-field-required").length) {
+                return;
+            }
 
-            if(!jQuery("#mec_book_form'.esc_js($uniqueid).' input[name=\'book[fields]["+field_id+"]\']").val())
+            var ticket_id = jQuery(this).data("ticket-id");
+            var field_id = jQuery(this).data("field-id");
+            const text_format_regex = /^[\\p{L}\\p{N}\\s.,!?\\-\'\u0022():&#$%*@]+$/u;
+            const text_value = jQuery("#mec_book_form'.esc_js($uniqueid).' textarea[name=\'book[tickets]["+ticket_id+"][reg]["+field_id+"]\']").val();
+
+            if(text_value && !text_format_regex.test(text_value))
             {
                 valid = false;
                 jQuery(this).addClass("mec-red-notification");
-                
+
                 if(!focused)
                 {
                     jQuery(this).find(":input").focus();
                     focused = true;
                 }
-                
+
+                if ( jQuery(this).find(".mec-booking-field-required").length < 1) {
+                    jQuery(this).find("label").append("<span class=\'mec-booking-field-required\'>'.esc_html__('This field contains invalid characters.', 'modern-events-calendar-lite').'</span>");
+                }
+            }
+            else
+            {
+                jQuery(this).find(".mec-booking-field-required").remove();
+                jQuery(this).removeClass("mec-red-notification");
+            }
+        });
+
+        // Fixed Fields
+        jQuery("#mec_book_form'.esc_js($uniqueid).' .mec-book-bfixed-fields-container .mec-book-bfixed-field-text.mec-reg-mandatory, #mec_book_form'.esc_js($uniqueid).' .mec-book-bfixed-fields-container .mec-book-bfixed-field-date.mec-reg-mandatory, #mec_book_form'.esc_js($uniqueid).' .mec-book-bfixed-fields-container .mec-book-bfixed-field-email.mec-reg-mandatory, #mec_book_form'.esc_js($uniqueid).' .mec-book-bfixed-fields-container .mec-book-bfixed-field-tel.mec-reg-mandatory").filter(":visible").each(function(i)
+        {
+            var field_id = jQuery(this).data("field-id");
+            var field_value = jQuery("#mec_book_form'.esc_js($uniqueid).' input[name=\'book[fields]["+field_id+"]\']").val();
+
+            if(!field_value || (jQuery(this).hasClass(\'mec-book-bfixed-field-date\') && field_value.toLowerCase() === \'mm/dd/yyyy\'))
+            {
+                valid = false;
+                jQuery(this).addClass("mec-red-notification");
+
+                if(!focused)
+                {
+                    jQuery(this).find(":input").focus();
+                    focused = true;
+                }
+
                 if ( jQuery(this).find(".mec-booking-field-required").length < 1) {
                     jQuery(this).find("label").append("<span class=\'mec-booking-field-required\'>'.esc_html__('This field is required.', 'modern-events-calendar-lite').'</span>");
+                }
+            }
+            else
+            {
+                jQuery(this).find(".mec-booking-field-required").remove();
+                jQuery(this).removeClass("mec-red-notification");
+            }
+        });
+
+        jQuery("#mec_book_form'.esc_js($uniqueid).' .mec-book-bfixed-fields-container .mec-book-bfixed-field-email").filter(":visible").each(function(i)
+        {
+            var field_id = jQuery(this).data("field-id");
+            const email_format_regex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+            const email_value = jQuery("#mec_book_form'.esc_js($uniqueid).' input[name=\'book[fields]["+field_id+"]\']").val();
+
+            if(!email_value) return;
+
+            if(!email_format_regex.test(email_value))
+            {
+                valid = false;
+                jQuery(this).addClass("mec-red-notification");
+
+                if(!focused)
+                {
+                    jQuery(this).find(":input").focus();
+                    focused = true;
+                }
+
+                if ( jQuery(this).find(".mec-booking-field-required").length < 1) {
+                    jQuery(this).find("label").append("<span class=\'mec-booking-field-required\'>'.esc_html__('Email format is not valid.', 'modern-events-calendar-lite').'</span>");
+                }
+            }
+            else
+            {
+                jQuery(this).find(".mec-booking-field-required").remove();
+                jQuery(this).removeClass("mec-red-notification");
+            }
+        });
+
+        jQuery("#mec_book_form'.esc_js($uniqueid).' .mec-book-bfixed-fields-container .mec-book-bfixed-field-text").filter(":visible").each(function(i)
+        {
+            if ( jQuery(this).find(".mec-booking-field-required").length) {
+                return;
+            }
+
+            var field_id = jQuery(this).data("field-id");
+            const text_format_regex = /^[\\p{L}\\p{N}\\s.,!?\\-\'\u0022():&#$%*@]+$/u;
+            const text_value = jQuery("#mec_book_form'.esc_js($uniqueid).' input[name=\'book[fields]["+field_id+"]\']").val();
+
+            if(text_value && !text_format_regex.test(text_value))
+            {
+                valid = false;
+                jQuery(this).addClass("mec-red-notification");
+
+                if(!focused)
+                {
+                    jQuery(this).find(":input").focus();
+                    focused = true;
+                }
+
+                if ( jQuery(this).find(".mec-booking-field-required").length < 1) {
+                    jQuery(this).find("label").append("<span class=\'mec-booking-field-required\'>'.esc_html__('This field contains invalid characters.', 'modern-events-calendar-lite').'</span>");
+                }
+            }
+            else
+            {
+                jQuery(this).find(".mec-booking-field-required").remove();
+                jQuery(this).removeClass("mec-red-notification");
+            }
+        });
+
+        jQuery("#mec_book_form'.esc_js($uniqueid).' .mec-book-bfixed-fields-container .mec-book-bfixed-field-date").filter(":visible").each(function(i)
+        {
+            if ( jQuery(this).find(".mec-booking-field-required").length) {
+                return;
+            }
+
+            var field_id = jQuery(this).data("field-id");
+            const date_value = jQuery("#mec_book_form'.esc_js($uniqueid).' input[name=\'book[fields]["+field_id+"]\']").val();
+
+            if(date_value && date_value.toLowerCase() !== \'mm/dd/yyyy\' && isNaN(Date.parse(date_value)))
+            {
+                valid = false;
+                jQuery(this).addClass("mec-red-notification");
+
+                if(!focused)
+                {
+                    jQuery(this).find(":input").focus();
+                    focused = true;
+                }
+
+                if ( jQuery(this).find(".mec-booking-field-required").length < 1) {
+                    jQuery(this).find("label").append("<span class=\'mec-booking-field-required\'>'.esc_html__('Please enter a valid date.', 'modern-events-calendar-lite').'</span>");
                 }
             }
             else
@@ -816,6 +1048,38 @@ function mec_book_form_submit'.esc_js($uniqueid).'()
                 
                 if ( jQuery(this).find(".mec-booking-field-required").length < 1) {
                     jQuery(this).find("label").append("<span class=\'mec-booking-field-required\'>'.esc_html__('This field is required.', 'modern-events-calendar-lite').'</span>");
+                }
+            }
+            else
+            {
+                jQuery(this).find(".mec-booking-field-required").remove();
+                jQuery(this).removeClass("mec-red-notification");
+            }
+        });
+
+        jQuery("#mec_book_form'.esc_js($uniqueid).' .mec-book-bfixed-fields-container .mec-book-bfixed-field-textarea").filter(":visible").each(function(i)
+        {
+            if ( jQuery(this).find(".mec-booking-field-required").length) {
+                return;
+            }
+
+            var field_id = jQuery(this).data("field-id");
+            const text_format_regex = /^[\\p{L}\\p{N}\\s.,!?\\-\'\u0022():&#$%*@]+$/u;
+            const text_value = jQuery("#mec_book_form'.esc_js($uniqueid).' textarea[name=\'book[fields]["+field_id+"]\']").val();
+
+            if(text_value && !text_format_regex.test(text_value))
+            {
+                valid = false;
+                jQuery(this).addClass("mec-red-notification");
+
+                if(!focused)
+                {
+                    jQuery(this).find(":input").focus();
+                    focused = true;
+                }
+
+                if ( jQuery(this).find(".mec-booking-field-required").length < 1) {
+                    jQuery(this).find("label").append("<span class=\'mec-booking-field-required\'>'.esc_html__('This field contains invalid characters.', 'modern-events-calendar-lite').'</span>");
                 }
             }
             else
@@ -1122,7 +1386,7 @@ function mec_partial_or_full_payment'.esc_js($uniqueid).'(transaction_id, method
     {
         type: "POST",
         url: "'.admin_url('admin-ajax.php', NULL).'",
-        data: "action=mec_partial_or_full&method="+method+"&transaction_id="+transaction_id+"&_wpnonce='.wp_create_nonce('mec_partial_or_full').'",
+        data: "action=mec_partial_or_full&method="+method+"&transaction_id="+transaction_id+"&stripe_piid="+(typeof mec_stripe_payment_intent_id !== "undefined" ? mec_stripe_payment_intent_id : "")+"&_wpnonce='.wp_create_nonce('mec_partial_or_full').'",
         dataType: "JSON",
         success: function(data)
         {

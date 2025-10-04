@@ -39,7 +39,7 @@ $constantcontact_refresh_token = get_option('mec_constantcontact_refresh_token',
 
                     <form id="mec_integrations_form">
 
-                        <?php if($this->main->getPRO()): ?>
+                        <?php if ($this->main->getPRO()): ?>
 
                             <div id="mailchimp_option" class="mec-options-fields active">
                                 <h4 class="mec-form-subtitle"><?php esc_html_e('Mailchimp', 'modern-events-calendar-lite'); ?></h4>
@@ -76,6 +76,15 @@ $constantcontact_refresh_token = get_option('mec_constantcontact_refresh_token',
                                                 </div>
                                                 <i title="" class="dashicons-before dashicons-editor-help"></i>
                                             </span>
+                                        </div>
+                                    </div>
+                                    <div class="mec-form-row">
+                                        <label class="mec-col-3" for="mec_settings_mchimp_attendee_mode"><?php esc_html_e('Attendee Mailchimp Sync Mode', 'modern-events-calendar-lite'); ?></label>
+                                        <div class="mec-col-9">
+                                            <select name="mec[settings][mchimp_attendee_mode]" id="mec_settings_mchimp_attendee_mode">
+                                                <option value="all" <?php if(!isset($settings['mchimp_attendee_mode']) || $settings['mchimp_attendee_mode'] == 'all') echo 'selected="selected"'; ?>><?php esc_html_e('All attendees', 'modern-events-calendar-lite'); ?></option>
+                                                <option value="primary" <?php if(isset($settings['mchimp_attendee_mode']) && $settings['mchimp_attendee_mode'] == 'primary') echo 'selected="selected"'; ?>><?php esc_html_e('Only primary attendee', 'modern-events-calendar-lite'); ?></option>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="mec-form-row">

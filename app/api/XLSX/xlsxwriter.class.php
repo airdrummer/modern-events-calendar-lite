@@ -30,7 +30,7 @@ class MEC_XLSXWriter
 	public function __construct()
 	{
 		defined('ENT_XML1') or define('ENT_XML1',16);//for php 5.3, avoid fatal error
-		date_default_timezone_get() or date_default_timezone_set('UTC');//php.ini missing tz, avoid warning
+		// date_default_timezone_get() or date_default_timezone_set('UTC');//php.ini missing tz, avoid warning
 		is_writeable($this->tempFilename()) or self::log("Warning: tempdir ".sys_get_temp_dir()." not writeable, use ->setTempDir()");
 		class_exists('ZipArchive') or self::log("Error: ZipArchive class does not exist");
 		$this->addCellStyle($number_format='GENERAL', $style_string=null);

@@ -676,6 +676,26 @@ jQuery(document).ready(function ($) {
     if(value === '2') $userpass.addClass('w-hidden');
     else $userpass.removeClass('w-hidden');
   });
+
+  $('.mec-image-size-field').each(function () {
+    const $field = $(this);
+    const skin = $field.data('skin');
+
+    if (!skin) {
+      return;
+    }
+
+    if ($field.data('forceHidden')) {
+      $field.addClass('mec-util-hidden');
+      return;
+    }
+
+    const $styleSelect = $('#mec_skin_' + skin + '_style');
+
+    if ($styleSelect.length) {
+      mec_toggle_image_size_field(skin, $styleSelect.val());
+    }
+  });
 });
 
 function mec_skin_full_calendar_skin_toggled(Context) {
@@ -1006,7 +1026,54 @@ function mec_skin_style_changed(skin, style, context) {
     else $mobile_clean_style.show();
   }
 
+  mec_toggle_image_size_field(skin, style);
+
   jQuery(document).trigger("mec_skin_style_changed", [skin, style, context]);
+}
+
+function mec_toggle_image_size_field(skin, style) {
+  const $field = jQuery('.mec-image-size-field[data-skin="' + skin + '"]');
+
+  if (!$field.length) {
+    return;
+  }
+
+  if ($field.data('forceHidden')) {
+    $field.addClass('mec-util-hidden');
+    return;
+  }
+
+  const rawHideStyles = $field.data('hideStyles');
+
+  if (!rawHideStyles) {
+    $field.removeClass('mec-util-hidden');
+    return;
+  }
+
+  let hideStyles = rawHideStyles;
+
+  if (!Array.isArray(hideStyles)) {
+    hideStyles = rawHideStyles.toString().split(',');
+  }
+
+  hideStyles = hideStyles
+    .map(function (item) {
+      return (item || '').toString().trim();
+    })
+    .filter(function (item) {
+      return item.length > 0;
+    });
+
+  if (!style && hideStyles.length) {
+    $field.addClass('mec-util-hidden');
+    return;
+  }
+
+  if (hideStyles.indexOf(style) !== -1) {
+    $field.addClass('mec-util-hidden');
+  } else {
+    $field.removeClass('mec-util-hidden');
+  }
 }
 
 function mec_skin_map_toggle(context) {

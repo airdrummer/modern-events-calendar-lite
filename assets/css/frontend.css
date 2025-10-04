@@ -74,11 +74,16 @@
   font-weight: 700;
 }
 
-.mec-wrap :not(.elementor-widget-container) > p {
+.mec-wrap p {
   margin: 0 0 20px 0;
   color: #616161;
   font-size: 14px;
   line-height: 1.8;
+}
+
+.mec-wrap .elementor-widget-container p,
+.mec-wrap .et_pb_module p {
+  all: unset;
 }
 
 .mec-wrap .read-more-text p span.more-text {
@@ -113,7 +118,7 @@
 .mec-wrap
   button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):not(
     .mec-googlemap-details button
-  ):not(.mec-googlemap-details button):not(.elementor-add-section-inner button),
+  ):not(.mec-googlemap-details button):not(.elementor-add-section-inner button):not(.dismissButton),
 .mec-wrap input[type="submit"],
 .mec-wrap input[type="reset"],
 .mec-wrap input[type="button"],
@@ -121,7 +126,7 @@
 .lity-content
   button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):not(
     .mec-googlemap-details button
-  ):not(.mec-googlemap-details button):not(.elementor-add-section-inner button),
+  ):not(.mec-googlemap-details button):not(.elementor-add-section-inner button):not(.dismissButton),
 .lity-content input[type="submit"],
 .lity-content input[type="reset"],
 .lity-content input[type="button"],
@@ -155,7 +160,7 @@
 .mec-wrap
   button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):not(
     .elementor-add-section-inner button
-  ):hover,
+  ):not(.dismissButton):hover,
 .mec-wrap input[type="submit"]:hover,
 .mec-wrap input[type="reset"]:hover,
 .mec-wrap input[type="button"]:hover,
@@ -380,7 +385,8 @@
     /* # Modern Events Calendar (WP Plugin) Styles
     ================================================== */
 .mec-wrap {
-  font: 14px/25px;
+  font-size: 14px;
+  line-height: 25px;
   font-weight: 400;
   color: #626262;
 }
@@ -2339,6 +2345,7 @@ span.mec-event-title-soldout {
   .mec-event-grid-novel .col-md-4.col-sm-4 .mec-event-article img {
     width: 100px;
     height: 100px;
+    object-fit: cover;
   }
 
   .mec-event-grid-novel .col-md-4.col-sm-4 .mec-event-detail-wrap {
@@ -4876,7 +4883,7 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
   line-height: 40px;
   margin: 0;
   border-radius: 5px;
-  padding: 0 20px;
+  padding: 0 5px;
 }
 
 .mec-single-event label.mec-fill-attendees {
@@ -8840,10 +8847,6 @@ address.mec-events-address {
   margin-left: 80px;
 }
 
-.mec-util-hidden {
-  display: none;
-}
-
 .mec-frontbox.mec-util-hidden {
   display: none !important;
 }
@@ -9426,9 +9429,8 @@ li.mec-no-event-found .mec-event-title {
 
 /* Mec Frontend Submission
     -------------------------------- */
-.mec-fes-form,
 .mec-fes-list {
-  background: #f8feff;
+  background: var(--mec-fes-main-color-rgba-1);
   padding: 30px 3%;
   color: #798f96;
 }
@@ -9459,7 +9461,6 @@ li.mec-no-event-found .mec-event-title {
   .mec-fes-list .mec-col-11,
   .mec-fes-list .mec-col-12 {
     float: left;
-    display: inline-block;
   }
 
   .mec-fes-form .mec-col-12,
@@ -9669,14 +9670,13 @@ li.mec-no-event-found .mec-event-title {
   color: #fff !important;
   display: inline-block;
   font-size: 13px;
-  line-height: 1;
-  text-transform: none;
-  font-weight: 400;
+  line-height: 16px;
+  font-weight: 600;
+  text-transform: capitalize;
   text-decoration: none !important;
   cursor: pointer;
-  margin-bottom: 20px !important;
   margin-right: 10px;
-  line-height: 1;
+  margin-bottom: 20px;
   letter-spacing: 0;
   padding: 15px 22px;
   background: #39c36e;
@@ -9695,19 +9695,13 @@ li.mec-no-event-found .mec-event-title {
   color: #fff;
 }
 
-.mec-fes-list-top-actions a {
-  font-weight: 600;
-  text-transform: capitalize;
-}
-
 .mec-fes-form-top-actions a:before {
   content: "";
   border: solid #fff;
   border-width: 0 2px 2px 0;
   display: inline-block;
-  padding: 6px;
+  padding: 3px;
   margin-right: 5px;
-  vertical-align: sub;
   transform: rotate(135deg);
   -webkit-transform: rotate(135deg);
 }
@@ -10176,7 +10170,7 @@ li.mec-no-event-found .mec-event-title {
   .mec-fes-form .mec-fes-form-sdbr {
     width: 32%;
     padding-right: 0;
-    padding-left: 20px;
+    padding-left: 10px;
   }
 
   .mec-fes-submit-mobile {
@@ -10191,6 +10185,10 @@ li.mec-no-event-found .mec-event-title {
   box-shadow: 0 2px 6px -3px #cfeff5;
   border-radius: 3px;
   background: #fff;
+}
+
+.mec-fes-form .mec-fes-editor {
+  margin-bottom: 20px;
 }
 
 .mec-fes-form .mec-meta-box-fields h4,
@@ -12793,7 +12791,9 @@ body:has(.mec-fes-form, .mec-search-form)
 }
 
 .mec-wrap .mec-event-countdown-style3 .mec-event-countdown-part2 .mec-event-image img {
-  width: auto;
+  width: 340px;
+  height: 340px;
+  object-fit: cover;
   max-width: unset;
   display: block;
 }
@@ -14056,7 +14056,8 @@ body:has(.mec-fes-form, .mec-search-form)
 
 .mec-next-event-details h6 {
   text-transform: uppercase;
-  font-size: 13px;
+  font-size: 14px;
+  font-weight: 600;
   padding-bottom: 5px;
   display: inline;
   color: #222;
@@ -14067,11 +14068,12 @@ body:has(.mec-fes-form, .mec-search-form)
   display: block;
   padding-left: 0;
   color: #8d8d8d;
+  font-size: 14px;
 }
 
 .mec-next-event-details i {
-  margin-right: 10px;
-  margin-left: 12px;
+  margin: 0 10px;
+  vertical-align: middle;
 }
 
 .mec-next-event-details i:before {
@@ -20069,7 +20071,7 @@ body:has(.mec-fes-form, .mec-search-form) .ui-datepicker.ui-widget .ui-datepicke
   .mec-fes-form .mec-fes-form-cntt {
     width: calc(100% - 300px);
     float: left;
-    padding-right: 20px;
+    padding-right: 10px;
     max-width: 540px;
     display: block;
   }
@@ -20549,6 +20551,7 @@ span.mec-event-export-csv:before,
   min-width: 200px;
   max-width: 230px;
   font-size: 14px;
+  z-index: 1;
 }
 
 .mec-fes-form .select2-selection {
@@ -25565,7 +25568,7 @@ span.mec-marker-wrap,
 .mec-wrap
   button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):not(
     .mec-googlemap-details button
-  ):not(.mec-googlemap-details button):not(.elementor-add-section-inner button),
+  ):not(.mec-googlemap-details button):not(.elementor-add-section-inner button):not(.dismissButton),
 .mec-wrap input[type="submit"],
 .mec-wrap input[type="reset"],
 .mec-wrap input[type="button"],
@@ -25573,7 +25576,7 @@ span.mec-marker-wrap,
 .lity-content
   button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):not(
     .mec-googlemap-details button
-  ):not(.mec-googlemap-details button):not(.elementor-add-section-inner button),
+  ):not(.mec-googlemap-details button):not(.elementor-add-section-inner button):not(.dismissButton),
 .lity-content input[type="submit"],
 .lity-content input[type="reset"],
 .lity-content input[type="button"],
@@ -25591,7 +25594,9 @@ span.mec-marker-wrap,
 .mec-wrap
   button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):not(
     .mec-googlemap-details button
-  ):not(.mec-googlemap-details button):not(.elementor-add-section-inner button):hover,
+  ):not(.mec-googlemap-details button):not(.elementor-add-section-inner button):not(
+    .dismissButton
+  ):hover,
 .mec-wrap input[type="submit"]:hover,
 .mec-wrap input[type="reset"]:hover,
 .mec-wrap input[type="button"]:hover,
@@ -25599,7 +25604,9 @@ span.mec-marker-wrap,
 .lity-content
   button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):not(
     .mec-googlemap-details button
-  ):not(.mec-googlemap-details button):not(.elementor-add-section-inner button):hover,
+  ):not(.mec-googlemap-details button):not(.elementor-add-section-inner button):not(
+    .dismissButton
+  ):hover,
 .lity-content input[type="submit"]:hover,
 .lity-content input[type="reset"]:hover,
 .lity-content input[type="button"]:hover,
@@ -25820,8 +25827,12 @@ span.mec-marker-wrap,
   box-shadow: 0 0 0 2px var(--mec-fes-main-color);
 }
 
+/* .mec-fes-form, */
+.mec-fes-form {
+  padding: 30px 3%;
+}
+
 .mec-fes-form,
-.mec-fes-list,
 .mec-fes-form .html-active .switch-html,
 .mec-fes-form .tmce-active .switch-tmce,
 .mec-fes-form .wp-editor-tabs .wp-switch-editor:active,
@@ -26362,7 +26373,9 @@ span.mec-marker-wrap,
 .mec-wrap.mec-single-fluent-wrap
   button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):not(
     .mec-googlemap-details button
-  ):not(.mec-googlemap-details button):not(.elementor-add-section-inner button):hover,
+  ):not(.mec-googlemap-details button):not(.elementor-add-section-inner button):not(
+    .dismissButton
+  ):hover,
 .mec-wrap.mec-single-fluent-wrap input[type="submit"]:hover,
 .mec-wrap.mec-single-fluent-wrap input[type="reset"]:hover,
 .mec-wrap.mec-single-fluent-wrap input[type="button"]:hover {
@@ -26799,6 +26812,201 @@ span.button {
   position: relative;
 }
 
+/* Fes Appointment */
+
+.mec-fes-form .mec-event-appointment-tab {
+  display: inline-block;
+  margin: 0 -20px;
+  padding: 5px;
+  width: calc(100% + 40px);
+}
+
+.mec-fes-form .mec-event-appointment-tab-item {
+  display: inline-block;
+  padding: 12px 33px;
+  line-height: 1;
+  font-size: 14px;
+  font-weight: 600;
+  color: #798f96;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mec-fes-form .mec-event-appointment-tab-item:hover {
+  color: var(--mec-fes-main-color);
+}
+
+.mec-fes-form .mec-b-active-tab,
+.mec-fes-form .mec-active-tab {
+  background: var(--mec-fes-main-color-rgba-2);
+  color: var(--mec-fes-main-color);
+  cursor: default;
+}
+
+.mec-fes-form .mec-entity-type-event .mec-appointment-form-wrap {
+  display: none;
+}
+
+.mec-fes-form .mec-entity-type-appointment .mec-appointment-form-wrap {
+  display: block;
+}
+
+.mec-fes-form .mec-entity-type-appointment .mec-date-time-inner-options,
+.mec-fes-form
+  .mec-entity-type-appointment
+  a.mec-add-event-tabs-link[data-href="mec_meta_box_repeat_form"],
+.mec-fes-form .mec-entity-type-appointment #mec_meta_box_repeat_form,
+.mec-fes-form
+  .mec-entity-type-appointment
+  a.mec-add-event-tabs-link[data-href="mec-hourly-schedule"],
+.mec-fes-form .mec-entity-type-appointment #mec-hourly-schedule,
+.mec-fes-form .mec-entity-type-appointment a.mec-add-event-tabs-link[data-href="mec-schema"],
+.mec-fes-form .mec-entity-type-appointment #mec-schema {
+  display: none !important;
+}
+
+.mec-fes-form .lsd-apt-to {
+  margin: 0 1% 0 0%;
+}
+
+.mec-fes-form .lsd-apt-day-label {
+  line-height: 38px;
+  font-weight: 600;
+}
+
+.mec-fes-form .lsd-apt-days-wrapper {
+  margin: 20px 0;
+}
+
+.mec-fes-form .lsd-apt-days-wrapper .lsd-apt-day-wrapper.mec-form-row,
+.mec-fes-form .lsd-apt-adjusted-days-wrapper .lsd-apt-day-wrapper.mec-form-row {
+  margin-bottom: 10px;
+}
+
+.mec-fes-form .lsd-apt-day-timeslot-wrapper {
+  display: flex;
+  flex-direction: row;
+  margin: 0;
+}
+
+.mec-fes-form .lsd-apt-day-timeslot-wrapper:not(:first-child) {
+  margin-top: 10px;
+}
+
+.mec-fes-form .lsd-apt-day-timeslot-wrapper > div {
+  width: calc(100% - 32px);
+}
+
+.mec-fes-form .mec-form-row .button.lsd-apt-day-timeslot-wrapper > span,
+.mec-fes-form .mec-form-row .button.lsd-apt-day-icon-plus,
+.mec-fes-form .mec-form-row .button.lsd-apt-day-icon-copy,
+.mec-fes-form .mec-form-row .button.lsd-apt-adj-day-icon-plus,
+.mec-fes-form .mec-form-row .button.lsd-apt-adjusted-day-remove,
+.mec-fes-form .mec-form-row .button.lsd-apt-day-icon-remove {
+  height: 36px !important;
+  padding: 0 8px !important;
+  margin: 0 2px 0 0 !important;
+}
+
+.mec-fes-form .lsd-apt-day-timeslot-wrapper > span svg,
+.mec-fes-form .lsd-apt-day-icon-plus svg,
+.mec-fes-form .lsd-apt-day-icon-copy svg,
+.mec-fes-form .button.lsd-apt-adj-day-icon-plus svg,
+.mec-fes-form .button.lsd-apt-adjusted-day-remove svg,
+.mec-fes-form .mec-form-row .button.lsd-apt-day-icon-remove svg {
+  width: 12px;
+}
+
+.mec-fes-form .lsd-apt-day-timeslot-wrapper > span svg path,
+.mec-fes-form .lsd-apt-day-icon-plus svg path,
+.mec-fes-form .lsd-apt-day-icon-copy svg path,
+.mec-fes-form .button.lsd-apt-adj-day-icon-plus svg path,
+.mec-fes-form .button.lsd-apt-adjusted-day-remove svg path,
+.mec-fes-form .mec-form-row .button.lsd-apt-day-icon-remove svg path {
+  fill: #40d9f1;
+}
+
+.mec-fes-form .lsd-apt-day-timeslot-wrapper > span:hover svg path,
+.mec-fes-form .lsd-apt-day-icon-plus:hover svg path,
+.mec-fes-form .lsd-apt-day-icon-copy:hover svg path,
+.mec-fes-form .button.lsd-apt-adj-day-icon-plus:hover svg path,
+.mec-fes-form .button.lsd-apt-adjusted-day-remove:hover svg path,
+.mec-fes-form .mec-form-row .button.lsd-apt-day-icon-remove:hover svg path {
+  fill: #fff;
+}
+
+.mec-fes-form .lsd-apt-day-icons .lsd-apt-day-icon-plus,
+.mec-fes-form .lsd-apt-day-icons .lsd-apt-day-icon-copy {
+  line-height: 38px;
+}
+
+.mec-fes-form .lsd-apt-day-timeslots-unavailable {
+  font-size: 13px;
+  line-height: 36px;
+  color: #ea6485;
+  text-align: center;
+}
+
+.mec-fes-form .lsd-apt-days-wrapper .lsd-apt-day-wrapper.mec-form-row select,
+.mec-fes-form .lsd-apt-adjusted-days-wrapper .lsd-apt-day-wrapper.mec-form-row select {
+  max-width: 55px;
+  padding: 0 0 0 5px;
+  margin-bottom: 0;
+}
+
+.mec-fes-form .mec-dash-remove-btn svg path {
+  fill: #ea6485 !important;
+}
+
+.mec-fes-form .mec-form-row.sw-apt {
+  display: flex;
+  align-items: center;
+}
+
+.mec-fes-form .mec-appointment-form-wrap span.mec-tooltip i {
+  line-height: 38px;
+}
+
+.mec-fes-form .lsd-apt-day-icons {
+  display: flex;
+}
+
+.mec-fes-form
+  .lsd-apt-adjusted-days-wrapper
+  .lsd-apt-day-wrapper.mec-form-row
+  .lsd-apt-day-label
+  input {
+  width: calc(100% - 15px);
+}
+
+.mec-fes-form .lsd-apt-day-label.mec-col-2 {
+  width: 7%;
+  font-size: 13px;
+  line-height: 36px;
+}
+
+.mec-fes-form .lsd-apt-day-timeslots.mec-col-9 {
+  width: 80%;
+}
+
+.mec-fes-form .lsd-apt-adjusted-days-wrapper .lsd-apt-day-label.mec-col-2,
+.mec-fes-form #mec_appointments_buffer,
+.mec-fes-form #mec_appointments_max_per_day,
+.mec-fes-form #mec_appointments_start_date {
+  width: 30%;
+}
+
+.mec-fes-form #mec_appointments_scheduling_advance,
+.mec-fes-form #mec_appointments_scheduling_before {
+  margin-bottom: 0;
+}
+
+.mec-fes-form .sw-apt span:not(:has(input)) {
+  font-size: 13px;
+  color: #798f96;
+  font-weight: 400;
+}
+
 .rtl .mec-yearly-view-wrap .mec-yearly-title-sec .mec-next-year i:before,
 .rtl .mec-yearly-view-wrap .mec-yearly-title-sec .mec-previous-year i:before,
 .rtl
@@ -26847,4 +27055,8 @@ span.button {
 
 body.rtl {
   font-family: vazirmatn;
+}
+
+.mec-util-hidden {
+  display: none;
 }

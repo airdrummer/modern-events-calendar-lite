@@ -1378,7 +1378,8 @@ body.post-type-mec-books th.column-author {
   .select2-selection--multiple
   .select2-selection__rendered
   li.select2-selection__choice {
-  padding-left: 25px;
+  padding: 0 0 0 25px;
+  line-height: 17px;
 }
 
 .post-type-mec-events .mec-add-event-tabs-wrap .select2-container,
@@ -14494,6 +14495,7 @@ body.index-php .ui-datepicker.ui-widget tr {
 
 body.toplevel_page_mec-intro .ui-datepicker.ui-widget td a,
 body.post-type-mec-events .ui-datepicker.ui-widget td a,
+body.post-type-mec-events .ui-datepicker.ui-widget td span,
 body.post-type-mec_calendars .ui-datepicker.ui-widget td a,
 body[class*="m-e-calendar_page_"] .ui-datepicker.ui-widget td a,
 body.index-php .ui-datepicker.ui-widget td a {
@@ -14507,6 +14509,10 @@ body.index-php .ui-datepicker.ui-widget td a {
   padding: 0;
   background: #fff;
   transition: all 0.2s ease;
+}
+
+body.post-type-mec-events .ui-datepicker.ui-widget td.ui-datepicker-unselectable.ui-state-disabled span {
+  color: #d1d2d3;
 }
 
 body.toplevel_page_mec-intro .ui-datepicker.ui-widget td a.ui-state-active,
@@ -14635,6 +14641,10 @@ body.index-php .ui-datepicker .ui-datepicker-next {
   font-weight: 600;
 }
 
+.lsd-apt-day-label input {
+  font-weight: 400;
+}
+
 .lsd-apt-days-wrapper {
   margin: 30px 0 0 0;
 }
@@ -14737,4 +14747,8 @@ textarea[readonly] {
   content: "\e023";
   font-size: 15px;
   color: #07bbe9;
+}
+
+body.post-type-mec_invoice #post-body-content {
+    margin: 0;
 }

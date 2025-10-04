@@ -36,6 +36,14 @@ $_1month_before = strtotime('first day of -1 month', strtotime($first_date));
 $_1month_after = strtotime('first day of +1 month', strtotime($first_date));
 $current_month_time = strtotime($first_date);
 
+// Scheduling advance limit for appointments
+$appointments_config = get_post_meta($event->ID, 'mec_appointments', true);
+$advance_limit = null;
+if(isset($appointments_config['scheduling_advance_status']) && $appointments_config['scheduling_advance_status'] && isset($appointments_config['scheduling_advance']) && trim($appointments_config['scheduling_advance']))
+{
+    $advance_limit = current_time('timestamp') + ((int) $appointments_config['scheduling_advance']) * DAY_IN_SECONDS;
+}
+
 $year = date('Y', strtotime($first_date));
 $month = date('m', strtotime($first_date));
 $active_day = date('d', strtotime($first_date));
@@ -78,8 +86,9 @@ if(strtotime(date('Y-m-t', $_1month_before)) >= time())
 
 $navigator_html .= '<div class="mec-calendar-header"><h2>'.esc_html($this->main->date_i18n('F Y', $current_month_time)).'</h2></div>';
 
-// Show next navigation
-if(strtotime(date('Y-m-01', $_1month_after)) >= time())
+// Show next navigation respecting scheduling advance limit
+$next_month_start = strtotime(date('Y-m-01', $_1month_after));
+if($next_month_start >= time() && (!$advance_limit || $next_month_start <= $advance_limit))
 {
     $navigator_html .= '<div class="mec-next-month mec-load-month mec-next-month" data-mec-year="'.date('Y', $_1month_after).'" data-mec-month="'.date('m', $_1month_after).'"><a href="#" class="mec-load-month-link">'.esc_html($this->main->date_i18n('M', $_1month_after)).' <i class="mec-sl-angle-right"></i></a></div>';
 }

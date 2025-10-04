@@ -73,7 +73,8 @@ $cost = $this->main->get_event_cost($event);
 
         <?php echo MEC_kses::full($this->main->display_progress_bar($event)); ?>
 
-        <div class="col-md-4<?php if(empty($event->data->thumbnails['full'])) echo ' mec-no-image'; ?>">
+        <?php $image = $this->get_thumbnail_image($event, 'full'); ?>
+        <div class="col-md-4<?php if(empty($image)) echo ' mec-no-image'; ?>">
 
             <?php do_action('mec_single_virtual_badge', $event->data); ?>
             <?php do_action('mec_single_zoom_badge', $event->data); ?>

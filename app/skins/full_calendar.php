@@ -207,6 +207,7 @@ class MEC_skin_full_calendar extends MEC_skins
                 $atts['sk-options']['yearly_view']['reason_for_cancellation'] = $this->skin_options['reason_for_cancellation'] ?? false;
                 $atts['sk-options']['yearly_view']['include_local_time'] = $this->include_local_time;
                 $atts['sk-options']['yearly_view']['booking_button'] = $this->skin_options['booking_button'] ?? 0;
+                $atts['sk-options']['yearly_view']['image_size'] = $this->skin_options['image_size'] ?? 'default';
                 $atts['sk-options']['yearly_view']['from_fc'] = 1;
                 $atts['sf_status'] = false;
 
@@ -234,6 +235,7 @@ class MEC_skin_full_calendar extends MEC_skins
                 $atts['sk-options']['monthly_view']['activate_current_day'] = $this->skin_options['activate_current_day'] ?? '1';
                 $atts['sk-options']['monthly_view']['display_all'] = $this->skin_options['display_all'] ?? 0;
                 $atts['sk-options']['monthly_view']['booking_button'] = $this->skin_options['booking_button'] ?? 0;
+                $atts['sk-options']['monthly_view']['image_size'] = $this->skin_options['image_size'] ?? 'default';
                 $atts['sk-options']['monthly_view']['from_fc'] = 1;
                 $atts['sf_status'] = false;
 
@@ -256,6 +258,7 @@ class MEC_skin_full_calendar extends MEC_skins
                 $atts['sk-options']['weekly_view']['reason_for_cancellation'] = $this->skin_options['reason_for_cancellation'] ?? false;
                 $atts['sk-options']['weekly_view']['include_local_time'] = $this->include_local_time;
                 $atts['sk-options']['weekly_view']['booking_button'] = $this->skin_options['booking_button'] ?? 0;
+                $atts['sk-options']['weekly_view']['image_size'] = $this->skin_options['image_size'] ?? 'default';
                 $atts['sk-options']['weekly_view']['from_fc'] = 1;
                 $atts['sf_status'] = false;
 
@@ -275,6 +278,7 @@ class MEC_skin_full_calendar extends MEC_skins
                 $atts['sk-options']['daily_view']['reason_for_cancellation'] = $this->skin_options['reason_for_cancellation'] ?? false;
                 $atts['sk-options']['daily_view']['include_local_time'] = $this->include_local_time;
                 $atts['sk-options']['daily_view']['booking_button'] = $this->skin_options['booking_button'] ?? 0;
+                $atts['sk-options']['daily_view']['image_size'] = $this->skin_options['image_size'] ?? 'default';
                 $atts['sk-options']['daily_view']['from_fc'] = 1;
                 $atts['sf_status'] = false;
 
@@ -309,6 +313,7 @@ class MEC_skin_full_calendar extends MEC_skins
                 $atts['sk-options']['grid']['reason_for_cancellation'] = $this->skin_options['reason_for_cancellation'] ?? false;
                 $atts['sk-options']['grid']['include_local_time'] = $this->include_local_time;
                 $atts['sk-options']['grid']['booking_button'] = $this->skin_options['booking_button'] ?? 0;
+                $atts['sk-options']['grid']['image_size'] = $this->skin_options['image_size'] ?? 'default';
                 $atts['sk-options']['grid']['from_fc'] = 1;
                 $atts['sf_status'] = false;
 
@@ -331,6 +336,7 @@ class MEC_skin_full_calendar extends MEC_skins
                 $atts['sk-options']['tile']['reason_for_cancellation'] = $this->skin_options['reason_for_cancellation'] ?? false;
                 $atts['sk-options']['tile']['include_local_time'] = $this->include_local_time;
                 $atts['sk-options']['tile']['booking_button'] = $this->skin_options['booking_button'] ?? 0;
+                $atts['sk-options']['tile']['image_size'] = $this->skin_options['image_size'] ?? 'default';
                 $atts['sk-options']['tile']['from_fc'] = 1;
                 $atts['sf_status'] = false;
 
@@ -363,6 +369,7 @@ class MEC_skin_full_calendar extends MEC_skins
                 $atts['sk-options']['list']['reason_for_cancellation'] = $this->skin_options['reason_for_cancellation'] ?? false;
                 $atts['sk-options']['list']['include_local_time'] = $this->include_local_time;
                 $atts['sk-options']['list']['booking_button'] = $this->skin_options['booking_button'] ?? 0;
+                $atts['sk-options']['list']['image_size'] = $this->skin_options['image_size'] ?? 'default';
                 $atts['sk-options']['list']['from_fc'] = 1;
                 $atts['sf_status'] = false;
 

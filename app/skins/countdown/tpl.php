@@ -242,7 +242,10 @@ do_action('mec_countdown_skin_head');
         </div>
         <div class="mec-event-countdown-part2">
             <div class="mec-event-image">
-                <?php echo MEC_kses::element($this->display_link($event, $event->data->thumbnails['meccarouselthumb'], '')); ?>
+                <?php
+                    $image = $this->get_thumbnail_image($event, 'meccarouselthumb');
+                    echo MEC_kses::element($this->display_link($event, $image, ''));
+                ?>
             </div>
         </div>
     </article>

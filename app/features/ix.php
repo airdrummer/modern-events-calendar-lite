@@ -4649,7 +4649,7 @@ class MEC_feature_ix extends MEC_base
                     $events = $this->main->get_events($batch_size, ['publish'], $paged, false);
                     if (empty($events)) break;
 
-                    foreach($events as $event) $output .= $this->main->ical_single($event->ID);
+                    foreach($events as $event) $output .= $this->main->ical_single($event->ID, '', '', true);
 
                     $paged++;
                     unset($events);

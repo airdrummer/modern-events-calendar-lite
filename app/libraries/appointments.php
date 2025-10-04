@@ -64,6 +64,8 @@ class MEC_appointments extends MEC_base
             unset($day); // break reference
         }
 
+        $availability_repeat_type = $config['availability_repeat_type'] ?? 'weekly';
+
         $adjusted_map = [];
         if (isset($config['adjusted_availability']) && is_array($config['adjusted_availability']))
         {
@@ -95,9 +97,13 @@ class MEC_appointments extends MEC_base
         $availability = $config['availability'] ?? [];
         $duration = isset($config['duration']) && is_numeric($config['duration']) ? (int) $config['duration'] : 10;
         $buffer = isset($config['buffer']) && is_numeric($config['buffer']) ? (int) $config['buffer'] : 0;
+        $max_bookings_per_day = isset($config['max_bookings_per_day']) && is_numeric($config['max_bookings_per_day']) ? (int) $config['max_bookings_per_day'] : '';
+        $repeat_start_date = isset($config['start_date']) ? sanitize_text_field($config['start_date']) : '';
 
         $config['duration'] = $duration;
         $config['buffer'] = $buffer;
+        $config['max_bookings_per_day'] = $max_bookings_per_day;
+        $config['start_date'] = $repeat_start_date;
 
         $start_date = null;
         $start_hour = null;
@@ -108,55 +114,126 @@ class MEC_appointments extends MEC_base
         $end_minutes = null;
         $end_ampm = null;
 
-        $slots = $this->generate_slots($availability, $duration, $buffer);
-        $adjusted_slots = [];
-        foreach ($adjusted_map as $date => $periods)
-        {
-            $g = $this->generate_slots([0 => $periods], $duration, $buffer);
-            $adjusted_slots[$date] = $g[0] ?? [];
-        }
-
-        $today = current_time('Y-m-d');
-        $today_ts = strtotime($today);
-
         $in_days = [];
-        for ($i = 0; $i < 180; $i++)
+
+        if ($availability_repeat_type === 'no_repeat')
         {
-            $date = wp_date('Y-m-d', strtotime("+$i days", $today_ts));
+            $dates = array_keys($adjusted_map);
+            sort($dates);
 
-            if (isset($adjusted_slots[$date]))
+            $start_ts = null;
+            $end_ts = null;
+
+            foreach ($dates as $date)
             {
-                $day_slots = $adjusted_slots[$date];
-                if (!count($day_slots)) continue;
+                $periods = $adjusted_map[$date];
+                $g = $this->generate_slots([0 => $periods], $duration, $buffer);
+                $day_slots = $g[0] ?? [];
+
+                foreach ($day_slots as $day_slot)
+                {
+                    $st = strtotime($date .' '.$day_slot['start']);
+                    $et = strtotime($date .' '.$day_slot['end']);
+
+                    if (is_null($start_ts)) $start_ts = $st;
+                    if (is_null($end_ts)) $end_ts = $et;
+
+                    $start_time = date('h-i-A', $st);
+                    $end_time = date('h-i-A', $et);
+                    $in_days[] = "$date:$date:$start_time:$end_time";
+                }
             }
-            else
-            {
-                // Get PHP weekday index (0 = Monday, 6 = Sunday)
-                $weekday = (int) wp_date('N', strtotime($date)) - 1;
-                if (empty($slots[$weekday])) continue;
 
-                $day_slots = $slots[$weekday];
+            if (!is_null($start_ts))
+            {
+                $start_date = date('Y-m-d', $start_ts);
+                $start_hour = date('h', $start_ts);
+                $start_minutes = date('i', $start_ts);
+                $start_ampm = date('A', $start_ts);
             }
 
-            // Day Slots
-            foreach ($day_slots as $day_slot)
+            if (!is_null($end_ts))
             {
-                $st = strtotime($date .' '.$day_slot['start']);
-                $et = strtotime($date .' '.$day_slot['end']);
+                $end_date = date('Y-m-d', $end_ts);
+                $end_hour = date('h', $end_ts);
+                $end_minutes = date('i', $end_ts);
+                $end_ampm = date('A', $end_ts);
+            }
+        }
+        else
+        {
+            $slots = $this->generate_slots($availability, $duration, $buffer);
+            $adjusted_slots = [];
+            foreach ($adjusted_map as $date => $periods)
+            {
+                $g = $this->generate_slots([0 => $periods], $duration, $buffer);
+                $adjusted_slots[$date] = $g[0] ?? [];
+            }
 
-                if (is_null($start_date)) $start_date = $date;
-                if (is_null($start_hour)) $start_hour = date('h', $st);
-                if (is_null($start_minutes)) $start_minutes = date('i', $st);
-                if (is_null($start_ampm)) $start_ampm = date('A', $st);
-                if (is_null($end_date)) $end_date = $date;
-                if (is_null($end_hour)) $end_hour = date('h', $et);
-                if (is_null($end_minutes)) $end_minutes = date('i', $et);
-                if (is_null($end_ampm)) $end_ampm = date('A', $et);
+            $timezone = wp_timezone();
+            $today_dt = new DateTime('now', $timezone);
+            $today_dt->setTime(0, 0);
 
-                $start_time = date('h-i-A', $st);
-                $end_time = date('h-i-A', $et);
+            $start_ts = $today_dt->getTimestamp();
+            if(!empty($repeat_start_date))
+            {
+                $tmp_start_dt = DateTime::createFromFormat('Y-m-d', $repeat_start_date, $timezone);
+                if($tmp_start_dt)
+                {
+                    $tmp_start_dt->setTime(0, 0);
+                    $tmp_start_ts = $tmp_start_dt->getTimestamp();
+                    if($tmp_start_ts > $start_ts) $start_ts = $tmp_start_ts;
+                }
+            }
 
-                $in_days[] = "$date:$date:$start_time:$end_time";
+            $start_slot_ts = null;
+            $end_slot_ts = null;
+
+            for ($i = 0; $i < 180; $i++)
+            {
+                $date_ts = $start_ts + (DAY_IN_SECONDS * $i);
+                $date = wp_date('Y-m-d', $date_ts);
+
+                if (isset($adjusted_slots[$date]))
+                {
+                    $day_slots = $adjusted_slots[$date];
+                    if (!count($day_slots)) continue;
+                }
+                else
+                {
+                    // Get PHP weekday index (0 = Monday, 6 = Sunday)
+                    $weekday = (int) wp_date('N', $date_ts) - 1;
+                    if (empty($slots[$weekday])) continue;
+
+                    $day_slots = $slots[$weekday];
+                }
+
+                // Day Slots
+                foreach ($day_slots as $day_slot)
+                {
+                    $start_dt = DateTime::createFromFormat('Y-m-d H:i', $date.' '.$day_slot['start'], $timezone);
+                    $end_dt = DateTime::createFromFormat('Y-m-d H:i', $date.' '.$day_slot['end'], $timezone);
+                    if(!$start_dt || !$end_dt) continue;
+
+                    $st = $start_dt->getTimestamp();
+                    $et = $end_dt->getTimestamp();
+
+                    if (is_null($start_date)) $start_date = $date;
+                    if (is_null($start_hour)) $start_hour = wp_date('h', $st);
+                    if (is_null($start_minutes)) $start_minutes = wp_date('i', $st);
+                    if (is_null($start_ampm)) $start_ampm = wp_date('A', $st);
+                    if (is_null($end_date)) $end_date = $date;
+                    if (is_null($end_hour)) $end_hour = wp_date('h', $et);
+                    if (is_null($end_minutes)) $end_minutes = wp_date('i', $et);
+                    if (is_null($end_ampm)) $end_ampm = wp_date('A', $et);
+                    if (is_null($start_slot_ts)) $start_slot_ts = $st;
+                    if (is_null($end_slot_ts)) $end_slot_ts = $et;
+
+                    $start_time = wp_date('h-i-A', $st);
+                    $end_time = wp_date('h-i-A', $et);
+
+                    $in_days[] = "$date:$date:$start_time:$end_time";
+                }
             }
         }
 
@@ -198,13 +275,13 @@ class MEC_appointments extends MEC_base
         update_post_meta($event_id, 'mec_date', [
             'start' => [
                 'date' => $start_date,
-                'hour' => date('g', strtotime($start_datetime)),
+                'hour' => wp_date('g', $start_slot_ts),
                 'minutes' => $start_minutes,
                 'ampm' => $start_ampm,
             ],
             'end' => [
                 'date' => $end_date,
-                'hour' => date('g', strtotime($end_datetime)),
+                'hour' => wp_date('g', $end_slot_ts),
                 'minutes' => $end_minutes,
                 'ampm' => $end_ampm,
             ],

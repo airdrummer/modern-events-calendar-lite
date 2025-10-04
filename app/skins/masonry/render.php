@@ -86,10 +86,12 @@ $reason_for_cancellation = isset($this->skin_options['reason_for_cancellation'])
                 <div class="mec-masonry">
 
                     <article class="mec-event-article mec-clear <?php echo esc_attr($this->get_event_classes($event)); ?> <?php echo esc_attr($custom_data_class); ?>">
-                        <?php if(isset($event->data->featured_image) and $this->masonry_like_grid): ?>
-                            <div class="mec-masonry-img"><?php echo MEC_kses::element($this->display_link($event, get_the_post_thumbnail($event->data->ID , 'thumblist'), '')); ?></div>
-                        <?php elseif(isset($event->data->featured_image) and isset($event->data->featured_image['full']) and trim($event->data->featured_image['full'])): ?>
-                            <div class="mec-masonry-img"><?php echo MEC_kses::element($this->display_link($event, get_the_post_thumbnail($event->data->ID , 'full'), '')); ?></div>
+                        <?php if($this->masonry_like_grid): ?>
+                            <?php $thumb = $this->get_thumbnail_image($event, 'thumblist'); if($thumb): ?>
+                            <div class="mec-masonry-img"><?php echo MEC_kses::element($this->display_link($event, $thumb, '')); ?></div>
+                            <?php endif; ?>
+                        <?php elseif($full = $this->get_thumbnail_image($event, 'full')): ?>
+                            <div class="mec-masonry-img"><?php echo MEC_kses::element($this->display_link($event, $full, '')); ?></div>
                         <?php endif; ?>
 
                         <?php echo MEC_kses::element($this->get_label_captions($event)); ?>

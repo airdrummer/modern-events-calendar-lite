@@ -371,7 +371,7 @@ $shortcodes = get_posts(array(
                                 <div id="mec_ical_feed_container_toggle" class="<?php if(!isset($settings['ical_feed']) or (isset($settings['ical_feed']) and !$settings['ical_feed'])) echo 'mec-util-hidden'; ?>">
                                     <div class="mec-form-row">
                                         <div class="mec-col-12">
-                                            <p style="margin-top: 0;"><?php echo sprintf(esc_html__('Users are able to use %s URL to subscribe to your events.', 'modern-events-calendar-lite'), '<a href="'.trim($this->main->URL('site'), '/ ').'/?mec-ical-feed=1" target="_blank">'.trim($this->main->URL('site'), '/ ').'/?mec-ical-feed=1</a>'); ?></p>
+                                            <p style="margin-top: 0;"><?php echo sprintf(esc_html__('Users are able to use %s URL to subscribe to your events.', 'modern-events-calendar-lite'), '<a href="'.trim($this->main->URL('site'), '/ ').'/?mec-ical-feed=1&nc='.time().'" target="_blank">'.trim($this->main->URL('site'), '/ ').'/?mec-ical-feed=1</a>'); ?></p>
                                         </div>
                                     </div>
                                     <div class="mec-form-row">
@@ -1181,66 +1181,6 @@ $shortcodes = get_posts(array(
                                             <div class="mec-col-3"><input type="text" name="mec[settings][api_keys][:i:][name]" title="<?php esc_attr_e('Display Name', 'modern-events-calendar-lite'); ?>" placeholder="<?php esc_attr_e('Display Name', 'modern-events-calendar-lite'); ?>"></div>
                                             <div class="mec-col-9"><input type="hidden" name="mec[settings][api_keys][:i:][key]" value=":k:"><code>:k:</code></div>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div id="mailchimp_option" class="mec-options-fields">
-                                <h4 class="mec-form-subtitle"><?php esc_html_e('Mailchimp Integration', 'modern-events-calendar-lite'); ?></h4>
-                                <div class="mec-form-row">
-                                    <label>
-                                        <input type="hidden" name="mec[settings][mchimp_status]" value="0" />
-                                        <input onchange="jQuery('#mec_mchimp_status_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][mchimp_status]" <?php if(isset($settings['mchimp_status']) and $settings['mchimp_status']) echo 'checked="checked"'; ?> /><?php esc_html_e('Enable Mailchimp Integration', 'modern-events-calendar-lite'); ?>
-                                    </label>
-                                </div>
-                                <div id="mec_mchimp_status_container_toggle" class="<?php if((isset($settings['mchimp_status']) and !$settings['mchimp_status']) or !isset($settings['mchimp_status'])) echo 'mec-util-hidden'; ?>">
-                                    <div class="mec-form-row">
-                                        <label class="mec-col-3" for="mec_settings_mchimp_api_key"><?php esc_html_e('API Key', 'modern-events-calendar-lite'); ?></label>
-                                        <div class="mec-col-9">
-                                            <input type="text" id="mec_settings_mchimp_api_key" name="mec[settings][mchimp_api_key]" value="<?php echo ((isset($settings['mchimp_api_key']) and trim($settings['mchimp_api_key']) != '') ? $settings['mchimp_api_key'] : ''); ?>" />
-                                            <span class="mec-tooltip">
-                                                <div class="box left">
-                                                    <h5 class="title"><?php esc_html_e('API Key', 'modern-events-calendar-lite'); ?></h5>
-                                                    <div class="content"><p><?php esc_attr_e("Required!", 'modern-events-calendar-lite'); ?><a href="https://webnus.net/dox/modern-events-calendar/mailchimp-integration/" target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
-                                                </div>
-                                                <i title="" class="dashicons-before dashicons-editor-help"></i>
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="mec-form-row">
-                                        <label class="mec-col-3" for="mec_settings_mchimp_list_id"><?php esc_html_e('List ID', 'modern-events-calendar-lite'); ?></label>
-                                        <div class="mec-col-9">
-                                            <input type="text" id="mec_settings_mchimp_list_id" name="mec[settings][mchimp_list_id]" value="<?php echo ((isset($settings['mchimp_list_id']) and trim($settings['mchimp_list_id']) != '') ? $settings['mchimp_list_id'] : ''); ?>" />
-                                            <span class="mec-tooltip">
-                                                <div class="box left">
-                                                    <h5 class="title"><?php esc_html_e('List ID', 'modern-events-calendar-lite'); ?></h5>
-                                                    <div class="content"><p><?php esc_attr_e("Required!", 'modern-events-calendar-lite'); ?><a href="https://webnus.net/dox/modern-events-calendar/mailchimp-integration/" target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
-                                                </div>
-                                                <i title="" class="dashicons-before dashicons-editor-help"></i>
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="mec-form-row">
-                                        <label class="mec-col-3" for="mec_settings_mchimp_subscription_status"><?php esc_html_e('Subscription Status', 'modern-events-calendar-lite'); ?></label>
-                                        <div class="mec-col-9">
-                                            <select name="mec[settings][mchimp_subscription_status]" id="mec_settings_mchimp_subscription_status">
-                                                <option value="subscribed" <?php if(isset($settings['mchimp_subscription_status']) and $settings['mchimp_subscription_status'] == 'subscribed') echo 'selected="selected"'; ?>><?php esc_html_e('Subscribe automatically', 'modern-events-calendar-lite'); ?></option>
-                                                <option value="pending" <?php if(isset($settings['mchimp_subscription_status']) and $settings['mchimp_subscription_status'] == 'pending') echo 'selected="selected"'; ?>><?php esc_html_e('Subscribe by verification', 'modern-events-calendar-lite'); ?></option>
-                                            </select>
-                                            <span class="mec-tooltip">
-                                                <div class="box left">
-                                                    <h5 class="title"><?php esc_html_e('Subscription Status', 'modern-events-calendar-lite'); ?></h5>
-                                                    <div class="content"><p><?php esc_attr_e('If you choose "Subscribe by verification" then an email will be send to the user by mailchimp for subscription verification.', 'modern-events-calendar-lite'); ?><a href="https://webnus.net/dox/modern-events-calendar/mailchimp-integration/" target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
-                                                </div>
-                                                <i title="" class="dashicons-before dashicons-editor-help"></i>
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="mec-form-row">
-                                        <label>
-                                            <input type="hidden" name="mec[settings][mchimp_segment_status]" value="0" />
-                                            <input value="1" type="checkbox" name="mec[settings][mchimp_segment_status]" <?php if(isset($settings['mchimp_segment_status']) and $settings['mchimp_segment_status']) echo 'checked="checked"'; ?> /><?php esc_html_e('Enable Segment Creation by Event Title and Booking Date', 'modern-events-calendar-lite'); ?>
-                                        </label>
                                     </div>
                                 </div>
                             </div>

@@ -1970,6 +1970,11 @@ jQuery(window).on('load', function()
 
             // Init Days slider
             var owl = $("#mec-owl-calendar-d-table-" + settings.id + "-" + month_id);
+            if(owl.hasClass('owl-loaded')){
+                owl.trigger('destroy.owl.carousel');
+                owl.removeClass('owl-loaded');
+                owl.find('.owl-stage-outer').children().unwrap();
+            }
             owl.owlCarousel({
                 responsiveClass: true,
                 responsive: {

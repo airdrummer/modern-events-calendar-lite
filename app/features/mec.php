@@ -1270,6 +1270,61 @@ class MEC_feature_mec extends MEC_base
         </div>';
     }
 
+    public function image_size_field($skin, $value = 'default', $args = [])
+    {
+        $sizes = [
+            'default' => esc_html__('Default', 'modern-events-calendar-lite'),
+            'thumbnail' => esc_html__('Thumbnail', 'modern-events-calendar-lite'),
+            'medium' => esc_html__('Medium', 'modern-events-calendar-lite'),
+            'medium_large' => esc_html__('Medium Large', 'modern-events-calendar-lite'),
+            'large' => esc_html__('Large', 'modern-events-calendar-lite'),
+            'full' => esc_html__('Full', 'modern-events-calendar-lite'),
+        ];
+
+        $args = array_merge([
+            'hide' => false,
+            'hide_for_styles' => [],
+        ], is_array($args) ? $args : []);
+
+        $hide_for_styles = array_filter(array_map(static function ($style) {
+            if (!is_string($style)) return '';
+
+            $style = preg_replace('/[^A-Za-z0-9_-]/', '', $style);
+
+            return trim((string) $style);
+        }, (array) ($args['hide_for_styles'] ?? [])));
+
+        $classes = [
+            'mec-form-row',
+            'mec-image-size-field',
+            'mec-image-size-field-' . sanitize_html_class($skin),
+        ];
+
+        $data_attributes = ' data-skin="' . esc_attr($skin) . '"';
+
+        if (!empty($args['hide'])) {
+            $classes[] = 'mec-util-hidden';
+            $data_attributes .= ' data-force-hidden="1"';
+        }
+
+        if (!empty($hide_for_styles)) {
+            $data_attributes .= ' data-hide-styles="' . esc_attr(implode(',', $hide_for_styles)) . '"';
+        }
+
+        $html = '<div class="' . esc_attr(implode(' ', $classes)) . '"' . $data_attributes . '>
+            <label class="mec-col-4" for="mec_skin_' . esc_attr($skin) . '_image_size">' . esc_html__('Image Size', 'modern-events-calendar-lite') . '</label>
+            <select class="mec-col-4 wn-mec-select" name="mec[sk-options][' . esc_attr($skin) . '][image_size]" id="mec_skin_' . esc_attr($skin) . '_image_size">';
+
+        foreach ($sizes as $key => $label) {
+            $selected = ($value === $key) ? 'selected="selected"' : '';
+            $html .= '<option value="' . esc_attr($key) . '" ' . $selected . '>' . $label . '</option>';
+        }
+
+        $html .= '</select></div>';
+
+        return $html;
+    }
+
     public function booking_button_field($skin, $value = 0)
     {
         $booking_status = (!isset($this->settings['booking_status']) or (isset($this->settings['booking_status']) and !$this->settings['booking_status'])) ? false : true;
@@ -1448,11 +1503,11 @@ class MEC_feature_mec extends MEC_base
     public function booking_badge($screen)
     {
         $user_id = get_current_user_id();
-        $user_last_view_date = get_user_meta($user_id, 'user_last_view_date', true);
+        $user_last_view_date = get_user_meta($user_id, 'mec_user_last_view_date', true);
 
         if (!trim($user_last_view_date))
         {
-            update_user_meta($user_id, 'user_last_view_date', date('YmdHis', current_time('timestamp', 0)));
+            update_user_meta($user_id, 'mec_user_last_view_date', date('YmdHis', current_time('timestamp')));
             return;
         }
 
@@ -1499,8 +1554,7 @@ class MEC_feature_mec extends MEC_base
 
         if (isset($screen->id) and $screen->id == 'edit-mec-books')
         {
-            update_user_meta($user_id, 'user_last_view_date', date('YmdHis', current_time('timestamp', 0)));
-            return;
+            update_user_meta($user_id, 'mec_user_last_view_date', date('YmdHis', current_time('timestamp')));
         }
     }
 
@@ -1514,11 +1568,11 @@ class MEC_feature_mec extends MEC_base
         if (!current_user_can('administrator') and !current_user_can('editor')) return;
 
         $user_id = get_current_user_id();
-        $user_last_view_date_events = get_user_meta($user_id, 'user_last_view_date_events', true);
+        $user_last_view_date_events = get_user_meta($user_id, 'mec_user_last_view_date_events', true);
 
         if (!trim($user_last_view_date_events))
         {
-            update_user_meta($user_id, 'user_last_view_date_events', date('YmdHis', current_time('timestamp', 0)));
+            update_user_meta($user_id, 'mec_user_last_view_date_events', date('YmdHis', current_time('timestamp', 0)));
             return;
         }
 
@@ -1565,8 +1619,7 @@ class MEC_feature_mec extends MEC_base
 
         if (isset($screen->id) and $screen->id == 'edit-mec-events')
         {
-            update_user_meta($user_id, 'user_last_view_date_events', date('YmdHis', current_time('timestamp', 0)));
-            return;
+            update_user_meta($user_id, 'mec_user_last_view_date_events', date('YmdHis', current_time('timestamp', 0)));
         }
     }
 

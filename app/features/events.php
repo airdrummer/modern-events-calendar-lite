@@ -1524,7 +1524,7 @@ class MEC_feature_events extends MEC_base
                                        id="mec_cost_auto_calculate" <?php echo ($cost_auto_calculate == 1) ? 'checked="checked"' : ''; ?>
                                        value="1"
                                        onchange="jQuery('#mec_meta_box_cost_form').toggleClass('mec-util-hidden');">
-                                <?php esc_html_e('Show the minimum price based on tickets', 'modern-events-calendar-lite'); ?>
+                                <?php esc_html_e('Show lowest ticket price', 'modern-events-calendar-lite'); ?>
                             </label>
                         </div>
                     </div>
@@ -3397,7 +3397,7 @@ class MEC_feature_events extends MEC_base
                 $post_ids = (isset($_GET['post']) and is_array($_GET['post']) and count($_GET['post'])) ? array_map('sanitize_text_field', wp_unslash($_GET['post'])) : [];
                 $events = '';
 
-                foreach ($post_ids as $post_id) $events .= $this->main->ical_single((int) $post_id);
+                foreach ($post_ids as $post_id) $events .= $this->main->ical_single((int) $post_id, '', '', true);
                 $ical_calendar = $this->main->ical_calendar($events);
 
                 header('Content-type: application/force-download; charset=utf-8');

@@ -40,7 +40,8 @@ $reason_for_cancellation = $this->skin_options['reason_for_cancellation'] ?? fal
             <article class="<?php echo (isset($event->data->meta['event_past']) and trim($event->data->meta['event_past'])) ? 'mec-past-event ' : ''; ?>mec-event-article <?php echo esc_attr($this->get_event_classes($event)); ?> <?php echo esc_attr($custom_data_class); ?>">
                 <div class="mec-event-list-weekly-date mec-color"><span class="mec-date-day"><?php echo esc_html($this->main->date_i18n('d', strtotime($event->date['start']['date']))); ?></span><?php echo esc_html($this->main->date_i18n('F', strtotime($event->date['start']['date']))); ?></div>
                 <div class= "mec-weekly-contents-wrapper">
-                    <div class="mec-event-image"><?php echo MEC_kses::element($event->data->thumbnails['thumbnail']); ?></div>
+                    <?php $thumb = $this->get_thumbnail_image($event, 'thumbnail'); ?>
+                    <div class="mec-event-image"><?php echo MEC_kses::element($thumb); ?></div>
                     <div class="mec-weekly-contents">
                         <?php echo MEC_kses::element($this->get_label_captions($event)); ?>
 

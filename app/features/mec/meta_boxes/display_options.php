@@ -374,6 +374,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                 </div>
                 <div class="mec-sed-methode-container">
                     <?php echo MEC_kses::form($this->sed_method_field('list', (isset($sk_options_list['sed_method']) ? $sk_options_list['sed_method'] : 0), (isset($sk_options_list['image_popup']) ? $sk_options_list['image_popup'] : 0))); ?>
+                    <?php echo MEC_kses::form($this->image_size_field('list', $sk_options_list['image_size'] ?? 'default', ['hide_for_styles' => ['minimal', 'modern', 'accordion']])); ?>
                 </div>
                 <?php do_action('mec_skin_options_list_end', $sk_options_list); ?>
             </div>
@@ -728,6 +729,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                 <?php echo MEC_kses::form($this->booking_button_field('grid', (isset($sk_options_grid['booking_button']) ? $sk_options_grid['booking_button'] : 0))); ?>
                 <?php echo MEC_kses::form($this->display_custom_data_field('grid', (isset($sk_options_grid['custom_data']) ? $sk_options_grid['custom_data'] : 0))); ?>
                 <?php echo MEC_kses::form($this->sed_method_field('grid', (isset($sk_options_grid['sed_method']) ? $sk_options_grid['sed_method'] : 0), (isset($sk_options_grid['image_popup']) ? $sk_options_grid['image_popup'] : 0))); ?>
+                <?php echo MEC_kses::form($this->image_size_field('grid', $sk_options_grid['image_size'] ?? 'default', ['hide_for_styles' => ['minimal', 'modern', 'simple', 'colorful']])); ?>
                 <?php do_action('mec_skin_options_grid_end', $sk_options_grid); ?>
             </div>
 
@@ -879,6 +881,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                 <?php echo MEC_kses::form($this->booking_button_field('agenda', (isset($sk_options_agenda['booking_button']) ? $sk_options_agenda['booking_button'] : 0))); ?>
                 <?php echo MEC_kses::form($this->display_custom_data_field('agenda', (isset($sk_options_agenda['custom_data']) ? $sk_options_agenda['custom_data'] : 0))); ?>
                 <?php echo MEC_kses::form($this->sed_method_field('agenda', (isset($sk_options_agenda['sed_method']) ? $sk_options_agenda['sed_method'] : 0), (isset($sk_options_agenda['image_popup']) ? $sk_options_agenda['image_popup'] : 0))); ?>
+                <?php echo MEC_kses::form($this->image_size_field('agenda', $sk_options_agenda['image_size'] ?? 'default', ['hide_for_styles' => ['clean']])); ?>
                 <?php do_action('mec_skin_options_agenda_end', $sk_options_agenda); ?>
             </div>
 
@@ -1199,6 +1202,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                 <?php echo MEC_kses::form($this->booking_button_field('full_calendar', (isset($sk_options_full_calendar['booking_button']) ? $sk_options_full_calendar['booking_button'] : 0))); ?>
                 <?php echo MEC_kses::form($this->display_custom_data_field('full_calendar', (isset($sk_options_full_calendar['custom_data']) ? $sk_options_full_calendar['custom_data'] : 0))); ?>
                 <?php echo MEC_kses::form($this->sed_method_field('full_calendar', (isset($sk_options_full_calendar['sed_method']) ? $sk_options_full_calendar['sed_method'] : 0), (isset($sk_options_full_calendar['image_popup']) ? $sk_options_full_calendar['image_popup'] : 0))); ?>
+                <?php echo MEC_kses::form($this->image_size_field('full_calendar', $sk_options_full_calendar['image_size'] ?? 'default')); ?>
                 <?php do_action('mec_skin_options_full_calendar_end', $sk_options_full_calendar); ?>
             </div>
 
@@ -1338,9 +1342,10 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                 </div>
                 <!-- End Display Reason for Cancellation -->
                 <p class="description"><?php esc_html_e('For showing next/previous year navigation.', 'modern-events-calendar-lite'); ?></p>
-                <?php echo MEC_kses::form($this->booking_button_field('yearly_view', (isset($sk_options_yearly_view['booking_button']) ? $sk_options_yearly_view['booking_button'] : 0))); ?>
-                <?php echo MEC_kses::form($this->display_custom_data_field('yearly_view', (isset($sk_options_yearly_view['custom_data']) ? $sk_options_yearly_view['custom_data'] : 0))); ?>
-                <?php echo MEC_kses::form($this->sed_method_field('yearly_view', (isset($sk_options_yearly_view['sed_method']) ? $sk_options_yearly_view['sed_method'] : 0), (isset($sk_options_yearly_view['image_popup']) ? $sk_options_yearly_view['image_popup'] : 0))); ?>
+                <?php echo MEC_kses::form($this->booking_button_field('yearly_view', ($sk_options_yearly_view['booking_button'] ?? 0))); ?>
+                <?php echo MEC_kses::form($this->display_custom_data_field('yearly_view', ($sk_options_yearly_view['custom_data'] ?? 0))); ?>
+                <?php echo MEC_kses::form($this->sed_method_field('yearly_view', ($sk_options_yearly_view['sed_method'] ?? 0), ($sk_options_yearly_view['image_popup'] ?? 0))); ?>
+                <?php echo MEC_kses::form($this->image_size_field('yearly_view', $sk_options_yearly_view['image_size'] ?? 'default', ['hide_for_styles' => ['modern']])); ?>
                 <?php do_action('mec_skin_options_yearly_view_end', $sk_options_yearly_view); ?>
             </div>
 
@@ -1490,6 +1495,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                 <?php echo MEC_kses::form($this->display_custom_data_field('monthly_view', ($sk_options_monthly_view['custom_data'] ?? 0))); ?>
                 <?php echo MEC_kses::form($this->display_detailed_time_field('monthly_view', ($sk_options_monthly_view['detailed_time'] ?? 0))); ?>
                 <?php echo MEC_kses::form($this->sed_method_field('monthly_view', ($sk_options_monthly_view['sed_method'] ?? 0), ($sk_options_monthly_view['image_popup'] ?? 0))); ?>
+                <?php echo MEC_kses::form($this->image_size_field('monthly_view', $sk_options_monthly_view['image_size'] ?? 'default', ['hide_for_styles' => ['novel']])); ?>
                 <?php do_action('mec_skin_options_monthly_view_end', $sk_options_monthly_view); ?>
             </div>
 
@@ -1693,6 +1699,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                 <?php echo MEC_kses::form($this->display_custom_data_field('daily_view', $sk_options_daily_view['custom_data'] ?? 0)); ?>
                 <?php echo MEC_kses::form($this->display_detailed_time_field('daily_view', $sk_options_daily_view['detailed_time'] ?? 0)); ?>
                 <?php echo MEC_kses::form($this->sed_method_field('daily_view', $sk_options_daily_view['sed_method'] ?? 0, $sk_options_daily_view['image_popup'] ?? 0)); ?>
+                <?php echo MEC_kses::form($this->image_size_field('daily_view', $sk_options_daily_view['image_size'] ?? 'default')); ?>
                 <?php do_action('mec_skin_options_daily_view_end', $sk_options_daily_view); ?>
             </div>
 
@@ -1823,6 +1830,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                 <?php echo MEC_kses::form($this->display_custom_data_field('weekly_view', ($sk_options_weekly_view['custom_data'] ?? 0))); ?>
                 <?php echo MEC_kses::form($this->display_detailed_time_field('weekly_view', ($sk_options_weekly_view['detailed_time'] ?? 0))); ?>
                 <?php echo MEC_kses::form($this->sed_method_field('weekly_view', ($sk_options_weekly_view['sed_method'] ?? 0), ($sk_options_weekly_view['image_popup'] ?? 0))); ?>
+                <?php echo MEC_kses::form($this->image_size_field('weekly_view', $sk_options_weekly_view['image_size'] ?? 'default')); ?>
                 <?php do_action('mec_skin_options_weekly_view_end', $sk_options_weekly_view); ?>
             </div>
 
@@ -2001,6 +2009,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                     <?php echo MEC_kses::form($this->booking_button_field('timetable', (isset($sk_options_timetable['booking_button']) ? $sk_options_timetable['booking_button'] : 0))); ?>
                     <?php echo MEC_kses::form($this->display_custom_data_field('timetable', (isset($sk_options_timetable['custom_data']) ? $sk_options_timetable['custom_data'] : 0))); ?>
                     <?php echo MEC_kses::form($this->sed_method_field('timetable', (isset($sk_options_timetable['sed_method']) ? $sk_options_timetable['sed_method'] : 0), (isset($sk_options_timetable['image_popup']) ? $sk_options_timetable['image_popup'] : 0))); ?>
+                <?php echo MEC_kses::form($this->image_size_field('timetable', $sk_options_timetable['image_size'] ?? 'default', ['hide_for_styles' => ['modern', 'clean']])); ?>
                 </div>
                 <?php do_action('mec_skin_options_timetable_end', $sk_options_timetable); ?>
             </div>
@@ -2187,6 +2196,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                 <?php echo MEC_kses::form($this->booking_button_field('masonry', (isset($sk_options_masonry['booking_button']) ? $sk_options_masonry['booking_button'] : 0))); ?>
                 <?php echo MEC_kses::form($this->display_custom_data_field('masonry', (isset($sk_options_masonry['custom_data']) ? $sk_options_masonry['custom_data'] : 0))); ?>
                 <?php echo MEC_kses::form($this->sed_method_field('masonry', (isset($sk_options_masonry['sed_method']) ? $sk_options_masonry['sed_method'] : 0), (isset($sk_options_masonry['image_popup']) ? $sk_options_masonry['image_popup'] : 0))); ?>
+                <?php echo MEC_kses::form($this->image_size_field('masonry', $sk_options_masonry['image_size'] ?? 'default')); ?>
                 <?php do_action('mec_skin_options_masonry_end', $sk_options_masonry); ?>
             </div>
 
@@ -2277,6 +2287,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                         </span>
                     </div>
                 </div>
+                <?php echo MEC_kses::form($this->image_size_field('cover', $sk_options_cover['image_size'] ?? 'default')); ?>
                 <!-- End LocalTime -->
                 <!-- Start Display Label -->
                 <div class="mec-form-row mec-switcher mec-include-events-local-times" id="mec_skin_cover_display_normal_label">
@@ -2397,6 +2408,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                         </span>
                     </div>
                 </div>
+                <?php echo MEC_kses::form($this->image_size_field('countdown', $sk_options_countdown['image_size'] ?? 'default')); ?>
                 <!-- End LocalTime -->
                 <!-- Start Display Label -->
                 <div class="mec-form-row mec-switcher mec-include-events-local-times" id="mec_skin_countdown_display_normal_label">
@@ -2494,6 +2506,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                         </span>
                     </div>
                 </div>
+                <?php echo MEC_kses::form($this->image_size_field('available_spot', $sk_options_available_spot['image_size'] ?? 'default')); ?>
                 <!-- End LocalTime -->
                 <!-- Start Display Label -->
                 <div class="mec-form-row mec-switcher mec-include-events-local-times" id="mec_skin_available_spot_display_normal_label">
@@ -2758,6 +2771,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                 </div>
                 <div class="mec-sed-methode-container">
                     <?php echo MEC_kses::form($this->sed_method_field('carousel', (isset($sk_options_carousel['sed_method']) ? $sk_options_carousel['sed_method'] : 0), (isset($sk_options_carousel['image_popup']) ? $sk_options_carousel['image_popup'] : 0))); ?>
+                    <?php echo MEC_kses::form($this->image_size_field('carousel', $sk_options_carousel['image_size'] ?? 'default')); ?>
                 </div>
                 <!-- End Display Reason for Cancellation -->
                 <?php do_action('mec_skin_options_carousel_end', $sk_options_carousel); ?>
@@ -2905,6 +2919,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                         </span>
                     </div>
                 </div>
+                <?php echo MEC_kses::form($this->image_size_field('slider', $sk_options_slider['image_size'] ?? 'default')); ?>
                 <!-- End LocalTime -->
                 <!-- Start Display Label -->
                 <div class="mec-form-row mec-switcher mec-include-events-local-times" id="mec_skin_slider_display_normal_label">
@@ -2944,7 +2959,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                     </div>
                 </div>
                 <!-- End Display Reason for Cancellation -->
-                <?php echo MEC_kses::form($this->display_custom_data_field('slider', (isset($sk_options_slider['custom_data']) ? $sk_options_slider['custom_data'] : 0))); ?>
+                <?php echo MEC_kses::form($this->display_custom_data_field('slider', ($sk_options_slider['custom_data'] ?? 0))); ?>
                 <?php do_action('mec_skin_options_slider_end', $sk_options_slider); ?>
             </div>
 
@@ -3103,6 +3118,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                 <?php echo MEC_kses::form($this->booking_button_field('timeline', (isset($sk_options_timeline['booking_button']) ? $sk_options_timeline['booking_button'] : 0))); ?>
                 <?php echo MEC_kses::form($this->display_custom_data_field('timeline', (isset($sk_options_timeline['custom_data']) ? $sk_options_timeline['custom_data'] : 0))); ?>
                 <?php echo MEC_kses::form($this->sed_method_field('timeline', (isset($sk_options_timeline['sed_method']) ? $sk_options_timeline['sed_method'] : 0), (isset($sk_options_timeline['image_popup']) ? $sk_options_timeline['image_popup'] : 0))); ?>
+                <?php echo MEC_kses::form($this->image_size_field('timeline', $sk_options_timeline['image_size'] ?? 'default')); ?>
             </div>
 
             <!-- Tile View -->
@@ -3232,6 +3248,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                 <?php echo MEC_kses::form($this->booking_button_field('tile', (isset($sk_options_tile['booking_button']) ? $sk_options_tile['booking_button'] : 0))); ?>
                 <?php echo MEC_kses::form($this->display_custom_data_field('tile', (isset($sk_options_tile['custom_data']) ? $sk_options_tile['custom_data'] : 0))); ?>
                 <?php echo MEC_kses::form($this->sed_method_field('tile', (isset($sk_options_tile['sed_method']) ? $sk_options_tile['sed_method'] : 0), (isset($sk_options_tile['image_popup']) ? $sk_options_tile['image_popup'] : 0))); ?>
+                <?php echo MEC_kses::form($this->image_size_field('tile', $sk_options_tile['image_size'] ?? 'default')); ?>
             </div>
 
             <!-- General Calendar -->
@@ -3310,6 +3327,7 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                 </div>
                 <div class="mec-sed-methode-container">
                     <?php echo MEC_kses::form($this->sed_method_field('general_calendar', (isset($sk_options_general_calendar['sed_method']) ? $sk_options_general_calendar['sed_method'] : 0), (isset($sk_options_general_calendar['image_popup']) ? $sk_options_general_calendar['image_popup'] : 0))); ?>
+                    <?php echo MEC_kses::form($this->image_size_field('general_calendar', $sk_options_general_calendar['image_size'] ?? 'default')); ?>
                 </div>
                 <!-- End Display Reason for Cancellation -->
             </div>

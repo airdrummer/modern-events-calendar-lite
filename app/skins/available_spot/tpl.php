@@ -27,7 +27,7 @@ $organizer_id = $this->main->get_master_organizer_id($event);
 $event_organizer = ($organizer_id ? $this->main->get_organizer_data($organizer_id) : array());
 
 $event_date = (isset($event->date['start']) ? $event->date['start']['date'] : $event->data->meta['mec_start_date']);
-$event_thumb_url = $event->data->featured_image['large'];
+$event_thumb_url = $this->get_featured_image_url($event, 'large');
 $start_date = (isset($event->date['start']) and isset($event->date['start']['date'])) ? $event->date['start']['date'] : date('Y-m-d H:i:s');
 $end_date = (isset($event->date['end']) and isset($event->date['end']['date'])) ? $event->date['end']['date'] : date('Y-m-d H:i:s');
 

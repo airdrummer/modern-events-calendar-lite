@@ -995,7 +995,7 @@ class FormBuilder extends Singleton {
                         <label for="mec_cost_auto_calculate" class="label-checkbox">
                             <input type="hidden" name="mec[cost_auto_calculate]" value="0" />
                             <input type="checkbox" name="mec[cost_auto_calculate]" id="mec_cost_auto_calculate" <?php echo ($cost_auto_calculate == 1) ? 'checked="checked"' : ''; ?> value="1" onchange="jQuery('#mec_meta_box_cost_form').toggleClass('mec-util-hidden');">
-                            <?php esc_html_e('Show the minimum price based on tickets', 'modern-events-calendar-lite'); ?>
+                            <?php esc_html_e('Show lowest ticket price', 'modern-events-calendar-lite'); ?>
                         </label>
                     </div>
                 </div>
@@ -1504,7 +1504,7 @@ class FormBuilder extends Singleton {
             <?php if(isset($atts['add_sponsors']) && $atts['add_sponsors'] == '1'): ?>
             <div class="mec-form-row">
                 <input type="text" name="mec[sponsors][datas][names]" id="mec_sponsor_input_names" placeholder="<?php echo sprintf(esc_html__('%s Name', 'modern-events-calendar-lite'), $singular_label); ?>">
-                <p><?php echo sprintf(esc_html__('Insert name of one %s: Company A', 'modern-events-calendar-lite'), strtolower(\MEC\Base::get_main()->m('taxonomy_sponsor', esc_html__('sponsor', 'modern-events-calendar-lite')))); ?></p>
+                <p class="description"><?php echo sprintf(esc_html__('Insert name of one %s: Company A', 'modern-events-calendar-lite'), strtolower(\MEC\Base::get_main()->m('taxonomy_sponsor', esc_html__('sponsor', 'modern-events-calendar-lite')))); ?></p>
                 <button class="button" type="button" id="mec_add_sponsor_button"><?php esc_html_e('Add Sponsor', 'modern-events-calendar-lite'); ?></button>
             </div>
             <?php elseif(isset($atts['add_sponsors']) && $atts['add_sponsors'] == '2'): ?>

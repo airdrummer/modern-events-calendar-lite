@@ -72,10 +72,30 @@ class MEC_tickets extends MEC_base
 
         if (isset($_REQUEST['mec_add_global_tickets']) && $_REQUEST['mec_add_global_tickets'])
         {
-            foreach ($global_tickets as $global_ticket)
+            $tickets_updated = false;
+            foreach ($global_tickets as $global_ticket_key => $global_ticket)
             {
-                if (!count($tickets)) $tickets[1] = $global_ticket;
-                else $tickets[] = $global_ticket;
+                if (!count($tickets)) {
+                    $tickets[1] = $global_ticket;
+                    // Copy category_ids from global ticket if exists
+                    if (isset($global_ticket['category_ids'])) {
+                        $tickets[1]['category_ids'] = $global_ticket['category_ids'];
+                    }
+                    $tickets_updated = true;
+                } else {
+                    $tickets[] = $global_ticket;
+                    // Copy category_ids from global ticket if exists
+                    $last_key = array_key_last($tickets);
+                    if (isset($global_ticket['category_ids'])) {
+                        $tickets[$last_key]['category_ids'] = $global_ticket['category_ids'];
+                    }
+                    $tickets_updated = true;
+                }
+            }
+            
+            // Save the updated tickets with category_ids to the database
+            if ($tickets_updated && $object_id) {
+                update_post_meta($object_id, 'mec_tickets', $tickets);
             }
 
             echo '<script>

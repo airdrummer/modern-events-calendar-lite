@@ -59,7 +59,8 @@ $sed_method = isset($this->skin_options['sed_method']) ? $this->skin_options['se
                     <div class="mec-timeline-event-content">
                         <div class="clearfix">
                             <div class="mec-timeline-right-content">
-                                <div class="mec-timeline-event-image"><?php echo MEC_kses::element($this->display_link($event, $event->data->thumbnails['thumblist'], '')); ?></div>
+                                <?php $image = $this->get_thumbnail_image($event, 'thumblist'); ?>
+                                <div class="mec-timeline-event-image"><?php echo MEC_kses::element($this->display_link($event, $image, '')); ?></div>
                             </div>
                             <div class="mec-timeline-left-content">
                                 <div class="mec-timeline-main-content">
