@@ -739,7 +739,7 @@ class MEC_skin_single extends MEC_skins
         $data->requested_id = $this->id;
         $data->data = $rendered;
 
-        if ($this->getAppointments()->get_entity_type($this->id) === 'appointment') $this->maximum_dates = 100;
+        if ($this->getAppointments()->get_entity_type($this->id) === 'appointment') $this->maximum_dates = 500;
 
         // Get Event Dates
         $dates = $this->render->dates($this->id, $rendered, $this->maximum_dates, ($occurrence_time ? date('Y-m-d H:i:s', $occurrence_time) : $occurrence));

@@ -584,6 +584,9 @@ class MEC_book extends MEC_base
         $date = get_post_meta($book_id, 'mec_date', true);
         $timestamps = explode(':', $date);
 
+        // Clear Cache
+        delete_transient('all_sold_tickets_' . $event_id);
+
         // Booking Records
         $this->getBookingRecord()->confirm($book_id);
 
@@ -1650,13 +1653,20 @@ class MEC_book extends MEC_base
         }
 
         $s_hour = $start['hour'];
-        if (strtoupper($start['ampm']) == 'AM' and $s_hour == '0') $s_hour = 12;
+        $start_ampm = $start['ampm'] ?? '';
+        if (strtoupper($start_ampm) == 'AM' && $s_hour == '0') $s_hour = 12;
+        if ($s_hour > 12) $start_ampm = '';
 
         $e_hour = $end['hour'];
-        if (strtoupper($end['ampm']) == 'AM' and $e_hour == '0') $e_hour = 12;
+        $end_ampm = $end['ampm'] ?? '';
+        if (strtoupper($end_ampm) == 'AM' && $e_hour == '0') $e_hour = 12;
+        if ($e_hour > 12) $end_ampm = '';
 
-        $start_time = $start['date'] . ' ' . sprintf("%02d", $s_hour) . ':' . sprintf("%02d", $start['minutes']) . ' ' . $start['ampm'];
-        $end_time = $end['date'] . ' ' . sprintf("%02d", $e_hour) . ':' . sprintf("%02d", $end['minutes']) . ' ' . $end['ampm'];
+        $start_time = $start['date'] . ' ' . sprintf("%02d", $s_hour) . ':' . sprintf("%02d", $start['minutes']);
+        if (trim($start_ampm) !== '') $start_time .= ' ' . $start_ampm;
+
+        $end_time = $end['date'] . ' ' . sprintf("%02d", $e_hour) . ':' . sprintf("%02d", $end['minutes']);
+        if (trim($end_ampm) !== '') $end_time .= ' ' . $end_ampm;
 
         return strtotime($start_time) . ':' . strtotime($end_time);
     }

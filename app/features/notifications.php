@@ -117,6 +117,9 @@ class MEC_feature_notifications extends MEC_base
             'booking_reminder' => [
                 'label' => esc_html__('Booking Reminder', 'modern-events-calendar-lite')
             ],
+            'attendee_report' => [
+                'label' => esc_html__('Attendee Report', 'modern-events-calendar-lite')
+            ],
             'event_finished' => [
                 'label' => esc_html__('Event Finished', 'modern-events-calendar-lite')
             ],

@@ -1541,6 +1541,128 @@ $additional_organizers = (isset($settings['additional_organizers']) and $setting
                             </div>
                         </div>
 
+                        <div id="attendee_report" class="mec-options-fields">
+
+                            <h4 class="mec-form-subtitle"><?php esc_html_e('Attendee Report', 'modern-events-calendar-lite'); ?></h4>
+                            <div class="mec-form-row">
+                                <div class="mec-col-12">
+                                    <label>
+                                        <input type="hidden" name="mec[notifications][attendee_report][status]" value="0" />
+                                        <input onchange="jQuery('#mec_notification_attendee_report_container_toggle').toggle();" value="1" type="checkbox" name="mec[notifications][attendee_report][status]" <?php if(isset($notifications['attendee_report']) and $notifications['attendee_report']['status']) echo 'checked="checked"'; ?> /><?php esc_html_e('Enable attendee report notification', 'modern-events-calendar-lite'); ?>
+                                    </label>
+                                </div>
+                            </div>
+                            <div id="mec_notification_attendee_report_container_toggle" class="<?php if((isset($notifications['attendee_report']) and !$notifications['attendee_report']['status']) or !isset($notifications['attendee_report'])) echo 'mec-util-hidden'; ?>">
+                                <div class="mec-form-row">
+                                    <?php $cron = MEC_ABSPATH.'app'.DS.'crons'.DS.'attendee-report.php'; ?>
+                                    <p class="mec-col-12 description"><strong><?php esc_html_e('Important Note', 'modern-events-calendar-lite'); ?>: </strong><?php echo sprintf(esc_html__("Set a cronjob to call %s file once per hour otherwise it won't send the reports. Please note that you should call this file %s otherwise it may send the reports multiple times.", 'modern-events-calendar-lite'), '<code>'.esc_html($cron).'</code>', '<strong>'.esc_html__('only once per hour', 'modern-events-calendar-lite').'</strong>'); ?></p>
+                                </div>
+                                <div class="mec-form-row">
+                                    <div class="mec-col-3">
+                                        <label for="mec_notifications_attendee_report_subject"><?php esc_html_e('Email Subject', 'modern-events-calendar-lite'); ?></label>
+                                    </div>
+                                    <div class="mec-col-9">
+                                        <input type="text" name="mec[notifications][attendee_report][subject]" id="mec_notifications_attendee_report_subject" value="<?php echo ((isset($notifications['attendee_report']) and isset($notifications['attendee_report']['subject'])) ? stripslashes($notifications['attendee_report']['subject']) : ''); ?>" />
+                                    </div>
+                                </div>
+
+                                <!-- Start Receiver Users -->
+                                <div class="mec-form-row">
+                                    <div class="mec-col-3">
+                                        <label for="mec_notifications_attendee_report_receiver_users"><?php esc_html_e('Receiver Users', 'modern-events-calendar-lite'); ?></label>
+                                    </div>
+                                    <div class="mec-col-9">
+                                        <?php
+                                            $users = $notifications['attendee_report']['receiver_users'] ?? [];
+                                            echo MEC_kses::form($this->main->get_users_dropdown($users, 'attendee_report'));
+                                        ?>
+                                        <span class="mec-tooltip">
+                                            <div class="box left">
+                                                <h5 class="title"><?php esc_html_e('Receiver Users', 'modern-events-calendar-lite'); ?></h5>
+                                                <div class="content"><p><?php esc_attr_e('Select users to send a copy of this email to them.', 'modern-events-calendar-lite'); ?></p></div>
+                                            </div>
+                                            <i title="" class="dashicons-before dashicons-editor-help"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                                <!-- End Receiver Users -->
+
+                                <!-- Start Receiver Roles -->
+                                <div class="mec-form-row">
+                                    <div class="mec-col-3">
+                                        <label for="mec_notifications_attendee_report_receiver_roles"><?php esc_html_e('Receiver Roles', 'modern-events-calendar-lite'); ?></label>
+                                    </div>
+                                    <div class="mec-col-9">
+                                        <?php
+                                            $roles = $notifications['attendee_report']['receiver_roles'] ?? [];
+                                            echo MEC_kses::form($this->main->get_roles_dropdown($roles, 'attendee_report'));
+                                        ?>
+                                        <span class="mec-tooltip">
+                                            <div class="box left">
+                                                <h5 class="title"><?php esc_html_e('Receiver Roles', 'modern-events-calendar-lite'); ?></h5>
+                                                <div class="content"><p><?php esc_attr_e('Select a user role to send a copy of this email to them.', 'modern-events-calendar-lite'); ?></p></div>
+                                            </div>
+                                            <i title="" class="dashicons-before dashicons-editor-help"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                                <!-- End Receiver Roles -->
+
+                                <div class="mec-form-row">
+                                    <div class="mec-col-3">
+                                        <label for="mec_notifications_attendee_report_recipients"><?php esc_html_e('Custom Recipients', 'modern-events-calendar-lite'); ?></label>
+                                    </div>
+                                    <div class="mec-col-9">
+                                        <input type="text" name="mec[notifications][attendee_report][recipients]" id="mec_notifications_attendee_report_recipients" value="<?php echo ((isset($notifications['attendee_report']) and isset($notifications['attendee_report']['recipients'])) ? $notifications['attendee_report']['recipients'] : ''); ?>" />
+                                        <span class="mec-tooltip">
+                                            <div class="box left">
+                                                <h5 class="title"><?php esc_html_e('Custom Recipients', 'modern-events-calendar-lite'); ?></h5>
+                                                <div class="content"><p><?php esc_attr_e('Insert the comma separated email addresses for multiple recipients.', 'modern-events-calendar-lite'); ?><a href="https://webnus.net/dox/modern-events-calendar/event-notifications/" target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
+                                            </div>
+                                            <i title="" class="dashicons-before dashicons-editor-help"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="mec-form-row">
+                                    <div class="mec-col-3">
+                                        <label for="mec_notifications_attendee_report_hours"><?php esc_html_e('Hours', 'modern-events-calendar-lite'); ?></label>
+                                    </div>
+                                    <div class="mec-col-9">
+                                        <input type="text" name="mec[notifications][attendee_report][hours]" id="mec_notifications_attendee_report_hours" value="<?php echo ((isset($notifications['attendee_report']) and isset($notifications['attendee_report']['hours'])) ? $notifications['attendee_report']['hours'] : '24'); ?>" />
+                                        <span class="mec-tooltip">
+                                            <div class="box left">
+                                                <h5 class="title"><?php esc_html_e('Report hours', 'modern-events-calendar-lite'); ?></h5>
+                                                <div class="content"><p><?php esc_attr_e('Insert the comma separated hours number to trigger the cron job', 'modern-events-calendar-lite'); ?><a href="https://webnus.net/dox/modern-events-calendar/event-notifications/" target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
+                                            </div>
+                                            <i title="" class="dashicons-before dashicons-editor-help"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="mec-form-row">
+                                    <label for="mec_notifications_attendee_report_content"><?php esc_html_e('Email Content', 'modern-events-calendar-lite'); ?></label>
+                                    <?php wp_editor((isset($notifications['attendee_report']) ? stripslashes($notifications['attendee_report']['content']) : ''), 'mec_notifications_attendee_report_content', array('textarea_name'=>'mec[notifications][attendee_report][content]')); ?>
+                                </div>
+
+                                <?php
+                                    $section = 'attendee_report';
+                                    do_action('mec_display_notification_settings',$notifications,$section);
+                                ?>
+
+                                <div class="mec-form-row">
+                                    <div class="mec-col-12">
+                                        <p class="description"><?php esc_html_e('You can use the following placeholders', 'modern-events-calendar-lite'); ?></p>
+                                        <ul>
+                                            <li><span>%%event_title%%</span>: <?php esc_html_e('Event title', 'modern-events-calendar-lite'); ?></li>
+                                            <li><span>%%event_start_datetime%%</span>: <?php esc_html_e('Event Start Date & Time', 'modern-events-calendar-lite'); ?></li>
+                                            <li><span>%%event_end_datetime%%</span>: <?php esc_html_e('Event End Date & Time', 'modern-events-calendar-lite'); ?></li>
+                                            <li><span>%%total_attendees%%</span>: <?php esc_html_e('Total attendees of current booking', 'modern-events-calendar-lite'); ?></li>
+                                            <?php do_action('mec_extra_field_notifications', $section); ?>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div id="booking_moved" class="mec-options-fields">
 
                             <h4 class="mec-form-subtitle"><?php esc_html_e('Booking Reschedule', 'modern-events-calendar-lite'); ?></h4>
@@ -2449,6 +2571,7 @@ $this->getFactory()->params('footer', function()
                 "booking_rejection",
                 "admin_notification",
                 "booking_reminder",
+                "attendee_report",
                 "booking_moved",
                 "event_finished",
                 "new_event",

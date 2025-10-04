@@ -324,7 +324,7 @@ if (function_exists('is_plugin_active') && is_plugin_active('mec-fluent-layouts/
 	}
 
 	// Second Background Color
-	$fluent_second_bg_color = '#d6eef9';
+	$fluent_second_bg_color = '#e8f7ff';
 	if (isset($styling['fluent_second_bg_color']) && $styling['fluent_second_bg_color']) {
 		$fluent_second_bg_color = $styling['fluent_second_bg_color'];
 	?>

@@ -166,6 +166,119 @@ class MEC_notifications extends MEC_base
         return true;
     }
 
+    public function attendee_report($event_id, $timestamps)
+    {
+        if (!$event_id) return false;
+
+        if (!isset($this->notif_settings['attendee_report']['status']) || !$this->notif_settings['attendee_report']['status']) return false;
+
+        $event = get_post($event_id);
+
+        // Wrong Event
+        if (!$event || !isset($event->ID)) return false;
+
+        list($start_timestamp, $end_timestamp) = explode(':', $timestamps);
+
+        $attendees = $this->main->get_event_attendees($event_id, $start_timestamp);
+
+        $headers = ['Content-Type: text/html; charset=UTF-8'];
+
+        $to = $this->get_organizer_email($event_id);
+
+        $recipients_str = $this->notif_settings['attendee_report']['recipients'] ?? '';
+        $recipients = trim($recipients_str) ? explode(',', $recipients_str) : [];
+
+        $users = $this->notif_settings['attendee_report']['receiver_users'] ?? [];
+        $users_down = $this->main->get_emails_by_users($users);
+        $recipients = array_merge($users_down, $recipients);
+
+        $roles = $this->notif_settings['attendee_report']['receiver_roles'] ?? [];
+        $user_roles = $this->main->get_emails_by_roles($roles);
+        $recipients = array_merge($user_roles, $recipients);
+
+        $recipients = array_map('trim', $recipients);
+        $recipients = array_filter($recipients);
+        $recipients = array_unique($recipients);
+
+        $CCBCC = $this->get_cc_bcc_method();
+        foreach ($recipients as $recipient)
+        {
+            if (!filter_var($recipient, FILTER_VALIDATE_EMAIL)) continue;
+            $headers[] = $CCBCC . ': ' . $recipient;
+        }
+
+        // Prepare CSV rows
+        $rows = [['Name', 'Email', 'Ticket', 'Quantity']];
+        $tickets = get_post_meta($event_id, 'mec_tickets', true);
+        $booking_prices = [];
+        foreach ($attendees as $attendee)
+        {
+            $ticket_id = $attendee['id'] ?? '';
+            $ticket_name = $tickets[$ticket_id]['name'] ?? '';
+            $rows[] = [
+                $attendee['name'] ?? '',
+                $attendee['email'] ?? '',
+                $ticket_name,
+                1,
+            ];
+
+            $bid = $attendee['book_id'] ?? 0;
+            if ($bid && !isset($booking_prices[$bid]))
+            {
+                $price = get_post_meta($bid, 'mec_price', true);
+                if (is_numeric($price)) $booking_prices[$bid] = (float) $price;
+            }
+        }
+
+        $total_money = array_sum($booking_prices);
+        $rows[] = ['Total Attendees', count($attendees), '', ''];
+        $rows[] = ['Total Money Collected', $total_money, '', ''];
+
+        $upload_dir = wp_upload_dir();
+        $file = $upload_dir['path'].'/mec_attendees.csv';
+        $handle = fopen($file, 'w');
+
+        foreach ($rows as $row) fputcsv($handle, $row);
+        fclose($handle);
+
+        // Date & Time Formats
+        $date_format = get_option('date_format');
+        $time_format = get_option('time_format');
+
+        $subject = isset($this->notif_settings['attendee_report']['subject']) ? stripslashes(esc_html__($this->notif_settings['attendee_report']['subject'], 'modern-events-calendar-lite')) : esc_html__('Attendee Report', 'modern-events-calendar-lite');
+        $subject = $this->content($this->get_subject($subject, 'attendee_report', $event_id, 0), 0);
+
+        $message = $this->notif_settings['attendee_report']['content'] ?? '';
+        $message = str_replace('%%event_title%%', $event->post_title, $message);
+        $message = str_replace('%%total_attendees%%', count($attendees), $message);
+        $message = str_replace('%%event_start_datetime%%', $this->main->date_i18n($date_format.' '.$time_format, $start_timestamp), $message);
+        $message = str_replace('%%event_end_datetime%%', $this->main->date_i18n($date_format.' '.$time_format, $end_timestamp), $message);
+        $message = $this->content($this->get_content($message, 'attendee_report', $event_id, 0), 0, [], $timestamps);
+        $message = preg_replace('/%%.*%%/', '', $message);
+        $message = $this->add_template($message);
+
+        $this->mec_sender_email_notification_filter();
+        add_filter('wp_mail_content_type', [$this->main, 'html_email_type']);
+
+        $mail_arg = [
+            'to' => $to,
+            'subject' => $subject,
+            'message' => $message,
+            'headers' => $headers,
+            'attachments' => [$file],
+        ];
+
+        $mail_arg = apply_filters('mec_before_send_attendee_report', $mail_arg, $event_id, 'attendee_report');
+
+        wp_mail($mail_arg['to'], html_entity_decode(stripslashes($mail_arg['subject']), ENT_QUOTES | ENT_HTML5), wpautop(stripslashes($mail_arg['message'])), $mail_arg['headers'], $mail_arg['attachments']);
+
+        remove_filter('wp_mail_content_type', [$this->main, 'html_email_type']);
+
+        @unlink($file);
+
+        return true;
+    }
+
     /**
      * Send booking notification
      * @param int $book_id
@@ -1879,7 +1992,7 @@ class MEC_notifications extends MEC_base
      */
     public function content($message, $book_id, $attendee = [], $timestamps = '')
     {
-        if (!$book_id) return false;
+        if (!$book_id) return $message;
 
         // Disable Cache
         $cache = $this->getCache();
@@ -2407,6 +2520,21 @@ class MEC_notifications extends MEC_base
     }
 
     /**
+     * Get Organizer Email by Event ID
+     * @param int $event_id
+     * @param int $occurrence
+     * @return string
+     * @author Webnus <info@webnus.net>
+     */
+    public function get_organizer_email($event_id, $occurrence = null)
+    {
+        $organizer_id = $this->main->get_master_organizer_id($event_id, $occurrence);
+        $email = get_term_meta($organizer_id, 'email', true);
+
+        return trim($email) ? $email : false;
+    }
+
+    /**
      * Get Booking Organizer Email by Book ID
      * @param int $book_id
      * @return string
@@ -2603,14 +2731,14 @@ class MEC_notifications extends MEC_base
         if (!empty($custom_subject)) return $custom_subject;
 
         $values = get_post_meta($event_id, 'mec_notifications', true);
-        if (!is_array($values) or !count($values)) return $value;
+        if (!is_array($values) || !count($values)) return $value;
 
         $notification = $values[$notification_key] ?? [];
 
-        if (!is_array($notification) or !count($notification)) return $value;
-        if (!isset($notification['status']) or !$notification['status']) return $value;
+        if (!is_array($notification) || !count($notification)) return $value;
+        if (!isset($notification['status']) || !$notification['status']) return $value;
 
-        return ((isset($notification['subject']) and trim($notification['subject'])) ? $notification['subject'] : $value);
+        return isset($notification['subject']) && trim($notification['subject']) ? $notification['subject'] : $value;
     }
 
     /**

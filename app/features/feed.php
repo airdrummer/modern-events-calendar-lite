@@ -210,6 +210,14 @@ class MEC_feature_feed extends MEC_base
             }
         }
 
+        // Remove appointment events from the feed
+        $appointments = $this->getAppointments();
+        foreach($event_ids as $key => $event_id)
+        {
+            if($appointments->get_entity_type($event_id) === 'appointment') unset($event_ids[$key]);
+        }
+        $event_ids = array_values($event_ids);
+
         $output = '';
         foreach($event_ids as $event_id) $output .= $this->main->ical_single($event_id, '', '', !$only_upcoming_events);
 

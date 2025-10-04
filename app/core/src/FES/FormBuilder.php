@@ -2278,8 +2278,8 @@ class FormBuilder extends Singleton {
         <div class="mec-meta-box-fields" id="mec-booking-date-selection">
             <h4 class="mec-title"><?php esc_html_e('Date Selection', 'modern-events-calendar-lite'); ?></h4>
             <div class="mec-form-row">
-            <label class="mec-col-4" for="mec_bookings_date_selection"><?php esc_html_e('Date Selection', 'modern-events-calendar-lite'); ?></label>
-                <div class="mec-col-4">
+            <label class="mec-col-6" for="mec_bookings_date_selection"><?php esc_html_e('Date Selection', 'modern-events-calendar-lite'); ?></label>
+                <div class="mec-col-6">
                     <select name="mec[booking][bookings_date_selection]" id="mec_bookings_date_selection">
                         <option value="global" <?php echo $bookings_date_selection === 'global' ? 'selected="selected"' : ''; ?>><?php esc_html_e('Inherit from global options', 'modern-events-calendar-lite'); ?></option>
                         <option value="dropdown" <?php echo $bookings_date_selection === 'dropdown' ? 'selected' : ''; ?>><?php esc_html_e('Dropdown', 'modern-events-calendar-lite'); ?></option>

@@ -96,8 +96,9 @@ $u = $this->getUser();
                     ?>
                     <div class="mec-attendees-item clearfix">
                         <?php
-                            echo '<div class="mec-attendee-avatar-sec">'. get_avatar($mec_attendee['email'], '50') .'</div>';
-                            echo '<div class="mec-attendee-profile-name-sec">'. (!is_email($mec_attendee['name']) ? $mec_attendee['name'] : 'N/A') .'</div>';
+                            echo '<div class="mec-attendee-avatar-sec">' . get_avatar($mec_attendee['email'], '50') . '</div>';
+                            $attendee_name = !is_email($mec_attendee['name']) ? $mec_attendee['name'] : 'N/A';
+                            echo '<div class="mec-attendee-profile-name-sec">' . esc_html($attendee_name) . '</div>';
                             echo '<span class="mec-attendee-profile-ticket-sec">'. sprintf(_n('%s ticket', '%s tickets', $mec_attendee['count'], 'modern-events-calendar-lite'), $mec_attendee['count']) . '</span>';
                         ?>
                     </div>

@@ -495,6 +495,21 @@ var mec_search_callbacks = [];
                 $event_status.filter('[value="all"]').prop('checked', true);
             }
 
+            // Reset map fields specifically
+            var mapFields = ['state', 'city', 'region', 'street', 'postal_code'];
+            $.each(mapFields, function(i, field) {
+                var $mapField = $("#mec_sf_" + field + "_" + settings.id);
+                if($mapField.length) {
+                    $mapField.val(null);
+                    if($mapField.is('select') && jQuery().niceSelect) {
+                        jQuery("#mec_sf_" + field + "_" + settings.id).niceSelect('update');
+                    }
+                    if($mapField.is('select') && jQuery().select2) {
+                        $mapField.select2();
+                    }
+                }
+            });
+
             var fields = get_fields();
             $.each(fields,function(i,field)
             {

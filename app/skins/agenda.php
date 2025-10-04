@@ -15,6 +15,7 @@ class MEC_skin_agenda extends MEC_skins
 
     public $date_format_clean_1;
     public $date_format_clean_2;
+    public $date_format_fluent_1;
 
     /**
      * Constructor method
@@ -58,6 +59,7 @@ class MEC_skin_agenda extends MEC_skins
         // Date Formats
         $this->date_format_clean_1 = (isset($this->skin_options['clean_date_format1']) and trim($this->skin_options['clean_date_format1'])) ? $this->skin_options['clean_date_format1'] : 'l';
         $this->date_format_clean_2 = (isset($this->skin_options['clean_date_format2']) and trim($this->skin_options['clean_date_format2'])) ? $this->skin_options['clean_date_format2'] : 'F j';
+        $this->date_format_fluent_1 = (isset($this->skin_options['fluent_date_format1']) and trim($this->skin_options['fluent_date_format1'])) ? $this->skin_options['fluent_date_format1'] : 'F d, Y';
 
         // Search Form Options
         $this->sf_options = (isset($this->atts['sf-options']) and isset($this->atts['sf-options'][$this->skin])) ? $this->atts['sf-options'][$this->skin] : [];

@@ -59,6 +59,8 @@ class MEC_feature_appointments extends MEC_base
         if (!is_array($config)) $config = [];
 
         $duration = isset($config['duration']) && $config['duration'] ? $config['duration'] : 60;
+        $buffer   = isset($config['buffer']) ? (int) $config['buffer'] : 0;
+        $adjusted = isset($config['adjusted_availability']) && is_array($config['adjusted_availability']) ? $config['adjusted_availability'] : [];
         ?>
         <div class="mec-event-appointment-tab-wrap">
             <div class="mec-event-appointment-tab">
@@ -84,6 +86,10 @@ class MEC_feature_appointments extends MEC_base
                 </select>
                 <p class="description"><?php esc_html_e('How long should each appointment last?', 'modern-events-calendar-lite'); ?></p>
             </div>
+            <div class="mec-form-row">
+                <input type="number" id="mec_appointments_buffer" name="mec[appointments][buffer]" min="0" max="240" step="1" value="<?php echo esc_attr($buffer); ?>">
+                <p class="description"><?php esc_html_e('Buffer time between appointments (minutes)', 'modern-events-calendar-lite'); ?></p>
+            </div>
             <h4><?php esc_html_e('Availability', 'modern-events-calendar-lite'); ?></h4>
             <div class="mec-form-row">
                 <select id="mec_appointments_availability_repeat_type" name="mec[appointments][availability_repeat_type]">
@@ -98,7 +104,7 @@ class MEC_feature_appointments extends MEC_base
                         $t = 0;
                     ?>
                     <div class="lsd-apt-day-wrapper mec-form-row" data-key="<?php echo esc_attr($key); ?>">
-                        <div class="lsd-apt-day-label mec-col-1"><?php echo esc_html($day); ?></div>
+                        <div class="lsd-apt-day-label mec-col-2"><?php echo esc_html($day); ?></div>
                         <div class="lsd-apt-day-timeslots mec-col-9">
                             <div class="lsd-apt-day-timeslots-unavailable <?php echo isset($config['saved']) && !count($day_availability) ? '' : 'mec-util-hidden'; ?>"><?php esc_html_e('Unavailable', 'modern-events-calendar-lite'); ?></div>
                             <div class="lsd-apt-day-timeslots-wrapper">
@@ -157,7 +163,7 @@ class MEC_feature_appointments extends MEC_base
                                 <?php endif; ?>
                             </div>
                         </div>
-                        <div class="lsd-apt-day-icons mec-col-2">
+                        <div class="lsd-apt-day-icons mec-col-1">
                             <span class="button lsd-apt-day-icon-plus" data-key="<?php echo esc_attr($t); ?>">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z"/></svg>
                             </span>
@@ -195,6 +201,128 @@ class MEC_feature_appointments extends MEC_base
                         </div>
                     </div>
                 <?php endforeach; ?>
+            </div>
+
+            <h4><?php esc_html_e('Adjusted Availability', 'modern-events-calendar-lite'); ?></h4>
+            <?php $last_adjusted_key = count($adjusted) ? max(array_map('intval', array_keys($adjusted))) : 0; ?>
+            <div class="lsd-apt-adjusted-days-wrapper" data-key="<?php echo esc_attr($last_adjusted_key); ?>">
+                <?php if (count($adjusted)): ?>
+                    <?php foreach ($adjusted as $i => $day_adjusted): $periods = $day_adjusted; $date = $day_adjusted['date'] ?? ''; unset($periods['date']); $t = 0; ?>
+                    <div class="lsd-apt-day-wrapper mec-form-row" data-day="<?php echo esc_attr($i); ?>">
+                        <div class="lsd-apt-day-label mec-col-2"><input type="text" class="mec-apt-date-picker" name="mec[appointments][adjusted_availability][<?php echo esc_attr($i); ?>][date]" value="<?php echo esc_attr($date); ?>"></div>
+                        <div class="lsd-apt-day-timeslots mec-col-9">
+                            <div class="lsd-apt-day-timeslots-unavailable <?php echo count($periods) ? 'mec-util-hidden' : ''; ?>"><?php esc_html_e('Unavailable', 'modern-events-calendar-lite'); ?></div>
+                            <div class="lsd-apt-day-timeslots-wrapper">
+                                <?php if(count($periods)): foreach($periods as $a => $p): if(!is_numeric($a)) continue; $t = max($t, $a); ?>
+                                <div class="lsd-apt-day-timeslot-wrapper">
+                                    <div>
+                                        <?php $this->main->timepicker([
+                                            'method' => $this->settings['time_format'] ?? 12,
+                                            'time_hour' => $p['start']['hour'] ?? 8,
+                                            'time_minutes' => $p['start']['minutes'] ?? 0,
+                                            'time_ampm' => $p['start']['ampm'] ?? '',
+                                            'name' => 'mec[appointments][adjusted_availability]['.$i.']['.$a.'][start]',
+                                            'id_key' => 'mec_appointments_adjusted_'.$i.'_'.$a.'_start_',
+                                        ]); ?>
+                                        <span class="lsd-apt-to"> - </span>
+                                        <?php $this->main->timepicker([
+                                            'method' => $this->settings['time_format'] ?? 12,
+                                            'time_hour' => $p['end']['hour'] ?? 6,
+                                            'time_minutes' => $p['end']['minutes'] ?? 0,
+                                            'time_ampm' => $p['end']['ampm'] ?? '',
+                                            'name' => 'mec[appointments][adjusted_availability]['.$i.']['.$a.'][end]',
+                                            'id_key' => 'mec_appointments_adjusted_'.$i.'_'.$a.'_end_',
+                                        ]); ?>
+                                    </div>
+                                    <span class="button mec-dash-remove-btn lsd-apt-day-icon-remove">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M170.5 51.6L151.5 80l145 0-19-28.4c-1.5-2.2-4-3.6-6.7-3.6l-93.7 0c-2.7 0-5.2 1.3-6.7 3.6zm147-26.6L354.2 80 368 80l48 0 8 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-8 0 0 304c0 44.2-35.8 80-80 80l-224 0c-44.2 0-80-35.8-80-80l0-304-8 0c-13.3 0-24-10.7-24-24S10.7 80 24 80l80 0 13.8 0 36.7-55.1C140.9 9.4 158.4 0 177.1 0l93.7 0c18.7 0 36.2 9.4 46.6 24.9zM80 128l0 304c0 17.7 14.3 32 32 32l224 0c17.7 0 32-14.3 32-32l0-304L80 128zm80 64l0 208c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-208c0-8.8 7.2-16 16-16s16 7.2 16 16zm80 0l0 208c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-208c0-8.8 7.2-16 16-16s16 7.2 16 16zm80 0l0 208c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-208c0-8.8 7.2-16 16-16s16 7.2 16 16z"/></svg>
+                                    </span>
+                                </div>
+                                <?php endforeach; endif; ?>
+                            </div>
+                        </div>
+                        <div class="lsd-apt-day-icons mec-col-1">
+                            <span class="button lsd-apt-adj-day-icon-plus" data-key="<?php echo esc_attr($t); ?>">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z"/></svg>
+                            </span>
+                            <span class="button mec-dash-remove-btn lsd-apt-adjusted-day-remove">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M170.5 51.6L151.5 80l145 0-19-28.4c-1.5-2.2-4-3.6-6.7-3.6l-93.7 0c-2.7 0-5.2 1.3-6.7 3.6zm147-26.6L354.2 80 368 80l48 0 8 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-8 0 0 304c0 44.2-35.8 80-80 80l-224 0c-44.2 0-80-35.8-80-80l0-304-8 0c-13.3 0-24-10.7-24-24S10.7 80 24 80l80 0 13.8 0 36.7-55.1C140.9 9.4 158.4 0 177.1 0l93.7 0c18.7 0 36.2 9.4 46.6 24.9zM80 128l0 304c0 17.7 14.3 32 32 32l224 0c17.7 0 32-14.3 32-32l0-304L80 128zm80 64l0 208c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-208c0-8.8 7.2-16 16-16s16 7.2 16 16zm80 0l0 208c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-208c0-8.8 7.2-16 16-16s16 7.2 16 16zm80 0l0 208c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-208c0-8.8 7.2-16 16-16s16 7.2 16 16z"/></svg>
+                            </span>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+            <div class="mec-form-row"><span class="button lsd-apt-adjusted-day-add"><?php esc_html_e('Add Day', 'modern-events-calendar-lite'); ?></span></div>
+            <div class="mec-util-hidden">
+                <div id="lsd-apt-adjusted-template-day">
+                    <div class="lsd-apt-day-wrapper mec-form-row" data-day=":i:">
+                        <div class="lsd-apt-day-label mec-col-2"><input type="text" class="mec-apt-date-picker" name="mec[appointments][adjusted_availability][:i:][date]" value=""></div>
+                        <div class="lsd-apt-day-timeslots mec-col-9">
+                            <div class="lsd-apt-day-timeslots-unavailable mec-util-hidden"><?php esc_html_e('Unavailable', 'modern-events-calendar-lite'); ?></div>
+                            <div class="lsd-apt-day-timeslots-wrapper">
+                                <div class="lsd-apt-day-timeslot-wrapper">
+                                    <div>
+                                        <?php $this->main->timepicker([
+                                            'method' => $this->settings['time_format'] ?? 12,
+                                            'time_hour' => 8,
+                                            'time_minutes' => 0,
+                                            'time_ampm' => 'AM',
+                                            'name' => 'mec[appointments][adjusted_availability][:i:][0][start]',
+                                            'id_key' => 'mec_appointments_adjusted_:i:_0_start_',
+                                        ]); ?>
+                                        <span class="lsd-apt-to"> - </span>
+                                        <?php $this->main->timepicker([
+                                            'method' => $this->settings['time_format'] ?? 12,
+                                            'time_hour' => 6,
+                                            'time_minutes' => 0,
+                                            'time_ampm' => 'PM',
+                                            'name' => 'mec[appointments][adjusted_availability][:i:][0][end]',
+                                            'id_key' => 'mec_appointments_adjusted_:i:_0_end_',
+                                        ]); ?>
+                                    </div>
+                                    <span class="button mec-dash-remove-btn lsd-apt-day-icon-remove">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M170.5 51.6L151.5 80l145 0-19-28.4c-1.5-2.2-4-3.6-6.7-3.6l-93.7 0c-2.7 0-5.2 1.3-6.7 3.6zm147-26.6L354.2 80 368 80l48 0 8 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-8 0 0 304c0 44.2-35.8 80-80 80l-224 0c-44.2 0-80-35.8-80-80l0-304-8 0c-13.3 0-24-10.7-24-24S10.7 80 24 80l80 0 13.8 0 36.7-55.1C140.9 9.4 158.4 0 177.1 0l93.7 0c18.7 0 36.2 9.4 46.6 24.9zM80 128l0 304c0 17.7 14.3 32 32 32l224 0c17.7 0 32-14.3 32-32l0-304L80 128zm80 64l0 208c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-208c0-8.8 7.2-16 16-16s16 7.2 16 16zm80 0l0 208c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-208c0-8.8 7.2-16 16-16s16 7.2 16 16zm80 0l0 208c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-208c0-8.8 7.2-16 16-16s16 7.2 16 16z"/></svg>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lsd-apt-day-icons mec-col-1">
+                            <span class="button lsd-apt-adj-day-icon-plus" data-key="0">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z"/></svg>
+                            </span>
+                            <span class="button mec-dash-remove-btn lsd-apt-adjusted-day-remove">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M170.5 51.6L151.5 80l145 0-19-28.4c-1.5-2.2-4-3.6-6.7-3.6l-93.7 0c-2.7 0-5.2 1.3-6.7 3.6zm147-26.6L354.2 80 368 80l48 0 8 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-8 0 0 304c0 44.2-35.8 80-80 80l-224 0c-44.2 0-80-35.8-80-80l0-304-8 0c-13.3 0-24-10.7-24-24S10.7 80 24 80l80 0 13.8 0 36.7-55.1C140.9 9.4 158.4 0 177.1 0l93.7 0c18.7 0 36.2 9.4 46.6 24.9zM80 128l0 304c0 17.7 14.3 32 32 32l224 0c17.7 0 32-14.3 32-32l0-304L80 128zm80 64l0 208c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-208c0-8.8 7.2-16 16-16s16 7.2 16 16zm80 0l0 208c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-208c0-8.8 7.2-16 16-16s16 7.2 16 16zm80 0l0 208c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-208c0-8.8 7.2-16 16-16s16 7.2 16 16z"/></svg>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div id="lsd-apt-adjusted-template-timeslot">
+                    <div class="lsd-apt-day-timeslot-wrapper">
+                        <div>
+                            <?php $this->main->timepicker([
+                                'method' => $this->settings['time_format'] ?? 12,
+                                'time_hour' => 8,
+                                'time_minutes' => 0,
+                                'time_ampm' => 'AM',
+                                'name' => 'mec[appointments][adjusted_availability][:i:][:t:][start]',
+                                'id_key' => 'mec_appointments_adjusted_:i:_:t:_start_',
+                            ]); ?>
+                            <span class="lsd-apt-to"> - </span>
+                            <?php $this->main->timepicker([
+                                'method' => $this->settings['time_format'] ?? 12,
+                                'time_hour' => 6,
+                                'time_minutes' => 0,
+                                'time_ampm' => 'PM',
+                                'name' => 'mec[appointments][adjusted_availability][:i:][:t:][end]',
+                                'id_key' => 'mec_appointments_adjusted_:i:_:t:_end_',
+                            ]); ?>
+                        </div>
+                        <span class="button mec-dash-remove-btn lsd-apt-day-icon-remove">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M170.5 51.6L151.5 80l145 0-19-28.4c-1.5-2.2-4-3.6-6.7-3.6l-93.7 0c-2.7 0-5.2 1.3-6.7 3.6zm147-26.6L354.2 80 368 80l48 0 8 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-8 0 0 304c0 44.2-35.8 80-80 80l-224 0c-44.2 0-80-35.8-80-80l0-304-8 0c-13.3 0-24-10.7-24-24S10.7 80 24 80l80 0 13.8 0 36.7-55.1C140.9 9.4 158.4 0 177.1 0l93.7 0c18.7 0 36.2 9.4 46.6 24.9zM80 128l0 304c0 17.7 14.3 32 32 32l224 0c17.7 0 32-14.3 32-32l0-304L80 128zm80 64l0 208c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-208c0-8.8 7.2-16 16-16s16 7.2 16 16zm80 0l0 208c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-208c0-8.8 7.2-16 16-16s16 7.2 16 16zm80 0l0 208c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-208c0-8.8 7.2-16 16-16s16 7.2 16 16z"/></svg>
+                        </span>
+                    </div>
+                </div>
             </div>
             <div class="mec-apt-scheduling-window-wrapper mec-util-hidden">
                 <h4><?php esc_html_e('Scheduling Window', 'modern-events-calendar-lite'); ?></h4>

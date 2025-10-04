@@ -920,7 +920,18 @@ class MEC_skins extends MEC_base
                             $midnight = $s+(3600*$midnight_hour);
                             if($days_long == '1' and $midnight >= $mec_date->tend) break;
 
-                            $dates[$d][] = $mec_date->post_id;
+                            // Check if this event has multiple time slots on the same day
+                            $event_id = $mec_date->post_id;
+                            $event_date = date('Y-m-d', $s);
+                            
+                            // Get all occurrences for this event on this specific date
+                            $occurrences_query = "SELECT * FROM `#__mec_dates` WHERE `post_id`='$event_id' AND DATE(FROM_UNIXTIME(`tstart`))='$event_date' ORDER BY `tstart` ASC";
+                            $occurrences = $this->db->select($occurrences_query);
+                            
+                            // Add the event ID for each occurrence
+                            foreach($occurrences as $occurrence) {
+                                $dates[$d][] = $event_id;
+                            }
                         }
                     }
 
@@ -1751,7 +1762,7 @@ class MEC_skins extends MEC_base
                 $now = current_time('timestamp');
 
                 $skins = ['list', 'grid', 'agenda', 'map'];
-                if(isset($this->skin_options['default_view']) and $this->skin_options['default_view'] == 'list') $skins[] = 'full_calendar';
+                if(isset($this->skin_options['default_view']) and $this->skin_options['default_view'] == 'list' and $this->skin !== 'full_calendar') $skins[] = 'full_calendar';
 
                 $item = esc_html__('Select', 'modern-events-calendar-lite');
                 $option = in_array($this->skin, $skins) ? '<option class="mec-none-item" value="none" selected="selected">'.esc_html($item).'</option>' : '';
@@ -1767,7 +1778,8 @@ class MEC_skins extends MEC_base
 
                 for($i = 1; $i <= 12; $i++)
                 {
-                    $output .= '<option value="'.($i < 10 ? esc_attr('0'.$i) : esc_attr($i)).'">'.esc_html($this->main->date_i18n('F', mktime(0, 0, 0, $i, 10))).'</option>';
+                    $selected = (!in_array($this->skin, $skins) and $i == date('n', $now)) ? 'selected' : '';
+                    $output .= '<option value="'.($i < 10 ? esc_attr('0'.$i) : esc_attr($i)).'" '.esc_attr($selected).'>'.esc_html($this->main->date_i18n('F', mktime(0, 0, 0, $i, 10))).'</option>';
                 }
 
                 $output .= '</select>';
@@ -2601,7 +2613,7 @@ class MEC_skins extends MEC_base
         $outlook = 'owa?path=/calendar/action/compose&rru=addsubscription&url=' . $feed_url . '&name=' .  get_bloginfo('name') . ' ' . get_the_title($this->id);
 
         return '<div class="mec-subscribe-to-calendar-container">
-        <button class="mec-subscribe-to-calendar-btn">' . __('Add to calendar', 'modern-events-calendar-lite') . '</button>
+        <button class="mec-subscribe-to-calendar-btn">' . __('Subscribe to calendar', 'modern-events-calendar-lite') . '</button>
         <div class="mec-subscribe-to-calendar-items" style="display: none">' .
             '<a target="_blank" rel="noopener noreferrer" href="https://www.google.com/calendar/render?cid=' . $webcal_feed_url . '">' . __('Google Calendar', 'modern-events-calendar-lite') . '</a>' .
             '<a target="_blank" rel="noopener noreferrer" href="' . $webcal_feed_url . '">' . __('iCalendar', 'modern-events-calendar-lite') . '</a>' .

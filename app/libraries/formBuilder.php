@@ -72,16 +72,17 @@ class MEC_formBuilder extends MEC_base
                             <div class="mec-hourly-schedule-schedules" id="<?php echo esc_attr($prefix); ?>mec_hourly_schedules<?php echo esc_attr($d); ?>">
                                 <?php $i = 0; foreach($day['schedules'] as $key => $hourly_schedule): if(!is_numeric($key)) continue; $i = max($i, $key); ?>
                                     <div class="mec-form-row mec-box" id="<?php echo esc_attr($prefix); ?>mec_hourly_schedule_row<?php echo esc_attr($d); ?>_<?php echo esc_attr($key); ?>">
-                                        <input class="mec-col-1" type="text" name="<?php echo esc_attr($name_prefix); ?>[hourly_schedules][<?php echo esc_attr($d); ?>][schedules][<?php echo esc_attr($key); ?>][from]" placeholder="<?php esc_attr_e('From e.g. 8:15', 'modern-events-calendar-lite'); ?>" value="<?php echo esc_attr($hourly_schedule['from']); ?>"/>
-                                        <input class="mec-col-1" type="text" name="<?php echo esc_attr($name_prefix); ?>[hourly_schedules][<?php echo esc_attr($d); ?>][schedules][<?php echo esc_attr($key); ?>][to]" placeholder="<?php esc_attr_e('To e.g. 8:45', 'modern-events-calendar-lite'); ?>" value="<?php echo esc_attr($hourly_schedule['to']); ?>"/>
-                                        <input class="mec-col-3" type="text" name="<?php echo esc_attr($name_prefix); ?>[hourly_schedules][<?php echo esc_attr($d); ?>][schedules][<?php echo esc_attr($key); ?>][title]" placeholder="<?php esc_attr_e('Title', 'modern-events-calendar-lite'); ?>" value="<?php echo esc_attr($hourly_schedule['title']); ?>"/>
+                                        <span class="mec_field_sort button"><?php esc_html_e('Sort', 'modern-events-calendar-lite'); ?></span>
+                                        <input class="mec-col-2" type="text" name="<?php echo esc_attr($name_prefix); ?>[hourly_schedules][<?php echo esc_attr($d); ?>][schedules][<?php echo esc_attr($key); ?>][from]" placeholder="<?php esc_attr_e('From e.g. 8:15', 'modern-events-calendar-lite'); ?>" value="<?php echo esc_attr($hourly_schedule['from']); ?>"/>
+                                        <input class="mec-col-2" type="text" name="<?php echo esc_attr($name_prefix); ?>[hourly_schedules][<?php echo esc_attr($d); ?>][schedules][<?php echo esc_attr($key); ?>][to]" placeholder="<?php esc_attr_e('To e.g. 8:45', 'modern-events-calendar-lite'); ?>" value="<?php echo esc_attr($hourly_schedule['to']); ?>"/>
+                                        <input class="mec-col-2" type="text" name="<?php echo esc_attr($name_prefix); ?>[hourly_schedules][<?php echo esc_attr($d); ?>][schedules][<?php echo esc_attr($key); ?>][title]" placeholder="<?php esc_attr_e('Title', 'modern-events-calendar-lite'); ?>" value="<?php echo esc_attr($hourly_schedule['title']); ?>"/>
                                         <?php if(apply_filters('mec_hourly_schedule_custom_field_description_status', false)): ?>
                                             <?php
                                                 $field_name = "{$name_prefix}[hourly_schedules][$d][schedules][$key][description]";
                                                 do_action('mec_hourly_schedule_custom_field_description', $hourly_schedule,$field_name, $name_prefix, $d, $key);
                                             ?>
                                         <?php else: ?>
-                                            <input class="mec-col-5" type="text" name="<?php echo esc_attr($name_prefix); ?>[hourly_schedules][<?php echo esc_attr($d); ?>][schedules][<?php echo esc_attr($key); ?>][description]" placeholder="<?php esc_attr_e('Description', 'modern-events-calendar-lite'); ?>" value="<?php echo esc_attr($hourly_schedule['description']); ?>"/>
+                                            <input class="mec-col-4" type="text" name="<?php echo esc_attr($name_prefix); ?>[hourly_schedules][<?php echo esc_attr($d); ?>][schedules][<?php echo esc_attr($key); ?>][description]" placeholder="<?php esc_attr_e('Description', 'modern-events-calendar-lite'); ?>" value="<?php echo esc_attr($hourly_schedule['description']); ?>"/>
                                         <?php endif; ?>
                                         <button class="button mec-remove-hourly-schedule-button mec-dash-remove-btn" type="button" onclick="mec_hourly_schedule_remove(<?php echo esc_attr($d); ?>, <?php echo esc_attr($key); ?>, '<?php echo esc_attr($prefix); ?>');"><?php esc_html_e('Remove', 'modern-events-calendar-lite'); ?></button>
                                         <?php if($speakers_status): ?>
@@ -100,16 +101,17 @@ class MEC_formBuilder extends MEC_base
                                value="<?php echo ($i + 1); ?>"/>
                         <div class="mec-util-hidden" id="<?php echo esc_attr($prefix); ?>mec_new_hourly_schedule_raw<?php echo esc_attr($d); ?>">
                             <div class="mec-form-row mec-box" id="<?php echo esc_attr($prefix); ?>mec_hourly_schedule_row<?php echo esc_attr($d); ?>_:i:">
-                                <input class="mec-col-1" type="text" name="<?php echo esc_attr($name_prefix); ?>[hourly_schedules][<?php echo esc_attr($d); ?>][schedules][:i:][from]" placeholder="<?php esc_attr_e('From e.g. 8:15', 'modern-events-calendar-lite'); ?>"/>
-                                <input class="mec-col-1" type="text" name="<?php echo esc_attr($name_prefix); ?>[hourly_schedules][<?php echo esc_attr($d); ?>][schedules][:i:][to]" placeholder="<?php esc_attr_e('To e.g. 8:45', 'modern-events-calendar-lite'); ?>"/>
-                                <input class="mec-col-3" type="text" name="<?php echo esc_attr($name_prefix); ?>[hourly_schedules][<?php echo esc_attr($d); ?>][schedules][:i:][title]" placeholder="<?php esc_attr_e('Title', 'modern-events-calendar-lite'); ?>"/>
+                                <span class="mec_field_sort button"><?php esc_html_e('Sort', 'modern-events-calendar-lite'); ?></span>
+                                <input class="mec-col-2" type="text" name="<?php echo esc_attr($name_prefix); ?>[hourly_schedules][<?php echo esc_attr($d); ?>][schedules][:i:][from]" placeholder="<?php esc_attr_e('From e.g. 8:15', 'modern-events-calendar-lite'); ?>"/>
+                                <input class="mec-col-2" type="text" name="<?php echo esc_attr($name_prefix); ?>[hourly_schedules][<?php echo esc_attr($d); ?>][schedules][:i:][to]" placeholder="<?php esc_attr_e('To e.g. 8:45', 'modern-events-calendar-lite'); ?>"/>
+                                <input class="mec-col-2" type="text" name="<?php echo esc_attr($name_prefix); ?>[hourly_schedules][<?php echo esc_attr($d); ?>][schedules][:i:][title]" placeholder="<?php esc_attr_e('Title', 'modern-events-calendar-lite'); ?>"/>
                                 <?php if(apply_filters('mec_hourly_schedule_custom_field_description_status',false)): ?>
                                     <?php
                                         $field_name = "{$name_prefix}[hourly_schedules][$d][schedules][:i:][description]";
                                         do_action('mec_hourly_schedule_custom_field_description', [],$field_name, $name_prefix, $d, ':i:' );
                                     ?>
                                 <?php else: ?>
-                                    <input class="mec-col-5" type="text" name="<?php echo esc_attr($name_prefix); ?>[hourly_schedules][<?php echo esc_attr($d); ?>][schedules][:i:][description]" placeholder="<?php esc_attr_e('Description', 'modern-events-calendar-lite'); ?>" />
+                                    <input class="mec-col-4" type="text" name="<?php echo esc_attr($name_prefix); ?>[hourly_schedules][<?php echo esc_attr($d); ?>][schedules][:i:][description]" placeholder="<?php esc_attr_e('Description', 'modern-events-calendar-lite'); ?>" />
                                 <?php endif; ?>
                                 <button class="button mec-remove-hourly-schedule-button mec-dash-remove-btn" type="button" onclick="mec_hourly_schedule_remove(<?php echo esc_attr($d); ?>, :i:, '<?php echo esc_attr($prefix); ?>');"><?php esc_html_e('Remove', 'modern-events-calendar-lite'); ?></button>
                                 <?php if($speakers_status): ?>
@@ -146,22 +148,23 @@ class MEC_formBuilder extends MEC_base
                             <button class="button mec-add-hourly-schedule-button" type="button" id="<?php echo esc_attr($prefix); ?>mec_add_hourly_schedule_button:d:" data-day=":d:" data-prefix="<?php echo esc_attr($prefix); ?>"><?php esc_html_e('Add', 'modern-events-calendar-lite'); ?></button>
                             <span class="description"><?php esc_attr_e('Add new hourly schedule row', 'modern-events-calendar-lite'); ?></span>
                         </div>
-                        <div id="<?php echo esc_attr($prefix); ?>mec_hourly_schedules:d:">
+                        <div class="mec-hourly-schedule-schedules" id="<?php echo esc_attr($prefix); ?>mec_hourly_schedules:d:">
                         </div>
                     </div>
                     <input type="hidden" id="<?php echo esc_attr($prefix); ?>mec_new_hourly_schedule_key:d:" value="1"/>
                     <div class="mec-util-hidden mec-hourly-schedule-raw" id="<?php echo esc_attr($prefix); ?>mec_new_hourly_schedule_raw:d:">
                         <div class="mec-form-row mec-box" id="<?php echo esc_attr($prefix); ?>mec_hourly_schedule_row:d:_:i:">
-                            <input class="mec-col-1" type="text" name="<?php echo esc_attr($name_prefix); ?>[hourly_schedules][:d:][schedules][:i:][from]" placeholder="<?php esc_attr_e('From e.g. 8:15', 'modern-events-calendar-lite'); ?>"/>
-                            <input class="mec-col-1" type="text" name="<?php echo esc_attr($name_prefix); ?>[hourly_schedules][:d:][schedules][:i:][to]" placeholder="<?php esc_attr_e('To e.g. 8:45', 'modern-events-calendar-lite'); ?>"/>
-                            <input class="mec-col-3" type="text" name="<?php echo esc_attr($name_prefix); ?>[hourly_schedules][:d:][schedules][:i:][title]" placeholder="<?php esc_attr_e('Title', 'modern-events-calendar-lite'); ?>"/>
+                            <span class="mec_field_sort button"><?php esc_html_e('Sort', 'modern-events-calendar-lite'); ?></span>
+                            <input class="mec-col-2" type="text" name="<?php echo esc_attr($name_prefix); ?>[hourly_schedules][:d:][schedules][:i:][from]" placeholder="<?php esc_attr_e('From e.g. 8:15', 'modern-events-calendar-lite'); ?>"/>
+                            <input class="mec-col-2" type="text" name="<?php echo esc_attr($name_prefix); ?>[hourly_schedules][:d:][schedules][:i:][to]" placeholder="<?php esc_attr_e('To e.g. 8:45', 'modern-events-calendar-lite'); ?>"/>
+                            <input class="mec-col-2" type="text" name="<?php echo esc_attr($name_prefix); ?>[hourly_schedules][:d:][schedules][:i:][title]" placeholder="<?php esc_attr_e('Title', 'modern-events-calendar-lite'); ?>"/>
                             <?php if(apply_filters('mec_hourly_schedule_custom_field_description_status',false)): ?>
                                 <?php
                                     $field_name = "{$name_prefix}[hourly_schedules][:d:][schedules][:i:][description]";
                                     do_action('mec_hourly_schedule_custom_field_description', [],$field_name, $name_prefix, ':d:', ':i:' );
                                 ?>
                             <?php else: ?>
-                                <input class="mec-col-5" type="text" name="<?php echo esc_attr($name_prefix); ?>[hourly_schedules][:d:][schedules][:i:][description]" placeholder="<?php esc_attr_e('Description', 'modern-events-calendar-lite'); ?>" />
+                                <input class="mec-col-4" type="text" name="<?php echo esc_attr($name_prefix); ?>[hourly_schedules][:d:][schedules][:i:][description]" placeholder="<?php esc_attr_e('Description', 'modern-events-calendar-lite'); ?>" />
                             <?php endif; ?>
                             <button class="button mec-remove-hourly-schedule-button mec-dash-remove-btn" type="button" onclick="mec_hourly_schedule_remove(:d:, :i:, '<?php echo esc_attr($prefix); ?>');"><?php esc_html_e('Remove', 'modern-events-calendar-lite'); ?></button>
                             <?php if($speakers_status): ?>

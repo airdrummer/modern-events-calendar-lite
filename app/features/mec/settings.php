@@ -384,7 +384,7 @@ $shortcodes = get_posts(array(
                                         </div>
                                     </div>
                                     <div class="mec-form-row">
-                                        <label class="mec-col-3" for="mec_settings_ical_feed_subscribe_to_calendar"><?php esc_html_e('Subscribe + To Calendar', 'modern-events-calendar-lite'); ?></label>
+                                        <label class="mec-col-3" for="mec_settings_ical_feed_subscribe_to_calendar"><?php esc_html_e('Subscribe To Calendar', 'modern-events-calendar-lite'); ?></label>
                                         <div class="mec-col-9">
                                             <label>
                                                 <input type="hidden" name="mec[settings][ical_feed_subscribe_to_calendar]" value="0" />

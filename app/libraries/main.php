@@ -741,6 +741,7 @@ class MEC_main extends MEC_base
                 esc_html__('Booking Verification', 'modern-events-calendar-lite') => 'booking_verification',
                 esc_html__('Booking Cancellation', 'modern-events-calendar-lite') => 'cancellation_notification',
                 esc_html__('Booking Reminder', 'modern-events-calendar-lite') => 'booking_reminder',
+                esc_html__('Attendee Report', 'modern-events-calendar-lite') => 'attendee_report',
                 esc_html__('Booking Reschedule', 'modern-events-calendar-lite') => 'booking_moved',
                 esc_html__('Event Soldout', 'modern-events-calendar-lite') => 'event_soldout',
                 esc_html__('Admin', 'modern-events-calendar-lite') => 'admin_notification',
@@ -3998,28 +3999,33 @@ class MEC_main extends MEC_base
             else $end_time = strtotime((trim($occurrence_end_date) ? $occurrence_end_date : $date['end']['date']) . ' ' . $end_time_string);
         }
 
-        $gmt_offset_seconds = $this->get_gmt_offset_seconds($start_time, $event);
+        $timezone = $this->get_timezone($event->ID);
         $stamp = strtotime($event->post->post_date);
         $modified = strtotime($event->post->post_modified);
 
         $rrules = $this->get_ical_rrules($event);
-        $time_format = 'Ymd\\THi00\\Z';
+        $time_format = 'Ymd\\THis';
 
         $sequence = (isset($event->meta['mec_sequence']) ? (int) $event->meta['mec_sequence'] : 0);
 
         // All Day Event
         if (isset($event->meta['mec_date']) and isset($event->meta['mec_date']['allday']) and $event->meta['mec_date']['allday'])
         {
-            $start_time = strtotime("Today", $start_time);
+            $start_time = strtotime('Today', $start_time);
             $end_time = strtotime('Tomorrow', $end_time);
+            $time_format = 'Ymd\\T000000';
         }
 
         $ical = "BEGIN:VEVENT" . $crlf;
         $ical .= "CLASS:PUBLIC" . $crlf;
         $ical .= "UID:MEC-" . md5($event_id) . "@" . $this->get_domain() . $crlf;
-        $ical .= "DTSTART:" . gmdate($time_format, ($start_time - $gmt_offset_seconds)) . $crlf;
-        $ical .= "DTEND:" . gmdate($time_format, ($end_time - $gmt_offset_seconds)) . $crlf;
-        $ical .= "DTSTAMP:" . gmdate($time_format, ($stamp - $gmt_offset_seconds)) . $crlf;
+        $start_dt = new DateTime('@' . $start_time);
+        $start_dt->setTimezone(new DateTimeZone($timezone));
+        $end_dt = new DateTime('@' . $end_time);
+        $end_dt->setTimezone(new DateTimeZone($timezone));
+        $ical .= "DTSTART;TZID=" . $timezone . ":" . $start_dt->format($time_format) . $crlf;
+        $ical .= "DTEND;TZID=" . $timezone . ":" . $end_dt->format($time_format) . $crlf;
+        $ical .= "DTSTAMP:" . gmdate('Ymd\\THis\\Z', $stamp) . $crlf;
 
         if (is_array($rrules) and count($rrules))
         {
@@ -4101,8 +4107,12 @@ class MEC_main extends MEC_base
 
         $ical = "BEGIN:VEVENT" . $crlf;
         $ical .= "CLASS:PUBLIC" . $crlf;
-        $ical .= "DTSTART;TZID=" . $timezone . ":" . date($time_format, $start_time) . $crlf;
-        $ical .= "DTEND;TZID=" . $timezone . ":" . date($time_format, $end_time) . $crlf;
+        $start_dt = new DateTime('@' . $start_time);
+        $start_dt->setTimezone(new DateTimeZone($timezone));
+        $end_dt = new DateTime('@' . $end_time);
+        $end_dt->setTimezone(new DateTimeZone($timezone));
+        $ical .= "DTSTART;TZID=" . $timezone . ":" . $start_dt->format($time_format) . $crlf;
+        $ical .= "DTEND;TZID=" . $timezone . ":" . $end_dt->format($time_format) . $crlf;
         $ical .= "DTSTAMP:" . gmdate($time_format, $stamp_gmt) . $crlf;
         $ical .= "UID:MEC-" . md5($event->ID) . "@" . $this->get_domain() . $crlf;
 
@@ -4260,6 +4270,8 @@ class MEC_main extends MEC_base
         $ical .= "X-ORIGINAL-URL:" . $this->URL('site') . $crlf;
         $ical .= "X-WR-CALNAME:" . get_bloginfo('name') . $crlf;
         $ical .= "X-WR-CALDESC:" . get_bloginfo('description') . $crlf;
+        $timezone = $this->get_timezone();
+        if ($timezone) $ical .= "X-WR-TIMEZONE:" . $timezone . $crlf . $this->build_vtimezone($timezone);
         $ical .= "REFRESH-INTERVAL;VALUE=DURATION:PT1H" . $crlf;
         $ical .= "X-PUBLISHED-TTL:PT1H" . $crlf;
         $ical .= "X-MS-OLK-FORCEINSPECTOROPEN:TRUE" . $crlf;
@@ -4267,6 +4279,87 @@ class MEC_main extends MEC_base
         $ical .= "END:VCALENDAR" . $crlf;
 
         return $ical;
+    }
+
+    protected function build_vtimezone($timezone)
+    {
+        $crlf = "\r\n";
+        if (!trim($timezone)) return '';
+
+        $tz = new DateTimeZone($timezone);
+        $year = date('Y');
+        $transitions = $tz->getTransitions(strtotime(($year - 1) . '-12-01'), strtotime(($year + 1) . '-01-01'));
+
+        $vtimezone = "BEGIN:VTIMEZONE" . $crlf . "TZID:" . $timezone . $crlf;
+
+        $dst = $std = null;
+        $prev = null;
+        foreach ($transitions as $t)
+        {
+            if ($prev)
+            {
+                if ($t['isdst'] && !$dst) $dst = ['current' => $t, 'prev' => $prev];
+                elseif (!$t['isdst'] && $dst && !$std) { $std = ['current' => $t, 'prev' => $prev]; break; }
+            }
+            $prev = $t;
+        }
+
+        if ($dst && $std)
+        {
+            $dst_dt = new DateTime('@' . $dst['current']['ts']);
+            $dst_dt->setTimezone($tz);
+            $std_dt = new DateTime('@' . $std['current']['ts']);
+            $std_dt->setTimezone($tz);
+
+            $vtimezone .= "BEGIN:DAYLIGHT" . $crlf;
+            $vtimezone .= "TZOFFSETFROM:" . $this->format_offset($dst['prev']['offset']) . $crlf;
+            $vtimezone .= "TZOFFSETTO:" . $this->format_offset($dst['current']['offset']) . $crlf;
+            $vtimezone .= "TZNAME:" . $dst['current']['abbr'] . $crlf;
+            $vtimezone .= "DTSTART:" . $dst_dt->format('Ymd\\THis') . $crlf;
+            $vtimezone .= "RRULE:FREQ=YEARLY;BYMONTH=" . $dst_dt->format('m') . ";BYDAY=" . $this->get_byday_rule($dst_dt) . $crlf;
+            $vtimezone .= "END:DAYLIGHT" . $crlf;
+
+            $vtimezone .= "BEGIN:STANDARD" . $crlf;
+            $vtimezone .= "TZOFFSETFROM:" . $this->format_offset($std['prev']['offset']) . $crlf;
+            $vtimezone .= "TZOFFSETTO:" . $this->format_offset($std['current']['offset']) . $crlf;
+            $vtimezone .= "TZNAME:" . $std['current']['abbr'] . $crlf;
+            $vtimezone .= "DTSTART:" . $std_dt->format('Ymd\\THis') . $crlf;
+            $vtimezone .= "RRULE:FREQ=YEARLY;BYMONTH=" . $std_dt->format('m') . ";BYDAY=" . $this->get_byday_rule($std_dt) . $crlf;
+            $vtimezone .= "END:STANDARD" . $crlf;
+        }
+        else
+        {
+            $now = new DateTime('now', $tz);
+            $vtimezone .= "BEGIN:STANDARD" . $crlf;
+            $vtimezone .= "TZOFFSETFROM:" . $this->format_offset($tz->getOffset($now)) . $crlf;
+            $vtimezone .= "TZOFFSETTO:" . $this->format_offset($tz->getOffset($now)) . $crlf;
+            $vtimezone .= "TZNAME:" . $now->format('T') . $crlf;
+            $vtimezone .= "DTSTART:" . $now->format('Ymd\\THis') . $crlf;
+            $vtimezone .= "END:STANDARD" . $crlf;
+        }
+
+        $vtimezone .= "END:VTIMEZONE" . $crlf;
+
+        return $vtimezone;
+    }
+
+    protected function format_offset($offset)
+    {
+        $sign = ($offset >= 0) ? '+' : '-';
+        $offset = abs($offset);
+        $hours = str_pad(intval($offset / 3600), 2, '0', STR_PAD_LEFT);
+        $minutes = str_pad(intval(($offset % 3600) / 60), 2, '0', STR_PAD_LEFT);
+        return $sign . $hours . $minutes;
+    }
+
+    protected function get_byday_rule($dt)
+    {
+        $days = ['Sun' => 'SU', 'Mon' => 'MO', 'Tue' => 'TU', 'Wed' => 'WE', 'Thu' => 'TH', 'Fri' => 'FR', 'Sat' => 'SA'];
+        $day_name = $days[$dt->format('D')];
+        $day_of_month = (int) $dt->format('j');
+        $week = (int) ceil($day_of_month / 7);
+        if ($week === 5) $week = -1;
+        return $week . $day_name;
     }
 
     /**
@@ -10474,8 +10567,7 @@ class MEC_main extends MEC_base
 
         if (trim($organizer_id) === '' or $organizer_id == 1) $organizer_id = 0;
 
-        $organizer_id = apply_filters('wpml_object_id', $organizer_id, 'mec_organizer', true);
-        return $organizer_id;
+        return apply_filters('wpml_object_id', $organizer_id, 'mec_organizer', true);
     }
 
     public function get_location_data($location_id): array
@@ -10945,7 +11037,8 @@ class MEC_main extends MEC_base
 
             $html .= '<div class="w-clearfix mec-attendees-content">';
             if ($checkbox) $html .= '<div class="w-col-xs-1"><input type="checkbox" data-attendee-id="' . esc_attr($mec_attendee_id) . '" data-book_attendee_key="' . $attendee['book_id'] . '-' . $attendee['key'] . '" onchange="mec_send_email_check(this);" /><span class="mec-util-hidden mec-send-email-attendee-info">' . esc_html($attendee['name'] . ':.:' . $attendee['email']) . ',</span></div>';
-            $html .= '<div class="w-col-xs-3 name">' . get_avatar($attendee['email']) . $attendee['name'] . '</div>';
+            $attendee_name = isset($attendee['name']) ? esc_html($attendee['name']) : '';
+            $html .= '<div class="w-col-xs-3 name">' . get_avatar($attendee['email']) . $attendee_name . '</div>';
             $html .= '<div class="w-col-xs-2 email">' . esc_html($attendee['email']) . '</div>';
             $html .= '<div class="w-col-xs-3 ticket">' . ((isset($attendee['id']) and isset($tickets[$attendee['id']]['name'])) ? $tickets[$attendee['id']]['name'] : esc_html__('Unknown', 'modern-events-calendar-lite')) . '</div>';
 

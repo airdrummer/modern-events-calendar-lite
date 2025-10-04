@@ -47,11 +47,22 @@ $with_css = $is_load_more ? false : true;
                     $month_id = date('Ym', strtotime($date));
                     foreach($events as $event)
                     {
-                        // Skip if this event has already been rendered in this shortcode
-                        if(in_array($event->data->ID, $rendered_events)) {
+                        // Create a unique key that includes time information for multiple time slots
+                        $event_id = $event->data->ID;
+                        $event_time = '';
+                        
+                        // Get the event's time information for this specific occurrence
+                        if(isset($event->data->time) && isset($event->data->time['start_timestamp'])) {
+                            $event_time = '_' . $event->data->time['start_timestamp'];
+                        }
+                        
+                        $event_unique_key = $event_id . '_' . $date . $event_time;
+                        
+                        // Skip if this specific event occurrence has already been rendered
+                        if(in_array($event_unique_key, $rendered_events)) {
                             continue;
                         }
-                        $rendered_events[] = $event->data->ID;
+                        $rendered_events[] = $event_unique_key;
                         
                         global $post;
                         $post = $event->data->post;
@@ -64,6 +75,10 @@ $with_css = $is_load_more ? false : true;
                         echo '<div class="col-md-'.esc_attr($col).' col-sm-'.esc_attr($col).'">';
                         echo '<article class="mec-event-article mec-sd-event-article'. get_the_ID().' mec-clear" itemscope>';
 
+                        // Set the current occurrence date for the date widget to use
+                        global $mec_current_occurrence_date;
+                        $mec_current_occurrence_date = $date;
+
                         if( isset( $mec_enqueue_custom_css[ $this->style ] ) ) {
 
                             $with_css = false;
@@ -72,7 +87,7 @@ $with_css = $is_load_more ? false : true;
                             $mec_enqueue_custom_css[ $this->style ] = true;
                         }
 
-                        echo Plugin::instance()->frontend->get_builder_content_for_display($this->style, $with_css);
+                        echo \Elementor\Plugin::instance()->frontend->get_builder_content_for_display($this->style, $with_css);
                         echo '</article></div>';
 
                         if($rcount == $count)
@@ -105,27 +120,75 @@ if(isset($map_events) && !empty($map_events))
 if(isset($this->map_on_top) and $this->map_on_top):
 if(isset($map_eventss) and !empty($map_eventss))
 {
-    // Include Map Assets such as JS and CSS libraries
-    $this->main->load_map_assets();
+    // Include Map Assets such as JS and CSS libraries (pass settings so OSM assets can load)
+    $this->main->load_map_assets(true, $settings);
+
+    $events_data = $this->render->markers($map_eventss, $this->style);
+    $map_type = $settings['default_maps_view'] ?? 'google';
 
     $map_javascript = '<script>
-    jQuery(document).ready(function()
-    {
-        var jsonPush = gmapSkin('.json_encode($this->render->markers($map_eventss, $this->style)).');
-        jQuery("#mec_googlemap_canvas'.esc_js($this->id).'").mecGoogleMaps(
-        {
-            id: "'.esc_js($this->id).'",
-            atts: "'.http_build_query(array('atts' => $this->atts), '', '&').'",
-            zoom: '.(isset($settings['google_maps_zoomlevel']) ? esc_js($settings['google_maps_zoomlevel']) : 14).',
-            icon: "'.esc_js(apply_filters('mec_marker_icon', $this->main->asset('img/m-04.png'))).'",
-            styles: '.((isset($settings['google_maps_style']) and trim($settings['google_maps_style']) != '') ? $this->main->get_googlemap_style($settings['google_maps_style']) : "''").',
-            markers: jsonPush,
-            clustering_images: "'.esc_js($this->main->asset('img/cluster1/m')).'",
-            getDirection: 0,
-            ajax_url: "'.admin_url('admin-ajax.php', NULL).'",
-            geolocation: "'.esc_js($this->geolocation).'",
-        });
-    });
+    (function($){
+        var attempts = 0;
+        var maxAttempts = 50;
+        var mapType = "'.esc_js($map_type).'";
+        var containerSelector = "#mec_googlemap_canvas'.esc_js($this->id).'";
+
+        function initWhenVisible(fn){
+            var intervalId = setInterval(function(){
+                if($(containerSelector).is(":visible")){
+                    try { fn(); } catch(e) {}
+                    clearInterval(intervalId);
+                }
+            }, 300);
+        }
+
+        function tryInit(){
+            attempts++;
+            if(attempts > maxAttempts){ init(); return; }
+            if(typeof jQuery === "undefined"){ setTimeout(tryInit, 100); return; }
+            if(mapType === "openstreetmap"){
+                if(typeof $.fn.mecOpenstreetMaps === "undefined"){ setTimeout(tryInit, 100); return; }
+            } else {
+                if(typeof $.fn.mecGoogleMaps === "undefined"){ setTimeout(tryInit, 100); return; }
+            }
+            init();
+        }
+
+        function init(){
+            if(mapType === "openstreetmap"){
+                initWhenVisible(function(){
+                    $(containerSelector).mecOpenstreetMaps({
+                        show_on_openstreetmap_text: "'.__('Show on OpenstreetMap', 'mec-map').'",
+                        id: "'.esc_js($this->id).'",
+                        atts: "'.http_build_query(array('atts' => $this->atts), '', '&').'",
+                        zoom: '.(isset($settings['google_maps_zoomlevel']) ? (int)$settings['google_maps_zoomlevel'] : 14).',
+                        scrollwheel: '.((isset($settings['default_maps_scrollwheel']) and $settings['default_maps_scrollwheel']) ? 'true' : 'false').',
+                        markers: '.json_encode($events_data).',
+                        HTML5geolocation: "'.esc_js($this->geolocation).'",
+                        ajax_url: "'.admin_url('admin-ajax.php', NULL).'"
+                    });
+                });
+            } else {
+                initWhenVisible(function(){
+                    var jsonPush = gmapSkin('.json_encode($events_data).');
+                    $(containerSelector).mecGoogleMaps({
+                        id: "'.esc_js($this->id).'",
+                        atts: "'.http_build_query(array('atts' => $this->atts), '', '&').'",
+                        zoom: '.(isset($settings['google_maps_zoomlevel']) ? esc_js($settings['google_maps_zoomlevel']) : 14).',
+                        icon: "'.esc_js(apply_filters('mec_marker_icon', $this->main->asset('img/m-04.png'))).'",
+                        styles: '.((isset($settings['google_maps_style']) and trim($settings['google_maps_style']) != '') ? $this->main->get_googlemap_style($settings['google_maps_style']) : "''").',
+                        markers: jsonPush,
+                        clustering_images: "'.esc_js($this->main->asset('img/cluster1/m')).'",
+                        getDirection: 0,
+                        ajax_url: "'.admin_url('admin-ajax.php', NULL).'",
+                        geolocation: "'.esc_js($this->geolocation).'"
+                    });
+                });
+            }
+        }
+
+        $(document).ready(function(){ tryInit(); });
+    })(jQuery);
     </script>';
 
     $map_data = new stdClass;

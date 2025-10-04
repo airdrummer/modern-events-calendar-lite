@@ -3989,7 +3989,7 @@ span.mec-event-title-soldout {
 }
 
 .lity-content .mec-events-meta-group-booking .mec-booking-form-container > .col-md-12,
-.mec-events-meta-group-booking .mec-booking-shortcode .col-md-12,
+.mec-events-meta-group-booking .mec-booking-shortcode .col-md-12.mec-ticket-subtotal-wrapper,
 .mec-single-event .mec-events-meta-group-booking .mec-booking-form-container > .col-md-12 {
   display: flex;
   align-items: center;
@@ -8680,6 +8680,10 @@ address.mec-events-address {
   margin-right: 100px;
 }
 
+.mec-calendar.mec-calendar-daily .mec-month-navigator {
+  position: relative;
+}
+
 .mec-calendar.mec-calendar-daily .mec-calendar-a-month .mec-previous-month,
 .mec-calendar.mec-calendar-daily .mec-calendar-a-month .mec-next-month {
   min-height: 28px;
@@ -10481,7 +10485,7 @@ select#mec_fes_selected_group {
 .mec-wrap .mec-totalcal-box {
   position: relative;
   border: 1px solid #efefef;
-  padding: 20px 5px;
+  padding: 20px 5px 45px 5px;
   margin: 0 0 20px;
   background: #fafafa;
   overflow: hidden;
@@ -10592,7 +10596,7 @@ select#mec_fes_selected_group {
   .select2-selection__rendered {
   color: #777;
   line-height: 34px;
-  padding-right: 5px;
+  padding: 0 5px 0 0;
 }
 
 .mec-search-form
@@ -10750,7 +10754,7 @@ body:has(.mec-search-form) .select2-results__option {
 }
 
 .mec-wrap .mec-text-address-search.with-mec-cost {
-  width: calc(100% - 356px);
+  width: calc(100% - 336px);
 }
 
 .mec-wrap .mec-minmax-event-cost {
@@ -10766,12 +10770,11 @@ body:has(.mec-search-form) .select2-results__option {
   max-width: 50%;
   float: left;
   margin-right: 0;
-  margin-left: 10px;
+  padding: 0 10px;
 }
 
 .mec-wrap .mec-checkboxes-search {
-  margin-right: 10px;
-  margin-left: 10px;
+  padding: 0 10px;
   display: table-caption;
 }
 
@@ -11352,12 +11355,6 @@ body:has(.mec-search-form) .select2-results__option {
   margin-top: 20px;
 }
 
-.mec-search-form .mec-text-address-search,
-.mec-search-form .mec-minmax-event-cost,
-.mec-widget .mec-search-form .mec-text-input-search {
-  margin-top: 10px;
-}
-
 .mec-search-form .mec-date-search {
   clear: right;
 }
@@ -11374,9 +11371,13 @@ body:has(.mec-search-form) .select2-results__option {
 .mec-checkboxes-search .mec-searchbar-category-wrap,
 .mec-wrap .mec-search-form .mec-dropdown-wrap .mec-dropdown-search select {
   width: calc(100% - 36px);
-  margin-bottom: 10px;
+  margin-bottom: 20px;
   border-radius: var(--mec-secondary-border-radius) 0 0 var(--mec-secondary-border-radius);
   padding-bottom: 3px;
+}
+
+.mec-wrap .mec-search-form .mec-text-input-search {
+  padding: 0 10px;
 }
 
 .mec-wrap .mec-search-form .mec-text-input-search input,
@@ -14776,7 +14777,7 @@ body .lity-close:active {
 
 .mec-yearly-view-wrap .mec-calendar.mec-yearly-calendar {
   max-width: 100%;
-  width: 232px;
+  width: 231px;
   padding: 10px;
   background: #fff;
   margin: 10px;
@@ -18579,6 +18580,7 @@ ul.mec-categories li.mec-category a {
 .mec-breadcrumbs a {
   color: #000;
   padding-right: 4px;
+  display: inline-block;
 }
 
 .mec-breadcrumbs a:hover {
@@ -22688,18 +22690,6 @@ body.mec-dark-mode .mec-single-modern .mec-single-event-bar {
   margin-right: 30px;
 }
 
-.mec-booking-shortcode .mec-ticket-name {
-  display: inline-block;
-  background-color: #fff;
-  border-radius: 3px;
-  font-size: 12px;
-  line-height: 12px;
-  font-weight: 400;
-  color: #00acf8;
-  padding: 8px 13px;
-  letter-spacing: 0;
-}
-
 .mec-booking-shortcode .mec_book_first_for_all {
   display: none;
 }
@@ -26041,6 +26031,9 @@ span.mec-marker-wrap,
 .mec-fluent-wrap .mec-calendar.mec-event-calendar-classic dl dt:hover {
   color: var(--mec-fluent-main-color-rgba-2) !important;
 }
+.mec-fluent-wrap .mec-event-sharing-wrap .mec-event-social-icon svg path {
+  fill: var(--mec-fluent-main-color-rgba-2) !important;
+}
 
 .mec-fluent-wrap.mec-skin-cover-container .mec-event-cover-fluent-type4 .mec-booking-button:hover,
 .mec-fluent-wrap.mec-skin-cover-container .mec-event-cover-fluent-type3 .mec-booking-button:hover,
@@ -26361,7 +26354,6 @@ span.mec-marker-wrap,
 }
 
 /* BACKGROUND HOVER COLOR */
-.mec-fluent-wrap .mec-yearly-view-wrap .mec-calendar.mec-yearly-calendar .mec-has-event:after,
 .mec-fluent-wrap .mec-load-more-button:hover,
 .mec-fluent-wrap .mec-load-month:hover,
 .mec-fluent-wrap .mec-load-year:hover,
@@ -26383,9 +26375,7 @@ span.mec-marker-wrap,
 }
 
 /* BACKGROUND SECOND BACKGROUND COLOR */
-.mec-fluent-wrap.mec-skin-masonry-container .mec-masonry .mec-date-wrap,
-.mec-single-fluent-wrap .mec-event-social li.mec-event-social-icon a:hover,
-.mec-fluent-wrap .mec-filter-content {
+.mec-single-fluent-wrap .mec-event-social li.mec-event-social-icon a:hover {
   background-color: var(--mec-fluent-second-bg-color) !important;
 }
 
@@ -26811,8 +26801,16 @@ span.button {
 
 .rtl .mec-yearly-view-wrap .mec-yearly-title-sec .mec-next-year i:before,
 .rtl .mec-yearly-view-wrap .mec-yearly-title-sec .mec-previous-year i:before,
-.rtl .mec-box-calendar.mec-calendar.mec-event-calendar-classic .mec-calendar-side .mec-previous-month i:before,
-.rtl .mec-box-calendar.mec-calendar.mec-event-calendar-classic .mec-calendar-side .mec-next-month i:before,
+.rtl
+  .mec-box-calendar.mec-calendar.mec-event-calendar-classic
+  .mec-calendar-side
+  .mec-previous-month
+  i:before,
+.rtl
+  .mec-box-calendar.mec-calendar.mec-event-calendar-classic
+  .mec-calendar-side
+  .mec-next-month
+  i:before,
 .rtl .mec-calendar .mec-calendar-side .mec-next-month i:before,
 .rtl .mec-calendar .mec-calendar-side .mec-previous-month i:before,
 .rtl .mec-calendar.mec-calendar-daily .mec-calendar-a-month .mec-next-month i:before,
@@ -26835,7 +26833,18 @@ span.button {
 .rtl .mec-slider-t4-wrap .mec-owl-theme .owl-nav .owl-prev i:before,
 .rtl .mec-slider-t5-wrap .mec-owl-theme .owl-nav .owl-next i:before,
 .rtl .mec-slider-t5-wrap .mec-owl-theme .owl-nav .owl-prev i:before,
-.rtl a.mec-timeline-readmore i:before {
+.rtl a.mec-timeline-readmore i:before,
+.rtl
+  .mec-wrap
+  button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):not(
+    .et-fb-button
+  )
+  svg,
+.rtl .mec-breadcrumbs i:before {
   display: inline-block;
   transform: scaleX(-1);
+}
+
+body.rtl {
+  font-family: vazirmatn;
 }

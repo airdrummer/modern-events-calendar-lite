@@ -244,7 +244,7 @@ class MEC_skin_full_calendar extends MEC_skins
             case 'weekly':
 
                 $start_date_type = $this->skin_options['start_date_type'] ?? 'today';
-                if($start_date_type == 'today') $start_date_type = 'start_current_month';
+                if($start_date_type == 'today') $start_date_type = 'start_current_week';
 
                 $atts['sk-options']['weekly_view']['start_date_type'] = $start_date_type;
                 $atts['sk-options']['weekly_view']['start_date'] = $this->skin_options['start_date'] ?? '';

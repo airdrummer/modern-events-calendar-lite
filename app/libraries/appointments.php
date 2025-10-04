@@ -64,9 +64,41 @@ class MEC_appointments extends MEC_base
             unset($day); // break reference
         }
 
+        $adjusted_map = [];
+        if (isset($config['adjusted_availability']) && is_array($config['adjusted_availability']))
+        {
+            foreach ($config['adjusted_availability'] as $k => &$day)
+            {
+                if (isset($day[':t:'])) unset($day[':t:']);
+
+                if (empty($day['date']))
+                {
+                    unset($config['adjusted_availability'][$k]);
+                    continue;
+                }
+
+                $day['date'] = sanitize_text_field($day['date']);
+
+                $periods = [];
+                foreach ($day as $i => $slot)
+                {
+                    if ($i === 'date' || !is_array($slot)) continue;
+                    $periods[] = $slot;
+                }
+
+                $adjusted_map[$day['date']] = $periods;
+            }
+
+            unset($day);
+        }
+
         $availability = $config['availability'] ?? [];
-        $duration = $config['duration'] ?? 10;
-        $buffer = $config['buffer'] ?? 0;
+        $duration = isset($config['duration']) && is_numeric($config['duration']) ? (int) $config['duration'] : 10;
+        $buffer = isset($config['buffer']) && is_numeric($config['buffer']) ? (int) $config['buffer'] : 0;
+
+        $config['duration'] = $duration;
+        $config['buffer'] = $buffer;
+
         $start_date = null;
         $start_hour = null;
         $start_minutes = null;
@@ -77,6 +109,12 @@ class MEC_appointments extends MEC_base
         $end_ampm = null;
 
         $slots = $this->generate_slots($availability, $duration, $buffer);
+        $adjusted_slots = [];
+        foreach ($adjusted_map as $date => $periods)
+        {
+            $g = $this->generate_slots([0 => $periods], $duration, $buffer);
+            $adjusted_slots[$date] = $g[0] ?? [];
+        }
 
         $today = current_time('Y-m-d');
         $today_ts = strtotime($today);
@@ -86,12 +124,19 @@ class MEC_appointments extends MEC_base
         {
             $date = wp_date('Y-m-d', strtotime("+$i days", $today_ts));
 
-            // Get PHP weekday index (0 = Monday, 6 = Sunday)
-            $weekday = (int) wp_date('N', strtotime($date)) - 1;
+            if (isset($adjusted_slots[$date]))
+            {
+                $day_slots = $adjusted_slots[$date];
+                if (!count($day_slots)) continue;
+            }
+            else
+            {
+                // Get PHP weekday index (0 = Monday, 6 = Sunday)
+                $weekday = (int) wp_date('N', strtotime($date)) - 1;
+                if (empty($slots[$weekday])) continue;
 
-            if (empty($slots[$weekday])) continue;
-
-            $day_slots = $slots[$weekday];
+                $day_slots = $slots[$weekday];
+            }
 
             // Day Slots
             foreach ($day_slots as $day_slot)
@@ -201,7 +246,7 @@ class MEC_appointments extends MEC_base
 
         // Update Schedule
         $schedule = $this->getSchedule();
-        $schedule->reschedule($event_id, 100);
+        $schedule->reschedule($event_id, 500);
     }
 
     public function generate_slots(array $availability, int $duration = 10, int $buffer = 0): array

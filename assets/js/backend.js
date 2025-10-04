@@ -950,7 +950,11 @@ function mec_skin_style_changed(skin, style, context) {
   }
 
   jQuery(".mec-skin-" + skin + "-date-format-container").hide();
-  jQuery("#mec_skin_" + skin + "_date_format_" + style + "_container").show();
+  if(skin === 'cover' && style === 'liquid-type1') {
+    jQuery("#mec_skin_cover_date_format_liquid_container").show();
+  } else {
+    jQuery("#mec_skin_" + skin + "_date_format_" + style + "_container").show();
+  }
 
   // List Standard Progress Bar
   if (skin === "list" && style === "standard")

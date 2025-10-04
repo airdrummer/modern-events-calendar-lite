@@ -207,7 +207,9 @@ class Attendees {
 			}
 
             .mec-single-event .mec-events-meta-group-booking .mec-book-tickets-container .mec-book-ticket-container .mec-ticket-subtotal-wrapper,
-            .mec-single-event .mec-events-meta-group-booking .mec-book-tickets-container .mec-book-ticket-container .mec-ticket-detail,.lity-content .mec-events-meta-group-booking .mec-book-tickets-container .mec-book-ticket-container .mec-ticket-detail {
+            .mec-single-event .mec-events-meta-group-booking .mec-book-tickets-container .mec-book-ticket-container .mec-ticket-detail,
+            .mec-events-meta-group-booking .mec-booking-shortcode .mec-ticket-detail,
+            .lity-content .mec-events-meta-group-booking .mec-book-tickets-container .mec-book-ticket-container .mec-ticket-detail {
                 display: flex;
                 align-items: center;
                 padding: 0 0 30px 0;

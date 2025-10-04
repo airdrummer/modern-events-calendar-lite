@@ -255,7 +255,16 @@ class MEC_parser extends MEC_base
 
     public function block_theme_single_content($content)
     {
+        if (!in_the_loop() || !is_main_query()) {
+            return $content;
+        }
+
         remove_filter('the_content', [$this, 'block_theme_single_content']);
-        return $this->single_content($content);
+
+        ob_start();
+        do_action('mec_before_main_content');
+        $before = ob_get_clean();
+
+        return $before . $this->single_content($content);
     }
 }

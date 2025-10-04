@@ -788,6 +788,53 @@ jQuery(document).ready(function($)
             });
         });
     });
+
+    $(document).on('click', '.lsd-apt-adjusted-day-add', function()
+    {
+        const $wrapper = $('.lsd-apt-adjusted-days-wrapper');
+        let key = $wrapper.data('key') || 0;
+
+        key = key + 1;
+        let html = $('#lsd-apt-adjusted-template-day').html();
+        html = html.replace(/:i:/g, key);
+
+        $wrapper.append(html);
+        $wrapper.data('key', key);
+
+        if($.fn.datepicker)
+        {
+            $wrapper.find('.mec-apt-date-picker').last().datepicker({
+                changeYear: true,
+                changeMonth: true,
+                dateFormat: datepicker_format,
+                gotoCurrent: true,
+                yearRange: 'c-3:c+5',
+            });
+        }
+    });
+
+    $(document).on('click', '.lsd-apt-adjusted-day-remove', function()
+    {
+        $(this).closest('.lsd-apt-day-wrapper').remove();
+    });
+
+    $(document).on('click', '.lsd-apt-adj-day-icon-plus', function()
+    {
+        const $button = $(this);
+        let key = $button.data('key');
+        const $day = $button.closest('.lsd-apt-day-wrapper');
+        const day = $day.data('day');
+        const $timeslots = $day.find('.lsd-apt-day-timeslots-wrapper');
+
+        key = key + 1;
+        let html = $('#lsd-apt-adjusted-template-timeslot').html();
+
+        html = html.replace(/:i:/g, day).replace(/:t:/g, key);
+        $timeslots.append(html);
+
+        $button.data('key', key);
+        $day.find('.lsd-apt-day-timeslots-unavailable').addClass('mec-util-hidden');
+    });
 });
 
 function trigger_period_picker()
@@ -997,7 +1044,11 @@ function mec_hourly_schedule_listeners()
             },
             quicktags: true,
             mediaButtons: false,
-          });
+        });
+    });
+
+    jQuery(".mec-hourly-schedule-schedules").sortable({
+        handle: '.mec_field_sort'
     });
 }
 
@@ -1078,7 +1129,9 @@ function mec_reg_fields_option_listeners()
             handle: 'h4'
         });
 
-        jQuery(".mec-hourly-schedule-schedules").sortable({});
+        jQuery(".mec-hourly-schedule-schedules").sortable({
+            handle: '.mec_field_sort'
+        });
     }
 }
 
@@ -1224,8 +1277,10 @@ function mec_faq_remove(key)
     jQuery("#mec_faq_row"+key).remove();
 }
 
-jQuery(document).on('focus', '.mec_date_picker', function () {
-    if (!jQuery(this).hasClass('hasDatepicker')) {
+jQuery(document).on('focus', '.mec_date_picker', function ()
+{
+    if (!jQuery(this).hasClass('hasDatepicker'))
+    {
         jQuery(this).datepicker({
             changeYear: true,
             changeMonth: true,

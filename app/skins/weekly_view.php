@@ -155,6 +155,8 @@ class MEC_skin_weekly_view extends MEC_skins
         // Start Date
         list($this->year, $this->month, $this->day) = $this->get_start_date();
 
+        if ($this->from_full_calendar) $this->day = date('d', current_time('timestamp'));
+
         $this->today = $this->year . '-' . $this->month . '-' . $this->day;
         $this->start_date = $this->year . '-' . $this->month . '-01';
 

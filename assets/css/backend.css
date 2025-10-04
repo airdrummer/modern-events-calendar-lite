@@ -5237,16 +5237,12 @@ textarea.mec-import-settings-content {
   min-width: 185px;
 }
 
-#mec_meta_box_hourly_schedule_days .mec-form-row input[type="text"],
-#mec_meta_box_tickets_form .mec-form-row input[type="text"] {
-  max-width: 290px;
+#mec_meta_box_hourly_schedule_days .mec-form-row input[type="text"] {
+  max-width: 180px;
 }
 
-@media (max-width: 1366px) {
-  #mec_meta_box_hourly_schedule_days .mec-box.mec-form-row input[type="text"] {
-    max-width: 150px;
-    min-width: 110px;
-  }
+#mec_meta_box_tickets_form .mec-form-row input[type="text"] {
+  max-width: 290px;
 }
 
 #mec_exceptions_not_in_days_date {
@@ -7433,6 +7429,15 @@ a.mec-create-shortcode-tabs-link {
 #ticket_variations_option #mec_ticket_variations_list .mec-form-row .button:hover,
 .mec-dash-remove-btn:hover {
   background: rgb(234 100 133 / 0.1) !important;
+}
+
+#mec-hourly-schedule .mec-form-row.mec-box .button.mec_field_sort {
+  color: #07bbe9 !important;
+  border-color: #d1e5ec !important;
+}
+
+#mec-hourly-schedule .mec-form-row.mec-box .button.mec_field_sort:hover {
+  background-color: #fff !important;
 }
 
 #mec-hourly-schedule .mec-hourly-schedule-form-speakers {
@@ -14645,25 +14650,28 @@ body.index-php .ui-datepicker .ui-datepicker-next {
   width: calc(100% - 43px);
 }
 
-.button .lsd-apt-day-timeslot-wrapper > span,
-.button .lsd-apt-day-icon-plus,
-.button .lsd-apt-day-icon-copy {
+.button.lsd-apt-day-timeslot-wrapper > span,
+.button.lsd-apt-day-icon-plus,
+.button.lsd-apt-day-icon-copy,
+.button.lsd-apt-adj-day-icon-plus,
+.button.lsd-apt-adjusted-day-remove {
   width: 38px;
   height: 38px;
 }
 
-.button.lsd-apt-day-icon-remove {
-}
-
 .lsd-apt-day-timeslot-wrapper > span svg,
 .lsd-apt-day-icon-plus svg,
-.lsd-apt-day-icon-copy svg {
+.lsd-apt-day-icon-copy svg,
+.button.lsd-apt-adj-day-icon-plus svg,
+.button.lsd-apt-adjusted-day-remove svg {
   width: 12px;
 }
 
 .lsd-apt-day-timeslot-wrapper > span svg path,
 .lsd-apt-day-icon-plus svg path,
-.lsd-apt-day-icon-copy svg path {
+.lsd-apt-day-icon-copy svg path,
+.button.lsd-apt-adj-day-icon-plus svg path,
+.button.lsd-apt-adjusted-day-remove svg path {
   fill: #40d9f1;
 }
 
@@ -14685,7 +14693,8 @@ textarea[readonly] {
   background-color: #f0f0f1 !important;
 }
 
-.lsd-apt-days-wrapper .lsd-apt-day-wrapper.mec-form-row select {
+.lsd-apt-days-wrapper .lsd-apt-day-wrapper.mec-form-row select,
+.lsd-apt-adjusted-days-wrapper .lsd-apt-day-wrapper.mec-form-row select {
   min-width: 50px;
 }
 
@@ -14704,4 +14713,28 @@ textarea[readonly] {
 
 .lsd-apt-day-icons {
   display: flex;
+}
+
+.lsd-apt-adjusted-days-wrapper .lsd-apt-day-wrapper.mec-form-row .lsd-apt-day-label input {
+  width: calc(100% - 15px);
+}
+
+#mec-hourly-schedule .mec-form-row.mec-box .button.mec_field_sort {
+  font-size: 0;
+  position: relative;
+  width: 38px;
+  text-align: center;
+}
+#mec-hourly-schedule .mec-form-row.mec-box .button.mec_field_sort:before {
+  position: absolute;
+  top: 0;
+  left: calc(50% - 10px);
+  width: 20px;
+  height: 20px;
+  display: block;
+  cursor: move;
+  font-family: simple-line-icons;
+  content: "\e023";
+  font-size: 15px;
+  color: #07bbe9;
 }

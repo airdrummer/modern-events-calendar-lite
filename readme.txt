@@ -4,7 +4,7 @@ Donate link: https://webnus.net
 Tags: Event, Events, Calendar, Booking, Schedule, Organizer, Venue
 Requires at least: 4.0.0
 Tested up to: 6.8.1
-Stable tag: 7.24.0
+Stable tag: 7.25.0
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -472,6 +472,21 @@ You can see [plugin documentation](https://webnus.net/dox/modern-events-calendar
 43. WordPress Event Calendar - Daily view(Fluent View Layouts Addon)
 
 == Changelog ==
+= v 7.25.0 - 17 August 2025 =
+- Added: Sort feature for hourly schedule.
+- Added: Attendee report notification and cronjob to send it automatically.
+- Added: Buffer time for appointment system.
+- Added: Adjusted availability to override default availability in the appointment system.
+- Fixed: Some timezone issues in iCal feeds.
+- Fixed: An issue in booking filters.
+- Fixed: Some PHP notices and warnings.
+- Fixed: Some issues in weekly and monthly skins.
+- Fixed: An issue in tickets count in admin events management.
+- Fixed: An XSS vulnerability.
+- Fixed: An issue in setting total booking limits per occurrence.
+- Fixed: An issue in displaying cancelation link.
+- Fixed: Some minor issues.
+
 = v 7.24.0 - 9 July 2025 =
 - Released: Appointment system phase 1.
 - Improved: The performance of some modules.
