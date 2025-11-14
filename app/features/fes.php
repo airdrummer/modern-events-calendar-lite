@@ -1758,6 +1758,9 @@ class MEC_feature_fes extends MEC_base
                 $reg_fields = $mec['reg_fields'] ?? [];
                 if ($reg_fields_global_inheritance) $reg_fields = [];
 
+                // Trigger action for form builder compatibility
+                do_action('mec_save_reg_fields', $post_id, $reg_fields);
+                
                 update_post_meta($post_id, 'mec_reg_fields', $reg_fields);
 
                 $bfixed_fields = $mec['bfixed_fields'] ?? [];

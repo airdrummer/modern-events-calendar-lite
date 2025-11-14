@@ -128,10 +128,13 @@ function mec_get_tickets_availability'.esc_js($uniqueid).'(event_id, date)
                     jQuery("#mec_booking'.esc_js($uniqueid).' #mec_event_ticket"+ticket_id+" .mec-ticket-available-spots").addClass("mec-util-hidden");
                     jQuery("#mec_booking'.esc_js($uniqueid).' #mec_event_ticket"+ticket_id+" .mec-ticket-unavailable-spots").removeClass("mec-util-hidden");
                 }
+                
+                const maximum_purchase = jQuery("#mec_booking'.esc_js($uniqueid).' #mec_event_ticket"+ticket_id+" .mec-book-ticket-limit:not(.mec-waiting-list-ticket-limit)").data("maximum-purchase");
+                console.log(maximum_purchase);
 
                 if(limit == "-1")
                 {
-                    jQuery("#mec_booking'.esc_js($uniqueid).' #mec_event_ticket"+ticket_id+" .mec-book-ticket-limit:not(.mec-waiting-list-ticket-limit)").attr("max", "");
+                    jQuery("#mec_booking'.esc_js($uniqueid).' #mec_event_ticket"+ticket_id+" .mec-book-ticket-limit:not(.mec-waiting-list-ticket-limit)").attr("max", (maximum_purchase ? maximum_purchase : ""));
                     jQuery("#mec_booking'.esc_js($uniqueid).' #mec_event_ticket"+ticket_id+" .mec-event-ticket-available span").html("'.esc_html__("Unlimited", 'modern-events-calendar-lite').'");
                 }
                 else
@@ -139,7 +142,7 @@ function mec_get_tickets_availability'.esc_js($uniqueid).'(event_id, date)
                     var cur_count = jQuery("#mec_booking'.esc_js($uniqueid).' #mec_event_ticket"+ticket_id+" .mec-book-ticket-limit:not(.mec-waiting-list-ticket-limit)").val();
                     if(cur_count > limit) jQuery("#mec_booking'.esc_js($uniqueid).' #mec_event_ticket"+ticket_id+" .mec-book-ticket-limit:not(.mec-waiting-list-ticket-limit)").val(limit);
 
-                    jQuery("#mec_booking'.esc_js($uniqueid).' #mec_event_ticket"+ticket_id+" .mec-book-ticket-limit:not(.mec-waiting-list-ticket-limit)").attr("max", limit);
+                    jQuery("#mec_booking'.esc_js($uniqueid).' #mec_event_ticket"+ticket_id+" .mec-book-ticket-limit:not(.mec-waiting-list-ticket-limit)").attr("max", (maximum_purchase ? (maximum_purchase > limit ? limit: maximum_purchase) : limit));
                     jQuery("#mec_booking'.esc_js($uniqueid).' #mec_event_ticket"+ticket_id+" .mec-event-ticket-available span").html(limit);
                 }
             }

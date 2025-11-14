@@ -17,6 +17,13 @@ class MEC_skin_single extends MEC_skins
     public $display_cancellation_reason;
 
     /**
+     * Prevent duplicate cache hook registration.
+     *
+     * @var bool
+     */
+    protected static $cache_hooks_registered = false;
+
+    /**
      * Constructor method
      * @author Webnus <info@webnus.net>
      */
@@ -38,6 +45,36 @@ class MEC_skin_single extends MEC_skins
     {
         $this->factory->action('wp_ajax_mec_load_single_page', array($this, 'load_single_page'));
         $this->factory->action('wp_ajax_nopriv_mec_load_single_page', array($this, 'load_single_page'));
+
+        if(!self::$cache_hooks_registered)
+        {
+            self::$cache_hooks_registered = true;
+
+            $main = MEC::getInstance('app.libraries.main');
+            $post_type = $main->get_main_post_type();
+
+            add_action('save_post_' . $post_type, array(__CLASS__, 'invalidate_single_page_cache_on_post_save'), 10, 3);
+            add_action('trashed_post', array(__CLASS__, 'invalidate_single_page_cache_on_post_delete'));
+            add_action('deleted_post', array(__CLASS__, 'invalidate_single_page_cache_on_post_delete'));
+
+            $booking_actions = array(
+                'mec_booking_added',
+                'mec_booking_confirmed',
+                'mec_booking_rejected',
+                'mec_booking_pended',
+                'mec_booking_verified',
+                'mec_booking_refunded',
+                'mec_booking_canceled',
+                'mec_booking_moved',
+                'mec_booking_waiting',
+                'mec_booking_completed',
+            );
+
+            foreach($booking_actions as $hook)
+            {
+                add_action($hook, array(__CLASS__, 'invalidate_single_page_cache_from_booking'));
+            }
+        }
     }
 
     /**
@@ -132,11 +169,16 @@ class MEC_skin_single extends MEC_skins
                                 $d = $dates[$t] ?? [];
 
                                 $timestamp = (isset($d['start']) and isset($d['start']['timestamp'])) ? $d['start']['timestamp'] : 0;
+                                $end_timestamp = (isset($d['end']) and isset($d['end']['timestamp'])) ? $d['end']['timestamp'] : $timestamp;
+                                $is_expired = ($end_timestamp and $end_timestamp < $now);
+
                                 $t++;
-                            } while (isset($dates[$t]) and $t <= 5 and $timestamp < $now);
+                            } while (isset($dates[$t]) and $t <= 5 and $is_expired);
+
+                            $is_active = ($timestamp and !$is_expired);
 
                             // Don't show Expired Events
-                            if($display_expired_events or ($timestamp and $timestamp > $now)):
+                            if($display_expired_events or $is_active):
 
                             $printed += 1;
                             $mec_date = (isset($d['start']) and isset($d['start']['date'])) ? $d['start']['date'] : get_post_meta(get_the_ID(), 'mec_start_date', true);
@@ -163,7 +205,7 @@ class MEC_skin_single extends MEC_skins
                                 <span><?php echo esc_html($date); ?></span>
                                 <h5>
                                     <a class="mec-color-hover" href="<?php echo esc_url($event_link); ?>"><?php echo get_the_title(); ?></a>
-                                    <?php if($display_expired_events && $timestamp && $timestamp < $now): ?>
+                                    <?php if($display_expired_events && $is_expired): ?>
                                     <span class="mec-holding-status mec-holding-status-expired"><?php esc_html_e('Expired!', 'modern-events-calendar-lite'); ?></span>
                                     <?php endif; ?>
                                 </h5>
@@ -872,30 +914,186 @@ class MEC_skin_single extends MEC_skins
      */
     public function load_single_page()
     {
+        $id = isset($_GET['id']) ? absint(sanitize_text_field(wp_unslash($_GET['id']))) : 0;
+        $layout = isset($_GET['layout']) ? sanitize_text_field(wp_unslash($_GET['layout'])) : 'm1';
+        $occurrence = isset($_GET['occurrence']) ? sanitize_text_field(wp_unslash($_GET['occurrence'])) : '';
+        $occurrence_time = isset($_GET['time']) ? sanitize_text_field(wp_unslash($_GET['time'])) : '';
 
-        $id = isset($_GET['id']) ? sanitize_text_field($_GET['id']) : 0;
-        $layout = isset($_GET['layout']) ? sanitize_text_field($_GET['layout']) : 'm1';
+        if($occurrence !== '') $_GET['occurrence'] = $occurrence;
+        if($occurrence_time !== '') $_GET['time'] = $occurrence_time;
+
+        if(!$id)
+        {
+            wp_die(esc_html__('Event not found.', 'modern-events-calendar-lite'));
+        }
+
+        $post = get_post($id);
+        if(!$post)
+        {
+            wp_die(esc_html__('Event not found.', 'modern-events-calendar-lite'));
+        }
+
+        setup_postdata($GLOBALS['post'] =& $post);
 
         do_action('mec-ajax-load-single-page-before', $id);
 
-        $post = get_post($id);
-        setup_postdata($GLOBALS['post'] =& $post);
+        $cache_enabled = $this->should_cache_single_page($id, $layout, $occurrence, $occurrence_time);
+        $cache_key = '';
+
+        if($cache_enabled)
+        {
+            $cache_key = $this->get_single_page_cache_key($id, $layout, $occurrence, $occurrence_time);
+            $cached_output = wp_cache_get($cache_key, 'mec-single-page');
+
+            if(false !== $cached_output)
+            {
+                echo $cached_output; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Cached output is already escaped
+                do_action('mec-ajax-load-single-page-after', $id);
+                wp_reset_postdata();
+                exit;
+            }
+        }
 
         // Initialize the skin
         $this->initialize(array(
             'id' => $id,
             'layout' => $layout,
-            'maximum_dates'=>($this->settings['booking_maximum_dates'] ?? 6)
+            'maximum_dates' => ($this->settings['booking_maximum_dates'] ?? 6)
         ));
 
         // Fetch the events
         $this->fetch();
 
         // Return the output
-        echo MEC_kses::full($this->output());
+        $output = MEC_kses::full($this->output());
+
+        if($cache_enabled && $cache_key)
+        {
+            $expiration = $this->get_single_page_cache_expiration($id, $layout, $occurrence, $occurrence_time);
+            if($expiration > 0)
+            {
+                wp_cache_set($cache_key, $output, 'mec-single-page', $expiration);
+            }
+        }
+
+        echo $output; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output sanitized via MEC_kses::full
 
         do_action('mec-ajax-load-single-page-after', $id);
+        wp_reset_postdata();
         exit;
+    }
+
+    /**
+     * Determine whether to cache the generated single page output.
+     */
+    protected function should_cache_single_page($event_id, $layout, $occurrence, $occurrence_time)
+    {
+        if(!apply_filters('mec_single_page_cache_enabled', true, $event_id, $layout, $occurrence, $occurrence_time, $this)) return false;
+
+        if(is_user_logged_in()) return false;
+
+        return true;
+    }
+
+    /**
+     * Build the cache key for the single page output.
+     */
+    protected function get_single_page_cache_key($event_id, $layout, $occurrence, $occurrence_time)
+    {
+        $version = self::get_single_page_cache_version_value($event_id);
+        $language = apply_filters('mec_single_page_cache_language', get_locale(), $event_id, $layout, $occurrence, $occurrence_time, $this);
+        $blog_id = get_current_blog_id();
+
+        $hash = md5(implode('|', array(
+            $layout,
+            (string) $occurrence,
+            (string) $occurrence_time,
+            (string) $language,
+            (string) $version,
+        )));
+
+        return sprintf('single:%d:%d:%s', $blog_id, $event_id, $hash);
+    }
+
+    /**
+     * Cache lifetime in seconds.
+     */
+    protected function get_single_page_cache_expiration($event_id, $layout, $occurrence, $occurrence_time)
+    {
+        $expiration = apply_filters('mec_single_page_cache_expiration', 120, $event_id, $layout, $occurrence, $occurrence_time, $this);
+
+        return (int) $expiration;
+    }
+
+    /**
+     * Fetch current cache version value.
+     */
+    protected static function get_single_page_cache_version_value($event_id)
+    {
+        $version = (int) get_post_meta($event_id, '_mec_single_cache_version', true);
+
+        if($version < 1) $version = 1;
+        return $version;
+    }
+
+    /**
+     * Increment cache version so new cache keys are generated.
+     */
+    protected static function bump_single_page_cache_version($event_id)
+    {
+        if(!$event_id) return;
+
+        $version = self::get_single_page_cache_version_value($event_id) + 1;
+
+        update_post_meta($event_id, '_mec_single_cache_version', $version);
+    }
+
+    /**
+     * Invalidate cache when events are saved.
+     */
+    public static function invalidate_single_page_cache_on_post_save($post_id, $post, $update)
+    {
+        if(defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
+
+        $post = $post instanceof \WP_Post ? $post : get_post($post_id);
+        if(!$post) return;
+
+        $main = MEC::getInstance('app.libraries.main');
+        if($post->post_type !== $main->get_main_post_type()) return;
+
+        self::bump_single_page_cache_version($post_id);
+    }
+
+    /**
+     * Invalidate cache when events are deleted or trashed.
+     */
+    public static function invalidate_single_page_cache_on_post_delete($post_id)
+    {
+        $post = get_post($post_id);
+        if(!$post) return;
+
+        $main = MEC::getInstance('app.libraries.main');
+        if($post->post_type !== $main->get_main_post_type()) return;
+
+        self::bump_single_page_cache_version($post_id);
+    }
+
+    /**
+     * Invalidate cache when bookings change.
+     */
+    public static function invalidate_single_page_cache_from_booking($booking_id)
+    {
+        $event_id = get_post_meta($booking_id, 'mec_event_id', true);
+
+        if(is_array($event_id))
+        {
+            $event_id = array_filter(array_map('intval', $event_id));
+            foreach($event_id as $single_event_id) self::bump_single_page_cache_version($single_event_id);
+            return;
+        }
+
+        $event_id = (int) $event_id;
+        if($event_id) self::bump_single_page_cache_version($event_id);
     }
 
     /**

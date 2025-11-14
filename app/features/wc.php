@@ -81,6 +81,7 @@ class MEC_feature_wc extends MEC_base
         $this->factory->filter('woocommerce_order_item_display_meta_value', array($this, 'display_value'), 10, 2);
         $this->factory->filter('woocommerce_cart_item_name', array($this, 'display_name'), 10, 2);
         $this->factory->filter('woocommerce_cart_item_thumbnail', array($this, 'display_thumbnail'), 10, 2);
+        $this->factory->filter('woocommerce_cart_item_quantity', array($this, 'display_cart_quantity'), 10, 3);
         $this->factory->filter('woocommerce_quantity_input_args', array($this, 'adjust_quantity'), 10, 2);
     }
 
@@ -280,6 +281,33 @@ class MEC_feature_wc extends MEC_base
         }
 
         return $args;
+    }
+
+    /**
+     * Ensure MEC ticket quantities remain visible and immutable in WooCommerce cart tables.
+     *
+     * @param string $quantity_html
+     * @param string $cart_item_key
+     * @param array  $cart_item
+     *
+     * @return string
+     */
+    public function display_cart_quantity($quantity_html, $cart_item_key, $cart_item)
+    {
+        if((!is_cart() && !is_checkout()) || !is_array($cart_item)) return $quantity_html;
+
+        $product = $cart_item['data'] ?? NULL;
+        if(!$product instanceof WC_Product) return $quantity_html;
+
+        $is_mec_product = get_post_meta($product->get_id(), 'mec_ticket', true);
+        if(!$is_mec_product) return $quantity_html;
+
+        $quantity_value = isset($cart_item['quantity']) ? wc_stock_amount($cart_item['quantity']) : 0;
+
+        $input_name = 'cart['.$cart_item_key.'][qty]';
+        $hidden_input = '<input type="hidden" name="'.esc_attr($input_name).'" value="'.esc_attr($quantity_value).'" />';
+
+        return $quantity_value.$hidden_input;
     }
 
     public function single_product_page()

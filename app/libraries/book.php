@@ -336,7 +336,7 @@ class MEC_book extends MEC_base
      */
     public function update_transaction($transaction_id, $data)
     {
-        update_option($transaction_id, $data, false);
+        update_option($transaction_id, $data, 'no');
 
         if ($transaction_id)
         {
@@ -561,7 +561,7 @@ class MEC_book extends MEC_base
         }
 
         // Latest Booking Date & Time
-        update_option('mec_latest_booking_datetime', current_time('YmdHis'), false);
+        update_option('mec_latest_booking_datetime', current_time('YmdHis'), 'no');
 
         return $book_id;
     }

@@ -461,7 +461,7 @@ class MEC_feature_ix extends MEC_base
                 $transaction['payable'] = $price_details['payable'];
                 $transaction['coupon'] = null;
 
-                update_option($transaction_id, $transaction, false);
+                update_option($transaction_id, $transaction, 'no');
 
                 $attendees = $transaction['tickets'] ?? [];
 

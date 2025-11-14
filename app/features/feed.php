@@ -145,6 +145,61 @@ class MEC_feature_feed extends MEC_base
     }
 
     /**
+     * Parse term filters coming from the iCal feed request.
+     *
+     * @param string $request_key
+     * @param string $taxonomy
+     * @return array [array $term_ids, bool $requested]
+     */
+    protected function parse_feed_filter_terms($request_key, $taxonomy)
+    {
+        $requested = false;
+        $term_ids = [];
+
+        if(isset($_GET[$request_key]) || isset($_POST[$request_key]) || isset($_REQUEST[$request_key]))
+        {
+            $raw = isset($_GET[$request_key]) ? $_GET[$request_key] : (isset($_POST[$request_key]) ? $_POST[$request_key] : $_REQUEST[$request_key]);
+
+            if(is_array($raw)) $raw = implode(',', $raw);
+
+            $raw = sanitize_text_field(wp_unslash($raw));
+
+            if($raw === '') return [$term_ids, false];
+
+            $requested = true;
+
+            $parts = preg_split('/\s*,\s*/', $raw, -1, PREG_SPLIT_NO_EMPTY);
+
+            $ids = [];
+            $slugs = [];
+
+            foreach($parts as $part)
+            {
+                if($part === '') continue;
+
+                if(is_numeric($part)) $ids[] = absint($part);
+                else $slugs[] = sanitize_title($part);
+            }
+
+            if(count($slugs))
+            {
+                $terms = get_terms([
+                    'taxonomy' => $taxonomy,
+                    'hide_empty' => false,
+                    'fields' => 'ids',
+                    'slug' => $slugs,
+                ]);
+
+                if(!is_wp_error($terms) && is_array($terms)) $ids = array_merge($ids, $terms);
+            }
+
+            $term_ids = array_values(array_unique(array_filter(array_map('absint', $ids))));
+        }
+
+        return [$term_ids, $requested];
+    }
+
+    /**
      * @throws Exception
      */
     public function ical()
@@ -171,27 +226,72 @@ class MEC_feature_feed extends MEC_base
         // Filtered Events
         $filtered_ids = null;
 
-        // Filter Criteria
-        $locations_str = isset($_REQUEST['mec_locations']) ? trim($_REQUEST['mec_locations'], ', ') : '';
-        $categories_str = isset($_REQUEST['mec_categories']) ? trim($_REQUEST['mec_categories'], ', ') : '';
-        $organizers_str = isset($_REQUEST['mec_organizers']) ? trim($_REQUEST['mec_organizers'], ', ') : '';
+        list($locations, $locations_requested) = $this->parse_feed_filter_terms('mec_locations', 'mec_location');
+        list($categories, $categories_requested) = $this->parse_feed_filter_terms('mec_categories', 'mec_category');
+        list($organizers, $organizers_requested) = $this->parse_feed_filter_terms('mec_organizers', 'mec_organizer');
 
-        // Filter Events
-        if(trim($locations_str, ', ') || trim($categories_str, ', ') || trim($organizers_str, ', '))
+        if($locations_requested || $categories_requested || $organizers_requested)
         {
-            $locations = [];
-            if(trim($locations_str, ', ')) $locations = array_map('trim', explode(',', $locations_str));
+            $tax_query = [];
+            $invalid_filter = false;
 
-            $categories = [];
-            if(trim($categories_str, ', ')) $categories = array_map('trim', explode(',', $categories_str));
+            if($locations_requested)
+            {
+                if(!count($locations)) $invalid_filter = true;
+                else
+                {
+                    $tax_query[] = [
+                        'taxonomy' => 'mec_location',
+                        'field' => 'term_id',
+                        'terms' => $locations,
+                        'operator' => 'IN',
+                    ];
+                }
+            }
 
-            $organizers = [];
-            if(trim($organizers_str, ', ')) $organizers = array_map('trim', explode(',', $organizers_str));
+            if(!$invalid_filter && $categories_requested)
+            {
+                if(!count($categories)) $invalid_filter = true;
+                else
+                {
+                    $tax_query[] = [
+                        'taxonomy' => 'mec_category',
+                        'field' => 'term_id',
+                        'terms' => $categories,
+                        'operator' => 'IN',
+                    ];
+                }
+            }
 
-            $filtered = $this->main->get_filtered_events($locations, $categories, $organizers);
+            if(!$invalid_filter && $organizers_requested)
+            {
+                if(!count($organizers)) $invalid_filter = true;
+                else
+                {
+                    $tax_query[] = [
+                        'taxonomy' => 'mec_organizer',
+                        'field' => 'term_id',
+                        'terms' => $organizers,
+                        'operator' => 'IN',
+                    ];
+                }
+            }
 
-            $filtered_ids = [];
-            foreach($filtered as $filtered_post) $filtered_ids[] = $filtered_post->ID;
+            if($invalid_filter) $filtered_ids = [];
+            elseif(count($tax_query))
+            {
+                $filtered_ids = get_posts([
+                    'post_type' => $this->PT,
+                    'posts_per_page' => -1,
+                    'post_status' => ['publish'],
+                    'fields' => 'ids',
+                    'no_found_rows' => true,
+                    'update_post_meta_cache' => false,
+                    'update_post_term_cache' => false,
+                    'tax_query' => $tax_query,
+                ]);
+            }
+            else $filtered_ids = [];
         }
 
         if(is_array($filtered_ids))
@@ -214,7 +314,10 @@ class MEC_feature_feed extends MEC_base
         $appointments = $this->getAppointments();
         foreach($event_ids as $key => $event_id)
         {
-            if($appointments->get_entity_type($event_id) === 'appointment') unset($event_ids[$key]);
+            $event_status = get_post_status($event_id);
+
+            if ($event_status !== 'publish') unset($event_ids[$key]);
+            if ($appointments->get_entity_type($event_id) === 'appointment') unset($event_ids[$key]);
         }
         $event_ids = array_values($event_ids);
 

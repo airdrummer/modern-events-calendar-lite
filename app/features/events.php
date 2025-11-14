@@ -715,8 +715,38 @@ class MEC_feature_events extends MEC_base
         $certain_weekdays = get_post_meta($post->ID, 'mec_certain_weekdays', true);
         if ($repeat_type != 'certain_weekdays') $certain_weekdays = [];
 
-        $in_days_str = get_post_meta($post->ID, 'mec_in_days', true);
-        $in_days = trim($in_days_str) ? explode(',', $in_days_str) : [];
+		$in_days_raw = get_post_meta($post->ID, 'mec_in_days', true);
+		// Guard: normalize array/object meta to expected comma-separated string
+		if (is_array($in_days_raw))
+		{
+			$normalized_in_days = [];
+			foreach ($in_days_raw as $day)
+			{
+				if (is_string($day) && trim($day) !== '')
+				{
+					$normalized_in_days[] = $day;
+				}
+				else if (
+					is_array($day)
+					&& isset($day['startDate'], $day['endDate'], $day['startTime'], $day['endTime'])
+				)
+				{
+					$sh = isset($day['startTime']['hour']) ? sprintf('%02d', (int) $day['startTime']['hour']) : '00';
+					$sm = isset($day['startTime']['minute']) ? sprintf('%02d', (int) $day['startTime']['minute']) : '00';
+					$sa = isset($day['startTime']['ampm']) ? $day['startTime']['ampm'] : 'AM';
+					$eh = isset($day['endTime']['hour']) ? sprintf('%02d', (int) $day['endTime']['hour']) : '00';
+					$em = isset($day['endTime']['minute']) ? sprintf('%02d', (int) $day['endTime']['minute']) : '00';
+					$ea = isset($day['endTime']['ampm']) ? $day['endTime']['ampm'] : 'PM';
+					$normalized_in_days[] = $this->main->standardize_format($day['startDate']) . ':' . $this->main->standardize_format($day['endDate']) . ':' . $sh . '-' . $sm . '-' . $sa . ':' . $eh . '-' . $em . '-' . $ea;
+				}
+			}
+			$in_days_str = implode(',', $normalized_in_days);
+		}
+		else
+		{
+			$in_days_str = (string) $in_days_raw;
+		}
+		$in_days = trim($in_days_str) ? explode(',', $in_days_str) : [];
 
         $entity_type = $this->getAppointments()->get_entity_type($post->ID);
         if ($entity_type === 'appointment') $in_days = [];
@@ -3397,7 +3427,7 @@ class MEC_feature_events extends MEC_base
                 $post_ids = (isset($_GET['post']) and is_array($_GET['post']) and count($_GET['post'])) ? array_map('sanitize_text_field', wp_unslash($_GET['post'])) : [];
                 $events = '';
 
-                foreach ($post_ids as $post_id) $events .= $this->main->ical_single((int) $post_id, '', '', true);
+                foreach ($post_ids as $post_id) $events .= $this->main->ical_single((int) $post_id);
                 $ical_calendar = $this->main->ical_calendar($events);
 
                 header('Content-type: application/force-download; charset=utf-8');

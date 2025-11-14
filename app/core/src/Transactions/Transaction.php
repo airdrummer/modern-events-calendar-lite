@@ -208,7 +208,8 @@ class Transaction
     public function update_data($reset_cache = true)
     {
 
-        update_option($this->transaction_id, $this->data, false);
+        // Transaction data can be sizable; store it as a non-autoloaded option to keep page loads fast.
+        update_option($this->transaction_id, $this->data, 'no');
 
         if ($reset_cache)
         {
@@ -294,7 +295,7 @@ class Transaction
             $data = $this->get_all_tickets_details(false);
         }
 
-        update_option($this->transaction_id . '_cached', $data, false);
+        update_option($this->transaction_id . '_cached', $data, 'no');
     }
 
     public function reset_cache_tickets_details()
@@ -2529,7 +2530,7 @@ class Transaction
             }
 
 
-            update_option($transaction_id, $transaction, false);
+            update_option($transaction_id, $transaction, 'no');
 
             $total = $transaction['total'] ?? 0;
             $payable = $transaction['payable'] ?? $total;

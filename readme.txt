@@ -1,10 +1,10 @@
-=== Modern Events Calendar Lite ===
+﻿=== Modern Events Calendar Lite ===
 Contributors: webnus
 Donate link: https://webnus.net
 Tags: Event, Events, Calendar, Booking, Schedule, Organizer, Venue
 Requires at least: 4.0.0
-Tested up to: 6.8.2
-Stable tag: 7.26.0.1
+Tested up to: 6.8.3
+Stable tag: 7.27.0
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -472,10 +472,23 @@ You can see [plugin documentation](https://webnus.net/dox/modern-events-calendar
 43. WordPress Event Calendar - Daily view(Fluent View Layouts Addon)
 
 == Changelog ==
-== Changelog ==
-= v 7.26.0.1 - 4 oct 2025 =
-- added missing timezone display, reformat
-- fixed countdown
+= v 7.27.0 - 25 October 2025 =
+- Added: Attachable invoice to the booking confirmation email.
+- Added: The sort ability to tickets, fees, ticket variations and FAQ.
+- Added: Event duration to the iCal feed.
+- Improved: The shortcode builder by adding some select2 fields.
+- Improved: The quantity display in Woo Cart.
+- Optimized: The MEC storage for WP options.
+- Optimized: The MEC single page for better caching and better load speed.
+- Fixed: Some PHP notices and warnings.
+- Fixed: An issue about loading non public events in iCal feed.
+- Fixed: An issue in JSON-LD Schema.
+- Fixed: An issue in the search bar.
+- Fixed: An issue in the get events API.
+- Fixed: An issue in multilingual MEC carts.
+- Fixed: An issue in displaying maximum buyable tickets in the booking module.
+- Fixed: Missing label for Search Input field causing accessibility warning.
+- Fixed: Some minor issues.
 
 = v 7.26.0 - 20 September 2025 =
 - Added: No Repeat type for the appointments.

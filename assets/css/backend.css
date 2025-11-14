@@ -1383,18 +1383,19 @@ body.post-type-mec-books th.column-author {
 }
 
 .post-type-mec-events .mec-add-event-tabs-wrap .select2-container,
+.post-type-mec_calendars .select2-container,
 .post-type-mec-events .mec-create-shortcode-tab-content .select2-container,
 .wns-be-main .mec-form-row .mec-create-shortcode-tab-content .select2-container {
   border: none;
   background-color: #f7f8f9;
   border-radius: 5px;
-  line-height: 38px;
   padding-left: 10px;
   min-height: 38px;
   box-shadow: inset 0 1px 2px rgb(0 0 0 / 7%);
 }
 
 .mec-add-event-tabs-wrap .select2-container .select2-selection--multiple,
+.post-type-mec_calendars .select2-container .select2-selection--multiple,
 .mec-create-shortcode-tab-content .select2-container .select2-selection--multiple,
 .wns-be-main .mec-form-row .select2-container .select2-selection--multiple {
   min-height: 38px;
@@ -1407,13 +1408,10 @@ body.post-type-mec-books th.column-author {
 }
 
 .post-type-mec-events .select2-dropdown,
+.post-type-mec_calendars .select2-dropdown,
 .wns-be-main .mec-form-row .select2-dropdown {
   border: 1px solid #ddd !important;
 }
-
-/* .post-type-mec-events .select2-container--default .select2-selection--single .select2-selection__rendered {
-  padding-left: 0;
-} */
 
 .wns-be-main .mec-form-row input[type="search"] {
   line-height: 2 !important;
@@ -1587,11 +1585,6 @@ body.post-type-mec-books th.column-author {
   max-width: 290px;
 }
 
-#mec_calendar_display_options .mec-col-4 input {
-  margin-left: 20px !important;
-  width: 80%;
-}
-
 .mec-form-row .description {
   display: inline-block;
   border-left: 1px dashed #ccc;
@@ -1669,7 +1662,9 @@ body.post-type-mec-books th.column-author {
 }
 
 .mec-form-row .mec-box .button,
-.mec-meta-box-fields .mec-box .button:not(.mec_add_price_date_button) {
+.mec-meta-box-fields .mec-box .button:not(.mec_add_price_date_button),
+#mec_tickets .mec_ticket_row .mec_field_sort,
+#mec_tickets .mec_ticket_row .mec_ticket_remove_button {
   float: right;
 }
 
@@ -5170,45 +5165,6 @@ textarea.mec-import-settings-content {
   max-width: 762px;
 }
 
-#mec_tickets .button.remove {
-  padding: 0;
-  min-height: 28px;
-  height: 28px;
-  width: 28px;
-  margin: 0;
-  border-radius: 50%;
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  color: #fff;
-  box-shadow: none;
-  background: #fff;
-  border-color: #ea6485;
-  font-size: 20px;
-  line-height: 1.5;
-}
-
-#mec_tickets .button.remove svg {
-  fill: #ea6485 !important;
-}
-
-#mec_tickets .button.remove:hover {
-  color: #fff;
-  border-color: #ea6485;
-  background: #ea6485;
-}
-
-#mec_tickets .button.remove:hover svg {
-  fill: #fff !important;
-}
-
-@media (max-width: 480px) {
-  #mec_tickets .button.remove {
-    top: 5px;
-    right: 5px;
-  }
-}
-
 .mec-ticket-id {
   font-size: 12px;
   line-height: 12px;
@@ -7408,16 +7364,9 @@ a.mec-create-shortcode-tabs-link {
   color: #07bbe9;
 }
 
-#taxes_option #mec_fees_list .mec-form-row .button,
-#ticket_variations_option #mec_ticket_variations_list .mec-form-row .button {
-  margin: 0;
-}
-
 #mec-hourly-schedule .mec-form-row .mec-col-1 .button,
 #mec-hourly-schedule .mec-form-row.mec-box .button,
 #mec_faq_list .mec-faq-actions .mec-faq-remove,
-#taxes_option #mec_fees_list .mec-form-row .button,
-#ticket_variations_option #mec_ticket_variations_list .mec-form-row .button,
 .mec-dash-remove-btn {
   color: #ea6485 !important;
   border-color: #ea6485 !important;
@@ -7426,8 +7375,6 @@ a.mec-create-shortcode-tabs-link {
 #mec-hourly-schedule .mec-form-row .mec-col-1 .button:hover,
 #mec-hourly-schedule .mec-form-row.mec-box .button:hover,
 #mec_faq_list .mec-faq-actions .mec-faq-remove:hover,
-#taxes_option #mec_fees_list .mec-form-row .button:hover,
-#ticket_variations_option #mec_ticket_variations_list .mec-form-row .button:hover,
 .mec-dash-remove-btn:hover {
   background: rgb(234 100 133 / 0.1) !important;
 }
@@ -7836,6 +7783,7 @@ a.mec-create-shortcode-tabs-link {
 }
 
 .mec-add-event-tabs-wrap .select2-container,
+.post-type-mec_calendars .select2-container,
 .mec-create-shortcode-tab-content .select2-container,
 .wns-be-main .mec-form-row .select2-container {
   min-height: 38px;
@@ -7856,6 +7804,7 @@ a.mec-create-shortcode-tabs-link {
 }
 
 .mec-add-event-tabs-wrap .select2-container.select2-container--above.select2-container--open,
+.post-type-mec_calendars .select2-container.select2-container--above.select2-container--open,
 .mec-create-shortcode-tab-content
   .select2-container.select2-container--above.select2-container--open,
 .wns-be-main .mec-form-row .select2-container.select2-container--above.select2-container--open {
@@ -7863,6 +7812,7 @@ a.mec-create-shortcode-tabs-link {
 }
 
 .mec-add-event-tabs-wrap .select2-container.select2-container--below.select2-container--open,
+.post-type-mec_calendars .select2-container.select2-container--below.select2-container--open,
 .mec-create-shortcode-tab-content
   .select2-container.select2-container--below.select2-container--open,
 .wns-be-main .mec-form-row .select2-container.select2-container--below.select2-container--open {
@@ -7870,6 +7820,7 @@ a.mec-create-shortcode-tabs-link {
 }
 
 .mec-add-event-tabs-wrap .select2-selection,
+.post-type-mec_calendars .select2-selection,
 .mec-create-shortcode-tab-content .select2-selection,
 .wns-be-main .mec-form-row .select2-selection {
   border: none;
@@ -7879,6 +7830,7 @@ a.mec-create-shortcode-tabs-link {
 }
 
 .mec-add-event-tabs-wrap .select2-container--default.select2-container--focus .select2-selection,
+.post-type-mec_calendars .select2-container--default.select2-container--focus .select2-selection,
 .mec-create-shortcode-tab-content
   .select2-container--default.select2-container--focus
   .select2-selection,
@@ -7888,6 +7840,10 @@ a.mec-create-shortcode-tabs-link {
 }
 
 .mec-add-event-tabs-wrap
+  .select2-container--default
+  .select2-selection--single
+  .select2-selection__arrow,
+.post-type-mec_calendars
   .select2-container--default
   .select2-selection--single
   .select2-selection__arrow,
@@ -7917,6 +7873,14 @@ a.mec-create-shortcode-tabs-link {
     no-repeat top right;
   background-size: 330px;
   border: 1px solid #e3e5e7;
+}
+
+.mec-cover-event-select-wrap > span.select2-container--default.select2-container--open[style*="position: absolute"] {
+  width: 0 !important;
+  height: 0 !important;
+  min-width: unset;
+  min-height: unset;
+  border: none;
 }
 
 .fserv-container .fserv-form-name {
@@ -14511,7 +14475,10 @@ body.index-php .ui-datepicker.ui-widget td a {
   transition: all 0.2s ease;
 }
 
-body.post-type-mec-events .ui-datepicker.ui-widget td.ui-datepicker-unselectable.ui-state-disabled span {
+body.post-type-mec-events
+  .ui-datepicker.ui-widget
+  td.ui-datepicker-unselectable.ui-state-disabled
+  span {
   color: #d1d2d3;
 }
 
@@ -14729,20 +14696,31 @@ textarea[readonly] {
   width: calc(100% - 15px);
 }
 
-#mec-hourly-schedule .mec-form-row.mec-box .button.mec_field_sort {
+#mec-hourly-schedule .mec-form-row.mec-box .button.mec_field_sort,
+#mec-faq .mec_faq_row.mec-box .button.mec_field_sort,
+#mec_tickets .mec_ticket_row.mec-box .button.mec_field_sort,
+#mec_fees_list .mec-form-row.mec-box .button.mec_field_sort,
+#mec_ticket_variations_list .mec_ticket_variation_row.mec-box .button.mec_field_sort,
+#taxes_option .mec-form-row.mec-box .button.mec_field_sort {
   font-size: 0;
   position: relative;
   width: 38px;
   text-align: center;
+  cursor: move;
+  transition: all .3s;
 }
-#mec-hourly-schedule .mec-form-row.mec-box .button.mec_field_sort:before {
+
+#mec-hourly-schedule .mec-form-row.mec-box .button.mec_field_sort:before,
+#mec-faq .mec_faq_row.mec-box .button.mec_field_sort:before,
+#mec_tickets .mec_ticket_row.mec-box .button.mec_field_sort:before,
+#mec_fees_list .mec-form-row.mec-box .button.mec_field_sort:before,
+#mec_ticket_variations_list .mec_ticket_variation_row.mec-box .button.mec_field_sort:before {
   position: absolute;
   top: 0;
   left: calc(50% - 10px);
   width: 20px;
   height: 20px;
   display: block;
-  cursor: move;
   font-family: simple-line-icons;
   content: "\e023";
   font-size: 15px;
@@ -14750,5 +14728,42 @@ textarea[readonly] {
 }
 
 body.post-type-mec_invoice #post-body-content {
-    margin: 0;
+  margin: 0;
+}
+
+.mec-book-details,
+.mec-rsvp-details,
+.mec-waiting-details {
+  position: relative;
+}
+
+.mec-book-details a.skip-to-edit-form {
+  position: absolute;
+  right: 0;
+}
+
+.mec-book-details .mec-book-details-section:not(:last-of-type),
+.mec-rsvp-details .mec-rsvp-details-section:not(:last-of-type),
+.mec-waiting-details .mec-waiting-details-section:not(:last-of-type) {
+  margin: 0 0 30px 0;
+}
+
+.mec-book-details .mec-attendee:not(:last-of-type),
+.mec-rsvp-details .mec-attendee:not(:last-of-type),
+.mec-waiting-details .mec-attendee:not(:last-of-type) {
+  margin: 0 0 20px 0;
+}
+
+.mec-book-details .mec-book-details-section h3,
+.mec-rsvp-details .mec-rsvp-details-section h3,
+.mec-waiting-details .mec-waiting-details-section h3 {
+  margin: 0 0 10px 0;
+}
+
+.mec-book-details .mec_booking_edit_heading {
+  padding: unset;
+}
+
+.label-checkbox + .label-checkbox {
+  margin-left: 10px;
 }

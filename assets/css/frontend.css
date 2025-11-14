@@ -84,6 +84,8 @@
 .mec-wrap .elementor-widget-container p,
 .mec-wrap .et_pb_module p {
   all: unset;
+  display: block;
+  margin: 0 0 20px 0;
 }
 
 .mec-wrap .read-more-text p span.more-text {
@@ -385,8 +387,6 @@
     /* # Modern Events Calendar (WP Plugin) Styles
     ================================================== */
 .mec-wrap {
-  font-size: 14px;
-  line-height: 25px;
   font-weight: 400;
   color: #626262;
 }
@@ -9580,6 +9580,12 @@ li.mec-no-event-found .mec-event-title {
   .mec-fes-list ul {
     padding-left: 0;
   }
+}
+
+.mec-fes-form .mec-meta-box-fields {
+  font-size: 13px;
+  line-height: 1.4;
+  color: #798f96;
 }
 
 .mec-fes-form .mec-required {
@@ -19841,11 +19847,6 @@ ul#mec_reg_form_fields li .mec_reg_field_remove:hover {
   color: #fff;
 }
 
-#mec_fees_list [id^="mec_remove_fee_button"],
-#mec_meta_box_ticket_variations_form .mec-form-row [id^="mec_remove_ticket_variation_button"] {
-  margin-left: 14px !important;
-}
-
 #mec_meta_box_hourly_schedule_days .mec-add-hourly-schedule-button {
   line-height: 10px !important;
 }
@@ -24128,7 +24129,7 @@ span.mec-booking-field-required {
 }
 
 .select2-container {
-  z-index: 9999;
+  z-index: 999999;
 }
 
 @media (max-width: 1200px) {
@@ -25925,11 +25926,6 @@ span.mec-marker-wrap,
 .mec-fes-form textarea {
   box-shadow: 0 2px 5px var(--mec-fes-main-color-rgba-5) inset;
 }
-/* 
-.mec-fes-list ul li,
-.mec-fes-form .mec-form-row .button:not(.wp-color-result) {
-  box-shadow: 0 2px 6px -4px var(--mec-fes-main-color-rgba-6);
-} */
 
 .mec-fes-form #mec_bfixed_form_field_types .button,
 .mec-fes-form #mec_reg_form_field_types .button,
@@ -26588,6 +26584,7 @@ span.load-more-text:before {
   font-weight: 400;
   display: inline-block;
   margin: 0 0 10px 0;
+  vertical-align: top;
 }
 
 .mec-fes-form .mec-form-row .button:not(.wp-color-result):focus,
@@ -26653,38 +26650,6 @@ span.load-more-text:before {
   position: relative;
 }
 
-.mec-fes-form .mec-box.mec_ticket_row .button.remove {
-  padding: 0 !important;
-  min-height: 28px;
-  height: 28px;
-  width: 28px;
-  margin: 0;
-  border-radius: 50%;
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  color: #fff;
-  box-shadow: none;
-  background: #fff;
-  border-color: #ea6485;
-  font-size: 20px;
-  line-height: 1.5 !important;
-}
-
-.mec-fes-form .mec-box.mec_ticket_row .button.remove svg {
-  fill: #ea6485 !important;
-}
-
-.mec-fes-form .mec-box.mec_ticket_row .button.remove:hover {
-  color: #fff;
-  border-color: #ea6485;
-  background: #ea6485;
-}
-
-.mec-fes-form .mec-box.mec_ticket_row .button.remove:hover svg {
-  fill: #fff !important;
-}
-
 .mec-fes-form .mec-form-row .mec-col-4 input[type="number"],
 .mec-fes-form .mec-form-row .mec-col-4 input[type="text"],
 .mec-fes-form .mec-form-row .mec-col-4:not(.mec-time-picker) select,
@@ -26704,12 +26669,6 @@ span.load-more-text:before {
 .mec-fes-form #mec_meta_box_hourly_schedule_days .mec-form-row input[type="text"],
 .mec-fes-form #mec_meta_box_tickets_form .mec-form-row input[type="text"] {
   max-width: 250px;
-}
-
-.mec-fes-form .mec-form-row:has(.mec-stop-selling-tickets) {
-  display: flex;
-  align-items: top;
-  gap: 5px;
 }
 
 .mec-fes-form .mec-form-row .mec-stop-selling-tickets {
@@ -26737,6 +26696,10 @@ span.load-more-text:before {
   line-height: 20px !important;
   letter-spacing: 0;
   padding: 0px 10px 0px 25px !important;
+}
+
+.mec-fes-form .mec_ticket_variation_row {
+  margin-bottom: 10px;
 }
 
 .mec-fes-form .mec_ticket_variation_row .mec-col-3,
@@ -26775,6 +26738,15 @@ span.load-more-text:before {
   color: #ea6485;
   border-color: #ffd2dd;
   cursor: not-allowed;
+}
+
+.mec-fes-form .mec-dash-remove-btn {
+  color: #ea6485 !important;
+  border-color: #ea6485 !important;
+}
+
+.mec-fes-form .mec-dash-remove-btn:hover {
+  background: rgb(234 100 133 / 0.1) !important;
 }
 
 #mec_reg_form_field_types .button.red {
@@ -27005,6 +26977,32 @@ span.button {
   font-size: 13px;
   color: #798f96;
   font-weight: 400;
+}
+
+.mec-fes-form .button.mec_field_sort {
+  font-size: 0 !important;
+  position: relative;
+  width: 38px;
+  text-align: center;
+  cursor: move;
+  transition: all .3s;
+}
+
+.mec-fes-form .button.mec_field_sort:before {
+  position: absolute;
+  top: 0;
+  left: calc(50% - 10px);
+  width: 20px;
+  height: 20px;
+  display: block;
+  font-family: simple-line-icons;
+  content: "\e023";
+  font-size: 15px;
+  color: #07bbe9;
+}
+
+.mec-fes-form .button.mec_field_sort:hover:before {
+  color: #ffffff;
 }
 
 .rtl .mec-yearly-view-wrap .mec-yearly-title-sec .mec-next-year i:before,

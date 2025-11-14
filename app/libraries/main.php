@@ -2567,7 +2567,10 @@ class MEC_main extends MEC_base
         $status_query = '';
         if ($status) $status_query .= " AND `status`='" . esc_sql($status) . "'";
 
-        $ids = $db->select("SELECT `post_id` FROM `#__mec_dates` WHERE `tstart` >= " . $start . $status_query, 'loadColumn');
+        $ids = $db->select(
+            "SELECT `post_id` FROM `#__mec_dates` WHERE `tend` >= " . $start . $status_query,
+            'loadColumn'
+        );
         return array_unique($ids);
     }
 
@@ -3168,8 +3171,375 @@ class MEC_main extends MEC_base
             echo '<p class="info-msg">' . esc_html__('You returned from payment gateway successfully.', 'modern-events-calendar-lite') . '</p>';
         }
 
-        // Trigget Actions
+        // Trigger Actions
         do_action('mec_gateway_do_endpoints', $this);
+    }
+
+    public function build_booking_invoice_pdf($transaction_id, $args = [])
+    {
+        $transaction_id = sanitize_text_field($transaction_id);
+
+        $defaults = [
+            'book_id' => null,
+            'require_confirmation' => true,
+            'enforce_key' => false,
+            'invoice_key' => null,
+        ];
+
+        $args = wp_parse_args($args, $defaults);
+
+        $settings = $this->get_settings();
+        if (isset($settings['booking_invoice']) and !$settings['booking_invoice'])
+        {
+            return new WP_Error('mec_invoice_disabled', __('Cannot find the invoice!', 'modern-events-calendar-lite'), ['title' => esc_html__('Invoice is invalid.', 'modern-events-calendar-lite')]);
+        }
+
+        $ml_settings = $this->get_ml_settings();
+
+        // Libraries
+        $book = $this->getBook();
+        $render = $this->getRender();
+        $db = $this->getDB();
+
+        $transaction = $book->get_transaction($transaction_id);
+        if (!is_array($transaction) or !count($transaction))
+        {
+            return new WP_Error('mec_invoice_transaction_missing', __('Cannot find the invoice!', 'modern-events-calendar-lite'), ['title' => esc_html__('Invoice is invalid.', 'modern-events-calendar-lite')]);
+        }
+
+        $event_id = $transaction['event_id'] ?? 0;
+        $requested_event_id = $transaction['translated_event_id'] ?? $event_id;
+
+        if ($args['book_id']) $book_id = absint($args['book_id']);
+        else $book_id = $db->select("SELECT `post_id` FROM `#__postmeta` WHERE `meta_value`='" . $transaction_id . "' AND `meta_key`='mec_transaction_id'", 'loadResult');
+
+        if (!$book_id)
+        {
+            return new WP_Error('mec_invoice_booking_missing', __('Cannot find the booking!', 'modern-events-calendar-lite'), ['title' => esc_html__('Booking is invalid.', 'modern-events-calendar-lite')]);
+        }
+
+        if ($args['require_confirmation'])
+        {
+            $mec_confirmed = get_post_meta($book_id, 'mec_confirmed', true);
+            if (!$mec_confirmed and (!current_user_can('administrator') and !current_user_can('editor')))
+            {
+                return new WP_Error('mec_invoice_not_confirmed', __('Your booking still is not confirmed. You can download it after confirmation!', 'modern-events-calendar-lite'), ['title' => esc_html__('Booking Not Confirmed.', 'modern-events-calendar-lite')]);
+            }
+        }
+
+        if (!$event_id)
+        {
+            return new WP_Error('mec_invoice_event_missing', __('Cannot find the booking!', 'modern-events-calendar-lite'), ['title' => esc_html__('Booking is invalid.', 'modern-events-calendar-lite')]);
+        }
+
+        if ($args['enforce_key'])
+        {
+            $invoice_key = $transaction['invoice_key'] ?? null;
+            $provided_key = isset($args['invoice_key']) ? sanitize_text_field($args['invoice_key']) : null;
+            if ($invoice_key and $provided_key !== $invoice_key)
+            {
+                return new WP_Error('mec_invoice_invalid_key', __("You don't have access to view this invoice!", 'modern-events-calendar-lite'), ['title' => esc_html__('Key is invalid.', 'modern-events-calendar-lite')]);
+            }
+        }
+
+        $event = $render->data($event_id);
+
+        $bfixed_fields = $this->get_bfixed_fields($event_id);
+        $reg_fields = $this->get_reg_fields($event_id);
+
+        $location_id = $this->get_master_location_id($event);
+        $location = isset($event->locations[$location_id]) ? (trim($event->locations[$location_id]['address']) ? $event->locations[$location_id]['address'] : $event->locations[$location_id]['name']) : '';
+
+        $dates = isset($transaction['date']) ? explode(':', $transaction['date']) : [time(), time()];
+
+        // Multiple Dates
+        $all_dates = ((isset($transaction['all_dates']) and is_array($transaction['all_dates'])) ? $transaction['all_dates'] : []);
+
+        // Get Booking Post
+        $booking = $book->get_bookings_by_transaction_id($transaction_id);
+
+        $booking_time = isset($booking[0]) ? get_post_meta($booking[0]->ID, 'mec_booking_time', true) : null;
+        if (!$booking_time and is_numeric($dates[0])) $booking_time = date('Y-m-d', $dates[0]);
+
+        $booking_time = date('Y-m-d', strtotime($booking_time));
+
+        // Coupon Code
+        $coupon_code = isset($booking[0]) ? get_post_meta($booking[0]->ID, 'mec_coupon_code', true) : '';
+
+        // Include the tFPDF Class
+        if (!class_exists('tFPDF')) require_once MEC_ABSPATH . 'app' . DS . 'api' . DS . 'TFPDF' . DS . 'tfpdf.php';
+
+        $pdf = new tFPDF();
+        $pdf->AddPage();
+
+        // Add a Unicode font (uses UTF-8)
+        $pdf->AddFont('DejaVu', '', 'DejaVuSansCondensed.ttf', true);
+        $pdf->AddFont('DejaVuBold', '', 'DejaVuSansCondensed-Bold.ttf', true);
+
+        $pdf->SetTitle(sprintf(esc_html__('%s Invoice', 'modern-events-calendar-lite'), $transaction_id));
+        $pdf->SetAuthor(get_bloginfo('name'), true);
+
+        // Event Information
+        $pdf->SetFont('DejaVuBold', '', 18);
+        $pdf->Write(25, html_entity_decode(get_the_title($event->ID)));
+        $pdf->Ln();
+
+        if (trim($location))
+        {
+            $pdf->SetFont('DejaVuBold', '', 12);
+            $pdf->Write(6, esc_html__('Location', 'modern-events-calendar-lite') . ': ');
+            $pdf->SetFont('DejaVu', '', 12);
+            $pdf->Write(6, $location);
+            $pdf->Ln();
+        }
+
+        $date_format = (isset($ml_settings['booking_date_format1']) and trim($ml_settings['booking_date_format1'])) ? $ml_settings['booking_date_format1'] : 'Y-m-d';
+        $time_format = get_option('time_format');
+
+        if (is_numeric($dates[0]) and is_numeric($dates[1]))
+        {
+            $start_datetime = date($date_format . ' ' . $time_format, $dates[0]);
+            $end_datetime = date($date_format . ' ' . $time_format, $dates[1]);
+        }
+        else
+        {
+            $start_datetime = $dates[0] . ' ' . ($event->data->time['start'] ?? '');
+            $end_datetime = $dates[1] . ' ' . ($event->data->time['end'] ?? '');
+        }
+
+        $booking_options = $event->meta['mec_booking'] ?? [];
+        $bookings_all_occurrences = $booking_options['bookings_all_occurrences'] ?? 0;
+
+        if (count($all_dates))
+        {
+            $pdf->SetFont('DejaVuBold', '', 12);
+            $pdf->Write(6, esc_html__('Date and Times', 'modern-events-calendar-lite'));
+            $pdf->Ln();
+            $pdf->SetFont('DejaVu', '', 12);
+
+            foreach ($all_dates as $one_date)
+            {
+                $other_timestamps = explode(':', $one_date);
+                if (isset($other_timestamps[0]) and isset($other_timestamps[1]))
+                {
+                    $other_start_datetime = date($date_format . ' ' . $time_format, $other_timestamps[0]);
+                    $other_end_datetime = date($date_format . ' ' . $time_format, $other_timestamps[1]);
+
+                    $pdf->Write(6, $other_start_datetime . ' - ' . $other_end_datetime);
+                    $pdf->Ln();
+                }
+            }
+        }
+        else
+        {
+            $pdf->SetFont('DejaVuBold', '', 12);
+            $pdf->Write(6, esc_html__('Date', 'modern-events-calendar-lite') . ': ');
+            $pdf->SetFont('DejaVu', '', 12);
+            $pdf->Write(6, $start_datetime . ($bookings_all_occurrences ? '' : ' - ' . $end_datetime));
+            $pdf->Ln();
+        }
+
+        // Booker Information
+        $pdf->Ln();
+        $pdf->SetFont('DejaVuBold', '', 16);
+        $pdf->Write(10, esc_html__('Booker', 'modern-events-calendar-lite'));
+        $pdf->Ln();
+
+        foreach ($bfixed_fields as $bfixed_field)
+        {
+            if (!isset($bfixed_field['type'])) continue;
+
+            if ($bfixed_field['type'] == 'name')
+            {
+                $pdf->SetFont('DejaVu', '', 12);
+                $pdf->Write(6, esc_html__('Name', 'modern-events-calendar-lite') . ': ');
+                $pdf->Write(6, ($transaction['customer']['first_name'] ?? '') . ' ' . ($transaction['customer']['last_name'] ?? ''));
+                $pdf->Ln();
+            }
+            elseif ($bfixed_field['type'] == 'email')
+            {
+                $pdf->SetFont('DejaVu', '', 12);
+                $pdf->Write(6, esc_html__('Email', 'modern-events-calendar-lite') . ': ');
+                $pdf->Write(6, ($transaction['customer']['email'] ?? ''));
+                $pdf->Ln();
+            }
+            elseif ($bfixed_field['type'] == 'tel')
+            {
+                $pdf->SetFont('DejaVu', '', 12);
+                $pdf->Write(6, esc_html__('Tel', 'modern-events-calendar-lite') . ': ');
+                $pdf->Write(6, ($transaction['customer']['tel'] ?? ''));
+                $pdf->Ln();
+            }
+            elseif ($bfixed_field['type'] == 'mec_email_verification')
+            {
+                $pdf->SetFont('DejaVu', '', 12);
+                $pdf->Write(6, esc_html__('Verification', 'modern-events-calendar-lite') . ': ');
+                $pdf->Write(6, (($transaction['customer']['email_verified'] ?? 0) ? esc_html__('Yes', 'modern-events-calendar-lite') : esc_html__('No', 'modern-events-calendar-lite')));
+                $pdf->Ln();
+            }
+        }
+
+        if (isset($transaction['fields']) and is_array($transaction['fields']) and count($transaction['fields']))
+        {
+            foreach ($transaction['fields'] as $field_id => $value)
+            {
+                $field = (isset($reg_fields[$field_id]) and is_array($reg_fields[$field_id])) ? $reg_fields[$field_id] : [];
+                if (!count($field)) continue;
+
+                $pdf->SetFont('DejaVu', '', 12);
+                $pdf->Write(6, $field['label'] . ': ');
+                $pdf->Write(6, (is_array($value) ? implode(', ', $value) : $value));
+                $pdf->Ln();
+            }
+        }
+
+        // Attendees
+        $pdf->Ln();
+        $pdf->SetFont('DejaVuBold', '', 16);
+        $pdf->Write(10, esc_html__('Attendees', 'modern-events-calendar-lite'));
+        $pdf->Ln();
+
+        $transaction['tickets'] = apply_filters('mec_filter_invoice_tickets', $transaction['tickets'], $event_id, $book_id);
+
+        if (isset($transaction['tickets']) and count($transaction['tickets']))
+        {
+            $i = 1;
+            foreach ($transaction['tickets'] as $attendee)
+            {
+                if (!isset($attendee['id'])) continue;
+
+                $pdf->SetFont('DejaVuBold', '', 12);
+                $pdf->Write(6, stripslashes($attendee['name']));
+                $pdf->Ln();
+
+                $pdf->SetFont('DejaVu', '', 10);
+                $pdf->Write(6, $attendee['email']);
+                $pdf->Ln();
+
+                $pdf->Write(6, ((isset($event->tickets[$attendee['id']]) ? esc_html__($this->m('ticket', esc_html__('Ticket', 'modern-events-calendar-lite'))) . ': ' . esc_html($event->tickets[$attendee['id']]['name']) : '') . ' ' . (isset($event->tickets[$attendee['id']]) ? $book->get_ticket_price_label($event->tickets[$attendee['id']], $booking_time, $event_id, $dates[0]) : '')));
+
+                // Registration Fields
+                $reg_form = (isset($attendee['reg']) and is_array($attendee['reg'])) ? $attendee['reg'] : [];
+                $reg_fields = apply_filters('mec_booking_reg_form', $reg_fields, $event_id, get_post($event_id));
+
+                if (isset($reg_form) and count($reg_form))
+                {
+                    foreach ($reg_form as $field_id => $value)
+                    {
+                        $label = isset($reg_fields[$field_id]) ? $reg_fields[$field_id]['label'] : '';
+                        $type = isset($reg_fields[$field_id]) ? $reg_fields[$field_id]['type'] : '';
+
+                        $pdf->Ln();
+
+                        if ($type == 'agreement')
+                        {
+                            $pdf->Write(5, sprintf(esc_html__($label, 'modern-events-calendar-lite'), get_the_title($reg_fields[$field_id]['page'])) . ": " . ($value == '1' ? esc_html__('Yes', 'modern-events-calendar-lite') : esc_html__('No', 'modern-events-calendar-lite')));
+                        }
+                        else
+                        {
+                            $pdf->Write(5, $label . ": " . (is_string($value) ? stripslashes($value) : (is_array($value) ? stripslashes(implode(', ', $value)) : '---')));
+                        }
+                    }
+                }
+
+                // Ticket Variations
+                if (isset($attendee['variations']) and is_array($attendee['variations']) and count($attendee['variations']))
+                {
+                    $ticket_variations = $this->ticket_variations($event_id, $attendee['id']);
+
+                    foreach ($attendee['variations'] as $variation_id => $variation_count)
+                    {
+                        if (!$variation_count || $variation_count < 0) continue;
+
+                        $variation_title = (isset($ticket_variations[$variation_id]) and isset($ticket_variations[$variation_id]['title'])) ? $ticket_variations[$variation_id]['title'] : '';
+                        if (!trim($variation_title)) continue;
+
+                        $pdf->Ln();
+                        $pdf->Write(6, '+ ' . $variation_title . ' (' . $variation_count . ')');
+                    }
+                }
+
+                if ($i != count($transaction['tickets'])) $pdf->Ln(12);
+                else $pdf->Ln();
+
+                $i++;
+            }
+        }
+
+        // Billing Information
+        if (isset($transaction['price_details']) and isset($transaction['price_details']['details']) and is_array($transaction['price_details']['details']) and count($transaction['price_details']['details']))
+        {
+            $pdf->SetFont('DejaVuBold', '', 16);
+            $pdf->Write(20, esc_html__('Billing', 'modern-events-calendar-lite'));
+            $pdf->Ln();
+
+            $pdf->SetFont('DejaVu', '', 12);
+            foreach ($transaction['price_details']['details'] as $price_row)
+            {
+                $pdf->Write(6, $price_row['description'] . ": " . $this->render_price($price_row['amount'], $requested_event_id));
+                $pdf->Ln();
+            }
+
+            if ($coupon_code)
+            {
+                $pdf->Write(6, esc_html__('Coupon Code', 'modern-events-calendar-lite') . ": " . $coupon_code);
+                $pdf->Ln();
+            }
+
+            $pdf->SetFont('DejaVuBold', '', 12);
+            $pdf->Write(10, esc_html__('Total', 'modern-events-calendar-lite') . ': ');
+            $pdf->Write(10, $this->render_price($transaction['price'], $requested_event_id));
+            $pdf->Ln();
+        }
+
+        // Gateway
+        $pdf->SetFont('DejaVuBold', '', 16);
+        $pdf->Write(20, esc_html__('Payment', 'modern-events-calendar-lite'));
+        $pdf->Ln();
+
+        if (isset($transaction['payable']))
+        {
+            $pdf->SetFont('DejaVu', '', 12);
+            $pdf->Write(6, esc_html__('Paid Amount', 'modern-events-calendar-lite') . ': ');
+            $pdf->Write(6, $this->render_price($transaction['payable'], $requested_event_id));
+            $pdf->Ln();
+        }
+
+        $pdf->SetFont('DejaVu', '', 12);
+        $pdf->Write(6, esc_html__('Gateway', 'modern-events-calendar-lite') . ': ');
+        $pdf->Write(6, get_post_meta($book_id, 'mec_gateway_label', true));
+        $pdf->Ln();
+
+        $pdf->SetFont('DejaVu', '', 12);
+        $pdf->Write(6, esc_html__('Transaction ID', 'modern-events-calendar-lite') . ': ');
+        $pdf->Write(6, ((isset($transaction['gateway_transaction_id']) and trim($transaction['gateway_transaction_id'])) ? $transaction['gateway_transaction_id'] : $transaction_id));
+        $pdf->Ln();
+
+        $date_format = get_option('date_format');
+        $time_format = get_option('time_format');
+
+        $pdf->SetFont('DejaVu', '', 12);
+        $pdf->Write(6, esc_html__('Payment Time', 'modern-events-calendar-lite') . ': ');
+        $pdf->Write(6, date($date_format . ' ' . $time_format, strtotime(get_post_meta($book_id, 'mec_booking_time', true))));
+        $pdf->Ln();
+
+        do_action('mec_book_invoice_pdf_before_qr_code', $pdf, $book_id, $transaction);
+
+        $image = $this->module('qrcode.invoice', ['event' => $event]);
+        if (trim($image))
+        {
+            // QR Code
+            $pdf->SetX(-50);
+            $pdf->Image($image);
+            $pdf->Ln();
+        }
+
+        $filename = 'mec-invoice-' . sanitize_file_name($transaction_id) . '.pdf';
+
+        return [
+            'content' => $pdf->Output('S'),
+            'filename' => $filename,
+        ];
     }
 
     public function booking_invoice()
@@ -3177,299 +3547,26 @@ class MEC_main extends MEC_base
         // Booking Invoice
         if (isset($_GET['method']) and sanitize_text_field($_GET['method']) == 'mec-invoice')
         {
-            $settings = $this->get_settings();
-            if (isset($settings['booking_invoice']) and !$settings['booking_invoice']) wp_die(__('Cannot find the invoice!', 'modern-events-calendar-lite'), esc_html__('Invoice is invalid.', 'modern-events-calendar-lite'));
+            $transaction_id = isset($_GET['id']) ? sanitize_text_field($_GET['id']) : '';
+            $invoice_key = isset($_GET['mec-key']) ? sanitize_text_field($_GET['mec-key']) : null;
 
-            $ml_settings = $this->get_ml_settings();
+            $pdf_data = $this->build_booking_invoice_pdf($transaction_id, [
+                'enforce_key' => true,
+                'invoice_key' => $invoice_key,
+            ]);
 
-            $transaction_id = sanitize_text_field($_GET['id']);
-
-            // Libraries
-            $book = $this->getBook();
-            $render = $this->getRender();
-            $db = $this->getDB();
-
-            $transaction = $book->get_transaction($transaction_id);
-            $event_id = $transaction['event_id'] ?? 0;
-            $requested_event_id = $transaction['translated_event_id'] ?? $event_id;
-
-            // Don't Show PDF If Booking is Pending
-            $book_id = $db->select("SELECT `post_id` FROM `#__postmeta` WHERE `meta_value`='" . $transaction_id . "' AND `meta_key`='mec_transaction_id'", 'loadResult');
-            $mec_confirmed = get_post_meta($book_id, 'mec_confirmed', true);
-
-            if (!$mec_confirmed and (!current_user_can('administrator') and !current_user_can('editor'))) wp_die(__('Your booking still is not confirmed. You can download it after confirmation!', 'modern-events-calendar-lite'), esc_html__('Booking Not Confirmed.', 'modern-events-calendar-lite'));
-            if (!$event_id) wp_die(__('Cannot find the booking!', 'modern-events-calendar-lite'), esc_html__('Booking is invalid.', 'modern-events-calendar-lite'));
-
-            // Invoice Key
-            $invoice_key = $transaction['invoice_key'] ?? null;
-            if ($invoice_key and (!isset($_GET['mec-key']) or sanitize_text_field($_GET['mec-key']) != $invoice_key)) wp_die(__("You don't have access to view this invoice!", 'modern-events-calendar-lite'), esc_html__('Key is invalid.', 'modern-events-calendar-lite'));
-
-            $event = $render->data($event_id);
-
-            $bfixed_fields = $this->get_bfixed_fields($event_id);
-            $reg_fields = $this->get_reg_fields($event_id);
-
-            $location_id = $this->get_master_location_id($event);
-            $location = isset($event->locations[$location_id]) ? (trim($event->locations[$location_id]['address']) ? $event->locations[$location_id]['address'] : $event->locations[$location_id]['name']) : '';
-
-            $dates = isset($transaction['date']) ? explode(':', $transaction['date']) : [time(), time()];
-
-            // Multiple Dates
-            $all_dates = ((isset($transaction['all_dates']) and is_array($transaction['all_dates'])) ? $transaction['all_dates'] : []);
-
-            // Get Booking Post
-            $booking = $book->get_bookings_by_transaction_id($transaction_id);
-
-            $booking_time = isset($booking[0]) ? get_post_meta($booking[0]->ID, 'mec_booking_time', true) : null;
-            if (!$booking_time and is_numeric($dates[0])) $booking_time = date('Y-m-d', $dates[0]);
-
-            $booking_time = date('Y-m-d', strtotime($booking_time));
-
-            // Coupon Code
-            $coupon_code = isset($booking[0]) ? get_post_meta($booking[0]->ID, 'mec_coupon_code', true) : '';
-
-            // Include the tFPDF Class
-            if (!class_exists('tFPDF')) require_once MEC_ABSPATH . 'app' . DS . 'api' . DS . 'TFPDF' . DS . 'tfpdf.php';
-
-            $pdf = new tFPDF();
-            $pdf->AddPage();
-
-            // Add a Unicode font (uses UTF-8)
-            $pdf->AddFont('DejaVu', '', 'DejaVuSansCondensed.ttf', true);
-            $pdf->AddFont('DejaVuBold', '', 'DejaVuSansCondensed-Bold.ttf', true);
-
-            $pdf->SetTitle(sprintf(esc_html__('%s Invoice', 'modern-events-calendar-lite'), $transaction_id));
-            $pdf->SetAuthor(get_bloginfo('name'), true);
-
-            // Event Information
-            $pdf->SetFont('DejaVuBold', '', 18);
-            $pdf->Write(25, html_entity_decode(get_the_title($event->ID)));
-            $pdf->Ln();
-
-            if (trim($location))
+            if (is_wp_error($pdf_data))
             {
-                $pdf->SetFont('DejaVuBold', '', 12);
-                $pdf->Write(6, esc_html__('Location', 'modern-events-calendar-lite') . ': ');
-                $pdf->SetFont('DejaVu', '', 12);
-                $pdf->Write(6, $location);
-                $pdf->Ln();
+                $error_data = $pdf_data->get_error_data();
+                $title = is_array($error_data) && isset($error_data['title']) ? $error_data['title'] : esc_html__('Invoice is invalid.', 'modern-events-calendar-lite');
+
+                wp_die($pdf_data->get_error_message(), $title);
             }
 
-            $date_format = (isset($ml_settings['booking_date_format1']) and trim($ml_settings['booking_date_format1'])) ? $ml_settings['booking_date_format1'] : 'Y-m-d';
-            $time_format = get_option('time_format');
+            header('Content-Type: application/pdf');
+            header('Content-Disposition: inline; filename="' . $pdf_data['filename'] . '"');
 
-            if (is_numeric($dates[0]) and is_numeric($dates[1]))
-            {
-                $start_datetime = date($date_format . ' ' . $time_format, $dates[0]);
-                $end_datetime = date($date_format . ' ' . $time_format, $dates[1]);
-            }
-            else
-            {
-                $start_datetime = $dates[0] . ' ' . $event->data->time['start'];
-                $end_datetime = $dates[1] . ' ' . $event->data->time['end'];
-            }
-
-            $booking_options = $event->meta['mec_booking'] ?? [];
-            $bookings_all_occurrences = $booking_options['bookings_all_occurrences'] ?? 0;
-
-            if (count($all_dates))
-            {
-                $pdf->SetFont('DejaVuBold', '', 12);
-                $pdf->Write(6, esc_html__('Date and Times', 'modern-events-calendar-lite'));
-                $pdf->Ln();
-                $pdf->SetFont('DejaVu', '', 12);
-
-                foreach ($all_dates as $one_date)
-                {
-                    $other_timestamps = explode(':', $one_date);
-                    if (isset($other_timestamps[0]) and isset($other_timestamps[1]))
-                    {
-                        $pdf->Write(6, sprintf(esc_html__('%s to %s', 'modern-events-calendar-lite'), $this->date_i18n($date_format . ' ' . $time_format, $other_timestamps[0]), $this->date_i18n($date_format . ' ' . $time_format, $other_timestamps[1])));
-                        $pdf->Ln();
-                    }
-                }
-
-                $pdf->Ln();
-            }
-            else if (!$bookings_all_occurrences)
-            {
-                $pdf->SetFont('DejaVuBold', '', 12);
-                $pdf->Write(6, esc_html__('Date and Time', 'modern-events-calendar-lite') . ': ');
-                $pdf->SetFont('DejaVu', '', 12);
-                $pdf->Write(6, trim($start_datetime) . ' - ' . (($start_datetime != $end_datetime) ? $end_datetime . ' ' : ''), '- ');
-                $pdf->Ln();
-            }
-
-            $pdf->SetFont('DejaVuBold', '', 12);
-            $pdf->Write(6, esc_html__('Transaction ID', 'modern-events-calendar-lite') . ': ');
-            $pdf->SetFont('DejaVu', '', 12);
-            $pdf->Write(6, $transaction_id);
-            $pdf->Ln();
-
-            if (is_array($bfixed_fields) and count($bfixed_fields) and isset($transaction['fields']) and is_array($transaction['fields']) and count($transaction['fields']))
-            {
-                $pdf->SetFont('DejaVuBold', '', 16);
-                $pdf->Write(20, sprintf(esc_html__('%s Fields', 'modern-events-calendar-lite'), $this->m('booking', esc_html__('Booking', 'modern-events-calendar-lite'))));
-                $pdf->Ln();
-
-                foreach ($bfixed_fields as $bfixed_field_id => $bfixed_field)
-                {
-                    if (!is_numeric($bfixed_field_id)) continue;
-
-                    $bfixed_value = $transaction['fields'][$bfixed_field_id] ?? null;
-                    if (!$bfixed_value) continue;
-
-                    $bfixed_type = $bfixed_field['type'] ?? null;
-                    $bfixed_label = $bfixed_field['label'] ?? '';
-
-                    if ($bfixed_type != 'agreement')
-                    {
-                        $pdf->SetFont('DejaVu', '', 12);
-                        $pdf->Write(6, $bfixed_label . ": " . (is_array($bfixed_value) ? stripslashes(implode(',', $bfixed_value)) : stripslashes($bfixed_value)));
-                        $pdf->Ln();
-                    }
-                }
-            }
-
-            // Attendees
-            if (isset($transaction['tickets']) and is_array($transaction['tickets']) and count($transaction['tickets']))
-            {
-                $pdf->SetFont('DejaVuBold', '', 16);
-                $pdf->Write(20, esc_html__('Attendees', 'modern-events-calendar-lite'));
-                $pdf->Ln();
-
-                $i = 1;
-                foreach ($transaction['tickets'] as $attendee)
-                {
-                    if (!isset($attendee['id'])) continue;
-
-                    $pdf->SetFont('DejaVuBold', '', 12);
-                    $pdf->Write(6, stripslashes($attendee['name']));
-                    $pdf->Ln();
-
-                    $pdf->SetFont('DejaVu', '', 10);
-                    $pdf->Write(6, $attendee['email']);
-                    $pdf->Ln();
-
-                    $pdf->Write(6, ((isset($event->tickets[$attendee['id']]) ? esc_html__($this->m('ticket', esc_html__('Ticket', 'modern-events-calendar-lite'))) . ': ' . esc_html($event->tickets[$attendee['id']]['name']) : '') . ' ' . (isset($event->tickets[$attendee['id']]) ? $book->get_ticket_price_label($event->tickets[$attendee['id']], $booking_time, $event_id, $dates[0]) : '')));
-
-                    // Registration Fields
-                    $reg_form = (isset($attendee['reg']) and is_array($attendee['reg'])) ? $attendee['reg'] : [];
-                    $reg_fields = apply_filters('mec_bookign_reg_form', $reg_fields, $event_id, get_post($event_id));
-
-                    if (isset($reg_form) and count($reg_form))
-                    {
-                        foreach ($reg_form as $field_id => $value)
-                        {
-                            $label = isset($reg_fields[$field_id]) ? $reg_fields[$field_id]['label'] : '';
-                            $type = isset($reg_fields[$field_id]) ? $reg_fields[$field_id]['type'] : '';
-
-                            $pdf->Ln();
-
-                            if ($type == 'agreement')
-                            {
-                                $pdf->Write(5, sprintf(esc_html__($label, 'modern-events-calendar-lite'), get_the_title($reg_fields[$field_id]['page'])) . ": " . ($value == '1' ? esc_html__('Yes', 'modern-events-calendar-lite') : esc_html__('No', 'modern-events-calendar-lite')));
-                            }
-                            else
-                            {
-                                $pdf->Write(5, $label . ": " . (is_string($value) ? stripslashes($value) : (is_array($value) ? stripslashes(implode(', ', $value)) : '---')));
-                            }
-                        }
-                    }
-
-                    // Ticket Variations
-                    if (isset($attendee['variations']) and is_array($attendee['variations']) and count($attendee['variations']))
-                    {
-                        $ticket_variations = $this->ticket_variations($event_id, $attendee['id']);
-
-                        foreach ($attendee['variations'] as $variation_id => $variation_count)
-                        {
-                            if (!$variation_count || $variation_count < 0) continue;
-
-                            $variation_title = (isset($ticket_variations[$variation_id]) and isset($ticket_variations[$variation_id]['title'])) ? $ticket_variations[$variation_id]['title'] : '';
-                            if (!trim($variation_title)) continue;
-
-                            $pdf->Ln();
-                            $pdf->Write(6, '+ ' . $variation_title . ' (' . $variation_count . ')');
-                        }
-                    }
-
-                    if ($i != count($transaction['tickets'])) $pdf->Ln(12);
-                    else $pdf->Ln();
-
-                    $i++;
-                }
-            }
-
-            // Billing Information
-            if (isset($transaction['price_details']) and isset($transaction['price_details']['details']) and is_array($transaction['price_details']['details']) and count($transaction['price_details']['details']))
-            {
-                $pdf->SetFont('DejaVuBold', '', 16);
-                $pdf->Write(20, esc_html__('Billing', 'modern-events-calendar-lite'));
-                $pdf->Ln();
-
-                $pdf->SetFont('DejaVu', '', 12);
-                foreach ($transaction['price_details']['details'] as $price_row)
-                {
-                    $pdf->Write(6, $price_row['description'] . ": " . $this->render_price($price_row['amount'], $requested_event_id));
-                    $pdf->Ln();
-                }
-
-                if ($coupon_code)
-                {
-                    $pdf->Write(6, esc_html__('Coupon Code', 'modern-events-calendar-lite') . ": " . $coupon_code);
-                    $pdf->Ln();
-                }
-
-                $pdf->SetFont('DejaVuBold', '', 12);
-                $pdf->Write(10, esc_html__('Total', 'modern-events-calendar-lite') . ': ');
-                $pdf->Write(10, $this->render_price($transaction['price'], $requested_event_id));
-                $pdf->Ln();
-            }
-
-            // Geteway
-            $pdf->SetFont('DejaVuBold', '', 16);
-            $pdf->Write(20, esc_html__('Payment', 'modern-events-calendar-lite'));
-            $pdf->Ln();
-
-            if (isset($transaction['payable']))
-            {
-                $pdf->SetFont('DejaVu', '', 12);
-                $pdf->Write(6, esc_html__('Paid Amount', 'modern-events-calendar-lite') . ': ');
-                $pdf->Write(6, $this->render_price($transaction['payable'], $requested_event_id));
-                $pdf->Ln();
-            }
-
-            $pdf->SetFont('DejaVu', '', 12);
-            $pdf->Write(6, esc_html__('Gateway', 'modern-events-calendar-lite') . ': ');
-            $pdf->Write(6, get_post_meta($book_id, 'mec_gateway_label', true));
-            $pdf->Ln();
-
-            $pdf->SetFont('DejaVu', '', 12);
-            $pdf->Write(6, esc_html__('Transaction ID', 'modern-events-calendar-lite') . ': ');
-            $pdf->Write(6, ((isset($transaction['gateway_transaction_id']) and trim($transaction['gateway_transaction_id'])) ? $transaction['gateway_transaction_id'] : $transaction_id));
-            $pdf->Ln();
-
-            $date_format = get_option('date_format');
-            $time_format = get_option('time_format');
-
-            $pdf->SetFont('DejaVu', '', 12);
-            $pdf->Write(6, esc_html__('Payment Time', 'modern-events-calendar-lite') . ': ');
-            $pdf->Write(6, date($date_format . ' ' . $time_format, strtotime(get_post_meta($book_id, 'mec_booking_time', true))));
-            $pdf->Ln();
-
-            do_action('mec_book_invoice_pdf_before_qr_code', $pdf, $book_id, $transaction);
-
-            $image = $this->module('qrcode.invoice', ['event' => $event]);
-            if (trim($image))
-            {
-                // QR Code
-                $pdf->SetX(-50);
-                $pdf->Image($image);
-                $pdf->Ln();
-            }
-
-            $pdf->Output();
+            echo $pdf_data['content'];
             exit;
         }
     }
@@ -4021,8 +4118,13 @@ class MEC_main extends MEC_base
         $ical .= "UID:MEC-" . md5($event_id) . "@" . $this->get_domain() . $crlf;
         $start_dt = new DateTime(date('Y-m-d H:i:s', $start_time), new DateTimeZone($timezone));
         $end_dt = new DateTime(date('Y-m-d H:i:s', $end_time), new DateTimeZone($timezone));
+
+        $custom_days_ical = (isset($event->ical_custom_days) and is_array($event->ical_custom_days)) ? $event->ical_custom_days : [];
+        $use_duration = (!empty($custom_days_ical['has_custom_days']) and empty($custom_days_ical['is_all_day']) and isset($custom_days_ical['uniform_duration']) and $custom_days_ical['uniform_duration'] !== null);
+
         $ical .= "DTSTART;TZID=" . $timezone . ":" . $start_dt->format($time_format) . $crlf;
-        $ical .= "DTEND;TZID=" . $timezone . ":" . $end_dt->format($time_format) . $crlf;
+        if ($use_duration) $ical .= "DURATION:" . $this->format_ical_duration($custom_days_ical['uniform_duration']) . $crlf;
+        else $ical .= "DTEND;TZID=" . $timezone . ":" . $end_dt->format($time_format) . $crlf;
         $ical .= "DTSTAMP:" . gmdate('Ymd\\THis\\Z', $stamp) . $crlf;
 
         if (is_array($rrules) and count($rrules))
@@ -4107,8 +4209,13 @@ class MEC_main extends MEC_base
         $ical .= "CLASS:PUBLIC" . $crlf;
         $start_dt = new DateTime(date('Y-m-d H:i:s', $start_time), new DateTimeZone($timezone));
         $end_dt = new DateTime(date('Y-m-d H:i:s', $end_time), new DateTimeZone($timezone));
+
+        $custom_days_ical = (isset($event->ical_custom_days) and is_array($event->ical_custom_days)) ? $event->ical_custom_days : [];
+        $use_duration = (!empty($custom_days_ical['has_custom_days']) and empty($custom_days_ical['is_all_day']) and isset($custom_days_ical['uniform_duration']) and $custom_days_ical['uniform_duration'] !== null);
+
         $ical .= "DTSTART;TZID=" . $timezone . ":" . $start_dt->format($time_format) . $crlf;
-        $ical .= "DTEND;TZID=" . $timezone . ":" . $end_dt->format($time_format) . $crlf;
+        if ($use_duration) $ical .= "DURATION:" . $this->format_ical_duration($custom_days_ical['uniform_duration']) . $crlf;
+        else $ical .= "DTEND;TZID=" . $timezone . ":" . $end_dt->format($time_format) . $crlf;
         $ical .= "DTSTAMP:" . gmdate('Ymd\\THis\\Z', $stamp_gmt) . $crlf;
         $ical .= "UID:MEC-" . md5($event->ID) . "@" . $this->get_domain() . $crlf;
 
@@ -9046,6 +9153,8 @@ class MEC_main extends MEC_base
         {
             $repeat_options = (isset($event->meta) and isset($event->meta['mec_repeat']) and is_array($event->meta['mec_repeat'])) ? $event->meta['mec_repeat'] : [];
 
+            $timezone = $this->get_timezone($event->ID);
+
             $finish_time = $event->time['end'];
             $finish_time = str_replace(['h:', 'H:', 'H'], 'h', $finish_time);
             $finish_time = str_replace(['h ', 'h'], ':', $finish_time);
@@ -9142,7 +9251,10 @@ class MEC_main extends MEC_base
                     array_unshift($mec_periods, date('Y-m-d', $main_occ_start) . ':' . date('Y-m-d', $main_occ_end) . ':' . date('h-i-A', $main_occ_start) . ':' . date('h-i-A', $main_occ_end));
                 }
 
-                $days = '';
+                $is_all_day_event = (isset($event->meta['mec_date']) and isset($event->meta['mec_date']['allday']) and $event->meta['mec_date']['allday']);
+                $rdate_values = [];
+                $durations = [];
+                $event_timezone_obj = new DateTimeZone($timezone);
                 foreach ($mec_periods as $mec_period)
                 {
                     $mec_days = explode(':', trim($mec_period, ': '));
@@ -9154,23 +9266,48 @@ class MEC_main extends MEC_base
                     $time_end = $event->time['end'];
                     if (isset($mec_days[3])) $time_end = str_replace('-', ':', str_replace('-AM', ' AM', str_replace('-PM', ' PM', $mec_days[3])));
 
-                    $start_time = strtotime($mec_days[0] . ' ' . $time_start);
-                    $end_time = strtotime($mec_days[1] . ' ' . $time_end);
-
-                    // All Day Event
-                    if (isset($event->meta['mec_date']) and isset($event->meta['mec_date']['allday']) and $event->meta['mec_date']['allday'])
+                    try
                     {
-                        $start_time = strtotime("Today", $start_time);
-                        $end_time = strtotime('Tomorrow', $end_time);
+                        $start_dt = new DateTime(trim($mec_days[0] . ' ' . $time_start), $event_timezone_obj);
+                        $end_dt = new DateTime(trim($mec_days[1] . ' ' . $time_end), $event_timezone_obj);
+                    }
+                    catch (Exception $exception)
+                    {
+                        continue;
                     }
 
-                    $gmt_offset_seconds = $this->get_gmt_offset_seconds($start_time, $event);
+                    if ($is_all_day_event)
+                    {
+                        $start_dt->setTime(0, 0, 0);
+                        $end_dt->setTime(0, 0, 0);
+                        $end_dt->modify('+1 day');
+                    }
 
-                    $days .= gmdate('Ymd\\THi00\\Z', ($start_time - $gmt_offset_seconds)) . '/' . gmdate('Ymd\\THi00\\Z', ($end_time - $gmt_offset_seconds)) . ',';
+                    if ($is_all_day_event) $rdate_values[] = $start_dt->format('Ymd');
+                    else $rdate_values[] = $start_dt->format('Ymd\\THis');
+
+                    $durations[] = max(0, $end_dt->getTimestamp() - $start_dt->getTimestamp());
                 }
 
-                // Add RDATE
-                $recurrence[] = trim('RDATE;VALUE=PERIOD:' . trim($days, ', '), '; ');
+                if (count($rdate_values))
+                {
+                    $rdate_values = array_unique($rdate_values);
+                    if ($is_all_day_event) $recurrence[] = 'RDATE;VALUE=DATE:' . implode(',', $rdate_values);
+                    else $recurrence[] = 'RDATE;TZID=' . $timezone . ':' . implode(',', $rdate_values);
+
+                    $uniform_duration = null;
+                    if (!$is_all_day_event and count($durations))
+                    {
+                        $unique_durations = array_unique($durations);
+                        if (count($unique_durations) === 1) $uniform_duration = array_shift($unique_durations);
+                    }
+
+                    $event->ical_custom_days = [
+                        'has_custom_days' => true,
+                        'is_all_day' => $is_all_day_event,
+                        'uniform_duration' => $uniform_duration,
+                    ];
+                }
             }
 
             // Add RRULE
@@ -9219,6 +9356,37 @@ class MEC_main extends MEC_base
             return $rrule;
         }
         else return $recurrence;
+    }
+
+    /**
+     * Convert seconds to iCal duration format
+     * @param int $seconds
+     * @return string
+     */
+    protected function format_ical_duration($seconds)
+    {
+        $seconds = (int) $seconds;
+        $is_negative = ($seconds < 0);
+
+        $seconds = abs($seconds);
+        $days = intdiv($seconds, DAY_IN_SECONDS);
+        $seconds -= ($days * DAY_IN_SECONDS);
+
+        $hours = intdiv($seconds, HOUR_IN_SECONDS);
+        $seconds -= ($hours * HOUR_IN_SECONDS);
+
+        $minutes = intdiv($seconds, MINUTE_IN_SECONDS);
+        $seconds -= ($minutes * MINUTE_IN_SECONDS);
+
+        $duration = 'P';
+        if ($days) $duration .= $days . 'D';
+
+        if ($hours || $minutes || $seconds) $duration .= 'T';
+        if ($hours) $duration .= $hours . 'H';
+        if ($minutes) $duration .= $minutes . 'M';
+        if ($seconds || (!$days && !$hours && !$minutes)) $duration .= $seconds . 'S';
+
+        return ($is_negative ? '-' : '') . $duration;
     }
 
     public static function get_upcoming_events($limit = 12)

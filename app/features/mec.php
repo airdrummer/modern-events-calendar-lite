@@ -199,7 +199,7 @@ class MEC_feature_mec extends MEC_base
         // Event Latest Event Date Time
         $this->factory->action('mec_save_event_data', function ()
         {
-            update_option('mec_latest_event_datetime', current_time('YmdHis'), false);
+            update_option('mec_latest_event_datetime', current_time('YmdHis'), 'no');
         });
 
         // Kses
@@ -2262,10 +2262,11 @@ class MEC_feature_mec extends MEC_base
         // Save Refresh Token
         if (trim($refresh_token))
         {
-            update_option('mec_constantcontact_refresh_token', $refresh_token, false);
+            update_option('mec_constantcontact_refresh_token', $refresh_token, 'no');
 
             wp_redirect(admin_url('admin.php?page=MEC-settings&tab=MEC-integrations#constantcontact_option'));
             exit;
         }
     }
+
 }

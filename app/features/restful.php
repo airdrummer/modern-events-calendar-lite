@@ -230,10 +230,13 @@ class MEC_feature_restful extends MEC_base
             ]);
         }
 
-        $start_date_type = $request->get_param('start_date_type');
-        if (!$start_date_type) $start_date_type = 'today';
-
         $start_date = $request->get_param('start_date');
+
+        $start_date_type = $request->get_param('start_date_type');
+        if (!$start_date_type)
+        {
+            $start_date_type = $start_date ? 'date' : 'today';
+        }
 
         if ($start_date_type === 'date' && !$start_date)
         {
@@ -292,9 +295,6 @@ class MEC_feature_restful extends MEC_base
 
         // Set Offset
         $EO->offset = (int) $request->get_param('offset');
-
-        // Search
-        $EO->search();
 
         // Events
         $events = $EO->fetch();

@@ -262,7 +262,7 @@ $mec_categories = get_terms(array(
                         </div>
 
                         <div id="fes_section_options" class="mec-options-fields">
-                        <h4 class="mec-form-subtitle"><?php esc_html_e('Frontend Event Submission Sections', 'modern-events-calendar-lite'); ?></h4>
+                            <h4 class="mec-form-subtitle"><?php esc_html_e('Frontend Event Submission Sections', 'modern-events-calendar-lite'); ?></h4>
                             <?php if(isset($settings['trailer_url_status']) and $settings['trailer_url_status']): ?>
                             <div class="mec-form-row">
                                 <label>
@@ -673,8 +673,9 @@ $mec_categories = get_terms(array(
                             <div class="mec-form-row">
                                 <label>
                                     <input type="hidden" name="mec[settings][fes_section_downloadable_file]" value="0" />
-                                    <input value="1" type="checkbox" name="mec[settings][fes_section_downloadable_file]" <?php if(!isset($settings['fes_section_downloadable_file']) or (isset($settings['fes_section_downloadable_file']) and $settings['fes_section_downloadable_file'])) echo 'checked="checked"'; ?> /><?php esc_html_e('Downloadable File', 'modern-events-calendar-lite'); ?>
+                                    <input value="1" type="checkbox" name="mec[settings][fes_section_downloadable_file]" <?php if(!isset($settings['fes_section_downloadable_file']) || $settings['fes_section_downloadable_file']) echo 'checked="checked"'; ?> /><?php esc_html_e('Downloadable File', 'modern-events-calendar-lite'); ?>
                                 </label>
+                                <p class="description"><?php esc_html_e('The Downloadable File section is only available for logged-in users.', 'modern-events-calendar-lite'); ?></p>
                             </div>
                             <?php endif; ?>
 
@@ -682,8 +683,9 @@ $mec_categories = get_terms(array(
                                 <div class="mec-form-row">
                                     <label>
                                         <input type="hidden" name="mec[settings][fes_section_public_download_module]" value="0" />
-                                        <input value="1" type="checkbox" name="mec[settings][fes_section_public_download_module]" <?php if(!isset($settings['fes_section_public_download_module']) or (isset($settings['fes_section_public_download_module']) and $settings['fes_section_public_download_module'])) echo 'checked="checked"'; ?> /><?php esc_html_e('Public Download Module', 'modern-events-calendar-lite'); ?>
+                                        <input value="1" type="checkbox" name="mec[settings][fes_section_public_download_module]" <?php if(!isset($settings['fes_section_public_download_module']) || $settings['fes_section_public_download_module']) echo 'checked="checked"'; ?> /><?php esc_html_e('Public Download Module', 'modern-events-calendar-lite'); ?>
                                     </label>
+                                    <p class="description"><?php esc_html_e('The Public Download Module section is only available for logged-in users.', 'modern-events-calendar-lite'); ?></p>
                                 </div>
                             <?php endif; ?>
 

@@ -303,7 +303,18 @@ class MEC_feature_schema extends MEC_base
 
     public function escape($text)
     {
-        $escaped = esc_js($text);
-        return str_replace("\'", "'", $escaped);
+        if($text === null) return '';
+        if(!is_scalar($text)) return '';
+
+        $encoded = wp_json_encode($text, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        if($encoded === false || $encoded === null) return '';
+
+        // Remove the wrapping quotes added by wp_json_encode().
+        if(strlen($encoded) >= 2 && $encoded[0] === '"' && substr($encoded, -1) === '"')
+        {
+            return substr($encoded, 1, -1);
+        }
+
+        return $encoded;
     }
 }

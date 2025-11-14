@@ -34,9 +34,11 @@ class MEC_ticketVariations extends MEC_base
         $ticket_variation = $args['value'] ?? [];
         $i = $args['i'] ?? ':i:';
         ?>
-        <div class="mec-box mec_ticket_variation_row" id="mec_<?php echo esc_attr($id_prefix); ?>_row<?php echo esc_attr($i); ?>">
+        <div class="mec-box mec_ticket_variation_row mec-form-row" id="mec_<?php echo esc_attr($id_prefix); ?>_row<?php echo esc_attr($i); ?>">
             <div class="mec-form-row">
-                <input class="mec-col-12" type="text" name="<?php echo esc_attr($name_prefix); ?>[<?php echo esc_attr($i); ?>][title]" placeholder="<?php esc_attr_e('Title', 'modern-events-calendar-lite'); ?>" value="<?php echo(isset($ticket_variation['title']) ? esc_attr($ticket_variation['title']) : ''); ?>"/>
+                <span class="mec_field_sort button"><?php esc_html_e('Sort', 'modern-events-calendar-lite'); ?></span>
+                <button class="button mec_remove_ticket_variation_button mec-dash-remove-btn" type="button" id="mec_remove_<?php echo esc_attr($id_prefix); ?>_button<?php echo esc_attr($i); ?>" onclick="mec_remove_ticket_variation(<?php echo esc_attr($i); ?>, '<?php echo esc_attr($id_prefix); ?>');"><?php esc_html_e('Remove', 'modern-events-calendar-lite'); ?></button>
+                <input class="mec-col-8" type="text" name="<?php echo esc_attr($name_prefix); ?>[<?php echo esc_attr($i); ?>][title]" placeholder="<?php esc_attr_e('Title', 'modern-events-calendar-lite'); ?>" value="<?php echo(isset($ticket_variation['title']) ? esc_attr($ticket_variation['title']) : ''); ?>"/>
             </div>
             <div class="mec-form-row">
                 <span class="mec-col-4">
@@ -69,11 +71,10 @@ class MEC_ticketVariations extends MEC_base
                         <i title="" class="dashicons-before dashicons-editor-help"></i>
                     </span>
                 </span>
-                <button class="button mec_remove_ticket_variation_button mec-dash-remove-btn" type="button" id="mec_remove_<?php echo esc_attr($id_prefix); ?>_button<?php echo esc_attr($i); ?>" onclick="mec_remove_ticket_variation(<?php echo esc_attr($i); ?>, '<?php echo esc_attr($id_prefix); ?>');"><?php esc_html_e('Remove', 'modern-events-calendar-lite'); ?></button>
             </div>
             <div class="mec-form-row">
-                <div class="mec-col-3"><?php esc_html_e('Notification Placeholders', 'modern-events-calendar-lite'); ?></div>
-                <div class="mec-col-9">
+                <div class="mec-col-4"><strong><?php esc_html_e('Notification Placeholders:', 'modern-events-calendar-lite'); ?></strong></div>
+                <div class="mec-col-8">
                     <ul style="margin: 0;">
                         <li>%%ticket_variations_<?php echo esc_attr($i); ?>_title%%</li>
                         <li>%%ticket_variations_<?php echo esc_attr($i); ?>_count%%</li>

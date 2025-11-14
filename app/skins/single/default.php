@@ -115,7 +115,10 @@ $category_restricted = false;
 			    <?php if($this->main->is_sold($event) and count($event->dates) <= 1): ?>
 			        <?php
 			        $event_id = $event->ID;
-			        $category_ids = array_map(function($category) { return $category['id']; }, $event->data->categories);
+			        $categories = is_array($event->data->categories) ? $event->data->categories : [];
+					$category_ids = array_map(function($category) {
+						return $category['id'];
+					}, $categories);
 
 			        $settings_serialized = get_option('mec_options', false);
 			        if ($settings_serialized !== false) {

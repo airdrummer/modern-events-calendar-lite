@@ -14,6 +14,7 @@ class MEC_cart extends MEC_base
     private $main;
     private $settings;
     private $ticket_names = [];
+    private $last_event_id = 0;
 
     /**
      * Constructor method
@@ -40,6 +41,18 @@ class MEC_cart extends MEC_base
         // Add to Ticket Names
         $this->ticket_names = array_merge($this->ticket_names, $this->get_ticket_names($transaction_id));
 
+        // Store the event language for localization purposes
+        $book = $this->getBook();
+        if($book)
+        {
+            $TO = $book->get_TO($transaction_id);
+            if($TO and method_exists($TO, 'get_event_id'))
+            {
+                $event_id = (int) $TO->get_event_id();
+                if($event_id) $this->last_event_id = $event_id;
+            }
+        }
+
         return $this;
     }
 
@@ -63,14 +76,18 @@ class MEC_cart extends MEC_base
         $ticket_names = implode(', ', $this->ticket_names);
         if(trim($ticket_names) === '') $ticket_names = esc_html__('Ticket', 'modern-events-calendar-lite');
 
+        $cart_id = $this->get_cart_id();
+        $cart = $this->get_cart($cart_id);
+        $event_id = $this->last_event_id ?: $this->get_first_event_id($cart);
+
         // Checkout URL
-        if(isset($this->settings['cart_after_add']) and $this->settings['cart_after_add'] == 'checkout') return array('type' => 'url', 'url' => $this->get_checkout_url());
+        if(isset($this->settings['cart_after_add']) and $this->settings['cart_after_add'] == 'checkout') return array('type' => 'url', 'url' => $this->get_checkout_url($event_id));
         // Optional Checkout URL
-        if(isset($this->settings['cart_after_add']) and $this->settings['cart_after_add'] == 'optional_cart') return array('type' => 'message', 'message' => '<div class="woocommerce-notices-wrapper"><div class="woocommerce-message" role="alert"><a href="'.esc_url($this->get_cart_url()).'" tabindex="1" class="button wc-forward" target="_parent">'.esc_html__('View cart', 'modern-events-calendar-lite').'</a> '.esc_html(sprintf(_n('“%s” has been added to your cart.', '“%s” have been added to your cart.', count($this->ticket_names), 'modern-events-calendar-lite'), $ticket_names)).'</div></div>');
+        if(isset($this->settings['cart_after_add']) and $this->settings['cart_after_add'] == 'optional_cart') return array('type' => 'message', 'message' => '<div class="woocommerce-notices-wrapper"><div class="woocommerce-message" role="alert"><a href="'.esc_url($this->get_cart_url($event_id)).'" tabindex="1" class="button wc-forward" target="_parent">'.esc_html__('View cart', 'modern-events-calendar-lite').'</a> '.esc_html(sprintf(_n('“%s” has been added to your cart.', '“%s” have been added to your cart.', count($this->ticket_names), 'modern-events-calendar-lite'), $ticket_names)).'</div></div>');
         // Optional Cart URL
-        if(isset($this->settings['cart_after_add']) and $this->settings['cart_after_add'] == 'optional_chckout') return array('type' => 'message', 'message' => '<div class="woocommerce-notices-wrapper"><div class="woocommerce-message" role="alert"><a href="'.esc_url($this->get_checkout_url()).'" tabindex="1" class="button wc-forward" target="_parent">'.esc_html__('Checkout', 'modern-events-calendar-lite').'</a> '.esc_html(sprintf(_n('“%s” has been added to your cart.', '“%s” have been added to your cart.', count($this->ticket_names), 'modern-events-calendar-lite'), $ticket_names)).'</div></div>');
+        if(isset($this->settings['cart_after_add']) and $this->settings['cart_after_add'] == 'optional_chckout') return array('type' => 'message', 'message' => '<div class="woocommerce-notices-wrapper"><div class="woocommerce-message" role="alert"><a href="'.esc_url($this->get_checkout_url($event_id)).'" tabindex="1" class="button wc-forward" target="_parent">'.esc_html__('Checkout', 'modern-events-calendar-lite').'</a> '.esc_html(sprintf(_n('“%s” has been added to your cart.', '“%s” have been added to your cart.', count($this->ticket_names), 'modern-events-calendar-lite'), $ticket_names)).'</div></div>');
         // Cart URL
-        else return array('type' => 'url', 'url' => $this->get_cart_url());
+        else return array('type' => 'url', 'url' => $this->get_cart_url($event_id));
     }
 
     public function get_cart($cart_id)
@@ -79,7 +96,7 @@ class MEC_cart extends MEC_base
         if(is_null($cart))
         {
             $cart = [];
-            update_option('mec_cart_'.$cart_id, $cart, false);
+            update_option('mec_cart_'.$cart_id, $cart, 'no');
         }
 
         if(!is_array($cart)) $cart = [];
@@ -88,13 +105,13 @@ class MEC_cart extends MEC_base
 
     public function update_cart($cart_id, $value)
     {
-        return update_option('mec_cart_'.$cart_id, $value, false);
+        return update_option('mec_cart_'.$cart_id, $value, 'no');
     }
 
     public function archive_cart($cart_id)
     {
         $value = $this->get_cart($cart_id);
-        return update_option('mec_cart_'.$cart_id.'_archived', $value, false);
+        return update_option('mec_cart_'.$cart_id.'_archived', $value, 'no');
     }
 
     public function get_archived_cart($cart_id)
@@ -121,29 +138,121 @@ class MEC_cart extends MEC_base
         return $cart_id;
     }
 
-    public function get_checkout_url()
+    public function get_checkout_url($event_id = NULL)
     {
         $page_id = (isset($this->settings['checkout_page']) and trim($this->settings['checkout_page'])) ? $this->settings['checkout_page'] : NULL;
-        return ($page_id ? get_permalink($page_id) : home_url());
+        $localized_page_id = $this->get_localized_page_id($page_id, $event_id);
+
+        return ($localized_page_id ? get_permalink($localized_page_id) : ($page_id ? get_permalink($page_id) : home_url()));
     }
 
-    public function get_cart_url()
+    public function get_cart_url($event_id = NULL)
     {
         $page_id = (isset($this->settings['cart_page']) and trim($this->settings['cart_page'])) ? $this->settings['cart_page'] : NULL;
+        $localized_page_id = $this->get_localized_page_id($page_id, $event_id);
+
+        if($localized_page_id) $page_id = $localized_page_id;
+
         $language_codes_array = null;
         $language_current_code = null;
         if ( class_exists( 'TRP_Translate_Press' ) ){
             $trp                 = TRP_Translate_Press::get_trp_instance();
             $trp_settings        = $trp->get_component( 'settings' );
             $language_codes_array = $trp_settings->get_settings()['publish-languages'];
-            $language_current_code = $_REQUEST['trp-form-language'];
+            $language_current_code = $_REQUEST['trp-form-language'] ?? '';
         }
 
-        if(!empty($language_codes_array)){
-            return home_url() . '/'.$language_current_code.str_replace(home_url(),'',get_permalink($page_id));
+        $url = ($page_id ? get_permalink($page_id) : home_url());
+
+        if(!empty($language_codes_array) and !empty($language_current_code)){
+            return home_url() . '/'.$language_current_code.str_replace(home_url(),'', $url);
         }else{
-            return ($page_id ? get_permalink($page_id) : home_url());
+            return $url;
         }
+    }
+
+    private function get_localized_page_id($page_id, $event_id = NULL)
+    {
+        if(!$page_id) return 0;
+
+        $language = $this->determine_language($event_id);
+        $default_language = '';
+
+        // WPML
+        if(class_exists('SitePress'))
+        {
+            if(!$language) $language = apply_filters('wpml_current_language', NULL);
+            $default_language = apply_filters('wpml_default_language', NULL);
+
+            if($language)
+            {
+                $translated_id = apply_filters('wpml_object_id', $page_id, 'page', false, $language);
+                if($translated_id) return (int) $translated_id;
+            }
+
+            if($default_language)
+            {
+                $fallback_id = apply_filters('wpml_object_id', $page_id, 'page', false, $default_language);
+                if($fallback_id) return (int) $fallback_id;
+            }
+
+            return (int) $page_id;
+        }
+
+        // Polylang
+        if(function_exists('pll_get_post'))
+        {
+            if(!$language) $language = function_exists('pll_current_language') ? pll_current_language() : '';
+            $default_language = function_exists('pll_default_language') ? pll_default_language() : '';
+
+            if($language)
+            {
+                $translated_id = pll_get_post($page_id, $language);
+                if($translated_id) return (int) $translated_id;
+            }
+
+            if($default_language)
+            {
+                $fallback_id = pll_get_post($page_id, $default_language);
+                if($fallback_id) return (int) $fallback_id;
+            }
+
+            return (int) $page_id;
+        }
+
+        return (int) $page_id;
+    }
+
+    private function determine_language($event_id = NULL)
+    {
+        if($event_id)
+        {
+            if(class_exists('SitePress'))
+            {
+                $details = apply_filters('wpml_post_language_details', NULL, $event_id);
+                if(is_array($details) and !empty($details['language_code'])) return $details['language_code'];
+            }
+
+            if(function_exists('pll_get_post_language'))
+            {
+                $language = pll_get_post_language($event_id);
+                if($language) return $language;
+            }
+        }
+
+        if(class_exists('SitePress'))
+        {
+            $current_language = apply_filters('wpml_current_language', NULL);
+            if($current_language) return $current_language;
+        }
+
+        if(function_exists('pll_current_language'))
+        {
+            $current_language = pll_current_language();
+            if($current_language) return $current_language;
+        }
+
+        return '';
     }
 
     public function get_ticket_names($transaction_id)

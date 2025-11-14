@@ -2263,11 +2263,13 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                 </div>
                 <div class="mec-form-row">
                     <label class="mec-col-4" for="mec_skin_cover_event_id"><?php esc_html_e('Event', 'modern-events-calendar-lite'); ?></label>
-                    <select class="mec-col-4 wn-mec-select" name="mec[sk-options][cover][event_id]" id="mec_skin_cover_event_id">
-                        <?php foreach($events as $event): ?>
-                            <option value="<?php echo esc_attr($event->ID); ?>" <?php if(isset($sk_options_cover['event_id']) and $sk_options_cover['event_id'] == $event->ID) echo 'selected="selected"'; ?>><?php echo esc_html($event->post_title); ?></option>
-                        <?php endforeach; ?>
-                    </select>
+                    <div class="mec-col-4 mec-cover-event-select-wrap">
+                        <select class="mec-cover-event-select" name="mec[sk-options][cover][event_id]" id="mec_skin_cover_event_id" style="width: 100%;">
+                            <?php foreach($events as $event): ?>
+                                <option value="<?php echo esc_attr($event->ID); ?>" <?php if(isset($sk_options_cover['event_id']) and $sk_options_cover['event_id'] == $event->ID) echo 'selected="selected"'; ?>><?php echo esc_html($event->post_title); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
                 </div>
                 <!-- Start LocalTime -->
                 <div class="mec-form-row mec-switcher mec-include-events-local-times mec-not-cover-liquid">
@@ -3341,6 +3343,17 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
 <script>
     // Niceselect
     jQuery(document).ready(function() {
+        var $coverEventSelect = jQuery('#mec_skin_cover_event_id');
+
+        if ($coverEventSelect.length && jQuery.fn.select2) {
+            var $coverEventWrapper = $coverEventSelect.closest('.mec-cover-event-select-wrap');
+
+            $coverEventSelect.select2({
+                width: '100%',
+                dropdownParent: $coverEventWrapper.length ? $coverEventWrapper : $coverEventSelect.parent()
+            });
+        }
+
         jQuery('.mec-custom-nice-select').find('li').each( function(index, elemement) {
             var $this = jQuery(this),
                 $name = $this.text();

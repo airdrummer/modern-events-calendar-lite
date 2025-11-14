@@ -118,6 +118,42 @@ class MEC_tickets extends MEC_base
                 <a class="button" href="<?php echo $main->add_qs_var('mec_add_global_tickets', 1); ?>" id="mec_add_global_tickets_button"><?php esc_html_e('Add Global Tickets', 'modern-events-calendar-lite'); ?></a>
                 <?php endif; ?>
             </div>
+            <?php
+            // Detect whether this event has global tickets applied
+            $mec_global_tickets_applied = 0;
+            if ($object_id) {
+                $mec_global_tickets_applied = (int) get_post_meta($object_id, 'mec_global_tickets_applied', true);
+            }
+            // Build quick heuristics by comparing event ticket names with global ticket names
+            $current_ticket_names = [];
+            foreach($tickets as $tk => $tv){ if(is_numeric($tk) && !empty($tv['name'])) $current_ticket_names[] = strtolower(trim($tv['name'])); }
+            $global_ticket_names = [];
+            foreach($global_tickets as $gk => $gv){ if(is_numeric($gk) && !empty($gv['name'])) $global_ticket_names[] = strtolower(trim($gv['name'])); }
+            $intersect_names = array_values(array_unique(array_intersect($current_ticket_names, $global_ticket_names)));
+            $classification = 'custom';
+            if(count($current_ticket_names) && count($global_ticket_names)){
+                if(count($intersect_names) === count($current_ticket_names) && count($current_ticket_names) <= count($global_ticket_names)){
+                    $classification = 'global_like';
+                } elseif(count($intersect_names) > 0){
+                    $classification = 'mixed';
+                }
+            }
+            ?>
+            <script>
+            (function(){
+                try{
+                    var eventId  = <?php echo (int) ($object_id ?: 0); ?>;
+                    var metaApplied = <?php echo $mec_global_tickets_applied ? 'true' : 'false'; ?>;
+                    var classification = <?php echo json_encode($classification); ?>;
+                    var names = {
+                        current: <?php echo json_encode($current_ticket_names); ?>,
+                        global: <?php echo json_encode($global_ticket_names); ?>,
+                        intersect: <?php echo json_encode($intersect_names); ?>
+                    };
+                    console.log('[MEC] Tickets source =>', (classification==='global_like'?'global':classification), { eventId: eventId, metaApplied: metaApplied, names: names });
+                }catch(e){}
+            })();
+            </script>
             <div id="mec_tickets">
                 <?php
                 $i = 0;
@@ -127,8 +163,9 @@ class MEC_tickets extends MEC_base
                     if(!is_numeric($key)) continue;
                     $i = max($i, $key);
                     ?>
-                    <div class="mec-box mec_ticket_row" id="mec_ticket_row<?php echo esc_attr($key); ?>">
-                        <button class="button remove mec_ticket_remove_button" type="button" onclick="mec_ticket_remove(<?php echo esc_attr($key); ?>);"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 20 20"><path d="M14.95 6.46L11.41 10l3.54 3.54l-1.41 1.41L10 11.42l-3.53 3.53l-1.42-1.42L8.58 10L5.05 6.47l1.42-1.42L10 8.58l3.54-3.53z"/></svg></button>
+                    <div class="mec-box mec_ticket_row mec-form-row" id="mec_ticket_row<?php echo esc_attr($key); ?>">
+                        <span class="mec_field_sort button"><?php esc_html_e('Sort', 'modern-events-calendar-lite'); ?></span>
+                        <button class="button remove mec_ticket_remove_button mec-dash-remove-btn" type="button" onclick="mec_ticket_remove(<?php echo esc_attr($key); ?>);"><?php esc_html_e("Remove", 'modern-events-calendar-lite'); ?></button>
                         <div class="mec-ticket-id mec-label" title="<?php esc_attr_e('Ticket ID', 'modern-events-calendar-lite'); ?>"><span class="mec-ticket-id-title"><?php esc_attr_e('ID', 'modern-events-calendar-lite'); ?>: </span><?php echo esc_attr($key); ?></div>
                         <div class="mec-form-row <?php echo $basic_class; ?>">
                             <input type="text" class="mec-col-12" name="<?php echo $name_prefix; ?>[<?php echo esc_attr($key); ?>][name]"
@@ -399,11 +436,12 @@ class MEC_tickets extends MEC_base
                                                 {
                                                     if(!is_numeric($tvk)) continue;
 
-                                                    $tvi = max($tvi, $tvk);
+                                                    $variation_key = (int) $tvk;
+                                                    $tvi = max($tvi, $variation_key);
                                                     $TicketVariations->item(array(
                                                         'name_prefix' => $name_prefix.'['.esc_attr($key).'][variations]',
                                                         'id_prefix' => 'variation_per_ticket'.esc_attr($key),
-                                                        'i' => $tvi,
+                                                        'i' => $variation_key,
                                                         'value' => $ticket_variation,
                                                     ));
                                                 }
@@ -455,8 +493,9 @@ class MEC_tickets extends MEC_base
         </div>
         <input type="hidden" id="mec_new_ticket_key" value="<?php echo ($i + 1); ?>"/>
         <div class="mec-util-hidden" id="mec_new_ticket_raw">
-            <div class="mec-box mec_ticket_row" id="mec_ticket_row:i:">
-                <button class="button remove mec_ticket_remove_button" type="button" onclick="mec_ticket_remove(:i:);"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false" width="1em" height="1em" style="-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); transform: rotate(360deg);" preserveAspectRatio="xMidYMid meet" viewBox="0 0 20 20"><path d="M14.95 6.46L11.41 10l3.54 3.54l-1.41 1.41L10 11.42l-3.53 3.53l-1.42-1.42L8.58 10L5.05 6.47l1.42-1.42L10 8.58l3.54-3.53z"/></svg></button>
+            <div class="mec-box mec_ticket_row mec-form-row" id="mec_ticket_row:i:">
+                <span class="mec_field_sort button"><?php esc_html_e('Sort', 'modern-events-calendar-lite'); ?></span>
+                <button class="button remove mec_ticket_remove_button mec-dash-remove-btn" type="button" onclick="mec_ticket_remove(:i:);"><?php esc_html_e("Remove", 'modern-events-calendar-lite'); ?></button>
                 <div class="mec-ticket-id" title="<?php esc_attr_e('Ticket ID', 'modern-events-calendar-lite'); ?>"><span class="mec-ticket-id-title"><?php esc_attr_e('ID', 'modern-events-calendar-lite'); ?>: </span>:i:</div>
                 <div class="mec-form-row <?php echo $basic_class; ?>">
                     <input class="mec-col-12" type="text" name="<?php echo $name_prefix; ?>[:i:][name]"

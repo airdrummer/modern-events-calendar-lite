@@ -294,7 +294,7 @@ final class Base
 
 			$body = json_decode($response_lite['body']);
 
-			if (count($body) > 0) :
+			if (is_countable($body) && count($body) > 0) :
 				$featured_media = $body[0]->featured_media;
 				$title = $body[0]->title->rendered;
 				$content = $body[0]->content->rendered;

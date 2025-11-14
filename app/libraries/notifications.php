@@ -485,6 +485,45 @@ class MEC_notifications extends MEC_base
         // Do not send email twice!
         $done_emails = [];
 
+        $invoice_attachments = [];
+        $invoice_temp_file = '';
+        $transaction_id = $this->book->get_transaction_id_book_id($book_id);
+
+        if ($transaction_id)
+        {
+            $invoice_pdf = $this->main->build_booking_invoice_pdf($transaction_id, [
+                'book_id' => $book_id,
+                'enforce_key' => false,
+            ]);
+
+            if (!is_wp_error($invoice_pdf) and !empty($invoice_pdf['content']))
+            {
+                $temp_dir = function_exists('get_temp_dir') ? get_temp_dir() : sys_get_temp_dir();
+                if (!$temp_dir) $temp_dir = sys_get_temp_dir();
+
+                $invoice_filename = $invoice_pdf['filename'];
+                $unique_filename = wp_unique_filename($temp_dir, $invoice_filename);
+
+                $temp_dir = trailingslashit($temp_dir);
+                $temp_file = $temp_dir . $unique_filename;
+
+                if ($temp_file)
+                {
+                    $written = file_put_contents($temp_file, $invoice_pdf['content']);
+
+                    if ($written !== false)
+                    {
+                        $invoice_temp_file = $temp_file;
+                        $invoice_attachments[] = $temp_file;
+                    }
+                    else
+                    {
+                        if (file_exists($temp_file)) @unlink($temp_file);
+                    }
+                }
+            }
+        }
+
         // Changing some sender email info.
         $this->mec_sender_email_notification_filter();
 
@@ -513,7 +552,7 @@ class MEC_notifications extends MEC_base
                 'subject' => $subject,
                 'message' => $message,
                 'headers' => $headers,
-                'attachments' => [],
+                'attachments' => $invoice_attachments,
             ];
 
             $mail_arg = apply_filters('mec_before_send_booking_confirmation', $mail_arg, $book_id, 'booking_confirmation');
@@ -530,6 +569,8 @@ class MEC_notifications extends MEC_base
 
         // Remove the HTML Email filter
         remove_filter('wp_mail_content_type', [$this->main, 'html_email_type']);
+
+        if ($invoice_temp_file && file_exists($invoice_temp_file)) @unlink($invoice_temp_file);
 
         return true;
     }

@@ -1856,7 +1856,7 @@ class MEC_skins extends MEC_base
             $label = esc_html__('Text', 'modern-events-calendar-lite');
             if ($type == 'text_input')
             {
-                $placeholder = $options['placeholder'] ?? '';
+                $placeholder = $options['placeholder'] ?? 'Search';
 
                 $output .= '<div class="mec-text-input-search">';
                 if ($display_label == 1) $output .= '<label for="mec_sf_s_' . esc_attr($this->id) . '">' . esc_html($label) . ': </label>';
@@ -2189,7 +2189,17 @@ class MEC_skins extends MEC_base
             $b_timestamp = strtotime($b_start_date . ' ' . $b->data->time['start_raw']);
         }
 
-        if ($a_timestamp == $b_timestamp) return 0;
+        if ($a_timestamp == $b_timestamp)
+        {
+            $a_id = isset($a->data->ID) ? (int) $a->data->ID : (isset($a->ID) ? (int) $a->ID : 0);
+            $b_id = isset($b->data->ID) ? (int) $b->data->ID : (isset($b->ID) ? (int) $b->ID : 0);
+
+            if ($a_id === $b_id) return 0;
+
+            if ($this->order_method === 'DESC') return ($a_id < $b_id) ? +1 : -1;
+
+            return ($a_id > $b_id) ? +1 : -1;
+        }
 
         if ($this->order_method === 'DESC') return ($a_timestamp < $b_timestamp) ? +1 : -1;
         else return ($a_timestamp > $b_timestamp) ? +1 : -1;

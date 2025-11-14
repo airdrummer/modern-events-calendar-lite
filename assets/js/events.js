@@ -522,6 +522,8 @@ jQuery(document).ready(function($)
         $('#mec_tickets').append(html);
         $key.val(parseInt(key)+1);
 
+        mec_init_sortable_sections();
+
         $('.mec_add_price_date_button').off('click').on('click', function()
         {
             mec_handle_add_price_date_button(this);
@@ -549,6 +551,7 @@ jQuery(document).ready(function($)
     });
 
     mec_hourly_schedule_add_day_listener();
+    mec_init_sortable_sections();
 
     $('#mec_add_fee_button').on('click', function()
     {
@@ -557,6 +560,8 @@ jQuery(document).ready(function($)
 
         $('#mec_fees_list').append(html);
         $('#mec_new_fee_key').val(parseInt(key)+1);
+
+        mec_init_sortable_sections();
     });
 
     $('#mec_add_ticket_variation_button').on('click', function()
@@ -566,6 +571,8 @@ jQuery(document).ready(function($)
 
         $('#mec_ticket_variations_list').append(html);
         $('#mec_new_ticket_variation_key').val(parseInt(key)+1);
+
+        mec_init_sortable_sections();
     });
 
     $('.mec-form-row.mec-available-color-row span').on('click', function()
@@ -668,6 +675,8 @@ jQuery(document).ready(function($)
 
         $('#mec_faq_list').append(html);
         $key.val(parseInt(key)+1);
+
+        mec_init_sortable_sections();
     });
 
     // Appointments
@@ -1128,6 +1137,37 @@ function add_variation_per_ticket(ticket_id)
 
     jQuery('#mec_ticket_variations_list'+ticket_id).append(html);
     $input.val(parseInt(key)+1);
+
+    mec_init_sortable_sections();
+}
+
+function mec_init_sortable_instance(selector, options)
+{
+    jQuery(selector).each(function()
+    {
+        var $element = jQuery(this);
+
+        if(!$element.length) return;
+
+        if(typeof $element.data('ui-sortable') === 'undefined')
+        {
+            $element.sortable(options);
+        }
+        else
+        {
+            $element.sortable('refresh');
+        }
+    });
+}
+
+function mec_init_sortable_sections()
+{
+    if(typeof jQuery.fn.sortable === 'undefined') return;
+
+    mec_init_sortable_instance('#mec_tickets', { handle: '.mec_field_sort', items: '> .mec_ticket_row' });
+    mec_init_sortable_instance('#mec_fees_list', { handle: '.mec_field_sort', items: '> .mec-box' });
+    mec_init_sortable_instance('[id^="mec_ticket_variations_list"]', { handle: '.mec_field_sort', items: '> .mec_ticket_variation_row' });
+    mec_init_sortable_instance('#mec_faq_list', { handle: '.mec_field_sort', items: '> .mec_faq_row' });
 }
 
 function mec_reg_fields_option_listeners()

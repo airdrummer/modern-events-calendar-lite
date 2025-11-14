@@ -903,14 +903,16 @@ if(isset($_POST['mec']['settings']['booking_registration'])) {
                                     <button class="button" type="button" id="mec_add_fee_button"><?php esc_html_e('Add Fee', 'modern-events-calendar-lite'); ?></button>
                                 </div>
                                 <div class="mec-form-row" id="mec_fees_list">
-                                    <?php $i = 0; foreach($fees as $key=>$fee): if(!is_numeric($key)) continue; $i = max($i, $key); ?>
-                                    <div class="mec-box" id="mec_fee_row<?php echo esc_attr($i); ?>">
+                                    <?php $i = 0; foreach($fees as $key=>$fee): if(!is_numeric($key)) continue; $fee_key = (int) $key; $i = max($i, $fee_key); ?>
+                                    <div class="mec-box mec-form-row" id="mec_fee_row<?php echo esc_attr($fee_key); ?>">
                                         <div class="mec-form-row">
-                                            <input class="mec-col-12" type="text" name="mec[settings][fees][<?php echo esc_attr($i); ?>][title]" placeholder="<?php esc_attr_e('Fee Title', 'modern-events-calendar-lite'); ?>" value="<?php echo (isset($fee['title']) ? esc_attr($fee['title']) : ''); ?>" />
+                                            <span class="mec_field_sort button"><?php esc_html_e('Sort', 'modern-events-calendar-lite'); ?></span>
+                                            <button class="button mec-dash-remove-btn" type="button" id="mec_remove_fee_button<?php echo esc_attr($fee_key); ?>" onclick="mec_remove_fee(<?php echo esc_attr($fee_key); ?>);"><?php esc_html_e('Remove', 'modern-events-calendar-lite'); ?></button>
+                                            <input class="mec-col-8" type="text" name="mec[settings][fees][<?php echo esc_attr($fee_key); ?>][title]" placeholder="<?php esc_attr_e('Fee Title', 'modern-events-calendar-lite'); ?>" value="<?php echo (isset($fee['title']) ? esc_attr($fee['title']) : ''); ?>" />
                                         </div>
                                         <div class="mec-form-row">
                                             <span class="mec-col-4">
-                                                <input type="text" name="mec[settings][fees][<?php echo esc_attr($i); ?>][amount]" placeholder="<?php esc_attr_e('Amount', 'modern-events-calendar-lite'); ?>" value="<?php echo (isset($fee['amount']) ? esc_attr($fee['amount']) : 0); ?>" />
+                                                <input type="text" name="mec[settings][fees][<?php echo esc_attr($fee_key); ?>][amount]" placeholder="<?php esc_attr_e('Amount', 'modern-events-calendar-lite'); ?>" value="<?php echo (isset($fee['amount']) ? esc_attr($fee['amount']) : 0); ?>" />
                                                 <span class="mec-tooltip">
                                                     <div class="box top">
                                                         <h5 class="title"><?php esc_html_e('Amount', 'modern-events-calendar-lite'); ?></h5>
@@ -920,23 +922,24 @@ if(isset($_POST['mec']['settings']['booking_registration'])) {
                                                 </span>
                                             </span>
                                             <span class="mec-col-4">
-                                                <select name="mec[settings][fees][<?php echo esc_attr($i); ?>][type]">
+                                                <select name="mec[settings][fees][<?php echo esc_attr($fee_key); ?>][type]">
                                                     <option value="percent" <?php echo ((isset($fee['type']) and $fee['type'] == 'percent') ? 'selected="selected"' : ''); ?>><?php esc_html_e('Percent', 'modern-events-calendar-lite'); ?></option>
                                                     <option value="amount" <?php echo ((isset($fee['type']) and $fee['type'] == 'amount') ? 'selected="selected"' : ''); ?>><?php esc_html_e('Amount (Per Ticket)', 'modern-events-calendar-lite'); ?></option>
                                                     <option value="amount_per_date" <?php echo ((isset($fee['type']) and $fee['type'] == 'amount_per_date') ? 'selected="selected"' : ''); ?>><?php esc_html_e('Amount (Per Date)', 'modern-events-calendar-lite'); ?></option>
                                                     <option value="amount_per_booking" <?php echo ((isset($fee['type']) and $fee['type'] == 'amount_per_booking') ? 'selected="selected"' : ''); ?>><?php esc_html_e('Amount (Per Booking)', 'modern-events-calendar-lite'); ?></option>
                                                 </select>
                                             </span>
-                                            <button class="button" type="button" id="mec_remove_fee_button<?php echo esc_attr($i); ?>" onclick="mec_remove_fee(<?php echo esc_attr($i); ?>);"><?php esc_html_e('Remove', 'modern-events-calendar-lite'); ?></button>
                                         </div>
                                     </div>
                                     <?php endforeach; ?>
                                 </div>
                                 <input type="hidden" id="mec_new_fee_key" value="<?php echo ($i+1); ?>" />
                                 <div class="mec-util-hidden" id="mec_new_fee_raw">
-                                    <div class="mec-box" id="mec_fee_row:i:">
+                                    <div class="mec-box mec-form-row" id="mec_fee_row:i:">
                                         <div class="mec-form-row">
-                                            <input class="mec-col-12" type="text" name="mec[settings][fees][:i:][title]" placeholder="<?php esc_attr_e('Fee Title', 'modern-events-calendar-lite'); ?>" />
+                                            <span class="mec_field_sort button"><?php esc_html_e('Sort', 'modern-events-calendar-lite'); ?></span>
+                                            <button class="button mec-dash-remove-btn" type="button" id="mec_remove_fee_button:i:" onclick="mec_remove_fee(:i:);"><?php esc_html_e('Remove', 'modern-events-calendar-lite'); ?></button>
+                                            <input class="mec-col-8" type="text" name="mec[settings][fees][:i:][title]" placeholder="<?php esc_attr_e('Fee Title', 'modern-events-calendar-lite'); ?>" />
                                         </div>
                                         <div class="mec-form-row">
                                             <span class="mec-col-4">
@@ -957,7 +960,6 @@ if(isset($_POST['mec']['settings']['booking_registration'])) {
                                                     <option value="amount_per_booking"><?php esc_html_e('Amount (Per Booking)', 'modern-events-calendar-lite'); ?></option>
                                                 </select>
                                             </span>
-                                            <button class="button" type="button" id="mec_remove_fee_button:i:" onclick="mec_remove_fee(:i:);"><?php esc_html_e('Remove', 'modern-events-calendar-lite'); ?></button>
                                         </div>
                                     </div>
                                 </div>
@@ -1016,10 +1018,11 @@ if(isset($_POST['mec']['settings']['booking_registration'])) {
                                             foreach($ticket_variations as $key => $ticket_variation)
                                             {
                                                 if(!is_numeric($key)) continue;
-                                                $i = max($i, $key);
+                                                $variation_key = (int) $key;
+                                                $i = max($i, $variation_key);
 
                                                 $TicketVariations->item([
-                                                    'i' => $i,
+                                                    'i' => $variation_key,
                                                     'name_prefix' => 'mec[settings][ticket_variations]',
                                                     'value' => $ticket_variation,
                                                 ]);
