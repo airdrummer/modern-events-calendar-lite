@@ -1,4 +1,8 @@
-﻿v 7.27.0 - 25 October 2025
+v 7.27.0.1 - 14 nov 2025
+- added missing timezone display, reformat
+- fixed countdown
+
+v 7.27.0 - 25 October 2025
 - Added: Attachable invoice to the booking confirmation email.
 - Added: The sort ability to tickets, fees, ticket variations and FAQ.
 - Added: Event duration to the iCal feed.
