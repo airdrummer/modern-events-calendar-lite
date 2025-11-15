@@ -103,6 +103,7 @@ if (isset($_SERVER['HTTP_USER_AGENT']))
 }
 
 // Generating javascript code of countdown default module
+$countdown_interval = 30000;  // setting tbd
 $defaultjs = '<script>
 jQuery(document).ready(function($)
 {
@@ -110,6 +111,7 @@ jQuery(document).ready(function($)
     {
         var datetime = jQuery(el).data("datetime");
         var gmt_offset = jQuery(el).data("gmt_offset");
+        var countdown_interval = jQuery(el).data("countdown_interval");
         jQuery(el).mecCountDown(
             {
                 date: datetime+""+gmt_offset,
