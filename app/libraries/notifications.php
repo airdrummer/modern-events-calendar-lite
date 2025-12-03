@@ -1133,6 +1133,209 @@ class MEC_notifications extends MEC_base
     }
 
     /**
+     * Prepare recipients, subject and message template for new event notifications
+     *
+     * @param int|null $event_id
+     *
+     * @return array|false
+     */
+    protected function get_new_event_email_structure($event_id = null)
+    {
+        $send_to_admin = !isset($this->notif_settings['new_event']['send_to_admin']) || (isset($this->notif_settings['new_event']['send_to_admin']) && $this->notif_settings['new_event']['send_to_admin']);
+        $to = $send_to_admin ? get_bloginfo('admin_email') : null;
+
+        $disabled_for_admin = !empty($this->notif_settings['new_event']['disable_send_notification_if_current_user_or_author_is_admin']);
+
+        if ($disabled_for_admin)
+        {
+            $author_id = null;
+
+            if ($event_id)
+            {
+                $author_id = (int)get_post_field('post_author', $event_id);
+            }
+            elseif (is_user_logged_in())
+            {
+                $author_id = get_current_user_id();
+            }
+
+            if ($author_id && user_can($author_id, 'manage_options')) $to = null;
+            elseif (!is_null($to) && current_user_can('manage_options')) $to = null;
+        }
+
+        $recipients_str = $this->notif_settings['new_event']['recipients'] ?? '';
+        $recipients = trim($recipients_str) ? explode(',', $recipients_str) : [];
+
+        $users = $this->notif_settings['new_event']['receiver_users'] ?? [];
+        $users_down = $this->main->get_emails_by_users($users);
+        $recipients = array_merge($users_down, $recipients);
+
+        $roles = $this->notif_settings['new_event']['receiver_roles'] ?? [];
+        $user_roles = $this->main->get_emails_by_roles($roles);
+        $recipients = array_merge($user_roles, $recipients);
+
+        // Unique Recipients
+        $recipients = array_map('trim', $recipients);
+        $recipients = array_filter($recipients);
+        $recipients = array_unique($recipients);
+
+        if (is_null($to) && !count($recipients)) return false;
+        elseif (is_null($to))
+        {
+            $to = array_shift($recipients);
+        }
+
+        $headers = ['Content-Type: text/html; charset=UTF-8'];
+
+        // Recipient Type
+        $CCBCC = $this->get_cc_bcc_method();
+
+        foreach ($recipients as $recipient)
+        {
+            // Skip if it's not a valid email
+            if (!filter_var($recipient, FILTER_VALIDATE_EMAIL)) continue;
+
+            $headers[] = $CCBCC . ': ' . $recipient;
+        }
+
+        $subject = (isset($this->notif_settings['new_event']['subject']) && trim($this->notif_settings['new_event']['subject'])) ? esc_html__($this->notif_settings['new_event']['subject'], 'modern-events-calendar-lite') : esc_html__('A new event is added.', 'modern-events-calendar-lite');
+        $message = (isset($this->notif_settings['new_event']['content']) && trim($this->notif_settings['new_event']['content'])) ? $this->notif_settings['new_event']['content'] : '';
+
+        return [
+            'to' => $to,
+            'headers' => $headers,
+            'subject' => $subject,
+            'message' => $message,
+        ];
+    }
+
+    /**
+     * Replace placeholders for new event notifications
+     *
+     * @param string $message
+     * @param int $event_id
+     *
+     * @return string
+     */
+    protected function replace_new_event_placeholders($message, $event_id)
+    {
+        $event_PT = $this->main->get_main_post_type();
+        $status = get_post_status($event_id);
+
+        // Site Data
+        $message = str_replace('%%blog_name%%', get_bloginfo('name'), $message);
+        $message = str_replace('%%blog_url%%', get_bloginfo('url'), $message);
+        $message = str_replace('%%blog_description%%', get_bloginfo('description'), $message);
+
+        // Event Data
+        $message = str_replace('%%admin_link%%', $this->link(['post_type' => $event_PT], $this->main->URL('admin') . 'edit.php'), $message);
+        $message = str_replace('%%event_title%%', get_the_title($event_id), $message);
+        $message = str_replace('%%event_link%%', get_post_permalink($event_id), $message);
+        $message = str_replace('%%event_description%%', $this->main->get_raw_post_description($event_id), $message);
+
+        $event_tags = get_the_terms($event_id, apply_filters('mec_taxonomy_tag', ''));
+        $message = str_replace('%%event_tags%%', (is_array($event_tags) ? join(', ', wp_list_pluck($event_tags, 'name')) : ''), $message);
+
+        $event_labels = get_the_terms($event_id, 'mec_label');
+        $message = str_replace('%%event_labels%%', (is_array($event_labels) ? join(', ', wp_list_pluck($event_labels, 'name')) : ''), $message);
+
+        $event_categories = get_the_terms($event_id, 'mec_category');
+        $message = str_replace('%%event_categories%%', (is_array($event_categories) ? join(', ', wp_list_pluck($event_categories, 'name')) : ''), $message);
+
+        $mec_cost = get_post_meta($event_id, 'mec_cost', true);
+        $message = str_replace('%%event_cost%%', (is_numeric($mec_cost) ? $this->main->render_price($mec_cost, $event_id) : $mec_cost), $message);
+
+        $date_format = get_option('date_format');
+        $message = str_replace('%%event_start_date%%', $this->main->date_i18n($date_format, strtotime(get_post_meta($event_id, 'mec_start_date', true))), $message);
+        $message = str_replace('%%event_end_date%%', $this->main->date_i18n($date_format, strtotime(get_post_meta($event_id, 'mec_end_date', true))), $message);
+        $message = str_replace('%%event_timezone%%', $this->main->get_timezone($event_id), $message);
+        $message = str_replace('%%event_note%%', get_post_meta($event_id, 'mec_note', true), $message);
+
+        $status_obj = get_post_status_object($status);
+        $message = str_replace('%%event_status%%', (($status_obj && isset($status_obj->label)) ? $status_obj->label : $status), $message);
+
+        // Data Fields
+        $event_fields = $this->main->get_event_fields();
+        $event_fields_data = get_post_meta($event_id, 'mec_fields', true);
+        if (!is_array($event_fields_data)) $event_fields_data = [];
+
+        foreach ($event_fields as $f => $event_field)
+        {
+            if (!is_numeric($f)) continue;
+
+            $field_value = $event_fields_data[$f] ?? '';
+            if ((!is_array($field_value) && trim($field_value) === '') || (is_array($field_value) && !count($field_value)))
+            {
+                $message = str_replace('%%event_field_' . $f . '%%', '', $message);
+                $message = str_replace('%%event_field_' . $f . '_with_name%%', '', $message);
+
+                continue;
+            }
+
+            $event_field_name = $event_field['label'] ?? '';
+            if (is_array($field_value)) $field_value = implode(', ', $field_value);
+
+            $message = str_replace('%%event_field_' . $f . '%%', trim($field_value, ', '), $message);
+            $message = str_replace('%%event_field_' . $f . '_with_name%%', trim((trim($event_field_name) ? $event_field_name . ': ' : '') . trim($field_value, ', ')), $message);
+        }
+
+        $message = str_replace('%%zoom_join%%', get_post_meta($event_id, 'mec_zoom_join_url', true), $message);
+        $message = str_replace('%%zoom_link%%', get_post_meta($event_id, 'mec_zoom_link_url', true), $message);
+        $message = str_replace('%%zoom_password%%', get_post_meta($event_id, 'mec_zoom_password', true), $message);
+        $message = str_replace('%%zoom_embed%%', get_post_meta($event_id, 'mec_zoom_embed', true), $message);
+        $message = str_replace('%%zoom_meeting_id%%', get_post_meta($event_id, 'mec_zoom_meeting_id', true), $message);
+
+        return $message;
+    }
+
+    /**
+     * Build combined information for multiple events
+     *
+     * @param array $event_ids
+     *
+     * @return string
+     */
+    protected function get_all_events_info_html($event_ids)
+    {
+        $event_ids = array_map('intval', (array)$event_ids);
+        $event_ids = array_filter($event_ids);
+        if (!count($event_ids)) return '';
+
+        $items = [];
+        $date_format = get_option('date_format');
+
+        foreach ($event_ids as $event_id)
+        {
+            $description = $this->main->get_raw_post_description($event_id);
+            $description = wp_trim_words(wp_strip_all_tags($description), 40, '...');
+
+            $start_date = get_post_meta($event_id, 'mec_start_date', true);
+            $end_date = get_post_meta($event_id, 'mec_end_date', true);
+
+            $start_display = $start_date ? $this->main->date_i18n($date_format, strtotime($start_date)) : '';
+            $end_display = $end_date ? $this->main->date_i18n($date_format, strtotime($end_date)) : '';
+
+            $date_display = $start_display;
+            if ($end_display && $end_display !== $start_display) $date_display .= ' - ' . $end_display;
+
+            $date_html = trim($date_display) ? '<div><small>' . esc_html(trim($date_display)) . '</small></div>' : '';
+            $description_html = trim($description) ? '<div><small>' . esc_html($description) . '</small></div>' : '';
+
+            $items[] = sprintf(
+                '<li><a href="%2$s">%1$s</a>%3$s%4$s</li>',
+                esc_html(get_the_title($event_id)),
+                esc_url(get_post_permalink($event_id)),
+                $date_html,
+                $description_html
+            );
+        }
+
+        $output = '<ul class="mec-new-event-digest">' . implode('', $items) . '</ul>';
+
+        return apply_filters('mec_new_event_all_events_info_html', $output, $event_ids, $this);
+    }
+
+    /**
      * Send new event notification
      * @param int $event_id
      * @param boolean $update
@@ -1166,116 +1369,24 @@ class MEC_notifications extends MEC_base
         $already_sent = get_post_meta($event_id, 'mec_new_event_notif_sent', true);
         if ($already_sent) return false;
 
-        $to = (!isset($this->notif_settings['new_event']['send_to_admin']) or (isset($this->notif_settings['new_event']['send_to_admin']) and $this->notif_settings['new_event']['send_to_admin'])) ? get_bloginfo('admin_email') : null;
-
-        $disabled_send_notification_if_current_user_or_author_is_superadmin = isset($this->notif_settings['new_event']['disable_send_notification_if_current_user_or_author_is_admin']) && $this->notif_settings['new_event']['disable_send_notification_if_current_user_or_author_is_admin'];
-        if ($disabled_send_notification_if_current_user_or_author_is_superadmin && current_user_can('manage_options')) $to = null;
-
-        $recipients_str = $this->notif_settings['new_event']['recipients'] ?? '';
-        $recipients = trim($recipients_str) ? explode(',', $recipients_str) : [];
-
-        $users = $this->notif_settings['new_event']['receiver_users'] ?? [];
-        $users_down = $this->main->get_emails_by_users($users);
-        $recipients = array_merge($users_down, $recipients);
-
-        $roles = $this->notif_settings['new_event']['receiver_roles'] ?? [];
-        $user_roles = $this->main->get_emails_by_roles($roles);
-        $recipients = array_merge($user_roles, $recipients);
-
-        // Unique Recipients
-        $recipients = array_map('trim', $recipients);
-        $recipients = array_unique($recipients);
-
-        if (is_null($to) and !count($recipients)) return false;
-        else if (is_null($to))
+        $delivery_method = $this->notif_settings['new_event']['delivery_method'] ?? 'instant';
+        if ($delivery_method === 'daily')
         {
-            $to = current($recipients);
-            unset($recipients[0]);
+            update_post_meta($event_id, 'mec_new_event_notif_sent', 'pending');
+
+            return true;
         }
 
-        $subject = (isset($this->notif_settings['new_event']['subject']) and trim($this->notif_settings['new_event']['subject'])) ? esc_html__($this->notif_settings['new_event']['subject'], 'modern-events-calendar-lite') : esc_html__('A new event is added.', 'modern-events-calendar-lite');
-        $subject = $this->get_subject($subject, 'new_event', $event_id);
+        $structure = $this->get_new_event_email_structure($event_id);
+        if (!$structure) return false;
 
-        $headers = ['Content-Type: text/html; charset=UTF-8'];
+        $subject = $this->get_subject($structure['subject'], 'new_event', $event_id);
+        $headers = $structure['headers'];
+        $to = $structure['to'];
 
-        // Recipient Type
-        $CCBCC = $this->get_cc_bcc_method();
-
-        foreach ($recipients as $recipient)
-        {
-            // Skip if it's not a valid email
-            if (trim($recipient) == '' or !filter_var($recipient, FILTER_VALIDATE_EMAIL)) continue;
-
-            $headers[] = $CCBCC . ': ' . $recipient;
-        }
-
-        // Date Format
-        $date_format = get_option('date_format');
-
-        $message = (isset($this->notif_settings['new_event']['content']) and trim($this->notif_settings['new_event']['content'])) ? $this->notif_settings['new_event']['content'] : '';
-        $message = $this->get_content($message, 'new_event', $event_id);
-
-        // Site Data
-        $message = str_replace('%%blog_name%%', get_bloginfo('name'), $message);
-        $message = str_replace('%%blog_url%%', get_bloginfo('url'), $message);
-        $message = str_replace('%%blog_description%%', get_bloginfo('description'), $message);
-
-        // Event Data
-        $message = str_replace('%%admin_link%%', $this->link(['post_type' => $event_PT], $this->main->URL('admin') . 'edit.php'), $message);
-        $message = str_replace('%%event_title%%', get_the_title($event_id), $message);
-        $message = str_replace('%%event_link%%', get_post_permalink($event_id), $message);
-        $message = str_replace('%%event_description%%', $this->main->get_raw_post_description($event_id), $message);
-
-        $event_tags = get_the_terms($event_id, apply_filters('mec_taxonomy_tag', ''));
-        $message = str_replace('%%event_tags%%', (is_array($event_tags) ? join(', ', wp_list_pluck($event_tags, 'name')) : ''), $message);
-
-        $event_labels = get_the_terms($event_id, 'mec_label');
-        $message = str_replace('%%event_labels%%', (is_array($event_labels) ? join(', ', wp_list_pluck($event_labels, 'name')) : ''), $message);
-
-        $event_categories = get_the_terms($event_id, 'mec_category');
-        $message = str_replace('%%event_categories%%', (is_array($event_categories) ? join(', ', wp_list_pluck($event_categories, 'name')) : ''), $message);
-
-        $mec_cost = get_post_meta($event_id, 'mec_cost', true);
-        $message = str_replace('%%event_cost%%', (is_numeric($mec_cost) ? $this->main->render_price($mec_cost, $event_id) : $mec_cost), $message);
-
-        $message = str_replace('%%event_start_date%%', $this->main->date_i18n($date_format, strtotime(get_post_meta($event_id, 'mec_start_date', true))), $message);
-        $message = str_replace('%%event_end_date%%', $this->main->date_i18n($date_format, strtotime(get_post_meta($event_id, 'mec_end_date', true))), $message);
-        $message = str_replace('%%event_timezone%%', $this->main->get_timezone($event_id), $message);
-        $message = str_replace('%%event_note%%', get_post_meta($event_id, 'mec_note', true), $message);
-
-        $status_obj = get_post_status_object($status);
-        $message = str_replace('%%event_status%%', (($status_obj and isset($status_obj->label)) ? $status_obj->label : $status), $message);
-
-        // Data Fields
-        $event_fields = $this->main->get_event_fields();
-        $event_fields_data = get_post_meta($event_id, 'mec_fields', true);
-        if (!is_array($event_fields_data)) $event_fields_data = [];
-
-        foreach ($event_fields as $f => $event_field)
-        {
-            if (!is_numeric($f)) continue;
-
-            $field_value = $event_fields_data[$f] ?? '';
-            if ((!is_array($field_value) and trim($field_value) === '') or (is_array($field_value) and !count($field_value)))
-            {
-                $message = str_replace('%%event_field_' . $f . '%%', '', $message);
-                $message = str_replace('%%event_field_' . $f . '_with_name%%', '', $message);
-
-                continue;
-            }
-
-            $event_field_name = $event_field['label'] ?? '';
-            if (is_array($field_value)) $field_value = implode(', ', $field_value);
-
-            $message = str_replace('%%event_field_' . $f . '%%', trim($field_value, ', '), $message);
-            $message = str_replace('%%event_field_' . $f . '_with_name%%', trim((trim($event_field_name) ? $event_field_name . ': ' : '') . trim($field_value, ', ')), $message);
-        }
-
-        $message = str_replace('%%zoom_join%%', get_post_meta($event_id, 'mec_zoom_join_url', true), $message);
-        $message = str_replace('%%zoom_link%%', get_post_meta($event_id, 'mec_zoom_link_url', true), $message);
-        $message = str_replace('%%zoom_password%%', get_post_meta($event_id, 'mec_zoom_password', true), $message);
-        $message = str_replace('%%zoom_embed%%', get_post_meta($event_id, 'mec_zoom_embed', true), $message);
-        $message = str_replace('%%zoom_meeting_id%%', get_post_meta($event_id, 'mec_zoom_meeting_id', true), $message);
+        $message = $this->get_content($structure['message'], 'new_event', $event_id);
+        $message = $this->replace_new_event_placeholders($message, $event_id);
+        $message = str_replace('%%all_events_info%%', '', $message);
 
         // Remove remained placeholders
         $message = preg_replace('/%%.*%%/', '', $message);
@@ -1298,6 +1409,183 @@ class MEC_notifications extends MEC_base
         update_post_meta($event_id, 'mec_new_event_notif_sent', 1);
 
         return true;
+    }
+
+    /**
+     * Normalize daily notification time
+     *
+     * @param string $time
+     *
+     * @return string
+     */
+    protected function sanitize_daily_time($time)
+    {
+        $time = trim((string)$time);
+
+        if (!preg_match('/^(\d{1,2}):(\d{2})$/', $time, $matches)) return '18:00';
+
+        $hour = (int)$matches[1];
+        $minute = (int)$matches[2];
+
+        if ($hour < 0 || $hour > 23) $hour = 18;
+        if ($minute < 0 || $minute > 59) $minute = 0;
+
+        return sprintf('%02d:%02d', $hour, $minute);
+    }
+
+    /**
+     * Get timestamp of the configured send time for the provided day
+     *
+     * @param string $time_string
+     * @param int $now
+     *
+     * @return int
+     */
+    protected function get_daily_target_timestamp($time_string, $now)
+    {
+        $timezone = wp_timezone();
+
+        $current = new DateTimeImmutable('@' . $now);
+        $current = $current->setTimezone($timezone);
+
+        $target = DateTimeImmutable::createFromFormat('Y-m-d H:i', $current->format('Y-m-d') . ' ' . $time_string, $timezone);
+        if (!$target)
+        {
+            $target = new DateTimeImmutable($current->format('Y-m-d') . ' ' . $time_string, $timezone);
+        }
+
+        return $target->getTimestamp();
+    }
+
+    /**
+     * Send once-per-day new event notifications
+     *
+     * @return int Number of sent notifications
+     */
+    public function send_new_event_daily_digest()
+    {
+        if (!isset($this->notif_settings['new_event']['status']) || !$this->notif_settings['new_event']['status']) return 0;
+
+        $delivery_method = $this->notif_settings['new_event']['delivery_method'] ?? 'instant';
+        if ($delivery_method !== 'daily') return 0;
+
+        $time_setting = $this->sanitize_daily_time($this->notif_settings['new_event']['daily_time'] ?? '');
+        $now = current_time('timestamp');
+        $target_timestamp = $this->get_daily_target_timestamp($time_setting, $now);
+
+        if ($now < $target_timestamp) return 0;
+
+        $last_run = (int) get_option('mec_new_event_daily_last_run', 0);
+
+        // Prevent multiple runs during the same day/time window
+        if ($last_run && $last_run >= $target_timestamp && wp_date('Y-m-d', $last_run) === wp_date('Y-m-d', $target_timestamp)) return 0;
+
+        $event_PT = $this->main->get_main_post_type();
+
+        $date_query = [];
+        if ($last_run > 0)
+        {
+            // Query posts created since the previous digest run to avoid skipping pending notifications
+            $date_query[] = [
+                'after' => wp_date('Y-m-d H:i:s', $last_run),
+                'inclusive' => true,
+                'column' => 'post_date',
+            ];
+        }
+
+        $query_args = [
+            'post_type' => $event_PT,
+            'post_status' => ['publish', 'future', 'pending'],
+            'posts_per_page' => -1,
+            'fields' => 'ids',
+            'orderby' => 'date',
+            'order' => 'ASC',
+            'meta_query' => [
+                [
+                    'key' => 'mec_new_event_notif_sent',
+                    'value' => 'pending',
+                    'compare' => '=',
+                ],
+            ],
+        ];
+
+        if (!empty($date_query)) $query_args['date_query'] = $date_query;
+
+        $pending_events = get_posts($query_args);
+        if (!count($pending_events))
+        {
+            update_option('mec_new_event_daily_last_run', $now, 'no');
+
+            return 0;
+        }
+
+        $events_by_author = [];
+        foreach ($pending_events as $event_id)
+        {
+            $author_id = (int)get_post_field('post_author', $event_id);
+            $events_by_author[$author_id][] = $event_id;
+        }
+
+        $sent_notifications = 0;
+
+        foreach ($events_by_author as $author_id => $event_ids)
+        {
+            $first_event_id = $event_ids[0];
+
+            $structure = $this->get_new_event_email_structure($first_event_id);
+            if (!$structure)
+            {
+                foreach ($event_ids as $event_id)
+                {
+                    update_post_meta($event_id, 'mec_new_event_notif_sent', 1);
+                }
+
+                continue;
+            }
+
+            $subject = $this->get_subject($structure['subject'], 'new_event', $first_event_id);
+            $subject = str_replace('%%event_title%%', get_the_title($first_event_id), $subject);
+
+            $message = $this->get_content($structure['message'], 'new_event', $first_event_id);
+            $message = $this->replace_new_event_placeholders($message, $first_event_id);
+
+            $all_events_info = $this->get_all_events_info_html($event_ids);
+            $message = str_replace('%%all_events_info%%', $all_events_info, $message);
+
+            // Provide author name placeholder for digest emails
+            $author = get_user_by('id', $author_id);
+            if ($author)
+            {
+                $author_name = trim($author->first_name . ' ' . $author->last_name);
+                if (!$author_name) $author_name = $author->display_name;
+                $message = str_replace('%%name%%', $author_name, $message);
+            }
+
+            // Remove remained placeholders
+            $message = preg_replace('/%%.*%%/', '', $message);
+
+            // Changing some sender email info.
+            $this->mec_sender_email_notification_filter();
+
+            // Set Email Type to HTML
+            add_filter('wp_mail_content_type', [$this->main, 'html_email_type']);
+
+            wp_mail($structure['to'], html_entity_decode(stripslashes($subject), ENT_QUOTES | ENT_HTML5), wpautop(stripslashes($message)), $structure['headers']);
+
+            // Remove the HTML Email filter
+            remove_filter('wp_mail_content_type', [$this->main, 'html_email_type']);
+
+            foreach ($event_ids as $event_id)
+            {
+                update_post_meta($event_id, 'mec_new_event_notif_sent', 1);
+            }
+
+            $sent_notifications++;
+        }
+
+        update_option('mec_new_event_daily_last_run', $now, 'no');
+
+        return $sent_notifications;
     }
 
     /**
@@ -2703,10 +2991,20 @@ class MEC_notifications extends MEC_base
             $attendees_full_info .= "\r\n";
         }
 
-        // Attachment
+        // Attachments
         if (count($attachments))
         {
-            $attendees_full_info .= esc_html__($attachment_field['label'], 'modern-events-calendar-lite') . ': <a href="' . esc_url($attachments[0]['url']) . '" target="_blank">' . esc_url($attachments[0]['url']) . '</a>' . "\r\n";
+            $attachment_label = isset($attachment_field['label']) && trim($attachment_field['label']) !== '' ? $attachment_field['label'] : __('Attachment', 'modern-events-calendar-lite');
+
+            foreach ($attachments as $index => $attachment)
+            {
+                if (!is_array($attachment) || empty($attachment['url'])) continue;
+
+                $label = esc_html($attachment_label);
+                if (count($attachments) > 1) $label .= ' #' . ($index + 1);
+
+                $attendees_full_info .= $label . ': <a href="' . esc_url($attachment['url']) . '" target="_blank">' . esc_url($attachment['url']) . '</a>' . "\r\n";
+            }
         }
 
         return $attendees_full_info;

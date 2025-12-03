@@ -346,6 +346,60 @@ function mec_label_first_for_all'.esc_js($uniqueid).'(context)
     }
 }
 
+const mecDefaultPatterns'.esc_js($uniqueid).' = {
+    tel: /^[\d\s+\-()]+$/,
+    email: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/,
+    name: /^[\p{L}\p{N}\s.]+$/u,
+    text: /^[\\p{L}\\p{N}\\s.,!?\\-\'\u0022():&#$%*@]+$/u,
+    textarea: /^[\\p{L}\\p{N}\\s.,!?\\-\'\u0022():&#$%*@]+$/u
+};
+
+function mec_parse_booking_pattern'.esc_js($uniqueid).'(rawPattern, key)
+{
+    const fallback = mecDefaultPatterns'.esc_js($uniqueid).'[key] || null;
+    if(!rawPattern) return fallback;
+
+    try
+    {
+        const regexParts = rawPattern.match(/^\/(.*)\/([a-z]*)$/i);
+        if(regexParts) return new RegExp(regexParts[1], regexParts[2] || (fallback ? fallback.flags : ""));
+
+        return new RegExp(rawPattern, fallback ? fallback.flags : "");
+    }
+    catch (error)
+    {
+        console.warn("MEC booking pattern is invalid:", rawPattern, error);
+    }
+
+    return fallback;
+}
+
+function mec_get_field_pattern'.esc_js($uniqueid).'($field, key)
+{
+    const rawPattern = $field && $field.data("pattern") ? $field.data("pattern").toString() : "";
+    return mec_parse_booking_pattern'.esc_js($uniqueid).'(rawPattern, key);
+}
+
+function mec_validate_date_value'.esc_js($uniqueid).'($field, dateValue)
+{
+    if(!dateValue || (dateValue.toLowerCase && dateValue.toLowerCase() === "mm/dd/yyyy")) return false;
+
+    const pattern = mec_get_field_pattern'.esc_js($uniqueid).'($field, "date");
+    if(pattern)
+    {
+        try
+        {
+            return pattern.test(dateValue);
+        }
+        catch (error)
+        {
+            console.warn("MEC booking date pattern is invalid:", pattern, error);
+        }
+    }
+
+    return !isNaN(Date.parse(dateValue));
+}
+
 function mec_recaptcha_v3_submit()
 {
     mec_book_form_submit'.esc_js($uniqueid).'();
@@ -555,14 +609,14 @@ function mec_book_form_submit'.esc_js($uniqueid).'()
             if ( jQuery(this).find(".mec-booking-field-required").length) {
                 return;
             }
-        
+
             var ticket_id = jQuery(this).data("ticket-id");
             var field_id = jQuery(this).data("field-id");
-            
-            const tel_format_regex = /^[\d\s+\-()]+$/;
+
+            const tel_format_regex = mec_get_field_pattern'.esc_js($uniqueid).'(jQuery(this), "tel");
             const tel_value = jQuery("#mec_book_form'.esc_js($uniqueid).' input[name=\'book[tickets]["+ticket_id+"][reg]["+field_id+"]\']").val();
 
-            if(tel_value && !tel_format_regex.test(tel_value))
+            if(tel_value && tel_format_regex && !tel_format_regex.test(tel_value))
             {
                 valid = false;
                 jQuery(this).addClass("mec-red-notification");
@@ -587,7 +641,7 @@ function mec_book_form_submit'.esc_js($uniqueid).'()
         jQuery("#mec_book_form'.esc_js($uniqueid).' .mec-book-ticket-container .mec-book-reg-field-email, #mec_book_form'.esc_js($uniqueid).' .mec-book-ticket-container .mec-book-reg-field-mec_email").filter(":visible").each(function(i)
         {
             var email_value = \'\';
-            const email_format_regex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+            const email_format_regex = mec_get_field_pattern'.esc_js($uniqueid).'(jQuery(this), "email");
 
             if(jQuery(this).hasClass(\'mec-book-reg-field-mec_email\'))
             {
@@ -603,7 +657,7 @@ function mec_book_form_submit'.esc_js($uniqueid).'()
 
             if(!email_value) return;
 
-            if(!email_format_regex.test(email_value))
+            if(email_format_regex && !email_format_regex.test(email_value))
             {
                 valid = false;
                 jQuery(this).addClass("mec-red-notification");
@@ -633,9 +687,9 @@ function mec_book_form_submit'.esc_js($uniqueid).'()
 
             var ticket_id = jQuery(this).data("ticket-id");
             var name_value = jQuery("#mec_book_form'.esc_js($uniqueid).' input[name=\'book[tickets]["+ticket_id+"][name]\']").val();
-            const name_format_regex = /^[\p{L}\p{N}\s.]+$/u;
+            const name_format_regex = mec_get_field_pattern'.esc_js($uniqueid).'(jQuery(this), "name");
 
-            if(name_value && !name_format_regex.test(name_value))
+            if(name_value && name_format_regex && !name_format_regex.test(name_value))
             {
                 valid = false;
                 jQuery(this).addClass("mec-red-notification");
@@ -665,10 +719,10 @@ function mec_book_form_submit'.esc_js($uniqueid).'()
 
             var ticket_id = jQuery(this).data("ticket-id");
             var field_id = jQuery(this).data("field-id");
-            const text_format_regex = /^[\\p{L}\\p{N}\\s.,!?\\-\'\u0022():&#$%*@]+$/u;
+            const text_format_regex = mec_get_field_pattern'.esc_js($uniqueid).'(jQuery(this), "text");
             const text_value = jQuery("#mec_book_form'.esc_js($uniqueid).' input[name=\'book[tickets]["+ticket_id+"][reg]["+field_id+"]\']").val();
 
-            if(text_value && !text_format_regex.test(text_value))
+            if(text_value && text_format_regex && !text_format_regex.test(text_value))
             {
                 valid = false;
                 jQuery(this).addClass("mec-red-notification");
@@ -700,7 +754,7 @@ function mec_book_form_submit'.esc_js($uniqueid).'()
             var field_id = jQuery(this).data("field-id");
             const date_value = jQuery("#mec_book_form'.esc_js($uniqueid).' input[name=\'book[tickets]["+ticket_id+"][reg]["+field_id+"]\']").val();
 
-            if(date_value && date_value.toLowerCase() !== \'mm/dd/yyyy\' && isNaN(Date.parse(date_value)))
+            if(date_value && date_value.toLowerCase() !== "mm/dd/yyyy" && !mec_validate_date_value'.esc_js($uniqueid).'(jQuery(this), date_value))
             {
                 valid = false;
                 jQuery(this).addClass("mec-red-notification");
@@ -784,10 +838,10 @@ function mec_book_form_submit'.esc_js($uniqueid).'()
 
             var ticket_id = jQuery(this).data("ticket-id");
             var field_id = jQuery(this).data("field-id");
-            const text_format_regex = /^[\\p{L}\\p{N}\\s.,!?\\-\'\u0022():&#$%*@]+$/u;
+            const text_format_regex = mec_get_field_pattern'.esc_js($uniqueid).'(jQuery(this), "textarea");
             const text_value = jQuery("#mec_book_form'.esc_js($uniqueid).' textarea[name=\'book[tickets]["+ticket_id+"][reg]["+field_id+"]\']").val();
 
-            if(text_value && !text_format_regex.test(text_value))
+            if(text_value && text_format_regex && !text_format_regex.test(text_value))
             {
                 valid = false;
                 jQuery(this).addClass("mec-red-notification");
@@ -840,12 +894,12 @@ function mec_book_form_submit'.esc_js($uniqueid).'()
         jQuery("#mec_book_form'.esc_js($uniqueid).' .mec-book-bfixed-fields-container .mec-book-bfixed-field-email").filter(":visible").each(function(i)
         {
             var field_id = jQuery(this).data("field-id");
-            const email_format_regex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+            const email_format_regex = mec_get_field_pattern'.esc_js($uniqueid).'(jQuery(this), "email");
             const email_value = jQuery("#mec_book_form'.esc_js($uniqueid).' input[name=\'book[fields]["+field_id+"]\']").val();
 
             if(!email_value) return;
 
-            if(!email_format_regex.test(email_value))
+            if(email_format_regex && !email_format_regex.test(email_value))
             {
                 valid = false;
                 jQuery(this).addClass("mec-red-notification");
@@ -874,10 +928,10 @@ function mec_book_form_submit'.esc_js($uniqueid).'()
             }
 
             var field_id = jQuery(this).data("field-id");
-            const text_format_regex = /^[\\p{L}\\p{N}\\s.,!?\\-\'\u0022():&#$%*@]+$/u;
+            const text_format_regex = mec_get_field_pattern'.esc_js($uniqueid).'(jQuery(this), "text");
             const text_value = jQuery("#mec_book_form'.esc_js($uniqueid).' input[name=\'book[fields]["+field_id+"]\']").val();
 
-            if(text_value && !text_format_regex.test(text_value))
+            if(text_value && text_format_regex && !text_format_regex.test(text_value))
             {
                 valid = false;
                 jQuery(this).addClass("mec-red-notification");
@@ -908,7 +962,7 @@ function mec_book_form_submit'.esc_js($uniqueid).'()
             var field_id = jQuery(this).data("field-id");
             const date_value = jQuery("#mec_book_form'.esc_js($uniqueid).' input[name=\'book[fields]["+field_id+"]\']").val();
 
-            if(date_value && date_value.toLowerCase() !== \'mm/dd/yyyy\' && isNaN(Date.parse(date_value)))
+            if(date_value && date_value.toLowerCase() !== "mm/dd/yyyy" && !mec_validate_date_value'.esc_js($uniqueid).'(jQuery(this), date_value))
             {
                 valid = false;
                 jQuery(this).addClass("mec-red-notification");
@@ -1067,10 +1121,10 @@ function mec_book_form_submit'.esc_js($uniqueid).'()
             }
 
             var field_id = jQuery(this).data("field-id");
-            const text_format_regex = /^[\\p{L}\\p{N}\\s.,!?\\-\'\u0022():&#$%*@]+$/u;
+            const text_format_regex = mec_get_field_pattern'.esc_js($uniqueid).'(jQuery(this), "textarea");
             const text_value = jQuery("#mec_book_form'.esc_js($uniqueid).' textarea[name=\'book[fields]["+field_id+"]\']").val();
 
-            if(text_value && !text_format_regex.test(text_value))
+            if(text_value && text_format_regex && !text_format_regex.test(text_value))
             {
                 valid = false;
                 jQuery(this).addClass("mec-red-notification");
@@ -1141,8 +1195,9 @@ function mec_book_form_submit'.esc_js($uniqueid).'()
         },
         success: function(data)
         {
-            // Remove the loading Class to the button
+            // Remove the loading Class from the buttons
             jQuery("#mec_book_form'.esc_js($uniqueid).' button[type=submit]").removeClass("loading").removeAttr("disabled");
+            jQuery("#mec_book_form'.esc_js($uniqueid).' button.mec-book-form-next-button").removeClass("loading").removeAttr("disabled");
 
             if(data.success)
             {
@@ -1204,14 +1259,41 @@ function mec_book_form_submit'.esc_js($uniqueid).'()
             else
             {
                 jQuery("#mec_booking'.esc_js($uniqueid).'").removeClass("loading");
-                jQuery("#mec_booking_message'.esc_js($uniqueid).'").addClass("mec-error").html(data.message).removeClass("mec-util-hidden");
+                var $msg = jQuery("#mec_booking_message'.esc_js($uniqueid).'");
+                $msg.addClass("mec-error").html(data.message).removeClass("mec-util-hidden");
+                // Explicitly show and override inline display:none if present
+                $msg.show();
+                try { $msg.prop("style").removeProperty("display"); } catch(e){}
+
+                // Ensure the error message is visible to the user
+                try
+                {
+                    if(jQuery(".mec-single-modal").length)
+                    {
+                        jQuery(".mec-single-modal").animate({
+                            scrollTop: ($msg.offset().top - 100)
+                        }, "slow");
+                    }
+                    else
+                    {
+                        jQuery("html,body").animate({
+                            scrollTop: ($msg.offset().top - 100)
+                        }, "slow");
+                    }
+                }
+                catch(e){}
             }
         },
         error: function(jqXHR, textStatus, errorThrown)
         {
-            // Remove the loading Class to the button
-            jQuery("#mec_book_form'.esc_js($uniqueid).' button[type=submit]").removeClass("loading");
+            // Remove the loading Class from the buttons
+            jQuery("#mec_book_form'.esc_js($uniqueid).' button[type=submit]").removeClass("loading").removeAttr("disabled");
+            jQuery("#mec_book_form'.esc_js($uniqueid).' button.mec-book-form-next-button").removeClass("loading").removeAttr("disabled");
             jQuery("#mec_booking'.esc_js($uniqueid).'").removeClass("loading");
+            // Show a generic error if response is not JSON
+            var $msg = jQuery("#mec_booking_message'.esc_js($uniqueid).'");
+            $msg.addClass("mec-error").html(errorThrown || textStatus || "Error").removeClass("mec-util-hidden").show();
+            try { $msg.prop("style").removeProperty("display"); } catch(e){}
         }
     });
 }

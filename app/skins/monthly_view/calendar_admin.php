@@ -88,30 +88,7 @@ elseif($week_start == 5) // Friday
                     echo '<div id="mec_attendees_'.$event->ID.'_'.$occurrence.'_table" class="mec-attendees-table lity-hide">'.$this->main->get_attendees_table($attendees, $event->ID, $occurrence, false).'</div>';
                     echo '</div>';
 
-                    $this->getFactory()->params('footer', function() use($event, $occurrence)
-                    {
-                        ?>
-                        <script>
-                        jQuery(document).ready(function()
-                        {
-                            setTimeout(() => {
-                                jQuery('#mec_attendees_<?php echo $event->ID.'_'.$occurrence; ?>_count').on('click', function(e)
-                                {
-                                    e.preventDefault();
-
-                                    // Open Lightbox
-                                    lity('#mec_attendees_<?php echo $event->ID.'_'.$occurrence; ?>_table');
-                                });
-                            }, 1000);
-
-                            jQuery(document).on('lity:close', function(event, instance)
-                            {
-                                jQuery('body').css('overflow', 'auto');
-                            });
-                        });
-                        </script>
-                        <?php
-                    });
+                    // Attendees click handler is now delegated in assets/js/admin-calendar.js
                 }
 
                 echo '</dt>';

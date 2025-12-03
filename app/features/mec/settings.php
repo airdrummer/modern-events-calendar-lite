@@ -698,6 +698,24 @@ $shortcodes = get_posts(array(
                                 </div>
                             </div>
 
+                            <div class="mec-form-row mec-archive-events-method-row <?php echo (isset($settings['default_skin_archive']) && $settings['default_skin_archive'] === 'custom') ? 'mec-util-hidden' : ''; ?>">
+                                <label class="mec-col-3" for="mec_settings_archive_events_method"><?php esc_html_e('Archive Events Method', 'modern-events-calendar-lite'); ?></label>
+                                <div class="mec-col-9">
+                                    <select id="mec_settings_archive_events_method" name="mec[settings][archive_events_method]">
+                                        <option value="3" <?php if(!isset($settings['archive_events_method']) || (isset($settings['archive_events_method']) && (string)$settings['archive_events_method'] === '3')) echo 'selected="selected"'; ?>><?php esc_html_e('All Events', 'modern-events-calendar-lite'); ?></option>
+                                        <option value="1" <?php if(isset($settings['archive_events_method']) && (string)$settings['archive_events_method'] === '1') echo 'selected="selected"'; ?>><?php esc_html_e('Upcoming Events', 'modern-events-calendar-lite'); ?></option>
+                                        <option value="2" <?php if(isset($settings['archive_events_method']) && (string)$settings['archive_events_method'] === '2') echo 'selected="selected"'; ?>><?php esc_html_e('Expired Events', 'modern-events-calendar-lite'); ?></option>
+                                    </select>
+                                    <span class="mec-tooltip">
+                                        <div class="box left">
+                                            <h5 class="title"><?php esc_html_e('Archive Events Method', 'modern-events-calendar-lite'); ?></h5>
+                                            <div class="content"><p><?php esc_attr_e('Which events should appear on the archive page?', 'modern-events-calendar-lite'); ?></p></div>
+                                        </div>
+                                        <i title="" class="dashicons-before dashicons-editor-help"></i>
+                                    </span>
+                                </div>
+                            </div>
+
                             <div class="mec-form-row">
                                 <label class="mec-col-3" for="mec_settings_default_skin_category"><?php esc_html_e('Category Page Skin', 'modern-events-calendar-lite'); ?></label>
                                 <div class="mec-col-9 tooltip-move-up">
@@ -1403,6 +1421,8 @@ function mec_archive_skin_style_changed(archive_value)
 {
     jQuery(".mec-archive-skins").hide();
     jQuery(".mec-archive-skins.mec-archive-"+archive_value+"-skins").show();
+    if(archive_value === "custom") jQuery(".mec-archive-events-method-row").hide();
+    else jQuery(".mec-archive-events-method-row").show();
 }
 mec_archive_skin_style_changed(archive_value);
 

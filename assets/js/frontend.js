@@ -416,12 +416,14 @@ var mec_search_callbacks = [];
             var $speaker = $("#mec_sf_speaker_" + settings.id);
             var $tag = $("#mec_sf_tag_" + settings.id);
             var $label = $("#mec_sf_label_" + settings.id);
+            var isEnhanced = $wrapper.hasClass('mec-dropdown-enhanced');
 
             if ($category.length && $category.prop('tagName') && $category.prop('tagName').toLowerCase() === 'div') {
                 $category.find('select').each(function () {
                     $(this).val(null).trigger('change');
                 });
-                $category.find('select').select2();
+                if(isEnhanced && jQuery().select2) $category.find('select').select2();
+                else if(jQuery().niceSelect) $category.find('select').niceSelect('update');
             }
             else if ($category.length && $category.prop('tagName') && $category.prop('tagName').toLowerCase() === 'ul') {
                 $category.find($('input[type=checkbox]:checked')).each(function () {
@@ -431,7 +433,10 @@ var mec_search_callbacks = [];
             else if ($category.length)
             {
                 $category.val(null);
-                if ($category.prop('tagName') && $category.prop('tagName').toLowerCase() === 'select') $category.select2();
+                if ($category.prop('tagName') && $category.prop('tagName').toLowerCase() === 'select') {
+                    if(isEnhanced && jQuery().select2) $category.select2();
+                    else if(jQuery().niceSelect) $category.niceSelect('update');
+                }
             }
 
             if ($location.length && $location.prop('tagName') && $location.prop('tagName').toLowerCase() === 'ul') {
@@ -442,7 +447,10 @@ var mec_search_callbacks = [];
             else if ($location.length)
             {
                 $location.val(null);
-                if ($location.prop('tagName') && $location.prop('tagName').toLowerCase() === 'select') $location.select2();
+                if ($location.prop('tagName') && $location.prop('tagName').toLowerCase() === 'select') {
+                    if(isEnhanced && jQuery().select2) $location.select2();
+                    else if(jQuery().niceSelect) $location.niceSelect('update');
+                }
             }
 
             if ($organizer.length && $organizer.prop('tagName') && $organizer.prop('tagName').toLowerCase() === 'ul') {
@@ -453,7 +461,10 @@ var mec_search_callbacks = [];
             else if ($organizer.length)
             {
                 $organizer.val(null);
-                if ($organizer.prop('tagName') && $organizer.prop('tagName').toLowerCase() === 'select') $organizer.select2();
+                if ($organizer.prop('tagName') && $organizer.prop('tagName').toLowerCase() === 'select') {
+                    if(isEnhanced && jQuery().select2) $organizer.select2();
+                    else if(jQuery().niceSelect) $organizer.niceSelect('update');
+                }
             }
 
             if ($speaker.length && $speaker.prop('tagName') && $speaker.prop('tagName').toLowerCase() === 'ul') {
@@ -464,7 +475,10 @@ var mec_search_callbacks = [];
             else if ($speaker.length)
             {
                 $speaker.val(null);
-                if ($speaker.prop('tagName') && $speaker.prop('tagName').toLowerCase() === 'select') $speaker.select2();
+                if ($speaker.prop('tagName') && $speaker.prop('tagName').toLowerCase() === 'select') {
+                    if(isEnhanced && jQuery().select2) $speaker.select2();
+                    else if(jQuery().niceSelect) $speaker.niceSelect('update');
+                }
             }
 
             if ($label.length && $label.prop('tagName') && $label.prop('tagName').toLowerCase() === 'ul') {
@@ -475,7 +489,10 @@ var mec_search_callbacks = [];
             else if ($label.length)
             {
                 $label.val(null);
-                if ($label.prop('tagName') && $label.prop('tagName').toLowerCase() === 'select') $label.select2();
+                if ($label.prop('tagName') && $label.prop('tagName').toLowerCase() === 'select') {
+                    if(isEnhanced && jQuery().select2) $label.select2();
+                    else if(jQuery().niceSelect) $label.niceSelect('update');
+                }
             }
 
             if ($tag.length) $tag.val(null);
@@ -501,11 +518,9 @@ var mec_search_callbacks = [];
                 var $mapField = $("#mec_sf_" + field + "_" + settings.id);
                 if($mapField.length) {
                     $mapField.val(null);
-                    if($mapField.is('select') && jQuery().niceSelect) {
-                        jQuery("#mec_sf_" + field + "_" + settings.id).niceSelect('update');
-                    }
-                    if($mapField.is('select') && jQuery().select2) {
-                        $mapField.select2();
+                    if($mapField.is('select')) {
+                        if(isEnhanced && jQuery().select2) $mapField.select2();
+                        else if(jQuery().niceSelect) jQuery("#mec_sf_" + field + "_" + settings.id).niceSelect('update');
                     }
                 }
             });
@@ -4680,29 +4695,25 @@ jQuery(window).on('load', function()
 (function ($) {
     $.fn.mecCountDown = function (options, callBack) {
         // Default Options
-        var settings = $.extend(
-		{
+        var settings = $.extend({
             // These are the defaults.
             date: null,
-            format: null,
-            interval: 1000
+            format: null
         }, options);
 
         var callback = callBack;
         var selector = $(this);
 
         startCountdown();
-        var intervalID = setInterval(startCountdown, settings.interval);
+        var interval = setInterval(startCountdown, 1000);
 
-        function startCountdown() 
-        {
+        function startCountdown() {
             var eventDate = Date.parse(settings.date) / 1000;
             var currentDate = Math.floor($.now() / 1000);
 
-            if (eventDate <= currentDate) 
-            {
+            if (eventDate <= currentDate) {
                 callback.call(this);
-                clearInterval(intervalID);
+                clearInterval(interval);
             }
 
             var seconds = eventDate - currentDate;
@@ -4716,18 +4727,17 @@ jQuery(window).on('load', function()
             var minutes = Math.floor(seconds / 60);
             seconds -= minutes * 60;
 
-            selector.find(".mec-timeRefDays").text((days == 1 
-            					? mecdata.day
-            					: mecdata.days));
-            selector.find(".mec-timeRefHours").text((hours == 1
-            					? mecdata.hour
-            					: mecdata.hours));
-			selector.find(".mec-timeRefMinutes").text((minutes == 1
-            					? mecdata.minute
-            					: mecdata.minutes));
-            selector.find(".mec-timeRefSeconds").text((seconds == 1
-								? mecdata.second
-								: mecdata.seconds));
+            if (days == 1) selector.find(".mec-timeRefDays").text(mecdata.day);
+            else selector.find(".mec-timeRefDays").text(mecdata.days);
+
+            if (hours == 1) selector.find(".mec-timeRefHours").text(mecdata.hour);
+            else selector.find(".mec-timeRefHours").text(mecdata.hours);
+
+            if (minutes == 1) selector.find(".mec-timeRefMinutes").text(mecdata.minute);
+            else selector.find(".mec-timeRefMinutes").text(mecdata.minutes);
+
+            if (seconds == 1) selector.find(".mec-timeRefSeconds").text(mecdata.second);
+            else selector.find(".mec-timeRefSeconds").text(mecdata.seconds);
 
             if (settings.format === "on") {
                 days = (String(days).length >= 2) ? days : "0" + days;
@@ -4742,7 +4752,7 @@ jQuery(window).on('load', function()
                 selector.find(".mec-minutes").text(minutes);
                 selector.find(".mec-seconds").text(seconds);
             } else {
-                clearInterval(intervalID);
+                clearInterval(interval);
             }
         }
     };

@@ -152,6 +152,17 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                         <i title="" class="dashicons-before dashicons-editor-help"></i>
                     </span>
                 </div>
+                <div class="mec-form-row mec-skin-list-date-format-container <?php if(isset($sk_options_list['style']) and strpos($sk_options_list['style'], 'liquid') === false) echo 'mec-util-hidden'; ?>" id="mec_skin_list_date_format_liquid-large_container">
+                    <label class="mec-col-4" for="mec_skin_list_liquid_large_date_format1"><?php esc_html_e('Date Formats', 'modern-events-calendar-lite'); ?></label>
+                    <input type="text" class="mec-col-4" name="mec[sk-options][list][liquid_large_date_format1]" id="mec_skin_list_liquid_large_date_format1" value="<?php echo ((isset($sk_options_list['liquid_large_date_format1']) and trim($sk_options_list['liquid_large_date_format1']) != '') ? $sk_options_list['liquid_large_date_format1'] : 'F d'); ?>" />
+                    <span class="mec-tooltip">
+                        <div class="box top">
+                            <h5 class="title"><?php esc_html_e('Date Formats', 'modern-events-calendar-lite'); ?></h5>
+                            <div class="content"><p><?php esc_attr_e('Default value is "F d"', 'modern-events-calendar-lite'); ?><a href="https://webnus.net/dox/modern-events-calendar/list-view-skin/" target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
+                        </div>
+                        <i title="" class="dashicons-before dashicons-editor-help"></i>
+                    </span>
+                </div>
                 <div class="mec-form-row mec-skin-list-date-format-container <?php if(isset($sk_options_list['style']) and strpos($sk_options_list['style'], 'liquid') === false) echo 'mec-util-hidden'; ?>" id="mec_skin_list_date_format_liquid-medium_container">
                     <label class="mec-col-4" for="mec_skin_list_liquid_medium_date_format1"><?php esc_html_e('Date Formats', 'modern-events-calendar-lite'); ?></label>
                     <input type="text" class="mec-col-4" name="mec[sk-options][list][liquid_medium_date_format1]" id="mec_skin_list_liquid_medium_date_format1" value="<?php echo ((isset($sk_options_list['liquid_medium_date_format1']) and trim($sk_options_list['liquid_medium_date_format1']) != '') ? $sk_options_list['liquid_medium_date_format1'] : 'F d'); ?>" />
@@ -513,6 +524,17 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                         <div class="box top">
                             <h5 class="title"><?php esc_html_e('Date Formats', 'modern-events-calendar-lite'); ?></h5>
                             <div class="content"><p><?php esc_attr_e('Default value is "d F Y"', 'modern-events-calendar-lite'); ?><a href="https://webnus.net/dox/modern-events-calendar/grid-view-skin/" target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
+                        </div>
+                        <i title="" class="dashicons-before dashicons-editor-help"></i>
+                    </span>
+                </div>
+                <div class="mec-form-row mec-skin-grid-date-format-container <?php if(isset($sk_options_grid['style']) and strpos($sk_options_grid['style'], 'liquid') === false) echo 'mec-util-hidden'; ?>" id="mec_skin_grid_date_format_liquid-large_container">
+                    <label class="mec-col-4" for="mec_skin_grid_liquid_large_date_format1"><?php esc_html_e('Date Formats', 'modern-events-calendar-lite'); ?></label>
+                    <input type="text" class="mec-col-4" name="mec[sk-options][grid][liquid_large_date_format1]" id="mec_skin_grid_liquid_large_date_format1" value="<?php echo ((isset($sk_options_grid['liquid_large_date_format1']) and trim($sk_options_grid['liquid_large_date_format1']) != '') ? $sk_options_grid['liquid_large_date_format1'] : 'F d'); ?>" />
+                    <span class="mec-tooltip">
+                        <div class="box top">
+                            <h5 class="title"><?php esc_html_e('Date Formats', 'modern-events-calendar-lite'); ?></h5>
+                            <div class="content"><p><?php esc_attr_e('Default value is "F d"', 'modern-events-calendar-lite'); ?><a href="https://webnus.net/dox/modern-events-calendar/grid-view-skin/" target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
                         </div>
                         <i title="" class="dashicons-before dashicons-editor-help"></i>
                     </span>

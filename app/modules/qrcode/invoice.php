@@ -14,6 +14,9 @@ $settings = $this->get_settings();
 if(isset($settings['qrcode_module_status']) and !$settings['qrcode_module_status']) return;
 
 $url = get_post_permalink($event->ID);
+if(!is_string($url)) $url = '';
+if(!trim($url)) { echo ''; return; }
+
 $file_name = 'qr_'.md5($url).'.png';
 
 $upload_dir = wp_upload_dir();
@@ -31,5 +34,6 @@ if(!$file->exists($file_path))
     $QRcode = $this->getQRcode();
     $QRcode->png($url, $file_path, 'L', 4, 2);
 }
-
-echo esc_html($file_path);
+// Ensure file actually exists before returning path
+if(is_readable($file_path)) echo esc_html($file_path);
+else echo '';

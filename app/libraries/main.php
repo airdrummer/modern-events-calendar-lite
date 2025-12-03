@@ -3526,11 +3526,13 @@ class MEC_main extends MEC_base
         do_action('mec_book_invoice_pdf_before_qr_code', $pdf, $book_id, $transaction);
 
         $image = $this->module('qrcode.invoice', ['event' => $event]);
-        if (trim($image))
+        if (is_string($image)) $image = trim($image);
+        if ($image && @file_exists($image))
         {
             // QR Code
             $pdf->SetX(-50);
-            $pdf->Image($image);
+            // Avoid hard crash if library cannot read image
+            try { $pdf->Image($image); } catch (Exception $e) { /* Skip QR if unreadable */ }
             $pdf->Ln();
         }
 
@@ -4655,6 +4657,10 @@ class MEC_main extends MEC_base
             <div>
                 <input type="hidden" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][type]" value="text" />
                 <input type="text" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][label]" placeholder="' . esc_attr__('Insert a label for this field', 'modern-events-calendar-lite') . '" value="' . (isset($values['label']) ? stripslashes($values['label']) : '') . '" />
+                <div class="mec-field-regex-wrapper">
+                    <input type="text" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][pattern]" placeholder="' . esc_attr__('Custom validation regex (optional)', 'modern-events-calendar-lite') . '" value="' . (isset($values['pattern']) ? esc_attr($values['pattern']) : '') . '" />
+                    <p class="description">' . esc_html__('Enter a regex without delimiters to override the default validation for this field.', 'modern-events-calendar-lite') . '</p>
+                </div>
                 ' . ($prefix == 'reg' ? $this->get_wp_user_fields_dropdown('mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][mapping]', ($values['mapping'] ?? '')) : '') . '
             </div>
         </li>';
@@ -4686,6 +4692,10 @@ class MEC_main extends MEC_base
              <div>
                  <input type="hidden" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][type]" value="name" />
                  <input type="text" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][label]" placeholder="' . esc_attr__('Insert a label for this field', 'modern-events-calendar-lite') . '" value="' . (isset($values['label']) ? stripslashes($values['label']) : '') . '" />
+                 <div class="mec-field-regex-wrapper">
+                     <input type="text" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][pattern]" placeholder="' . esc_attr__('Custom validation regex (optional)', 'modern-events-calendar-lite') . '" value="' . (isset($values['pattern']) ? esc_attr($values['pattern']) : '') . '" />
+                     <p class="description">' . esc_html__('Use a regex without delimiters to customize attendee name validation. Invalid patterns are ignored.', 'modern-events-calendar-lite') . '</p>
+                 </div>
              </div>
          </li>';
     }
@@ -4716,6 +4726,10 @@ class MEC_main extends MEC_base
              <div>
                  <input type="hidden" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][type]" value="mec_email" />
                  <input type="text" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][label]" placeholder="' . esc_attr__('Insert a label for this field', 'modern-events-calendar-lite') . '" value="' . (isset($values['label']) ? stripslashes($values['label']) : '') . '" />
+                 <div class="mec-field-regex-wrapper">
+                     <input type="text" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][pattern]" placeholder="' . esc_attr__('Custom validation regex (optional)', 'modern-events-calendar-lite') . '" value="' . (isset($values['pattern']) ? esc_attr($values['pattern']) : '') . '" />
+                     <p class="description">' . esc_html__('Provide a regex without delimiters to override the default email validation. Invalid patterns will be skipped.', 'modern-events-calendar-lite') . '</p>
+                 </div>
              </div>
          </li>';
     }
@@ -4747,6 +4761,10 @@ class MEC_main extends MEC_base
             <div>
                 <input type="hidden" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][type]" value="email" />
                 <input type="text" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][label]" placeholder="' . esc_attr__('Insert a label for this field', 'modern-events-calendar-lite') . '" value="' . (isset($values['label']) ? stripslashes($values['label']) : '') . '" />
+                <div class="mec-field-regex-wrapper">
+                    <input type="text" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][pattern]" placeholder="' . esc_attr__('Custom validation regex (optional)', 'modern-events-calendar-lite') . '" value="' . (isset($values['pattern']) ? esc_attr($values['pattern']) : '') . '" />
+                    <p class="description">' . esc_html__('Override the default email validation with a regex (no delimiters). MEC falls back to defaults if the pattern is invalid.', 'modern-events-calendar-lite') . '</p>
+                </div>
                 ' . ($prefix == 'reg' ? $this->get_wp_user_fields_dropdown('mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][mapping]', ($values['mapping'] ?? '')) : '') . '
             </div>
         </li>';
@@ -4842,6 +4860,10 @@ class MEC_main extends MEC_base
             <div>
                 <input type="hidden" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][type]" value="date" />
                 <input type="text" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][label]" placeholder="' . esc_attr__('Insert a label for this field', 'modern-events-calendar-lite') . '" value="' . (isset($values['label']) ? stripslashes($values['label']) : '') . '" />
+                <div class="mec-field-regex-wrapper">
+                    <input type="text" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][pattern]" placeholder="' . esc_attr__('Custom validation regex (optional)', 'modern-events-calendar-lite') . '" value="' . (isset($values['pattern']) ? esc_attr($values['pattern']) : '') . '" />
+                    <p class="description">' . esc_html__('Enter a regex without delimiters to control accepted date formats. Defaults are used if invalid.', 'modern-events-calendar-lite') . '</p>
+                </div>
                 ' . ($prefix == 'reg' ? $this->get_wp_user_fields_dropdown('mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][mapping]', ($values['mapping'] ?? '')) : '') . '
             </div>
         </li>';
@@ -4874,6 +4896,10 @@ class MEC_main extends MEC_base
             <div>
                 <input type="hidden" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][type]" value="tel" />
                 <input type="text" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][label]" placeholder="' . esc_attr__('Insert a label for this field', 'modern-events-calendar-lite') . '" value="' . (isset($values['label']) ? stripslashes($values['label']) : '') . '" />
+                <div class="mec-field-regex-wrapper">
+                    <input type="text" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][pattern]" placeholder="' . esc_attr__('Custom validation regex (optional)', 'modern-events-calendar-lite') . '" value="' . (isset($values['pattern']) ? esc_attr($values['pattern']) : '') . '" />
+                    <p class="description">' . esc_html__('Provide a regex without delimiters to customize phone validation. Invalid patterns are ignored.', 'modern-events-calendar-lite') . '</p>
+                </div>
                 ' . ($prefix == 'reg' ? $this->get_wp_user_fields_dropdown('mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][mapping]', ($values['mapping'] ?? '')) : '') . '
             </div>
         </li>';
@@ -4913,6 +4939,10 @@ class MEC_main extends MEC_base
             <div>
                 <input type="hidden" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][type]" value="textarea" />
                 <input type="text" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][label]" placeholder="' . esc_attr__('Insert a label for this field', 'modern-events-calendar-lite') . '" value="' . (isset($values['label']) ? stripslashes($values['label']) : '') . '" />
+                <div class="mec-field-regex-wrapper">
+                    <input type="text" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][pattern]" placeholder="' . esc_attr__('Custom validation regex (optional)', 'modern-events-calendar-lite') . '" value="' . (isset($values['pattern']) ? esc_attr($values['pattern']) : '') . '" />
+                    <p class="description">' . esc_html__('Add a regex without delimiters to validate textarea content. Invalid patterns will be ignored.', 'modern-events-calendar-lite') . '</p>
+                </div>
                 ' . ($prefix == 'reg' ? $this->get_wp_user_fields_dropdown('mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][mapping]', ($values['mapping'] ?? '')) : '') . '
             </div>
         </li>';
@@ -7930,10 +7960,18 @@ class MEC_main extends MEC_base
         ]);
 
         $status = wp_remote_retrieve_response_code($response);
-        if ($status !== 200) return '';
+        if ($status !== 200)
+        {
+            // Token refresh failed. Clear stored refresh token to allow re-authorization in UI
+            delete_option('mec_constantcontact_refresh_token');
+            return '';
+        }
 
         $JSON = wp_remote_retrieve_body($response);
         $results = json_decode($JSON);
+
+        // Constant Contact rotates refresh tokens; persist the new one if provided
+        if (!empty($results->refresh_token)) update_option('mec_constantcontact_refresh_token', $results->refresh_token, 'no');
 
         return $results->access_token ?? '';
     }
@@ -9605,8 +9643,10 @@ class MEC_main extends MEC_base
      */
     public function get_flags($event, $date = null)
     {
+        $event_obj = null;
         if (is_object($event))
         {
+            $event_obj = $event;
             $event_id = $event->data->ID;
 
             if (is_array($date) and isset($date['start']) and isset($date['start']['timestamp'])) $timestamp = $date['start']['timestamp'];
@@ -9620,6 +9660,10 @@ class MEC_main extends MEC_base
         }
 
         if ((!isset($event_id) or !trim($event_id)) or !trim($timestamp)) return false;
+
+        $occurrence_date = null;
+        if (is_array($date) && isset($date['start'])) $occurrence_date = $date;
+        else if ($event_obj && isset($event_obj->date)) $occurrence_date = $event_obj->date;
 
         // MEC Settings
         $settings = $this->get_settings();
@@ -9636,9 +9680,26 @@ class MEC_main extends MEC_base
 
         // MEC Cache
         $cache = $this->getCache();
+        $cache_key = 'flag-' . $event_id . ':' . $timestamp;
+
+        $occurrence_expired = false;
+        if (is_array($occurrence_date) && isset($occurrence_date['end'], $occurrence_date['end']['timestamp']) && $occurrence_date['end']['timestamp'])
+        {
+            $occurrence_expired = ($occurrence_date['end']['timestamp'] < current_time('timestamp'));
+        }
+        else if ($event_obj)
+        {
+            $occurrence_expired = $this->is_expired($event_obj);
+        }
+
+        if ($occurrence_expired)
+        {
+            $cache->set($cache_key, false);
+            return false;
+        }
 
         // Return from Cache
-        if ($cache->has('flag-' . $event_id . ':' . $timestamp)) return $cache->get('flag-' . $event_id . ':' . $timestamp);
+        if ($cache->has($cache_key)) return $cache->get($cache_key);
 
         $total_event_seats = 0;
         foreach ($tickets as $ticket_id => $ticket)
@@ -9683,7 +9744,7 @@ class MEC_main extends MEC_base
         if ($sale_stopped)
         {
             $flag = str_replace('%%title%%', esc_html__('Sale has ended', 'modern-events-calendar-lite'), $output_tag) . '<input type="hidden" value="%%soldout%%"/>';
-            $cache->set('flag-' . $event_id . ':' . $timestamp, $flag);
+            $cache->set($cache_key, $flag);
 
             return $flag;
         }
@@ -9691,7 +9752,7 @@ class MEC_main extends MEC_base
         else if ($remained_tickets === 0)
         {
             $flag = str_replace('%%title%%', esc_html__('Sold Out', 'modern-events-calendar-lite'), $output_tag) . '<input type="hidden" value="%%soldout%%"/>';
-            $cache->set('flag-' . $event_id . ':' . $timestamp, $flag);
+            $cache->set($cache_key, $flag);
 
             return $flag;
         }
@@ -9728,12 +9789,12 @@ class MEC_main extends MEC_base
         if (($total_bookings_limit > 0) and ($remained_tickets > 0 and $remained_tickets <= (($percentage * $total_bookings_limit) / 100)))
         {
             $flag = str_replace('%%title%%', esc_html__('Last Few Tickets', 'modern-events-calendar-lite'), $output_tag);
-            $cache->set('flag-' . $event_id . ':' . $timestamp, $flag);
+            $cache->set($cache_key, $flag);
 
             return $flag;
         }
 
-        $cache->set('flag-' . $event_id . ':' . $timestamp, false);
+        $cache->set($cache_key, false);
         return false;
     }
 

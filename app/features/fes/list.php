@@ -19,6 +19,10 @@ $tax = [];
 // Category
 $cat = $_GET['mec_cat'] ?? '';
 
+// Expired filter
+$expired_filter = $_GET['mec-expired'] ?? 'active';
+$expired_filter = ($expired_filter === 'expired') ? 'expired' : 'active';
+
 if ($cat)
 {
     $tax[] = [
@@ -40,6 +44,20 @@ $args = [
 
 // Apply Author Query
 if (!current_user_can('edit_others_posts')) $args['author'] = get_current_user_id();
+
+// Expired/Active filter handling
+$expired_ids = [];
+$events_feature = MEC::getInstance('app.features.events', 'MEC_feature_events');
+if ($events_feature && method_exists($events_feature, 'get_expired_event_ids')) $expired_ids = $events_feature->get_expired_event_ids();
+
+if ($expired_filter === 'expired')
+{
+    $args['post__in'] = count($expired_ids) ? $expired_ids : [0];
+}
+else if (!empty($expired_ids))
+{
+    $args['post__not_in'] = $expired_ids;
+}
 
 // The Query
 $query = new WP_Query($args);
@@ -113,12 +131,16 @@ $this->factory->params('footer', $javascript);
     <div class="mec-fes-list-top-actions">
         <a href="<?php echo esc_url($this->link_add_event()); ?>"><?php echo esc_html__('Add new', 'modern-events-calendar-lite'); ?></a>
         <form method="get" class="mec-form-row">
-            <input class="mec-col-5" title="<?php esc_attr_e('Search Query', 'modern-events-calendar-lite'); ?>" type="search" name="mec_s" value="<?php echo esc_attr($s); ?>" placeholder="<?php esc_attr_e('Search Query', 'modern-events-calendar-lite'); ?>">
-            <select class="mec-col-5" name="mec_cat" title="<?php esc_attr_e('Event Category', 'modern-events-calendar-lite'); ?>">
+            <input class="mec-col-4" title="<?php esc_attr_e('Search Query', 'modern-events-calendar-lite'); ?>" type="search" name="mec_s" value="<?php echo esc_attr($s); ?>" placeholder="<?php esc_attr_e('Search Query', 'modern-events-calendar-lite'); ?>">
+            <select class="mec-col-3" name="mec_cat" title="<?php esc_attr_e('Event Category', 'modern-events-calendar-lite'); ?>">
                 <option value=""><?php esc_html_e('All Categories', 'modern-events-calendar-lite'); ?></option>
                 <?php foreach ($categories as $category): ?>
                     <option value="<?php echo $category->term_id; ?>" <?php echo $category->term_id == $cat ? 'selected' : ''; ?>><?php echo $category->name; ?></option>
                 <?php endforeach; ?>
+            </select>
+            <select class="mec-col-3" name="mec-expired" title="<?php esc_attr_e('Event Status', 'modern-events-calendar-lite'); ?>">
+                <option value="active" <?php selected('active', $expired_filter); ?>><?php esc_html_e('Active', 'modern-events-calendar-lite'); ?></option>
+                <option value="expired" <?php selected('expired', $expired_filter); ?>><?php esc_html_e('Expired', 'modern-events-calendar-lite'); ?></option>
             </select>
             <button class="mec-col-2 button" type="submit"><?php esc_html_e('Filter', 'modern-events-calendar-lite'); ?></button>
         </form>

@@ -451,6 +451,8 @@ $javascript .='
 				reset()
 			})
 			function reset() {
+				var $wrapper = jQuery("#mec_search_form_'. esc_attr($this->id) .'");
+				var isEnhanced = $wrapper.hasClass("mec-dropdown-enhanced");
 				var $event_cost_min = $("#mec_sf_event_cost_min_'. esc_attr($this->id).'");
 				var $event_cost_max = $("#mec_sf_event_cost_max_'. esc_attr($this->id).'");
 				var $time_start = $("#mec_sf_timepicker_start_'. esc_attr($this->id).'");
@@ -476,11 +478,13 @@ $javascript .='
 					$category.find("select").each(function () {
 						jQuery(this).val(null).trigger("change");
 					});
-					$category.find("select").select2();
+					if(isEnhanced && jQuery().select2) $category.find("select").select2();
+					else if(jQuery().niceSelect) $category.find("select").niceSelect("update");
 				} else {
 					if ($category.length) {
 						$category.val(null);
-						$category.niceSelect("update")
+						if(isEnhanced && jQuery().select2) $category.select2();
+						else if(jQuery().niceSelect) $category.niceSelect("update")
 					}
 				}
 

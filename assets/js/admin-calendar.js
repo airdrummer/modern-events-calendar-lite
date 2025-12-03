@@ -121,3 +121,28 @@
         }
     };
 }(jQuery));
+
+// Attach delegated handlers for admin calendar attendees
+(function($){
+    // Ensure handler is attached once
+    $(document).off('click.mecAdminAttendees', '.mec-admin-calendar-attendees-count');
+
+    // Open attendees lightbox on count click (works for dynamically loaded months)
+    $(document).on('click.mecAdminAttendees', '.mec-admin-calendar-attendees-count', function(e){
+        e.preventDefault();
+
+        var id = $(this).attr('id');
+        if(!id) return;
+
+        var target = '#' + id.replace('_count', '_table');
+        if($(target).length){
+            // Open Lightbox
+            if(typeof lity === 'function') lity(target);
+        }
+    });
+
+    // Restore body scroll after closing lity
+    $(document).off('lity:close.mecAdminAttendees').on('lity:close.mecAdminAttendees', function(){
+        $('body').css('overflow', 'auto');
+    });
+})(jQuery);

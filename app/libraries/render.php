@@ -395,6 +395,27 @@ class MEC_render extends MEC_base
             }
         }
 
+        // Apply archive events method when archive skin is not custom
+        $archive_skin = $this->settings['default_skin_archive'] ?? '';
+        if ($archive_skin !== 'custom')
+        {
+            $archive_events_method = isset($this->settings['archive_events_method']) ? (string) $this->settings['archive_events_method'] : '3';
+            if ($archive_events_method === '2') $atts['show_only_past_events'] = 1; // Expired only
+            else if ($archive_events_method === '3') // Include past + future
+            {
+                $atts['show_past_events'] = 1;
+                $atts['sk-options'][$archive_skin]['start_date_type'] = 'start_current_month';
+            }
+            else
+            {
+                // Upcoming: ensure past not included explicitly
+                unset($atts['show_only_past_events']);
+
+                // Avoid forcing include past
+                $atts['show_past_events'] = 0;
+            }
+        }
+
         $monthly_skin = (isset($this->settings['monthly_view_archive_skin']) and trim($this->settings['monthly_view_archive_skin']) != '') ? $this->settings['monthly_view_archive_skin'] : 'clean';
         $list_skin = (isset($this->settings['list_archive_skin']) and trim($this->settings['list_archive_skin']) != '') ? $this->settings['list_archive_skin'] : 'standard';
         $grid_skin = (isset($this->settings['grid_archive_skin']) and trim($this->settings['grid_archive_skin']) != '') ? $this->settings['grid_archive_skin'] : 'classic';
@@ -405,15 +426,15 @@ class MEC_render extends MEC_base
             return $this->vdefaultfull($atts);
         }
 
-        if ($this->settings['default_skin_archive'] == 'monthly_view') $content = $this->vmonth(array_merge($atts, ['sk-options' => ['monthly_view' => ['style' => $monthly_skin]]]));
+        if ($this->settings['default_skin_archive'] == 'monthly_view') $content = $this->vmonth(array_merge(['sk-options' => ['monthly_view' => ['style' => $monthly_skin]]], $atts));
         else if ($this->settings['default_skin_archive'] == 'full_calendar') $content = $this->vdefaultfull($atts);
         else if ($this->settings['default_skin_archive'] == 'yearly_view') $content = $this->vyear($atts);
         else if ($this->settings['default_skin_archive'] == 'weekly_view') $content = $this->vweek($atts);
         else if ($this->settings['default_skin_archive'] == 'daily_view') $content = $this->vday($atts);
-        else if ($this->settings['default_skin_archive'] == 'timetable') $content = $this->vtimetable(array_merge($atts, ['sk-options' => ['timetable' => ['style' => $timetable_skin]]]));
+        else if ($this->settings['default_skin_archive'] == 'timetable') $content = $this->vtimetable(array_merge(['sk-options' => ['timetable' => ['style' => $timetable_skin]]], $atts));
         else if ($this->settings['default_skin_archive'] == 'masonry') $content = $this->vmasonry($atts);
-        else if ($this->settings['default_skin_archive'] == 'list') $content = $this->vlist(array_merge($atts, ['sk-options' => ['list' => ['style' => $list_skin]]]));
-        else if ($this->settings['default_skin_archive'] == 'grid') $content = $this->vgrid(array_merge($atts, ['sk-options' => ['grid' => ['style' => $grid_skin]]]));
+        else if ($this->settings['default_skin_archive'] == 'list') $content = $this->vlist(array_merge(['sk-options' => ['list' => ['style' => $list_skin]]], $atts));
+        else if ($this->settings['default_skin_archive'] == 'grid') $content = $this->vgrid(array_merge(['sk-options' => ['grid' => ['style' => $grid_skin]]], $atts));
         else if ($this->settings['default_skin_archive'] == 'agenda') $content = $this->vagenda($atts);
         else if ($this->settings['default_skin_archive'] == 'map') $content = $this->vmap($atts);
         else if ($this->settings['default_skin_archive'] == 'general_calendar') $content = $this->vgeneral_calendar($atts);
@@ -1859,8 +1880,12 @@ class MEC_render extends MEC_base
                 }
                 else
                 {
-                    $markers[$key]['event_ids'][] = $event->data->ID;
-                    $markers[$key]['lightbox'] .= $this->main->get_marker_lightbox($event, $date_format, $skin_style);
+                    // Only add event if it's not already added to this marker
+                    if (!in_array($event->data->ID, $markers[$key]['event_ids']))
+                    {
+                        $markers[$key]['event_ids'][] = $event->data->ID;
+                        $markers[$key]['lightbox'] .= $this->main->get_marker_lightbox($event, $date_format, $skin_style);
+                    }
                 }
             }
         }

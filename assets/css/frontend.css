@@ -20431,8 +20431,7 @@ body:has(.mec-fes-form, .mec-search-form)
 }
 
 .mec-fes-btn-export {
-  margin-left: 15px;
-  margin-top: 12px;
+  text-align: center;
 }
 
 .mec-fes-btn-export span {
@@ -20476,18 +20475,16 @@ span.mec-event-export-csv:before,
 }
 
 .mec-fes-list .wn-p-t-right {
-  min-width: 170px;
-  max-width: 200px;
+  width: max-content;
   display: inline-block;
-  top: -8px;
+  top: -10px;
   left: 50%;
   margin-top: 0;
   transform: translate(-50%, -100%);
-  padding: 0;
   background-color: #000;
   color: #fff;
   font-weight: 400;
-  font-size: 14px;
+  font-size: 12px;
   letter-spacing: 0.5px;
   line-height: 1.5;
   position: absolute;

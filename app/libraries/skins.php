@@ -1029,24 +1029,6 @@ class MEC_skins extends MEC_base
             $end = date('Y-m-t', strtotime('+15 Years', strtotime($start)));
         }
 
-        if (isset($this->atts['sk-options'][$this->args['mec-skin']]['end_date_type']) and $this->atts['sk-options'][$this->args['mec-skin']]['end_date_type'] === 'date')
-        {
-            if (!empty($this->atts['sk-options'][$this->args['mec-skin']]['end_date']))
-            {
-                $this->maximum_date_range = $this->atts['sk-options'][$this->args['mec-skin']]['end_date'];
-                $this->maximum_date = $this->maximum_date_range;
-            }
-        }
-        // Handle today/tomorrow end dates
-        else if (isset($this->atts['sk-options'][$this->args['mec-skin']]['end_date_type']) and in_array($this->atts['sk-options'][$this->args['mec-skin']]['end_date_type'], ['today', 'tomorrow']))
-        {
-            $end_date_field = 'end_date_' . $this->atts['sk-options'][$this->args['mec-skin']]['end_date_type'];
-            if (!empty($this->atts['sk-options'][$this->args['mec-skin']][$end_date_field]))
-            {
-                $this->maximum_date_range = $this->atts['sk-options'][$this->args['mec-skin']][$end_date_field];
-                $this->maximum_date = $this->maximum_date_range;
-            }
-        }
 
         // Set a certain maximum date from shortcode page.
         if (trim($this->maximum_date) == '' and (isset($this->maximum_date_range) and trim($this->maximum_date_range))) $this->maximum_date = $this->maximum_date_range;

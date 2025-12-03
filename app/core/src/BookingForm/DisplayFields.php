@@ -97,11 +97,13 @@ class DisplayFields {
 				$classes[] = 'mec-reg-mandatory';
 			}
 
-			if( $single_row ){
+                        if( $single_row ){
 
-				$classes[] = 'clearfix';
-			}
-			$is_col_4 = isset($field['inline_third']) && $field['inline_third'] === 'enable';
+                                $classes[] = 'clearfix';
+                        }
+                        $pattern = isset($field['pattern']) ? trim($field['pattern']) : '';
+                        $pattern_attribute = $pattern ? ' data-pattern="' . esc_attr($pattern) . '"' : '';
+                        $is_col_4 = isset($field['inline_third']) && $field['inline_third'] === 'enable';
 
 			if ($is_col_4) {
 			    if (!$inline_third_open) {
@@ -126,7 +128,7 @@ class DisplayFields {
 			    $close_row_after_li = false;
 			}
 			?>
-			<li class="mec-<?php echo esc_attr( $group_id ); ?>-field-<?php echo esc_attr( $field['type'] ); ?> mec-<?php echo esc_attr( $group_id ); ?>-<?php echo esc_attr($form_type); ?>-field-<?php echo esc_attr( $field['type'] ); ?> <?php echo esc_attr( join( ' ', $classes ) ); ?>" data-field-id="<?php echo esc_attr( $f_id ); ?>" data-ticket-id="<?php echo esc_attr($j); ?>">
+                        <li class="mec-<?php echo esc_attr( $group_id ); ?>-field-<?php echo esc_attr( $field['type'] ); ?> mec-<?php echo esc_attr( $group_id ); ?>-<?php echo esc_attr($form_type); ?>-field-<?php echo esc_attr( $field['type'] ); ?> <?php echo esc_attr( join( ' ', $classes ) ); ?>" data-field-id="<?php echo esc_attr( $f_id ); ?>" data-ticket-id="<?php echo esc_attr($j); ?>"<?php echo $pattern_attribute; ?>>
 				<?php
 				global $current_user;
 				$attributes = '';
@@ -303,7 +305,7 @@ class DisplayFields {
                                                        $checked       = in_array( $current_value, (array) $value );
                                                        $input_html   .= '<label>'
                                                                 . '<input type="' . esc_attr( $field_type ) . '" id="mec_' . esc_attr( $form_type . '_field_' . $type . $j . '_' . $field_id . '_' . strtolower( str_replace( ' ', '_', $field_label ) ) ) . '" name="' . esc_attr( $field_name ) . '" value="' . esc_attr( $current_value ) . '" ' . checked( $checked, true, false ) . '/>'
-                                                                . esc_html__( $field_label, 'mec' )
+                                                                . esc_html__( $field_label, 'modern-events-calendar-lite')
                                                                 . '</label>';
                                                }
 
@@ -317,7 +319,7 @@ class DisplayFields {
                                                        $checked       = in_array( $current_value, (array) $value );
                                                        $input_html   .= '<label>'
                                                                 . '<input type="' . esc_attr( $field_type ) . '" id="mec_' . esc_attr( $form_type . '_field_' . $type . $j . '_' . $field_id . '_' . strtolower( str_replace( ' ', '_', $field_label ) ) ) . '" name="' . esc_attr( $field_name ) . '[]" value="' . esc_attr( $current_value ) . '" ' . checked( $checked, true, false ) . '/>'
-                                                                . esc_html__( $field_label, 'mec' )
+                                                                . esc_html__( $field_label, 'modern-events-calendar-lite')
                                                                 . '</label>';
                                                }
 

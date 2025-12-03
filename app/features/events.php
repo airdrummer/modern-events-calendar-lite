@@ -3254,6 +3254,41 @@ class MEC_feature_events extends MEC_base
         }
     }
 
+    public function get_expired_event_ids()
+    {
+        $today = current_time('Y-m-d');
+        $today_seconds = $this->main->time_to_seconds(current_time('H'), current_time('i'), current_time('s'));
+
+        $expired_ids = $this->db->select("SELECT `post_id` FROM `#__mec_events` WHERE (`end` != '0000-00-00' AND `end` < '" . $today . "') OR (`end` = '" . $today . "' AND `time_end` <= '" . $today_seconds . "')", 'loadColumn');
+
+        $filtered_ids = [];
+        foreach ($expired_ids as $expired_id)
+        {
+            $custom_days = $this->db->select("SELECT `days` FROM `#__mec_events` WHERE `post_id` = '" . esc_sql($expired_id) . "'", 'loadResult');
+            if (!$custom_days)
+            {
+                $filtered_ids[] = (int)$expired_id;
+                continue;
+            }
+
+            $ex = explode(',', $custom_days);
+            $last = end($ex);
+
+            $parts = explode(':', $last);
+
+            $last_date = $parts[1] ?? '';
+            $last_time = $parts[3] ?? '';
+            $last_time = str_replace('-AM', ' AM', $last_time);
+            $last_time = str_replace('-PM', ' PM', $last_time);
+            $last_time = str_replace('-', ':', $last_time);
+
+            $last_datetime = $last_date . ' ' . $last_time;
+            if (trim($last_datetime) === '' || strtotime($last_datetime) < current_time('timestamp')) $filtered_ids[] = (int)$expired_id;
+        }
+
+        return array_values(array_unique($filtered_ids));
+    }
+
     /**
      * Sort events if sorted by custom columns
      *
@@ -3274,33 +3309,7 @@ class MEC_feature_events extends MEC_base
         $expired = (isset($_REQUEST['mec-expired']) ? sanitize_text_field($_REQUEST['mec-expired']) : 0);
         if ($expired)
         {
-            $today = current_time('Y-m-d');
-            $today_seconds = $this->main->time_to_seconds(current_time('H'), current_time('i'), current_time('s'));
-
-            $expired_ids = $this->db->select("SELECT post_id FROM `#__mec_events` WHERE `end` != '0000-00-00' AND `end` < '" . $today . "' OR (`end` = '" . $today . "' AND `time_end` <= '" . $today_seconds . "')", 'loadColumn');
-
-            $filtered_ids = [];
-            foreach ($expired_ids as $expired_id)
-            {
-                $custom_days = $this->db->select("SELECT days FROM `#__mec_events` WHERE `post_id` = '" . esc_sql($expired_id) . "'", 'loadResult');
-                if (!$custom_days) $filtered_ids[] = $expired_id;
-                else
-                {
-                    $ex = explode(',', $custom_days);
-                    $last = end($ex);
-
-                    $parts = explode(':', $last);
-
-                    $last_date = $parts[1] ?? '';
-                    $last_time = $parts[3] ?? '';
-                    $last_time = str_replace('-AM', ' AM', $last_time);
-                    $last_time = str_replace('-PM', ' PM', $last_time);
-                    $last_time = str_replace('-', ':', $last_time);
-
-                    $last_datetime = $last_date . ' ' . $last_time;
-                    if (trim($last_datetime) === '' || strtotime($last_datetime) < current_time('timestamp')) $filtered_ids[] = $expired_id;
-                }
-            }
+            $filtered_ids = $this->get_expired_event_ids();
 
             if (!count($filtered_ids)) $filtered_ids = [0];
 

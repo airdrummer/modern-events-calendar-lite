@@ -29,6 +29,21 @@ foreach($gateways as $gateway)
 $javascript = '<script>
 jQuery(document).ready(function()
 {
+    (function()
+    {
+        var hasCookie = document.cookie.indexOf("mec_cart=") !== -1;
+        if (!hasCookie)
+        {
+            var cid = "'.esc_js($cart_id).'";
+            if (cid)
+            {
+                var expires = new Date();
+                expires.setTime(expires.getTime() + (30*24*60*60*1000));
+                document.cookie = "mec_cart=" + cid + "; path=/; expires=" + expires.toUTCString();
+            }
+        }
+    })();
+
     jQuery(".mec-checkout").mecCheckout(
     {
         ajax_url: "'.admin_url('admin-ajax.php', NULL).'",

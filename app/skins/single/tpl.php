@@ -53,7 +53,8 @@ elseif($settings['single_single_style'] == 'builder') $layout = 'builder';
 elseif($settings['single_single_style'] == 'divi-builder') $layout = 'divi-builder';
 else $layout = 'modern';
 
-$filename = MEC::import('app.skins.single.'.$layout, true, true);
+$filename = apply_filters('mec_single_style_path', '', $layout, $event, $this);
+if(!$filename) $filename = MEC::import('app.skins.single.'.$layout, true, true);
 if(!file_exists($filename)) $filename = MEC::import('app.skins.single.default', true, true);
 
 include $filename;

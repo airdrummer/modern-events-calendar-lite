@@ -178,16 +178,18 @@ $constantcontact_refresh_token = get_option('mec_constantcontact_refresh_token',
                                     <div class="mec-form-row mec-last-tooltip">
                                         <label class="mec-col-3" for="mec_settings_constantcontact_list_id"><?php esc_html_e('Select List', 'modern-events-calendar-lite'); ?></label>
                                         <div class="mec-col-9">
-                                            <select name="mec[settings][constantcontact_list_id]" id="mec_settings_constantcontact_list_id">
-                                                <?php
-                                                    foreach($lists as $list)
-                                                    {
-                                                        ?>
-                                                            <option <?php if(isset($settings['constantcontact_list_id']) && $list->list_id === $settings['constantcontact_list_id']) echo 'selected="selected"'; ?> value="<?php echo esc_attr($list->list_id); ?>"><?php echo esc_html($list->name); ?></option>
-                                                        <?php
-                                                    }
-                                                ?>
-                                            </select>
+                                            <?php if(is_array($lists) && count($lists)): ?>
+                                                <select name="mec[settings][constantcontact_list_id]" id="mec_settings_constantcontact_list_id">
+                                                    <?php foreach($lists as $list): ?>
+                                                        <option <?php if(isset($settings['constantcontact_list_id']) && $list->list_id === $settings['constantcontact_list_id']) echo 'selected="selected"'; ?> value="<?php echo esc_attr($list->list_id); ?>"><?php echo esc_html($list->name); ?></option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            <?php else: ?>
+                                                <p class="description"><?php esc_html_e('Your Constant Contact session expired or lists are unavailable. Please authorize again.', 'modern-events-calendar-lite'); ?></p>
+                                                <?php if(isset($settings['constantcontact_api_key']) && trim($settings['constantcontact_api_key'])): ?>
+                                                    <a class="button button-secondary" href="https://authz.constantcontact.com/oauth2/default/v1/authorize?client_id=<?php echo $settings['constantcontact_api_key']; ?>&redirect_uri=<?php echo admin_url(); ?>&response_type=code&scope=contact_data%20offline_access&state=mec-constantcontact-authorize"><?php esc_html_e('Authorize', 'modern-events-calendar-lite'); ?></a>
+                                                <?php endif; ?>
+                                            <?php endif; ?>
                                             <span class="mec-tooltip">
                                                 <div class="box left">
                                                     <h5 class="title"><?php esc_html_e('Select List', 'modern-events-calendar-lite'); ?></h5>

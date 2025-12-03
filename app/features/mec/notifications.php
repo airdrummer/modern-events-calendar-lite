@@ -2049,10 +2049,54 @@ $additional_organizers = (isset($settings['additional_organizers']) and $setting
                                     <div class="mec-col-12">
                                         <label>
                                             <input type="hidden" name="mec[notifications][new_event][disable_send_notification_if_current_user_or_author_is_admin]" value="0" />
-                                            <input value="1" type="checkbox" name="mec[notifications][new_event][disable_send_notification_if_current_user_or_author_is_admin]" <?php if( isset($notifications['new_event']['disable_send_notification_if_current_user_or_author_is_admin']) and $notifications['new_event']['disable_send_notification_if_current_user_or_author_is_admin']) echo 'checked="checked"'; ?> /><?php esc_html_e('Disable sending notifications to admin if super admin has created or published.', 'modern-events-calendar-lite'); ?>
+                                            <input value="1" type="checkbox" name="mec[notifications][new_event][disable_send_notification_if_current_user_or_author_is_admin]" <?php if( isset($notifications['new_event']['disable_send_notification_if_current_user_or_author_is_admin']) and $notifications['new_event']['disable_send_notification_if_current_user_or_author_is_admin']) echo 'checked="checked"'; ?> /><?php esc_html_e("Don't notify admins if Super Admin created", 'modern-events-calendar-lite'); ?>
                                         </label>
                                     </div>
                                 </div>
+                                <?php
+                                    $delivery_method = $notifications['new_event']['delivery_method'] ?? 'instant';
+                                    $daily_time = $notifications['new_event']['daily_time'] ?? '18:00';
+                                ?>
+                                <div class="mec-form-row">
+                                    <div class="mec-col-3">
+                                        <label for="mec_notifications_new_event_delivery_method"><?php esc_html_e('Delivery Method', 'modern-events-calendar-lite'); ?></label>
+                                    </div>
+                                    <div class="mec-col-9">
+                                        <select id="mec_notifications_new_event_delivery_method" name="mec[notifications][new_event][delivery_method]" onchange="mecToggleNewEventDeliveryMethod(this.value);">
+                                            <option value="instant" <?php selected($delivery_method, 'instant'); ?>><?php esc_html_e('Send immediately after event creation', 'modern-events-calendar-lite'); ?></option>
+                                            <option value="daily" <?php selected($delivery_method, 'daily'); ?>><?php esc_html_e('Once per day', 'modern-events-calendar-lite'); ?></option>
+                                        </select>
+                                        <p class="description"><?php esc_html_e('Choose when the New Event notification should be delivered.', 'modern-events-calendar-lite'); ?></p>
+                                    </div>
+                                </div>
+                                <div class="mec-form-row mec-new-event-daily-field <?php echo ($delivery_method === 'daily') ? '' : 'mec-util-hidden'; ?>">
+                                    <div class="mec-col-3">
+                                        <label for="mec_notifications_new_event_daily_time"><?php esc_html_e('Daily send time', 'modern-events-calendar-lite'); ?></label>
+                                    </div>
+                                    <div class="mec-col-9">
+                                        <input type="time" id="mec_notifications_new_event_daily_time" name="mec[notifications][new_event][daily_time]" value="<?php echo esc_attr($daily_time); ?>" />
+                                        <p class="description"><?php esc_html_e('Notifications will be sent once per day at this time (site timezone).', 'modern-events-calendar-lite'); ?></p>
+                                    </div>
+                                </div>
+                                <?php $cron = MEC_ABSPATH . 'app' . DS . 'crons' . DS . 'new-event-digest.php'; ?>
+                                <div class="mec-form-row mec-new-event-daily-field <?php echo ($delivery_method === 'daily') ? '' : 'mec-util-hidden'; ?>">
+                                    <p class="mec-col-12 description"><strong><?php esc_html_e('Important Note', 'modern-events-calendar-lite'); ?>:</strong> <?php echo sprintf(esc_html__('Set a cronjob to call %1$s once per day at or after the selected send time. Running this cron more than once per day may cause duplicate checks but emails will only send once per day.', 'modern-events-calendar-lite'), '<code>' . esc_html($cron) . '</code>'); ?></p>
+                                </div>
+                                <script type="text/javascript">
+                                if (typeof window.mecToggleNewEventDeliveryMethod === 'undefined') {
+                                    window.mecToggleNewEventDeliveryMethod = function(value) {
+                                        var fields = document.querySelectorAll('.mec-new-event-daily-field');
+                                        fields.forEach(function(field) {
+                                            if (value === 'daily') field.classList.remove('mec-util-hidden');
+                                            else field.classList.add('mec-util-hidden');
+                                        });
+                                    };
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        var selector = document.getElementById('mec_notifications_new_event_delivery_method');
+                                        if (selector) window.mecToggleNewEventDeliveryMethod(selector.value);
+                                    });
+                                }
+                                </script>
                                 <div class="mec-form-row">
                                     <div class="mec-col-3">
                                         <label for="mec_notifications_new_event_subject"><?php esc_html_e('Email Subject', 'modern-events-calendar-lite'); ?></label>
@@ -2148,11 +2192,12 @@ $additional_organizers = (isset($settings['additional_organizers']) and $setting
                                             <li><span>%%blog_url%%</span>: <?php esc_html_e('Your website URL', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%blog_description%%</span>: <?php esc_html_e('Your website description', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%admin_link%%</span>: <?php esc_html_e('Admin events management link.', 'modern-events-calendar-lite'); ?></li>
-                                            <?php do_action('mec_extra_field_notifications', $section); ?>
-                                        </ul>
-                                    </div>
+                                            <li><span>%%all_events_info%%</span>: <?php esc_html_e('List of all events in the daily digest (available with Once per day delivery).', 'modern-events-calendar-lite'); ?></li>
+                                        <?php do_action('mec_extra_field_notifications', $section); ?>
+                                    </ul>
                                 </div>
                             </div>
+                        </div>
 
                         </div>
 
