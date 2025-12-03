@@ -1,4 +1,8 @@
-﻿v 7.28.0 - 29 November 2025
+v 7.28.0.1 - 3 dec 2025
+- added missing timezone display, reformat
+- fixed countdown
+
+v 7.28.0 - 29 November 2025
 - Added: A new delivery method for new event notification.
 - Added: Active and expired filter for Frontend Event Submission.
 - Added: Custom regex for booking fields.
