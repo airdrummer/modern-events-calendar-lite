@@ -487,38 +487,44 @@ class MEC_notifications extends MEC_base
 
         $invoice_attachments = [];
         $invoice_temp_file = '';
-        $transaction_id = $this->book->get_transaction_id_book_id($book_id);
 
-        if ($transaction_id)
+        $attach_invoice_setting = isset($this->settings['attach_default_invoice_confirmation']) ? (int) $this->settings['attach_default_invoice_confirmation'] : 1;
+
+        if ($attach_invoice_setting)
         {
-            $invoice_pdf = $this->main->build_booking_invoice_pdf($transaction_id, [
-                'book_id' => $book_id,
-                'enforce_key' => false,
-            ]);
+            $transaction_id = $this->book->get_transaction_id_book_id($book_id);
 
-            if (!is_wp_error($invoice_pdf) and !empty($invoice_pdf['content']))
+            if ($transaction_id)
             {
-                $temp_dir = function_exists('get_temp_dir') ? get_temp_dir() : sys_get_temp_dir();
-                if (!$temp_dir) $temp_dir = sys_get_temp_dir();
+                $invoice_pdf = $this->main->build_booking_invoice_pdf($transaction_id, [
+                    'book_id' => $book_id,
+                    'enforce_key' => false,
+                ]);
 
-                $invoice_filename = $invoice_pdf['filename'];
-                $unique_filename = wp_unique_filename($temp_dir, $invoice_filename);
-
-                $temp_dir = trailingslashit($temp_dir);
-                $temp_file = $temp_dir . $unique_filename;
-
-                if ($temp_file)
+                if (!is_wp_error($invoice_pdf) and !empty($invoice_pdf['content']))
                 {
-                    $written = file_put_contents($temp_file, $invoice_pdf['content']);
+                    $temp_dir = function_exists('get_temp_dir') ? get_temp_dir() : sys_get_temp_dir();
+                    if (!$temp_dir) $temp_dir = sys_get_temp_dir();
 
-                    if ($written !== false)
+                    $invoice_filename = $invoice_pdf['filename'];
+                    $unique_filename = wp_unique_filename($temp_dir, $invoice_filename);
+
+                    $temp_dir = trailingslashit($temp_dir);
+                    $temp_file = $temp_dir . $unique_filename;
+
+                    if ($temp_file)
                     {
-                        $invoice_temp_file = $temp_file;
-                        $invoice_attachments[] = $temp_file;
-                    }
-                    else
-                    {
-                        if (file_exists($temp_file)) @unlink($temp_file);
+                        $written = file_put_contents($temp_file, $invoice_pdf['content']);
+
+                        if ($written !== false)
+                        {
+                            $invoice_temp_file = $temp_file;
+                            $invoice_attachments[] = $temp_file;
+                        }
+                        else
+                        {
+                            if (file_exists($temp_file)) @unlink($temp_file);
+                        }
                     }
                 }
             }

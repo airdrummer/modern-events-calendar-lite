@@ -158,7 +158,7 @@ class MEC_skin_general_calendar extends MEC_skins
                 $labels = '';
                 if (isset($event->data->labels) && !empty($event->data->labels) && $display_label)
                 {
-                    foreach ($event->data->labels as $label) $labels .= '<span class="mec-general-calendar-label" style="background-color:' . esc_attr($label['color']) . ';">' . trim($label['name']) . '</span>';
+                    foreach ($event->data->labels as $label) $labels .= '<span class="mec-general-calendar-label '. trim($label['style']) .'" style="background-color:' . esc_attr($label['color']) . ';">' . trim($label['name']) . '</span>';
                 }
 
                 $event_title = $event->data->title;

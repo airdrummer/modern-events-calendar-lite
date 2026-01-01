@@ -1161,6 +1161,19 @@ $shortcodes = get_posts(array(
                                         <input value="1" type="checkbox" name="mec[settings][auto_month_rotation]" <?php if(!isset($settings['auto_month_rotation']) or $settings['auto_month_rotation']) echo 'checked="checked"'; ?> /><?php esc_html_e("Automatically search and display next month's events if no events are found for the requested month.", 'modern-events-calendar-lite'); ?>
                                     </label>
                                 </div>
+                                <div class="mec-form-row">
+                                    <label>
+                                        <input type="hidden" name="mec[settings][sf_update_url]" value="0" />
+                                        <input value="1" type="checkbox" name="mec[settings][sf_update_url]" <?php if(isset($settings['sf_update_url']) && $settings['sf_update_url']) echo 'checked="checked"'; ?> /><?php esc_html_e('Update browser URL with active filters', 'modern-events-calendar-lite'); ?>
+                                    </label>
+                                    <span class="mec-tooltip">
+                                        <div class="box">
+                                            <h5 class="title"><?php esc_html_e('URL Sync', 'modern-events-calendar-lite'); ?></h5>
+                                            <div class="content"><p><?php esc_attr_e('When enabled, applying filters updates the page URL with query parameters so the filtered view can be shared or bookmarked. Resetting filters restores the original URL.', 'modern-events-calendar-lite'); ?></p></div>
+                                        </div>
+                                        <i title="" class="dashicons-before dashicons-editor-help"></i>
+                                    </span>
+                                </div>
                             </div>
                         </div>
 

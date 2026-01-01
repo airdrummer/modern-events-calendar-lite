@@ -352,6 +352,8 @@ class Attendees extends Singleton{
 
         $saved_attendees = $this->get_attendees( $post_id, $event_id, $occurrence, false );
         $saved_attendees_keys = [];
+        // Initialize attendees keys to avoid undefined variable and ensure it's always an array
+        $attendees_keys = [];
         foreach( $saved_attendees as $saved_attendee ) {
 
             $email = isset($saved_attendee['email']) ? sanitize_email($saved_attendee['email']) : 0;
@@ -377,7 +379,9 @@ class Attendees extends Singleton{
 
         foreach( $saved_attendees_keys as $attendee_id => $attendee_key ){
 
-            $saved_attendee_id = array_search( $attendee_key, $attendees_keys );
+            // When there are no current attendees, $attendees_keys is an empty array,
+            // so all previously saved attendees for this RSVP will be deleted as expected.
+            $saved_attendee_id = array_search( $attendee_key, $attendees_keys, true );
             if( false === $saved_attendee_id ){
 
                 $conditions = [

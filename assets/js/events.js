@@ -680,20 +680,22 @@ jQuery(document).ready(function($)
     });
 
     // Appointments
-    $('.mec-event-appointment-tab .mec-event-appointment-tab-item').on('click', function()
+    // Move the selector to the metabox header
+    var $header = $('#mec_metabox_details .hndle');
+    // If .hndle is not found, try .postbox-header (newer WP versions)
+    if ($header.length === 0) {
+        $header = $('#mec_metabox_details .postbox-header');
+    }
+    $('.mec-event-appointment-type-wrap').appendTo($header).removeClass('mec-util-hidden').on('click', function(e) {
+        e.stopPropagation();
+    });
+
+    $('#mec_entity_type_select').on('change', function()
     {
-        const $tab = $(this);
+        const entity_type = $(this).val();
         const $fes_form = $('#mec_fes_form');
         const $metabox_details = $('#mec_metabox_details');
         const $appointment_form_wrapper = $('.mec-appointment-form-wrap');
-
-        const entity_type = $(this).data('entity-type');
-
-        const $entity_type_input = $('#mec_entity_type_input');
-        $entity_type_input.val(entity_type);
-
-        $('.mec-event-appointment-tab-item').removeClass('mec-active-tab');
-        $tab.addClass('mec-active-tab');
 
         if (entity_type === 'appointment')
         {
@@ -711,7 +713,7 @@ jQuery(document).ready(function($)
         }
     });
 
-    $('.mec-event-appointment-tab .mec-event-appointment-tab-item.mec-active-tab').trigger('click');
+    $('#mec_entity_type_select').trigger('change');
 
     const $repeatType = $('#mec_appointments_availability_repeat_type');
     if($.fn.datepicker)

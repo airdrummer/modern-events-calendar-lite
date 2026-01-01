@@ -31,6 +31,7 @@ class MEC_skin_slider extends MEC_skins
     public $date_format_type5_1;
     public $date_format_type5_2;
     public $date_format_type5_3;
+    public $date_format_liquid_1;
 
     /**
      * Constructor method

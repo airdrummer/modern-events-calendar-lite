@@ -278,36 +278,44 @@ final class Base
 				return;
 			}
 
-			$response_lite = wp_remote_get(
-				add_query_arg(
-					array( // posts from 101 to 200
-						'per_page' => 1,
-						'page' => 1,
-						'categories' => 4,
-					),
-					'https://notifications.webnus.site/wp-json/wp/v2/posts'
+		$response_lite = wp_remote_get(
+			add_query_arg(
+				array( // posts from 101 to 200
+					'per_page' => 1,
+					'page' => 1,
+					'categories' => 4,
 				),
+				'https://notifications.webnus.site/wp-json/wp/v2/posts'
+			),
+			array(
+				'timeout' => 50, // Fix for: cURL error 28: Operation timed out after...
+			)
+		);
+
+		if (is_wp_error($response_lite) || wp_remote_retrieve_response_code($response_lite) !== 200) {
+			return;
+		}
+
+		$body = json_decode(wp_remote_retrieve_body($response_lite));
+
+		if (is_countable($body) && count($body) > 0) :
+			$featured_media = $body[0]->featured_media;
+			$title = $body[0]->title->rendered;
+			$content = $body[0]->content->rendered;
+
+			$featured_image = wp_remote_get(
+				'https://notifications.webnus.site/wp-json/wp/v2/media/' . $featured_media,
 				array(
 					'timeout' => 50, // Fix for: cURL error 28: Operation timed out after...
 				)
 			);
 
-			$body = json_decode($response_lite['body']);
+			if (is_wp_error($featured_image) || wp_remote_retrieve_response_code($featured_image) !== 200) {
+				return;
+			}
 
-			if (is_countable($body) && count($body) > 0) :
-				$featured_media = $body[0]->featured_media;
-				$title = $body[0]->title->rendered;
-				$content = $body[0]->content->rendered;
-
-				// Get featured image from $featured_media
-				$featured_image = wp_remote_get(
-					'https://notifications.webnus.site/wp-json/wp/v2/media/' . $featured_media,
-					array(
-						'timeout' => 50, // Fix for: cURL error 28: Operation timed out after...
-					)
-				);
-				$body_featured_image = json_decode($featured_image['body']);
-				$lite_featured_image = $body_featured_image->guid->rendered;
+			$body_featured_image = json_decode(wp_remote_retrieve_body($featured_image));
+			$lite_featured_image = $body_featured_image->guid->rendered;
 			?>
 				<div class="notice notice-info is-dismissible">
 

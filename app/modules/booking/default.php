@@ -3,6 +3,7 @@
 defined('MECEXEC') or die();
 
 /** @var $this MEC_main **/
+/** @var $event array **/
 
 // PRO Version is required
 if(!$this->getPRO()) return;
@@ -12,7 +13,7 @@ $settings = $this->get_settings();
 $ml_settings = $this->get_ml_settings();
 
 // Booking module is disabled
-if(!isset($settings['booking_status']) or (isset($settings['booking_status']) and !$settings['booking_status'])) return;
+if(!isset($settings['booking_status']) || !$settings['booking_status']) return;
 
 // Skip First Step
 $skip_step1 = isset($settings['booking_skip_step1']) && $settings['booking_skip_step1'];
@@ -349,7 +350,7 @@ function mec_label_first_for_all'.esc_js($uniqueid).'(context)
 const mecDefaultPatterns'.esc_js($uniqueid).' = {
     tel: /^[\d\s+\-()]+$/,
     email: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/,
-    name: /^[\p{L}\p{N}\s.]+$/u,
+    name: /^[\p{L}\p{M}\p{N}\s\p{Pd}.\-\'’·]+$/u,
     text: /^[\\p{L}\\p{N}\\s.,!?\\-\'\u0022():&#$%*@]+$/u,
     textarea: /^[\\p{L}\\p{N}\\s.,!?\\-\'\u0022():&#$%*@]+$/u
 };

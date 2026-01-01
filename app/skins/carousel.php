@@ -17,6 +17,7 @@ class MEC_skin_carousel extends MEC_skins
     public $date_format_type1_3;
     public $date_format_type2_1;
     public $date_format_type3_1;
+    public $date_format_liquid_1;
     public $archive_link;
     public $head_text;
     public $autoplay;

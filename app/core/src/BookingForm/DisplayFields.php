@@ -252,6 +252,13 @@ class DisplayFields {
 
 				$input_html = '';
 				$field_class = $class;
+				
+				// Add width style if inline or inline_third is enabled
+				$width_style = '';
+				if ( ( isset( $field['inline'] ) && 'enable' === $field['inline'] ) || ( isset( $field['inline_third'] ) && 'enable' === $field['inline_third'] ) ) {
+					$width_style = ' style="width: 95% !important;"';
+				}
+				
 				// Display Input
 				switch ( $type ) {
 					case 'name':
@@ -260,7 +267,7 @@ class DisplayFields {
 					case 'mec_email':
 
 						$placeholder = ( isset( $field['placeholder'] ) && $field['placeholder'] ) ? esc_html__( $field['placeholder'], 'modern-events-calendar-lite') : esc_html__( $field['label'], 'modern-events-calendar-lite');
-						$input_html = '<input id="' . esc_attr( $html_id ) . '" class="' . esc_attr( $field_class ) . '" type="' . esc_attr( $field_type ) . '" name="' . esc_attr($field_name) . '" value="' . esc_attr(trim( $value )) . '" placeholder="' . esc_attr( $placeholder ) . '" ' . $required . '  ' . $lock_field . '  ' . $attributes . '  />';
+						$input_html = '<input id="' . esc_attr( $html_id ) . '" class="' . esc_attr( $field_class ) . '" type="' . esc_attr( $field_type ) . '" name="' . esc_attr($field_name) . '" value="' . esc_attr(trim( $value )) . '" placeholder="' . esc_attr( $placeholder ) . '" ' . $required . '  ' . $lock_field . '  ' . $attributes . $width_style . '  />';
 
 						break;
 					case 'text':
@@ -270,19 +277,19 @@ class DisplayFields {
 					case 'tel':
 
 						$placeholder = ( isset( $field['placeholder'] ) && $field['placeholder'] ) ? esc_html__( $field['placeholder'], 'modern-events-calendar-lite') : esc_html__( $field['label'], 'modern-events-calendar-lite');
-						$input_html = '<input id="' . esc_attr( $html_id ) . '" class="' . esc_attr( $field_class ) . '" type="' . esc_attr( $field_type ) . '" name="' . esc_attr($field_name) . '" value="' . esc_attr(trim( $value )) . '" placeholder="' . esc_attr( $placeholder ) . '" ' . $required . '  ' . $lock_field . '  ' . $attributes . '  />';
+						$input_html = '<input id="' . esc_attr( $html_id ) . '" class="' . esc_attr( $field_class ) . '" type="' . esc_attr( $field_type ) . '" name="' . esc_attr($field_name) . '" value="' . esc_attr(trim( $value )) . '" placeholder="' . esc_attr( $placeholder ) . '" ' . $required . '  ' . $lock_field . '  ' . $attributes . $width_style . '  />';
 
 						break;
 					case 'textarea':
 
 						$placeholder = ( isset( $field['placeholder'] ) && $field['placeholder'] ) ? esc_html__( $field['placeholder'], 'modern-events-calendar-lite') : esc_html__( $field['label'], 'modern-events-calendar-lite');
-						$input_html = '<textarea id="' . esc_attr( $html_id ) . '" class="' . esc_attr( $field_class ) . '" name="' . esc_attr( $field_name ) . '" value="' . esc_attr(trim( $value )) . '" placeholder="' . esc_attr( $placeholder ) . '" ' . $required . '  ' . $lock_field . '  ' . $attributes . '  ></textarea>';
+						$input_html = '<textarea id="' . esc_attr( $html_id ) . '" class="' . esc_attr( $field_class ) . '" name="' . esc_attr( $field_name ) . '" value="' . esc_attr(trim( $value )) . '" placeholder="' . esc_attr( $placeholder ) . '" ' . $required . '  ' . $lock_field . '  ' . $attributes . $width_style . '  ></textarea>';
 
 						break;
 					case 'select':
 
 						$placeholder = '';
-						$input_html = '<select id="' . esc_attr( $html_id ) . '" class="' . esc_attr( $field_class ) . '" name="'.esc_attr($field_name).'" placeholder="' . esc_attr( $placeholder ) . '" ' . $required . '  ' . $lock_field . '  ' . $attributes . ' >';
+						$input_html = '<select id="' . esc_attr( $html_id ) . '" class="' . esc_attr( $field_class ) . '" name="'.esc_attr($field_name).'" placeholder="' . esc_attr( $placeholder ) . '" ' . $required . '  ' . $lock_field . '  ' . $attributes . $width_style . ' >';
 						$rd = 0;
 						$selected = $value;
                                                $options = isset($field['options']) ? $field['options'] : [];

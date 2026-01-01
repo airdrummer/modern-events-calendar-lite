@@ -95,6 +95,11 @@ var mec_search_callbacks = [];
         var $event_status = $(".mec_sf_event_status_" + settings.id );
         var last_field;
 
+        // URL Sync option
+        var updateUrl = (typeof mecdata !== 'undefined' && parseInt(mecdata.sf_update_url) === 1);
+        var isApplyingFromURL = false;
+        var originalURL = window.location.href;
+
         // Trigger
         trigger();
 
@@ -269,6 +274,168 @@ var mec_search_callbacks = [];
             });
         }
 
+        function getRawNonSfQuery() {
+            var search = window.location.search;
+            if(search.indexOf('?') === 0) search = search.substring(1);
+            if(!search) return '';
+            var parts = search.split('&');
+            var kept = [];
+            for(var i=0;i<parts.length;i++){
+                var p = parts[i];
+                if(!p) continue;
+                var key = p.split('=')[0] || '';
+                if(key.indexOf('sf[') === 0 || key.indexOf('sf%5B') === 0) continue;
+                kept.push(p);
+            }
+            return kept.join('&');
+        }
+
+        function encodeSfQuery(sfQS){
+            if(!sfQS) return '';
+            var out = [];
+            var parts = sfQS.split('&');
+            for(var i=0;i<parts.length;i++){
+                var p = parts[i];
+                if(!p) continue;
+                var eq = p.indexOf('=');
+                var key = eq > -1 ? p.substring(0, eq) : p;
+                var val = eq > -1 ? p.substring(eq+1) : '';
+                if(val === '') continue;
+                out.push(key + '=' + encodeURIComponent(val));
+            }
+            return out.join('&');
+        }
+
+        function pushFiltersToUrl(sfQS) {
+            if(!updateUrl) return;
+            try {
+                var base = window.location.origin + window.location.pathname;
+                var preserved = getRawNonSfQuery();
+                var sfRaw = encodeSfQuery(sfQS); // keep keys as sf[...]
+                var qs = '';
+                if(preserved) qs = preserved;
+                if(sfRaw) qs = qs ? (qs + '&' + sfRaw) : sfRaw;
+                var finalUrl = qs ? (base + '?' + qs + window.location.hash) : (base + window.location.hash);
+                window.history.pushState({mec_sf: true, id: settings.id}, '', finalUrl);
+            } catch (e) {}
+        }
+
+        function extractSfFromRawSearch(){
+            var res = {};
+            try {
+                var raw = window.location.search;
+                if(raw.indexOf('?') === 0) raw = raw.substring(1);
+                var regex = /(?:^|&)sf(?:%5B|\[)([^\]=%]+)(?:%5D|\])=([^&]*)/g;
+                var m;
+                while((m = regex.exec(raw)) !== null){
+                    var k = m[1];
+                    var v = decodeURIComponent(m[2] || '');
+                    res[k] = v;
+                }
+            } catch(e) {}
+            return res;
+        }
+
+        function applyURLToFormAndSearch() {
+            if(!updateUrl) return;
+            try {
+                var sfObj = extractSfFromRawSearch();
+
+                if(Object.keys(sfObj).length === 0) return;
+
+                isApplyingFromURL = true;
+
+                // Simple fields
+                if(typeof sfObj['s'] !== 'undefined' && $s.length) $s.val(sfObj['s']);
+                if(typeof sfObj['address'] !== 'undefined' && $address.length) $address.val(sfObj['address']);
+                if(typeof sfObj['cost-min'] !== 'undefined' && $event_cost_min.length) $event_cost_min.val(sfObj['cost-min']);
+                if(typeof sfObj['cost-max'] !== 'undefined' && $event_cost_max.length) $event_cost_max.val(sfObj['cost-max']);
+                if(typeof sfObj['time-start'] !== 'undefined' && $time_start.length) $time_start.val(sfObj['time-start']);
+                if(typeof sfObj['time-end'] !== 'undefined' && $time_end.length) $time_end.val(sfObj['time-end']);
+                if(typeof sfObj['month'] !== 'undefined' && $month.length) $month.val(sfObj['month']);
+                if(typeof sfObj['year'] !== 'undefined' && $year.length) $year.val(sfObj['year']);
+                if(typeof sfObj['start'] !== 'undefined' && $date_start.length) $date_start.val(sfObj['start']);
+                if(typeof sfObj['end'] !== 'undefined' && $date_end.length) $date_end.val(sfObj['end']);
+                if(typeof sfObj['date_start'] !== 'undefined' && $date_start.length) $date_start.val(sfObj['date_start']);
+                if(typeof sfObj['date_end'] !== 'undefined' && $date_end.length) $date_end.val(sfObj['date_end']);
+                if(typeof sfObj['event_type'] !== 'undefined' && $event_type.length) $event_type.val(sfObj['event_type']);
+                if(typeof sfObj['event_type_2'] !== 'undefined' && $event_type_2.length) $event_type_2.val(sfObj['event_type_2']);
+                if(typeof sfObj['attribute'] !== 'undefined' && $attribute.length) $attribute.val(sfObj['attribute']);
+
+                // Event status (radio)
+                if(typeof sfObj['event_status'] !== 'undefined' && $event_status.length){
+                    $event_status.prop('checked', false);
+                    $event_status.filter('[value="'+sfObj['event_status']+'"]').prop('checked', true);
+                }
+
+                // Taxonomies: select/ul checkboxes
+                function applyTaxonomy($el, csv){
+                    if(!$el.length) return;
+                    var vals = (csv||'').split(',').filter(function(x){return x!==''});
+                    var tag = ($el.prop('tagName')||'').toLowerCase();
+                    if(tag === 'select'){
+                        $el.val(vals.length>1 ? vals : (vals[0]||''));
+                        if($wrapper.hasClass('mec-dropdown-enhanced') && jQuery().select2){
+                            $el.trigger('change.select2');
+                        } else if(jQuery().niceSelect){
+                            $el.niceSelect('update');
+                        }
+                    } else if(tag === 'ul'){
+                        var set = new Set(vals);
+                        $el.find('input[type=checkbox]').each(function(){
+                            var v = jQuery(this).val();
+                            jQuery(this).prop('checked', set.has(v));
+                        });
+                    }
+                }
+
+                applyTaxonomy($("#mec_sf_category_" + settings.id), sfObj['category']);
+                applyTaxonomy($("#mec_sf_location_" + settings.id), sfObj['location']);
+                applyTaxonomy($("#mec_sf_organizer_" + settings.id), sfObj['organizer']);
+                applyTaxonomy($("#mec_sf_speaker_" + settings.id), sfObj['speaker']);
+                applyTaxonomy($("#mec_sf_tag_" + settings.id), sfObj['tag']);
+                applyTaxonomy($("#mec_sf_label_" + settings.id), sfObj['label']);
+
+                // Update UI for simple selects in enhanced mode
+                function updateSelectUI($sel){
+                    if(!$sel || !$sel.length) return;
+                    if($wrapper.hasClass('mec-dropdown-enhanced') && jQuery().select2){
+                        $sel.trigger('change.select2');
+                    } else if(jQuery().niceSelect){
+                        $sel.niceSelect('update');
+                    }
+                }
+
+                updateSelectUI($month);
+                updateSelectUI($year);
+                updateSelectUI($event_type);
+                updateSelectUI($event_type_2);
+                updateSelectUI($attribute);
+
+                // Trigger a search with these values (skip once if server already applied them)
+                setTimeout(function(){
+                    isApplyingFromURL = false;
+                    var skipOnce = $wrapper.data('mec-skip-initial-search');
+                    if(skipOnce){
+                        $wrapper.removeAttr('data-mec-skip-initial-search');
+                    } else {
+                        search();
+                    }
+                }, 50);
+
+            } catch (e) {}
+        }
+
+        // Handle browser back/forward to re-apply filters
+        if(updateUrl && !$wrapper.data('mec-popstate-bound')){
+            jQuery(window).on('popstate', function(){
+                applyURLToFormAndSearch();
+            });
+            $wrapper.data('mec-popstate-bound', true);
+        }
+        // Apply URL filters immediately on init
+        applyURLToFormAndSearch();
+
         function search() {
             var $category = $("#mec_sf_category_" + settings.id);
             var $location = $("#mec_sf_location_" + settings.id);
@@ -407,6 +574,11 @@ var mec_search_callbacks = [];
             {
                 for(const cb of mec_search_callbacks[settings.id]) cb(atts);
             }
+
+            // Update URL after search so it can be shared
+            if(updateUrl && !isApplyingFromURL){
+                pushFiltersToUrl(sf);
+            }
         }
 
         function reset() {
@@ -542,6 +714,15 @@ var mec_search_callbacks = [];
             if(jQuery().niceSelect){
 
                 jQuery('.mec-fluent-wrap').find('.mec-filter-content').find('select:not([multiple])').niceSelect('update');
+            }
+
+            // Clean URL query if enabled
+            if(updateUrl){
+                try{
+                    var url = new URL(window.location.href);
+                    url = removeSfParamsFromUrl(url);
+                    window.history.pushState({mec_sf: true, id: settings.id}, '', url.toString());
+                }catch(e){}
             }
 
             // Search Again
@@ -1400,7 +1581,7 @@ jQuery(window).on('load', function()
                             if (custom_month == 'true') {
                                 $(".mec-month-container .mec-calendar-day").removeClass('mec-has-event');
                                 $(".mec-month-container .mec-calendar-day").removeClass('mec-selected-day');
-                                $('.mec-calendar-day').unbind('click');
+                                $('.mec-calendar-day').off('click');
                             }
                         }
 
@@ -4534,7 +4715,7 @@ jQuery(window).on('load', function()
                 });
 
                 if (settings.autoplay_status) {
-                    owl.bind(
+                    owl.on(
                         "mouseleave",
                         function (event) {
                             $("#mec_skin_" + settings.id + " .mec-owl-carousel").trigger('play.owl.autoplay');
@@ -4568,7 +4749,7 @@ jQuery(window).on('load', function()
                 });
 
                 if (settings.autoplay_status) {
-                    $("#mec_skin_" + settings.id + " .mec-owl-carousel").bind(
+                    $("#mec_skin_" + settings.id + " .mec-owl-carousel").on(
                         "mouseleave",
                         function (event) {
                             $("#mec_skin_" + settings.id + " .mec-owl-carousel").trigger('play.owl.autoplay');
@@ -4602,7 +4783,7 @@ jQuery(window).on('load', function()
                 });
 
                 if (settings.autoplay_status) {
-                    $("#mec_skin_" + settings.id + " .mec-owl-carousel").bind(
+                    $("#mec_skin_" + settings.id + " .mec-owl-carousel").on(
                         "mouseleave",
                         function (event) {
                             $("#mec_skin_" + settings.id + " .mec-owl-carousel").trigger('play.owl.autoplay');
@@ -4695,29 +4876,25 @@ jQuery(window).on('load', function()
 (function ($) {
     $.fn.mecCountDown = function (options, callBack) {
         // Default Options
-        var settings = $.extend(
-		{
+        var settings = $.extend({
             // These are the defaults.
             date: null,
-            format: null,
-            interval: 1000
+            format: null
         }, options);
 
         var callback = callBack;
         var selector = $(this);
 
         startCountdown();
-        var intervalID = setInterval(startCountdown, settings.interval);
+        var interval = setInterval(startCountdown, 1000);
 
-        function startCountdown() 
-        {
+        function startCountdown() {
             var eventDate = Date.parse(settings.date) / 1000;
             var currentDate = Math.floor($.now() / 1000);
 
-            if (eventDate <= currentDate) 
-            {
+            if (eventDate <= currentDate) {
                 callback.call(this);
-                clearInterval(intervalID);
+                clearInterval(interval);
             }
 
             var seconds = eventDate - currentDate;
@@ -4731,18 +4908,17 @@ jQuery(window).on('load', function()
             var minutes = Math.floor(seconds / 60);
             seconds -= minutes * 60;
 
-            selector.find(".mec-timeRefDays").text((days == 1 
-            					? mecdata.day
-            					: mecdata.days));
-            selector.find(".mec-timeRefHours").text((hours == 1
-            					? mecdata.hour
-            					: mecdata.hours));
-			selector.find(".mec-timeRefMinutes").text((minutes == 1
-            					? mecdata.minute
-            					: mecdata.minutes));
-            selector.find(".mec-timeRefSeconds").text((seconds == 1
-								? mecdata.second
-								: mecdata.seconds));
+            if (days == 1) selector.find(".mec-timeRefDays").text(mecdata.day);
+            else selector.find(".mec-timeRefDays").text(mecdata.days);
+
+            if (hours == 1) selector.find(".mec-timeRefHours").text(mecdata.hour);
+            else selector.find(".mec-timeRefHours").text(mecdata.hours);
+
+            if (minutes == 1) selector.find(".mec-timeRefMinutes").text(mecdata.minute);
+            else selector.find(".mec-timeRefMinutes").text(mecdata.minutes);
+
+            if (seconds == 1) selector.find(".mec-timeRefSeconds").text(mecdata.second);
+            else selector.find(".mec-timeRefSeconds").text(mecdata.seconds);
 
             if (settings.format === "on") {
                 days = (String(days).length >= 2) ? days : "0" + days;
@@ -4757,7 +4933,7 @@ jQuery(window).on('load', function()
                 selector.find(".mec-minutes").text(minutes);
                 selector.find(".mec-seconds").text(seconds);
             } else {
-                clearInterval(intervalID);
+                clearInterval(interval);
             }
         }
     };
@@ -5355,7 +5531,7 @@ function mec_focus_week(id, skin) {
         // add mec-sm959 class if mec-wrap div size < 959
         mec_wrap_resize();
 
-        jQuery(window).bind('resize', function () {
+        jQuery(window).on('resize', function () {
             mec_wrap_resize();
         });
 
@@ -6301,7 +6477,7 @@ function mecFluentYearlyUI(eventID, yearID) {
                             if (custom_month == 'true') {
                                 $(".mec-month-container .mec-calendar-day").removeClass('mec-has-event');
                                 $(".mec-month-container .mec-calendar-day").removeClass('mec-selected-day');
-                                $('.mec-calendar-day').unbind('click');
+                                $('.mec-calendar-day').off('click');
                             }
                         }
                         if (!do_in_background) {
@@ -6584,7 +6760,7 @@ function mecFluentYearlyUI(eventID, yearID) {
                             if (custom_month == 'true') {
                                 $(".mec-month-container .mec-calendar-day").removeClass('mec-has-event');
                                 $(".mec-month-container .mec-calendar-day").removeClass('mec-selected-day');
-                                $('.mec-calendar-day').unbind('click');
+                                $('.mec-calendar-day').off('click');
                             }
                         }
                         if (!do_in_background) {

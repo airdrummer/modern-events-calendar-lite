@@ -12,6 +12,7 @@ class MEC_skin_daily_view extends MEC_skins
      * @var string
      */
     public $skin = 'daily_view';
+    public $date_format_liquid_1;
 
     /**
      * Constructor method

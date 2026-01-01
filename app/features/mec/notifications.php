@@ -72,6 +72,16 @@ $additional_organizers = (isset($settings['additional_organizers']) and $setting
                                     <p class="description"><?php esc_html_e('Send booker emails only after email verification', 'modern-events-calendar-lite'); ?></p>
                                 </div>
                             </div>
+                            <div class="mec-form-row">
+                                <label class="mec-col-3" for="mec_settings_attach_default_invoice_confirmation"><?php esc_html_e('Attach default invoice to confirmation email', 'modern-events-calendar-lite'); ?></label>
+                                <div class="mec-col-9">
+                                    <select id="mec_settings_attach_default_invoice_confirmation" name="mec[settings][attach_default_invoice_confirmation]">
+                                        <option value="1" <?php echo (!isset($settings['attach_default_invoice_confirmation']) || (string)$settings['attach_default_invoice_confirmation'] === '1') ? 'selected="selected"' : ''; ?>><?php esc_html_e('Yes', 'modern-events-calendar-lite'); ?></option>
+                                        <option value="0" <?php echo (isset($settings['attach_default_invoice_confirmation']) && (string)$settings['attach_default_invoice_confirmation'] === '0') ? 'selected="selected"' : ''; ?>><?php esc_html_e('No', 'modern-events-calendar-lite'); ?></option>
+                                    </select>
+                                    <p class="description"><?php esc_html_e('If enabled, MEC attaches the default invoice PDF to booking confirmation emails. Disable to prevent duplicate invoices when using the Ticket & Invoice add-on.', 'modern-events-calendar-lite'); ?></p>
+                                </div>
+                            </div>
 
                             <?php if($this->main->getPRO()): ?>
                             <h5 class="mec-form-subtitle"><?php esc_html_e('Notifications Per Event', 'modern-events-calendar-lite'); ?></h5>

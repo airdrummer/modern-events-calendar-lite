@@ -8,7 +8,7 @@
  *   Author URI: https://webnus.net
  *   Developer: Webnus
  *   Developer URI: https://webnus.net
- *   Version: 7.28.0.1
+ *   Version: 7.29.0
  *   Text Domain: modern-events-calendar-lite
  *   Domain Path: /languages
  **/
@@ -33,7 +33,7 @@ if (!defined('MECEXEC')) {
     define('MEC_BASENAME', plugin_basename(__FILE__)); // modern-events-calendar/mec.php
 
     /** Plugin Version **/
-    define('MEC_VERSION', '7.28.0.1');
+    define('MEC_VERSION', '7.29.0');
 
     /** API URL **/
     define('MEC_API_ACTIVATION', 'https://my.webnus.net/api/v3');

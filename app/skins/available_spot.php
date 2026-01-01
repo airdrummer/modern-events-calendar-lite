@@ -17,6 +17,7 @@ class MEC_skin_available_spot extends MEC_skins
     public $date_format1;
     public $date_format2;
     public $date_format_fluent_1;
+    public $date_format_liquid_1;
 
     /**
      * Constructor method

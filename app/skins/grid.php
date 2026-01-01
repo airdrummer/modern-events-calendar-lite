@@ -24,6 +24,7 @@ class MEC_skin_grid extends MEC_skins
     public $date_format_simple_1;
     public $date_format_novel_1;
     public $date_format_fluent_1;
+    public $date_format_liquid_1;
     public $loadMoreRunning;
     public $widget_autoplay = true;
     public $widget_autoplay_time = 3000;

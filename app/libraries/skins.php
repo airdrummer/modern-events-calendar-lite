@@ -1282,11 +1282,18 @@ class MEC_skins extends MEC_base
         if (!is_array($event->data->labels) or (is_array($event->data->labels) and !count($event->data->labels))) return null;
 
         $classes = '';
+        $is_featured = false;
+
         foreach ($event->data->labels as $label)
         {
             if (!isset($label['style']) || !trim($label['style'])) continue;
             $classes .= ' ' . $label['style'];
+
+            // Featured: add wrapper class if label style matches
+            if (trim($label['style']) === 'mec-label-featured') $is_featured = true;
         }
+
+        if ($is_featured) $classes .= ' mec-featured-event-wrapper';
 
         return trim($classes);
     }
@@ -1339,7 +1346,11 @@ class MEC_skins extends MEC_base
         $form = '';
         if (trim($fields) && (in_array('dropdown', $display_form) || in_array('simple-checkboxes', $display_form) || in_array('checkboxes', $display_form) || in_array('text_input', $display_form) || in_array('address_input', $display_form) || in_array('minmax', $display_form) || in_array('local-time-picker', $display_form) || in_array('fields', $display_form)))
         {
-            $form .= '<form id="mec_search_form_' . esc_attr($this->id) . '" class="mec-search-form mec-totalcal-box mec-dropdown-' . ($this->sf_dropdown_method == '2' ? 'enhanced' : 'classic') . '" autocomplete="off">';
+            // If URL has sf[...] and backend already applied filters, mark to skip initial JS search once
+            $skip_attr = '';
+            if(isset($_REQUEST['sf']) && is_array($_REQUEST['sf']) && count($_REQUEST['sf'])) $skip_attr = ' data-mec-skip-initial-search="1"';
+
+            $form .= '<form id="mec_search_form_' . esc_attr($this->id) . '" class="mec-search-form mec-totalcal-box mec-dropdown-' . ($this->sf_dropdown_method == '2' ? 'enhanced' : 'classic') . '" autocomplete="off"' . $skip_attr . '>';
             $form .= $fields;
 
             // Reset Button
@@ -2005,23 +2016,23 @@ class MEC_skins extends MEC_base
         // Apply Address Search Query
         if (isset($sf['address'])) $atts['address'] = $sf['address'];
 
-        // Apply Category Query
-        if (isset($sf['category']) and trim($sf['category'])) $atts['category'] = $sf['category'];
+        // Apply Category Query (allow clearing by passing empty value)
+        if (array_key_exists('category', $sf)) $atts['category'] = $sf['category'];
 
-        // Apply Location Query
-        if (isset($sf['location'])) $atts['location'] = $sf['location'];
+        // Apply Location Query (already allowed clearing)
+        if (array_key_exists('location', $sf)) $atts['location'] = $sf['location'];
 
-        // Apply Organizer Query
-        if (isset($sf['organizer']) and trim($sf['organizer'])) $atts['organizer'] = $sf['organizer'];
+        // Apply Organizer Query (allow clearing by passing empty value)
+        if (array_key_exists('organizer', $sf)) $atts['organizer'] = $sf['organizer'];
 
-        // Apply speaker Query
-        if (isset($sf['speaker']) and trim($sf['speaker'])) $atts['speaker'] = $sf['speaker'];
+        // Apply speaker Query (allow clearing by passing empty value)
+        if (array_key_exists('speaker', $sf)) $atts['speaker'] = $sf['speaker'];
 
-        // Apply tag Query
-        if (isset($sf['tag']) and trim($sf['tag'])) $atts['tag'] = $sf['tag'];
+        // Apply tag Query (allow clearing by passing empty value)
+        if (array_key_exists('tag', $sf)) $atts['tag'] = $sf['tag'];
 
-        // Apply Label Query
-        if (isset($sf['label']) and trim($sf['label'])) $atts['label'] = $sf['label'];
+        // Apply Label Query (allow clearing by passing empty value)
+        if (array_key_exists('label', $sf)) $atts['label'] = $sf['label'];
 
         // Apply Event Cost Query
         if (isset($sf['cost-min'])) $atts['cost-min'] = $sf['cost-min'];
@@ -2491,7 +2502,16 @@ class MEC_skins extends MEC_base
 
         if ($end_date_type === 'today') $maximum_date = current_time('Y-m-d');
         else if ($end_date_type === 'tomorrow') $maximum_date = date('Y-m-d', strtotime('Tomorrow'));
-        else $maximum_date = (isset($this->skin_options['maximum_date_range']) and trim($this->skin_options['maximum_date_range'])) ? trim($this->skin_options['maximum_date_range']) : '';
+        else {
+            // Check for maximum_date_range first, then fallback to end_date for backward compatibility
+            if (isset($this->skin_options['maximum_date_range']) and trim($this->skin_options['maximum_date_range'])) {
+                $maximum_date = trim($this->skin_options['maximum_date_range']);
+            } elseif (isset($this->skin_options['end_date']) and trim($this->skin_options['end_date'])) {
+                $maximum_date = trim($this->skin_options['end_date']);
+            } else {
+                $maximum_date = '';
+            }
+        }
 
         return $maximum_date;
     }

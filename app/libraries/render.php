@@ -92,6 +92,14 @@ class MEC_render extends MEC_base
         // Create Skin Object Class
         $SKO = new $skin_class_name();
 
+        // Apply URL search filters on initial render (so no flash of unfiltered results)
+        $sf = (isset($_REQUEST['sf']) and is_array($_REQUEST['sf'])) ? $this->main->sanitize_deep_array($_REQUEST['sf']) : [];
+        if(!empty($sf)){
+            // Respect date application like AJAX paths do
+            $apply_sf_date = isset($_REQUEST['apply_sf_date']) ? sanitize_text_field($_REQUEST['apply_sf_date']) : 1;
+            $atts = $SKO->sf_apply($atts, $sf, $apply_sf_date);
+        }
+
         // Initialize the skin
         $SKO->initialize($atts);
 
@@ -559,6 +567,15 @@ class MEC_render extends MEC_base
 
         // Create Skin Object Class
         $SKO = new $skin_class_name();
+
+        // Apply URL search filters on initial render to avoid flash of unfiltered content
+        // Mirrors AJAX paths that call sf_apply() before initializing the skin.
+        $sf = (isset($_REQUEST['sf']) and is_array($_REQUEST['sf'])) ? $this->main->sanitize_deep_array($_REQUEST['sf']) : [];
+        if(!empty($sf))
+        {
+            $apply_sf_date = isset($_REQUEST['apply_sf_date']) ? sanitize_text_field($_REQUEST['apply_sf_date']) : 1;
+            $atts = $SKO->sf_apply($atts, $sf, $apply_sf_date);
+        }
 
         // Initialize the skin
         $SKO->initialize($atts);

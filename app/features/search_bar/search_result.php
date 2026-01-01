@@ -4,14 +4,6 @@ defined('MECEXEC') or die();
 
 $settings = $this->main->get_settings();
 $event_id = get_the_ID();
-$start_hour = get_post_meta($event_id, 'mec_start_time_hour', true);
-$start_minutes_meta = get_post_meta($event_id, 'mec_start_time_minutes', true);
-$start_min = ($start_minutes_meta < '10') ? '0' . $start_minutes_meta : $start_minutes_meta;
-$start_ampm = get_post_meta($event_id, 'mec_start_time_ampm', true);
-$end_hour = get_post_meta($event_id, 'mec_end_time_hour', true);
-$end_minutes_meta = get_post_meta($event_id, 'mec_end_time_minutes', true);
-$end_min = ($end_minutes_meta < '10') ? '0' . $end_minutes_meta : $end_minutes_meta;
-$end_ampm = get_post_meta($event_id, 'mec_end_time_ampm', true);
 
 $today = date('Y-m-d', current_time('timestamp'));
 $next_occurrences = $this->getRender()->dates($event_id, null, 1, $today);
@@ -25,9 +17,23 @@ if (!$occurrence_timestamp)
     $occurrence_timestamp = $fallback_date ? strtotime($fallback_date) : null;
 }
 
-$time = (get_post_meta($event_id, 'mec_allday', true) == '1')
-        ? $this->main->m('all_day', esc_html__('All Day', 'modern-events-calendar-lite'))
-        : $start_hour . ':' . $start_min . ' ' . $start_ampm . ' - ' . $end_hour . ':' . $end_min . ' ' . $end_ampm;
+$allday = (get_post_meta($event_id, 'mec_allday', true) == '1');
+if ($allday)
+{
+    $time = $this->main->m('all_day', esc_html__('All Day', 'modern-events-calendar-lite'));
+}
+else
+{
+    $time_format = get_option('time_format');
+    $start_ts = $next_occurrence_start['timestamp'] ?? $occurrence_timestamp;
+    $next_occurrence_end = $next_occurrences[0]['end'] ?? [];
+    $end_ts = $next_occurrence_end['timestamp'] ?? null;
+
+    $start_str = $start_ts ? $this->main->date_i18n($time_format, $start_ts) : '';
+    $end_str = $end_ts ? $this->main->date_i18n($time_format, $end_ts) : '';
+
+    $time = $start_str . ($end_str ? ' - ' . $end_str : '');
+}
 ?>
 <article class="mec-search-bar-result">
     <div class="mec-event-list-search-bar-date mec-color">

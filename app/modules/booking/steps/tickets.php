@@ -247,6 +247,13 @@ wp_enqueue_script('mec-niceselect-script');
                         <?php
                             $price_label = isset($ticket['price_label']) ? $book->get_ticket_price_label($ticket, current_time('Y-m-d'), $event_id, $occurrence_time) : '';
                             $price_label = apply_filters('mec_filter_price_label', $price_label, $ticket, $event_id, $book);
+
+                            // Fallback: if label is empty, render numeric price
+                            if(trim((string) $price_label) === '')
+                            {
+                                $numeric_price = $book->get_ticket_price($ticket, current_time('Y-m-d'), $event_id, $occurrence_time);
+                                $price_label = $this->render_price($numeric_price, $event_id);
+                            }
                         ?>
                         <div class="mec-event-ticket-price"><?php echo MEC_kses::element($price_label); ?></div>
                     </div>

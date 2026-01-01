@@ -1778,6 +1778,11 @@ class MEC_book extends MEC_base
         if (!is_array($booking_options)) $booking_options = [];
 
         $tickets = get_post_meta($event_id, 'mec_tickets', true);
+        
+        // Ensure $tickets is an array
+        if (!is_array($tickets)) {
+            $tickets = array();
+        }
 
         $total_bookings_limit = (isset($booking_options['bookings_limit']) and trim($booking_options['bookings_limit']) !== '') ? $booking_options['bookings_limit'] : 100;
         $bookings_limit_unlimited = $booking_options['bookings_limit_unlimited'] ?? 0;

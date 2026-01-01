@@ -65,15 +65,15 @@ class MEC_feature_appointments extends MEC_base
         $adjusted = isset($config['adjusted_availability']) && is_array($config['adjusted_availability']) ? $config['adjusted_availability'] : [];
         $availability_repeat_type = $config['availability_repeat_type'] ?? 'weekly';
         ?>
-        <div class="mec-event-appointment-tab-wrap">
-            <div class="mec-event-appointment-tab">
-                <div class="mec-event-appointment-tab-item <?php echo $entity_type === 'event' ? 'mec-active-tab' : ''; ?>" data-entity-type="event"><?php esc_html_e('Event', 'modern-events-calendar-lite'); ?></div>
-                <div class="mec-event-appointment-tab-item <?php echo $entity_type === 'appointment' ? 'mec-active-tab' : ''; ?>" data-entity-type="appointment"><?php esc_html_e('Appointment', 'modern-events-calendar-lite'); ?></div>
-            </div>
+        <div class="mec-event-appointment-type-wrap mec-util-hidden"> &mdash;
+            <label for="mec_entity_type_select" class="screen-reader-text"><?php esc_html_e('Event Type', 'modern-events-calendar-lite'); ?></label>
+            <select id="mec_entity_type_select" name="mec[entity_type]">
+                <option value="event" <?php selected($entity_type, 'event'); ?>><?php esc_html_e('Event', 'modern-events-calendar-lite'); ?></option>
+                <option value="appointment" <?php selected($entity_type, 'appointment'); ?>><?php esc_html_e('Appointment', 'modern-events-calendar-lite'); ?></option>
+            </select>
         </div>
         <div class="mec-appointment-form-wrap">
             <input type="hidden" name="mec[appointments][saved]" value="1">
-            <input type="hidden" id="mec_entity_type_input" name="mec[entity_type]" value="<?php echo esc_attr($entity_type); ?>">
             <h4><?php esc_html_e('Appointment duration', 'modern-events-calendar-lite'); ?></h4>
             <div class="mec-form-row">
                 <select id="mec_appointments_duration" name="mec[appointments][duration]">

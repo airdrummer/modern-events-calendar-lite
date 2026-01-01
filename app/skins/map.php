@@ -13,6 +13,7 @@ class MEC_skin_map extends MEC_skins
      */
     public $skin = 'map';
     public $geolocation;
+    public $date_format_liquid_1;
 
     /**
      * Constructor method

@@ -26,6 +26,7 @@ class MEC_skin_list extends MEC_skins
     public $display_price;
     public $display_available_tickets;
     public $date_format_fluent_1;
+    public $date_format_liquid_1;
     public $reason_for_cancellation;
     public $display_label;
     public $loadMoreRunning;

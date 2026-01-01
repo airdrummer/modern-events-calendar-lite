@@ -493,7 +493,10 @@ class MEC_skin_single extends MEC_skins
         elseif (is_object($event) and isset($event->ID)) $event_id = $event->ID;
         else return;
 
-        list($p, $n) = $this->get_next_prev_query($event_id, $event->date);
+        $next_prev_result = $this->get_next_prev_query($event_id, $event->date ?? []);
+
+        $p = $next_prev_result[0] ?? null;
+        $n = $next_prev_result[1] ?? null;
 
         // No Event Found!
         if(is_array($p) && !isset($p['post_id']) && is_array($n) && !isset($n['post_id'])) return;

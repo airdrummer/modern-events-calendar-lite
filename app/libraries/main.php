@@ -5217,6 +5217,14 @@ class MEC_main extends MEC_base
         $currency_sign_position = $this->get_currency_sign_position($event);
         $decimals = $this->get_decimals($event);
 
+        // Normalize empty / non-numeric values to avoid passing null into number_format()
+        if ($price === null || $price === '') {
+            $price = 0;
+        }
+        if (!is_numeric($price)) {
+            $price = 0;
+        }
+
         // Force to double
         if (is_string($price)) $price = (float) $price;
 
@@ -9261,14 +9269,33 @@ class MEC_main extends MEC_base
             {
                 $advanced_days = is_array($event->meta['mec_advanced_days']) ? $event->meta['mec_advanced_days'] : [];
 
-                $first_rule = $advanced_days[0] ?? null;
-                $ex = explode('.', $first_rule);
-
-                $w = $ex[1] ?? null;
-                if ($w === 'l') $w = -1;
-
+                // Build BYDAY from all selected advanced rules (e.g., 2TU,4TU or 1MO,-1FR)
+                $byday_parts = [];
                 $byday_mapping = ['MON' => 'MO', 'TUE' => 'TU', 'WED' => 'WE', 'THU' => 'TH', 'FRI' => 'FR', 'SAT' => 'SA', 'SUN' => 'SU'];
-                $byday = $w . $byday_mapping[strtoupper($ex[0])];
+
+                foreach ($advanced_days as $rule)
+                {
+                    if (!is_string($rule) || strpos($rule, '.') === false) continue;
+
+                    $ex = explode('.', $rule);
+                    if (!isset($ex[0], $ex[1])) continue;
+
+                    $day_key = strtoupper($ex[0]);
+                    if (!isset($byday_mapping[$day_key])) continue;
+
+                    $ord = $ex[1];
+                    $ord = ($ord === 'l') ? -1 : intval($ord);
+                    if ($ord === 0) continue;
+
+                    $byday_parts[] = $ord . $byday_mapping[$day_key];
+                }
+
+                if (!empty($byday_parts))
+                {
+                    // Ensure unique and stable order
+                    $byday_parts = array_values(array_unique($byday_parts));
+                    $byday = implode(',', $byday_parts);
+                }
 
                 $wkst_mapping = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
                 $wkst = $wkst_mapping[$this->get_first_day_of_week()];

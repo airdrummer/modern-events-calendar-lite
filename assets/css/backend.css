@@ -1294,7 +1294,7 @@ body.post-type-mec-books th.column-author {
   max-width: 290px;
   margin-left: 0px;
   margin-right: 0px;
-  margin-bottom: 0;
+  margin-bottom: 10px;
 }
 
 .wns-be-main .mec-form-row .wp-editor-area {
@@ -14032,4 +14032,14 @@ body.post-type-mec_invoice #post-body-content {
 
 .label-checkbox+.label-checkbox {
   margin-left: 10px;
+}
+
+#mec_metabox_details .hndle {
+  justify-content: flex-start;
+  gap: 5px;
+}
+
+.meta-box-sortables select#mec_entity_type_select {
+  max-width: unset;
+  width: 200px;
 }

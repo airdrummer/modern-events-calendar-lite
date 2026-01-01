@@ -446,7 +446,7 @@ class MEC_feature_events extends MEC_base
     public function register_meta_boxes()
     {
         // Event Details
-        add_meta_box('mec_metabox_details', esc_html__('Event Details', 'modern-events-calendar-lite'), [$this, 'meta_box_details'], $this->main->get_main_post_type(), 'normal', 'high');
+        add_meta_box('mec_metabox_details', esc_html__('Details', 'modern-events-calendar-lite'), [$this, 'meta_box_details'], $this->main->get_main_post_type(), 'normal', 'high');
 
         // Visibility
         $visibility_status = !isset($this->settings['event_visibility_status']) || $this->settings['event_visibility_status'];

@@ -251,8 +251,10 @@ elseif($week_start == 5) // Friday
                         }
                         else $event_content = $this->cache->get($event->data->ID.'_content');
 
-                        echo '<div class="'.($this->main->is_expired($event) ? 'mec-past-event ' : '').'ended-relative simple-skin-ended">';
-                        if($sed_method !== 'no') echo '<a class="mec-monthly-tooltip event-single-link-simple" data-tooltip-content="#mec-tooltip-'.esc_attr($event_unique.'-'.$day_id).'" data-event-id="'.esc_attr($event->data->ID).'" href="'.esc_url($this->main->get_event_date_permalink($event, $event->date['start']['date'])).'" '.$target_url.'>';
+                        // Add event classes (including featured wrapper class)
+                        $event_classes = $this->get_event_classes($event);
+                        echo '<div class="'.($this->main->is_expired($event) ? 'mec-past-event ' : '').'ended-relative simple-skin-ended'.(!empty($event_classes) ? ' '.esc_attr($event_classes) : '').'">';
+                        if ($sed_method !== 'no') echo '<a class="mec-monthly-tooltip event-single-link-simple" data-tooltip-content="#mec-tooltip-'.esc_attr($event_unique.'-'.$day_id).'" data-event-id="'.esc_attr($event->data->ID).'" href="'.esc_url($this->main->get_event_date_permalink($event, $event->date['start']['date'])).'" '.$target_url.'>';
                         echo '<h4 class="mec-event-title">'.esc_html(apply_filters('mec_occurrence_event_title', $event->data->title, $event)).'</h4>'.MEC_kses::element($this->main->get_normal_labels($event, $display_label).$this->main->display_cancellation_reason($event, $reason_for_cancellation));
                         do_action('mec_shortcode_virtual_badge', $event->data->ID);
                         if($sed_method !== 'no') echo '</a>';

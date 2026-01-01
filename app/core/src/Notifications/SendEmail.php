@@ -310,7 +310,11 @@ class SendEmail{
 
             $timestamps = $this->get_event_times();
         }
+
+        // Normalize timestamps to integers to avoid type errors on date functions
         list($start_timestamp, $end_timestamp) = explode(':', $timestamps);
+        $start_timestamp = (int) $start_timestamp;
+        $end_timestamp   = (int) $end_timestamp;
 
         // Event Data
         $organizer_id = get_post_meta($this->event_id, 'mec_organizer_id', true);
