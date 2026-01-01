@@ -1,4 +1,9 @@
-﻿v 7.29.0 - 25 December 2025
+v 7.29.0.1 - 1jan26
+- added missing timezone display, reformat
+- fixed countdown
+
+
+v 7.29.0 - 25 December 2025
 - Added: An advanced feature to apply the search criteria to the browser URL.
 - Added: An option to disable default invoice attached to the booking notifications.
 - Improved: The codes to be integrated with WordPress 6.9
