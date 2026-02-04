@@ -104,6 +104,7 @@ if (isset($_SERVER['HTTP_USER_AGENT']))
 
 // Generating javascript code of countdown default module
 $defaultjs = '<script>
+$countdown_interval = 30000;  // setting tbd
 jQuery(document).ready(function($)
 {
     jQuery.each(jQuery(".mec-countdown-details"),function(i,el)
