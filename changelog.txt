@@ -1,4 +1,8 @@
-﻿v 7.30.0 - 31 January 2026
+v 7.30.0.1 - 4feb26
+- added missing timezone display, reformat
+- fixed countdown
+
+v 7.30.0 - 31 January 2026
 - Added: An ability to perform an address radius search to find the events.
 - Improved: The Restful API by adding information of event labels.
 - Improved: The MEC tags system.

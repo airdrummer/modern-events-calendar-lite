@@ -44,36 +44,66 @@ $end_time = date('D M j Y G:i:s', strtotime($end_date . ' ' . $e_time));
 // Timezone
 $TZO = $this->get_TZO($event);
 
-$d1 = new DateTime($start_time, $TZO);
-$d2 = new DateTime('now', $TZO);
-$d3 = new DateTime($end_time, $TZO);
+$starttime = new DateTime($start_time, $TZO);
+$nowtime   = new DateTime('now', $TZO);
+$endtime   = new DateTime($end_time, $TZO);
 
-$countdown_method = get_post_meta($event->ID, 'mec_countdown_method', true);
-if (trim($countdown_method) == '') $countdown_method = 'global';
-
-if ($countdown_method == 'global') $ongoing = isset($settings['hide_time_method']) && trim($settings['hide_time_method']) == 'end';
-else $ongoing = $countdown_method == 'end';
-
-$disable_for_ongoing = isset($settings['countdown_disable_for_ongoing_events']) && $settings['countdown_disable_for_ongoing_events'];
-
-if ($d3 < $d2) {
-    echo '<div class="mec-end-counts"><h3>' . esc_html__('The event is finished.', 'modern-events-calendar-lite') . '</h3></div>';
-    return;
-} elseif (($d1 < $d2 and !$ongoing) or ($d1 < $d2 and $disable_for_ongoing)) {
-    echo '<div class="mec-end-counts"><h3>' . esc_html__('The event is ongoing.', 'modern-events-calendar-lite') . '</h3></div>';
+if($endtime < $nowtime)
+{
+    echo '<div class="mec-end-counts"><h3>'
+    	.esc_html__('This event has ended', 'modern-events-calendar-lite')
+    	.'</h3></div>';
     return;
 }
 
-$gmt_offset = $this->get_gmt_offset($event, strtotime($start_date . ' ' . $s_time));
-if (isset($_SERVER['HTTP_USER_AGENT']) and strpos($_SERVER['HTTP_USER_AGENT'], 'Safari') === false) $gmt_offset = ' : ' . $gmt_offset;
-if (isset($_SERVER['HTTP_USER_AGENT']) and strpos($_SERVER['HTTP_USER_AGENT'], 'Edge') == true) $gmt_offset = substr(trim($gmt_offset), 0, 3);
-if (isset($_SERVER['HTTP_USER_AGENT']) and strpos($_SERVER['HTTP_USER_AGENT'], 'Trident') == true) $gmt_offset = substr(trim($gmt_offset), 2, 3);
+$countdown_method = get_post_meta($event->ID, 'mec_countdown_method', true);
+if (trim($countdown_method) == '') 
+	$countdown_method = 'global';
+if ($countdown_method == 'global')
+	$show_ongoing = isset($settings['hide_time_method'])
+					&& trim($settings['hide_time_method']) == 'end';
+else
+	$show_ongoing = $countdown_method == 'end';
 
-$datetime = $ongoing ? $end_time : $start_time;
+$disable_for_ongoing = (isset($settings['countdown_disable_for_ongoing_events'])
+	 					  and $settings['countdown_disable_for_ongoing_events']);
+
+$ongoing = ($starttime < $nowtime);
+if ( $ongoing )
+{
+	echo '<div class="mec-end-counts"><h3>'
+        . esc_html__('going on NOW!', 'modern-events-calendar-lite')
+        . '</h3></div>';
+    if ($disable_for_ongoing or !$show_ongoing)
+        return;
+
+	$datetime = $end_time;
+    $cd2 = "ends in";
+}
+else if (!$disable_for_ongoing and $countdown_method == 'end')
+{
+	$datetime = $end_time;
+    $cd2 = "ends in";
+}
+else
+{	
+	$datetime = $start_time;
+	$cd2 = "starts in";
+}
+
+$gmt_offset = $this->get_gmt_offset($event, strtotime($start_date . ' ' . $s_time));
+if (isset($_SERVER['HTTP_USER_AGENT']))
+{
+	if( strpos($_SERVER['HTTP_USER_AGENT'], 'Safari') === false)
+		$gmt_offset = ' : ' . $gmt_offset;
+	if (strpos($_SERVER['HTTP_USER_AGENT'], 'Edge') == true)
+		$gmt_offset = substr(trim($gmt_offset), 0, 3);
+	if (strpos($_SERVER['HTTP_USER_AGENT'], 'Trident') == true)
+		$gmt_offset = substr(trim($gmt_offset), 2, 3);
+}
 
 // Generating javascript code of countdown default module
 $defaultjs = '<script>
-
 jQuery(document).ready(function($)
 {
     jQuery.each(jQuery(".mec-countdown-details"),function(i,el)
@@ -83,7 +113,8 @@ jQuery(document).ready(function($)
         jQuery(el).mecCountDown(
             {
                 date: datetime+""+gmt_offset,
-                format: "off"
+                format: "off",
+                interval: countdown_interval 
             },
             function(){}
         );
@@ -105,9 +136,9 @@ jQuery(document).ready(function()
         return (second-first)/(1000*3600*24);
     }
 
-    if(dayDiff(currentDate, futureDate) < 100) jQuery(".clock").addClass("twodaydigits");
-    else jQuery(".clock").addClass("threedaydigits");
-
+	jQuery(".clock").addClass((dayDiff(currentDate, futureDate) < 100
+								? "twodaydigits"
+								: "threedaydigits"));
     if(diff < 0)
     {
         diff = 0;
