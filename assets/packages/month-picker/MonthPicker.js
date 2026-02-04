@@ -188,7 +188,7 @@
 			while (i < 12) {
 				html += '<span class="month">'+DPGlobal.dates.monthsShort[i++]+'</span>';
 			}
-			this.picker.find('.datepicker-months td').append(html);
+			this.picker.find('.datepicker-months td').html(html);
 		},
 
 		fill: function() {

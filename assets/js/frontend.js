@@ -84,6 +84,7 @@ var mec_search_callbacks = [];
         var $time_end = $("#mec_sf_timepicker_end_" + settings.id);
         var $s = $("#mec_sf_s_" + settings.id);
         var $address = $("#mec_sf_address_s_" + settings.id);
+        var $address_radius = $("#mec_sf_address_radius_" + settings.id);
         var $date_start = $('#mec_sf_date_start_' + settings.id);
         var $date_end = $('#mec_sf_date_end_' + settings.id);
         var $event_type = $('#mec_sf_event_type_' + settings.id);
@@ -115,6 +116,10 @@ var mec_search_callbacks = [];
 
         $address.off('change').on('change', function (e) {
             last_field = 'address';
+            search();
+        });
+        $address_radius.off('change').on('change', function (e) {
+            last_field = 'address_radius';
             search();
         });
 
@@ -348,6 +353,7 @@ var mec_search_callbacks = [];
                 // Simple fields
                 if(typeof sfObj['s'] !== 'undefined' && $s.length) $s.val(sfObj['s']);
                 if(typeof sfObj['address'] !== 'undefined' && $address.length) $address.val(sfObj['address']);
+                if(typeof sfObj['address_radius'] !== 'undefined' && $address_radius.length) $address_radius.val(sfObj['address_radius']);
                 if(typeof sfObj['cost-min'] !== 'undefined' && $event_cost_min.length) $event_cost_min.val(sfObj['cost-min']);
                 if(typeof sfObj['cost-max'] !== 'undefined' && $event_cost_max.length) $event_cost_max.val(sfObj['cost-max']);
                 if(typeof sfObj['time-start'] !== 'undefined' && $time_start.length) $time_start.val(sfObj['time-start']);
@@ -446,6 +452,7 @@ var mec_search_callbacks = [];
 
             var s = $s.length ? $s.val() : '';
             var address = $address.length ? $address.val() : '';
+            var address_radius = $address_radius.length ? $address_radius.val() : '';
             var tag = $tag.length ? $tag.val() : '';
             var month = $month.length ? $month.val() : '';
             var year = $year.length ? $year.val() : '';
@@ -540,7 +547,7 @@ var mec_search_callbacks = [];
             }
 
             // Search Parameters
-            var sf = 'sf[s]=' + s + '&sf[address]=' + address + '&sf[cost-min]=' + cost_min + '&sf[cost-max]=' + cost_max + '&sf[time-start]=' + time_start + '&sf[time-end]=' + time_end + '&sf[month]=' + month + '&sf[year]=' + year + '&sf[start]=' + start + '&sf[end]=' + end + '&sf[category]=' + category + '&sf[location]=' + location + '&sf[organizer]=' + organizer + '&sf[speaker]=' + speaker + '&sf[tag]=' + tag + '&sf[label]=' + label + '&sf[event_type]=' + event_type + '&sf[event_type_2]=' + event_type_2 + '&sf[event_status]=' + event_status + '&sf[attribute]=' + attribute + addation_attr;
+            var sf = 'sf[s]=' + s + '&sf[address]=' + address + '&sf[address_radius]=' + address_radius + '&sf[cost-min]=' + cost_min + '&sf[cost-max]=' + cost_max + '&sf[time-start]=' + time_start + '&sf[time-end]=' + time_end + '&sf[month]=' + month + '&sf[year]=' + year + '&sf[start]=' + start + '&sf[end]=' + end + '&sf[category]=' + category + '&sf[location]=' + location + '&sf[organizer]=' + organizer + '&sf[speaker]=' + speaker + '&sf[tag]=' + tag + '&sf[label]=' + label + '&sf[event_type]=' + event_type + '&sf[event_type_2]=' + event_type_2 + '&sf[event_status]=' + event_status + '&sf[attribute]=' + attribute + addation_attr;
 
             // Event Fields
             $custom_fields.each(function()
@@ -670,6 +677,7 @@ var mec_search_callbacks = [];
             if ($tag.length) $tag.val(null);
             if ($s.length) $s.val(null);
             if ($address.length) $address.val(null);
+            if ($address_radius.length) $address_radius.val(null);
             if ($month.length) $month.val(null);
             if ($year.length) $year.val(null);
             if ($event_cost_min.length) $event_cost_min.val(null);
@@ -4876,29 +4884,25 @@ jQuery(window).on('load', function()
 (function ($) {
     $.fn.mecCountDown = function (options, callBack) {
         // Default Options
-        var settings = $.extend(
-		{
+        var settings = $.extend({
             // These are the defaults.
             date: null,
-            format: null,
-            interval: 1000
+            format: null
         }, options);
 
         var callback = callBack;
         var selector = $(this);
 
         startCountdown();
-        var intervalID = setInterval(startCountdown, settings.interval);
+        var interval = setInterval(startCountdown, 1000);
 
-        function startCountdown() 
-        {
+        function startCountdown() {
             var eventDate = Date.parse(settings.date) / 1000;
             var currentDate = Math.floor($.now() / 1000);
 
-            if (eventDate <= currentDate) 
-            {
+            if (eventDate <= currentDate) {
                 callback.call(this);
-                clearInterval(intervalID);
+                clearInterval(interval);
             }
 
             var seconds = eventDate - currentDate;
@@ -4912,18 +4916,17 @@ jQuery(window).on('load', function()
             var minutes = Math.floor(seconds / 60);
             seconds -= minutes * 60;
 
-            selector.find(".mec-timeRefDays").text((days == 1 
-            					? mecdata.day
-            					: mecdata.days));
-            selector.find(".mec-timeRefHours").text((hours == 1
-            					? mecdata.hour
-            					: mecdata.hours));
-			selector.find(".mec-timeRefMinutes").text((minutes == 1
-            					? mecdata.minute
-            					: mecdata.minutes));
-            selector.find(".mec-timeRefSeconds").text((seconds == 1
-								? mecdata.second
-								: mecdata.seconds));
+            if (days == 1) selector.find(".mec-timeRefDays").text(mecdata.day);
+            else selector.find(".mec-timeRefDays").text(mecdata.days);
+
+            if (hours == 1) selector.find(".mec-timeRefHours").text(mecdata.hour);
+            else selector.find(".mec-timeRefHours").text(mecdata.hours);
+
+            if (minutes == 1) selector.find(".mec-timeRefMinutes").text(mecdata.minute);
+            else selector.find(".mec-timeRefMinutes").text(mecdata.minutes);
+
+            if (seconds == 1) selector.find(".mec-timeRefSeconds").text(mecdata.second);
+            else selector.find(".mec-timeRefSeconds").text(mecdata.seconds);
 
             if (settings.format === "on") {
                 days = (String(days).length >= 2) ? days : "0" + days;
@@ -4938,7 +4941,7 @@ jQuery(window).on('load', function()
                 selector.find(".mec-minutes").text(minutes);
                 selector.find(".mec-seconds").text(seconds);
             } else {
-                clearInterval(intervalID);
+                clearInterval(interval);
             }
         }
     };

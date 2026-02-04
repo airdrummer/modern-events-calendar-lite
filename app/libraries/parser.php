@@ -171,6 +171,17 @@ class MEC_parser extends MEC_base
             $template = locate_template('taxonomy-mec-category.php');
             if ($template == '') $template = MEC_ABSPATH . 'templates' . DS . 'taxonomy-mec-category.php';
         }
+        else if (is_tax('mec_tag'))
+        {
+            // Block Themes
+            if (function_exists('wp_is_block_theme') && wp_is_block_theme())
+            {
+                return $template;
+            }
+
+            $template = locate_template('taxonomy-mec_tag.php');
+            if ($template == '') $template = MEC_ABSPATH . 'templates' . DS . 'taxonomy-mec_tag.php';
+        }
 
         return $template;
     }

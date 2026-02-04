@@ -9,12 +9,22 @@ $today = date('Y-m-d', current_time('timestamp'));
 $next_occurrences = $this->getRender()->dates($event_id, null, 1, $today);
 $next_occurrence_start = $next_occurrences[0]['start'] ?? [];
 $occurrence_timestamp = $next_occurrence_start['timestamp'] ?? null;
+$occurrence_date = $next_occurrence_start['date'] ?? null;
 
 if (!$occurrence_timestamp && !empty($next_occurrence_start['date'])) $occurrence_timestamp = strtotime($next_occurrence_start['date']);
 if (!$occurrence_timestamp)
 {
     $fallback_date = get_post_meta($event_id, 'mec_start_date', true);
     $occurrence_timestamp = $fallback_date ? strtotime($fallback_date) : null;
+    if (!$occurrence_date && $fallback_date) $occurrence_date = $fallback_date;
+}
+if (!$occurrence_date && $occurrence_timestamp) $occurrence_date = date('Y-m-d', $occurrence_timestamp);
+
+$event_link = get_permalink($event_id);
+if ($occurrence_date)
+{
+    $event_data = $this->getRender()->data($event_id);
+    $event_link = $this->main->get_event_date_permalink((object) ['data' => $event_data], $occurrence_date);
 }
 
 $allday = (get_post_meta($event_id, 'mec_allday', true) == '1');
@@ -43,13 +53,13 @@ else
         <?php if ($occurrence_timestamp) echo esc_html($this->main->date_i18n('F', $occurrence_timestamp)); ?>
     </div>
     <div class="mec-event-image">
-        <a href="<?php the_permalink(); ?>" target="_blank"><?php the_post_thumbnail('thumbnail'); ?></a>
+        <a href="<?php echo esc_url($event_link); ?>" target="_blank"><?php the_post_thumbnail('thumbnail'); ?></a>
     </div>
     <div class="mec-event-time mec-color">
         <i class="mec-sl-clock-o"></i><?php echo esc_html($time); ?>
     </div>
     <h4 class="mec-event-title">
-        <a class="mec-color-hover" href="<?php the_permalink(); ?>" target="_blank"><?php the_title(); ?></a>
+        <a class="mec-color-hover" href="<?php echo esc_url($event_link); ?>" target="_blank"><?php the_title(); ?></a>
     </h4>
     <div class="mec-event-detail">
         <?php

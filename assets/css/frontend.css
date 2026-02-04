@@ -11441,7 +11441,7 @@ body:has(.mec-modern-search-bar .mec-search-form)
 .mec-checkboxes-search .mec-searchbar-category-wrap,
 .mec-wrap .mec-search-form .mec-dropdown-wrap .mec-dropdown-search select {
   width: calc(100% - 36px);
-  margin-bottom: 20px;
+  margin-bottom: 20px !important;
   border-radius: 0 var(--mec-secondary-border-radius) var(--mec-secondary-border-radius) 0;
   padding-bottom: 3px;
 }
@@ -26857,6 +26857,19 @@ span.button {
   color: #fff;
 }
 
+.mec-book-field-agreement.mec-reg-mandatory .wbmec-mandatory {
+  font-size: 0;
+}
+
+.mec-book-field-agreement.mec-reg-mandatory a:after {
+  content: "*";
+  color: red;
+  width: 50px;
+  height: 50px;
+  font-size: 14px;
+  padding-left: 5px;
+}
+
 /* Fes Appointment */
 
 .mec-fes-form .mec-event-appointment-tab {
@@ -27076,6 +27089,12 @@ span.button {
 
 .mec-fes-form .button.mec_field_sort:hover:before {
   color: #ffffff;
+}
+
+.mec-fes-form .mec-event-appointment-type-wrap {
+  margin: 10px -10px 0;
+  font-size: 15px;
+  font-weight: 600;
 }
 
 .rtl .mec-yearly-view-wrap .mec-yearly-title-sec .mec-next-year i:before,

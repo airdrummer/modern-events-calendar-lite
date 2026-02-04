@@ -610,7 +610,7 @@ $shortcodes = get_posts(array(
                                     <span class="mec-tooltip">
                                         <div class="box left">
                                             <h5 class="title"><?php esc_html_e('Archive Page Skin', 'modern-events-calendar-lite'); ?></h5>
-                                            <div class="content"><p><?php esc_attr_e("The event archive page skin can be modified here. ", 'modern-events-calendar-lite'); ?><a href="https://webnus.net/dox/modern-events-calendar/general-settings/#3-_Archive_Page_Skin/" target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a><a href="https://webnus.net/modern-events-calendar/" target="_blank"><?php esc_html_e('See Demo', 'modern-events-calendar-lite'); ?></a></p></div>
+                                            <div class="content"><p><?php esc_attr_e("Select the skin for the main Events archive and event tag archive pages.", 'modern-events-calendar-lite'); ?><a href="https://webnus.net/dox/modern-events-calendar/general-settings/#3-_Archive_Page_Skin/" target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a><a href="https://webnus.net/modern-events-calendar/" target="_blank"><?php esc_html_e('See Demo', 'modern-events-calendar-lite'); ?></a></p></div>
                                         </div>
                                         <i title="" class="dashicons-before dashicons-editor-help"></i>
                                     </span>
@@ -1075,8 +1075,7 @@ $shortcodes = get_posts(array(
                         </div>
 
                         <div id="search_options" class="mec-options-fields">
-                            <h4 class="mec-form-subtitle"><?php esc_html_e('Search Bar', 'modern-events-calendar-lite'); ?></h4>
-
+                        <h4 class="mec-form-subtitle"><?php esc_html_e('Search', 'modern-events-calendar-lite'); ?></h4>
                             <div class="mec-backend-tab-wrap mec-basvanced-toggle" data-for="#search_options">
                                 <div class="mec-backend-tab">
                                     <div class="mec-backend-tab-item mec-b-active-tab"><?php esc_html_e('Basic', 'modern-events-calendar-lite'); ?></div>
@@ -1085,6 +1084,8 @@ $shortcodes = get_posts(array(
                             </div>
 
                             <div class="mec-basvanced-basic">
+                                <h5 class="mec-form-subtitle"><?php esc_html_e('Search Bar', 'modern-events-calendar-lite'); ?></h5>
+
                                 <div class="mec-form-row">
                                     <p><?php echo sprintf(esc_html__('Put %s shortcode into your desired page. Then users are able to search events', 'modern-events-calendar-lite'), '<code>[MEC_search_bar]</code>'); ?></p>
                                 </div>
@@ -1173,6 +1174,13 @@ $shortcodes = get_posts(array(
                                         </div>
                                         <i title="" class="dashicons-before dashicons-editor-help"></i>
                                     </span>
+                                </div>
+                                <h5 class="mec-form-subtitle"><?php esc_html_e('Geo-point', 'modern-events-calendar-lite'); ?></h5>
+                                <div class="mec-form-row">
+                                    <label class="mec-col-3" for="mec_settings_google_geocoding_api_key"><?php esc_html_e('Google Geocoding API Key', 'modern-events-calendar-lite'); ?></label>
+                                    <div class="mec-col-9">
+                                        <input type="text" id="mec_settings_google_geocoding_api_key" name="mec[settings][google_geocoding_api_key]" value="<?php echo (isset($settings['google_geocoding_api_key']) && trim($settings['google_geocoding_api_key']) !== '') ? esc_attr($settings['google_geocoding_api_key']) : ''; ?>" />
+                                    </div>
                                 </div>
                             </div>
                         </div>

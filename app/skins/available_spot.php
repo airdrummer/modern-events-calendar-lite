@@ -118,6 +118,9 @@ class MEC_skin_available_spot extends MEC_skins
             $events[] = $this->render->after_render($data, $this);
         }
 
+        // custom sort events by publish date
+        $events = apply_filters('mec_skin_events', $events, $this);
+
         return $events;
     }
 }

@@ -110,7 +110,8 @@ function mec_get_tickets_availability'.esc_js($uniqueid).'(event_id, date)
                 jQuery("#mec_booking'.esc_js($uniqueid).' #mec_event_ticket"+ticket_id).removeClass("mec-util-hidden");
                 if(data.availability["not_available_"+ticket_id]) jQuery("#mec_booking'.esc_js($uniqueid).' #mec_event_ticket"+ticket_id).addClass("mec-util-hidden");
                 
-                jQuery("#mec_booking'.esc_js($uniqueid).' #mec_event_ticket"+ticket_id).addClass(".mec-event-ticket"+limit);
+                // Add dynamic availability class without a leading dot in the class name
+                jQuery("#mec_booking'.esc_js($uniqueid).' #mec_event_ticket"+ticket_id).addClass("mec-event-ticket"+limit);
                 
                 if(data.active_mec_waiting == undefined){
                  if(data.availability["stop_selling_"+ticket_id]) jQuery("#mec_booking'.esc_js($uniqueid).' #mec-ticket-message-"+ticket_id).attr("class", "mec-ticket-unavailable-spots mec-error").find("div").html(jQuery("#mec_booking'.esc_js($uniqueid).' #mec-ticket-message-sales-"+ticket_id).val());
@@ -152,7 +153,14 @@ function mec_get_tickets_availability'.esc_js($uniqueid).'(event_id, date)
             {
                 var price_label = data.prices[ticket_id];
 
-                jQuery("#mec_booking'.esc_js($uniqueid).' #mec_event_ticket"+ticket_id+" .mec-event-ticket-price").html(price_label);
+                // Only update the price HTML when we actually have a value.
+                // This prevents clearing the original price label in edge cases
+                // (for example, when navigating back from later booking steps and
+                // the availability AJAX response does not include prices).
+                if(typeof price_label !== "undefined" && price_label !== null && String(price_label).trim() !== "")
+                {
+                    jQuery("#mec_booking'.esc_js($uniqueid).' #mec_event_ticket"+ticket_id+" .mec-event-ticket-price").html(price_label);
+                }
             }
 
             // Remove Preloader
@@ -220,7 +228,8 @@ function mec_get_tickets_availability_multiple'.esc_js($uniqueid).'(event_id)
                     else available_spots = "-1";
                 }
 
-                jQuery("#mec_booking'.esc_js($uniqueid).' #mec_event_ticket"+ticket_id).addClass(".mec-event-ticket"+limit);
+                // Add dynamic availability class without a leading dot in the class name
+                jQuery("#mec_booking'.esc_js($uniqueid).' #mec_event_ticket"+ticket_id).addClass("mec-event-ticket"+limit);
 
                 if(data.availability["stop_selling_"+ticket_id]) jQuery("#mec_booking'.esc_js($uniqueid).' #mec-ticket-message-"+ticket_id).attr("class", "mec-ticket-unavailable-spots mec-error").find("div").html(jQuery("#mec_booking'.esc_js($uniqueid).' #mec-ticket-message-sales-"+ticket_id).val());
                 else jQuery("#mec_booking'.esc_js($uniqueid).' #mec-ticket-message-"+ticket_id).attr("class", "mec-ticket-unavailable-spots info-msg").find("div").html(jQuery("#mec_booking'.esc_js($uniqueid).' #mec-ticket-message-sold-out-"+ticket_id).val());
@@ -257,7 +266,14 @@ function mec_get_tickets_availability_multiple'.esc_js($uniqueid).'(event_id)
             {
                 var price_label = data.prices[ticket_id];
 
-                jQuery("#mec_booking'.esc_js($uniqueid).' #mec_event_ticket"+ticket_id+" .mec-event-ticket-price").html(price_label);
+                // Only update the price HTML when we actually have a value.
+                // This prevents clearing the original price label in edge cases
+                // (for example, when navigating back from later booking steps and
+                // the availability AJAX response does not include prices).
+                if(typeof price_label !== "undefined" && price_label !== null && String(price_label).trim() !== "")
+                {
+                    jQuery("#mec_booking'.esc_js($uniqueid).' #mec_event_ticket"+ticket_id+" .mec-event-ticket-price").html(price_label);
+                }
             }
 
             // Disable or Enable Button

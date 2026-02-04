@@ -65,7 +65,7 @@ class MEC_feature_appointments extends MEC_base
         $adjusted = isset($config['adjusted_availability']) && is_array($config['adjusted_availability']) ? $config['adjusted_availability'] : [];
         $availability_repeat_type = $config['availability_repeat_type'] ?? 'weekly';
         ?>
-        <div class="mec-event-appointment-type-wrap mec-util-hidden"> &mdash;
+        <div class="mec-event-appointment-type-wrap"><?php esc_html_e('Details', 'modern-events-calendar-lite'); ?> &mdash;
             <label for="mec_entity_type_select" class="screen-reader-text"><?php esc_html_e('Event Type', 'modern-events-calendar-lite'); ?></label>
             <select id="mec_entity_type_select" name="mec[entity_type]">
                 <option value="event" <?php selected($entity_type, 'event'); ?>><?php esc_html_e('Event', 'modern-events-calendar-lite'); ?></option>

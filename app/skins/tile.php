@@ -18,6 +18,7 @@ class MEC_skin_tile extends MEC_skins
     public $display_label;
     public $date_format_clean_1;
     public $date_format_clean_2;
+    public $order_method;
 
     /**
      * Constructor method
@@ -112,6 +113,9 @@ class MEC_skin_tile extends MEC_skins
         // SED Method
         $this->sed_method = $this->get_sed_method();
 
+        // Order Method
+        $this->order_method = (isset($this->skin_options['order_method']) and trim($this->skin_options['order_method'])) ? $this->skin_options['order_method'] : 'ASC';
+
         // Image popup
         $this->image_popup = $this->skin_options['image_popup'] ?? '0';
 
@@ -162,17 +166,21 @@ class MEC_skin_tile extends MEC_skins
 
         // Sort Options
         $this->args['orderby'] = 'mec_start_day_seconds ID';
-        $this->args['order'] = 'ASC';
+        $this->args['order'] = (in_array($this->order_method, ['ASC', 'DESC']) ? $this->order_method : 'ASC');
         $this->args['meta_key'] = 'mec_start_day_seconds';
 
         // Show Only Expired Events
         $this->show_only_expired_events = (isset($this->atts['show_only_past_events']) and trim($this->atts['show_only_past_events'])) ? '1' : '0';
+
+        // Maximum Date Range.
+        $this->maximum_date_range = $this->get_end_date();
 
         // Show Past Events
         if ($this->show_only_expired_events)
         {
             $this->order_method = 'DESC';
             $this->atts['show_past_events'] = '1';
+            $this->args['order'] = 'DESC';
         }
 
         // Show Past Events
@@ -224,6 +232,9 @@ class MEC_skin_tile extends MEC_skins
         {
             $start = $this->start_date;
             $end = ($this->load_method === 'month' ? date('Y-m-t', strtotime($this->start_date)) : date('Y-m-t', strtotime('+15 Years', strtotime($start))));
+
+            // Set a certain maximum date from shortcode page.
+            if (trim($this->maximum_date) == '' and (isset($this->maximum_date_range) and trim($this->maximum_date_range))) $this->maximum_date = $this->maximum_date_range;
         }
 
         // Date Events
@@ -244,6 +255,9 @@ class MEC_skin_tile extends MEC_skins
         {
             // No Event
             if (!is_array($IDs) or !count($IDs)) continue;
+
+            // Check Finish Date
+            if (isset($this->maximum_date) && trim($this->maximum_date) && ((strtotime($date) > strtotime($this->maximum_date) && $this->order_method === 'ASC') || (strtotime($date) < strtotime($this->maximum_date) && ($this->order_method === 'DESC' || $this->show_only_expired_events)))) break;
 
             // Include Available Events
             $this->args['post__in'] = array_unique($IDs);
@@ -341,6 +355,8 @@ class MEC_skin_tile extends MEC_skins
 
         // Initialize Occurrences' Data
         MEC_feature_occurrences::fetch($events);
+        // custom sort events by publish date
+        $events = apply_filters('mec_skin_events', $events, $this);
 
         // Set found events
         $this->found = $found;

@@ -282,7 +282,7 @@ class MEC_main extends MEC_base
         $url1 = "https://maps.googleapis.com/maps/api/geocode/json?address=" . $address . ((isset($settings['google_maps_api_key']) and trim($settings['google_maps_api_key']) != '') ? '&key=' . $settings['google_maps_api_key'] : '');
         $url2 = 'http://www.datasciencetoolkit.org/maps/api/geocode/json?sensor=false&address=' . $address;
 
-        // Get Latitide and Longitude by First URL
+        // Get Latitude and Longitude by First URL
         $JSON = wp_remote_retrieve_body(wp_remote_get($url1, [
             'body' => null,
             'timeout' => '10',
@@ -297,7 +297,7 @@ class MEC_main extends MEC_base
             return [$location_point['lat'], $location_point['lng']];
         }
 
-        // Get Latitide and Longitude by Second URL
+        // Get Latitude and Longitude by Second URL
         $JSON = wp_remote_retrieve_body(wp_remote_get($url2, [
             'body' => null,
             'timeout' => '10',
@@ -313,6 +313,71 @@ class MEC_main extends MEC_base
         }
 
         return [0, 0];
+    }
+
+    /**
+     * Convert address string to latitude and longitude using Google Geocoding API.
+     * @param string $address
+     * @return array
+     */
+    public function geopoint($address)
+    {
+        $address = trim((string) $address);
+        if ($address === '') return [];
+
+        $settings = $this->get_settings();
+        $api_key = isset($settings['google_geocoding_api_key']) ? trim($settings['google_geocoding_api_key']) : '';
+        if ($api_key === '') return [];
+
+        $url = add_query_arg(
+            [
+                'address' => urlencode($address),
+                'key' => $api_key,
+            ],
+            'https://maps.googleapis.com/maps/api/geocode/json'
+        );
+
+        $response = wp_remote_get($url, [
+            'body' => null,
+            'timeout' => '10',
+            'redirection' => '10',
+        ]);
+
+        if (is_wp_error($response)) return [];
+
+        $data = json_decode(wp_remote_retrieve_body($response), true);
+        $location_point = $data['results'][0]['geometry']['location'] ?? [];
+
+        if (!isset($location_point['lat'], $location_point['lng'])) return [];
+
+        return [
+            'lat' => $location_point['lat'],
+            'lng' => $location_point['lng'],
+        ];
+    }
+
+    /**
+     * Calculate distance between two geo points in meters.
+     * @param float $lat1
+     * @param float $lng1
+     * @param float $lat2
+     * @param float $lng2
+     * @return float
+     */
+    public function distance_between($lat1, $lng1, $lat2, $lng2)
+    {
+        $lat1 = deg2rad((float) $lat1);
+        $lng1 = deg2rad((float) $lng1);
+        $lat2 = deg2rad((float) $lat2);
+        $lng2 = deg2rad((float) $lng2);
+
+        $dlat = $lat2 - $lat1;
+        $dlng = $lng2 - $lng1;
+
+        $a = pow(sin($dlat / 2), 2) + cos($lat1) * cos($lat2) * pow(sin($dlng / 2), 2);
+        $c = 2 * asin(min(1, sqrt($a)));
+
+        return 6371000 * $c;
     }
 
     /**
@@ -5959,11 +6024,19 @@ class MEC_main extends MEC_base
         if (is_tax())
         {
             $query = get_queried_object();
-            $term_id = $query->term_id;
+            $term_id = $query->term_id ?? 0;
+            $taxonomy = $query->taxonomy ?? '';
 
-            if (!isset($atts['category'])) $atts['category'] = '';
-
-            $atts['category'] = trim(trim($atts['category'], ', ') . ',' . $term_id, ', ');
+            if ($taxonomy === 'mec_category')
+            {
+                if (!isset($atts['category'])) $atts['category'] = '';
+                $atts['category'] = trim(trim($atts['category'], ', ') . ',' . $term_id, ', ');
+            }
+            else if ($taxonomy === apply_filters('mec_taxonomy_tag', ''))
+            {
+                if (!isset($atts['tag'])) $atts['tag'] = '';
+                $atts['tag'] = trim(trim($atts['tag'], ', ') . ',' . $term_id, ', ');
+            }
         }
 
         return $atts;
@@ -8403,8 +8476,8 @@ class MEC_main extends MEC_base
                         $dates['daysMin'][$k] = $day_min;
                         break;
                     case 'months':
-                        $dates['months'][$k] = date_i18n('F', strtotime($value));
-                        $dates['monthsShort'][$k] = date_i18n('M', strtotime($value));
+                        $dates['months'][$k] = date_i18n('F', strtotime('1 ' . $value));
+                        $dates['monthsShort'][$k] = date_i18n('M', strtotime('1 '. $value));
                         break;
                 }
             }
@@ -11083,18 +11156,18 @@ class MEC_main extends MEC_base
             $p = $path . $key . '.';
             if ((is_array($excludes) and in_array(trim($p, '. '), $excludes)) or (is_array($excludes) and !count($excludes)))
             {
-                $sanitized[$key] = $val;
+                $sanitized[$key] = wp_unslash($val);
                 continue;
             }
 
             if (is_array($val)) $sanitized[$key] = $this->sanitize_deep_array($val, $type, $excludes, $p);
-            else if ($type == 'int') $sanitized[$key] = (int) $val;
-            else if ($type == 'url') $sanitized[$key] = esc_url($val);
-            else if ($type == 'email') $sanitized[$key] = sanitize_email($val);
-            else if ($type == 'page') $sanitized[$key] = MEC_kses::page($val);
+            else if ($type == 'int') $sanitized[$key] = (int) wp_unslash($val);
+            else if ($type == 'url') $sanitized[$key] = esc_url(wp_unslash($val));
+            else if ($type == 'email') $sanitized[$key] = sanitize_email(wp_unslash($val));
+            else if ($type == 'page') $sanitized[$key] = MEC_kses::page(wp_unslash($val));
             else
             {
-                $sanitized[$key] = sanitize_text_field($val);
+                $sanitized[$key] = sanitize_text_field(wp_unslash($val));
             }
         }
 
@@ -11446,6 +11519,7 @@ class MEC_main extends MEC_base
 
         // MEC Settings
         $settings = $this->get_settings();
+        if (empty($settings['exceptional_days'])) return $days;
 
         // Global Exceptional Days
         $global = isset($settings['global_exceptional_days']) && is_array($settings['global_exceptional_days']) ? $settings['global_exceptional_days'] : [];

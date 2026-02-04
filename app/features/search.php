@@ -137,7 +137,6 @@ class MEC_feature_search extends MEC_base
             'order' => 'ASC',
             'show_count' => 0,
             'hide_empty' => 0,
-            'include' => ((isset($taxonomy_name) and trim($taxonomy_name)) ? $taxonomy_name : ''),
             'echo' => false,
             'selected' => 0,
             'hierarchical' => true,

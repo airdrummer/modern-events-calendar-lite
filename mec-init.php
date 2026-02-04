@@ -290,5 +290,15 @@ class MEC
         $render = MEC::getInstance('app.libraries.render');
         return $render->vcategory();
     }
-}
 
+    /**
+     * Load tag archive page
+     * @author Webnus <info@webnus.net>
+     */
+    public function tag()
+    {
+        // Import Render Library
+        $render = MEC::getInstance('app.libraries.render');
+        return $render->vtag();
+    }
+}

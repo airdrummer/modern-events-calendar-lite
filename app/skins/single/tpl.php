@@ -43,13 +43,59 @@ if(isset($this->settings['style_per_event']) and $this->settings['style_per_even
 {
     $style_per_event = get_post_meta($event->data->ID, 'mec_style_per_event', true);
     if($style_per_event === 'global') $style_per_event = '';
+    
+    // Validate plugin activation for builder styles
+    if($style_per_event == 'builder' || $style_per_event == 'gsb-builder')
+    {
+        if(!function_exists('is_plugin_active')) include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+        
+        if($style_per_event == 'builder' && !is_plugin_active('mec-single-builder/mec-single-builder.php'))
+        {
+            $style_per_event = '';
+        }
+        elseif($style_per_event == 'gsb-builder' && !is_plugin_active('mec-gutenberg-single-builder/mec-gutenberg-single-builder.php'))
+        {
+            $style_per_event = '';
+        }
+    }
 }
 
 if(isset($this->layout) and trim($this->layout)) $layout = $this->layout;
 elseif(trim($style_per_event)) $layout = $style_per_event;
-elseif($fes && isset($settings['fes_single_event_style']) && trim($settings['fes_single_event_style'])) $layout = $settings['fes_single_event_style'];
+elseif($fes && isset($settings['fes_single_event_style']) && trim($settings['fes_single_event_style']))
+{
+    $fes_style = $settings['fes_single_event_style'];
+    // Validate plugin activation for builder styles
+    if($fes_style == 'builder' || $fes_style == 'gsb-builder')
+    {
+        if(!function_exists('is_plugin_active')) include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+        
+        if($fes_style == 'builder' && !is_plugin_active('mec-single-builder/mec-single-builder.php'))
+        {
+            $fes_style = 'default';
+        }
+        elseif($fes_style == 'gsb-builder' && !is_plugin_active('mec-gutenberg-single-builder/mec-gutenberg-single-builder.php'))
+        {
+            $fes_style = 'default';
+        }
+    }
+    $layout = $fes_style;
+}
 elseif(!isset($settings['single_single_style']) || $settings['single_single_style'] == 'default') $layout = 'default';
-elseif($settings['single_single_style'] == 'builder') $layout = 'builder';
+elseif($settings['single_single_style'] == 'builder')
+{
+    // Validate Elementor Single Builder plugin is active
+    if(!function_exists('is_plugin_active')) include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+    if(is_plugin_active('mec-single-builder/mec-single-builder.php')) $layout = 'builder';
+    else $layout = 'default';
+}
+elseif($settings['single_single_style'] == 'gsb-builder')
+{
+    // Validate Gutenberg Single Builder plugin is active
+    if(!function_exists('is_plugin_active')) include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+    if(is_plugin_active('mec-gutenberg-single-builder/mec-gutenberg-single-builder.php')) $layout = 'gsb-builder';
+    else $layout = 'default';
+}
 elseif($settings['single_single_style'] == 'divi-builder') $layout = 'divi-builder';
 else $layout = 'modern';
 

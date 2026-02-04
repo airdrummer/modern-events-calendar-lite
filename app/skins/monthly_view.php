@@ -321,6 +321,8 @@ class MEC_skin_monthly_view extends MEC_skins
 
         // Initialize Occurrences' Data
         MEC_feature_occurrences::fetch($events);
+        // custom sort events by publish date
+        $events = apply_filters('mec_skin_events', $events, $this);
 
         return $events;
     }

@@ -206,6 +206,53 @@ class MEC_feature_restful extends MEC_base
         ]);
     }
 
+    private function add_event_labels($event)
+    {
+        if (!is_object($event) || !isset($event->data) || !is_object($event->data)) return $event;
+
+        $event_id = $event->data->ID ?? ($event->ID ?? null);
+        if (!$event_id) return $event;
+
+        if (isset($event->data->labels) && is_array($event->data->labels) && count($event->data->labels)) return $event;
+
+        $terms = wp_get_post_terms($event_id, 'mec_label', ['fields' => 'all']);
+        if (is_wp_error($terms) || !is_array($terms) || !count($terms)) return $event;
+
+        $labels = [];
+        foreach ($terms as $term)
+        {
+            if (!isset($term->term_id)) continue;
+
+            $labels[$term->term_id] = [
+                'id' => (int) $term->term_id,
+                'name' => $term->name,
+                'color' => get_metadata('term', $term->term_id, 'color', true),
+                'style' => get_metadata('term', $term->term_id, 'style', true),
+            ];
+        }
+
+        if (count($labels)) $event->data->labels = $labels;
+
+        return $event;
+    }
+
+    private function add_labels_in_events($events)
+    {
+        if (!is_array($events)) return $events;
+
+        foreach ($events as $date => $day_events)
+        {
+            if (!is_array($day_events)) continue;
+
+            foreach ($day_events as $index => $event)
+            {
+                $events[$date][$index] = $this->add_event_labels($event);
+            }
+        }
+
+        return $events;
+    }
+
     public function events(WP_REST_Request $request)
     {
         $limit = $request->get_param('limit');
@@ -298,6 +345,7 @@ class MEC_feature_restful extends MEC_base
 
         // Events
         $events = $EO->fetch();
+        $events = $this->add_labels_in_events($events);
 
         // Response
         return $this->restful->response([
@@ -347,10 +395,11 @@ class MEC_feature_restful extends MEC_base
         // Render Event Data
         $single = new MEC_skin_single();
         $events = $single->get_event_mec($id);
+        $event = (isset($events[0]) && is_object($events[0])) ? $this->add_event_labels($events[0]) : null;
 
         // Response
         return $this->restful->response([
-            'data' => isset($events[0]) && is_object($events[0]) ? $events[0] : new stdClass(),
+            'data' => $event ?: new stdClass(),
         ]);
     }
 

@@ -81,15 +81,48 @@ $event_fields = $this->main->get_event_fields();
                                 <div class="mec-form-row">
                                     <label class="mec-col-3" for="mec_settings_single_event_single_style"><?php esc_html_e('Single Event Style', 'modern-events-calendar-lite'); ?></label>
                                     <div class="mec-col-9">
+                                        <?php
+                                        // Validate and auto-reset invalid single_single_style values
+                                        $single_style_value = isset($settings['single_single_style']) ? $settings['single_single_style'] : 'default';
+                                        if(!function_exists('is_plugin_active')) include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+                                        
+                                        // If gsb-builder is selected but plugin is not active, reset to default
+                                        if($single_style_value == 'gsb-builder' && !is_plugin_active('mec-gutenberg-single-builder/mec-gutenberg-single-builder.php'))
+                                        {
+                                            $single_style_value = 'default';
+                                            // Auto-update the setting in database
+                                            $options = $this->main->get_options();
+                                            if(isset($options['settings']['single_single_style']) && $options['settings']['single_single_style'] == 'gsb-builder')
+                                            {
+                                                $options['settings']['single_single_style'] = 'default';
+                                                update_option('mec_options', $options);
+                                                $settings['single_single_style'] = 'default';
+                                            }
+                                        }
+                                        
+                                        // If builder is selected but plugin is not active, reset to default
+                                        if($single_style_value == 'builder' && !is_plugin_active('mec-single-builder/mec-single-builder.php'))
+                                        {
+                                            $single_style_value = 'default';
+                                            // Auto-update the setting in database
+                                            $options = $this->main->get_options();
+                                            if(isset($options['settings']['single_single_style']) && $options['settings']['single_single_style'] == 'builder')
+                                            {
+                                                $options['settings']['single_single_style'] = 'default';
+                                                update_option('mec_options', $options);
+                                                $settings['single_single_style'] = 'default';
+                                            }
+                                        }
+                                        ?>
                                         <select id="mec_settings_single_event_single_style" name="mec[settings][single_single_style]">
-                                            <option value="default" <?php echo (isset($settings['single_single_style']) and $settings['single_single_style'] == 'default') ? 'selected="selected"' : ''; ?>><?php esc_html_e('Default Style', 'modern-events-calendar-lite'); ?></option>
-                                            <option value="modern" <?php echo (isset($settings['single_single_style']) and $settings['single_single_style'] == 'modern') ? 'selected="selected"' : ''; ?>><?php esc_html_e('Modern Style', 'modern-events-calendar-lite'); ?></option>
+                                            <option value="default" <?php echo ($single_style_value == 'default') ? 'selected="selected"' : ''; ?>><?php esc_html_e('Default Style', 'modern-events-calendar-lite'); ?></option>
+                                            <option value="modern" <?php echo ($single_style_value == 'modern') ? 'selected="selected"' : ''; ?>><?php esc_html_e('Modern Style', 'modern-events-calendar-lite'); ?></option>
                                             <?php do_action('mec_single_style', $settings); ?>
                                             <?php if(is_plugin_active( 'mec-single-builder/mec-single-builder.php')): ?>
-                                            <option value="builder" <?php echo (isset($settings['single_single_style']) and $settings['single_single_style'] == 'builder') ? 'selected="selected"' : ''; ?>><?php esc_html_e('Elementor Single Builder', 'modern-events-calendar-lite'); ?></option>
+                                            <option value="builder" <?php echo ($single_style_value == 'builder') ? 'selected="selected"' : ''; ?>><?php esc_html_e('Elementor Single Builder', 'modern-events-calendar-lite'); ?></option>
                                             <?php endif; ?>
                                             <?php if(is_plugin_active( 'mec-gutenberg-single-builder/mec-gutenberg-single-builder.php')): ?>
-                                            <option value="gsb-builder" <?php echo (isset($settings['single_single_style']) and $settings['single_single_style'] == 'gsb-builder') ? 'selected="selected"' : ''; ?>><?php esc_html_e('Gutenberg Single Builder', 'modern-events-calendar-lite'); ?></option>
+                                            <option value="gsb-builder" <?php echo ($single_style_value == 'gsb-builder') ? 'selected="selected"' : ''; ?>><?php esc_html_e('Gutenberg Single Builder', 'modern-events-calendar-lite'); ?></option>
                                             <?php endif; ?>
                                         </select>
                                         <span class="mec-tooltip">

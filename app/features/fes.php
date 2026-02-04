@@ -773,7 +773,8 @@ class MEC_feature_fes extends MEC_base
             isset($this->settings['fes_required_body']) && $this->settings['fes_required_body'],
             'content'
         );
-        if ($is_required_content && !trim($post_content)) $this->main->response(['success' => 0, 'message' => __('Please fill event body field!', 'modern-events-calendar-lite'), 'code' => 'BODY_IS_EMPTY']);
+        $normalized_post_content = trim(preg_replace('/\x{00a0}+/u', ' ', wp_strip_all_tags(html_entity_decode($post_content, ENT_QUOTES, 'UTF-8'))));
+        if ($is_required_content && $normalized_post_content === '') $this->main->response(['success' => 0, 'message' => __('Please fill event body field!', 'modern-events-calendar-lite'), 'code' => 'BODY_IS_EMPTY']);
 
         // excerpt is Required
         $is_required_excerpt = apply_filters(
@@ -781,7 +782,8 @@ class MEC_feature_fes extends MEC_base
             isset($this->settings['fes_required_excerpt']) && $this->settings['fes_required_excerpt'],
             'excerpt'
         );
-        if ($is_required_excerpt && !trim($post_excerpt)) $this->main->response(['success' => 0, 'message' => __('Please fill event excerpt field!', 'modern-events-calendar-lite'), 'code' => 'EXCERPT_IS_EMPTY']);
+        $normalized_post_excerpt = trim(preg_replace('/\x{00a0}+/u', ' ', wp_strip_all_tags(html_entity_decode($post_excerpt, ENT_QUOTES, 'UTF-8'))));
+        if ($is_required_excerpt && $normalized_post_excerpt === '') $this->main->response(['success' => 0, 'message' => __('Please fill event excerpt field!', 'modern-events-calendar-lite'), 'code' => 'EXCERPT_IS_EMPTY']);
 
         // Dates are Required
         $is_required_dates = apply_filters(

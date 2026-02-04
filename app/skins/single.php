@@ -113,7 +113,7 @@ class MEC_skin_single extends MEC_skins
         // Init MEC
         $this->args['mec-skin'] = $this->skin;
 
-        $this->id = $this->atts['id'] ?? 0;
+        $this->id = isset($this->atts['id']) && is_numeric($this->atts['id']) ? (int) $this->atts['id'] : 0;
         $this->uniqueid = mt_rand(1000, 10000);
         $this->maximum_dates = $this->atts['maximum_dates'] ?? 6;
     }
@@ -833,6 +833,8 @@ class MEC_skin_single extends MEC_skins
         $this->display_cancellation_reason = MEC_feature_occurrences::param($this->id, $start_timestamp, 'display_cancellation_reason_in_single_page', $display_cancellation_reason);
 
         $events[] = $event;
+        // custom sort events by publish date
+        $events = apply_filters('mec_skin_events', $events, $this);
         return $events;
     }
 
@@ -1456,19 +1458,11 @@ class MEC_skin_single extends MEC_skins
         echo MEC_kses::full($this->main->module('qrcode.details', array('event' => $event)));
     }
 
-    /**
-     * @param object weather Widget
-     * @return void
-     */
     public function display_weather_widget($event)
     {
         echo MEC_kses::full($this->main->module('weather.details', array('event' => $event)));
     }
 
-    /**
-     * @param object time Widget
-     * @return void
-     */
     public function display_time_widget($event)
     {
         echo '<div class="mec-event-meta">';
@@ -1496,10 +1490,6 @@ class MEC_skin_single extends MEC_skins
         echo '</div>';
     }
 
-    /**
-     * @param object
-     * @return void
-     */
     public function display_register_button_widget($event)
     {
         // MEC Settings
@@ -1530,10 +1520,6 @@ class MEC_skin_single extends MEC_skins
         <?php endif;
     }
 
-    /**
-     * @param object other organizers Widget
-     * @return void
-     */
     public function display_other_organizer_widget($event)
     {
         $organizer_id = $this->main->get_master_organizer_id($event);
@@ -1547,10 +1533,6 @@ class MEC_skin_single extends MEC_skins
         }
     }
 
-    /**
-     * @param object organizer Widget
-     * @return void
-     */
     public function display_organizer_widget($event)
     {
         $organizer_id = $this->main->get_master_organizer_id($event);

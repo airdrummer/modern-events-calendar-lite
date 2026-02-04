@@ -2040,16 +2040,18 @@ protected function _putTTfontwidths(&$font, $maxUni) {
 		if ($cid==128 && (!file_exists($font['unifilename'].'.cw127.php'))) {
 			if (is_writable(dirname($this->fontpath.'unifont/x'))) {
 				$fh = fopen($font['unifilename'].'.cw127.php',"wb");
-				$cw127='<?php'."\n";
-				$cw127.='$rangeid='.$rangeid.";\n";
-				$cw127.='$prevcid='.$prevcid.";\n";
-				$cw127.='$prevwidth='.$prevwidth.";\n";
-				if ($interval) { $cw127.='$interval=true'.";\n"; }
-				else { $cw127.='$interval=false'.";\n"; }
-				$cw127.='$range='.var_export($range,true).";\n";
-				$cw127.="?>";
-				fwrite($fh,$cw127,strlen($cw127));
-				fclose($fh);
+				if ($fh !== false) {
+					$cw127='<?php'."\n";
+					$cw127.='$rangeid='.$rangeid.";\n";
+					$cw127.='$prevcid='.$prevcid.";\n";
+					$cw127.='$prevwidth='.$prevwidth.";\n";
+					if ($interval) { $cw127.='$interval=true'.";\n"; }
+					else { $cw127.='$interval=false'.";\n"; }
+					$cw127.='$range='.var_export($range,true).";\n";
+					$cw127.="?>";
+					fwrite($fh,$cw127,strlen($cw127));
+					fclose($fh);
+				}
 			}
 		}
 		if ((!isset($font['cw'][$cid*2]) || !isset($font['cw'][$cid*2+1])) || 

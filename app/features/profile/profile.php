@@ -95,8 +95,8 @@ $id = 1;
             $transaction = $this->book->get_transaction($transaction_id);
             $timestamps = explode(':', get_post_meta($ID, 'mec_date', true));
 
-            $start_time = $timestamps[0];
-            $end_time = $timestamps[1];
+            $start_time = isset($timestamps[0]) ? (int) $timestamps[0] : 0;
+            $end_time = isset($timestamps[1]) ? (int) $timestamps[1] : 0;
 
             $booking_options = get_post_meta($event_id, 'mec_booking', true);
             $bookings_all_occurrences = $booking_options['bookings_all_occurrences'] ?? 0;
@@ -137,7 +137,11 @@ $id = 1;
                     <?php if(count($all_dates)): ?>
                     <span>
                         <?php foreach($all_dates as $all_date): $all_date_ex = explode(':', $all_date); ?>
-                        <?php echo trim(date($datetime_format, $all_date_ex[0]).' - '.date($datetime_format, $all_date_ex[1]), '- '); ?><br>
+                        <?php
+                            $all_date_start = isset($all_date_ex[0]) ? (int) $all_date_ex[0] : 0;
+                            $all_date_end = isset($all_date_ex[1]) ? (int) $all_date_ex[1] : 0;
+                            echo trim(date($datetime_format, $all_date_start) . ' - ' . date($datetime_format, $all_date_end), '- ');
+                        ?><br>
                         <?php endforeach; ?>
                     </span>
                     <?php else: ?>

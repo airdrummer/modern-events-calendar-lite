@@ -73,7 +73,7 @@ class MEC_search extends MEC_base
         }
 
         // Add event address to filter
-        if(isset($sf['address']) and trim($sf['address'], ', ') != '')
+        if(isset($sf['address']) and trim($sf['address'], ', ') != '' and (!isset($sf['address_radius']) or floatval($sf['address_radius']) <= 0))
         {
             $get_locations_id = $this->get_locations_id(sanitize_text_field($sf['address']));
             $tax_query[] = array(
@@ -200,6 +200,20 @@ class MEC_search extends MEC_base
 
         // Restore Original Post Data
         wp_reset_postdata();
+
+        // Radius Search
+        $radius_context = $this->get_radius_search_context($sf);
+        if (is_array($radius_context))
+        {
+            if (isset($radius_context['invalid'])) $event_ids = [];
+            else
+            {
+                $event_ids = array_values(array_filter($event_ids, function($event_id) use ($radius_context)
+                {
+                    return $this->event_in_radius($event_id, $radius_context);
+                }));
+            }
+        }
 
         $categories = [];
         $locations = [];
@@ -498,5 +512,43 @@ class MEC_search extends MEC_base
         {
             return intval($value['term_id']);
         }, $locations_id);
+    }
+
+    private function get_radius_search_context($sf)
+    {
+        $address = $sf['address'] ?? '';
+        $radius = isset($sf['address_radius']) ? floatval($sf['address_radius']) : 0;
+
+        if (!trim($address) || $radius <= 0) return null;
+
+        $geo_point = $this->main->geopoint($address);
+        if (!isset($geo_point['lat'], $geo_point['lng'])) return ['invalid' => true];
+
+        return [
+            'lat' => (float) $geo_point['lat'],
+            'lng' => (float) $geo_point['lng'],
+            'radius' => $radius,
+        ];
+    }
+
+    private function event_in_radius($event_id, $context)
+    {
+        if (!isset($context['lat'], $context['lng'], $context['radius'])) return true;
+
+        $location_ids = wp_get_post_terms($event_id, 'mec_location', ['fields' => 'ids']);
+        if (!is_array($location_ids) || !count($location_ids)) return false;
+
+        foreach ($location_ids as $location_id)
+        {
+            $lat = get_term_meta($location_id, 'latitude', true);
+            $lng = get_term_meta($location_id, 'longitude', true);
+
+            if (!trim($lat) || !trim($lng)) continue;
+
+            $distance = $this->main->distance_between($context['lat'], $context['lng'], $lat, $lng);
+            if ($distance <= $context['radius']) return true;
+        }
+
+        return false;
     }
 }

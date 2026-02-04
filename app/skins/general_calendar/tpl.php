@@ -459,6 +459,7 @@ $javascript .='
 				var $time_end = $("#mec_sf_timepicker_end_'. esc_attr($this->id).'");
 				var $s = $("#mec_sf_s_'. esc_attr($this->id).'");
 				var $address = $("#mec_sf_address_s_'. esc_attr($this->id).'");
+				var $address_radius = $("#mec_sf_address_radius_'. esc_attr($this->id).'");
 				var $date_start = $("#mec_sf_date_start_'. esc_attr($this->id).'");
 				var $date_end = $("#mec_sf_date_end_'. esc_attr($this->id).'");
 				var $event_type = $("#mec_sf_event_type_'. esc_attr($this->id).'");
@@ -495,6 +496,7 @@ $javascript .='
 				if ($label.length) $label.val(null);
 				if ($s.length) $s.val(null);
 				if ($address.length) $address.val(null);
+				if ($address_radius.length) $address_radius.val(null);
 				if ($month.length) $month.val(null);
 				if ($year.length) $year.val(null);
 				if ($event_cost_min.length) $event_cost_min.val(null);

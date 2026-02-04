@@ -406,7 +406,7 @@ class MEC_skins extends MEC_base
         }
 
         // Add event address to filter
-        if (isset($this->atts['address']) and trim($this->atts['address'], ', ') != '')
+        if (isset($this->atts['address']) and trim($this->atts['address'], ', ') != '' and (!isset($this->atts['address_radius']) or floatval($this->atts['address_radius']) <= 0))
         {
             $get_locations_id = $this->get_locations_id($this->atts['address']);
             $tax_query[] = [
@@ -499,12 +499,13 @@ class MEC_skins extends MEC_base
         }
 
         // Include tags to filter
-        if (apply_filters('mec_taxonomy_tag', '') !== 'post_tag' and isset($this->atts['tag']) and trim($this->atts['tag'], ', ') != '')
+        $tag_taxonomy = apply_filters('mec_taxonomy_tag', '');
+        if ($tag_taxonomy !== 'post_tag' and isset($this->atts['tag']) and trim($this->atts['tag'], ', ') != '')
         {
             if (is_numeric($this->atts['tag']))
             {
                 $tax_query[] = [
-                    'taxonomy' => 'mec_tag',
+                    'taxonomy' => $tag_taxonomy,
                     'field' => 'term_id',
                     'terms' => explode(',', trim($this->atts['tag'], ', ')),
                 ];
@@ -512,7 +513,7 @@ class MEC_skins extends MEC_base
             else
             {
                 $tax_query[] = [
-                    'taxonomy' => 'mec_tag',
+                    'taxonomy' => $tag_taxonomy,
                     'field' => 'name',
                     'terms' => explode(',', trim($this->atts['tag'], ', ')),
                 ];
@@ -891,7 +892,7 @@ class MEC_skins extends MEC_base
                         if (!isset($dates[$d])) $dates[$d] = [];
 
                         // Check for exclude events
-                        if ($exclude)
+                        if ($exclude && !empty($this->settings['exceptional_days']))
                         {
                             $current_id = !isset($current_id) ? 0 : $current_id;
 
@@ -978,13 +979,16 @@ class MEC_skins extends MEC_base
         }
 
         // Remove Global Exceptional Dates
-        $global_exceptional_dates = isset($this->settings['global_exceptional_days']) && is_array($this->settings['global_exceptional_days']) ? $this->settings['global_exceptional_days'] : [];
-        foreach ($global_exceptional_dates as $k => $e)
+        if (!empty($this->settings['exceptional_days']))
         {
-            if (!is_numeric($k)) continue;
-            $e = $this->main->standardize_format($e);
+            $global_exceptional_dates = isset($this->settings['global_exceptional_days']) && is_array($this->settings['global_exceptional_days']) ? $this->settings['global_exceptional_days'] : [];
+            foreach ($global_exceptional_dates as $k => $e)
+            {
+                if (!is_numeric($k)) continue;
+                $e = $this->main->standardize_format($e);
 
-            if (isset($dates[$e])) unset($dates[$e]);
+                if (isset($dates[$e])) unset($dates[$e]);
+            }
         }
 
         // Make the event ids Unique
@@ -1005,6 +1009,15 @@ class MEC_skins extends MEC_base
     public function search()
     {
         global $MEC_Events_dates;
+
+        $radius_context = $this->get_radius_search_context();
+        if (is_array($radius_context) && isset($radius_context['invalid']))
+        {
+            $this->found = 0;
+            $this->has_more_events = false;
+            return [];
+        }
+
         if ($this->show_only_expired_events)
         {
             $apply_sf_date = isset($_REQUEST['apply_sf_date']) ? sanitize_text_field($_REQUEST['apply_sf_date']) : 1;
@@ -1117,6 +1130,8 @@ class MEC_skins extends MEC_base
                         ];
 
                         $event_data = $this->render->after_render($data, $this, $i);
+                        if (is_array($radius_context) && !$this->event_in_radius($event_data, $radius_context)) continue;
+
                         $date_times = $this->get_event_datetimes($event_data);
 
                         $last_timestamp = $event_data->data->time['start_timestamp'];
@@ -1156,6 +1171,8 @@ class MEC_skins extends MEC_base
 
         // Initialize Occurrences' Data
         MEC_feature_occurrences::fetch($events);
+        // custom sort events by publish date
+        $events = apply_filters('mec_skin_events', $events, $this);
 
         // Set Offset for Last Page
         if ($found < $this->limit)
@@ -1344,7 +1361,7 @@ class MEC_skins extends MEC_base
         $fields = apply_filters('mec_filter_fields_search_form', $fields, $this);
 
         $form = '';
-        if (trim($fields) && (in_array('dropdown', $display_form) || in_array('simple-checkboxes', $display_form) || in_array('checkboxes', $display_form) || in_array('text_input', $display_form) || in_array('address_input', $display_form) || in_array('minmax', $display_form) || in_array('local-time-picker', $display_form) || in_array('fields', $display_form)))
+        if (trim($fields) && (in_array('dropdown', $display_form) || in_array('simple-checkboxes', $display_form) || in_array('checkboxes', $display_form) || in_array('text_input', $display_form) || in_array('address_input', $display_form) || in_array('radius_search', $display_form) || in_array('minmax', $display_form) || in_array('local-time-picker', $display_form) || in_array('fields', $display_form)))
         {
             // If URL has sf[...] and backend already applied filters, mark to skip initial JS search once
             $skip_attr = '';
@@ -1871,6 +1888,19 @@ class MEC_skins extends MEC_base
                     <input type="search" value="' . ($this->atts['address'] ?? '') . '" id="mec_sf_address_s_' . esc_attr($this->id) . '" placeholder="' . esc_attr($placeholder) . '" title="' . esc_attr($placeholder) . '" />
                 </div>';
             }
+            else if ($type == 'radius_search')
+            {
+                $placeholder = $options['placeholder'] ?? '';
+                $radius_value = $this->atts['address_radius'] ?? ($options['radius'] ?? '');
+
+                $output .= '<div class="mec-text-address-search">';
+                if ($display_label == 1) $output .= '<label for="mec_sf_address_s_' . esc_attr($this->id) . '">' . esc_html($label) . ': </label>';
+                $output .= $this->icons->display('map') . '
+                    <input type="search" value="' . ($this->atts['address'] ?? '') . '" id="mec_sf_address_s_' . esc_attr($this->id) . '" placeholder="' . esc_attr($placeholder) . '" title="' . esc_attr($placeholder) . '" />
+                    <input type="hidden" value="' . esc_attr($radius_value) . '" id="mec_sf_address_radius_' . esc_attr($this->id) . '" />
+                    <input type="hidden" value="m" id="mec_sf_address_radius_unit_' . esc_attr($this->id) . '" />
+                </div>';
+            }
         }
         else if ($field == 'event_cost')
         {
@@ -2015,6 +2045,7 @@ class MEC_skins extends MEC_base
 
         // Apply Address Search Query
         if (isset($sf['address'])) $atts['address'] = $sf['address'];
+        if (isset($sf['address_radius'])) $atts['address_radius'] = $sf['address_radius'];
 
         // Apply Category Query (allow clearing by passing empty value)
         if (array_key_exists('category', $sf)) $atts['category'] = $sf['category'];
@@ -2164,6 +2195,42 @@ class MEC_skins extends MEC_base
         {
             return intval($value['term_id']);
         }, $locations_id);
+    }
+
+    private function get_radius_search_context()
+    {
+        $address = $this->atts['address'] ?? '';
+        $radius = isset($this->atts['address_radius']) ? floatval($this->atts['address_radius']) : 0;
+
+        if (!trim($address) || $radius <= 0) return null;
+
+        $geo_point = $this->main->geopoint($address);
+        if (!isset($geo_point['lat'], $geo_point['lng'])) return ['invalid' => true];
+
+        return [
+            'lat' => (float) $geo_point['lat'],
+            'lng' => (float) $geo_point['lng'],
+            'radius' => $radius,
+        ];
+    }
+
+    private function event_in_radius($event_data, $context)
+    {
+        if (!isset($context['lat'], $context['lng'], $context['radius'])) return true;
+        if (!isset($event_data->data->locations) || !is_array($event_data->data->locations)) return false;
+
+        foreach ($event_data->data->locations as $location)
+        {
+            $lat = $location['latitude'] ?? '';
+            $lng = $location['longitude'] ?? '';
+
+            if (!trim($lat) || !trim($lng)) continue;
+
+            $distance = $this->main->distance_between($context['lat'], $context['lng'], $lat, $lng);
+            if ($distance <= $context['radius']) return true;
+        }
+
+        return false;
     }
 
     public function sort_day_events($a, $b)

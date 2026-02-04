@@ -2097,12 +2097,27 @@ class Transaction
 
         $fees_product_ids = [];
 
+        $gateway = $this->get_gateway();
+        $main = \MEC\Base::get_main();
+        $all_gateways_options = $main->get_gateways_options();
+        $gateway_number = $this->get_gateway_number();
+        $gateway_options = $all_gateways_options[$gateway_number] ?? [];
+        $use_mec_taxes = false;
+
+        if ($gateway === 'MEC_gateway_add_to_woocommerce_cart') {
+            $use_mec_taxes = isset($gateway_options['use_mec_taxes']) && 'on' == $gateway_options['use_mec_taxes'] ? true : false;
+        }
+
         foreach ($fees_details as $fee_key => $fee_detail)
         {
             $fee_type = $fee_detail['fee_type'];
             if (in_array($fee_type, $per_ticket_fee_types))
             {
 
+                continue;
+            }
+
+            if (!$use_mec_taxes && $gateway === 'MEC_gateway_add_to_woocommerce_cart') {
                 continue;
             }
 
@@ -2249,8 +2264,47 @@ class Transaction
         $discounts_amount = $ticket_detail['discounts_amount'] ?? 0;
         $fees_per_ticket_amount = $ticket_detail['fees_per_ticket_amount'] ?? 0;
 
-        $ticket_price += $fees_per_ticket_amount;
-        $ticket_sale_price += $fees_per_ticket_amount;
+        $main = \MEC\Base::get_main();
+        $all_gateways_options = $main->get_gateways_options();
+        $woocommerce_gateway_options = $all_gateways_options[1995] ?? [];
+        $use_mec_taxes = false;
+
+        if (isset($woocommerce_gateway_options['use_mec_taxes']) && 'on' == $woocommerce_gateway_options['use_mec_taxes']) {
+            $use_mec_taxes = true;
+        }
+
+        if ($use_mec_taxes) {
+            $event_id = $this->get_event_id();
+            $mec_fees = $this->bookClass->get_fees($event_id);
+
+            $tickets_count = $ticket_detail['count'] ?? 1;
+            $tickets_and_variations_amount_with_discount = $ticket_detail['tickets_and_variations_amount_with_discount'] ?? 0;
+
+            $calculated_fees_per_ticket = 0;
+            $per_ticket_fee_types = ['percent', 'amount'];
+
+            foreach ($mec_fees as $key => $fee) {
+                if (!is_numeric($key)) continue;
+
+                $fee_amount_config = isset($fee['amount']) ? (float) $fee['amount'] : 0;
+                $type = $fee['type'] ?? '';
+
+                if (in_array($type, $per_ticket_fee_types)) {
+                    if ($type === 'percent') {
+                        $calculated_fees_per_ticket += (float) (($tickets_and_variations_amount_with_discount * $fee_amount_config) / 100);
+                    } elseif ($type === 'amount') {
+                        $calculated_fees_per_ticket += (float) ($tickets_count * $fee_amount_config);
+                    }
+                }
+            }
+
+            if ($calculated_fees_per_ticket > 0) {
+                $fees_per_ticket_amount = $calculated_fees_per_ticket;
+            }
+
+            $ticket_price += $fees_per_ticket_amount;
+            $ticket_sale_price += $fees_per_ticket_amount;
+        }
 
         $ticket_price += $variations_amount;
         $ticket_sale_price += $variations_amount - $discounts_amount;
@@ -2267,7 +2321,7 @@ class Transaction
                 '_price' => $ticket_sale_price,
 
                 'ticket_id' => $ticket_id,
-                'ticket_name' => $ticket['ticket_name'] ?? '',
+                'ticket_name' => $ticket_detail['ticket_name'] ?? '',
                 'attendee_key' => $attendee_key,
                 'mec_ticket' => $ticket_detail,
                 'mec_date' => $ticket_detail['date'],
@@ -2279,6 +2333,18 @@ class Transaction
         {
 
             $args['ID'] = $ticket_product_id;
+        }
+
+        if ($ticket_product_id > 0 && !$update) {
+            $product = wc_get_product($ticket_product_id);
+            if ($product && $product->get_status() == 'mec_tickets') {
+                $product->set_regular_price($ticket_price);
+                $product->set_sale_price($ticket_sale_price);
+                $product->set_price($ticket_sale_price);
+                $product->save();
+
+                return $ticket_product_id;
+            }
         }
 
         $post_id = $this->create_product($args);
