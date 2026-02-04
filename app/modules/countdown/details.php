@@ -102,15 +102,17 @@ if (isset($_SERVER['HTTP_USER_AGENT']))
 		$gmt_offset = substr(trim($gmt_offset), 2, 3);
 }
 
+$countdown_interval = 30000;  // setting tbd
+
 // Generating javascript code of countdown default module
 $defaultjs = '<script>
-$countdown_interval = 30000;  // setting tbd
 jQuery(document).ready(function($)
 {
     jQuery.each(jQuery(".mec-countdown-details"),function(i,el)
     {
         var datetime = jQuery(el).data("datetime");
         var gmt_offset = jQuery(el).data("gmt_offset");
+        var countdown_interval = jQuery(el).data("countdown_interval");
         jQuery(el).mecCountDown(
             {
                 date: datetime+""+gmt_offset,
@@ -212,8 +214,12 @@ if (!function_exists('is_plugin_active')) include_once(ABSPATH . 'wp-admin/inclu
     elseif (is_plugin_active('mec-single-builder/mec-single-builder.php')) echo MEC_kses::full($defaultjs);
     else $factory->params('footer', $defaultjs);
     ?>
-    <div class="mec-countdown-details" id="mec_countdown_details" data-datetime="<?php echo esc_attr($datetime); ?>"
-         data-gmt_offset="<?php echo esc_attr($gmt_offset); ?>">
+    <div class="mec-countdown-details" id="mec_countdown_details"
+    		data-datetime="<?php echo esc_attr($datetime); ?>"
+			data-gmt_offset="<?php echo esc_attr($gmt_offset); ?>"
+			data-countdown_interval ="<?php echo esc_attr($countdown_interval); ?>">
+	<?php  echo $cd2; ?>
+
         <div class="countdown-w ctd-simple">
             <ul class="clockdiv" id="countdown">
                 <li class="days-w block-w">
