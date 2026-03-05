@@ -1,4 +1,8 @@
-﻿v 7.31.0 - 2 March 2026
+v 7.31.0.1 - 5mar26
+- added missing timezone display, reformat
+- fixed countdown
+
+v 7.31.0 - 2 March 2026
 - Added: An option to import appointment services from Bookly and Amelia plugins.
 - Added: An ability to display appointment time slots in shortcakes.
 - Added: An option to change the notification send intervals per event.
