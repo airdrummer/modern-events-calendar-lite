@@ -834,6 +834,15 @@ if(isset($_POST['mec']['settings']['booking_registration'])) {
                                 </div>
                             </div>
                             <div id="mec_appointments_container_toggle" class="<?php if(!isset($settings['appointments_status']) || !$settings['appointments_status']) echo 'mec-util-hidden'; ?>">
+                                <div class="mec-form-row">
+                                    <div class="form-col-12">
+                                        <label>
+                                            <input type="hidden" name="mec[settings][appointments_display_in_shortcodes]" value="0" />
+                                            <input value="1" type="checkbox" name="mec[settings][appointments_display_in_shortcodes]" <?php if(isset($settings['appointments_display_in_shortcodes']) && $settings['appointments_display_in_shortcodes']) echo 'checked="checked"'; ?> /><?php esc_html_e('Display appointment slots in shortcodes', 'modern-events-calendar-lite'); ?>
+                                        </label>
+                                        <p><?php esc_html_e('If enabled, appointments are marked as public on save, so they can appear in MEC shortcodes.', 'modern-events-calendar-lite'); ?></p>
+                                    </div>
+                                </div>
                                 <p><?php esc_html_e("You cannot use some MEC features for appointments, including but not limited to the following:", 'modern-events-calendar-lite'); ?></p>
                                 <ul>
                                     <li><?php esc_html_e('Event Repeating', 'modern-events-calendar-lite'); ?></li>

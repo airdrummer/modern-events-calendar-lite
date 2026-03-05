@@ -2673,6 +2673,7 @@ $this->getFactory()->params('footer', function()
                 "booking_notification",
                 "email_verification",
                 "booking_confirmation",
+                "cancellation_notification",
                 "booking_rejection",
                 "admin_notification",
                 "booking_reminder",

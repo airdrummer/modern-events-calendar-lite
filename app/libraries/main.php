@@ -3038,13 +3038,23 @@ class MEC_main extends MEC_base
     }
 
     /**
+     * Returns MEC DB version (without debug suffix)
+     * @return string
+     * @author Webnus <info@webnus.net>
+     */
+    public function get_db_version()
+    {
+        return MEC_VERSION;
+    }
+
+    /**
      * Returns MEC version
      * @return string
      * @author Webnus <info@webnus.net>
      */
     public function get_version()
     {
-        $version = MEC_VERSION;
+        $version = $this->get_db_version();
 
         if (defined('WP_DEBUG') and WP_DEBUG) $version .= '.' . time();
         return $version;
@@ -8991,6 +9001,8 @@ class MEC_main extends MEC_base
         return [
             'eventon' => esc_html__('EventON', 'modern-events-calendar-lite'),
             'the-events-calendar' => esc_html__('The Events Calendar', 'modern-events-calendar-lite'),
+            'bookly' => esc_html__('Bookly', 'modern-events-calendar-lite'),
+            'amelia' => esc_html__('Amelia', 'modern-events-calendar-lite'),
             'weekly-class' => esc_html__('Events Schedule WP Plugin', 'modern-events-calendar-lite'),
             'calendarize-it' => esc_html__('Calendarize It', 'modern-events-calendar-lite'),
             'event-espresso' => esc_html__('Event Espresso', 'modern-events-calendar-lite'),

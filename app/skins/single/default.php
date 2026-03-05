@@ -133,25 +133,28 @@ $category_restricted = false;
 			            }
 			        }
 
-			        $dates = (isset($event->dates) ? $event->dates : array($event->date));
-			        $occurrence_time = ($dates[0]['start']['timestamp'] ?? strtotime($dates[0]['start']['date']));
-			        $tickets = get_post_meta($event_id, 'mec_tickets', true);
+				        $dates = (isset($event->dates) ? $event->dates : array($event->date));
+				        $occurrence_time = ($dates[0]['start']['timestamp'] ?? strtotime($dates[0]['start']['date']));
+				        $tickets = get_post_meta($event_id, 'mec_tickets', true);
+				        if (!is_array($tickets)) $tickets = [];
 			        $book = $this->getBook();
 			        $availability = $book->get_tickets_availability($event_id, $occurrence_time);
 			        $sales_end = 0;
 			        $ticket_limit = -1;
 			        $ticket_sales_ended_messages = [];
-			        $stop_selling = '';
-			        foreach ($tickets as $ticket_id => $ticket) {
-			            $ticket_limit = $availability[$ticket_id] ?? -1;
-			            $ticket_name = isset($ticket['name']) ? '<strong>' . esc_html($ticket['name']) . '</strong>' : '';
-			            $key = 'stop_selling_' . $ticket_id;
-			            if (!isset($availability[$key])) continue;
-			            if (true === $availability[$key]) {
-			                $sales_end++;
-			                $ticket_sales_ended_messages[$ticket_id] = sprintf($availability['stop_selling_' . $ticket_id . '_message'], $ticket_name) ?? 			sprintf(esc_html__('The %s ticket sales has ended!', 'modern-events-calendar-lite'), $ticket_name);
-			            }
-			        }
+				        $stop_selling = '';
+				        foreach ($tickets as $ticket_id => $ticket) {
+				            $ticket_limit = $availability[$ticket_id] ?? -1;
+				            $ticket_name = isset($ticket['name']) ? '<strong>' . esc_html($ticket['name']) . '</strong>' : '';
+				            $key = 'stop_selling_' . $ticket_id;
+				            if (!isset($availability[$key])) continue;
+				            if (true === $availability[$key]) {
+				                $sales_end++;
+				                $message_template = $availability['stop_selling_' . $ticket_id . '_message'] ?? esc_html__('The %s ticket sales has ended!', 'modern-events-calendar-lite');
+				                if (!is_string($message_template) || !trim($message_template)) $message_template = esc_html__('The %s ticket sales has ended!', 'modern-events-calendar-lite');
+				                $ticket_sales_ended_messages[$ticket_id] = sprintf($message_template, $ticket_name);
+				            }
+				        }
 			        $tickets_sales_end = (count($tickets) === $sales_end);
 			        ?>
 			        <?php if (!empty($ticket_sales_ended_messages)): ?>

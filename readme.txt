@@ -1,10 +1,10 @@
-=== Modern Events Calendar Lite ===
+﻿=== Modern Events Calendar Lite ===
 Contributors: webnus
 Donate link: https://webnus.net
 Tags: Event, Events, Calendar, Booking, Schedule, Organizer, Venue
 Requires at least: 4.0.0
 Tested up to: 6.9.0
-Stable tag: 7.30.0.1
+Stable tag: 7.31.0
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -472,9 +472,21 @@ You can see [plugin documentation](https://webnus.net/dox/modern-events-calendar
 43. WordPress Event Calendar - Daily view(Fluent View Layouts Addon)
 
 == Changelog ==
-v 7.30.0.1 - 3feb26
-- added missing timezone display, reformat
-- fixed countdown
+= v 7.31.0 - 28 February 2026 =
+- Added: An option to import appointment services from Bookly and Amelia plugins.
+- Added: An ability to display appointment time slots in shortcakes.
+- Added: An option to change the notification send intervals per event.
+- Enhanced: MEC Backend menus for better speed and resource usage.
+- Enhanced: Some SQL queries.
+- Fixed: Some issue in masonry skin.
+- Fixed: Some issues in displaying Multiple Day Events.
+- Fixed: An issue in date filter of search module when using some certain date formats.
+- Fixed: Some issues in booking cancellation and attendee reports notifications.
+- Fixed: Some issues in MEC user creation flow.
+- Fixed: Some PHP notice and warning issues.
+
+= v 7.30.1 - 3 February 2026 =
+- Fixed: Invalid characters/whitespace
 
 = v 7.30.0 - 31 January 2026 =
 - Added: An ability to perform an address radius search to find the events.

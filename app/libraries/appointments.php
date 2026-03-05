@@ -313,7 +313,8 @@ class MEC_appointments extends MEC_base
         update_post_meta($event_id, 'mec_repeat_status', 1);
         update_post_meta($event_id, 'mec_repeat_type', $repeat_type);
         update_post_meta($event_id, 'mec_repeat_interval', null);
-        update_post_meta($event_id, 'mec_public', 0);
+        $display_in_shortcodes = isset($this->settings['appointments_display_in_shortcodes']) && (int) $this->settings['appointments_display_in_shortcodes'] === 1;
+        update_post_meta($event_id, 'mec_public', $display_in_shortcodes ? 1 : 0);
         update_post_meta($event_id, 'mec_in_days', $in_days_str);
 
         $db = $this->getDB();

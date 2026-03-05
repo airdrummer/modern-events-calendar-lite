@@ -130,11 +130,12 @@ class DisplayFields {
 			?>
                         <li class="mec-<?php echo esc_attr( $group_id ); ?>-field-<?php echo esc_attr( $field['type'] ); ?> mec-<?php echo esc_attr( $group_id ); ?>-<?php echo esc_attr($form_type); ?>-field-<?php echo esc_attr( $field['type'] ); ?> <?php echo esc_attr( join( ' ', $classes ) ); ?>" data-field-id="<?php echo esc_attr( $f_id ); ?>" data-ticket-id="<?php echo esc_attr($j); ?>"<?php echo $pattern_attribute; ?>>
 				<?php
-				global $current_user;
-				$attributes = '';
-				$has_icon = false;
-				$class = '';
-				switch ( $type ) {
+					global $current_user;
+					$attributes = '';
+					$has_icon = false;
+					$class = '';
+					$value = '';
+					switch ( $type ) {
 					case 'name':
 						$field_type     = 'text';
 						$field_id       = 'name';

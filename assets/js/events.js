@@ -327,7 +327,19 @@ jQuery(document).ready(function($)
             yearRange: 'c-1:c+5',
             onSelect: function(date)
             {
-                var selectedDate = new Date(date);
+                var selectedDate;
+
+                try
+                {
+                    selectedDate = $.datepicker.parseDate(datepicker_format, date);
+                }
+                catch(e)
+                {
+                    selectedDate = new Date(date);
+                }
+
+                if(!(selectedDate instanceof Date) || isNaN(selectedDate.getTime())) return;
+
                 var endDate = new Date(selectedDate.getTime());
 
                 var $end_picker = $(this).next();

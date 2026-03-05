@@ -528,14 +528,16 @@ class MEC_feature_ix extends MEC_base
         // File Type is not valid
         if (!isset($feed_file['type']) or !in_array(strtolower($feed_file['type']), ['text/xml', 'text/calendar'])) return ['success' => 0, 'message' => esc_html__('The file type should be XML or ICS.', 'modern-events-calendar-lite')];
 
-        // Upload the File
-        $upload_dir = wp_upload_dir();
+        // Upload the file using WP upload handler for better compatibility on shared hostings.
+        if (!function_exists('wp_handle_upload')) require_once ABSPATH . 'wp-admin/includes/file.php';
 
-        $target_path = $upload_dir['basedir'] . '/' . basename($feed_file['name']);
-        $uploaded = move_uploaded_file($feed_file['tmp_name'], $target_path);
+        $uploaded_file = wp_handle_upload($feed_file, ['test_form' => false, 'test_type' => false]);
+        if (!is_array($uploaded_file) or isset($uploaded_file['error']) or !isset($uploaded_file['file']) or !file_exists($uploaded_file['file']))
+        {
+            return ['success' => 0, 'message' => esc_html__("An error occurred during the file upload! Please check permissions!", 'modern-events-calendar-lite')];
+        }
 
-        // Error on Upload
-        if (!$uploaded) return ['success' => 0, 'message' => esc_html__("An error occurred during the file upload! Please check permissions!", 'modern-events-calendar-lite')];
+        $target_path = $uploaded_file['file'];
 
         if ($type = mime_content_type($target_path) and $type == 'text/x-php')
         {
@@ -545,6 +547,7 @@ class MEC_feature_ix extends MEC_base
 
         if ($type === 'text/calendar' and is_string($this->main->parse_ics($target_path)))
         {
+            unlink($target_path);
             return ['success' => 0, 'message' => sprintf(__("The ICS file is not valid. Reported Error: %s", 'modern-events-calendar-lite'), '<strong>' . $this->main->parse_ics($target_path) . '</strong>')];
         }
 
@@ -1615,6 +1618,20 @@ class MEC_feature_ix extends MEC_base
                 'post_type' => 'tribe_events',
             ]);
         }
+        else if ($third_party == 'bookly')
+        {
+            $validation = $this->bookly_import_validate_requirements();
+            if (!$validation['success']) return $validation;
+
+            $events = $this->bookly_import_get_services();
+        }
+        else if ($third_party == 'amelia')
+        {
+            $validation = $this->amelia_import_validate_requirements();
+            if (!$validation['success']) return $validation;
+
+            $events = $this->amelia_import_get_services();
+        }
         else if ($third_party == 'weekly-class' and class_exists('WeeklyClass'))
         {
             $events = get_posts([
@@ -1692,6 +1709,8 @@ class MEC_feature_ix extends MEC_base
         $response = ['success' => 0, 'message' => __('Third Party plugin is invalid!', 'modern-events-calendar-lite')];
         if ($third_party == 'eventon') $response = $this->thirdparty_eventon_import_do($events);
         else if ($third_party == 'the-events-calendar') $response = $this->thirdparty_tec_import_do($events);
+        else if ($third_party == 'bookly') $response = $this->thirdparty_bookly_import_do($events);
+        else if ($third_party == 'amelia') $response = $this->thirdparty_amelia_import_do($events);
         else if ($third_party == 'weekly-class') $response = $this->thirdparty_weekly_class_import_do($events);
         else if ($third_party == 'calendarize-it') $response = $this->thirdparty_calendarize_it_import_do($events);
         else if ($third_party == 'event-espresso') $response = $this->thirdparty_es_import_do($events);
@@ -1705,6 +1724,2113 @@ class MEC_feature_ix extends MEC_base
         $response['imported'] = (int) min(($step * $count), count($all_events));
 
         $this->main->response($response);
+    }
+
+    public function thirdparty_bookly_import_do($IDs)
+    {
+        $validation = $this->bookly_import_validate_requirements();
+        if (!$validation['success']) return $validation;
+
+        $count = 0;
+        $wpdb = $this->db->get_DBO();
+
+        $settings = $this->main->get_settings();
+        $time_format = ((isset($settings['time_format']) and (int) $settings['time_format'] === 24) ? 24 : 12);
+
+        $services_table = $this->bookly_table('services');
+        $staff_services_table = $this->bookly_table('staff_services');
+        $staff_table = $this->bookly_table('staff');
+        $schedule_items_table = $this->bookly_table('staff_schedule_items');
+        $schedule_breaks_table = $this->bookly_table('schedule_item_breaks');
+        $holidays_table = $this->bookly_table('holidays');
+        $schedule_breaks_available = $this->bookly_table_exists('schedule_item_breaks');
+        $holidays_available = $this->bookly_table_exists('holidays');
+
+        $categories_table = $this->bookly_table('categories');
+        $categories_available = $this->bookly_table_exists('categories');
+
+        $locations_table = $this->bookly_table('locations');
+        $locations_available = $this->bookly_table_exists('locations');
+
+        foreach ($IDs as $ID)
+        {
+            $service_id = (int) $ID;
+            if (!$service_id) continue;
+
+            $service = $wpdb->get_row("SELECT * FROM `{$services_table}` WHERE `id`='{$service_id}'", ARRAY_A);
+            if (!is_array($service) or !isset($service['id'])) continue;
+
+            $staff_services = $wpdb->get_results("SELECT * FROM `{$staff_services_table}` WHERE `service_id`='{$service_id}'", ARRAY_A);
+            if (!is_array($staff_services) or !count($staff_services)) continue;
+
+            $staff_ids = [];
+            $location_ids = [];
+            foreach ($staff_services as $staff_service)
+            {
+                $staff_id = (int) ($staff_service['staff_id'] ?? 0);
+                if ($staff_id) $staff_ids[] = $staff_id;
+
+                if (isset($staff_service['location_id']) and !is_null($staff_service['location_id']) and trim((string) $staff_service['location_id']) !== '')
+                {
+                    $location_id = (int) $staff_service['location_id'];
+                    if ($location_id) $location_ids[] = $location_id;
+                }
+            }
+
+            $staff_ids = array_values(array_unique($staff_ids));
+            if (!count($staff_ids)) continue;
+
+            $staff_ids_str = implode(',', array_map('intval', $staff_ids));
+
+            $staff_rows = $wpdb->get_results("SELECT * FROM `{$staff_table}` WHERE `id` IN ({$staff_ids_str})", ARRAY_A);
+            if (!is_array($staff_rows)) $staff_rows = [];
+
+            $schedule_rows = $wpdb->get_results("SELECT * FROM `{$schedule_items_table}` WHERE `staff_id` IN ({$staff_ids_str}) AND `start_time` IS NOT NULL AND `end_time` IS NOT NULL", ARRAY_A);
+            if (!is_array($schedule_rows) or !count($schedule_rows)) continue;
+
+            $schedule_item_ids = [];
+            foreach ($schedule_rows as $schedule_row)
+            {
+                $schedule_item_id = (int) ($schedule_row['id'] ?? 0);
+                if ($schedule_item_id) $schedule_item_ids[] = $schedule_item_id;
+            }
+
+            $breaks_by_schedule = [];
+            if (count($schedule_item_ids) and $schedule_breaks_available)
+            {
+                $schedule_item_ids_str = implode(',', array_map('intval', $schedule_item_ids));
+                $break_rows = $wpdb->get_results("SELECT * FROM `{$schedule_breaks_table}` WHERE `staff_schedule_item_id` IN ({$schedule_item_ids_str})", ARRAY_A);
+
+                if (is_array($break_rows) and count($break_rows))
+                {
+                    foreach ($break_rows as $break_row)
+                    {
+                        $schedule_item_id = (int) ($break_row['staff_schedule_item_id'] ?? 0);
+                        if (!$schedule_item_id) continue;
+
+                        $start = $this->bookly_time_to_minutes($break_row['start_time'] ?? null);
+                        $end = $this->bookly_time_to_minutes($break_row['end_time'] ?? null);
+
+                        if (is_null($start) or is_null($end) or $end === $start) continue;
+
+                        if (!isset($breaks_by_schedule[$schedule_item_id])) $breaks_by_schedule[$schedule_item_id] = [];
+                        $breaks_by_schedule[$schedule_item_id][] = ['start' => $start, 'end' => $end];
+                    }
+                }
+            }
+
+            $availability_by_day = [0 => [], 1 => [], 2 => [], 3 => [], 4 => [], 5 => [], 6 => []];
+            foreach ($schedule_rows as $schedule_row)
+            {
+                $bookly_day_index = (int) ($schedule_row['day_index'] ?? 0);
+                $mec_day_index = $this->bookly_day_index_to_mec($bookly_day_index);
+                if (is_null($mec_day_index)) continue;
+
+                $start = $this->bookly_time_to_minutes($schedule_row['start_time'] ?? null);
+                $end = $this->bookly_time_to_minutes($schedule_row['end_time'] ?? null);
+                if (is_null($start) or is_null($end)) continue;
+
+                $segments = $this->bookly_split_interval($mec_day_index, $start, $end);
+                if (!count($segments)) continue;
+
+                $schedule_item_id = (int) ($schedule_row['id'] ?? 0);
+                $raw_breaks = $breaks_by_schedule[$schedule_item_id] ?? [];
+                $breaks_by_day = [];
+
+                if (count($raw_breaks))
+                {
+                    foreach ($raw_breaks as $raw_break)
+                    {
+                        $break_segments = $this->bookly_split_interval($mec_day_index, (int) $raw_break['start'], (int) $raw_break['end']);
+                        if (!count($break_segments)) continue;
+
+                        foreach ($break_segments as $break_segment)
+                        {
+                            if (!isset($breaks_by_day[$break_segment['day']])) $breaks_by_day[$break_segment['day']] = [];
+                            $breaks_by_day[$break_segment['day']][] = ['start' => $break_segment['start'], 'end' => $break_segment['end']];
+                        }
+                    }
+                }
+
+                foreach ($segments as $segment)
+                {
+                    $intervals = [['start' => $segment['start'], 'end' => $segment['end']]];
+                    $segment_breaks = $breaks_by_day[$segment['day']] ?? [];
+                    if (count($segment_breaks)) $intervals = $this->bookly_subtract_intervals($intervals, $segment_breaks);
+
+                    foreach ($intervals as $interval)
+                    {
+                        if ($interval['end'] <= $interval['start']) continue;
+                        $availability_by_day[$segment['day']][] = $interval;
+                    }
+                }
+            }
+
+            $appointments_availability = [];
+            $first_interval = null;
+            for ($d = 0; $d <= 6; $d++)
+            {
+                $merged = $this->bookly_merge_intervals($availability_by_day[$d]);
+                if (!count($merged)) continue;
+
+                foreach ($merged as $interval)
+                {
+                    if ($first_interval === null) $first_interval = ['day' => $d, 'start' => $interval['start'], 'end' => $interval['end']];
+
+                    $appointments_availability[$d][] = [
+                        'start' => $this->bookly_minutes_to_timepicker($interval['start'], $time_format),
+                        'end' => $this->bookly_minutes_to_timepicker($interval['end'], $time_format),
+                    ];
+                }
+            }
+
+            if (!count($appointments_availability) or $first_interval === null) continue;
+
+            $max_days_for_booking = (int) get_option('bookly_gen_max_days_for_booking', 365);
+            if ($max_days_for_booking <= 0) $max_days_for_booking = 365;
+
+            $today = wp_date('Y-m-d');
+            $horizon = wp_date('Y-m-d', strtotime('+' . $max_days_for_booking . ' days', strtotime($today)));
+
+            if ($holidays_available) $holiday_rows = $wpdb->get_results("SELECT `date`, `repeat_event` FROM `{$holidays_table}` WHERE `staff_id` IN ({$staff_ids_str}) AND `date` IS NOT NULL", ARRAY_A);
+            else $holiday_rows = [];
+            if (!is_array($holiday_rows)) $holiday_rows = [];
+
+            $holiday_dates = $this->bookly_expand_holidays($holiday_rows, $today, $horizon);
+            $adjusted_availability = $this->bookly_prepare_adjusted_availability($holiday_dates);
+
+            $title = $this->bookly_get_service_title($service);
+            $description = $service['info'] ?? '';
+            $third_party_id = $service_id;
+
+            // Import Categories
+            $category_ids = [];
+            if ($categories_available and isset($this->ix['import_categories']) and $this->ix['import_categories'] and isset($service['category_id']) and (int) $service['category_id'])
+            {
+                $bookly_category_id = (int) $service['category_id'];
+                $bookly_category = $wpdb->get_row("SELECT * FROM `{$categories_table}` WHERE `id`='{$bookly_category_id}'", ARRAY_A);
+
+                if (is_array($bookly_category) and isset($bookly_category['name']) and trim($bookly_category['name']))
+                {
+                    $category_id = $this->main->save_category([
+                        'name' => trim($bookly_category['name']),
+                    ]);
+
+                    if ($category_id) $category_ids[] = $category_id;
+                }
+            }
+
+            // Import Organizers
+            $organizer_id = 1;
+            $additional_organizers_ids = [];
+            if (isset($this->ix['import_organizers']) and $this->ix['import_organizers'] and count($staff_rows))
+            {
+                foreach ($staff_rows as $staff_index => $staff)
+                {
+                    $organizer_name = trim($staff['full_name'] ?? '');
+                    if (!trim($organizer_name)) continue;
+
+                    $imported_organizer_id = $this->main->save_organizer([
+                        'name' => $organizer_name,
+                        'tel' => trim($staff['phone'] ?? ''),
+                        'email' => trim($staff['email'] ?? ''),
+                    ]);
+
+                    if (!$imported_organizer_id) continue;
+
+                    if ($staff_index === 0) $organizer_id = $imported_organizer_id;
+                    else $additional_organizers_ids[] = $imported_organizer_id;
+                }
+            }
+
+            // Import Location (Best Effort)
+            $location_id = 1;
+            $location_ids = array_values(array_unique($location_ids));
+            if ($locations_available and isset($this->ix['import_locations']) and $this->ix['import_locations'] and count($location_ids))
+            {
+                $bookly_location_id = (int) $location_ids[0];
+                $bookly_location = $wpdb->get_row("SELECT * FROM `{$locations_table}` WHERE `id`='{$bookly_location_id}'", ARRAY_A);
+
+                if (is_array($bookly_location))
+                {
+                    $location_name = '';
+                    if (isset($bookly_location['name']) and trim($bookly_location['name'])) $location_name = trim($bookly_location['name']);
+                    else if (isset($bookly_location['title']) and trim($bookly_location['title'])) $location_name = trim($bookly_location['title']);
+
+                    if (trim($location_name))
+                    {
+                        $location_id = $this->main->save_location([
+                            'name' => $location_name,
+                            'address' => trim($bookly_location['address'] ?? ''),
+                            'latitude' => trim($bookly_location['latitude'] ?? ($bookly_location['lat'] ?? 0)),
+                            'longitude' => trim($bookly_location['longitude'] ?? ($bookly_location['lng'] ?? 0)),
+                        ]);
+                    }
+                }
+            }
+
+            $duration = (isset($service['duration']) and is_numeric($service['duration'])) ? (int) round((((int) $service['duration']) / 60)) : 60;
+            if ($duration <= 0) $duration = 10;
+
+            $buffer = $this->bookly_resolve_buffer_minutes($service, $duration);
+
+            $limit_period = $service['limit_period'] ?? 'off';
+            $appointments_limit = (isset($service['appointments_limit']) and is_numeric($service['appointments_limit'])) ? (int) $service['appointments_limit'] : 0;
+            $max_bookings_per_day = (in_array($limit_period, ['day', 'calendar_day']) and $appointments_limit > 0) ? $appointments_limit : 0;
+
+            $global_min_time_prior_booking = (int) get_option('bookly_gen_min_time_prior_booking', 0);
+            $service_min_time_prior_booking = ((isset($service['min_time_prior_booking']) and trim((string) $service['min_time_prior_booking']) !== '') ? (int) $service['min_time_prior_booking'] : null);
+            $min_time_prior_booking = max(0, ($service_min_time_prior_booking === null ? $global_min_time_prior_booking : $service_min_time_prior_booking));
+
+            $scheduling_before = (int) ceil($min_time_prior_booking / HOUR_IN_SECONDS);
+            $scheduling_before_status = ($scheduling_before > 0 ? 1 : 0);
+            if ($scheduling_before <= 0) $scheduling_before = 4;
+
+            $appointments_config = [
+                'saved' => 1,
+                'duration' => $duration,
+                'buffer' => $buffer,
+                'max_bookings_per_day' => $max_bookings_per_day,
+                'availability_repeat_type' => 'weekly',
+                'start_date' => $today,
+                'availability' => $appointments_availability,
+                'adjusted_availability' => $adjusted_availability,
+                'scheduling_advance_status' => 1,
+                'scheduling_advance' => $max_days_for_booking,
+                'scheduling_before_status' => $scheduling_before_status,
+                'scheduling_before' => $scheduling_before,
+            ];
+
+            $event_start_date = $this->bookly_get_next_date_for_day((int) ($first_interval['day'] ?? 0), $today);
+            $event_start_time = $this->bookly_minutes_to_event_time((int) ($first_interval['start'] ?? 480));
+            $event_end_time = $this->bookly_minutes_to_event_time((int) ($first_interval['end'] ?? 540), 'end');
+
+            $args = [
+                'title' => $title,
+                'content' => $description,
+                'location_id' => $location_id,
+                'organizer_id' => $organizer_id,
+                'date' => [
+                    'start' => [
+                        'date' => $event_start_date,
+                        'hour' => $event_start_time['hour'],
+                        'minutes' => $event_start_time['minutes'],
+                        'ampm' => $event_start_time['ampm'],
+                    ],
+                    'end' => [
+                        'date' => $event_start_date,
+                        'hour' => $event_end_time['hour'],
+                        'minutes' => $event_end_time['minutes'],
+                        'ampm' => $event_end_time['ampm'],
+                    ],
+                    'repeat' => [
+                        'end' => 'never',
+                        'end_at_date' => '',
+                        'end_at_occurrences' => 10,
+                    ],
+                    'allday' => 0,
+                    'comment' => '',
+                    'hide_time' => 0,
+                    'hide_end_time' => 0,
+                ],
+                'start' => $event_start_date,
+                'start_time_hour' => $event_start_time['hour'],
+                'start_time_minutes' => $event_start_time['minutes'],
+                'start_time_ampm' => $event_start_time['ampm'],
+                'end' => $event_start_date,
+                'end_time_hour' => $event_end_time['hour'],
+                'end_time_minutes' => $event_end_time['minutes'],
+                'end_time_ampm' => $event_end_time['ampm'],
+                'repeat_status' => 1,
+                'repeat_type' => 'custom_days',
+                'interval' => null,
+                'finish' => null,
+                'year' => null,
+                'month' => null,
+                'day' => null,
+                'week' => null,
+                'weekday' => null,
+                'weekdays' => null,
+                'days' => '',
+                'meta' => [
+                    'mec_source' => 'bookly',
+                    'mec_bookly_service_id' => $third_party_id,
+                    'mec_bookly_service_type' => ($service['type'] ?? 'simple'),
+                    'mec_allday' => 0,
+                    'hide_end_time' => 0,
+                    'mec_repeat_end' => 'never',
+                    'mec_repeat_end_at_occurrences' => 9,
+                    'mec_repeat_end_at_date' => '',
+                    'mec_in_days' => '',
+                    'mec_more_info' => '',
+                    'mec_cost' => ($service['price'] ?? ''),
+                ],
+            ];
+
+            $post_id = $this->db->select("SELECT `post_id` FROM `#__postmeta` WHERE `meta_value`='{$third_party_id}' AND `meta_key`='mec_bookly_service_id'", 'loadResult');
+
+            // Insert / Update the event into MEC
+            $post_id = $this->main->save_event($args, $post_id);
+            if (!$post_id) continue;
+
+            // Ensure the event title always matches the service title.
+            wp_update_post([
+                'ID' => $post_id,
+                'post_title' => $title,
+            ]);
+
+            // Create a single ticket from the Bookly service price.
+            $tickets = $this->bookly_prepare_event_tickets($service, $title);
+            update_post_meta($post_id, 'mec_booking', [
+                'bookings_limit_unlimited' => 1,
+                'bookings_limit' => '',
+            ]);
+            update_post_meta($post_id, 'mec_tickets', $tickets);
+            update_post_meta($post_id, 'mec_global_tickets_applied', 1);
+
+            // Featured image from Bookly service attachment.
+            if (isset($this->ix['import_featured_image']) and $this->ix['import_featured_image'])
+            {
+                $attachment_id = (int) ($service['attachment_id'] ?? 0);
+                if ($attachment_id and get_post_type($attachment_id) === 'attachment' and wp_attachment_is_image($attachment_id))
+                {
+                    set_post_thumbnail($post_id, $attachment_id);
+                }
+            }
+
+            // Convert Event to Appointment
+            update_post_meta($post_id, 'mec_entity_type', 'appointment');
+            $this->getAppointments()->save($post_id, [
+                'entity_type' => 'appointment',
+                'appointments' => $appointments_config,
+            ]);
+
+            // Set location to the post
+            if ($location_id) wp_set_object_terms($post_id, (int) $location_id, 'mec_location');
+
+            // Set organizer to the post
+            if ($organizer_id) wp_set_object_terms($post_id, (int) $organizer_id, 'mec_organizer');
+
+            // Set additional organizers
+            if (is_array($additional_organizers_ids) and count($additional_organizers_ids))
+            {
+                foreach ($additional_organizers_ids as $additional_organizers_id) wp_set_object_terms($post_id, (int) $additional_organizers_id, 'mec_organizer', true);
+                update_post_meta($post_id, 'mec_additional_organizer_ids', $additional_organizers_ids);
+            }
+            else delete_post_meta($post_id, 'mec_additional_organizer_ids');
+
+            // Set categories to the post
+            if (count($category_ids)) foreach ($category_ids as $category_id) wp_set_object_terms($post_id, (int) $category_id, 'mec_category', true);
+
+            $count++;
+        }
+
+        return ['success' => 1, 'data' => $count];
+    }
+
+    private function bookly_import_validate_requirements()
+    {
+        if (!class_exists('Bookly\\Lib\\Plugin')) return ['success' => 0, 'message' => __("Bookly plugin is not installed and activated!", 'modern-events-calendar-lite')];
+
+        if (!$this->bookly_table_exists('services') or !$this->bookly_table_exists('staff_services'))
+        {
+            return ['success' => 0, 'message' => __("Bookly tables are missing. Please make sure Bookly is installed correctly.", 'modern-events-calendar-lite')];
+        }
+
+        if (!$this->getPRO()) return ['success' => 0, 'message' => __("MEC Pro is required to import Bookly services as appointment events.", 'modern-events-calendar-lite')];
+
+        $settings = $this->main->get_settings();
+        if (!isset($settings['booking_status']) or !$settings['booking_status'])
+        {
+            return ['success' => 0, 'message' => __("Please enable MEC Booking module first.", 'modern-events-calendar-lite')];
+        }
+
+        if (!isset($settings['appointments_status']) or !$settings['appointments_status'])
+        {
+            return ['success' => 0, 'message' => __("Please enable MEC Appointments module first.", 'modern-events-calendar-lite')];
+        }
+
+        return ['success' => 1];
+    }
+
+    private function bookly_import_get_services()
+    {
+        $wpdb = $this->db->get_DBO();
+        $services_table = $this->bookly_table('services');
+        $staff_services_table = $this->bookly_table('staff_services');
+
+        $services = $wpdb->get_results("SELECT DISTINCT `s`.`id` AS `ID`, `s`.`title` AS `post_title`, `s`.`position` FROM `{$services_table}` `s` INNER JOIN `{$staff_services_table}` `ss` ON `ss`.`service_id` = `s`.`id` ORDER BY `s`.`position` ASC, `s`.`id` ASC");
+        if (!is_array($services)) $services = [];
+
+        foreach ($services as $service)
+        {
+            $service->post_title = $this->bookly_get_service_title([
+                'id' => (int) ($service->ID ?? 0),
+                'title' => (string) ($service->post_title ?? ''),
+            ]);
+        }
+
+        return $services;
+    }
+
+    private function bookly_get_service_title($service)
+    {
+        $service_id = (int) ($service['id'] ?? 0);
+        if (!$service_id and isset($service['ID'])) $service_id = (int) $service['ID'];
+
+        $raw_title = trim((string) ($service['title'] ?? ($service['post_title'] ?? '')));
+        $title = $raw_title;
+
+        if ($service_id and class_exists('Bookly\\Lib\\Entities\\Service'))
+        {
+            $bookly_service = \Bookly\Lib\Entities\Service::find($service_id);
+            if ($bookly_service and method_exists($bookly_service, 'getTranslatedTitle'))
+            {
+                $translated_title = trim((string) $bookly_service->getTranslatedTitle());
+                if (trim($translated_title)) $title = $translated_title;
+            }
+        }
+        else if ($service_id and class_exists('Bookly\\Lib\\Utils\\Common'))
+        {
+            $translated_title = trim((string) \Bookly\Lib\Utils\Common::getTranslatedString('service_' . $service_id, $raw_title));
+            if (trim($translated_title)) $title = $translated_title;
+        }
+
+        if (!trim($title)) $title = sprintf(__('Service %s', 'modern-events-calendar-lite'), $service_id);
+        return $title;
+    }
+
+    private function bookly_prepare_event_tickets($service, $service_title)
+    {
+        $ticket_price = 0;
+        if (isset($service['price']) and trim((string) $service['price']) !== '' and is_numeric($service['price']))
+        {
+            $ticket_price = (float) $service['price'];
+        }
+
+        return [
+            1 => [
+                'id' => 1,
+                'name' => $service_title,
+                'description' => '',
+                'price' => $ticket_price,
+                'price_label' => '',
+                'limit' => '',
+                'unlimited' => 1,
+                'seats' => 1,
+                'minimum_ticket' => 0,
+                'maximum_ticket' => '',
+                'stop_selling_value' => 0,
+                'stop_selling_type' => 'day',
+                'dates' => [],
+                'category_ids' => [],
+            ],
+        ];
+    }
+
+    private function bookly_resolve_buffer_minutes($service, $duration = 10)
+    {
+        $duration = max(1, (int) $duration);
+
+        $padding_left = (isset($service['padding_left']) and is_numeric($service['padding_left'])) ? (int) $service['padding_left'] : 0;
+        $padding_right = (isset($service['padding_right']) and is_numeric($service['padding_right'])) ? (int) $service['padding_right'] : 0;
+        $padding_buffer = (int) round((max(0, $padding_left + $padding_right)) / 60);
+
+        $slot_buffer = 0;
+        $slot_length = trim((string) ($service['slot_length'] ?? ''));
+        if ($slot_length === 'as_service_duration')
+        {
+            $slot_buffer = $duration;
+        }
+        else if ($slot_length === 'default' or $slot_length === '') $slot_buffer = 0;
+        else if (is_numeric($slot_length))
+        {
+            $slot_length_value = (float) $slot_length;
+            if ($slot_length_value > 0)
+            {
+                if ($slot_length_value >= 60) $slot_buffer = (int) ceil($slot_length_value / 60);
+                else $slot_buffer = (int) round($slot_length_value);
+            }
+        }
+
+        return max(0, max($padding_buffer, $slot_buffer));
+    }
+
+    private function bookly_table($name)
+    {
+        $wpdb = $this->db->get_DBO();
+        return $wpdb->prefix . 'bookly_' . $name;
+    }
+
+    private function bookly_table_exists($name)
+    {
+        return $this->db->exists('bookly_' . $name);
+    }
+
+    private function bookly_day_index_to_mec($bookly_day_index)
+    {
+        if ($bookly_day_index < 1 or $bookly_day_index > 7) return null;
+        return (int) (($bookly_day_index + 5) % 7);
+    }
+
+    private function bookly_time_to_minutes($time)
+    {
+        if (!is_string($time) or !trim($time)) return null;
+
+        $parts = explode(':', $time);
+        if (!isset($parts[0]) or !isset($parts[1])) return null;
+
+        $hour = (int) $parts[0];
+        $minutes = (int) $parts[1];
+
+        if ($hour < 0 or $hour > 24) return null;
+        if ($minutes < 0 or $minutes > 59) return null;
+        if ($hour === 24 and $minutes > 0) return null;
+
+        return ($hour * 60) + $minutes;
+    }
+
+    private function bookly_split_interval($day, $start, $end)
+    {
+        $intervals = [];
+
+        // Same-day interval
+        if ($end > $start)
+        {
+            $intervals[] = ['day' => $day, 'start' => $start, 'end' => $end];
+        }
+        // Overnight interval
+        else if ($end < $start)
+        {
+            $intervals[] = ['day' => $day, 'start' => $start, 'end' => 1440];
+            $intervals[] = ['day' => (($day + 1) % 7), 'start' => 0, 'end' => $end];
+        }
+
+        return $intervals;
+    }
+
+    private function bookly_subtract_intervals($base_intervals, $subtract_intervals)
+    {
+        $result = $base_intervals;
+        foreach ($subtract_intervals as $cut)
+        {
+            $next = [];
+            foreach ($result as $base)
+            {
+                // No overlap
+                if ($cut['end'] <= $base['start'] or $cut['start'] >= $base['end'])
+                {
+                    $next[] = $base;
+                    continue;
+                }
+
+                // Left remainder
+                if ($cut['start'] > $base['start'])
+                {
+                    $next[] = ['start' => $base['start'], 'end' => min($cut['start'], $base['end'])];
+                }
+
+                // Right remainder
+                if ($cut['end'] < $base['end'])
+                {
+                    $next[] = ['start' => max($cut['end'], $base['start']), 'end' => $base['end']];
+                }
+            }
+
+            $result = $next;
+        }
+
+        return $result;
+    }
+
+    private function bookly_merge_intervals($intervals)
+    {
+        if (!is_array($intervals) or !count($intervals)) return [];
+
+        usort($intervals, function ($a, $b)
+        {
+            if ($a['start'] == $b['start']) return ($a['end'] <=> $b['end']);
+            return ($a['start'] <=> $b['start']);
+        });
+
+        $merged = [];
+        foreach ($intervals as $interval)
+        {
+            if (!isset($interval['start']) or !isset($interval['end'])) continue;
+            if ($interval['end'] <= $interval['start']) continue;
+
+            if (!count($merged))
+            {
+                $merged[] = $interval;
+                continue;
+            }
+
+            $last_key = count($merged) - 1;
+            if ($interval['start'] <= $merged[$last_key]['end'])
+            {
+                $merged[$last_key]['end'] = max($merged[$last_key]['end'], $interval['end']);
+            }
+            else $merged[] = $interval;
+        }
+
+        return $merged;
+    }
+
+    private function bookly_minutes_to_timepicker($minutes, $time_format = 12)
+    {
+        $minutes = max(0, min(1440, (int) $minutes));
+
+        $hour_24 = (int) floor($minutes / 60);
+        $minute = (int) ($minutes % 60);
+
+        if ((int) $time_format === 24)
+        {
+            return [
+                'hour' => $hour_24,
+                'minutes' => $minute,
+                'ampm' => '',
+            ];
+        }
+
+        $ampm = ($hour_24 >= 12 ? 'PM' : 'AM');
+        $hour_12 = ($hour_24 % 12);
+        if ($hour_12 === 0) $hour_12 = 12;
+
+        return [
+            'hour' => $hour_12,
+            'minutes' => $minute,
+            'ampm' => $ampm,
+        ];
+    }
+
+    private function bookly_minutes_to_event_time($minutes, $type = 'start')
+    {
+        $minutes = max(0, min(1440, (int) $minutes));
+
+        $hour_24 = (int) floor($minutes / 60);
+        $minute = (int) ($minutes % 60);
+
+        if ($hour_24 === 24)
+        {
+            $hour_12 = 12;
+            $ampm = 'AM';
+        }
+        else
+        {
+            $ampm = ($hour_24 >= 12 ? 'PM' : 'AM');
+            $hour_12 = ($hour_24 % 12);
+            if ($hour_12 === 0) $hour_12 = 12;
+        }
+
+        return [
+            'hour' => $hour_12,
+            'minutes' => $minute,
+            'ampm' => $ampm,
+            'type' => $type,
+        ];
+    }
+
+    private function bookly_get_next_date_for_day($mec_day_index, $from_date = null)
+    {
+        if (is_null($from_date) or !trim($from_date)) $from_date = wp_date('Y-m-d');
+
+        $from_ts = strtotime($from_date);
+        if (!$from_ts) $from_ts = current_time('timestamp');
+
+        // PHP w: 0=Sunday..6=Saturday => MEC day: 0=Monday..6=Sunday
+        $php_to_mec = [6, 0, 1, 2, 3, 4, 5];
+        $current_mec_day = $php_to_mec[(int) wp_date('w', $from_ts)];
+
+        $delta = ($mec_day_index - $current_mec_day + 7) % 7;
+        return wp_date('Y-m-d', strtotime('+' . $delta . ' day', $from_ts));
+    }
+
+    private function bookly_expand_holidays($holiday_rows, $from_date, $to_date)
+    {
+        $expanded = [];
+        $from_ts = strtotime($from_date);
+        $to_ts = strtotime($to_date);
+
+        if (!$from_ts or !$to_ts or $to_ts < $from_ts) return [];
+
+        foreach ($holiday_rows as $holiday_row)
+        {
+            $holiday_date = trim($holiday_row['date'] ?? '');
+            if (!trim($holiday_date)) continue;
+
+            $repeat_event = (int) ($holiday_row['repeat_event'] ?? 0);
+
+            if (!$repeat_event)
+            {
+                $ts = strtotime($holiday_date);
+                if ($ts and $ts >= $from_ts and $ts <= $to_ts) $expanded[] = date('Y-m-d', $ts);
+                continue;
+            }
+
+            $month_day = date('m-d', strtotime($holiday_date));
+            if (!trim($month_day)) continue;
+
+            $start_year = (int) date('Y', $from_ts);
+            $end_year = (int) date('Y', $to_ts);
+            for ($year = $start_year; $year <= $end_year; $year++)
+            {
+                $candidate = $year . '-' . $month_day;
+                $candidate_ts = strtotime($candidate);
+                if (!$candidate_ts) continue;
+
+                if ($candidate_ts >= $from_ts and $candidate_ts <= $to_ts) $expanded[] = date('Y-m-d', $candidate_ts);
+            }
+        }
+
+        $expanded = array_values(array_unique($expanded));
+        sort($expanded);
+
+        return $expanded;
+    }
+
+    private function bookly_prepare_adjusted_availability($holiday_dates)
+    {
+        $adjusted = [];
+        $i = 0;
+
+        foreach ($holiday_dates as $holiday_date)
+        {
+            $adjusted[$i] = ['date' => $holiday_date];
+            $i++;
+        }
+
+        return $adjusted;
+    }
+
+    public function thirdparty_amelia_import_do($IDs)
+    {
+        $validation = $this->amelia_import_validate_requirements();
+        if (!$validation['success']) return $validation;
+
+        $count = 0;
+        $wpdb = $this->db->get_DBO();
+
+        $settings = $this->main->get_settings();
+        $time_format = ((isset($settings['time_format']) and (int) $settings['time_format'] === 24) ? 24 : 12);
+
+        $amelia_settings = $this->amelia_get_settings();
+        $general_settings = (isset($amelia_settings['general']) and is_array($amelia_settings['general'])) ? $amelia_settings['general'] : [];
+
+        $max_days_for_booking = (int) ($general_settings['numberOfDaysAvailableForBooking'] ?? 365);
+        if ($max_days_for_booking <= 0) $max_days_for_booking = 365;
+
+        $global_min_time_prior_booking = (int) ($general_settings['minimumTimeRequirementPriorToBooking'] ?? 0);
+        if ($global_min_time_prior_booking < 0) $global_min_time_prior_booking = 0;
+
+        $today = wp_date('Y-m-d');
+        $horizon = wp_date('Y-m-d', strtotime('+' . $max_days_for_booking . ' days', strtotime($today)));
+
+        $services_table = $this->amelia_table('services');
+        $provider_services_table = $this->amelia_table('providers_to_services');
+        $users_table = $this->amelia_table('users');
+        $weekdays_table = $this->amelia_table('providers_to_weekdays');
+        $timeouts_table = $this->amelia_table('providers_to_timeouts');
+        $periods_table = $this->amelia_table('providers_to_periods');
+        $period_services_table = $this->amelia_table('providers_to_periods_services');
+        $period_locations_table = $this->amelia_table('providers_to_periods_location');
+        $specialdays_table = $this->amelia_table('providers_to_specialdays');
+        $specialday_periods_table = $this->amelia_table('providers_to_specialdays_periods');
+        $specialday_period_services_table = $this->amelia_table('providers_to_specialdays_periods_services');
+        $specialday_period_locations_table = $this->amelia_table('providers_to_specialdays_periods_location');
+        $daysoff_table = $this->amelia_table('providers_to_daysoff');
+        $provider_locations_table = $this->amelia_table('providers_to_locations');
+        $categories_table = $this->amelia_table('categories');
+        $locations_table = $this->amelia_table('locations');
+
+        $timeouts_available = $this->amelia_table_exists('providers_to_timeouts');
+        $periods_available = $this->amelia_table_exists('providers_to_periods');
+        $period_services_available = $this->amelia_table_exists('providers_to_periods_services');
+        $period_locations_available = $this->amelia_table_exists('providers_to_periods_location');
+        $specialdays_available = $this->amelia_table_exists('providers_to_specialdays');
+        $specialday_periods_available = $this->amelia_table_exists('providers_to_specialdays_periods');
+        $specialday_period_services_available = $this->amelia_table_exists('providers_to_specialdays_periods_services');
+        $specialday_period_locations_available = $this->amelia_table_exists('providers_to_specialdays_periods_location');
+        $daysoff_available = $this->amelia_table_exists('providers_to_daysoff');
+        $provider_locations_available = $this->amelia_table_exists('providers_to_locations');
+        $categories_available = $this->amelia_table_exists('categories');
+        $locations_available = $this->amelia_table_exists('locations');
+
+        foreach ($IDs as $ID)
+        {
+            $service_id = (int) $ID;
+            if (!$service_id) continue;
+
+            $service = $wpdb->get_row("SELECT * FROM `{$services_table}` WHERE `id`='{$service_id}'", ARRAY_A);
+            if (!is_array($service) or !isset($service['id'])) continue;
+            if (isset($service['status']) and trim((string) $service['status']) === 'disabled') continue;
+
+            $provider_service_rows = $wpdb->get_results("SELECT * FROM `{$provider_services_table}` WHERE `serviceId`='{$service_id}'", ARRAY_A);
+            if (!is_array($provider_service_rows) or !count($provider_service_rows)) continue;
+
+            $provider_ids = [];
+            foreach ($provider_service_rows as $provider_service_row)
+            {
+                $provider_id = (int) ($provider_service_row['userId'] ?? 0);
+                if ($provider_id) $provider_ids[] = $provider_id;
+            }
+
+            $provider_ids = array_values(array_unique($provider_ids));
+            if (!count($provider_ids)) continue;
+
+            $provider_ids_str = implode(',', array_map('intval', $provider_ids));
+            $provider_rows = $wpdb->get_results("SELECT * FROM `{$users_table}` WHERE `id` IN ({$provider_ids_str}) AND `type`='provider' AND (`status` IS NULL OR `status`!='disabled')", ARRAY_A);
+            if (!is_array($provider_rows) or !count($provider_rows)) continue;
+
+            $provider_ids = [];
+            foreach ($provider_rows as $provider_row)
+            {
+                $provider_id = (int) ($provider_row['id'] ?? 0);
+                if ($provider_id) $provider_ids[] = $provider_id;
+            }
+
+            $provider_ids = array_values(array_unique($provider_ids));
+            if (!count($provider_ids)) continue;
+
+            $provider_ids_str = implode(',', array_map('intval', $provider_ids));
+
+            $weekday_rows = $wpdb->get_results("SELECT * FROM `{$weekdays_table}` WHERE `userId` IN ({$provider_ids_str}) AND `startTime` IS NOT NULL AND `endTime` IS NOT NULL", ARRAY_A);
+            if (!is_array($weekday_rows) or !count($weekday_rows)) continue;
+
+            $weekdays_by_provider = [];
+            $weekday_ids = [];
+            foreach ($weekday_rows as $weekday_row)
+            {
+                $provider_id = (int) ($weekday_row['userId'] ?? 0);
+                if (!$provider_id) continue;
+
+                $weekday_id = (int) ($weekday_row['id'] ?? 0);
+                if ($weekday_id) $weekday_ids[] = $weekday_id;
+
+                if (!isset($weekdays_by_provider[$provider_id])) $weekdays_by_provider[$provider_id] = [];
+                $weekdays_by_provider[$provider_id][] = $weekday_row;
+            }
+
+            $weekday_ids = array_values(array_unique($weekday_ids));
+            $timeouts_by_weekday = [];
+            if ($timeouts_available and count($weekday_ids))
+            {
+                $weekday_ids_str = implode(',', array_map('intval', $weekday_ids));
+                $timeout_rows = $wpdb->get_results("SELECT * FROM `{$timeouts_table}` WHERE `weekDayId` IN ({$weekday_ids_str})", ARRAY_A);
+                if (is_array($timeout_rows) and count($timeout_rows))
+                {
+                    foreach ($timeout_rows as $timeout_row)
+                    {
+                        $weekday_id = (int) ($timeout_row['weekDayId'] ?? 0);
+                        if (!$weekday_id) continue;
+
+                        if (!isset($timeouts_by_weekday[$weekday_id])) $timeouts_by_weekday[$weekday_id] = [];
+                        $timeouts_by_weekday[$weekday_id][] = $timeout_row;
+                    }
+                }
+            }
+
+            $periods_by_weekday = [];
+            $period_services_by_period = [];
+            $period_locations_by_period = [];
+            $period_ids = [];
+
+            if ($periods_available and count($weekday_ids))
+            {
+                $weekday_ids_str = implode(',', array_map('intval', $weekday_ids));
+                $period_rows = $wpdb->get_results("SELECT * FROM `{$periods_table}` WHERE `weekDayId` IN ({$weekday_ids_str})", ARRAY_A);
+                if (is_array($period_rows) and count($period_rows))
+                {
+                    foreach ($period_rows as $period_row)
+                    {
+                        $weekday_id = (int) ($period_row['weekDayId'] ?? 0);
+                        $period_id = (int) ($period_row['id'] ?? 0);
+                        if (!$weekday_id or !$period_id) continue;
+
+                        if (!isset($periods_by_weekday[$weekday_id])) $periods_by_weekday[$weekday_id] = [];
+                        $periods_by_weekday[$weekday_id][] = $period_row;
+                        $period_ids[] = $period_id;
+                    }
+                }
+            }
+
+            $period_ids = array_values(array_unique($period_ids));
+            if ($period_services_available and count($period_ids))
+            {
+                $period_ids_str = implode(',', array_map('intval', $period_ids));
+                $period_service_rows = $wpdb->get_results("SELECT * FROM `{$period_services_table}` WHERE `periodId` IN ({$period_ids_str})", ARRAY_A);
+                if (is_array($period_service_rows) and count($period_service_rows))
+                {
+                    foreach ($period_service_rows as $period_service_row)
+                    {
+                        $period_id = (int) ($period_service_row['periodId'] ?? 0);
+                        $matched_service_id = (int) ($period_service_row['serviceId'] ?? 0);
+                        if (!$period_id or !$matched_service_id) continue;
+
+                        if (!isset($period_services_by_period[$period_id])) $period_services_by_period[$period_id] = [];
+                        $period_services_by_period[$period_id][] = $matched_service_id;
+                    }
+                }
+            }
+
+            if ($period_locations_available and count($period_ids))
+            {
+                $period_ids_str = implode(',', array_map('intval', $period_ids));
+                $period_location_rows = $wpdb->get_results("SELECT * FROM `{$period_locations_table}` WHERE `periodId` IN ({$period_ids_str})", ARRAY_A);
+                if (is_array($period_location_rows) and count($period_location_rows))
+                {
+                    foreach ($period_location_rows as $period_location_row)
+                    {
+                        $period_id = (int) ($period_location_row['periodId'] ?? 0);
+                        $location_id = (int) ($period_location_row['locationId'] ?? 0);
+                        if (!$period_id or !$location_id) continue;
+
+                        if (!isset($period_locations_by_period[$period_id])) $period_locations_by_period[$period_id] = [];
+                        $period_locations_by_period[$period_id][] = $location_id;
+                    }
+                }
+            }
+
+            $special_days_by_provider = [];
+            $special_periods_by_special_day = [];
+            $special_period_services_by_period = [];
+            $special_period_locations_by_period = [];
+            $dayoffs_by_provider = [];
+            $provider_locations_by_provider = [];
+
+            $special_day_ids = [];
+            if ($specialdays_available)
+            {
+                $special_day_rows = $wpdb->get_results("SELECT * FROM `{$specialdays_table}` WHERE `userId` IN ({$provider_ids_str}) AND `endDate` >= '{$today}' AND `startDate` <= '{$horizon}'", ARRAY_A);
+                if (is_array($special_day_rows) and count($special_day_rows))
+                {
+                    foreach ($special_day_rows as $special_day_row)
+                    {
+                        $provider_id = (int) ($special_day_row['userId'] ?? 0);
+                        $special_day_id = (int) ($special_day_row['id'] ?? 0);
+                        if (!$provider_id or !$special_day_id) continue;
+
+                        if (!isset($special_days_by_provider[$provider_id])) $special_days_by_provider[$provider_id] = [];
+                        $special_days_by_provider[$provider_id][] = $special_day_row;
+                        $special_day_ids[] = $special_day_id;
+                    }
+                }
+            }
+
+            $special_day_ids = array_values(array_unique($special_day_ids));
+            $special_period_ids = [];
+            if ($specialday_periods_available and count($special_day_ids))
+            {
+                $special_day_ids_str = implode(',', array_map('intval', $special_day_ids));
+                $special_period_rows = $wpdb->get_results("SELECT * FROM `{$specialday_periods_table}` WHERE `specialDayId` IN ({$special_day_ids_str})", ARRAY_A);
+                if (is_array($special_period_rows) and count($special_period_rows))
+                {
+                    foreach ($special_period_rows as $special_period_row)
+                    {
+                        $special_day_id = (int) ($special_period_row['specialDayId'] ?? 0);
+                        $special_period_id = (int) ($special_period_row['id'] ?? 0);
+                        if (!$special_day_id or !$special_period_id) continue;
+
+                        if (!isset($special_periods_by_special_day[$special_day_id])) $special_periods_by_special_day[$special_day_id] = [];
+                        $special_periods_by_special_day[$special_day_id][] = $special_period_row;
+                        $special_period_ids[] = $special_period_id;
+                    }
+                }
+            }
+
+            $special_period_ids = array_values(array_unique($special_period_ids));
+            if ($specialday_period_services_available and count($special_period_ids))
+            {
+                $special_period_ids_str = implode(',', array_map('intval', $special_period_ids));
+                $special_period_service_rows = $wpdb->get_results("SELECT * FROM `{$specialday_period_services_table}` WHERE `periodId` IN ({$special_period_ids_str})", ARRAY_A);
+                if (is_array($special_period_service_rows) and count($special_period_service_rows))
+                {
+                    foreach ($special_period_service_rows as $special_period_service_row)
+                    {
+                        $period_id = (int) ($special_period_service_row['periodId'] ?? 0);
+                        $matched_service_id = (int) ($special_period_service_row['serviceId'] ?? 0);
+                        if (!$period_id or !$matched_service_id) continue;
+
+                        if (!isset($special_period_services_by_period[$period_id])) $special_period_services_by_period[$period_id] = [];
+                        $special_period_services_by_period[$period_id][] = $matched_service_id;
+                    }
+                }
+            }
+
+            if ($specialday_period_locations_available and count($special_period_ids))
+            {
+                $special_period_ids_str = implode(',', array_map('intval', $special_period_ids));
+                $special_period_location_rows = $wpdb->get_results("SELECT * FROM `{$specialday_period_locations_table}` WHERE `periodId` IN ({$special_period_ids_str})", ARRAY_A);
+                if (is_array($special_period_location_rows) and count($special_period_location_rows))
+                {
+                    foreach ($special_period_location_rows as $special_period_location_row)
+                    {
+                        $period_id = (int) ($special_period_location_row['periodId'] ?? 0);
+                        $location_id = (int) ($special_period_location_row['locationId'] ?? 0);
+                        if (!$period_id or !$location_id) continue;
+
+                        if (!isset($special_period_locations_by_period[$period_id])) $special_period_locations_by_period[$period_id] = [];
+                        $special_period_locations_by_period[$period_id][] = $location_id;
+                    }
+                }
+            }
+
+            if ($daysoff_available)
+            {
+                $dayoff_rows = $wpdb->get_results("SELECT * FROM `{$daysoff_table}` WHERE `userId` IN ({$provider_ids_str}) AND (`repeat`='1' OR (`endDate` >= '{$today}' AND `startDate` <= '{$horizon}'))", ARRAY_A);
+                if (is_array($dayoff_rows) and count($dayoff_rows))
+                {
+                    foreach ($dayoff_rows as $dayoff_row)
+                    {
+                        $provider_id = (int) ($dayoff_row['userId'] ?? 0);
+                        if (!$provider_id) continue;
+
+                        if (!isset($dayoffs_by_provider[$provider_id])) $dayoffs_by_provider[$provider_id] = [];
+                        $dayoffs_by_provider[$provider_id][] = $dayoff_row;
+                    }
+                }
+            }
+
+            if ($provider_locations_available)
+            {
+                $provider_location_rows = $wpdb->get_results("SELECT * FROM `{$provider_locations_table}` WHERE `userId` IN ({$provider_ids_str})", ARRAY_A);
+                if (is_array($provider_location_rows) and count($provider_location_rows))
+                {
+                    foreach ($provider_location_rows as $provider_location_row)
+                    {
+                        $provider_id = (int) ($provider_location_row['userId'] ?? 0);
+                        $location_id = (int) ($provider_location_row['locationId'] ?? 0);
+                        if (!$provider_id or !$location_id) continue;
+
+                        if (!isset($provider_locations_by_provider[$provider_id])) $provider_locations_by_provider[$provider_id] = [];
+                        $provider_locations_by_provider[$provider_id][] = $location_id;
+                    }
+                }
+            }
+
+            $provider_weekly_availability = [];
+            $availability_by_day = [0 => [], 1 => [], 2 => [], 3 => [], 4 => [], 5 => [], 6 => []];
+            $source_location_ids = [];
+
+            foreach ($provider_ids as $provider_id)
+            {
+                $provider_weekly = $this->amelia_build_provider_weekly_availability(
+                    $provider_id,
+                    $service_id,
+                    $weekdays_by_provider,
+                    $timeouts_by_weekday,
+                    $periods_by_weekday,
+                    $period_services_by_period,
+                    $period_locations_by_period,
+                    $source_location_ids
+                );
+
+                $provider_weekly_availability[$provider_id] = $provider_weekly;
+
+                for ($d = 0; $d <= 6; $d++)
+                {
+                    if (!isset($provider_weekly[$d]) or !count($provider_weekly[$d])) continue;
+                    $availability_by_day[$d] = array_merge($availability_by_day[$d], $provider_weekly[$d]);
+                }
+
+                $provider_location_ids = $provider_locations_by_provider[$provider_id] ?? [];
+                if (count($provider_location_ids)) $source_location_ids = array_merge($source_location_ids, $provider_location_ids);
+            }
+
+            $appointments_availability = [];
+            $first_interval = null;
+            for ($d = 0; $d <= 6; $d++)
+            {
+                $availability_by_day[$d] = $this->amelia_merge_intervals($availability_by_day[$d]);
+                if (!count($availability_by_day[$d])) continue;
+
+                foreach ($availability_by_day[$d] as $interval)
+                {
+                    if ($first_interval === null) $first_interval = ['day' => $d, 'start' => $interval['start'], 'end' => $interval['end']];
+
+                    $appointments_availability[$d][] = [
+                        'start' => $this->amelia_minutes_to_timepicker($interval['start'], $time_format),
+                        'end' => $this->amelia_minutes_to_timepicker($interval['end'], $time_format),
+                    ];
+                }
+            }
+
+            if (!count($appointments_availability) or $first_interval === null) continue;
+
+            $global_days_off = $this->amelia_expand_global_days_off(($amelia_settings['daysOff'] ?? []), $today, $horizon);
+            $adjusted_availability = [];
+
+            $cursor = strtotime($today);
+            $end_ts = strtotime($horizon);
+            while ($cursor and $cursor <= $end_ts)
+            {
+                $date = wp_date('Y-m-d', $cursor);
+                $weekday = ((int) wp_date('N', $cursor)) - 1;
+
+                $is_global_day_off = isset($global_days_off[$date]);
+                $has_adjustment = $is_global_day_off;
+                $date_intervals = [];
+
+                foreach ($provider_ids as $provider_id)
+                {
+                    if ($is_global_day_off) continue;
+
+                    if ($this->amelia_is_provider_day_off_on_date($provider_id, $date, $dayoffs_by_provider))
+                    {
+                        $has_adjustment = true;
+                        continue;
+                    }
+
+                    $special_intervals = $this->amelia_get_provider_special_day_intervals_on_date(
+                        $provider_id,
+                        $date,
+                        $service_id,
+                        $special_days_by_provider,
+                        $special_periods_by_special_day,
+                        $special_period_services_by_period,
+                        $special_period_locations_by_period,
+                        $source_location_ids
+                    );
+
+                    if (!is_null($special_intervals))
+                    {
+                        $has_adjustment = true;
+                        if (count($special_intervals)) $date_intervals = array_merge($date_intervals, $special_intervals);
+                        continue;
+                    }
+
+                    $weekly_intervals = $provider_weekly_availability[$provider_id][$weekday] ?? [];
+                    if (count($weekly_intervals)) $date_intervals = array_merge($date_intervals, $weekly_intervals);
+                }
+
+                $date_intervals = $this->amelia_merge_intervals($date_intervals);
+
+                if (!$has_adjustment)
+                {
+                    $baseline = $availability_by_day[$weekday] ?? [];
+                    if (!$this->amelia_intervals_equal($baseline, $date_intervals)) $has_adjustment = true;
+                }
+
+                if ($has_adjustment) $adjusted_availability[] = $this->amelia_prepare_adjusted_availability($date, $date_intervals, $time_format);
+
+                $cursor = strtotime('+1 day', $cursor);
+            }
+
+            $source_location_ids = array_values(array_unique(array_filter(array_map('intval', $source_location_ids))));
+            $provider_ids = array_values(array_unique(array_filter(array_map('intval', $provider_ids))));
+
+            $title = $this->amelia_get_service_title($service);
+            $description = $service['description'] ?? '';
+            $third_party_id = $service_id;
+
+            // Import Categories
+            $category_ids = [];
+            if ($categories_available and isset($this->ix['import_categories']) and $this->ix['import_categories'] and isset($service['categoryId']) and (int) $service['categoryId'])
+            {
+                $category_id = (int) $service['categoryId'];
+                $amelia_category = $wpdb->get_row("SELECT * FROM `{$categories_table}` WHERE `id`='{$category_id}'", ARRAY_A);
+
+                if (is_array($amelia_category) and isset($amelia_category['name']) and trim($amelia_category['name']))
+                {
+                    $imported_category_id = $this->main->save_category([
+                        'name' => trim($amelia_category['name']),
+                    ]);
+
+                    if ($imported_category_id) $category_ids[] = $imported_category_id;
+                }
+            }
+
+            // Import Organizers
+            $organizer_id = 1;
+            $additional_organizers_ids = [];
+            if (isset($this->ix['import_organizers']) and $this->ix['import_organizers'] and count($provider_rows))
+            {
+                foreach ($provider_rows as $provider_index => $provider_row)
+                {
+                    $first_name = trim((string) ($provider_row['firstName'] ?? ''));
+                    $last_name = trim((string) ($provider_row['lastName'] ?? ''));
+                    $organizer_name = trim(trim($first_name . ' ' . $last_name));
+                    if (!trim($organizer_name)) continue;
+
+                    $imported_organizer_id = $this->main->save_organizer([
+                        'name' => $organizer_name,
+                        'tel' => trim((string) ($provider_row['phone'] ?? '')),
+                        'email' => trim((string) ($provider_row['email'] ?? '')),
+                    ]);
+
+                    if (!$imported_organizer_id) continue;
+
+                    if ($provider_index === 0) $organizer_id = $imported_organizer_id;
+                    else $additional_organizers_ids[] = $imported_organizer_id;
+                }
+            }
+
+            // Import Locations
+            $location_id = 1;
+            $additional_location_ids = [];
+            if ($locations_available and isset($this->ix['import_locations']) and $this->ix['import_locations'] and count($source_location_ids))
+            {
+                foreach ($source_location_ids as $source_location_id)
+                {
+                    $amelia_location = $wpdb->get_row("SELECT * FROM `{$locations_table}` WHERE `id`='{$source_location_id}'", ARRAY_A);
+                    if (!is_array($amelia_location)) continue;
+
+                    $location_name = trim((string) ($amelia_location['name'] ?? ''));
+                    if (!trim($location_name)) continue;
+
+                    $imported_location_id = $this->main->save_location([
+                        'name' => $location_name,
+                        'address' => trim((string) ($amelia_location['address'] ?? '')),
+                        'latitude' => trim((string) ($amelia_location['latitude'] ?? 0)),
+                        'longitude' => trim((string) ($amelia_location['longitude'] ?? 0)),
+                    ]);
+
+                    if (!$imported_location_id) continue;
+
+                    if ($location_id === 1) $location_id = $imported_location_id;
+                    else $additional_location_ids[] = $imported_location_id;
+                }
+            }
+
+            $duration = (isset($service['duration']) and is_numeric($service['duration'])) ? (int) round((((int) $service['duration']) / 60)) : 60;
+            if ($duration <= 0) $duration = 10;
+
+            $time_before = (isset($service['timeBefore']) and is_numeric($service['timeBefore'])) ? (int) $service['timeBefore'] : 0;
+            $time_after = (isset($service['timeAfter']) and is_numeric($service['timeAfter'])) ? (int) $service['timeAfter'] : 0;
+            $buffer = (int) ceil(max(0, ($time_before + $time_after)) / 60);
+
+            $max_bookings_per_day = 0;
+
+            $scheduling_before = (int) ceil($global_min_time_prior_booking / HOUR_IN_SECONDS);
+            $scheduling_before_status = ($scheduling_before > 0 ? 1 : 0);
+            if ($scheduling_before <= 0) $scheduling_before = 4;
+
+            $appointments_config = [
+                'saved' => 1,
+                'duration' => $duration,
+                'buffer' => $buffer,
+                'max_bookings_per_day' => $max_bookings_per_day,
+                'availability_repeat_type' => 'weekly',
+                'start_date' => $today,
+                'availability' => $appointments_availability,
+                'adjusted_availability' => $adjusted_availability,
+                'scheduling_advance_status' => 1,
+                'scheduling_advance' => $max_days_for_booking,
+                'scheduling_before_status' => $scheduling_before_status,
+                'scheduling_before' => $scheduling_before,
+            ];
+
+            $event_start_date = $this->amelia_get_next_date_for_day((int) ($first_interval['day'] ?? 0), $today);
+            $event_start_time = $this->amelia_minutes_to_event_time((int) ($first_interval['start'] ?? 480));
+            $event_end_time = $this->amelia_minutes_to_event_time((int) ($first_interval['end'] ?? 540), 'end');
+
+            $args = [
+                'title' => $title,
+                'content' => $description,
+                'location_id' => $location_id,
+                'organizer_id' => $organizer_id,
+                'date' => [
+                    'start' => [
+                        'date' => $event_start_date,
+                        'hour' => $event_start_time['hour'],
+                        'minutes' => $event_start_time['minutes'],
+                        'ampm' => $event_start_time['ampm'],
+                    ],
+                    'end' => [
+                        'date' => $event_start_date,
+                        'hour' => $event_end_time['hour'],
+                        'minutes' => $event_end_time['minutes'],
+                        'ampm' => $event_end_time['ampm'],
+                    ],
+                    'repeat' => [
+                        'end' => 'never',
+                        'end_at_date' => '',
+                        'end_at_occurrences' => 10,
+                    ],
+                    'allday' => 0,
+                    'comment' => '',
+                    'hide_time' => 0,
+                    'hide_end_time' => 0,
+                ],
+                'start' => $event_start_date,
+                'start_time_hour' => $event_start_time['hour'],
+                'start_time_minutes' => $event_start_time['minutes'],
+                'start_time_ampm' => $event_start_time['ampm'],
+                'end' => $event_start_date,
+                'end_time_hour' => $event_end_time['hour'],
+                'end_time_minutes' => $event_end_time['minutes'],
+                'end_time_ampm' => $event_end_time['ampm'],
+                'repeat_status' => 1,
+                'repeat_type' => 'custom_days',
+                'interval' => null,
+                'finish' => null,
+                'year' => null,
+                'month' => null,
+                'day' => null,
+                'week' => null,
+                'weekday' => null,
+                'weekdays' => null,
+                'days' => '',
+                'meta' => [
+                    'mec_source' => 'amelia',
+                    'mec_amelia_service_id' => $third_party_id,
+                    'mec_amelia_service_status' => ($service['status'] ?? ''),
+                    'mec_amelia_provider_ids' => implode(',', $provider_ids),
+                    'mec_amelia_location_ids' => implode(',', $source_location_ids),
+                    'mec_allday' => 0,
+                    'hide_end_time' => 0,
+                    'mec_repeat_end' => 'never',
+                    'mec_repeat_end_at_occurrences' => 9,
+                    'mec_repeat_end_at_date' => '',
+                    'mec_in_days' => '',
+                    'mec_more_info' => '',
+                    'mec_cost' => ($service['price'] ?? ''),
+                ],
+            ];
+
+            $post_id = $this->db->select("SELECT `post_id` FROM `#__postmeta` WHERE `meta_value`='{$third_party_id}' AND `meta_key`='mec_amelia_service_id'", 'loadResult');
+
+            // Insert / Update the event into MEC
+            $post_id = $this->main->save_event($args, $post_id);
+            if (!$post_id) continue;
+
+            // Keep imported title synced with Amelia service title.
+            wp_update_post([
+                'ID' => $post_id,
+                'post_title' => $title,
+            ]);
+
+            // Create one ticket using Amelia service base price.
+            $tickets = $this->amelia_prepare_event_tickets($service, $title);
+            update_post_meta($post_id, 'mec_booking', [
+                'bookings_limit_unlimited' => 1,
+                'bookings_limit' => '',
+            ]);
+            update_post_meta($post_id, 'mec_tickets', $tickets);
+            update_post_meta($post_id, 'mec_global_tickets_applied', 1);
+
+            // Featured image from Amelia service picture paths.
+            if (isset($this->ix['import_featured_image']) and $this->ix['import_featured_image'] and !has_post_thumbnail($post_id))
+            {
+                $featured_image = $this->amelia_resolve_image_url(($service['pictureFullPath'] ?? ($service['pictureThumbPath'] ?? '')));
+                if (trim($featured_image)) $this->main->set_featured_image($featured_image, $post_id);
+            }
+
+            // Convert Event to Appointment
+            update_post_meta($post_id, 'mec_entity_type', 'appointment');
+            $this->getAppointments()->save($post_id, [
+                'entity_type' => 'appointment',
+                'appointments' => $appointments_config,
+            ]);
+
+            // Set location to the post
+            if ($location_id) wp_set_object_terms($post_id, (int) $location_id, 'mec_location');
+
+            // Set additional locations
+            if (is_array($additional_location_ids) and count($additional_location_ids))
+            {
+                $additional_location_ids = array_values(array_unique(array_map('intval', $additional_location_ids)));
+                foreach ($additional_location_ids as $additional_location_id) wp_set_object_terms($post_id, (int) $additional_location_id, 'mec_location', true);
+            }
+
+            // Set organizer to the post
+            if ($organizer_id) wp_set_object_terms($post_id, (int) $organizer_id, 'mec_organizer');
+
+            // Set additional organizers
+            if (is_array($additional_organizers_ids) and count($additional_organizers_ids))
+            {
+                $additional_organizers_ids = array_values(array_unique(array_map('intval', $additional_organizers_ids)));
+                foreach ($additional_organizers_ids as $additional_organizers_id) wp_set_object_terms($post_id, (int) $additional_organizers_id, 'mec_organizer', true);
+                update_post_meta($post_id, 'mec_additional_organizer_ids', $additional_organizers_ids);
+            }
+            else delete_post_meta($post_id, 'mec_additional_organizer_ids');
+
+            // Set categories to the post
+            if (count($category_ids))
+            {
+                $category_ids = array_values(array_unique(array_map('intval', $category_ids)));
+                foreach ($category_ids as $category_id) wp_set_object_terms($post_id, (int) $category_id, 'mec_category', true);
+            }
+
+            $count++;
+        }
+
+        return ['success' => 1, 'data' => $count];
+    }
+
+    private function amelia_import_validate_requirements()
+    {
+        if (!class_exists('AmeliaBooking\\Plugin')) return ['success' => 0, 'message' => __("Amelia plugin is not installed and activated!", 'modern-events-calendar-lite')];
+
+        if (
+            !$this->amelia_table_exists('services') or
+            !$this->amelia_table_exists('providers_to_services') or
+            !$this->amelia_table_exists('users') or
+            !$this->amelia_table_exists('providers_to_weekdays')
+        )
+        {
+            return ['success' => 0, 'message' => __("Amelia tables are missing. Please make sure Amelia is installed correctly.", 'modern-events-calendar-lite')];
+        }
+
+        if (!$this->getPRO()) return ['success' => 0, 'message' => __("MEC Pro is required to import Amelia services as appointment events.", 'modern-events-calendar-lite')];
+
+        $settings = $this->main->get_settings();
+        if (!isset($settings['booking_status']) or !$settings['booking_status'])
+        {
+            return ['success' => 0, 'message' => __("Please enable MEC Booking module first.", 'modern-events-calendar-lite')];
+        }
+
+        if (!isset($settings['appointments_status']) or !$settings['appointments_status'])
+        {
+            return ['success' => 0, 'message' => __("Please enable MEC Appointments module first.", 'modern-events-calendar-lite')];
+        }
+
+        return ['success' => 1];
+    }
+
+    private function amelia_import_get_services()
+    {
+        $wpdb = $this->db->get_DBO();
+        $services_table = $this->amelia_table('services');
+        $provider_services_table = $this->amelia_table('providers_to_services');
+
+        $services = $wpdb->get_results("SELECT DISTINCT `s`.`id` AS `ID`, `s`.`name` AS `post_title`, `s`.`translations` AS `translations`, `s`.`position` FROM `{$services_table}` `s` INNER JOIN `{$provider_services_table}` `ps` ON `ps`.`serviceId` = `s`.`id` WHERE (`s`.`status` IS NULL OR `s`.`status`!='disabled') ORDER BY `s`.`position` ASC, `s`.`id` ASC");
+        if (!is_array($services)) $services = [];
+
+        foreach ($services as $service)
+        {
+            $service->post_title = $this->amelia_get_service_title([
+                'id' => (int) ($service->ID ?? 0),
+                'name' => (string) ($service->post_title ?? ''),
+                'translations' => (string) ($service->translations ?? ''),
+            ]);
+        }
+
+        return $services;
+    }
+
+    private function amelia_get_service_title($service)
+    {
+        $service_id = (int) ($service['id'] ?? 0);
+        if (!$service_id and isset($service['ID'])) $service_id = (int) $service['ID'];
+
+        $title = trim((string) ($service['name'] ?? ($service['post_title'] ?? '')));
+
+        $translations_raw = $service['translations'] ?? '';
+        if (is_string($translations_raw) and trim($translations_raw))
+        {
+            $translations = json_decode($translations_raw, true);
+            if (is_array($translations))
+            {
+                $candidates = [];
+                $user_locale = trim((string) get_user_locale());
+                $site_locale = trim((string) get_locale());
+
+                if ($user_locale) $candidates[] = $user_locale;
+                if ($site_locale and !in_array($site_locale, $candidates)) $candidates[] = $site_locale;
+
+                if ($user_locale and strpos($user_locale, '_') !== false)
+                {
+                    $short_locale = explode('_', $user_locale)[0];
+                    if ($short_locale and !in_array($short_locale, $candidates)) $candidates[] = $short_locale;
+                }
+
+                if ($site_locale and strpos($site_locale, '_') !== false)
+                {
+                    $short_locale = explode('_', $site_locale)[0];
+                    if ($short_locale and !in_array($short_locale, $candidates)) $candidates[] = $short_locale;
+                }
+
+                if (isset($translations['name']) and is_array($translations['name']))
+                {
+                    foreach ($candidates as $candidate)
+                    {
+                        if (isset($translations['name'][$candidate]) and trim((string) $translations['name'][$candidate]))
+                        {
+                            $title = trim((string) $translations['name'][$candidate]);
+                            break;
+                        }
+                    }
+
+                    if (!trim($title) and count($translations['name']))
+                    {
+                        foreach ($translations['name'] as $translated_title)
+                        {
+                            if (trim((string) $translated_title))
+                            {
+                                $title = trim((string) $translated_title);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!trim($title)) $title = sprintf(__('Service %s', 'modern-events-calendar-lite'), $service_id);
+        return $title;
+    }
+
+    private function amelia_prepare_event_tickets($service, $service_title)
+    {
+        $ticket_price = 0;
+        if (isset($service['price']) and trim((string) $service['price']) !== '' and is_numeric($service['price']))
+        {
+            $ticket_price = (float) $service['price'];
+        }
+
+        return [
+            1 => [
+                'id' => 1,
+                'name' => $service_title,
+                'description' => '',
+                'price' => $ticket_price,
+                'price_label' => '',
+                'limit' => '',
+                'unlimited' => 1,
+                'seats' => 1,
+                'minimum_ticket' => 0,
+                'maximum_ticket' => '',
+                'stop_selling_value' => 0,
+                'stop_selling_type' => 'day',
+                'dates' => [],
+                'category_ids' => [],
+            ],
+        ];
+    }
+
+    private function amelia_get_settings()
+    {
+        $settings = get_option('amelia_settings', []);
+        if (is_string($settings)) $settings = json_decode($settings, true);
+        if (!is_array($settings)) $settings = [];
+
+        return $settings;
+    }
+
+    private function amelia_table($name)
+    {
+        $wpdb = $this->db->get_DBO();
+        return $wpdb->prefix . 'amelia_' . $name;
+    }
+
+    private function amelia_table_exists($name)
+    {
+        return $this->db->exists('amelia_' . $name);
+    }
+
+    private function amelia_day_index_to_mec($amelia_day_index)
+    {
+        if ($amelia_day_index < 1 or $amelia_day_index > 7) return null;
+        return (int) ($amelia_day_index - 1);
+    }
+
+    private function amelia_time_to_minutes($time, $is_end = false)
+    {
+        if (!is_string($time) or !trim($time)) return null;
+
+        $parts = explode(':', $time);
+        if (!isset($parts[0]) or !isset($parts[1])) return null;
+
+        $hour = (int) $parts[0];
+        $minutes = (int) $parts[1];
+        $seconds = isset($parts[2]) ? (int) $parts[2] : 0;
+
+        if ($hour < 0 or $hour > 24) return null;
+        if ($minutes < 0 or $minutes > 59) return null;
+        if ($seconds < 0 or $seconds > 59) return null;
+        if ($hour === 24 and ($minutes > 0 or $seconds > 0)) return null;
+
+        if ($is_end and $hour === 0 and $minutes === 0 and $seconds === 0) return 1440;
+
+        $value = ($hour * 60) + $minutes + ($seconds / 60);
+        return ($is_end ? (int) ceil($value) : (int) floor($value));
+    }
+
+    private function amelia_split_interval($day, $start, $end)
+    {
+        $intervals = [];
+        if ($end > $start)
+        {
+            $intervals[] = ['day' => $day, 'start' => $start, 'end' => $end];
+        }
+        else if ($end < $start)
+        {
+            $intervals[] = ['day' => $day, 'start' => $start, 'end' => 1440];
+            $intervals[] = ['day' => (($day + 1) % 7), 'start' => 0, 'end' => $end];
+        }
+
+        return $intervals;
+    }
+
+    private function amelia_subtract_intervals($base_intervals, $subtract_intervals)
+    {
+        $result = $base_intervals;
+        foreach ($subtract_intervals as $cut)
+        {
+            $next = [];
+            foreach ($result as $base)
+            {
+                if ($cut['end'] <= $base['start'] or $cut['start'] >= $base['end'])
+                {
+                    $next[] = $base;
+                    continue;
+                }
+
+                if ($cut['start'] > $base['start'])
+                {
+                    $next[] = ['start' => $base['start'], 'end' => min($cut['start'], $base['end'])];
+                }
+
+                if ($cut['end'] < $base['end'])
+                {
+                    $next[] = ['start' => max($cut['end'], $base['start']), 'end' => $base['end']];
+                }
+            }
+
+            $result = $next;
+        }
+
+        return $result;
+    }
+
+    private function amelia_merge_intervals($intervals)
+    {
+        if (!is_array($intervals) or !count($intervals)) return [];
+
+        usort($intervals, function ($a, $b)
+        {
+            if ($a['start'] == $b['start']) return ($a['end'] <=> $b['end']);
+            return ($a['start'] <=> $b['start']);
+        });
+
+        $merged = [];
+        foreach ($intervals as $interval)
+        {
+            if (!isset($interval['start']) or !isset($interval['end'])) continue;
+            if ($interval['end'] <= $interval['start']) continue;
+
+            if (!count($merged))
+            {
+                $merged[] = ['start' => (int) $interval['start'], 'end' => (int) $interval['end']];
+                continue;
+            }
+
+            $last_key = count($merged) - 1;
+            if ($interval['start'] <= $merged[$last_key]['end'])
+            {
+                $merged[$last_key]['end'] = max($merged[$last_key]['end'], (int) $interval['end']);
+            }
+            else $merged[] = ['start' => (int) $interval['start'], 'end' => (int) $interval['end']];
+        }
+
+        return $merged;
+    }
+
+    private function amelia_minutes_to_timepicker($minutes, $time_format = 12)
+    {
+        $minutes = max(0, min(1440, (int) $minutes));
+
+        $hour_24 = (int) floor($minutes / 60);
+        $minute = (int) ($minutes % 60);
+
+        if ((int) $time_format === 24)
+        {
+            return [
+                'hour' => $hour_24,
+                'minutes' => $minute,
+                'ampm' => '',
+            ];
+        }
+
+        $ampm = ($hour_24 >= 12 ? 'PM' : 'AM');
+        $hour_12 = ($hour_24 % 12);
+        if ($hour_12 === 0) $hour_12 = 12;
+
+        return [
+            'hour' => $hour_12,
+            'minutes' => $minute,
+            'ampm' => $ampm,
+        ];
+    }
+
+    private function amelia_minutes_to_event_time($minutes, $type = 'start')
+    {
+        $minutes = max(0, min(1440, (int) $minutes));
+
+        $hour_24 = (int) floor($minutes / 60);
+        $minute = (int) ($minutes % 60);
+
+        if ($hour_24 === 24)
+        {
+            $hour_12 = 12;
+            $ampm = 'AM';
+        }
+        else
+        {
+            $ampm = ($hour_24 >= 12 ? 'PM' : 'AM');
+            $hour_12 = ($hour_24 % 12);
+            if ($hour_12 === 0) $hour_12 = 12;
+        }
+
+        return [
+            'hour' => $hour_12,
+            'minutes' => $minute,
+            'ampm' => $ampm,
+            'type' => $type,
+        ];
+    }
+
+    private function amelia_get_next_date_for_day($mec_day_index, $from_date = null)
+    {
+        if (is_null($from_date) or !trim($from_date)) $from_date = wp_date('Y-m-d');
+
+        $from_ts = strtotime($from_date);
+        if (!$from_ts) $from_ts = current_time('timestamp');
+
+        $php_to_mec = [6, 0, 1, 2, 3, 4, 5];
+        $current_mec_day = $php_to_mec[(int) wp_date('w', $from_ts)];
+
+        $delta = ($mec_day_index - $current_mec_day + 7) % 7;
+        return wp_date('Y-m-d', strtotime('+' . $delta . ' day', $from_ts));
+    }
+
+    private function amelia_period_matches_service($period_id, $service_id, $period_services_by_period)
+    {
+        if (!isset($period_services_by_period[$period_id])) return true;
+
+        $services = array_values(array_unique(array_filter(array_map('intval', $period_services_by_period[$period_id]))));
+        if (!count($services)) return true;
+
+        return in_array((int) $service_id, $services);
+    }
+
+    private function amelia_build_provider_weekly_availability($provider_id, $service_id, $weekdays_by_provider, $timeouts_by_weekday, $periods_by_weekday, $period_services_by_period, $period_locations_by_period, &$source_location_ids)
+    {
+        $provider_weekly = [0 => [], 1 => [], 2 => [], 3 => [], 4 => [], 5 => [], 6 => []];
+
+        $provider_weekdays = $weekdays_by_provider[$provider_id] ?? [];
+        foreach ($provider_weekdays as $weekday_row)
+        {
+            $amelia_day_index = (int) ($weekday_row['dayIndex'] ?? 0);
+            $mec_day_index = $this->amelia_day_index_to_mec($amelia_day_index);
+            if (is_null($mec_day_index)) continue;
+
+            $weekday_id = (int) ($weekday_row['id'] ?? 0);
+            if (!$weekday_id) continue;
+
+            $segments = [];
+            $weekday_periods = $periods_by_weekday[$weekday_id] ?? [];
+            if (count($weekday_periods))
+            {
+                foreach ($weekday_periods as $period_row)
+                {
+                    $period_id = (int) ($period_row['id'] ?? 0);
+                    if (!$period_id) continue;
+                    if (!$this->amelia_period_matches_service($period_id, $service_id, $period_services_by_period)) continue;
+
+                    $start = $this->amelia_time_to_minutes($period_row['startTime'] ?? null, false);
+                    $end = $this->amelia_time_to_minutes($period_row['endTime'] ?? null, true);
+                    if (is_null($start) or is_null($end) or $start === $end) continue;
+
+                    $period_location_id = (int) ($period_row['locationId'] ?? 0);
+                    if ($period_location_id) $source_location_ids[] = $period_location_id;
+
+                    $period_location_ids = $period_locations_by_period[$period_id] ?? [];
+                    if (count($period_location_ids)) $source_location_ids = array_merge($source_location_ids, $period_location_ids);
+
+                    $split = $this->amelia_split_interval($mec_day_index, $start, $end);
+                    if (count($split)) $segments = array_merge($segments, $split);
+                }
+            }
+            else
+            {
+                $start = $this->amelia_time_to_minutes($weekday_row['startTime'] ?? null, false);
+                $end = $this->amelia_time_to_minutes($weekday_row['endTime'] ?? null, true);
+                if (is_null($start) or is_null($end) or $start === $end) continue;
+
+                $split = $this->amelia_split_interval($mec_day_index, $start, $end);
+                if (count($split)) $segments = array_merge($segments, $split);
+            }
+
+            if (!count($segments)) continue;
+
+            $timeouts_by_day = [];
+            $weekday_timeouts = $timeouts_by_weekday[$weekday_id] ?? [];
+            foreach ($weekday_timeouts as $timeout_row)
+            {
+                $timeout_start = $this->amelia_time_to_minutes($timeout_row['startTime'] ?? null, false);
+                $timeout_end = $this->amelia_time_to_minutes($timeout_row['endTime'] ?? null, true);
+                if (is_null($timeout_start) or is_null($timeout_end) or $timeout_start === $timeout_end) continue;
+
+                $timeout_segments = $this->amelia_split_interval($mec_day_index, $timeout_start, $timeout_end);
+                foreach ($timeout_segments as $timeout_segment)
+                {
+                    if (!isset($timeouts_by_day[$timeout_segment['day']])) $timeouts_by_day[$timeout_segment['day']] = [];
+                    $timeouts_by_day[$timeout_segment['day']][] = ['start' => $timeout_segment['start'], 'end' => $timeout_segment['end']];
+                }
+            }
+
+            foreach ($segments as $segment)
+            {
+                $intervals = [['start' => $segment['start'], 'end' => $segment['end']]];
+                $segment_timeouts = $timeouts_by_day[$segment['day']] ?? [];
+                if (count($segment_timeouts)) $intervals = $this->amelia_subtract_intervals($intervals, $segment_timeouts);
+
+                foreach ($intervals as $interval)
+                {
+                    if ($interval['end'] <= $interval['start']) continue;
+                    $provider_weekly[$segment['day']][] = $interval;
+                }
+            }
+        }
+
+        for ($d = 0; $d <= 6; $d++) $provider_weekly[$d] = $this->amelia_merge_intervals($provider_weekly[$d]);
+        return $provider_weekly;
+    }
+
+    private function amelia_get_provider_special_day_intervals_on_date($provider_id, $date, $service_id, $special_days_by_provider, $special_periods_by_special_day, $special_period_services_by_period, $special_period_locations_by_period, &$source_location_ids)
+    {
+        $special_days = $special_days_by_provider[$provider_id] ?? [];
+        if (!count($special_days)) return null;
+
+        $matched_special_day = false;
+        $intervals = [];
+        $mec_day_index = ((int) wp_date('N', strtotime($date))) - 1;
+
+        foreach ($special_days as $special_day_row)
+        {
+            $start_date = trim((string) ($special_day_row['startDate'] ?? ''));
+            $end_date = trim((string) ($special_day_row['endDate'] ?? ''));
+            if (!trim($start_date) or !trim($end_date)) continue;
+            if ($date < $start_date or $date > $end_date) continue;
+
+            $matched_special_day = true;
+            $special_day_id = (int) ($special_day_row['id'] ?? 0);
+            if (!$special_day_id) continue;
+
+            $special_periods = $special_periods_by_special_day[$special_day_id] ?? [];
+            if (!count($special_periods)) continue;
+
+            foreach ($special_periods as $special_period_row)
+            {
+                $special_period_id = (int) ($special_period_row['id'] ?? 0);
+                if (!$special_period_id) continue;
+                if (!$this->amelia_period_matches_service($special_period_id, $service_id, $special_period_services_by_period)) continue;
+
+                $start = $this->amelia_time_to_minutes($special_period_row['startTime'] ?? null, false);
+                $end = $this->amelia_time_to_minutes($special_period_row['endTime'] ?? null, true);
+                if (is_null($start) or is_null($end) or $start === $end) continue;
+
+                $special_location_id = (int) ($special_period_row['locationId'] ?? 0);
+                if ($special_location_id) $source_location_ids[] = $special_location_id;
+
+                $special_location_ids = $special_period_locations_by_period[$special_period_id] ?? [];
+                if (count($special_location_ids)) $source_location_ids = array_merge($source_location_ids, $special_location_ids);
+
+                $split = $this->amelia_split_interval($mec_day_index, $start, $end);
+                foreach ($split as $segment)
+                {
+                    if ((int) $segment['day'] !== (int) $mec_day_index) continue;
+                    $intervals[] = ['start' => $segment['start'], 'end' => $segment['end']];
+                }
+            }
+        }
+
+        if (!$matched_special_day) return null;
+        return $this->amelia_merge_intervals($intervals);
+    }
+
+    private function amelia_is_provider_day_off_on_date($provider_id, $date, $dayoffs_by_provider)
+    {
+        $dayoffs = $dayoffs_by_provider[$provider_id] ?? [];
+        if (!count($dayoffs)) return false;
+
+        $date_ts = strtotime($date);
+        if (!$date_ts) return false;
+
+        foreach ($dayoffs as $dayoff_row)
+        {
+            $start_date = trim((string) ($dayoff_row['startDate'] ?? ''));
+            $end_date = trim((string) ($dayoff_row['endDate'] ?? ''));
+            if (!trim($start_date) or !trim($end_date)) continue;
+
+            $repeat = (int) ($dayoff_row['repeat'] ?? 0);
+            if (!$repeat)
+            {
+                if ($date >= $start_date and $date <= $end_date) return true;
+                continue;
+            }
+
+            $start_md = wp_date('m-d', strtotime($start_date));
+            $end_md = wp_date('m-d', strtotime($end_date));
+            $current_md = wp_date('m-d', $date_ts);
+
+            if ($start_md <= $end_md)
+            {
+                if ($current_md >= $start_md and $current_md <= $end_md) return true;
+            }
+            else
+            {
+                if ($current_md >= $start_md or $current_md <= $end_md) return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function amelia_expand_global_days_off($days_off, $from_date, $to_date)
+    {
+        $result = [];
+        if (!is_array($days_off) or !count($days_off)) return $result;
+
+        $from_ts = strtotime($from_date);
+        $to_ts = strtotime($to_date);
+        if (!$from_ts or !$to_ts or $to_ts < $from_ts) return $result;
+
+        $raw_values = [];
+        foreach ($days_off as $day_off)
+        {
+            if (is_string($day_off) and trim($day_off))
+            {
+                $raw_values[] = trim($day_off);
+                continue;
+            }
+
+            if (is_array($day_off))
+            {
+                foreach ($day_off as $day_off_item)
+                {
+                    if (is_string($day_off_item) and trim($day_off_item))
+                    {
+                        $raw_values[] = trim($day_off_item);
+                    }
+                }
+            }
+        }
+
+        $raw_values = array_values(array_unique($raw_values));
+        if (!count($raw_values)) return $result;
+
+        foreach ($raw_values as $raw_value)
+        {
+            $parts = explode('-', $raw_value);
+
+            if (count($parts) === 3)
+            {
+                $ts = strtotime($raw_value);
+                if ($ts and $ts >= $from_ts and $ts <= $to_ts) $result[wp_date('Y-m-d', $ts)] = true;
+                continue;
+            }
+
+            if (count($parts) !== 2) continue;
+
+            $month_day = sprintf('%02d-%02d', (int) $parts[0], (int) $parts[1]);
+            $start_year = (int) wp_date('Y', $from_ts);
+            $end_year = (int) wp_date('Y', $to_ts);
+
+            for ($year = $start_year; $year <= $end_year; $year++)
+            {
+                $candidate = $year . '-' . $month_day;
+                $candidate_ts = strtotime($candidate);
+                if (!$candidate_ts) continue;
+
+                if ($candidate_ts >= $from_ts and $candidate_ts <= $to_ts) $result[wp_date('Y-m-d', $candidate_ts)] = true;
+            }
+        }
+
+        return $result;
+    }
+
+    private function amelia_intervals_equal($intervals_a, $intervals_b)
+    {
+        $intervals_a = $this->amelia_merge_intervals($intervals_a);
+        $intervals_b = $this->amelia_merge_intervals($intervals_b);
+
+        if (count($intervals_a) !== count($intervals_b)) return false;
+
+        foreach ($intervals_a as $i => $interval_a)
+        {
+            $interval_b = $intervals_b[$i] ?? null;
+            if (!is_array($interval_b)) return false;
+
+            if ((int) ($interval_a['start'] ?? -1) !== (int) ($interval_b['start'] ?? -2)) return false;
+            if ((int) ($interval_a['end'] ?? -1) !== (int) ($interval_b['end'] ?? -2)) return false;
+        }
+
+        return true;
+    }
+
+    private function amelia_prepare_adjusted_availability($date, $intervals, $time_format = 12)
+    {
+        $adjusted = ['date' => $date];
+
+        if (!is_array($intervals) or !count($intervals)) return $adjusted;
+
+        $intervals = $this->amelia_merge_intervals($intervals);
+        foreach ($intervals as $i => $interval)
+        {
+            $adjusted[$i] = [
+                'start' => $this->amelia_minutes_to_timepicker((int) $interval['start'], $time_format),
+                'end' => $this->amelia_minutes_to_timepicker((int) $interval['end'], $time_format),
+            ];
+        }
+
+        return $adjusted;
+    }
+
+    private function amelia_resolve_image_url($image)
+    {
+        $image = trim((string) $image);
+        if (!trim($image)) return '';
+
+        if (filter_var($image, FILTER_VALIDATE_URL)) return $image;
+
+        $upload_dir = wp_upload_dir();
+        $baseurl = rtrim((string) ($upload_dir['baseurl'] ?? ''), '/');
+        $basedir = rtrim((string) ($upload_dir['basedir'] ?? ''), '/');
+
+        if ($basedir and strpos($image, $basedir) === 0 and file_exists($image))
+        {
+            $relative = ltrim(str_replace($basedir, '', $image), '/');
+            return $baseurl . '/' . $relative;
+        }
+
+        if (strpos($image, '/wp-content/uploads/') === 0) return home_url($image);
+
+        if (strpos($image, ABSPATH) === 0 and file_exists($image))
+        {
+            $relative = ltrim(str_replace(ABSPATH, '', $image), '/');
+            return home_url('/' . $relative);
+        }
+
+        if (strpos($image, '/') === 0)
+        {
+            if (file_exists($image))
+            {
+                if ($basedir and strpos($image, $basedir) === 0)
+                {
+                    $relative = ltrim(str_replace($basedir, '', $image), '/');
+                    return $baseurl . '/' . $relative;
+                }
+
+                if (strpos($image, ABSPATH) === 0)
+                {
+                    $relative = ltrim(str_replace(ABSPATH, '', $image), '/');
+                    return home_url('/' . $relative);
+                }
+            }
+
+            return home_url($image);
+        }
+
+        $upload_path_candidate = $basedir . '/' . ltrim($image, '/');
+        if ($basedir and file_exists($upload_path_candidate))
+        {
+            $relative = ltrim(str_replace($basedir, '', $upload_path_candidate), '/');
+            return $baseurl . '/' . $relative;
+        }
+
+        return $baseurl . '/' . ltrim($image, '/');
     }
 
     public function thirdparty_eventon_import_do($IDs)

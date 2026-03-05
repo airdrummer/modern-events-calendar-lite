@@ -59,7 +59,7 @@ $events_str = '';
             // Print events
             if(isset($events[$today]) and count($events[$today]))
             {
-                echo '<dt class="mec-calendar-day mec-table-nullday '.esc_attr($selected_day).' mec-has-event" data-mec-cell="'.esc_attr($day_id).'" data-day="'.esc_attr($list_day).'" data-month="'.date('Ym', strtotime($year.'-'.$month.'-01')).'"><a href="#" class="mec-has-event-a" >'.MEC_kses::full(apply_filters('mec_filter_list_day_value', $list_day, $today, $this)).'</a>';
+                echo '<dt class="mec-calendar-day mec-table-nullday '.esc_attr($selected_day).' mec-has-event" data-mec-cell="'.esc_attr($day_id).'" data-day="'.esc_attr($list_day).'" data-month="'.date('Ym', strtotime($year.'-'.$month.'-01')).'"><a href="#" class="mec-has-event-a">'.MEC_kses::full(apply_filters('mec_filter_list_day_value', $list_day, $today, $this)).'</a>';
                 do_action('monthly_box_hook', $events[$today]);
                 echo '</dt>';
 

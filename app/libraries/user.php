@@ -275,13 +275,22 @@ class MEC_user extends MEC_base
                 }
 
                 $user_id = $this->main->register_user($username, $email, $password, $auto);
+                if (is_wp_error($user_id)) {
+                    $existing_user_id = $this->main->email_exists($email);
+                    if ($existing_user_id !== false) $user_id = $existing_user_id;
+                    else return false;
+                }
+
+                if (!is_scalar($user_id) or !is_numeric($user_id) or ((int) $user_id) <= 0) return false;
+                $user_id = (int) $user_id;
 
                 $user = new stdClass();
                 $user->ID = $user_id;
                 $user->first_name = $first_name;
                 $user->last_name = $last_name;
 
-                wp_update_user($user);
+                $updated = wp_update_user($user);
+                if (is_wp_error($updated)) return false;
                 update_user_meta($user_id, 'mec_name', $name);
                 update_user_meta($user_id, 'mec_reg', $reg);
                 update_user_meta($user_id, 'nickname', $name);
@@ -330,6 +339,10 @@ class MEC_user extends MEC_base
 
     public function get($id)
     {
+        if (!is_scalar($id) or !is_numeric($id) or ((int) $id) <= 0) return $this->empty();
+
+        $id = (int) $id;
+
         // Registration is disabled
         if (isset($this->settings['booking_registration']) and !$this->settings['booking_registration']) {
             $user = $this->mec($id);
@@ -338,6 +351,21 @@ class MEC_user extends MEC_base
             $user = $this->wp($id);
             if (!$user) $user = $this->mec($id);
         }
+
+        return $user ?: $this->empty();
+    }
+
+    private function empty()
+    {
+        $user = new stdClass();
+        $user->ID = 0;
+        $user->first_name = '';
+        $user->last_name = '';
+        $user->display_name = '';
+        $user->email = NULL;
+        $user->user_email = NULL;
+        $user->user_registered = NULL;
+        $user->data = (object) array('user_email' => NULL);
 
         return $user;
     }

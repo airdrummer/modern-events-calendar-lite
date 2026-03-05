@@ -44,9 +44,10 @@ class MEC_feature_update extends MEC_base
     public function update()
     {
         $version = get_option('mec_version', '1.0.0');
+        $latest_version = $this->main->get_db_version();
 
         // It's updated to latest version
-        if(version_compare($version, $this->main->get_version(), '>=')) return;
+        if(version_compare($version, $latest_version, '>=')) return;
      
         // Run the updates one by one
         if(version_compare($version, '1.0.3', '<')) $this->version103();
@@ -90,7 +91,7 @@ class MEC_feature_update extends MEC_base
         if(version_compare($version, '7.13.0', '<')) $this->version7130();
 
         // Update to latest version to prevent running the code twice
-        update_option('mec_version', $this->main->get_version());
+        update_option('mec_version', $latest_version);
     }
 
     public function update_capabilities($capabilities)

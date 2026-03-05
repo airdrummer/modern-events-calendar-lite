@@ -410,6 +410,7 @@ class MEC_factory extends MEC_base
             // Get Current Screen
             global $current_screen;
             if (!isset($current_screen)) $current_screen = get_current_screen();
+            $include_heavy_assets = $this->should_include_heavy_backend_assets($current_screen);
 
             // Styling
             $styling = $this->main->get_styling();
@@ -424,17 +425,20 @@ class MEC_factory extends MEC_base
             wp_enqueue_script('mec-select2-script');
             wp_enqueue_style('mec-select2-style');
 
-            // Include Lity Lightbox
-            wp_enqueue_script('mec-lity-script');
+            if ($include_heavy_assets)
+            {
+                // Include Lity Lightbox
+                wp_enqueue_script('mec-lity-script');
 
-            // Include Nicescroll
-            wp_enqueue_script('mec-nice-scroll');
+                // Include Nicescroll
+                wp_enqueue_script('mec-nice-scroll');
 
-            wp_enqueue_style('featherlight');
-            wp_enqueue_script('featherlight');
+                wp_enqueue_style('featherlight');
+                wp_enqueue_script('featherlight');
 
-            // Include MEC Carousel JS libraries
-            wp_enqueue_script('mec-owl-carousel-script');
+                // Include MEC Carousel JS libraries
+                wp_enqueue_script('mec-owl-carousel-script');
+            }
 
             // Register New Block Editor
             if (function_exists('register_block_type')) register_block_type('mec/blockeditor', ['editor_script' => 'block.editor']);
@@ -467,7 +471,7 @@ class MEC_factory extends MEC_base
             if (is_rtl()) wp_enqueue_style('mec-backend-rtl-style');
 
             // Include Lity CSS file
-            wp_enqueue_style('mec-lity-style');
+            if ($include_heavy_assets) wp_enqueue_style('mec-lity-style');
         }
 
         // Include MEC backend CSS
@@ -1195,7 +1199,7 @@ class MEC_factory extends MEC_base
         update_option('mec_installed', 1);
 
         // Set the version into the Database
-        update_option('mec_version', $this->main->get_version());
+        update_option('mec_version', $this->main->get_db_version());
 
         // MEC Capabilities
         $role = get_role('administrator');
@@ -1413,6 +1417,57 @@ class MEC_factory extends MEC_base
 
             return apply_filters('mec_include_backend_assets', false);
         }
+    }
+
+    public function should_include_heavy_backend_assets($screen = null)
+    {
+        if (!is_a($screen, '\WP_Screen') && function_exists('get_current_screen')) $screen = get_current_screen();
+
+        if (!is_a($screen, '\WP_Screen')) return apply_filters('mec_include_backend_heavy_assets', false, $screen);
+
+        $base = $screen->base;
+        $page = isset($_REQUEST['page']) ? sanitize_text_field($_REQUEST['page']) : '';
+        $post_type = $screen->post_type;
+        $taxonomy = $screen->taxonomy;
+
+        $is_mec_taxonomy = (trim((string) $taxonomy) and in_array($taxonomy, [
+                apply_filters('mec_taxonomy_tag', ''),
+                'mec_category',
+                'mec_label',
+                'mec_location',
+                'mec_organizer',
+                'mec_speaker',
+                'mec_coupon',
+            ]));
+
+        $is_mec_post_type = (trim((string) $post_type) and in_array($post_type, [
+                $this->main->get_main_post_type(),
+                'mec_calendars',
+                $this->main->get_book_post_type(),
+            ]));
+
+        $is_mec_page = ((trim((string) $base) and in_array($base, [
+                    'toplevel_page_mec-intro',
+                    'm-e-calendar_page_MEC-settings',
+                    'm-e-calendar_page_MEC-addons',
+                    'm-e-calendar_page_MEC-report',
+                    'm-e-calendar_page_MEC-ix',
+                    'm-e-calendar_page_MEC-support',
+                    'm-e-calendar_page_MEC-wizard',
+                    'm-e-calendar_page_MEC-go-pro',
+                ])) or (trim($page) and in_array($page, [
+                    'mec-intro',
+                    'MEC-settings',
+                    'MEC-addons',
+                    'MEC-report',
+                    'MEC-ix',
+                    'MEC-support',
+                    'MEC-wizard',
+                    'MEC-go-pro',
+                    'mec-advanced-report',
+                ])));
+
+        return apply_filters('mec_include_backend_heavy_assets', ($is_mec_taxonomy || $is_mec_post_type || $is_mec_page), $screen);
     }
 
     function mecShowUpgradeNotification($currentPluginMetadata, $newPluginMetadata)

@@ -81,6 +81,9 @@ class MEC_schedule extends MEC_base
         // Create Public Column If Not Exists
         if (!$this->db->columns('mec_dates', 'public')) $this->db->q("ALTER TABLE `#__mec_dates` ADD `public` INT(4) UNSIGNED NOT NULL DEFAULT 1 AFTER `tend`;");
 
+        $fallback_start_seconds = (int) get_post_meta($event_id, 'mec_start_day_seconds', true);
+        $fallback_end_seconds = (int) get_post_meta($event_id, 'mec_end_day_seconds', true);
+
         foreach ($dates as $date)
         {
             $sd = $date['start']['date'];
@@ -119,8 +122,22 @@ class MEC_schedule extends MEC_base
                 $end_time = '11:59 PM';
             }
 
-            $st = strtotime(trim($date['start']['date'] . ' ' . $start_time, ' :'));
-            $et = strtotime(trim($date['end']['date'] . ' ' . $end_time, ' :'));
+            $st = $this->parse_occurrence_timestamp(
+                $date['start']['date'],
+                $start_time,
+                $start_hour,
+                $start_minute,
+                $start_ampm,
+                $fallback_start_seconds
+            );
+            $et = $this->parse_occurrence_timestamp(
+                $date['end']['date'],
+                $end_time,
+                $end_hour,
+                $end_minute,
+                $end_ampm,
+                $fallback_end_seconds
+            );
 
             $date_id = $this->db->select("SELECT `id` FROM `#__mec_dates` WHERE `post_id`='$event_id' AND `tstart`='$st' AND `tend`='$et'", 'loadResult');
 
@@ -131,6 +148,26 @@ class MEC_schedule extends MEC_base
         }
 
         return true;
+    }
+
+    private function parse_occurrence_timestamp($date, $time, $hour, $minute, $ampm, $fallback_seconds)
+    {
+        $timestamp = strtotime(trim($date . ' ' . $time, ' :'));
+        if ($timestamp !== false) return $timestamp;
+
+        // Some channels can pass hybrid time values like "13:00 PM"; retry as 24-hour time.
+        if (is_numeric($hour) and (int) $hour > 12 and trim((string) $ampm) !== '')
+        {
+            $normalized = sprintf('%02d:%02d', (int) $hour, (int) $minute);
+            $timestamp = strtotime(trim($date . ' ' . $normalized, ' :'));
+            if ($timestamp !== false) return $timestamp;
+        }
+
+        // Last fallback: use date + stored day seconds so tstart/tend are never invalid.
+        $day_timestamp = strtotime($date);
+        if ($day_timestamp === false) $day_timestamp = 0;
+
+        return $day_timestamp + (int) $fallback_seconds;
     }
 
     public function clean($event_id)

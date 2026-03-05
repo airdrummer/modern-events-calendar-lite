@@ -55,6 +55,11 @@ class MEC_feature_notifications extends MEC_base
         if(!is_array($values)) $values = [];
 
         $notifications = $this->get_notifications();
+        $hours_notifications = ['booking_reminder', 'attendee_report'];
+        $hours_defaults = [
+            'booking_reminder' => '24,72,168',
+            'attendee_report' => '24',
+        ];
     ?>
         <div class="mec-meta-box-fields mec-event-tab-content" id="mec-notifications">
             <?php foreach($notifications as $key => $notification): if(isset($this->notif_settings[$key]) and isset($this->notif_settings[$key]['status']) and !$this->notif_settings[$key]['status']) continue; ?>
@@ -83,6 +88,22 @@ class MEC_feature_notifications extends MEC_base
                             <?php wp_editor(((isset($values[$key]) and isset($values[$key]['content']) and trim($values[$key]['content'])) ? stripslashes($values[$key]['content']) : ((isset($this->notif_settings[$key]) and isset($this->notif_settings[$key]['content']) and trim($this->notif_settings[$key]['content'])) ? stripslashes($this->notif_settings[$key]['content']) : '')), 'mec_notifications_'.esc_attr($key).'_content', array('textarea_name'=>'mec[notifications]['.$key.'][content]')); ?>
                         </div>
                     </div>
+                    <?php if(in_array($key, $hours_notifications, true)): ?>
+                    <?php
+                        $event_hours = isset($values[$key]['hours']) ? trim((string) $values[$key]['hours']) : '';
+                        $global_hours = isset($this->notif_settings[$key]['hours']) ? trim((string) $this->notif_settings[$key]['hours']) : '';
+                        $hours_value = $event_hours !== '' ? $event_hours : ($global_hours !== '' ? $global_hours : $hours_defaults[$key]);
+                    ?>
+                    <div class="mec-form-row">
+                        <div class="mec-col-2">
+                            <label for="mec_notifications_<?php echo esc_attr($key); ?>_hours"><?php esc_html_e('Hours', 'modern-events-calendar-lite'); ?></label>
+                        </div>
+                        <div class="mec-col-10">
+                            <input id="mec_notifications_<?php echo esc_attr($key); ?>_hours" type="text" name="mec[notifications][<?php echo esc_attr($key); ?>][hours]" value="<?php echo esc_attr($hours_value); ?>">
+                            <p class="description"><?php esc_html_e('Comma separated positive hours (for example: 72,48,24,1).', 'modern-events-calendar-lite'); ?></p>
+                        </div>
+                    </div>
+                    <?php endif; ?>
 
                     <?php
                         do_action('mec_display_notification_settings_for_event', $values, $key);

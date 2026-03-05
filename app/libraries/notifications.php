@@ -250,6 +250,10 @@ class MEC_notifications extends MEC_base
 
         $subject = isset($this->notif_settings['attendee_report']['subject']) ? stripslashes(esc_html__($this->notif_settings['attendee_report']['subject'], 'modern-events-calendar-lite')) : esc_html__('Attendee Report', 'modern-events-calendar-lite');
         $subject = $this->content($this->get_subject($subject, 'attendee_report', $event_id, 0), 0);
+        $subject = str_replace('%%event_title%%', $event->post_title, $subject);
+        $subject = str_replace('%%total_attendees%%', count($attendees), $subject);
+        $subject = str_replace('%%event_start_datetime%%', $this->main->date_i18n($date_format.' '.$time_format, $start_timestamp), $subject);
+        $subject = str_replace('%%event_end_datetime%%', $this->main->date_i18n($date_format.' '.$time_format, $end_timestamp), $subject);
 
         $message = $this->notif_settings['attendee_report']['content'] ?? '';
         $message = str_replace('%%event_title%%', $event->post_title, $message);

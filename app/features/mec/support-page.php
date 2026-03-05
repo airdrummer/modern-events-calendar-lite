@@ -505,50 +505,6 @@ global $wp_version;
         // });
     </script>
     <?php if ($this->getPRO()): ?>
-        <script>
-            window.intercomSettings = {
-                api_base: "https://api-iam.intercom.io",
-                app_id: "l0q7rr0s",
-                custom_launcher_selector: '.support-button'
-            };
-        </script>
-
-
-        <script>
-            // We pre-filled your app ID in the widget URL: 'https://widget.intercom.io/widget/l0q7rr0s'
-            (function() {
-                var w = window;
-                var ic = w.Intercom;
-                if (typeof ic === "function") {
-                    ic('reattach_activator');
-                    ic('update', w.intercomSettings);
-                } else {
-                    var d = document;
-                    var i = function() {
-                        i.c(arguments);
-                    };
-                    i.q = [];
-                    i.c = function(args) {
-                        i.q.push(args);
-                    };
-                    w.Intercom = i;
-                    var l = function() {
-                        var s = d.createElement('script');
-                        s.type = 'text/javascript';
-                        s.async = true;
-                        s.src = 'https://widget.intercom.io/widget/l0q7rr0s';
-                        var x = d.getElementsByTagName('script')[0];
-                        x.parentNode.insertBefore(s, x);
-                    };
-                    if (document.readyState === 'complete') {
-                        l();
-                    } else if (w.attachEvent) {
-                        w.attachEvent('onload', l);
-                    } else {
-                        w.addEventListener('load', l, false);
-                    }
-                }
-            })();
-        </script>
-<?php endif;
+        <script type="text/javascript">window.$crisp=[];window.CRISP_WEBSITE_ID="1ec276e5-9da2-4a16-859f-eae7bcbb4ae9";(function(){d=document;s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();</script>
+    <?php endif;
 });

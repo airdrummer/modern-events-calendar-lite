@@ -89,12 +89,14 @@ $third_parties = $this->main->get_integrated_plugins_for_import();
                                     </div>
                                     <?php endif; ?>
 
+                                    <?php if($this->ix['third-party'] != 'bookly'): ?>
                                     <div class="mec-form-row" style="padding-bottom: 5px;">
                                         <label>
                                             <input type="checkbox" name="ix[import_locations]" value="1" checked="checked" />
                                             <?php esc_html_e('Import Locations', 'modern-events-calendar-lite'); ?>
                                         </label>
                                     </div>
+                                    <?php endif; ?>
                                     <div class="mec-form-row" style="padding-bottom: 5px;">
                                         <label>
                                             <input type="checkbox" name="ix[import_categories]" value="1" checked="checked" />

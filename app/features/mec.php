@@ -845,6 +845,7 @@ class MEC_feature_mec extends MEC_base
         update_post_meta($post_id, 'mec_icons', $icons);
 
         $skin = (isset($mec['skin']) ? sanitize_text_field($mec['skin']) : '');
+        $skin = trim(trim($skin), "\"'");
         $start_date_type = ((isset($mec['sk-options'][$skin]) and isset($mec['sk-options'][$skin]['start_date_type'])) ? sanitize_text_field($mec['sk-options'][$skin]['start_date_type']) : 'today');
         $end_date_type = ((isset($mec['sk-options'][$skin]) and isset($mec['sk-options'][$skin]['end_date_type'])) ? sanitize_text_field($mec['sk-options'][$skin]['end_date_type']) : 'date');
 
@@ -856,7 +857,18 @@ class MEC_feature_mec extends MEC_base
         else if (in_array($start_date_type, ['yesterday', 'start_last_year', 'start_last_month', 'start_last_week'])) $mec['show_past_events'] = 1;
 
         // Set date filter type to dropdown because of skin
-        if (!in_array($skin, ['list', 'grid', 'agenda', 'timeline', 'map', 'custom']) and $mec['sf-options'][$skin]['month_filter']['type'] == 'date-range-picker') $mec['sf-options'][$skin]['month_filter']['type'] = 'dropdown';
+        $month_filter_type = null;
+        if (
+            isset($mec['sf-options']) and
+            is_array($mec['sf-options']) and
+            isset($mec['sf-options'][$skin]) and
+            is_array($mec['sf-options'][$skin]) and
+            isset($mec['sf-options'][$skin]['month_filter']) and
+            is_array($mec['sf-options'][$skin]['month_filter']) and
+            isset($mec['sf-options'][$skin]['month_filter']['type'])
+        ) $month_filter_type = $mec['sf-options'][$skin]['month_filter']['type'];
+
+        if (!in_array($skin, ['list', 'grid', 'agenda', 'timeline', 'map', 'custom']) and $month_filter_type == 'date-range-picker') $mec['sf-options'][$skin]['month_filter']['type'] = 'dropdown';
 
         // Enable Descending Order
         if ($start_date_type === 'date' and $end_date_type === 'date' and isset($mec['sk-options'][$skin]) and isset($mec['sk-options'][$skin]['start_date']) and isset($mec['sk-options'][$skin]['maximum_date_range']) and trim($mec['sk-options'][$skin]['start_date']) and trim($mec['sk-options'][$skin]['maximum_date_range']) and strtotime($mec['sk-options'][$skin]['start_date']) > strtotime($mec['sk-options'][$skin]['maximum_date_range'])) $mec['sk-options'][$skin]['order_method'] = 'DESC';
@@ -1495,6 +1507,43 @@ class MEC_feature_mec extends MEC_base
         return $status;
     }
 
+    private function get_badge_count_cache_ttl()
+    {
+        $ttl = apply_filters('mec_badge_count_cache_ttl', (5 * MINUTE_IN_SECONDS));
+        return ((int) $ttl > 0 ? (int) $ttl : (5 * MINUTE_IN_SECONDS));
+    }
+
+    private function get_badge_count($type, $user_id, $post_type, $meta_key, $user_last_view_date, $latest_datetime)
+    {
+        $cache_key = 'mec_badge_count_' . $type . '_' . md5($user_id . '|' . $latest_datetime . '|' . $user_last_view_date);
+        $count = get_transient($cache_key);
+
+        if ($count !== false) return (int) $count;
+
+        $query = new WP_Query([
+            'post_type' => $post_type,
+            'post_status' => 'any',
+            'fields' => 'ids',
+            'posts_per_page' => -1,
+            'no_found_rows' => true,
+            'suppress_filters' => true,
+            'update_post_meta_cache' => false,
+            'update_post_term_cache' => false,
+            'meta_query' => [
+                [
+                    'key' => $meta_key,
+                    'value' => $user_last_view_date,
+                    'compare' => '>=',
+                ],
+            ],
+        ]);
+
+        $count = count($query->posts);
+        set_transient($cache_key, (int) $count, $this->get_badge_count_cache_ttl());
+
+        return (int) $count;
+    }
+
     /**
      * Show Booking Badge.
      * @param object $screen
@@ -1514,30 +1563,14 @@ class MEC_feature_mec extends MEC_base
         $latest_booking_datetime = get_option('mec_latest_booking_datetime');
         if ($latest_booking_datetime and (int) $latest_booking_datetime <= (int) $user_last_view_date) return;
 
-        $args = [
-            'post_type' => $this->main->get_book_post_type(),
-            'post_status' => 'any',
-            'meta_query' => [
-                [
-                    'key' => 'mec_book_date_submit',
-                    'value' => $user_last_view_date,
-                    'compare' => '>=',
-                ],
-            ],
-        ];
-
-        $count = 0;
-        $query = new WP_Query($args);
-        if ($query->have_posts())
-        {
-            while ($query->have_posts())
-            {
-                $query->the_post();
-                $count += 1;
-            }
-        }
-
-        wp_reset_postdata();
+        $count = $this->get_badge_count(
+            'booking',
+            $user_id,
+            $this->main->get_book_post_type(),
+            'mec_book_date_submit',
+            $user_last_view_date,
+            $latest_booking_datetime
+        );
 
         if ($count != 0)
         {
@@ -1579,30 +1612,14 @@ class MEC_feature_mec extends MEC_base
         $latest_event_datetime = get_option('mec_latest_event_datetime');
         if ($latest_event_datetime and (int) $latest_event_datetime <= (int) $user_last_view_date_events) return;
 
-        $args = [
-            'post_type' => $this->main->get_main_post_type(),
-            'post_status' => 'any',
-            'meta_query' => [
-                [
-                    'key' => 'mec_event_date_submit',
-                    'value' => $user_last_view_date_events,
-                    'compare' => '>=',
-                ],
-            ],
-        ];
-
-        $count = 0;
-        $query = new WP_Query($args);
-        if ($query->have_posts())
-        {
-            while ($query->have_posts())
-            {
-                $query->the_post();
-                $count += 1;
-            }
-        }
-
-        wp_reset_postdata();
+        $count = $this->get_badge_count(
+            'event',
+            $user_id,
+            $this->main->get_main_post_type(),
+            'mec_event_date_submit',
+            $user_last_view_date_events,
+            $latest_event_datetime
+        );
 
         if ($count != 0)
         {

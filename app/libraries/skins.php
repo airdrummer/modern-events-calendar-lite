@@ -922,19 +922,8 @@ class MEC_skins extends MEC_base
                             $midnight = $s + (3600 * $midnight_hour);
                             if ($days_long == '1' and $midnight >= $mec_date->tend) break;
 
-                            // Check if this event has multiple time slots on the same day
-                            $event_id = $mec_date->post_id;
-                            $event_date = date('Y-m-d', $s);
-
-                            // Get all occurrences for this event on this specific date
-                            $occurrences_query = "SELECT * FROM `#__mec_dates` WHERE `post_id`='$event_id' AND DATE(FROM_UNIXTIME(`tstart`))='$event_date' ORDER BY `tstart` ASC";
-                            $occurrences = $this->db->select($occurrences_query);
-
-                            // Add the event ID for each occurrence
-                            foreach ($occurrences as $occurrence)
-                            {
-                                $dates[$d][] = $event_id;
-                            }
+                            // Use the already matched occurrence row so multi-day events are shown on all spanned days.
+                            $dates[$d][] = $mec_date->post_id;
                         }
                     }
 

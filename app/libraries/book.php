@@ -678,7 +678,10 @@ class MEC_book extends MEC_base
             return true;
         }
 
+        // When booking is canceled (by user via email or by admin), set both Confirmation and Verification to rejected
+        // so that the slot is considered fully freed (e.g. for waiting list promotion).
         update_post_meta($book_id, 'mec_verified', -1);
+        update_post_meta($book_id, 'mec_confirmed', -1);
         update_post_meta($book_id, 'mec_cancelled_date', date('Y-m-d H:i:s', current_time('timestamp')));
 
         if (is_null($refund)) $refund = (isset($this->settings['booking_auto_refund']) and $this->settings['booking_auto_refund']);
