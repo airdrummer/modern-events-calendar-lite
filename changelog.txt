@@ -1,4 +1,8 @@
-﻿v 7.32.0 - 7 April 2026
+v 7.32.0.1 - 16apr26
+- added missing timezone display, reformat
+- fixed countdown
+
+v 7.32.0 - 7 April 2026
 - Added: Comprehensive attendees page for events to filter and manage attendees per occurrence.
 - Added: An ability to change the countdown method globally.
 - Enhanced: The security of Frontend Submission.
