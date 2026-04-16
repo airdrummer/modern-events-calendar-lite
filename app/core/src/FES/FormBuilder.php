@@ -4287,6 +4287,18 @@ class FormBuilder extends Singleton
 
         static::register_style_and_scripts();
 
+        // Featured image (and other .mec_upload_image_button handlers) use wp.media().
+        // Without wp_editor() on the page (e.g. Elementor FES form without Description widget),
+        // media scripts are never loaded, so the upload button does nothing.
+        wp_enqueue_media();
+
+        $wp_scripts = wp_scripts();
+        if (isset($wp_scripts->registered['mec-events-script']) && is_array($wp_scripts->registered['mec-events-script']->deps)) {
+            if (!in_array('media-editor', $wp_scripts->registered['mec-events-script']->deps, true)) {
+                $wp_scripts->registered['mec-events-script']->deps[] = 'media-editor';
+            }
+        }
+
         wp_enqueue_script('mec-fes-form-builder');
 
         do_action('mec_fes_form_enqueue_scripts');

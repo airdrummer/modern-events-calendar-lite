@@ -239,9 +239,22 @@ function mec_fes_form_submit()
 
                 // Redirect Currnet Page
                 if (response.data.redirect_to !== "") {
-                    setTimeout(function () {
-                        window.location.href = response.data.redirect_to;
-                    }, mecdata.fes_thankyou_page_time );
+                    // Seat layout booking uses the same FES submit flow, but we don't want to redirect
+                    // to transaction-pay endpoints after selecting seats.
+                    const redirectTo = response.data.redirect_to;
+                    const hasSeatLayout =
+                        document.querySelector('#mec-seat-layouts-wrap') ||
+                        document.querySelector('#mec-seat-open-seats') ||
+                        document.querySelector('#mec-seat-save-seats');
+
+                    const isSeatTransactionPayRedirect =
+                        typeof redirectTo === 'string' && redirectTo.indexOf('mec_do_transaction_pay_locally') !== -1;
+
+                    if (!hasSeatLayout && !isSeatTransactionPayRedirect) {
+                        setTimeout(function () {
+                            window.location.href = redirectTo;
+                        }, mecdata.fes_thankyou_page_time );
+                    }
                 }
             } else {
                 // Refresh reCaptcha

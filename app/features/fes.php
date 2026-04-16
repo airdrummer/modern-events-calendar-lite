@@ -102,6 +102,17 @@ class MEC_feature_fes extends MEC_base
     }
 
     /**
+     * @return bool
+     */
+    public function validate_fes_term_creation_request()
+    {
+        $nonce = isset($_REQUEST['fes_nonce']) ? sanitize_text_field(wp_unslash($_REQUEST['fes_nonce'])) : '';
+        if (!$nonce || !wp_verify_nonce($nonce, 'mec_fes_nonce')) return false;
+
+        return $this->current_user_can_submit_event();
+    }
+
+    /**
      * @param int $post_id
      * @return bool
      */
@@ -270,7 +281,8 @@ class MEC_feature_fes extends MEC_base
 
     public function mec_fes_csv_export()
     {
-        if ((!isset($_REQUEST['mec_event_id'])) || (!isset($_REQUEST['fes_nonce'])) || (!wp_verify_nonce(sanitize_text_field($_REQUEST['fes_nonce']), 'mec_fes_nonce'))) {
+        if ((!isset($_REQUEST['mec_event_id'])) || (!isset($_REQUEST['fes_nonce'])) || (!wp_verify_nonce(sanitize_text_field($_REQUEST['fes_nonce']), 'mec_fes_nonce')))
+        {
             die(json_encode(['ex' => "error"]));
         }
 
@@ -279,19 +291,24 @@ class MEC_feature_fes extends MEC_base
         $booking_ids = '';
         $type = isset($_REQUEST['type']) ? sanitize_text_field($_REQUEST['type']) : 'csv';
 
-        if ($timestamp) {
+        if ($timestamp)
+        {
             $bookings = $this->main->get_bookings($event_id, $timestamp);
-            foreach ($bookings as $booking) {
+            foreach ($bookings as $booking)
+            {
                 $booking_ids .= $booking->ID . ',';
             }
         }
 
         $post_ids = trim($booking_ids) ? explode(',', trim($booking_ids, ', ')) : [];
 
-        if (!count($post_ids) && !$timestamp) {
+        if (!count($post_ids) && !$timestamp)
+        {
             $books = $this->db->select("SELECT `post_id` FROM `#__postmeta` WHERE `meta_key`='mec_event_id' AND `meta_value`={$event_id}", 'loadAssocList');
-            foreach ($books as $book) {
-                if (isset($book['post_id'])) {
+            foreach ($books as $book)
+            {
+                if (isset($book['post_id']))
+                {
                     $post_ids[] = $book['post_id'];
                 }
             }
@@ -300,87 +317,107 @@ class MEC_feature_fes extends MEC_base
         // Gather all reg_fields and fixed_fields labels for dynamic columns
         $all_reg_labels = [];
         $all_fixed_labels = [];
-        foreach ($post_ids as $post_id) {
+        foreach ($post_ids as $post_id)
+        {
             $event_id = get_post_meta($post_id, 'mec_event_id', true);
             $reg_fields = $this->main->get_reg_fields($event_id);
             if (is_array($reg_fields) && isset($reg_fields[':i:'])) unset($reg_fields[':i:']);
-            foreach ($reg_fields as $field_key => $field) {
-                if (!empty($field['label'])) {
+            foreach ($reg_fields as $field_key => $field)
+            {
+                if (!empty($field['label']))
+                {
                     // Skip Name and Email fields to avoid duplication with main columns
                     $label = $field['label'];
                     $label_lower = strtolower(trim($label));
                     $field_key_lower = strtolower(trim($field_key));
-                    
+
                     // Check for various Name and Email variations
                     $skip_field = false;
-                    $name_variations = ['name', 'نام', 'full name', 'fullname', 'first name', 'firstname', 'last name', 'lastname'];
-                    $email_variations = ['email', 'ایمیل', 'e-mail', 'email address', 'emailaddress'];
-                    
-                    foreach ($name_variations as $variation) {
-                        if ($label_lower === $variation || $field_key_lower === $variation || 
-                            strpos($label_lower, $variation) !== false || strpos($field_key_lower, $variation) !== false) {
+                    $name_variations = ['name', 'full name', 'fullname', 'first name', 'firstname', 'last name', 'lastname'];
+                    $email_variations = ['email', 'e-mail', 'email address', 'emailaddress'];
+
+                    foreach ($name_variations as $variation)
+                    {
+                        if ($label_lower === $variation || $field_key_lower === $variation ||
+                            strpos($label_lower, $variation) !== false || strpos($field_key_lower, $variation) !== false)
+                        {
                             $skip_field = true;
                             break;
                         }
                     }
-                    
-                    if (!$skip_field) {
-                        foreach ($email_variations as $variation) {
-                            if ($label_lower === $variation || $field_key_lower === $variation || 
-                                strpos($label_lower, $variation) !== false || strpos($field_key_lower, $variation) !== false) {
+
+                    if (!$skip_field)
+                    {
+                        foreach ($email_variations as $variation)
+                        {
+                            if ($label_lower === $variation || $field_key_lower === $variation ||
+                                strpos($label_lower, $variation) !== false || strpos($field_key_lower, $variation) !== false)
+                            {
                                 $skip_field = true;
                                 break;
                             }
                         }
                     }
-                    
+
                     // Also check against translated labels
                     if (!$skip_field && ($label === esc_html__('Name', 'modern-events-calendar-lite') || $label === esc_html__('Email', 'modern-events-calendar-lite') ||
-                        $label === __('Name', 'modern-events-calendar-lite') || $label === __('Email', 'modern-events-calendar-lite'))) {
+                            $label === __('Name', 'modern-events-calendar-lite') || $label === __('Email', 'modern-events-calendar-lite')))
+                    {
                         $skip_field = true;
                     }
-                    
-                    if (!$skip_field) {
+
+                    if (!$skip_field)
+                    {
                         $all_reg_labels[$field_key] = $label;
                     }
                 }
             }
             $fixed_fields_raw = $this->main->get_bfixed_fields($event_id);
-            if (is_array($fixed_fields_raw)) {
-                foreach ($fixed_fields_raw as $field_id => $field_data) {
-                    if (!empty($field_data['label']) && is_numeric($field_id)) {
+            if (is_array($fixed_fields_raw))
+            {
+                foreach ($fixed_fields_raw as $field_id => $field_data)
+                {
+                    if (!empty($field_data['label']) && is_numeric($field_id))
+                    {
                         // Skip Name and Email fields to avoid duplication with main columns
                         $label = $field_data['label'];
                         $label_lower = strtolower(trim($label));
-                        
+
                         // Check for various Name and Email variations
                         $skip_field = false;
-                        $name_variations = ['name', 'نام', 'full name', 'fullname', 'first name', 'firstname', 'last name', 'lastname'];
-                        $email_variations = ['email', 'ایمیل', 'e-mail', 'email address', 'emailaddress'];
-                        
-                        foreach ($name_variations as $variation) {
-                            if ($label_lower === $variation || strpos($label_lower, $variation) !== false) {
+                        $name_variations = ['name', 'full name', 'fullname', 'first name', 'firstname', 'last name', 'lastname'];
+                        $email_variations = ['email', 'e-mail', 'email address', 'emailaddress'];
+
+                        foreach ($name_variations as $variation)
+                        {
+                            if ($label_lower === $variation || strpos($label_lower, $variation) !== false)
+                            {
                                 $skip_field = true;
                                 break;
                             }
                         }
-                        
-                        if (!$skip_field) {
-                            foreach ($email_variations as $variation) {
-                                if ($label_lower === $variation || strpos($label_lower, $variation) !== false) {
+
+                        if (!$skip_field)
+                        {
+                            foreach ($email_variations as $variation)
+                            {
+                                if ($label_lower === $variation || strpos($label_lower, $variation) !== false)
+                                {
                                     $skip_field = true;
                                     break;
                                 }
                             }
                         }
-                        
+
                         // Also check against translated labels
                         if (!$skip_field && ($label === esc_html__('Name', 'modern-events-calendar-lite') || $label === esc_html__('Email', 'modern-events-calendar-lite') ||
-                            $label === __('Name', 'modern-events-calendar-lite') || $label === __('Email', 'modern-events-calendar-lite'))) {
+                                $label === __('Name', 'modern-events-calendar-lite') || $label === __('Email', 'modern-events-calendar-lite')))
+                        {
                             $skip_field = true;
                         }
-                        
-                        if (!$skip_field) {
+
+                        if (!$skip_field)
+                        {
                             $all_fixed_labels[$field_id] = $label;
                         }
                     }
@@ -402,19 +439,22 @@ class MEC_feature_fes extends MEC_base
             esc_html__('Email', 'modern-events-calendar-lite'),
             esc_html__('Ticket Variation', 'modern-events-calendar-lite'),
             esc_html__('Confirmation', 'modern-events-calendar-lite'),
-            esc_html__('Verification', 'modern-events-calendar-lite')
+            esc_html__('Verification', 'modern-events-calendar-lite'),
         ];
-        foreach ($all_reg_labels as $label) {
+        foreach ($all_reg_labels as $label)
+        {
             $columns[] = $label;
         }
-        foreach ($all_fixed_labels as $label) {
+        foreach ($all_fixed_labels as $label)
+        {
             $columns[] = $label;
         }
 
         $uniqueBookings = [];
         $book_object = new \MEC_book();
 
-        foreach ($post_ids as $post_id) {
+        foreach ($post_ids as $post_id)
+        {
             $post_id = (int) $post_id;
 
             $event_id = get_post_meta($post_id, 'mec_event_id', true);
@@ -422,7 +462,8 @@ class MEC_feature_fes extends MEC_base
             $order_time = get_post_meta($post_id, 'mec_booking_time', true);
             $tickets = get_post_meta($event_id, 'mec_tickets', true);
             $attendees = get_post_meta($post_id, 'mec_attendees', true);
-            if (!is_array($attendees) || !count($attendees)) {
+            if (!is_array($attendees) || !count($attendees))
+            {
                 $attendees = [get_post_meta($post_id, 'mec_attendee', true)];
             }
 
@@ -435,7 +476,8 @@ class MEC_feature_fes extends MEC_base
             $fixed_fields_raw = $this->main->get_bfixed_fields($event_id);
             if (!is_array($fixed_fields_raw)) $fixed_fields_raw = [];
 
-            foreach ($attendees as $key => $attendee) {
+            foreach ($attendees as $key => $attendee)
+            {
                 if ($key === 'attachments') continue;
                 if (isset($attendee[0]['MEC_TYPE_OF_DATA'])) continue;
 
@@ -444,10 +486,13 @@ class MEC_feature_fes extends MEC_base
 
                 // Ticket Variation output
                 $ticket_variations_output = '';
-                if (isset($attendee['variations']) && is_array($attendee['variations']) && count($attendee['variations'])) {
+                if (isset($attendee['variations']) && is_array($attendee['variations']) && count($attendee['variations']))
+                {
                     $ticket_variations = $this->main->ticket_variations($event_id, $ticket_id);
-                    foreach ($attendee['variations'] as $variation_id => $variation_count) {
-                        if ((int) $variation_count > 0) {
+                    foreach ($attendee['variations'] as $variation_id => $variation_count)
+                    {
+                        if ((int) $variation_count > 0)
+                        {
                             $ticket_variations_output .= (isset($ticket_variations[$variation_id]) ? $ticket_variations[$variation_id]['title'] : 'N/A') . ': (' . $variation_count . '), ';
                         }
                     }
@@ -457,20 +502,26 @@ class MEC_feature_fes extends MEC_base
                 // Reg Fields output
                 $per_attendee_fields = isset($attendee['reg']) ? $attendee['reg'] : [];
                 $reg_field_values = [];
-                foreach ($all_reg_labels as $field_key => $label) {
+                foreach ($all_reg_labels as $field_key => $label)
+                {
                     $value = isset($per_attendee_fields[$field_key]) ? $per_attendee_fields[$field_key] : '';
                     $reg_field_values[] = is_array($value) ? implode(', ', $value) : $value;
                 }
 
                 // Fixed Fields output
                 $fixed_field_values = [];
-                if (!empty($all_fixed_labels) && isset($transaction['fields']) && is_array($transaction['fields'])) {
-                    foreach ($all_fixed_labels as $field_id => $label) {
+                if (!empty($all_fixed_labels) && isset($transaction['fields']) && is_array($transaction['fields']))
+                {
+                    foreach ($all_fixed_labels as $field_id => $label)
+                    {
                         $value = isset($transaction['fields'][$field_id]) ? $transaction['fields'][$field_id] : '';
                         $fixed_field_values[] = is_array($value) ? implode(', ', $value) : $value;
                     }
-                } else {
-                    foreach ($all_fixed_labels as $field_id => $label) {
+                }
+                else
+                {
+                    foreach ($all_fixed_labels as $field_id => $label)
+                    {
                         $fixed_field_values[] = '';
                     }
                 }
@@ -481,7 +532,8 @@ class MEC_feature_fes extends MEC_base
                 $confirmed = get_post_meta($post_id, 'mec_confirmed', true) == '1' ? esc_html__('Confirmed', 'modern-events-calendar-lite') : esc_html__('Pending', 'modern-events-calendar-lite');
                 $verified = get_post_meta($post_id, 'mec_verified', true) == '1' ? esc_html__('Verified', 'modern-events-calendar-lite') : esc_html__('Waiting', 'modern-events-calendar-lite');
 
-                if (!isset($uniqueBookings[$transactionKey])) {
+                if (!isset($uniqueBookings[$transactionKey]))
+                {
                     $uniqueBookings[$transactionKey] = [
                         'count' => 1,
                         'booking' => [
@@ -498,18 +550,21 @@ class MEC_feature_fes extends MEC_base
                             ($attendee['email'] ?? ''),
                             $ticket_variations_output,
                             $confirmed,
-                            $verified
+                            $verified,
                         ],
                         'reg_fields' => $reg_field_values,
-                        'fixed_fields' => $fixed_field_values
+                        'fixed_fields' => $fixed_field_values,
                     ];
-                } else {
+                }
+                else
+                {
                     $uniqueBookings[$transactionKey]['count'] += 1;
                 }
             }
         }
 
-        switch ($type) {
+        switch ($type)
+        {
             case 'ms-excel':
                 $filename = 'attendees-' . md5(time() . mt_rand(100, 999)) . '.xlsx';
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -567,8 +622,10 @@ class MEC_feature_fes extends MEC_base
                 $sharedStringsIndex = 0;
                 $sharedStringsMap = [];
 
-                foreach ($columns as $column) {
-                    if (!isset($sharedStringsMap[$column])) {
+                foreach ($columns as $column)
+                {
+                    if (!isset($sharedStringsMap[$column]))
+                    {
                         $sharedStringsMap[$column] = $sharedStringsIndex++;
                         $sharedStrings[] = htmlspecialchars($column, ENT_XML1);
                     }
@@ -578,23 +635,28 @@ class MEC_feature_fes extends MEC_base
                 $rowNum = 1;
 
                 $sheetData .= '<row r="' . $rowNum . '">';
-                foreach ($columns as $column) {
+                foreach ($columns as $column)
+                {
                     $sheetData .= '<c t="s"><v>' . $sharedStringsMap[$column] . '</v></c>';
                 }
                 $sheetData .= '</row>';
                 $rowNum++;
 
-                foreach ($uniqueBookings as $booking) {
+                foreach ($uniqueBookings as $booking)
+                {
                     $bookingData = $booking['booking'];
-                    if ($booking['count'] > 1) {
+                    if ($booking['count'] > 1)
+                    {
                         $bookingData[4] .= ' (x' . $booking['count'] . ')';
                     }
 
                     $data = array_merge($bookingData, $booking['reg_fields'], $booking['fixed_fields']);
 
                     $sheetData .= '<row r="' . $rowNum . '">';
-                    foreach ($data as $value) {
-                        if (!isset($sharedStringsMap[$value])) {
+                    foreach ($data as $value)
+                    {
+                        if (!isset($sharedStringsMap[$value]))
+                        {
                             $sharedStringsMap[$value] = $sharedStringsIndex++;
                             $sharedStrings[] = htmlspecialchars($value, ENT_XML1);
                         }
@@ -607,7 +669,8 @@ class MEC_feature_fes extends MEC_base
 
                 $sharedStringsXml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
                 <sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="' . count($sharedStrings) . '" uniqueCount="' . count($sharedStrings) . '">';
-                foreach ($sharedStrings as $string) {
+                foreach ($sharedStrings as $string)
+                {
                     $sharedStringsXml .= '<si><t>' . $string . '</t></si>';
                 }
                 $sharedStringsXml .= '</sst>';
@@ -635,9 +698,11 @@ class MEC_feature_fes extends MEC_base
                 fprintf($output, chr(0xEF) . chr(0xBB) . chr(0xBF));
                 fputcsv($output, $columns);
 
-                foreach ($uniqueBookings as $booking) {
+                foreach ($uniqueBookings as $booking)
+                {
                     $bookingData = $booking['booking'];
-                    if ($booking['count'] > 1) {
+                    if ($booking['count'] > 1)
+                    {
                         $bookingData[4] .= ' (x' . $booking['count'] . ')';
                     }
 
@@ -652,12 +717,14 @@ class MEC_feature_fes extends MEC_base
 
     private function getTicketName($event_id, $attendee_id)
     {
-        if (!$event_id || !$attendee_id) {
+        if (!$event_id || !$attendee_id)
+        {
             return esc_html__('Unknown', 'modern-events-calendar-lite');
         }
 
         $tickets = get_post_meta($event_id, 'mec_tickets', true);
-        if (!is_array($tickets)) {
+        if (!is_array($tickets))
+        {
             return esc_html__('Unknown', 'modern-events-calendar-lite');
         }
 
@@ -1762,7 +1829,7 @@ class MEC_feature_fes extends MEC_base
 
                 // Trigger action for form builder compatibility
                 do_action('mec_save_reg_fields', $post_id, $reg_fields);
-                
+
                 update_post_meta($post_id, 'mec_reg_fields', $reg_fields);
 
                 $bfixed_fields = $mec['bfixed_fields'] ?? [];

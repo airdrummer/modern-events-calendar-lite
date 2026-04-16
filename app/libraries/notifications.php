@@ -2555,8 +2555,18 @@ class MEC_notifications extends MEC_base
 
                 $bfixed_field_name = $bfixed_field['label'] ?? '';
                 $bfixed_value = $transaction['fields'][$b] ?? '';
+                $bfixed_type = $bfixed_field['type'] ?? '';
 
-                if (is_array($bfixed_value)) $bfixed_value = implode(', ', $bfixed_value);
+                if ($bfixed_type === 'agreement')
+                {
+                    $bfixed_field_name = sprintf(
+                        esc_html__($bfixed_field_name, 'modern-events-calendar-lite'),
+                        '<a href="' . get_the_permalink($bfixed_field['page']) . '">' . get_the_title($bfixed_field['page']) . '</a>'
+                    );
+                    $bfixed_value = $bfixed_value == '1' ? esc_html__('Yes', 'modern-events-calendar-lite') : esc_html__('No', 'modern-events-calendar-lite');
+                }
+                else if (is_array($bfixed_value)) $bfixed_value = implode(', ', $bfixed_value);
+
                 if (trim($bfixed_value) === '') continue;
 
                 $name_and_value = trim((trim($bfixed_field_name) ? stripslashes($bfixed_field_name) . ': ' : '') . trim(stripslashes($bfixed_value), ', '));

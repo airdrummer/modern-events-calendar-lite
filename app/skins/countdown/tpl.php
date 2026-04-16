@@ -60,11 +60,7 @@ $d1 = new DateTime($start_time, $TZO);
 $d2 = new DateTime(current_time("D M j Y G:i:s"), $TZO);
 $d3 = new DateTime($end_time, $TZO);
 
-$countdown_method = get_post_meta($event->ID, 'mec_countdown_method', true);
-if(trim($countdown_method) == '') $countdown_method = 'global';
-
-if($countdown_method == 'global') $ongoing = isset($settings['hide_time_method']) && trim($settings['hide_time_method']) == 'end';
-else $ongoing = $countdown_method == 'end';
+$ongoing = $this->main->get_countdown_method($event) === 'end';
 
 if($ongoing and $d3 < $d2) $ongoing = false;
 

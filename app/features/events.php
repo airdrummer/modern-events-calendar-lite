@@ -3725,7 +3725,12 @@ class MEC_feature_events extends MEC_base
         }
 
         // Booking Button
-        if ($this->getPRO() && current_user_can('edit_others_posts') && isset($this->settings['booking_status']) && $this->settings['booking_status']) $actions['mec-bookings'] = '<a href="' . esc_url($this->main->add_qs_vars(['post_type' => $this->main->get_book_post_type(), 'mec_event_id' => $post->ID], trim($this->main->URL('admin'), '/ ') . '/edit.php')) . '">' . esc_html__('Bookings', 'modern-events-calendar-lite') . '</a>';
+        $can_access_attendees = current_user_can('manage_options') || current_user_can('mec_bookings') || current_user_can('edit_others_posts');
+        if ($this->getPRO() && $can_access_attendees && isset($this->settings['booking_status']) && $this->settings['booking_status']) $actions['mec-bookings'] = '<a href="' . esc_url($this->main->add_qs_vars([
+            'post_type' => $this->PT,
+            'page' => 'mec-attendees',
+            'event_id' => $post->ID,
+        ], trim($this->main->URL('admin'), '/ ') . '/edit.php')) . '">' . esc_html__('Attendees', 'modern-events-calendar-lite') . '</a>';
 
         // Certificate Button
         if ($this->getPRO() && isset($this->settings['certificate_status']) && $this->settings['certificate_status']) $actions['mec-send-certificate'] = '<a href="' . esc_url($this->main->add_qs_vars(['page' => 'MEC-report', 'event_id' => $post->ID], trim($this->main->URL('admin'), '/ ') . '/admin.php')) . '">' . esc_html__('Send Certificates', 'modern-events-calendar-lite') . '</a>';

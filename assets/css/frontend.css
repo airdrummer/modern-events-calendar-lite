@@ -117,18 +117,12 @@
 
 /* Buttons Default */
 .mec-wrap .button,
-.mec-wrap
-  button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):not(
-    .mec-googlemap-details button
-  ):not(.mec-googlemap-details button):not(.elementor-add-section-inner button):not(.dismissButton),
+.mec-wrap button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):not(.mec-googlemap-details button):not(.mec-googlemap-details button):not(.elementor-add-section-inner button):not(.dismissButton):not([class*="et-"]),
 .mec-wrap input[type="submit"],
 .mec-wrap input[type="reset"],
 .mec-wrap input[type="button"],
 .lity-content .button,
-.lity-content
-  button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):not(
-    .mec-googlemap-details button
-  ):not(.mec-googlemap-details button):not(.elementor-add-section-inner button):not(.dismissButton),
+.lity-content button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):not(.mec-googlemap-details button):not(.mec-googlemap-details button):not(.elementor-add-section-inner button):not(.dismissButton):not([class*="et-"]),
 .lity-content input[type="submit"],
 .lity-content input[type="reset"],
 .lity-content input[type="button"],
@@ -159,16 +153,12 @@
 
 .mec-wrap .button:hover,
 .mec-wrap a.button:hover,
-.mec-wrap
-  button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):not(
-    .elementor-add-section-inner button
-  ):not(.dismissButton):hover,
+.mec-wrap button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):not(.elementor-add-section-inner button):not(.dismissButton):not([class*="et-"]):hover,
 .mec-wrap input[type="submit"]:hover,
 .mec-wrap input[type="reset"]:hover,
 .mec-wrap input[type="button"]:hover,
 .lity-content .button:hover,
-.lity-content
-  button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):hover,
+.lity-content button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):not([class*="et-"]):hover,
 .lity-content input[type="submit"]:hover,
 .lity-content input[type="reset"]:hover,
 .lity-content input[type="button"]:hover,
@@ -178,20 +168,12 @@
 }
 
 .mec-wrap .button svg,
-.mec-wrap
-  button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):not(
-    .et-fb-button
-  )
-  svg,
+.mec-wrap button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):not(.et-fb-button):not([class*="et-"]) svg,
 .mec-wrap input[type="submit"] svg,
 .mec-wrap input[type="reset"] svg,
 .mec-wrap input[type="button"] svg,
 .lity-content .button svg,
-.lity-content
-  button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):not(
-    .et-fb-button
-  )
-  svg,
+.lity-content button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):not(.et-fb-button):not([class*="et-"]) svg,
 .lity-content input[type="submit"] svg,
 .lity-content input[type="reset"] svg,
 .lity-content input[type="button"] svg,
@@ -201,11 +183,7 @@
 }
 
 .mec-wrap .button svg.back,
-.mec-wrap
-  button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):not(
-    .et-fb-button
-  )
-  svg.back {
+.mec-wrap button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):not(.et-fb-button) svg.back {
   margin-right: 30px;
   margin-left: 0;
 }
@@ -246,35 +224,36 @@
   height: 100px;
 }
 
-* + html hr.vertical-space,
-* + html hr.vertical-space1,
-* + html hr .vertical-space2,
-* + html hr.vertical-space3,
-* + html hr.vertical-space4,
-* + html hr.vertical-space5 {
+*+html hr.vertical-space,
+*+html hr.vertical-space1,
+*+html hr .vertical-space2,
+*+html hr.vertical-space3,
+*+html hr.vertical-space4,
+*+html hr.vertical-space5 {
   height: 0;
   margin: 10px 0;
   background: #fff;
   border: 1px solid #fff;
 }
 
-* + html hr.vertical-space2 {
+*+html hr.vertical-space2 {
   margin: 20px 0;
 }
 
-* + html hr.vertical-space3 {
+*+html hr.vertical-space3 {
   margin: 30px 0;
 }
 
-* + html hr.vertical-space4 {
+*+html hr.vertical-space4 {
   margin: 40px 0;
 }
 
-* + html hr.vertical-space5 {
+*+html hr.vertical-space5 {
   margin: 50px 0;
 }
 
 @media only screen and (max-width: 479px) {
+
   .vertical-space,
   .vertical-space1 {
     height: 8px;
@@ -298,6 +277,7 @@
 }
 
 @media only screen and (max-width: 960px) {
+
   .vertical-space,
   .vertical-space1 {
     height: 12px;
@@ -603,7 +583,7 @@
   height: 38px;
 }
 
-.mec-event-sharing-wrap:hover > li {
+.mec-event-sharing-wrap:hover>li {
   cursor: pointer;
   background-color: #40d9f1;
 }
@@ -612,7 +592,7 @@
   color: #fff;
 }
 
-.mec-event-sharing-wrap > li:first-of-type {
+.mec-event-sharing-wrap>li:first-of-type {
   border: 1px solid #d9d9d9;
   border-radius: var(--mec-secondary-border-radius);
 }
@@ -1224,7 +1204,7 @@ span.mec-event-title-soldout {
 
 .mec-event-grid-colorful .mec-event-content p,
 .mec-event-grid-colorful .event-grid-modern-head,
-.mec-event-grid-colorful .mec-event-sharing-wrap > li > a,
+.mec-event-grid-colorful .mec-event-sharing-wrap>li>a,
 .mec-event-grid-colorful .event-grid-modern-head .mec-event-day,
 .mec-event-grid-colorful .mec-event-title a,
 .mec-event-grid-colorful .event-grid-modern-head .mec-event-date,
@@ -1237,11 +1217,11 @@ span.mec-event-title-soldout {
   border: none;
 }
 
-.mec-event-grid-colorful .mec-event-sharing-wrap > li {
+.mec-event-grid-colorful .mec-event-sharing-wrap>li {
   border-color: #fff;
 }
 
-.mec-event-grid-colorful .mec-event-sharing-wrap:hover > li {
+.mec-event-grid-colorful .mec-event-sharing-wrap:hover>li {
   background: #333;
   border-color: #333;
 }
@@ -1631,7 +1611,7 @@ span.mec-event-title-soldout {
   padding-left: 0;
 }
 
-.mec-event-list-modern .mec-event-sharing > li {
+.mec-event-list-modern .mec-event-sharing>li {
   display: inline-block;
   border: none;
   border-radius: 50%;
@@ -1639,17 +1619,17 @@ span.mec-event-title-soldout {
   margin-bottom: 5px;
 }
 
-.mec-event-list-modern .mec-event-sharing > li:hover {
+.mec-event-list-modern .mec-event-sharing>li:hover {
   display: inline-block;
 }
 
-.mec-event-list-modern .mec-event-sharing > li:hover a i {
+.mec-event-list-modern .mec-event-sharing>li:hover a i {
   color: #fff;
   background: #40d9f1;
   border-color: #40d9f1;
 }
 
-.mec-event-list-modern .mec-event-sharing > li i {
+.mec-event-list-modern .mec-event-sharing>li i {
   width: 36px;
   display: inline-block;
   line-height: 35px;
@@ -1662,12 +1642,12 @@ span.mec-event-title-soldout {
   transition: all ease 300ms;
 }
 
-.mec-event-list-modern .mec-event-sharing > li i svg {
+.mec-event-list-modern .mec-event-sharing>li i svg {
   height: 15px;
   vertical-align: sub;
 }
 
-.mec-event-list-modern .mec-event-sharing > li .mec-social-title {
+.mec-event-list-modern .mec-event-sharing>li .mec-social-title {
   color: #767676;
   font-size: 14px;
 }
@@ -1811,12 +1791,7 @@ span.mec-event-title-soldout {
 .mec-event-grid-minimal .mec-time-details,
 .mec-event-grid-minimal .mec-event-detail .mec-event-loc-place,
 .mec-event-grid-minimal .mec-event-detail .mec-categories-wrapper,
-.mec-event-grid-minimal
-  .mec-event-detail
-  .mec-categories-wrapper
-  ul.mec-categories
-  li.mec-category
-  a,
+.mec-event-grid-minimal .mec-event-detail .mec-categories-wrapper ul.mec-categories li.mec-category a,
 .mec-event-grid-minimal .mec-event-detail .mec-shortcode-organizers,
 .mec-event-grid-minimal .mec-event-detail .mec-price-details {
   font-size: 15px;
@@ -2045,13 +2020,11 @@ span.mec-event-title-soldout {
 }
 
 .mec-event-grid-novel .mec-event-article:hover .novel-grad-bg {
-  background-image: -webkit-gradient(
-    linear,
-    left top,
-    right top,
-    from(rgb(38, 46, 50)),
-    to(rgb(14, 16, 21))
-  );
+  background-image: -webkit-gradient(linear,
+      left top,
+      right top,
+      from(rgb(38, 46, 50)),
+      to(rgb(14, 16, 21)));
   background-image: -webkit-linear-gradient(left, rgb(38, 46, 50) 0%, rgb(14, 16, 21) 100%);
   background-image: -o-linear-gradient(left, rgb(38, 46, 50) 0%, rgb(14, 16, 21) 100%);
   background-image: linear-gradient(90deg, rgb(38, 46, 50) 0%, rgb(14, 16, 21) 100%);
@@ -2086,10 +2059,7 @@ span.mec-event-title-soldout {
   color: #fafcff;
 }
 
-.mec-event-grid-novel
-  .mec-event-content
-  h4.mec-gCalendar-search-text-wrap
-  input[type="text"]:before {
+.mec-event-grid-novel .mec-event-content h4.mec-gCalendar-search-text-wrap input[type="text"]:before {
   content: "";
   position: absolute;
   top: 8px;
@@ -2199,7 +2169,7 @@ span.mec-event-title-soldout {
   padding-left: 0;
 }
 
-.mec-event-grid-novel .mec-event-sharing-wrap > li {
+.mec-event-grid-novel .mec-event-sharing-wrap>li {
   border-color: rgba(255, 255, 255, 0.1);
   border-radius: 50%;
 }
@@ -2224,7 +2194,7 @@ span.mec-event-title-soldout {
   backdrop-filter: blur(10px);
 }
 
-.mec-event-grid-novel .mec-event-sharing-wrap:hover > li {
+.mec-event-grid-novel .mec-event-sharing-wrap:hover>li {
   background-color: rgba(255, 255, 255, 0.1);
 }
 
@@ -2243,7 +2213,7 @@ span.mec-event-title-soldout {
   padding: 0 10px;
 }
 
-.mec-event-grid-novel .mec-event-sharing-wrap > li a {
+.mec-event-grid-novel .mec-event-sharing-wrap>li a {
   color: #fff;
 }
 
@@ -3148,10 +3118,7 @@ span.mec-event-title-soldout {
   margin-left: 2px;
 }
 
-.tooltipster-sidetip.tooltipster-shadow:not(.uael-tooltipster-active)
-  .tooltipster-content
-  .mec-price-details
-  i,
+.tooltipster-sidetip.tooltipster-shadow:not(.uael-tooltipster-active) .tooltipster-content .mec-price-details i,
 .mec-month-side .mec-price-details i {
   padding-top: 4px;
   vertical-align: unset;
@@ -3197,6 +3164,7 @@ span.mec-event-title-soldout {
 }
 
 @media only screen and (min-width: 480px) and (max-width: 960px) {
+
   .mec-event-list-standard .mec-col-table-c.mec-event-image-wrap,
   .mec-event-list-standard .mec-col-table-c.mec-event-content-wrap {
     display: table-cell;
@@ -3204,6 +3172,7 @@ span.mec-event-title-soldout {
 }
 
 @media only screen and (max-width: 479px) {
+
   .mec-event-list-standard .mec-col-table-c.mec-event-image-wrap,
   .mec-event-list-standard .mec-col-table-c.mec-event-image-wrap img {
     float: none;
@@ -3712,6 +3681,7 @@ span.mec-event-title-soldout {
 }
 
 @media (max-width: 1023px) {
+
   .mec-skin-daily-view-events-container .mec-modal-booking-button,
   .mec-weekly-view-dates-events .mec-event-article .mec-modal-booking-button {
     position: relative;
@@ -3995,9 +3965,9 @@ span.mec-event-title-soldout {
   margin-left: 10px;
 }
 
-.lity-content .mec-events-meta-group-booking .mec-booking-form-container > .col-md-12,
+.lity-content .mec-events-meta-group-booking .mec-booking-form-container>.col-md-12,
 .mec-events-meta-group-booking .mec-booking-shortcode .col-md-12.mec-ticket-subtotal-wrapper,
-.mec-single-event .mec-events-meta-group-booking .mec-booking-form-container > .col-md-12 {
+.mec-single-event .mec-events-meta-group-booking .mec-booking-form-container>.col-md-12 {
   display: flex;
   align-items: center;
   padding: 0 0 30px 0;
@@ -4011,24 +3981,9 @@ span.mec-event-title-soldout {
   margin-right: 25px;
 }
 
-.lity-content
-  .mec-events-meta-group-booking
-  .col-md-12
-  .mec-ticket-name-description-wrapper
-  .mec-ticket-price-wrapper
-  span,
-.mec-single-event
-  .mec-events-meta-group-booking
-  .col-md-12
-  .mec-ticket-name-description-wrapper
-  .mec-ticket-price-wrapper
-  span,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  .col-md-12
-  .mec-ticket-name-description-wrapper
-  .mec-ticket-price-wrapper
-  span {
+.lity-content .mec-events-meta-group-booking .col-md-12 .mec-ticket-name-description-wrapper .mec-ticket-price-wrapper span,
+.mec-single-event .mec-events-meta-group-booking .col-md-12 .mec-ticket-name-description-wrapper .mec-ticket-price-wrapper span,
+.mec-events-meta-group-booking .mec-booking-shortcode .col-md-12 .mec-ticket-name-description-wrapper .mec-ticket-price-wrapper span {
   display: block;
   font-size: 14px;
   font-weight: 400;
@@ -4037,24 +3992,9 @@ span.mec-event-title-soldout {
   margin-bottom: 4px;
 }
 
-.lity-content
-  .mec-events-meta-group-booking
-  .col-md-12
-  .mec-ticket-name-description-wrapper
-  .mec-ticket-price-wrapper
-  span.mec-ticket-price,
-.mec-single-event
-  .mec-events-meta-group-booking
-  .col-md-12
-  .mec-ticket-name-description-wrapper
-  .mec-ticket-price-wrapper
-  span.mec-ticket-price,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  .col-md-12
-  .mec-ticket-name-description-wrapper
-  .mec-ticket-price-wrapper
-  span.mec-ticket-price {
+.lity-content .mec-events-meta-group-booking .col-md-12 .mec-ticket-name-description-wrapper .mec-ticket-price-wrapper span.mec-ticket-price,
+.mec-single-event .mec-events-meta-group-booking .col-md-12 .mec-ticket-name-description-wrapper .mec-ticket-price-wrapper span.mec-ticket-price,
+.mec-events-meta-group-booking .mec-booking-shortcode .col-md-12 .mec-ticket-name-description-wrapper .mec-ticket-price-wrapper span.mec-ticket-price {
   font-size: 18px;
   font-weight: 600;
   line-height: 24px;
@@ -4097,26 +4037,12 @@ span.mec-event-title-soldout {
   margin-bottom: 6px;
 }
 
-.lity-content
-  .mec-events-meta-group-booking
-  button.mec-book-form-back-button#mec-book-form-back-btn-step-2,
-.mec-wrap
-  .mec-single-event
-  .mec-events-meta-group-booking
-  button.mec-book-form-back-button#mec-book-form-back-btn-step-2,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  button.mec-book-form-back-button#mec-book-form-back-btn-step-2,
-.lity-content
-  .mec-events-meta-group-booking
-  button.mec-book-form-back-button#mec-book-form-back-btn-step-3,
-.mec-wrap
-  .mec-single-event
-  .mec-events-meta-group-booking
-  button.mec-book-form-back-button#mec-book-form-back-btn-step-3,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  button.mec-book-form-back-button#mec-book-form-back-btn-step-3 {
+.lity-content .mec-events-meta-group-booking button.mec-book-form-back-button#mec-book-form-back-btn-step-2,
+.mec-wrap .mec-single-event .mec-events-meta-group-booking button.mec-book-form-back-button#mec-book-form-back-btn-step-2,
+.mec-events-meta-group-booking .mec-booking-shortcode button.mec-book-form-back-button#mec-book-form-back-btn-step-2,
+.lity-content .mec-events-meta-group-booking button.mec-book-form-back-button#mec-book-form-back-btn-step-3,
+.mec-wrap .mec-single-event .mec-events-meta-group-booking button.mec-book-form-back-button#mec-book-form-back-btn-step-3,
+.mec-events-meta-group-booking .mec-booking-shortcode button.mec-book-form-back-button#mec-book-form-back-btn-step-3 {
   color: #636f72;
   background: #f6f7f8;
   border: 1px solid #e7e8e9;
@@ -4124,55 +4050,21 @@ span.mec-event-title-soldout {
   margin: 0;
 }
 
-.lity-content
-  .mec-events-meta-group-booking
-  button.mec-book-form-back-button#mec-book-form-back-btn-step-2:hover,
-.mec-wrap
-  .mec-single-event
-  .mec-events-meta-group-booking
-  button.mec-book-form-back-button#mec-book-form-back-btn-step-2:hover,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  button.mec-book-form-back-button#mec-book-form-back-btn-step-2:hover,
-.lity-content
-  .mec-events-meta-group-booking
-  button.mec-book-form-back-button#mec-book-form-back-btn-step-2:hover,
-.mec-wrap
-  .mec-single-event
-  .mec-events-meta-group-booking
-  button.mec-book-form-back-button#mec-book-form-back-btn-step-2:hover,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  button.mec-book-form-back-button#mec-book-form-back-btn-step-3:hover {
+.lity-content .mec-events-meta-group-booking button.mec-book-form-back-button#mec-book-form-back-btn-step-2:hover,
+.mec-wrap .mec-single-event .mec-events-meta-group-booking button.mec-book-form-back-button#mec-book-form-back-btn-step-2:hover,
+.mec-events-meta-group-booking .mec-booking-shortcode button.mec-book-form-back-button#mec-book-form-back-btn-step-2:hover,
+.lity-content .mec-events-meta-group-booking button.mec-book-form-back-button#mec-book-form-back-btn-step-2:hover,
+.mec-wrap .mec-single-event .mec-events-meta-group-booking button.mec-book-form-back-button#mec-book-form-back-btn-step-2:hover,
+.mec-events-meta-group-booking .mec-booking-shortcode button.mec-book-form-back-button#mec-book-form-back-btn-step-3:hover {
   border: 1px solid #d9dadc;
 }
 
-.lity-content
-  .mec-events-meta-group-booking
-  button.mec-book-form-back-button#mec-book-form-back-btn-step-2
-  img.mec-svg-icon,
-.mec-wrap
-  .mec-single-event
-  .mec-events-meta-group-booking
-  button.mec-book-form-back-button#mec-book-form-back-btn-step-2
-  img.mec-svg-icon,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  button.mec-book-form-back-button#mec-book-form-back-btn-step-2
-  img.mec-svg-icon,
-.lity-content
-  .mec-events-meta-group-booking
-  button.mec-book-form-back-button#mec-book-form-back-btn-step-3
-  img.mec-svg-icon,
-.mec-wrap
-  .mec-single-event
-  .mec-events-meta-group-booking
-  button.mec-book-form-back-button#mec-book-form-back-btn-step-3
-  img.mec-svg-icon,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  button.mec-book-form-back-button#mec-book-form-back-btn-step-3
-  img.mec-svg-icon,
+.lity-content .mec-events-meta-group-booking button.mec-book-form-back-button#mec-book-form-back-btn-step-2 img.mec-svg-icon,
+.mec-wrap .mec-single-event .mec-events-meta-group-booking button.mec-book-form-back-button#mec-book-form-back-btn-step-2 img.mec-svg-icon,
+.mec-events-meta-group-booking .mec-booking-shortcode button.mec-book-form-back-button#mec-book-form-back-btn-step-2 img.mec-svg-icon,
+.lity-content .mec-events-meta-group-booking button.mec-book-form-back-button#mec-book-form-back-btn-step-3 img.mec-svg-icon,
+.mec-wrap .mec-single-event .mec-events-meta-group-booking button.mec-book-form-back-button#mec-book-form-back-btn-step-3 img.mec-svg-icon,
+.mec-events-meta-group-booking .mec-booking-shortcode button.mec-book-form-back-button#mec-book-form-back-btn-step-3 img.mec-svg-icon,
 .mec-nextprev-prev-button svg {
   margin-left: unset;
   margin-right: 30px;
@@ -4224,10 +4116,7 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
 .mec-events-meta-group-booking .mec-booking-shortcode .mec-click-pay #mec_woo_add_to_cart_btn_r,
 .lity-content .mec-events-meta-group-booking .mec-click-pay button.mec-book-form-next-button,
 .mec-single-event .mec-events-meta-group-booking .mec-click-pay button.mec-book-form-next-button,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  .mec-click-pay
-  button.mec-book-form-next-button {
+.mec-events-meta-group-booking .mec-booking-shortcode .mec-click-pay button.mec-book-form-next-button {
   float: right;
   margin: 30px 0 0 0 !important;
   background: #47dc6e !important;
@@ -4238,19 +4127,10 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
 
 .lity-content .mec-events-meta-group-booking .mec-click-pay #mec_woo_add_to_cart_btn_r:hover,
 .mec-single-event .mec-events-meta-group-booking .mec-click-pay #mec_woo_add_to_cart_btn_r:hover,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  .mec-click-pay
-  #mec_woo_add_to_cart_btn_r:hover,
+.mec-events-meta-group-booking .mec-booking-shortcode .mec-click-pay #mec_woo_add_to_cart_btn_r:hover,
 .lity-content .mec-events-meta-group-booking .mec-click-pay button.mec-book-form-next-button:hover,
-.mec-single-event
-  .mec-events-meta-group-booking
-  .mec-click-pay
-  button.mec-book-form-next-button:hover,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  .mec-click-pay
-  button.mec-book-form-next-button:hover {
+.mec-single-event .mec-events-meta-group-booking .mec-click-pay button.mec-book-form-next-button:hover,
+.mec-events-meta-group-booking .mec-booking-shortcode .mec-click-pay button.mec-book-form-next-button:hover {
   background: #54d274;
 }
 
@@ -4400,6 +4280,7 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
 }
 
 @media (max-width: 480px) {
+
   .lity-content .mec-booking-progress-bar li,
   .mec-booking-shortcode .mec-booking-progress-bar li,
   .mec-wrap .mec-booking-progress-bar li {
@@ -4408,6 +4289,7 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
 }
 
 @media (max-width: 390px) {
+
   .lity-content .mec-booking-progress-bar li,
   .mec-booking-shortcode .mec-booking-progress-bar li,
   .mec-wrap .mec-booking-progress-bar li {
@@ -4466,6 +4348,7 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
   right: 5px;
   line-height: 1;
   height: 14px;
+  display: flex;
 }
 
 .mec-booking .mec-event-tickets-list .mec-ticket-style-row .plus {
@@ -4499,7 +4382,7 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
   flex-wrap: nowrap;
 }
 
-.mec-booking .mec-event-tickets-list .mec-ticket-style-row > div {
+.mec-booking .mec-event-tickets-list .mec-ticket-style-row>div {
   width: unset;
 }
 
@@ -4514,7 +4397,7 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
     flex-wrap: unset;
   }
 
-  .mec-wrap .mec-booking .mec-event-tickets-list .mec-ticket-style-row > div {
+  .mec-wrap .mec-booking .mec-event-tickets-list .mec-ticket-style-row>div {
     width: 100%;
     margin-bottom: 10px;
   }
@@ -4526,7 +4409,7 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
 }
 
 .mec-booking .mec-event-tickets-list .mec-ticket-style-row .mec-event-ticket-available,
-.mec-booking .mec-event-tickets-list .mec-ticket-style-row > div {
+.mec-booking .mec-event-tickets-list .mec-ticket-style-row>div {
   border: 0;
   display: block;
   box-shadow: unset;
@@ -4589,6 +4472,7 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
 }
 
 @media only screen and (max-width: 767px) {
+
   .lity-content .mec-events-meta-group-booking select,
   .mec-single-event .mec-events-meta-group-booking select,
   .mec-events-meta-group-booking .mec-booking-shortcode select {
@@ -4597,6 +4481,7 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
 }
 
 @media only screen and (max-width: 479px) {
+
   .lity-content .mec-book-first .mec-booking-calendar-wrapper,
   .mec-single-event .mec-book-first .mec-booking-calendar-wrapper,
   .mec-single-fluent-wrap .mec-book-first .mec-booking-calendar-wrapper,
@@ -4619,39 +4504,17 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
   color: #606367;
 }
 
-.lity-content
-  .mec-book-first
-  .mec-booking-calendar-wrapper
-  .mec-select-date-label
-  span.mec-required,
-.mec-single-event
-  .mec-book-first
-  .mec-booking-calendar-wrapper
-  .mec-select-date-label
-  span.mec-required,
-.mec-single-fluent-wrap
-  .mec-book-first
-  .mec-booking-calendar-wrapper
-  .mec-select-date-label
-  span.mec-required,
-.mec-booking-shortcode
-  .mec-book-first
-  .mec-booking-calendar-wrapper
-  .mec-select-date-label
-  span.mec-required {
+.lity-content .mec-book-first .mec-booking-calendar-wrapper .mec-select-date-label span.mec-required,
+.mec-single-event .mec-book-first .mec-booking-calendar-wrapper .mec-select-date-label span.mec-required,
+.mec-single-fluent-wrap .mec-book-first .mec-booking-calendar-wrapper .mec-select-date-label span.mec-required,
+.mec-booking-shortcode .mec-book-first .mec-booking-calendar-wrapper .mec-select-date-label span.mec-required {
   color: #ec3365;
 }
 
 .lity-content .mec-book-first .mec-booking-calendar-wrapper .mec-select-date-calendar-dropdown,
 .mec-single-event .mec-book-first .mec-booking-calendar-wrapper .mec-select-date-calendar-dropdown,
-.mec-single-fluent-wrap
-  .mec-book-first
-  .mec-booking-calendar-wrapper
-  .mec-select-date-calendar-dropdown,
-.mec-booking-shortcode
-  .mec-book-first
-  .mec-booking-calendar-wrapper
-  .mec-select-date-calendar-dropdown,
+.mec-single-fluent-wrap .mec-book-first .mec-booking-calendar-wrapper .mec-select-date-calendar-dropdown,
+.mec-booking-shortcode .mec-book-first .mec-booking-calendar-wrapper .mec-select-date-calendar-dropdown,
 .lity-content .mec-book-first .mec-select-date-dropdown-wrapper .mec-select-date-dropdown,
 .mec-single-event .mec-book-first .mec-select-date-dropdown-wrapper .mec-select-date-dropdown,
 .mec-booking-shortcode .mec-book-first .mec-select-date-dropdown-wrapper .mec-select-date-dropdown {
@@ -4663,41 +4526,13 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
   background-color: #fff;
 }
 
-.lity-content
-  .mec-book-first
-  .mec-booking-calendar-wrapper
-  .mec-select-date-calendar-dropdown
-  span.mec-select-date-calendar-icon,
-.mec-single-event
-  .mec-book-first
-  .mec-booking-calendar-wrapper
-  .mec-select-date-calendar-dropdown
-  span.mec-select-date-calendar-icon,
-.mec-single-event
-  .mec-book-first
-  .mec-booking-calendar-wrapper
-  .mec-select-date-calendar-dropdown
-  span.mec-select-date-calendar-icon,
-.mec-booking-shortcode
-  .mec-book-first
-  .mec-booking-calendar-wrapper
-  .mec-select-date-calendar-dropdown
-  span.mec-select-date-calendar-icon,
-.lity-content
-  .mec-book-first
-  .mec-select-date-dropdown-wrapper
-  .mec-select-date-dropdown
-  span.mec-select-date-calendar-icon,
-.mec-single-event
-  .mec-book-first
-  .mec-select-date-dropdown-wrapper
-  .mec-select-date-dropdown
-  span.mec-select-date-calendar-icon,
-.mec-booking-shortcode
-  .mec-book-first
-  .mec-select-date-dropdown-wrapper
-  .mec-select-date-dropdown
-  span.mec-select-date-calendar-icon {
+.lity-content .mec-book-first .mec-booking-calendar-wrapper .mec-select-date-calendar-dropdown span.mec-select-date-calendar-icon,
+.mec-single-event .mec-book-first .mec-booking-calendar-wrapper .mec-select-date-calendar-dropdown span.mec-select-date-calendar-icon,
+.mec-single-event .mec-book-first .mec-booking-calendar-wrapper .mec-select-date-calendar-dropdown span.mec-select-date-calendar-icon,
+.mec-booking-shortcode .mec-book-first .mec-booking-calendar-wrapper .mec-select-date-calendar-dropdown span.mec-select-date-calendar-icon,
+.lity-content .mec-book-first .mec-select-date-dropdown-wrapper .mec-select-date-dropdown span.mec-select-date-calendar-icon,
+.mec-single-event .mec-book-first .mec-select-date-dropdown-wrapper .mec-select-date-dropdown span.mec-select-date-calendar-icon,
+.mec-booking-shortcode .mec-book-first .mec-select-date-dropdown-wrapper .mec-select-date-dropdown span.mec-select-date-calendar-icon {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -4707,72 +4542,28 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
   border-radius: var(--mec-secondary-border-radius) 0 0 var(--mec-secondary-border-radius);
 }
 
-.lity-content
-  .mec-book-first
-  .mec-select-date-dropdown-wrapper
-  .mec-select-date-dropdown
-  .mec-custom-nice-select,
-.mec-single-event
-  .mec-book-first
-  .mec-select-date-dropdown-wrapper
-  .mec-select-date-dropdown
-  .mec-custom-nice-select,
-.mec-booking-shortcode
-  .mec-book-first
-  .mec-select-date-dropdown-wrapper
-  .mec-select-date-dropdown
-  .mec-custom-nice-select {
+.lity-content .mec-book-first .mec-select-date-dropdown-wrapper .mec-select-date-dropdown .mec-custom-nice-select,
+.mec-single-event .mec-book-first .mec-select-date-dropdown-wrapper .mec-select-date-dropdown .mec-custom-nice-select,
+.mec-booking-shortcode .mec-book-first .mec-select-date-dropdown-wrapper .mec-select-date-dropdown .mec-custom-nice-select {
   margin: 0;
   border: none;
   padding-right: 30px;
 }
 
-.lity-content
-  .mec-book-first
-  .mec-booking-calendar-wrapper
-  .mec-select-date-calendar-dropdown
-  .mec-select-date-calendar-formatted-date,
-.mec-single-event
-  .mec-book-first
-  .mec-booking-calendar-wrapper
-  .mec-select-date-calendar-dropdown
-  .mec-select-date-calendar-formatted-date,
-.mec-single-fluent-wrap
-  .mec-book-first
-  .mec-booking-calendar-wrapper
-  .mec-select-date-calendar-dropdown
-  .mec-select-date-calendar-formatted-date,
-.mec-booking-shortcode
-  .mec-book-first
-  .mec-booking-calendar-wrapper
-  .mec-select-date-calendar-dropdown
-  .mec-select-date-calendar-formatted-date {
+.lity-content .mec-book-first .mec-booking-calendar-wrapper .mec-select-date-calendar-dropdown .mec-select-date-calendar-formatted-date,
+.mec-single-event .mec-book-first .mec-booking-calendar-wrapper .mec-select-date-calendar-dropdown .mec-select-date-calendar-formatted-date,
+.mec-single-fluent-wrap .mec-book-first .mec-booking-calendar-wrapper .mec-select-date-calendar-dropdown .mec-select-date-calendar-formatted-date,
+.mec-booking-shortcode .mec-book-first .mec-booking-calendar-wrapper .mec-select-date-calendar-dropdown .mec-select-date-calendar-formatted-date {
   font-size: 13px;
   line-height: 40px;
   padding: 0 12px;
   width: 240px;
 }
 
-.lity-content
-  .mec-book-first
-  .mec-booking-calendar-wrapper
-  .mec-select-date-calendar-dropdown
-  span.mec-select-date-calendar-icons,
-.mec-single-event
-  .mec-book-first
-  .mec-booking-calendar-wrapper
-  .mec-select-date-calendar-dropdown
-  span.mec-select-date-calendar-icons,
-.mec-single-fluent-wrap
-  .mec-book-first
-  .mec-booking-calendar-wrapper
-  .mec-select-date-calendar-dropdown
-  span.mec-select-date-calendar-icons,
-.mec-booking-shortcode
-  .mec-book-first
-  .mec-booking-calendar-wrapper
-  .mec-select-date-calendar-dropdown
-  span.mec-select-date-calendar-icons {
+.lity-content .mec-book-first .mec-booking-calendar-wrapper .mec-select-date-calendar-dropdown span.mec-select-date-calendar-icons,
+.mec-single-event .mec-book-first .mec-booking-calendar-wrapper .mec-select-date-calendar-dropdown span.mec-select-date-calendar-icons,
+.mec-single-fluent-wrap .mec-book-first .mec-booking-calendar-wrapper .mec-select-date-calendar-dropdown span.mec-select-date-calendar-icons,
+.mec-booking-shortcode .mec-book-first .mec-booking-calendar-wrapper .mec-select-date-calendar-dropdown span.mec-select-date-calendar-icons {
   cursor: pointer;
   line-height: 33px;
   position: relative;
@@ -4781,103 +4572,31 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
 
 .lity-content .mec-book-first .mec-booking-calendar-wrapper .mec-select-date-calendar-container,
 .mec-single-event .mec-book-first .mec-booking-calendar-wrapper .mec-select-date-calendar-container,
-.mec-single-fluent-wrap
-  .mec-book-first
-  .mec-booking-calendar-wrapper
-  .mec-select-date-calendar-container,
-.mec-booking-shortcode
-  .mec-book-first
-  .mec-booking-calendar-wrapper
-  .mec-select-date-calendar-container {
+.mec-single-fluent-wrap .mec-book-first .mec-booking-calendar-wrapper .mec-select-date-calendar-container,
+.mec-booking-shortcode .mec-book-first .mec-booking-calendar-wrapper .mec-select-date-calendar-container {
   position: absolute;
   right: 40px;
   z-index: 99;
 }
 
-.lity-content
-  .mec-book-first
-  .mec-booking-calendar-wrapper
-  .mec-select-date-calendar-container
-  .mec-booking-calendar.mec-wrap,
-.mec-single-event
-  .mec-book-first
-  .mec-booking-calendar-wrapper
-  .mec-select-date-calendar-container
-  .mec-booking-calendar.mec-wrap,
-.mec-single-fluent-wrap
-  .mec-book-first
-  .mec-booking-calendar-wrapper
-  .mec-select-date-calendar-container
-  .mec-booking-calendar.mec-wrap,
-.mec-booking-shortcode
-  .mec-book-first
-  .mec-booking-calendar-wrapper
-  .mec-select-date-calendar-container
-  .mec-booking-calendar.mec-wrap {
+.lity-content .mec-book-first .mec-booking-calendar-wrapper .mec-select-date-calendar-container .mec-booking-calendar.mec-wrap,
+.mec-single-event .mec-book-first .mec-booking-calendar-wrapper .mec-select-date-calendar-container .mec-booking-calendar.mec-wrap,
+.mec-single-fluent-wrap .mec-book-first .mec-booking-calendar-wrapper .mec-select-date-calendar-container .mec-booking-calendar.mec-wrap,
+.mec-booking-shortcode .mec-book-first .mec-booking-calendar-wrapper .mec-select-date-calendar-container .mec-booking-calendar.mec-wrap {
   border: 1px solid #e3e5e7;
   border-radius: 5px;
 }
 
-.lity-content
-  .mec-book-first
-  .mec-booking-calendar-wrapper
-  .mec-select-date-calendar-container
-  .mec-booking-calendar-month-navigation
-  .mec-next-month,
-.mec-single-event
-  .mec-book-first
-  .mec-booking-calendar-wrapper
-  .mec-select-date-calendar-container
-  .mec-booking-calendar-month-navigation
-  .mec-next-month,
-.mec-single-event
-  .mec-book-first
-  .mec-select-date-express-calendar-wrapper
-  .mec-select-date-calendar-container
-  .mec-booking-calendar-month-navigation
-  .mec-next-month,
-.mec-single-fluent-wrap
-  .mec-book-first
-  .mec-booking-calendar-wrapper
-  .mec-select-date-calendar-container
-  .mec-booking-calendar-month-navigation
-  .mec-next-month,
-.mec-booking-shortcode
-  .mec-book-first
-  .mec-booking-calendar-wrapper
-  .mec-select-date-calendar-container
-  .mec-booking-calendar-month-navigation
-  .mec-next-month,
-.lity-content
-  .mec-book-first
-  .mec-booking-calendar-wrapper
-  .mec-select-date-calendar-container
-  .mec-booking-calendar-month-navigation
-  .mec-previous-month,
-.mec-single-event
-  .mec-book-first
-  .mec-booking-calendar-wrapper
-  .mec-select-date-calendar-container
-  .mec-booking-calendar-month-navigation
-  .mec-previous-month,
-.mec-single-event
-  .mec-book-first
-  .mec-select-date-express-calendar-wrapper
-  .mec-select-date-calendar-container
-  .mec-booking-calendar-month-navigation
-  .mec-next-month,
-.mec-single-fluent-wrap
-  .mec-book-first
-  .mec-booking-calendar-wrapper
-  .mec-select-date-calendar-container
-  .mec-booking-calendar-month-navigation
-  .mec-previous-month,
-.mec-booking-shortcode
-  .mec-book-first
-  .mec-booking-calendar-wrapper
-  .mec-select-date-calendar-container
-  .mec-booking-calendar-month-navigation
-  .mec-previous-month {
+.lity-content .mec-book-first .mec-booking-calendar-wrapper .mec-select-date-calendar-container .mec-booking-calendar-month-navigation .mec-next-month,
+.mec-single-event .mec-book-first .mec-booking-calendar-wrapper .mec-select-date-calendar-container .mec-booking-calendar-month-navigation .mec-next-month,
+.mec-single-event .mec-book-first .mec-select-date-express-calendar-wrapper .mec-select-date-calendar-container .mec-booking-calendar-month-navigation .mec-next-month,
+.mec-single-fluent-wrap .mec-book-first .mec-booking-calendar-wrapper .mec-select-date-calendar-container .mec-booking-calendar-month-navigation .mec-next-month,
+.mec-booking-shortcode .mec-book-first .mec-booking-calendar-wrapper .mec-select-date-calendar-container .mec-booking-calendar-month-navigation .mec-next-month,
+.lity-content .mec-book-first .mec-booking-calendar-wrapper .mec-select-date-calendar-container .mec-booking-calendar-month-navigation .mec-previous-month,
+.mec-single-event .mec-book-first .mec-booking-calendar-wrapper .mec-select-date-calendar-container .mec-booking-calendar-month-navigation .mec-previous-month,
+.mec-single-event .mec-book-first .mec-select-date-express-calendar-wrapper .mec-select-date-calendar-container .mec-booking-calendar-month-navigation .mec-next-month,
+.mec-single-fluent-wrap .mec-book-first .mec-booking-calendar-wrapper .mec-select-date-calendar-container .mec-booking-calendar-month-navigation .mec-previous-month,
+.mec-booking-shortcode .mec-book-first .mec-booking-calendar-wrapper .mec-select-date-calendar-container .mec-booking-calendar-month-navigation .mec-previous-month {
   border: none;
   box-shadow: none;
   line-height: 40px;
@@ -4913,25 +4632,13 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
   padding-left: 0;
 }
 
-.mec-wrap .mec-events-meta-group-booking .mec-wrap-checkout.row {
+.mec-wrap .mec-events-meta-group-booking .mec-wrap-checkout {
   margin: 0;
 }
 
-.lity-content
-  .mec-events-meta-group-booking
-  .mec-wrap-checkout.row
-  .mec-book-form-gateways
-  .mec-book-form-gateways-title,
-.mec-wrap
-  .mec-events-meta-group-booking
-  .mec-wrap-checkout.row
-  .mec-book-form-gateways
-  .mec-book-form-gateways-title,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  .mec-wrap-checkout.row
-  .mec-book-form-gateways
-  .mec-book-form-gateways-title {
+.lity-content .mec-events-meta-group-booking .mec-wrap-checkout .mec-book-form-gateways .mec-book-form-gateways-title,
+.mec-wrap .mec-events-meta-group-booking .mec-wrap-checkout .mec-book-form-gateways .mec-book-form-gateways-title,
+.mec-events-meta-group-booking .mec-booking-shortcode .mec-wrap-checkout .mec-book-form-gateways .mec-book-form-gateways-title {
   font-size: 18px;
   font-weight: 600;
   line-height: 24px;
@@ -4939,44 +4646,17 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
   margin-bottom: 20px;
 }
 
-.lity-content
-  .mec-events-meta-group-booking
-  .mec-wrap-checkout.row
-  .mec-book-form-gateways
-  .mec-book-form-gateways-radio-buttons,
-.mec-wrap
-  .mec-events-meta-group-booking
-  .mec-wrap-checkout.row
-  .mec-book-form-gateways
-  .mec-book-form-gateways-radio-buttons,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  .mec-wrap-checkout.row
-  .mec-book-form-gateways
-  .mec-book-form-gateways-radio-buttons {
+.lity-content .mec-events-meta-group-booking .mec-wrap-checkout .mec-book-form-gateways .mec-book-form-gateways-radio-buttons,
+.mec-wrap .mec-events-meta-group-booking .mec-wrap-checkout .mec-book-form-gateways .mec-book-form-gateways-radio-buttons,
+.mec-events-meta-group-booking .mec-booking-shortcode .mec-wrap-checkout .mec-book-form-gateways .mec-book-form-gateways-radio-buttons {
   display: flex;
   flex-wrap: wrap;
   padding-bottom: 20px;
 }
 
-.lity-content
-  .mec-events-meta-group-booking
-  .mec-wrap-checkout.row
-  .mec-book-form-gateways
-  .mec-book-form-gateways-radio-buttons
-  .mec-book-form-gateway-option,
-.mec-wrap
-  .mec-events-meta-group-booking
-  .mec-wrap-checkout.row
-  .mec-book-form-gateways
-  .mec-book-form-gateways-radio-buttons
-  .mec-book-form-gateway-option,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  .mec-wrap-checkout.row
-  .mec-book-form-gateways
-  .mec-book-form-gateways-radio-buttons
-  .mec-book-form-gateway-option {
+.lity-content .mec-events-meta-group-booking .mec-wrap-checkout .mec-book-form-gateways .mec-book-form-gateways-radio-buttons .mec-book-form-gateway-option,
+.mec-wrap .mec-events-meta-group-booking .mec-wrap-checkout .mec-book-form-gateways .mec-book-form-gateways-radio-buttons .mec-book-form-gateway-option,
+.mec-events-meta-group-booking .mec-booking-shortcode .mec-wrap-checkout .mec-book-form-gateways .mec-book-form-gateways-radio-buttons .mec-book-form-gateway-option {
   flex: calc(50% - 20px);
   max-width: calc(50% - 10px);
   border: 1px solid #e6e7e8;
@@ -4989,203 +4669,64 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
   cursor: pointer;
 }
 
-.lity-content
-  .mec-events-meta-group-booking
-  .mec-wrap-checkout.row
-  .mec-book-form-gateways
-  .mec-book-form-gateways-radio-buttons
-  .mec-book-form-gateway-option:has(input:checked),
-.mec-wrap
-  .mec-events-meta-group-booking
-  .mec-wrap-checkout.row
-  .mec-book-form-gateways
-  .mec-book-form-gateways-radio-buttons
-  .mec-book-form-gateway-option:has(input:checked),
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  .mec-wrap-checkout.row
-  .mec-book-form-gateways
-  .mec-book-form-gateways-radio-buttons
-  .mec-book-form-gateway-option:has(input:checked) {
+.lity-content .mec-events-meta-group-booking .mec-wrap-checkout .mec-book-form-gateways .mec-book-form-gateways-radio-buttons .mec-book-form-gateway-option:has(input:checked),
+.mec-wrap .mec-events-meta-group-booking .mec-wrap-checkout .mec-book-form-gateways .mec-book-form-gateways-radio-buttons .mec-book-form-gateway-option:has(input:checked),
+.mec-events-meta-group-booking .mec-booking-shortcode .mec-wrap-checkout .mec-book-form-gateways .mec-book-form-gateways-radio-buttons .mec-book-form-gateway-option:has(input:checked) {
   border: 1px solid var(--mec-color-skin-rgba-2);
 }
 
 @media only screen and (max-width: 767px) {
-  .lity-content
-    .mec-events-meta-group-booking
-    .mec-events-meta-group-booking
-    .mec-wrap-checkout.row
-    .mec-book-form-gateways
-    .mec-book-form-gateways-radio-buttons
-    .mec-book-form-gateway-option,
-  .mec-wrap
-    .mec-events-meta-group-booking
-    .mec-wrap-checkout.row
-    .mec-book-form-gateways
-    .mec-book-form-gateways-radio-buttons
-    .mec-book-form-gateway-option,
-  .mec-events-meta-group-booking
-    .mec-booking-shortcode
-    .mec-wrap-checkout.row
-    .mec-book-form-gateways
-    .mec-book-form-gateways-radio-buttons
-    .mec-book-form-gateway-option {
+
+  .lity-content .mec-events-meta-group-booking .mec-events-meta-group-booking .mec-wrap-checkout .mec-book-form-gateways .mec-book-form-gateways-radio-buttons .mec-book-form-gateway-option,
+  .mec-wrap .mec-events-meta-group-booking .mec-wrap-checkout .mec-book-form-gateways .mec-book-form-gateways-radio-buttons .mec-book-form-gateway-option,
+  .mec-events-meta-group-booking .mec-booking-shortcode .mec-wrap-checkout .mec-book-form-gateways .mec-book-form-gateways-radio-buttons .mec-book-form-gateway-option {
     flex: 100%;
     max-width: 100%;
   }
 
-  .lity-content
-    .mec-events-meta-group-booking
-    .mec-wrap-checkout.row
-    .mec-book-form-gateways
-    .mec-book-form-gateways-radio-buttons
-    .mec-book-form-gateway-option:nth-child(2n + 1),
-  .mec-wrap
-    .mec-events-meta-group-booking
-    .mec-wrap-checkout.row
-    .mec-book-form-gateways
-    .mec-book-form-gateways-radio-buttons
-    .mec-book-form-gateway-option:nth-child(2n + 1),
-  .mec-events-meta-group-booking
-    .mec-booking-shortcode
-    .mec-wrap-checkout.row
-    .mec-book-form-gateways
-    .mec-book-form-gateways-radio-buttons
-    .mec-book-form-gateway-option:nth-child(2n + 1) {
+  .lity-content .mec-events-meta-group-booking .mec-wrap-checkout .mec-book-form-gateways .mec-book-form-gateways-radio-buttons .mec-book-form-gateway-option:nth-child(2n + 1),
+  .mec-wrap .mec-events-meta-group-booking .mec-wrap-checkout .mec-book-form-gateways .mec-book-form-gateways-radio-buttons .mec-book-form-gateway-option:nth-child(2n + 1),
+  .mec-events-meta-group-booking .mec-booking-shortcode .mec-wrap-checkout .mec-book-form-gateways .mec-book-form-gateways-radio-buttons .mec-book-form-gateway-option:nth-child(2n + 1) {
     margin-right: 0 !important;
   }
 }
 
-.lity-content
-  .mec-events-meta-group-booking
-  .mec-wrap-checkout.row
-  .mec-book-form-gateways
-  .mec-book-form-gateways-radio-buttons
-  .mec-book-form-gateway-option:nth-child(2n + 1),
-.mec-wrap
-  .mec-events-meta-group-booking
-  .mec-wrap-checkout.row
-  .mec-book-form-gateways
-  .mec-book-form-gateways-radio-buttons
-  .mec-book-form-gateway-option:nth-child(2n + 1),
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  .mec-wrap-checkout.row
-  .mec-book-form-gateways
-  .mec-book-form-gateways-radio-buttons
-  .mec-book-form-gateway-option:nth-child(2n + 1) {
+.lity-content .mec-events-meta-group-booking .mec-wrap-checkout .mec-book-form-gateways .mec-book-form-gateways-radio-buttons .mec-book-form-gateway-option:nth-child(2n + 1),
+.mec-wrap .mec-events-meta-group-booking .mec-wrap-checkout .mec-book-form-gateways .mec-book-form-gateways-radio-buttons .mec-book-form-gateway-option:nth-child(2n + 1),
+.mec-events-meta-group-booking .mec-booking-shortcode .mec-wrap-checkout .mec-book-form-gateways .mec-book-form-gateways-radio-buttons .mec-book-form-gateway-option:nth-child(2n + 1) {
   margin-right: 20px;
 }
 
-.lity-content
-  .mec-events-meta-group-booking
-  .mec-wrap-checkout.row
-  .mec-book-form-gateways
-  .mec-book-form-gateways-radio-buttons
-  .mec-book-form-gateway-option
-  .mec-book-form-gateway-option-svg,
-.mec-wrap
-  .mec-events-meta-group-booking
-  .mec-wrap-checkout.row
-  .mec-book-form-gateways
-  .mec-book-form-gateways-radio-buttons
-  .mec-book-form-gateway-option
-  .mec-book-form-gateway-option-svg,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  .mec-wrap-checkout.row
-  .mec-book-form-gateways
-  .mec-book-form-gateways-radio-buttons
-  .mec-book-form-gateway-option
-  .mec-book-form-gateway-option-svg {
+.lity-content .mec-events-meta-group-booking .mec-wrap-checkout .mec-book-form-gateways .mec-book-form-gateways-radio-buttons .mec-book-form-gateway-option .mec-book-form-gateway-option-svg,
+.mec-wrap .mec-events-meta-group-booking .mec-wrap-checkout .mec-book-form-gateways .mec-book-form-gateways-radio-buttons .mec-book-form-gateway-option .mec-book-form-gateway-option-svg,
+.mec-events-meta-group-booking .mec-booking-shortcode .mec-wrap-checkout .mec-book-form-gateways .mec-book-form-gateways-radio-buttons .mec-book-form-gateway-option .mec-book-form-gateway-option-svg {
   display: flex;
   margin-right: 10px;
 }
 
-.lity-content
-  .mec-events-meta-group-booking
-  .mec-wrap-checkout.row
-  .mec-book-form-gateways
-  .mec-book-form-gateways-radio-buttons
-  .mec-book-form-gateway-option
-  .mec-book-form-gateway-option-title,
-.mec-wrap
-  .mec-events-meta-group-booking
-  .mec-wrap-checkout.row
-  .mec-book-form-gateways
-  .mec-book-form-gateways-radio-buttons
-  .mec-book-form-gateway-option
-  .mec-book-form-gateway-option-title,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  .mec-wrap-checkout.row
-  .mec-book-form-gateways
-  .mec-book-form-gateways-radio-buttons
-  .mec-book-form-gateway-option
-  .mec-book-form-gateway-option-title {
+.lity-content .mec-events-meta-group-booking .mec-wrap-checkout .mec-book-form-gateways .mec-book-form-gateways-radio-buttons .mec-book-form-gateway-option .mec-book-form-gateway-option-title,
+.mec-wrap .mec-events-meta-group-booking .mec-wrap-checkout .mec-book-form-gateways .mec-book-form-gateways-radio-buttons .mec-book-form-gateway-option .mec-book-form-gateway-option-title,
+.mec-events-meta-group-booking .mec-booking-shortcode .mec-wrap-checkout .mec-book-form-gateways .mec-book-form-gateways-radio-buttons .mec-book-form-gateway-option .mec-book-form-gateway-option-title {
   font-size: 14px;
   font-weight: 600;
   line-height: 18px;
 }
 
-.lity-content
-  .mec-events-meta-group-booking
-  .mec-wrap-checkout.row
-  .mec-book-form-gateways
-  .mec-book-form-gateways-radio-buttons
-  .mec-book-form-gateway-option
-  .mec-book-form-gateway-option-radio,
-.mec-wrap
-  .mec-events-meta-group-booking
-  .mec-wrap-checkout.row
-  .mec-book-form-gateways
-  .mec-book-form-gateways-radio-buttons
-  .mec-book-form-gateway-option
-  .mec-book-form-gateway-option-radio,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  .mec-wrap-checkout.row
-  .mec-book-form-gateways
-  .mec-book-form-gateways-radio-buttons
-  .mec-book-form-gateway-option
-  .mec-book-form-gateway-option-radio {
+.lity-content .mec-events-meta-group-booking .mec-wrap-checkout .mec-book-form-gateways .mec-book-form-gateways-radio-buttons .mec-book-form-gateway-option .mec-book-form-gateway-option-radio,
+.mec-wrap .mec-events-meta-group-booking .mec-wrap-checkout .mec-book-form-gateways .mec-book-form-gateways-radio-buttons .mec-book-form-gateway-option .mec-book-form-gateway-option-radio,
+.mec-events-meta-group-booking .mec-booking-shortcode .mec-wrap-checkout .mec-book-form-gateways .mec-book-form-gateways-radio-buttons .mec-book-form-gateway-option .mec-book-form-gateway-option-radio {
   margin-left: auto;
 }
 
-.lity-content
-  .mec-events-meta-group-booking
-  .mec-wrap-checkout.row
-  .mec-book-form-gateways
-  .mec-book-form-gateways-radio-buttons
-  .mec-book-form-gateway-option
-  .mec-book-form-gateway-option-radio
-  input,
-.mec-wrap
-  .mec-events-meta-group-booking
-  .mec-wrap-checkout.row
-  .mec-book-form-gateways
-  .mec-book-form-gateways-radio-buttons
-  .mec-book-form-gateway-option
-  .mec-book-form-gateway-option-radio
-  input,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  .mec-wrap-checkout.row
-  .mec-book-form-gateways
-  .mec-book-form-gateways-radio-buttons
-  .mec-book-form-gateway-option
-  .mec-book-form-gateway-option-radio
-  input {
+.lity-content .mec-events-meta-group-booking .mec-wrap-checkout .mec-book-form-gateways .mec-book-form-gateways-radio-buttons .mec-book-form-gateway-option .mec-book-form-gateway-option-radio input,
+.mec-wrap .mec-events-meta-group-booking .mec-wrap-checkout .mec-book-form-gateways .mec-book-form-gateways-radio-buttons .mec-book-form-gateway-option .mec-book-form-gateway-option-radio input,
+.mec-events-meta-group-booking .mec-booking-shortcode .mec-wrap-checkout .mec-book-form-gateways .mec-book-form-gateways-radio-buttons .mec-book-form-gateway-option .mec-book-form-gateway-option-radio input {
   left: -2px;
 }
 
 .lity-content .mec-wrap-checkout .mec-book-form-gateways .mec-book-form-gateway-label,
 .mec-wrap .mec-wrap-checkout .mec-book-form-gateways .mec-book-form-gateway-label,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  .mec-wrap-checkout
-  .mec-book-form-gateways
-  .mec-book-form-gateway-label {
+.mec-events-meta-group-booking .mec-booking-shortcode .mec-wrap-checkout .mec-book-form-gateways .mec-book-form-gateway-label {
   padding-left: 3px;
 }
 
@@ -5269,30 +4810,16 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
 }
 
 @media only screen and (max-width: 767px) {
+
   .lity-content .mec-events-meta-group-booking .mec-booking-checkout-coupon-total-wrapper,
   .mec-single-event .mec-events-meta-group-booking .mec-booking-checkout-coupon-total-wrapper,
   .mec-events-meta-group-booking .mec-booking-shortcode .mec-booking-checkout-coupon-total-wrapper {
     flex-direction: column;
   }
 
-  .lity-content
-    .mec-events-meta-group-booking
-    .mec-book-form-coupon
-    form
-    span.mec-booking-coupon-field-wrapper
-    input,
-  .mec-single-event
-    .mec-events-meta-group-booking
-    .mec-book-form-coupon
-    form
-    span.mec-booking-coupon-field-wrapper
-    input,
-  .mec-events-meta-group-booking
-    .mec-booking-shortcode
-    .mec-book-form-coupon
-    form
-    span.mec-booking-coupon-field-wrapper
-    input {
+  .lity-content .mec-events-meta-group-booking .mec-book-form-coupon form span.mec-booking-coupon-field-wrapper input,
+  .mec-single-event .mec-events-meta-group-booking .mec-book-form-coupon form span.mec-booking-coupon-field-wrapper input,
+  .mec-events-meta-group-booking .mec-booking-shortcode .mec-book-form-coupon form span.mec-booking-coupon-field-wrapper input {
     width: 100%;
   }
 
@@ -5304,114 +4831,39 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
   }
 }
 
-.lity-content
-  .mec-events-meta-group-booking
-  .mec-booking-checkout-coupon-total-wrapper
-  .mec-booking-checkout-total-wrapper
-  ul,
-.mec-single-event
-  .mec-events-meta-group-booking
-  .mec-booking-checkout-coupon-total-wrapper
-  .mec-booking-checkout-total-wrapper
-  ul,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  .mec-booking-checkout-coupon-total-wrapper
-  .mec-booking-checkout-total-wrapper
-  ul {
+.lity-content .mec-events-meta-group-booking .mec-booking-checkout-coupon-total-wrapper .mec-booking-checkout-total-wrapper ul,
+.mec-single-event .mec-events-meta-group-booking .mec-booking-checkout-coupon-total-wrapper .mec-booking-checkout-total-wrapper ul,
+.mec-events-meta-group-booking .mec-booking-shortcode .mec-booking-checkout-coupon-total-wrapper .mec-booking-checkout-total-wrapper ul {
   display: flex;
   align-items: center;
 }
 
-.lity-content
-  .mec-events-meta-group-booking
-  .mec-booking-checkout-coupon-total-wrapper
-  .mec-booking-checkout-total-wrapper
-  ul
-  li,
-.mec-single-event
-  .mec-events-meta-group-booking
-  .mec-booking-checkout-coupon-total-wrapper
-  .mec-booking-checkout-total-wrapper
-  ul
-  li,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  .mec-booking-checkout-coupon-total-wrapper
-  .mec-booking-checkout-total-wrapper
-  ul
-  li {
+.lity-content .mec-events-meta-group-booking .mec-booking-checkout-coupon-total-wrapper .mec-booking-checkout-total-wrapper ul li,
+.mec-single-event .mec-events-meta-group-booking .mec-booking-checkout-coupon-total-wrapper .mec-booking-checkout-total-wrapper ul li,
+.mec-events-meta-group-booking .mec-booking-shortcode .mec-booking-checkout-coupon-total-wrapper .mec-booking-checkout-total-wrapper ul li {
   margin-bottom: 0;
   text-align: right;
 }
 
-.lity-content
-  .mec-events-meta-group-booking
-  .mec-booking-checkout-coupon-total-wrapper
-  .mec-booking-checkout-total-wrapper
-  ul
-  li,
-.mec-single-event
-  .mec-events-meta-group-booking
-  .mec-booking-checkout-coupon-total-wrapper
-  .mec-booking-checkout-total-wrapper
-  ul
-  li,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  .mec-booking-checkout-coupon-total-wrapper
-  .mec-booking-checkout-total-wrapper
-  ul
-  li {
+.lity-content .mec-events-meta-group-booking .mec-booking-checkout-coupon-total-wrapper .mec-booking-checkout-total-wrapper ul li,
+.mec-single-event .mec-events-meta-group-booking .mec-booking-checkout-coupon-total-wrapper .mec-booking-checkout-total-wrapper ul li,
+.mec-events-meta-group-booking .mec-booking-shortcode .mec-booking-checkout-coupon-total-wrapper .mec-booking-checkout-total-wrapper ul li {
   padding-left: 20px;
   margin-left: 20px;
   border-left: 1px dashed #e6e7e8;
 }
 
-.lity-content
-  .mec-events-meta-group-booking
-  .mec-booking-checkout-coupon-total-wrapper
-  .mec-booking-checkout-total-wrapper
-  ul
-  li:first-child,
-.mec-single-event
-  .mec-events-meta-group-booking
-  .mec-booking-checkout-coupon-total-wrapper
-  .mec-booking-checkout-total-wrapper
-  ul
-  li:first-child,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  .mec-booking-checkout-coupon-total-wrapper
-  .mec-booking-checkout-total-wrapper
-  ul
-  li:first-child {
+.lity-content .mec-events-meta-group-booking .mec-booking-checkout-coupon-total-wrapper .mec-booking-checkout-total-wrapper ul li:first-child,
+.mec-single-event .mec-events-meta-group-booking .mec-booking-checkout-coupon-total-wrapper .mec-booking-checkout-total-wrapper ul li:first-child,
+.mec-events-meta-group-booking .mec-booking-shortcode .mec-booking-checkout-coupon-total-wrapper .mec-booking-checkout-total-wrapper ul li:first-child {
   padding-left: unset;
   margin-left: unset;
   border-left: none;
 }
 
-.lity-content
-  .mec-events-meta-group-booking
-  .mec-booking-checkout-coupon-total-wrapper
-  .mec-booking-checkout-total-wrapper
-  ul
-  li
-  span,
-.mec-single-event
-  .mec-events-meta-group-booking
-  .mec-booking-checkout-coupon-total-wrapper
-  .mec-booking-checkout-total-wrapper
-  ul
-  li
-  span,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  .mec-booking-checkout-coupon-total-wrapper
-  .mec-booking-checkout-total-wrapper
-  ul
-  li
-  span {
+.lity-content .mec-events-meta-group-booking .mec-booking-checkout-coupon-total-wrapper .mec-booking-checkout-total-wrapper ul li span,
+.mec-single-event .mec-events-meta-group-booking .mec-booking-checkout-coupon-total-wrapper .mec-booking-checkout-total-wrapper ul li span,
+.mec-events-meta-group-booking .mec-booking-shortcode .mec-booking-checkout-coupon-total-wrapper .mec-booking-checkout-total-wrapper ul li span {
   display: block;
   font-size: 14px;
   font-weight: 400;
@@ -5420,27 +4872,9 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
   margin-bottom: 4px;
 }
 
-.lity-content
-  .mec-events-meta-group-booking
-  .mec-booking-checkout-coupon-total-wrapper
-  .mec-booking-checkout-total-wrapper
-  ul
-  li
-  span:last-child,
-.mec-single-event
-  .mec-events-meta-group-booking
-  .mec-booking-checkout-coupon-total-wrapper
-  .mec-booking-checkout-total-wrapper
-  ul
-  li
-  span:last-child,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  .mec-booking-checkout-coupon-total-wrapper
-  .mec-booking-checkout-total-wrapper
-  ul
-  li
-  span:last-child {
+.lity-content .mec-events-meta-group-booking .mec-booking-checkout-coupon-total-wrapper .mec-booking-checkout-total-wrapper ul li span:last-child,
+.mec-single-event .mec-events-meta-group-booking .mec-booking-checkout-coupon-total-wrapper .mec-booking-checkout-total-wrapper ul li span:last-child,
+.mec-events-meta-group-booking .mec-booking-shortcode .mec-booking-checkout-coupon-total-wrapper .mec-booking-checkout-total-wrapper ul li span:last-child {
   font-size: 18px;
   font-weight: 600;
   line-height: 24px;
@@ -5448,46 +4882,17 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
   margin: 0;
 }
 
-.lity-content
-  .mec-events-meta-group-booking
-  .mec-booking-checkout-coupon-total-wrapper
-  .mec-booking-checkout-total-wrapper
-  ul
-  li
-  span.mec-book-price-total,
-.mec-single-event
-  .mec-events-meta-group-booking
-  .mec-booking-checkout-coupon-total-wrapper
-  .mec-booking-checkout-total-wrapper
-  ul
-  li
-  span.mec-book-price-total,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  .mec-booking-checkout-coupon-total-wrapper
-  .mec-booking-checkout-total-wrapper
-  ul
-  li
-  span.mec-book-price-total {
+.lity-content .mec-events-meta-group-booking .mec-booking-checkout-coupon-total-wrapper .mec-booking-checkout-total-wrapper ul li span.mec-book-price-total,
+.mec-single-event .mec-events-meta-group-booking .mec-booking-checkout-coupon-total-wrapper .mec-booking-checkout-total-wrapper ul li span.mec-book-price-total,
+.mec-events-meta-group-booking .mec-booking-shortcode .mec-booking-checkout-coupon-total-wrapper .mec-booking-checkout-total-wrapper ul li span.mec-book-price-total {
   font-weight: 700;
 }
 
 @media only screen and (max-width: 767px) {
-  .lity-content
-    .mec-events-meta-group-booking
-    .mec-booking-checkout-coupon-total-wrapper
-    .mec-booking-checkout-total-wrapper
-    ul,
-  .mec-single-event
-    .mec-events-meta-group-booking
-    .mec-booking-checkout-coupon-total-wrapper
-    .mec-booking-checkout-total-wrapper
-    ul,
-  .mec-events-meta-group-booking
-    .mec-booking-shortcode
-    .mec-booking-checkout-coupon-total-wrapper
-    .mec-booking-checkout-total-wrapper
-    ul {
+
+  .lity-content .mec-events-meta-group-booking .mec-booking-checkout-coupon-total-wrapper .mec-booking-checkout-total-wrapper ul,
+  .mec-single-event .mec-events-meta-group-booking .mec-booking-checkout-coupon-total-wrapper .mec-booking-checkout-total-wrapper ul,
+  .mec-events-meta-group-booking .mec-booking-shortcode .mec-booking-checkout-coupon-total-wrapper .mec-booking-checkout-total-wrapper ul {
     margin-top: 30px;
   }
 }
@@ -5505,21 +4910,9 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
   min-width: 256px;
 }
 
-.lity-content
-  .mec-events-meta-group-booking
-  .mec-book-form-coupon
-  form
-  span.mec-booking-coupon-field-wrapper,
-.mec-single-event
-  .mec-events-meta-group-booking
-  .mec-book-form-coupon
-  form
-  span.mec-booking-coupon-field-wrapper,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  .mec-book-form-coupon
-  form
-  span.mec-booking-coupon-field-wrapper {
+.lity-content .mec-events-meta-group-booking .mec-book-form-coupon form span.mec-booking-coupon-field-wrapper,
+.mec-single-event .mec-events-meta-group-booking .mec-book-form-coupon form span.mec-booking-coupon-field-wrapper,
+.mec-events-meta-group-booking .mec-booking-shortcode .mec-book-form-coupon form span.mec-booking-coupon-field-wrapper {
   display: flex;
   border: 1px solid #e3e5e7;
   border-radius: var(--mec-secondary-border-radius);
@@ -5527,24 +4920,9 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
   width: 100%;
 }
 
-.lity-content
-  .mec-events-meta-group-booking
-  .mec-book-form-coupon
-  form
-  span.mec-booking-coupon-field-wrapper
-  .mec-booking-coupon-field-icon,
-.mec-single-event
-  .mec-events-meta-group-booking
-  .mec-book-form-coupon
-  form
-  span.mec-booking-coupon-field-wrapper
-  .mec-booking-coupon-field-icon,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  .mec-book-form-coupon
-  form
-  span.mec-booking-coupon-field-wrapper
-  .mec-booking-coupon-field-icon {
+.lity-content .mec-events-meta-group-booking .mec-book-form-coupon form span.mec-booking-coupon-field-wrapper .mec-booking-coupon-field-icon,
+.mec-single-event .mec-events-meta-group-booking .mec-book-form-coupon form span.mec-booking-coupon-field-wrapper .mec-booking-coupon-field-icon,
+.mec-events-meta-group-booking .mec-booking-shortcode .mec-book-form-coupon form span.mec-booking-coupon-field-wrapper .mec-booking-coupon-field-icon {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -5554,24 +4932,9 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
   border-radius: var(--mec-secondary-border-radius) 0 0 var(--mec-secondary-border-radius);
 }
 
-.lity-content
-  .mec-events-meta-group-booking
-  .mec-book-form-coupon
-  form
-  span.mec-booking-coupon-field-wrapper
-  input,
-.mec-single-event
-  .mec-events-meta-group-booking
-  .mec-book-form-coupon
-  form
-  span.mec-booking-coupon-field-wrapper
-  input,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  .mec-book-form-coupon
-  form
-  span.mec-booking-coupon-field-wrapper
-  input {
+.lity-content .mec-events-meta-group-booking .mec-book-form-coupon form span.mec-booking-coupon-field-wrapper input,
+.mec-single-event .mec-events-meta-group-booking .mec-book-form-coupon form span.mec-booking-coupon-field-wrapper input,
+.mec-events-meta-group-booking .mec-booking-shortcode .mec-book-form-coupon form span.mec-booking-coupon-field-wrapper input {
   border: none;
   line-height: 48px;
   height: unset;
@@ -5596,11 +4959,7 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
 
 .lity-content .mec-events-meta-group-booking .mec-book-form-coupon form button.loading:after,
 .mec-single-event .mec-events-meta-group-booking .mec-book-form-coupon form button.loading:after,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  .mec-book-form-coupon
-  form
-  button.loading:after {
+.mec-events-meta-group-booking .mec-booking-shortcode .mec-book-form-coupon form button.loading:after {
   position: absolute;
   left: calc(50% - 10px);
 }
@@ -5689,9 +5048,7 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
 
 .lity-content .mec-events-meta-group-booking select:not(#mec_paypal_credit_card_card_type),
 .mec-single-event .mec-events-meta-group-booking select:not(#mec_paypal_credit_card_card_type),
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  select:not(#mec_paypal_credit_card_card_type) {
+.mec-events-meta-group-booking .mec-booking-shortcode select:not(#mec_paypal_credit_card_card_type) {
   width: 100%;
   -webkit-appearance: none;
   background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMS40MjQiIGhlaWdodD0iNi40MiIgdmlld0JveD0iMCAwIDExLjQyNCA2LjQyIj4NCiAgPGcgaWQ9Ikdyb3VwXzY1NjI3IiBkYXRhLW5hbWU9Ikdyb3VwIDY1NjI3IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgwLjIxMiAwLjIxMikiPg0KICAgIDxwYXRoIGlkPSJhbmdsZS1sZWZ0IiBkPSJNLjk5LDUuNWw1LDUuMDA1LS41LjVMMCw1LjUsNS41LDAsNiwuNS45OSw1LjVaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgwIDUuOTk1KSByb3RhdGUoLTkwKSIgZmlsbD0iIzYzNmY3MiIgc3Ryb2tlPSIjNjM2ZjcyIiBzdHJva2Utd2lkdGg9IjAuMyIvPg0KICA8L2c+DQo8L3N2Zz4NCg==");
@@ -5719,14 +5076,8 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
 }
 
 .mec-events-meta-group-booking .mec-booking-shortcode .mec-paypal-credit-card-payment-fields li,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  ul.mec-book-tickets-reg-fields-container
-  li:first-child,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  ul.mec-book-tickets-reg-fields-container
-  li:nth-child(2),
+.mec-events-meta-group-booking .mec-booking-shortcode ul.mec-book-tickets-reg-fields-container li:first-child,
+.mec-events-meta-group-booking .mec-booking-shortcode ul.mec-book-tickets-reg-fields-container li:nth-child(2),
 .mec-single-event .mec-events-meta-group-booking .mec-paypal-credit-card-payment-fields li {
   width: calc(50% - 83.665px);
 }
@@ -5737,95 +5088,40 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
   padding-top: 20px;
 }
 
-.lity-content
-  .mec-events-meta-group-booking
-  .mec-paypal-credit-card-payment-fields
-  li.mec-paypal-credit-card-expiration-date-month
-  select,
-.mec-single-event
-  .mec-events-meta-group-booking
-  .mec-paypal-credit-card-payment-fields
-  li.mec-paypal-credit-card-expiration-date-month
-  select,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  .mec-paypal-credit-card-payment-fields
-  li.mec-paypal-credit-card-expiration-date-month
-  select {
+.lity-content .mec-events-meta-group-booking .mec-paypal-credit-card-payment-fields li.mec-paypal-credit-card-expiration-date-month select,
+.mec-single-event .mec-events-meta-group-booking .mec-paypal-credit-card-payment-fields li.mec-paypal-credit-card-expiration-date-month select,
+.mec-events-meta-group-booking .mec-booking-shortcode .mec-paypal-credit-card-payment-fields li.mec-paypal-credit-card-expiration-date-month select {
   width: calc(50% - 24px) !important;
   display: inline-block;
   min-width: unset;
 }
 
 @media only screen and (max-width: 768px) {
-  .mec-events-meta-group-booking
-    .mec-booking-shortcode
-    ul.mec-book-tickets-reg-fields-container
-    li:first-child,
-  .lity-content
-    .mec-events-meta-group-booking
-    .mec-paypal-credit-card-payment-fields
-    li:nth-child(2n + 1),
-  .mec-single-event
-    .mec-events-meta-group-booking
-    .mec-paypal-credit-card-payment-fields
-    li:nth-child(2n + 1),
-  .mec-events-meta-group-booking
-    .mec-booking-shortcode
-    .mec-paypal-credit-card-payment-fields
-    li:nth-child(2n + 1),
-  .mec-events-meta-group-booking
-    .mec-booking-shortcode
-    ul.mec-book-tickets-reg-fields-container
-    li:nth-child(2) {
+
+  .mec-events-meta-group-booking .mec-booking-shortcode ul.mec-book-tickets-reg-fields-container li:first-child,
+  .lity-content .mec-events-meta-group-booking .mec-paypal-credit-card-payment-fields li:nth-child(2n + 1),
+  .mec-single-event .mec-events-meta-group-booking .mec-paypal-credit-card-payment-fields li:nth-child(2n + 1),
+  .mec-events-meta-group-booking .mec-booking-shortcode .mec-paypal-credit-card-payment-fields li:nth-child(2n + 1),
+  .mec-events-meta-group-booking .mec-booking-shortcode ul.mec-book-tickets-reg-fields-container li:nth-child(2) {
     width: calc(100% - 83.665px);
     max-width: unset;
   }
 
   .lity-content .mec-events-meta-group-booking ul.mec-book-tickets-reg-fields-container li input,
   .lity-content .mec-events-meta-group-booking .mec-book-ticket-variation-wrapper input,
-  .mec-single-event
-    .mec-events-meta-group-booking
-    ul.mec-book-tickets-reg-fields-container
-    li
-    input,
+  .mec-single-event .mec-events-meta-group-booking ul.mec-book-tickets-reg-fields-container li input,
   .mec-single-event .mec-events-meta-group-booking .mec-book-ticket-variation-wrapper input,
-  .mec-events-meta-group-booking
-    .mec-booking-shortcode
-    ul.mec-book-tickets-reg-fields-container
-    li
-    input,
+  .mec-events-meta-group-booking .mec-booking-shortcode ul.mec-book-tickets-reg-fields-container li input,
   .mec-events-meta-group-booking .mec-booking-shortcode .mec-book-ticket-variation-wrapper input {
     max-width: unset !important;
   }
 
-  .lity-content
-    .mec-events-meta-group-booking
-    ul.mec-book-tickets-reg-fields-container
-    li:nth-child(2n)
-    input,
-  .lity-content
-    .mec-events-meta-group-booking
-    .mec-book-ticket-variation-wrapper:nth-child(2n)
-    input,
-  .mec-single-event
-    .mec-events-meta-group-booking
-    ul.mec-book-tickets-reg-fields-container
-    li:nth-child(2n)
-    input,
-  .mec-single-event
-    .mec-events-meta-group-booking
-    .mec-book-ticket-variation-wrapper:nth-child(2n)
-    input,
-  .mec-events-meta-group-booking
-    .mec-booking-shortcode
-    ul.mec-book-tickets-reg-fields-container
-    li:nth-child(2n)
-    input,
-  .mec-events-meta-group-booking
-    .mec-booking-shortcode
-    .mec-book-ticket-variation-wrapper:nth-child(2n)
-    input {
+  .lity-content .mec-events-meta-group-booking ul.mec-book-tickets-reg-fields-container li:nth-child(2n) input,
+  .lity-content .mec-events-meta-group-booking .mec-book-ticket-variation-wrapper:nth-child(2n) input,
+  .mec-single-event .mec-events-meta-group-booking ul.mec-book-tickets-reg-fields-container li:nth-child(2n) input,
+  .mec-single-event .mec-events-meta-group-booking .mec-book-ticket-variation-wrapper:nth-child(2n) input,
+  .mec-events-meta-group-booking .mec-booking-shortcode ul.mec-book-tickets-reg-fields-container li:nth-child(2n) input,
+  .mec-events-meta-group-booking .mec-booking-shortcode .mec-book-ticket-variation-wrapper:nth-child(2n) input {
     margin-left: 0px;
   }
 }
@@ -5852,42 +5148,15 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
   align-items: flex-start;
 }
 
-.lity-content
-  .mec-events-meta-group-booking
-  .mec-booking-email-field-wrapper
-  span.mec-booking-email-field-icon,
-.mec-single-event
-  .mec-events-meta-group-booking
-  .mec-booking-email-field-wrapper
-  span.mec-booking-email-field-icon,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  .mec-booking-email-field-wrapper
-  span.mec-booking-email-field-icon,
-.lity-content
-  .mec-events-meta-group-booking
-  .mec-booking-name-field-wrapper
-  span.mec-booking-name-field-icon,
-.mec-single-event
-  .mec-events-meta-group-booking
-  .mec-booking-name-field-wrapper
-  span.mec-booking-name-field-icon,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  .mec-booking-name-field-wrapper
-  span.mec-booking-name-field-icon,
-.lity-content
-  .mec-events-meta-group-booking
-  .mec-stripe-name-and-email-wrapper
-  span.mec-booking-email-field-icon,
-.mec-single-event
-  .mec-events-meta-group-booking
-  .mec-stripe-name-and-email-wrapper
-  span.mec-booking-email-field-icon,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  .mec-stripe-name-and-email-wrapper
-  span.mec-booking-email-field-icon,
+.lity-content .mec-events-meta-group-booking .mec-booking-email-field-wrapper span.mec-booking-email-field-icon,
+.mec-single-event .mec-events-meta-group-booking .mec-booking-email-field-wrapper span.mec-booking-email-field-icon,
+.mec-events-meta-group-booking .mec-booking-shortcode .mec-booking-email-field-wrapper span.mec-booking-email-field-icon,
+.lity-content .mec-events-meta-group-booking .mec-booking-name-field-wrapper span.mec-booking-name-field-icon,
+.mec-single-event .mec-events-meta-group-booking .mec-booking-name-field-wrapper span.mec-booking-name-field-icon,
+.mec-events-meta-group-booking .mec-booking-shortcode .mec-booking-name-field-wrapper span.mec-booking-name-field-icon,
+.lity-content .mec-events-meta-group-booking .mec-stripe-name-and-email-wrapper span.mec-booking-email-field-icon,
+.mec-single-event .mec-events-meta-group-booking .mec-stripe-name-and-email-wrapper span.mec-booking-email-field-icon,
+.mec-events-meta-group-booking .mec-booking-shortcode .mec-stripe-name-and-email-wrapper span.mec-booking-email-field-icon,
 .lity-content .mec-events-meta-group-booking .mec-field-wrapper span.mec-field-icon,
 .mec-single-event .mec-events-meta-group-booking .mec-field-wrapper span.mec-field-icon,
 .mec-events-meta-group-booking .mec-booking-shortcode .mec-field-wrapper span.mec-field-icon {
@@ -5963,6 +5232,7 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
 }
 
 @media only screen and (max-width: 479px) {
+
   .lity-content .mec-events-meta-group-booking input[type="text"],
   .mec-single-event .mec-events-meta-group-booking input[type="text"],
   .mec-events-meta-group-booking .mec-booking-shortcode input[type="text"],
@@ -6102,9 +5372,7 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
   text-align: center;
 }
 
-.mec-events-meta-group-booking
-  .mec-book-price-details
-  li.mec-book-price-detail.mec-book-price-detail-type-tickets {
+.mec-events-meta-group-booking .mec-book-price-details li.mec-book-price-detail.mec-book-price-detail-type-tickets {
   display: flex;
   align-items: center;
 }
@@ -6149,42 +5417,15 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
     margin-bottom: 30px;
   }
 
-  .lity-content
-    .mec-events-meta-group-booking
-    .mec-booking-checkout-coupon-total-wrapper
-    .mec-booking-checkout-total-wrapper
-    ul,
-  .mec-single-event
-    .mec-events-meta-group-booking
-    .mec-booking-checkout-coupon-total-wrapper
-    .mec-booking-checkout-total-wrapper
-    ul,
-  .mec-events-meta-group-booking
-    .mec-booking-shortcode
-    .mec-booking-checkout-coupon-total-wrapper
-    .mec-booking-checkout-total-wrapper
-    ul {
+  .lity-content .mec-events-meta-group-booking .mec-booking-checkout-coupon-total-wrapper .mec-booking-checkout-total-wrapper ul,
+  .mec-single-event .mec-events-meta-group-booking .mec-booking-checkout-coupon-total-wrapper .mec-booking-checkout-total-wrapper ul,
+  .mec-events-meta-group-booking .mec-booking-shortcode .mec-booking-checkout-coupon-total-wrapper .mec-booking-checkout-total-wrapper ul {
     flex-direction: column;
   }
 
-  .lity-content
-    .mec-events-meta-group-booking
-    .mec-booking-checkout-coupon-total-wrapper
-    .mec-booking-checkout-total-wrapper
-    ul
-    li,
-  .mec-single-event
-    .mec-events-meta-group-booking
-    .mec-booking-checkout-coupon-total-wrapper
-    .mec-booking-checkout-total-wrapper
-    ul
-    li,
-  .mec-events-meta-group-booking
-    .mec-booking-shortcode
-    .mec-booking-checkout-coupon-total-wrapper
-    .mec-booking-checkout-total-wrapper
-    ul
-    li {
+  .lity-content .mec-events-meta-group-booking .mec-booking-checkout-coupon-total-wrapper .mec-booking-checkout-total-wrapper ul li,
+  .mec-single-event .mec-events-meta-group-booking .mec-booking-checkout-coupon-total-wrapper .mec-booking-checkout-total-wrapper ul li,
+  .mec-events-meta-group-booking .mec-booking-shortcode .mec-booking-checkout-coupon-total-wrapper .mec-booking-checkout-total-wrapper ul li {
     padding-left: 0;
     margin-left: 0;
     border-left: none;
@@ -6201,14 +5442,8 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
 .lity-content .mec-events-meta-group-booking input[type="checkbox"],
 .mec-single-event .mec-events-meta-group-booking input[type="checkbox"],
 .mec-events-meta-group-booking .mec-booking-shortcode input[type="checkbox"],
-.mec-single-event
-  .mec-events-meta-group-booking
-  .mec-booking-dates-checkboxes
-  input[type="checkbox"],
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  .mec-booking-dates-checkboxes
-  input[type="checkbox"],
+.mec-single-event .mec-events-meta-group-booking .mec-booking-dates-checkboxes input[type="checkbox"],
+.mec-events-meta-group-booking .mec-booking-shortcode .mec-booking-dates-checkboxes input[type="checkbox"],
 .lity-content .mec-events-meta-group-booking .mec-booking-dates-checkboxes input[type="checkbox"],
 .mec-booking input[type="checkbox"],
 .mec-wrap .mec-simple-checkboxes-search ul li label input[type="checkbox"] {
@@ -6233,18 +5468,9 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
 .lity-content .mec-events-meta-group-booking input[type="checkbox"]:before,
 .mec-single-event .mec-events-meta-group-booking input[type="checkbox"]:before,
 .mec-events-meta-group-booking .mec-booking-shortcode input[type="checkbox"]:before,
-.mec-single-event
-  .mec-events-meta-group-booking
-  .mec-booking-dates-checkboxes
-  input[type="checkbox"]:before,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  .mec-booking-dates-checkboxes
-  input[type="checkbox"]:before,
-.lity-content
-  .mec-events-meta-group-booking
-  .mec-booking-dates-checkboxes
-  input[type="checkbox"]:before,
+.mec-single-event .mec-events-meta-group-booking .mec-booking-dates-checkboxes input[type="checkbox"]:before,
+.mec-events-meta-group-booking .mec-booking-shortcode .mec-booking-dates-checkboxes input[type="checkbox"]:before,
+.lity-content .mec-events-meta-group-booking .mec-booking-dates-checkboxes input[type="checkbox"]:before,
 .mec-booking input[type="checkbox"]:before,
 .mec-wrap .mec-simple-checkboxes-search ul li label input[type="checkbox"]:before {
   content: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSI4IiB2aWV3Qm94PSIwIDAgMTAgOCI+DQogIDxwYXRoIGlkPSJEb25lIiBkPSJNOS4xNzUsMGEuOC44LDAsMCwwLS42NjUuMzA2bC01LjIsNS42NDdMMS4zODgsMy44MzNhLjcuNywwLDAsMC0uNjczLS4yMTIsMS4zODIsMS4zODIsMCwwLDAtLjcuNy44NjIuODYyLDAsMCwwLC4yMjYuNzI0TDIuNzk1LDcuNzkxYS43OTIuNzkyLDAsMCwwLDEuMDYyLjAxTDkuNzY5LDEuMzI5QS44MzIuODMyLDAsMCwwLDkuOTYuNTIxLDEsMSwwLDAsMCw5LjE3NSwwWiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAwKSIgZmlsbD0iI2ZmZiIvPg0KPC9zdmc+DQo=");
@@ -6265,18 +5491,9 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
 .lity-content .mec-events-meta-group-booking input[type="checkbox"]:checked,
 .mec-single-event .mec-events-meta-group-booking input[type="checkbox"]:checked,
 .mec-events-meta-group-booking .mec-booking-shortcode input[type="checkbox"]:checked,
-.mec-single-event
-  .mec-events-meta-group-booking
-  .mec-booking-dates-checkboxes
-  input[type="checkbox"]:checked,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  .mec-booking-dates-checkboxes
-  input[type="checkbox"]:checked,
-.lity-content
-  .mec-events-meta-group-booking
-  .mec-booking-dates-checkboxes
-  input[type="checkbox"]:checked,
+.mec-single-event .mec-events-meta-group-booking .mec-booking-dates-checkboxes input[type="checkbox"]:checked,
+.mec-events-meta-group-booking .mec-booking-shortcode .mec-booking-dates-checkboxes input[type="checkbox"]:checked,
+.lity-content .mec-events-meta-group-booking .mec-booking-dates-checkboxes input[type="checkbox"]:checked,
 .mec-booking input[type="checkbox"]:checked,
 .mec-wrap .mec-simple-checkboxes-search ul li label input[type="checkbox"]:checked {
   border: 1px solid var(--mec-color-skin) !important;
@@ -6287,18 +5504,9 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
 .lity-container .mec-events-meta-group-booking .mec_book_first_for_all:checked:before,
 .mec-single-event .mec-events-meta-group-booking input[type="checkbox"]:checked:before,
 .mec-events-meta-group-booking .mec-booking-shortcode input[type="checkbox"]:checked:before,
-.mec-single-event
-  .mec-events-meta-group-booking
-  .mec-booking-dates-checkboxes
-  input[type="checkbox"]:checked:before,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  .mec-booking-dates-checkboxes
-  input[type="checkbox"]:checked:before,
-.lity-content
-  .mec-events-meta-group-booking
-  .mec-booking-dates-checkboxes
-  input[type="checkbox"]:checked:before,
+.mec-single-event .mec-events-meta-group-booking .mec-booking-dates-checkboxes input[type="checkbox"]:checked:before,
+.mec-events-meta-group-booking .mec-booking-shortcode .mec-booking-dates-checkboxes input[type="checkbox"]:checked:before,
+.lity-content .mec-events-meta-group-booking .mec-booking-dates-checkboxes input[type="checkbox"]:checked:before,
 .mec-booking input[type="checkbox"]:checked:before,
 .mec-wrap .mec-simple-checkboxes-search ul li label input[type="checkbox"]:checked:before {
   transform: scale(1);
@@ -6339,48 +5547,24 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
   display: block;
 }
 
-.mec-single-event
-  .mec-event-export-module.mec-frontbox
-  .mec-event-exporting
-  .mec-export-details
-  ul {
+.mec-single-event .mec-event-export-module.mec-frontbox .mec-event-exporting .mec-export-details ul {
   display: table;
   width: 100%;
 }
 
-.mec-single-event
-  .mec-event-export-module.mec-frontbox
-  .mec-event-exporting
-  .mec-export-details
-  ul
-  li {
+.mec-single-event .mec-event-export-module.mec-frontbox .mec-event-exporting .mec-export-details ul li {
   display: table-cell;
 }
 
-.mec-single-event
-  .mec-event-export-module.mec-frontbox
-  .mec-event-exporting
-  .mec-export-details
-  ul
-  li:last-child {
+.mec-single-event .mec-event-export-module.mec-frontbox .mec-event-exporting .mec-export-details ul li:last-child {
   text-align: right;
 }
 
-.mec-single-event
-  .mec-event-export-module.mec-frontbox
-  .mec-event-exporting
-  .mec-export-details
-  ul
-  li
-  a:hover {
+.mec-single-event .mec-event-export-module.mec-frontbox .mec-event-exporting .mec-export-details ul li a:hover {
   color: #fff;
 }
 
-.mec-single-event
-  .mec-event-export-module.mec-frontbox
-  .mec-event-exporting
-  .mec-export-details
-  ul {
+.mec-single-event .mec-event-export-module.mec-frontbox .mec-event-exporting .mec-export-details ul {
   padding-left: 0;
   margin: 15px 5px;
 }
@@ -6423,12 +5607,7 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
 }
 
 @media only screen and (max-width: 767px) {
-  .mec-single-event
-    .mec-event-export-module.mec-frontbox
-    .mec-event-exporting
-    .mec-export-details
-    ul
-    li {
+  .mec-single-event .mec-event-export-module.mec-frontbox .mec-event-exporting .mec-export-details ul li {
     width: 100%;
     min-height: 40px;
     margin-bottom: 15px;
@@ -6437,13 +5616,7 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
     display: block;
   }
 
-  .mec-single-event
-    .mec-event-export-module.mec-frontbox
-    .mec-event-exporting
-    .mec-export-details
-    ul
-    li
-    a {
+  .mec-single-event .mec-event-export-module.mec-frontbox .mec-event-exporting .mec-export-details ul li a {
     width: 100%;
     padding-left: 0;
     padding-right: 0;
@@ -6454,6 +5627,7 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
 }
 
 @media only screen and (max-width: 767px) {
+
   .lity-content .mec-events-meta-group-booking .mec-single-event .mec-events-meta-group-booking,
   .mec-events-meta-group-booking .mec-booking-shortcode {
     margin-bottom: 30px;
@@ -7010,9 +6184,9 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
 .lity-content .mec-events-meta-group-booking .mec-wrap-checkout h4,
 .mec-single-event .mec-events-meta-group-booking .mec-wrap-checkout h4,
 .mec-events-meta-group-booking .mec-booking-shortcode .mec-wrap-checkout h4,
-.lity-content .mec-events-meta-group-booking form > h4,
-.mec-single-event .mec-events-meta-group-booking form > h4,
-.mec-events-meta-group-booking .mec-booking-shortcode form > h4 {
+.lity-content .mec-events-meta-group-booking form>h4,
+.mec-single-event .mec-events-meta-group-booking form>h4,
+.mec-events-meta-group-booking .mec-booking-shortcode form>h4 {
   text-transform: uppercase;
   font-size: 15px;
   font-weight: bold;
@@ -7031,9 +6205,9 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
 .lity-content .mec-events-meta-group-booking .mec-wrap-checkout h4:before,
 .mec-single-event .mec-events-meta-group-booking .mec-wrap-checkout h4:before,
 .mec-events-meta-group-booking .mec-booking-shortcode .mec-wrap-checkout h4:before,
-.lity-content .mec-events-meta-group-booking form > h4:before,
-.mec-single-event .mec-events-meta-group-booking form > h4:before,
-.mec-events-meta-group-booking .mec-booking-shortcode form > h4:before {
+.lity-content .mec-events-meta-group-booking form>h4:before,
+.mec-single-event .mec-events-meta-group-booking form>h4:before,
+.mec-events-meta-group-booking .mec-booking-shortcode form>h4:before {
   padding: 1px 35px;
   border-bottom: 4px solid #40d9f1;
   font-size: 6px;
@@ -7058,6 +6232,7 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
 }
 
 @media (max-width: 768px) {
+
   .mec-single-event .mec-events-meta-group-booking input[data-stripe="exp-month"],
   .mec-events-meta-group-booking .mec-booking-shortcode input[data-stripe="exp-month"],
   .mec-single-event .mec-events-meta-group-booking input[data-stripe="exp-year"],
@@ -7180,16 +6355,10 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
 }
 
 .mec-single-event .mec-event-meta .mec-single-event-organizer .mec-events-single-section-title,
-.mec-single-event
-  .mec-event-meta
-  .mec-single-event-additional-organizers
-  .mec-events-single-section-title,
+.mec-single-event .mec-event-meta .mec-single-event-additional-organizers .mec-events-single-section-title,
 .mec-single-event .mec-events-meta-date h3,
 .mec-single-event .mec-event-meta .mec-single-event-location .mec-events-single-section-title,
-.mec-single-event
-  .mec-event-meta
-  .mec-single-event-additional-locations
-  .mec-events-single-section-title,
+.mec-single-event .mec-event-meta .mec-single-event-additional-locations .mec-events-single-section-title,
 .mec-single-event .mec-event-meta .mec-single-event-category .mec-events-single-section-title {
   padding: 0 0 5px 10px;
   margin-top: 0;
@@ -7266,7 +6435,7 @@ mec-book-form-pay-button button#mec-book-form-back-btn-step-3 {
   display: table;
 }
 
-.mec-single-event .mec-single-event-location dd.author > a {
+.mec-single-event .mec-single-event-location dd.author>a {
   font-size: 16px;
   font-weight: 400;
 }
@@ -7308,9 +6477,7 @@ address.mec-events-address {
   padding-bottom: 5px;
 }
 
-.mec-single-event
-  .mec-single-event-additional-organizers
-  .mec-single-event-additional-organizer:last-child {
+.mec-single-event .mec-single-event-additional-organizers .mec-single-event-additional-organizer:last-child {
   margin-bottom: 0;
   padding-bottom: 0;
 }
@@ -7780,6 +6947,7 @@ address.mec-events-address {
 }
 
 @media only screen and (max-width: 479px) {
+
   .mec-calendar.mec-calendar-weekly .mec-event-article,
   .mec-calendar.mec-calendar-daily .mec-event-artile {
     flex-direction: column;
@@ -7834,18 +7002,13 @@ address.mec-events-address {
   height: auto;
 }
 
-.mec-calendar:not(.mec-liquid-custom-scrollbar, .mec-liquid-daily)
-  .mec-event-article
-  .mec-event-image {
+.mec-calendar:not(.mec-liquid-custom-scrollbar, .mec-liquid-daily) .mec-event-article .mec-event-image {
   max-width: 70px;
   margin-right: 15px;
   height: auto;
 }
 
-.mec-calendar:not(.mec-liquid-custom-scrollbar, .mec-liquid-daily)
-  .mec-event-article
-  .mec-event-image
-  img {
+.mec-calendar:not(.mec-liquid-custom-scrollbar, .mec-liquid-daily) .mec-event-article .mec-event-image img {
   border-radius: var(--mec-secondary-border-radius);
 }
 
@@ -7911,23 +7074,17 @@ address.mec-events-address {
 
 /* Page with sidebar fix */
 @media only screen and (min-width: 961px) {
-  .mec-wrap.mec-sm959
-    .mec-calendar:not(.mec-event-calendar-classic):not(.mec-calendar-weekly)
-    .mec-has-event:after {
+  .mec-wrap.mec-sm959 .mec-calendar:not(.mec-event-calendar-classic):not(.mec-calendar-weekly) .mec-has-event:after {
     width: 6px;
     height: 6px;
     bottom: 6px;
   }
 
-  .mec-wrap.mec-sm959
-    .mec-calendar:not(.mec-event-calendar-classic):not(.mec-calendar-weekly)
-    .mec-calendar-side {
+  .mec-wrap.mec-sm959 .mec-calendar:not(.mec-event-calendar-classic):not(.mec-calendar-weekly) .mec-calendar-side {
     width: 370px;
   }
 
-  .mec-wrap.mec-sm959
-    .mec-calendar:not(.mec-event-calendar-classic):not(.mec-calendar-weekly)
-    .mec-calendar-header {
+  .mec-wrap.mec-sm959 .mec-calendar:not(.mec-event-calendar-classic):not(.mec-calendar-weekly) .mec-calendar-header {
     position: relative;
     width: 350px;
     margin-top: 30px;
@@ -8116,6 +7273,7 @@ address.mec-events-address {
 }
 
 @media only screen and (max-width: 767px) {
+
   .mec-box-calendar.mec-calendar .mec-calendar-side .mec-previous-month,
   .mec-box-calendar.mec-calendar .mec-calendar-side .mec-next-month {
     top: 28px;
@@ -8136,6 +7294,7 @@ address.mec-events-address {
 }
 
 @media only screen and (max-width: 479px) {
+
   .mec-box-calendar.mec-calendar .mec-calendar-side .mec-previous-month,
   .mec-box-calendar.mec-calendar .mec-calendar-side .mec-next-month {
     font-size: 0;
@@ -8246,9 +7405,7 @@ address.mec-events-address {
   border-bottom: none;
 }
 
-.mec-wrap
-  .mec-calendar.mec-event-calendar-classic:not(.mec-event-container-simple)
-  .mec-selected-day:hover {
+.mec-wrap .mec-calendar.mec-event-calendar-classic:not(.mec-event-container-simple) .mec-selected-day:hover {
   color: #fff !important;
 }
 
@@ -8268,10 +7425,7 @@ address.mec-events-address {
   color: #4d4d4d;
 }
 
-.mec-calendar.mec-event-calendar-classic
-  .mec-calendar-row
-  dt.mec-has-event:not(.mec-selected-day):hover
-  a {
+.mec-calendar.mec-event-calendar-classic .mec-calendar-row dt.mec-has-event:not(.mec-selected-day):hover a {
   color: #fff;
 }
 
@@ -8340,9 +7494,7 @@ address.mec-events-address {
   border-bottom: 1px solid #eaeaea;
 }
 
-.mec-calendar.mec-event-calendar-classic.mec-event-container-novel
-  .mec-calendar-side
-  .mec-calendar-table {
+.mec-calendar.mec-event-calendar-classic.mec-event-container-novel .mec-calendar-side .mec-calendar-table {
   min-height: auto;
 }
 
@@ -8400,16 +7552,11 @@ address.mec-events-address {
   display: block;
 }
 
-.mec-event-container-simple
-  .simple-skin-ended:nth-last-of-type(2)
-  .mec-monthly-tooltip.event-single-link-simple {
+.mec-event-container-simple .simple-skin-ended:nth-last-of-type(2) .mec-monthly-tooltip.event-single-link-simple {
   border-bottom: none;
 }
 
-.mec-event-container-simple
-  .mec-calendar-day
-  .ended-relative:nth-last-child(1 of .ended-relative)
-  .mec-monthly-tooltip.event-single-link-simple {
+.mec-event-container-simple .mec-calendar-day .ended-relative:nth-last-child(1 of .ended-relative) .mec-monthly-tooltip.event-single-link-simple {
   border: none;
 }
 
@@ -8440,6 +7587,7 @@ address.mec-events-address {
 }
 
 @media (max-width: 768px) {
+
   .mec-calendar.mec-event-container-simple,
   .mec-calendar.mec-event-container-novel {
     overflow-x: scroll;
@@ -8467,9 +7615,7 @@ address.mec-events-address {
   margin-bottom: 2px;
 }
 
-.tooltipster-sidetip.tooltipster-shadow:not(.uael-tooltipster-active)
-  .tooltipster-content
-  .mec-price-details,
+.tooltipster-sidetip.tooltipster-shadow:not(.uael-tooltipster-active) .tooltipster-content .mec-price-details,
 .mec-tooltip-event-time {
   font-size: 12px;
   color: #888;
@@ -8526,8 +7672,7 @@ address.mec-events-address {
   border-width: 12px !important;
 }
 
-.tooltipster-sidetip.tooltipster-shadow.tooltipster-right:not(.uael-tooltipster-active)
-  .tooltipster-arrow-border {
+.tooltipster-sidetip.tooltipster-shadow.tooltipster-right:not(.uael-tooltipster-active) .tooltipster-arrow-border {
   border-right-color: #e2e3e4 !important;
 }
 
@@ -8536,8 +7681,7 @@ address.mec-events-address {
   z-index: 9999999999 !important;
 }
 
-.tooltipster-sidetip.tooltipster-shadow:not(.uael-tooltipster-active)
-  .tooltipster-arrow-background {
+.tooltipster-sidetip.tooltipster-shadow:not(.uael-tooltipster-active) .tooltipster-arrow-background {
   display: block !important;
 }
 
@@ -8562,24 +7706,20 @@ address.mec-events-address {
   left: -1px !important;
 }
 
-.tooltipster-sidetip.tooltipster-shadow.tooltipster-top:not(.uael-tooltipster-active)
-  .tooltipster-arrow-border {
+.tooltipster-sidetip.tooltipster-shadow.tooltipster-top:not(.uael-tooltipster-active) .tooltipster-arrow-border {
   border-top-color: #e2e3e4 !important;
 }
 
-.tooltipster-sidetip.tooltipster-shadow.tooltipster-bottom:not(.uael-tooltipster-active)
-  .tooltipster-arrow-border {
+.tooltipster-sidetip.tooltipster-shadow.tooltipster-bottom:not(.uael-tooltipster-active) .tooltipster-arrow-border {
   left: -1px !important;
   top: -11px !important;
 }
 
-.tooltipster-sidetip.tooltipster-shadow.tooltipster-bottom:not(.uael-tooltipster-active)
-  .tooltipster-arrow-border {
+.tooltipster-sidetip.tooltipster-shadow.tooltipster-bottom:not(.uael-tooltipster-active) .tooltipster-arrow-border {
   border-bottom-color: #e2e3e4 !important;
 }
 
-.tooltipster-sidetip.tooltipster-bottom:not(.uael-tooltipster-active)
-  .tooltipster-arrow-background {
+.tooltipster-sidetip.tooltipster-bottom:not(.uael-tooltipster-active) .tooltipster-arrow-background {
   top: -9px !important;
   border-bottom-color: #ffffff !important;
 }
@@ -8590,8 +7730,7 @@ address.mec-events-address {
   top: 0 !important;
 }
 
-.tooltipster-sidetip.tooltipster-shadow.tooltipster-left:not(.uael-tooltipster-active)
-  .tooltipster-arrow-border {
+.tooltipster-sidetip.tooltipster-shadow.tooltipster-left:not(.uael-tooltipster-active) .tooltipster-arrow-border {
   border-left-color: #e2e3e4 !important;
   left: -1px !important;
   top: -1px !important;
@@ -8789,9 +7928,7 @@ address.mec-events-address {
 }
 
 .mec-calendar.mec-calendar-daily .mec-calendar-d-table dl dt.mec-table-d-current,
-.mec-calendar.mec-calendar-daily
-  .mec-calendar-d-table
-  .mec-daily-view-day.mec-daily-view-day-active {
+.mec-calendar.mec-calendar-daily .mec-calendar-d-table .mec-daily-view-day.mec-daily-view-day-active {
   font-weight: 700;
   background: #fafafa;
   color: #40d9f1;
@@ -9025,10 +8162,7 @@ li.mec-no-event-found .mec-event-title {
   height: 4px;
 }
 
-.mec-widget
-  .mec-calendar.mec-event-calendar-classic
-  .mec-calendar-events-sec
-  .mec-table-side-title {
+.mec-widget .mec-calendar.mec-event-calendar-classic .mec-calendar-events-sec .mec-table-side-title {
   font-size: 14px;
 }
 
@@ -9438,6 +8572,7 @@ li.mec-no-event-found .mec-event-title {
 }
 
 @media (min-width: 783px) {
+
   .mec-fes-form .mec-col-1,
   .mec-fes-form .mec-col-2,
   .mec-fes-form .mec-col-3,
@@ -9578,6 +8713,7 @@ li.mec-no-event-found .mec-event-title {
 }
 
 @media (max-width: 480px) {
+
   .mec-fes-list .mec-fes-list-top-actions,
   .mec-fes-list ul {
     padding-left: 0;
@@ -9645,6 +8781,7 @@ li.mec-no-event-found .mec-event-title {
 }
 
 @media (max-width: 600px) {
+
   .mec-fes-list ul li .mec-fes-event-remove,
   .mec-fes-list ul li .mec-fes-event-view a,
   .mec-fes-list ul li .mec-fes-event-export a,
@@ -9744,7 +8881,7 @@ li.mec-no-event-found .mec-event-title {
   line-height: 36px;
 }
 
-.mec-fes-form input + label {
+.mec-fes-form input+label {
   line-height: 24px;
   padding: 0;
   margin: 0;
@@ -9752,7 +8889,7 @@ li.mec-no-event-found .mec-event-title {
   vertical-align: middle;
 }
 
-#wrap .mec-fes-form input + label {
+#wrap .mec-fes-form input+label {
   padding-top: 0;
 }
 
@@ -9805,12 +8942,8 @@ li.mec-no-event-found .mec-event-title {
 
 .lity-content .mec-events-meta-group-booking input[type="date"]::-webkit-calendar-picker-indicator,
 .lity-content #mec_fes_form input[type="date"]::-webkit-calendar-picker-indicator,
-.mec-single-event
-  .mec-events-meta-group-booking
-  input[type="date"]::-webkit-calendar-picker-indicator,
-.mec-events-meta-group-booking
-  .mec-booking-shortcode
-  input[type="date"]::-webkit-calendar-picker-indicator,
+.mec-single-event .mec-events-meta-group-booking input[type="date"]::-webkit-calendar-picker-indicator,
+.mec-events-meta-group-booking .mec-booking-shortcode input[type="date"]::-webkit-calendar-picker-indicator,
 #mec_fes_form input[type="date"]::-webkit-calendar-picker-indicator {
   background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTQ1IDc5LjE2MzQ5OSwgMjAxOC8wOC8xMy0xNjo0MDoyMiAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTkgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjA0QjQ2N0QwQjQ4MzExRUE4RDdFREZDRTUxMUVERTM5IiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjA0QjQ2N0QxQjQ4MzExRUE4RDdFREZDRTUxMUVERTM5Ij4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MDRCNDY3Q0VCNDgzMTFFQThEN0VERkNFNTExRURFMzkiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MDRCNDY3Q0ZCNDgzMTFFQThEN0VERkNFNTExRURFMzkiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz6WW71PAAAGIklEQVR42qRXS28bVRQ+586Mx3ZC1DSpVFojRU2CqMIGiSKxAVoUduzoDjYIlhU/Av4AYsdjRXfkD0Cjom6QqIqEqEhRo1aRkkZpkpY6j7GduQ++c2dsj1+BlInGztxvzj3nfudpPlM/otc2W2QjJmU0rZ0uUytUpBxNnN9p/FYhctF0+XUi2nPGkX7WJOfwxNRzqXxtbfI4eUvm7xY1o4iiI0d/vFiisL2BgTAz0yvbCRnLhP0uNEtqrgUseZRcwPPvJewaldSA8o48vo+Tj0U+CnrkOgZwvkEzEmGm1PF9fzK5Y3U/YlllsjRUv19zXl7571HyAjooc/kmYerpcmPO0Mfa0SyxEtji44ynOjPuayjecd7M46/MQOdGyIs9ThnzMLD0XRrwIdeetmoLm41fWiG95Ar792tydLLrOPkAlpW027hbG3+T37lf/5EtvYcXUuhfBjWp9wHRBO63c5lbEkQj2B92uaHy4l2EAQ66GFgbmiD4id/9q661ooAtf8rsvmUEilAHEqcgtJvvNq3YPTkJA8PksT9ZFxD8+4my9pvAOqOMxIMoJHfPZoJkJNiYat3duOac6hxt1N3GR8lnt0O623s+c2CVZEGaZ8Oks1mElvxu7hGYaQjpHLpH3q/YFQE7Oh5Y6gFTaHhAXlasxmoWpZO5L9Ow4DTv+UBZBAkWNO+CqhkbSOzaXWWyzY+n3WcACdVscnklz5CHYsmv1L/RyUJ/cs7zdT3Ey8pTgw/QgNNuS4XjNMvffwvBNmwDH+pdeZ3J+1qDdW15vS0iBhjZWzF9ge8HWl7zNLluYhP/9/jvFANXyL+ufF4jZvOCZsK8isp77+sixf10n7QQjJT39bBtjzdA5chtLG61n7kgk6UvDy29z4HL4c/ifkN0hYV+cA3Bc7stKAfossgSSF06+3HOu8QovE8eThDlv4pu1TbUOpqySDNUKMSDQRIo6QgVRHbFcID1mCITUGgNKLI9uBbcCC59xUi+DsiHBq0XOLb3utqOUYV+LglH9XJASRAsRNqt4xHVj59Exqw3AlrYi0PaiwNqBKoX12Y9iQSP/GkD4xZC0yt/GPFCvZzhUBoMtmPftRwMEEtpupy2auzadLraXtlNoXLhKQYLbjrWRx0cXNf24wxPSmWw5aZPNXSNOi5ytXqZpjTwSqs3PsJi0I61LG29EFG9GtyaeqgvxU17TrAkDjbvnq/eKcTYrbcemi5eHoI/OLgUt7r4n+cqd04llmZ3mjBSDQ4kYtERLLz4OKGt0xGKA9+RgiSGSRV7+UlCVvka72lEvHRx04vLGW2f/PzTBk3VtddRrGlhMXVaIdME5sLJ3ZQOTPQBNqj58uzcxsXtZEkqmQ7IB9ihLeA2x6FQqyG4cRuvbh8uNZSigzBCALhBBtrjkwjjQItQ+kPXWY6eBuEi/lmOlC8kvTh38ZLH3QC+y+GiIl4OqbeZ9RggQZgcVIXe1ep48jPkz/oGw7x1yoytIq1o59AH1Wp1rNHBSXA9tip87zYyvFzpx8dXLVTvqySvhUMNsN6+1ERrrNQVQs57H4K6cR35GrapffICb16RpO7glOHrrQyvjHXxQHB0/j1ugV0LpcFwAzS4n6hiZoIvEp2znwcSigfGJhxpMmseLc0dvFjcvRuLvdEdNyl2+0DOALwE863TM/jnJqhfQa6v4AfJzUNOZ/aVlhqIUpoO4PuU4XFsqFrSM866m9hxBXSvWPx/wHpGqA96Vfa5AH9HnMjYNI96dbkwaVzcCw/nAK+xHzp4Hp89eD04nENzX6v4cYrnrVWXXQF/Fh7MQfWasmogCNsmaT+qwD0g4gYsuYqnWlboeKMUumUr86LycxdwdRUb+zQTvAzcgL0jLXFkbkQUX5UKyFTE2bvZD0a5B8SAUu6dPf+7AInssja2VPSZRud2Ni/NKse5M2VQqkO4BxSzZLmV8Wwpa8S9OHsK3X6+Lc7F/JidOwvkc7z3FbIgzd7smy1c35TEg7NGrg6Ucs88UsCliOLHH1+Td8HYFl++W//QxfT9iSee/3lJWy5X6aMwtK3rTVWJUU4/g4GzdLLp73ku8cEDxNmXUZhc/0eAAQAVgX0RHvvILQAAAABJRU5ErkJggg==");
   background-position: center;
@@ -9854,6 +8987,7 @@ li.mec-no-event-found .mec-event-title {
 }
 
 @media only screen and (min-width: 961px) {
+
   .mec-fes-form #mec-event-data input[type="date"],
   .mec-fes-form input[type="text"],
   .mec-fes-list input[type="search"],
@@ -9869,6 +9003,7 @@ li.mec-no-event-found .mec-event-title {
 }
 
 @media only screen and (max-width: 768px) {
+
   .mec-fes-form #mec-event-data input[type="date"],
   .mec-fes-form input[type="text"],
   .mec-fes-list input[type="search"],
@@ -10168,6 +9303,7 @@ li.mec-no-event-found .mec-event-title {
 }
 
 @media only screen and (min-width: 961px) {
+
   .mec-fes-form .mec-fes-form-cntt,
   .mec-fes-form .mec-fes-form-sdbr {
     width: 68%;
@@ -10262,10 +9398,7 @@ li.mec-no-event-found .mec-event-title {
   padding: 9px 26px;
 }
 
-.mec-fes-form
-  #mec_meta_box_hourly_schedule_days
-  .mec-form-row
-  button.mec-add-hourly-schedule-button {
+.mec-fes-form #mec_meta_box_hourly_schedule_days .mec-form-row button.mec-add-hourly-schedule-button {
   font-size: 12px;
   height: 30px;
   line-height: 25px;
@@ -10379,13 +9512,7 @@ li.mec-no-event-found .mec-event-title {
   width: max-content;
 }
 
-.mec-fes-form
-  .mec-attendees-wrapper
-  .mec-attendees-list
-  .mec-booking-attendees-tooltip
-  ul
-  li:last-child
-  a {
+.mec-fes-form .mec-attendees-wrapper .mec-attendees-list .mec-booking-attendees-tooltip ul li:last-child a {
   margin-bottom: 0;
 }
 
@@ -10544,26 +9671,14 @@ select#mec_fes_selected_group {
   width: calc((100% - 36px) * 2 / 5) !important;
 }
 
-.mec-search-form
-  span.select2.select2-container--open.select2-container--below
-  .selection
-  .select2-selection.select2-selection--single,
-.mec-search-form
-  span.select2.select2-container--open.select2-container--below
-  .selection
-  .select2-selection.select2-selection--multiple {
+.mec-search-form span.select2.select2-container--open.select2-container--below .selection .select2-selection.select2-selection--single,
+.mec-search-form span.select2.select2-container--open.select2-container--below .selection .select2-selection.select2-selection--multiple {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
 
-.mec-search-form
-  span.select2.select2-container--open.select2-container--above
-  .selection
-  .select2-selection.select2-selection--single,
-.mec-search-form
-  span.select2.select2-container--open.select2-container--above
-  .selection
-  .select2-selection.select2-selection--multiple {
+.mec-search-form span.select2.select2-container--open.select2-container--above .selection .select2-selection.select2-selection--single,
+.mec-search-form span.select2.select2-container--open.select2-container--above .selection .select2-selection.select2-selection--multiple {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
@@ -10588,35 +9703,15 @@ select#mec_fes_selected_group {
   border-radius: 0;
 }
 
-.mec-search-form
-  .mec-dropdown-wrap
-  span.select2
-  .selection
-  .select2-selection
-  .select2-selection__rendered,
-.mec-search-form
-  .mec-date-search
-  span.select2
-  .selection
-  .select2-selection
-  .select2-selection__rendered {
+.mec-search-form .mec-dropdown-wrap span.select2 .selection .select2-selection .select2-selection__rendered,
+.mec-search-form .mec-date-search span.select2 .selection .select2-selection .select2-selection__rendered {
   color: #777;
   line-height: 34px;
   padding: 0 0 0 5px;
 }
 
-.mec-search-form
-  .mec-dropdown-wrap
-  span.select2
-  .selection
-  .select2-selection
-  .select2-selection__arrow,
-.mec-search-form
-  .mec-date-search
-  span.select2
-  .selection
-  .select2-selection
-  .select2-selection__arrow {
+.mec-search-form .mec-dropdown-wrap span.select2 .selection .select2-selection .select2-selection__arrow,
+.mec-search-form .mec-date-search span.select2 .selection .select2-selection .select2-selection__arrow {
   height: 34px;
 }
 
@@ -10646,9 +9741,7 @@ body:has(.mec-search-form) .select2-container--default .select2-results__option-
   background-color: #efefef !important;
 }
 
-body:has(.mec-search-form)
-  .select2-container--default
-  .select2-results__option--highlighted.select2-results__option--selectable {
+body:has(.mec-search-form) .select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
   background-color: var(--mec-color-skin) !important;
 }
 
@@ -10656,67 +9749,29 @@ body:has(.mec-search-form) .select2-results__option {
   font-size: 13px !important;
 }
 
-.mec-modern-search-bar
-  .mec-search-form
-  .mec-dropdown-wrap
-  span.select2
-  .selection
-  .select2-selection,
-.mec-modern-search-bar
-  .mec-search-form
-  .mec-date-search
-  span.select2
-  .selection
-  .select2-selection {
+.mec-modern-search-bar .mec-search-form .mec-dropdown-wrap span.select2 .selection .select2-selection,
+.mec-modern-search-bar .mec-search-form .mec-date-search span.select2 .selection .select2-selection {
   min-height: 45px;
   height: 45px;
   border: 1px solid #ccc;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) inset;
 }
 
-.mec-modern-search-bar
-  .mec-search-form
-  .mec-dropdown-wrap
-  span.select2
-  .selection
-  .select2-selection
-  .select2-selection__rendered,
-.mec-modern-search-bar
-  .mec-search-form
-  .mec-date-search
-  span.select2
-  .selection
-  .select2-selection
-  .select2-selection__rendered {
+.mec-modern-search-bar .mec-search-form .mec-dropdown-wrap span.select2 .selection .select2-selection .select2-selection__rendered,
+.mec-modern-search-bar .mec-search-form .mec-date-search span.select2 .selection .select2-selection .select2-selection__rendered {
   line-height: 43px;
 }
 
-.mec-modern-search-bar
-  .mec-search-form
-  .mec-dropdown-wrap
-  span.select2
-  .selection
-  .select2-selection
-  .select2-selection__arrow,
-.mec-modern-search-bar
-  .mec-search-form
-  .mec-date-search
-  span.select2
-  .selection
-  .select2-selection
-  .select2-selection__arrow {
+.mec-modern-search-bar .mec-search-form .mec-dropdown-wrap span.select2 .selection .select2-selection .select2-selection__arrow,
+.mec-modern-search-bar .mec-search-form .mec-date-search span.select2 .selection .select2-selection .select2-selection__arrow {
   height: 43px;
 }
 
-body:has(.mec-modern-search-bar .mec-search-form)
-  .select2-container--open
-  .select2-dropdown--below {
+body:has(.mec-modern-search-bar .mec-search-form) .select2-container--open .select2-dropdown--below {
   border: 1px solid #ccc;
 }
 
-body:has(.mec-modern-search-bar .mec-search-form)
-  .select2-container--open
-  .select2-dropdown--above {
+body:has(.mec-modern-search-bar .mec-search-form) .select2-container--open .select2-dropdown--above {
   border: 1px solid #ccc;
 }
 
@@ -10861,10 +9916,7 @@ body:has(.mec-modern-search-bar .mec-search-form)
   line-height: 20px;
 }
 
-.mec-wrap
-  .mec-checkboxes-search
-  .mec-searchbar-category-wrap
-  .select2-container.select2-container--default {
+.mec-wrap .mec-checkboxes-search .mec-searchbar-category-wrap .select2-container.select2-container--default {
   width: calc(100% - 36px) !important;
 }
 
@@ -10874,47 +9926,24 @@ body:has(.mec-modern-search-bar .mec-search-form)
   margin: 0;
 }
 
-.mec-wrap
-  .mec-checkboxes-search
-  .mec-searchbar-category-wrap
-  .select2-container
-  .select2-selection--multiple
-  ul,
-.mec-wrap
-  .mec-checkboxes-search
-  .mec-searchbar-category-wrap
-  .select2-container.select2-container--default {
+.mec-wrap .mec-checkboxes-search .mec-searchbar-category-wrap .select2-container .select2-selection--multiple ul,
+.mec-wrap .mec-checkboxes-search .mec-searchbar-category-wrap .select2-container.select2-container--default {
   height: auto;
   overflow: unset;
 }
 
-.mec-wrap
-  .mec-checkboxes-search
-  .mec-searchbar-category-wrap
-  .select2-container
-  .select2-selection--multiple
-  ul {
+.mec-wrap .mec-checkboxes-search .mec-searchbar-category-wrap .select2-container .select2-selection--multiple ul {
   display: block;
 }
 
-.mec-wrap
-  .mec-checkboxes-search
-  .mec-searchbar-category-wrap
-  .select2-container
-  .select2-selection--multiple {
+.mec-wrap .mec-checkboxes-search .mec-searchbar-category-wrap .select2-container .select2-selection--multiple {
   border: unset;
   width: 100%;
   height: 0 !important;
   border-radius: 0;
 }
 
-.mec-wrap
-  .mec-checkboxes-search
-  .mec-searchbar-category-wrap
-  .select2-container
-  .select2-selection--multiple
-  ul
-  li {
+.mec-wrap .mec-checkboxes-search .mec-searchbar-category-wrap .select2-container .select2-selection--multiple ul li {
   line-height: 12px !important;
   max-height: 20px !important;
   width: auto;
@@ -10922,12 +9951,7 @@ body:has(.mec-modern-search-bar .mec-search-form)
   margin-top: 5px;
 }
 
-.mec-wrap
-  .mec-checkboxes-search
-  .mec-searchbar-category-wrap
-  .select2-container
-  .select2-selection--multiple
-  .select2-selection__choice {
+.mec-wrap .mec-checkboxes-search .mec-searchbar-category-wrap .select2-container .select2-selection--multiple .select2-selection__choice {
   letter-spacing: 0;
   color: #777;
   text-transform: capitalize;
@@ -10944,12 +9968,7 @@ body:has(.mec-modern-search-bar .mec-search-form)
   text-transform: uppercase;
 }
 
-.mec-wrap
-  .mec-checkboxes-search
-  .mec-searchbar-category-wrap
-  .select2-container
-  .select2-selection--multiple
-  .select2-selection__choice__remove {
+.mec-wrap .mec-checkboxes-search .mec-searchbar-category-wrap .select2-container .select2-selection--multiple .select2-selection__choice__remove {
   color: #777;
 }
 
@@ -10960,6 +9979,7 @@ body:has(.mec-modern-search-bar .mec-search-form)
 }
 
 @media only screen and (max-width: 960px) {
+
   .mec-wrap .mec-totalcal-box .col-md-3,
   .mec-wrap .mec-totalcal-box .col-md-4,
   .mec-wrap .mec-totalcal-box .col-md-5 {
@@ -10994,12 +10014,7 @@ body:has(.mec-modern-search-bar .mec-search-form)
     float: none;
   }
 
-  .mec-wrap
-    .mec-checkboxes-search
-    .mec-searchbar-category-wrap
-    .select2-container
-    .select2-selection--multiple
-    .select2-selection__choice {
+  .mec-wrap .mec-checkboxes-search .mec-searchbar-category-wrap .select2-container .select2-selection--multiple .select2-selection__choice {
     display: block;
     max-width: 100%;
     white-space: break-spaces;
@@ -11065,6 +10080,7 @@ body:has(.mec-modern-search-bar .mec-search-form)
 }
 
 @media only screen and (min-width: 961px) {
+
   .mec-wrap.mec-sm959 .mec-totalcal-box .col-md-3,
   .mec-wrap .mec-wrap.mec-sm959 .mec-totalcal-box .col-md-5 {
     padding-bottom: 20px;
@@ -11129,6 +10145,7 @@ body:has(.mec-modern-search-bar .mec-search-form)
 }
 
 @media only screen and (max-width: 1200px) {
+
   .post-type-archive-mec-events .mec-totalcal-box .col-md-3,
   .post-type-archive-mec-events .mec-totalcal-box .col-md-4 {
     width: 100%;
@@ -11474,6 +10491,7 @@ body:has(.mec-modern-search-bar .mec-search-form)
 }
 
 @media only screen and (max-width: 781px) {
+
   .mec-search-form .mec-dropdown-search,
   .mec-search-form .mec-text-input-search,
   .mec-search-form .mec-date-search {
@@ -11507,6 +10525,7 @@ body:has(.mec-modern-search-bar .mec-search-form)
 
 /* Final fix full calendar shortcode */
 @media only screen and (min-width: 961px) and (max-width: 1200px) {
+
   .post-type-archive-mec-events .mec-totalcal-box .col-md-3,
   .post-type-archive-mec-events .mec-totalcal-box .col-md-4,
   .post-type-archive-mec-events .mec-totalcal-box .col-md-5 {
@@ -11529,6 +10548,7 @@ body:has(.mec-modern-search-bar .mec-search-form)
 }
 
 @media only screen and (max-width: 960px) {
+
   .mec-full-calendar-wrap .mec-totalcal-box .col-md-4,
   .post-type-archive-mec-events .mec-totalcal-box .col-md-4 {
     padding: 0 10px;
@@ -11646,6 +10666,7 @@ body:has(.mec-modern-search-bar .mec-search-form)
 }
 
 @media (max-width: 480px) {
+
   .mec-search-form .mec-date-search.with-mec-time-picker,
   .mec-search-form .mec-time-picker-search.with-mec-date-search {
     width: 100%;
@@ -11805,10 +10826,7 @@ body:has(.mec-fes-form, .mec-search-form) .ui-datepicker .ui-datepicker-current-
   color: #fff;
 }
 
-body:has(.mec-fes-form, .mec-search-form)
-  .ui-datepicker
-  .ui-datepicker-calendar
-  .ui-datepicker-unselectable:hover {
+body:has(.mec-fes-form, .mec-search-form) .ui-datepicker .ui-datepicker-calendar .ui-datepicker-unselectable:hover {
   background-color: #fff;
   cursor: default;
 }
@@ -11853,8 +10871,7 @@ body:has(.mec-fes-form, .mec-search-form)
   height: 97px;
   line-height: 2.3;
   padding-right: 85px;
-  border-radius: var(--mec-secondary-border-radius) var(--mec-secondary-border-radius)
-    var(--mec-secondary-border-radius) 0;
+  border-radius: var(--mec-secondary-border-radius) var(--mec-secondary-border-radius) var(--mec-secondary-border-radius) 0;
 }
 
 .event-carousel-type1-head .mec-event-date-carousel:after {
@@ -11941,10 +10958,7 @@ body:has(.mec-fes-form, .mec-search-form)
   width: 255px;
 }
 
-.mec-skin-carousel-container
-  .mec-multiple-event
-  .event-carousel-type1-head
-  .mec-event-date-info-year,
+.mec-skin-carousel-container .mec-multiple-event .event-carousel-type1-head .mec-event-date-info-year,
 .mec-skin-carousel-container .mec-multiple-event .event-carousel-type1-head .mec-event-date-info {
   left: 175px;
 }
@@ -11971,7 +10985,7 @@ body:has(.mec-fes-form, .mec-search-form)
 }
 
 @media only screen and (min-width: 768px) and (max-width: 1000px),
-  (min-width: 270px) and (max-width: 448px) {
+(min-width: 270px) and (max-width: 448px) {
   .event-carousel-type1-head .mec-event-date-carousel {
     font-size: 25px;
     line-height: 2.5;
@@ -12053,7 +11067,7 @@ body:has(.mec-fes-form, .mec-search-form)
   margin-right: auto;
 }
 
-.event-carousel-type2-head .mec-event-footer-carousel-type2 .mec-event-sharing-wrap > li {
+.event-carousel-type2-head .mec-event-footer-carousel-type2 .mec-event-sharing-wrap>li {
   border: none;
   -webkit-transition: all 0.25s ease;
   transition: all 0.25s ease;
@@ -12164,6 +11178,7 @@ body:has(.mec-fes-form, .mec-search-form)
 }
 
 @media only screen and (min-width: 320px) and (max-width: 768px) {
+
   .mec-event-carousel-type2 .owl-prev,
   .mec-event-carousel-type2 .owl-next,
   .mec-event-carousel-type3 .owl-prev,
@@ -12474,7 +11489,7 @@ body:has(.mec-fes-form, .mec-search-form)
   margin-top: 0;
 }
 
-.mec-wrap .mec-event-countdown-style1 .mec-event-countdown-part2 .mec-event-countdown > div {
+.mec-wrap .mec-event-countdown-style1 .mec-event-countdown-part2 .mec-event-countdown>div {
   display: inline-block;
 }
 
@@ -12581,6 +11596,7 @@ body:has(.mec-fes-form, .mec-search-form)
 }
 
 @media only screen and (min-width: 1200px) {
+
   .mec-wrap.mec-sm959 .mec-event-countdown-style1 .mec-event-countdown-part1,
   .mec-wrap.mec-sm959 .mec-event-countdown-style1 .mec-event-countdown-part2,
   .mec-wrap.mec-sm959 .mec-event-countdown-style1 .mec-event-countdown-part3 {
@@ -12601,6 +11617,7 @@ body:has(.mec-fes-form, .mec-search-form)
 }
 
 @media (max-width: 960px) {
+
   .mec-wrap .mec-event-countdown-style1 .mec-event-countdown-part1,
   .mec-wrap .mec-event-countdown-style1 .mec-event-countdown-part2,
   .mec-wrap .mec-event-countdown-style1 .mec-event-countdown-part3 {
@@ -12684,7 +11701,7 @@ body:has(.mec-fes-form, .mec-search-form)
   margin-top: 0;
 }
 
-.mec-wrap .mec-event-countdown-style2 .mec-event-countdown-part2 .mec-event-countdown > div {
+.mec-wrap .mec-event-countdown-style2 .mec-event-countdown-part2 .mec-event-countdown>div {
   display: inline-block;
 }
 
@@ -12869,11 +11886,7 @@ body:has(.mec-fes-form, .mec-search-form)
   display: block;
 }
 
-.mec-wrap
-  .mec-event-countdown-style3
-  .mec-event-countdown-part1
-  .mec-event-countdown-part-title
-  span {
+.mec-wrap .mec-event-countdown-style3 .mec-event-countdown-part1 .mec-event-countdown-part-title span {
   font-weight: 400;
   display: block;
 }
@@ -12887,7 +11900,7 @@ body:has(.mec-fes-form, .mec-search-form)
   margin-top: -10px;
 }
 
-.mec-wrap .mec-event-countdown-style3 .mec-event-countdown-part2 .mec-event-countdown > div {
+.mec-wrap .mec-event-countdown-style3 .mec-event-countdown-part2 .mec-event-countdown>div {
   display: inline-block;
 }
 
@@ -12976,8 +11989,7 @@ body:has(.mec-fes-form, .mec-search-form)
   position: absolute;
   left: -27px;
   top: 146px;
-  border-radius: var(--mec-secondary-border-radius) var(--mec-secondary-border-radius)
-    var(--mec-secondary-border-radius) 0;
+  border-radius: var(--mec-secondary-border-radius) var(--mec-secondary-border-radius) var(--mec-secondary-border-radius) 0;
 }
 
 .mec-event-countdown-style3 .mec-event-date:after {
@@ -13075,6 +12087,7 @@ body:has(.mec-fes-form, .mec-search-form)
 }
 
 @media (max-width: 959px) {
+
   .mec-wrap .mec-event-countdown-style3 .mec-event-countdown-part1,
   .mec-wrap .mec-event-countdown-style3 .mec-event-countdown-part2 {
     width: 100%;
@@ -13098,11 +12111,7 @@ body:has(.mec-fes-form, .mec-search-form)
     display: none;
   }
 
-  .mec-wrap
-    .mec-event-countdown-style3
-    .mec-event-countdown-part1
-    .mec-event-countdown-part-title
-    span {
+  .mec-wrap .mec-event-countdown-style3 .mec-event-countdown-part1 .mec-event-countdown-part-title span {
     display: inline;
   }
 
@@ -13295,6 +12304,7 @@ body:has(.mec-fes-form, .mec-search-form)
 }
 
 @media only screen and (max-width: 960px) {
+
   .mec-slider-t1 .mec-slider-t1-img,
   .mec-slider-t1 .mec-slider-t1-content {
     width: 100%;
@@ -13474,6 +12484,7 @@ body:has(.mec-fes-form, .mec-search-form)
 }
 
 @media only screen and (max-width: 960px) {
+
   .mec-slider-t2 .mec-slider-t2-img,
   .mec-slider-t2 .mec-slider-t2-content {
     width: 100%;
@@ -13664,6 +12675,7 @@ body:has(.mec-fes-form, .mec-search-form)
 }
 
 @media only screen and (max-width: 767px) {
+
   .mec-slider-t3-wrap .mec-owl-theme .owl-nav .owl-prev,
   .mec-slider-t3-wrap .mec-owl-theme .owl-nav .owl-next {
     top: 40px;
@@ -14043,21 +13055,21 @@ body:has(.mec-fes-form, .mec-search-form)
   border: 1px solid #e6e6e6;
 }
 
-.mec-single-modern .mec-single-event-bar > div {
+.mec-single-modern .mec-single-event-bar>div {
   display: table-cell;
 }
 
-.mec-single-modern .mec-single-event-bar > div i {
+.mec-single-modern .mec-single-event-bar>div i {
   font-size: 20px;
   vertical-align: middle;
 }
 
-.mec-single-modern .mec-single-event-bar > div .mec-time-comment {
+.mec-single-modern .mec-single-event-bar>div .mec-time-comment {
   font-size: 12px;
   color: #999;
 }
 
-.mec-single-modern .mec-single-event-bar > div h3 {
+.mec-single-modern .mec-single-event-bar>div h3 {
   text-transform: uppercase;
   font-size: 16px;
   font-weight: bold;
@@ -14067,7 +13079,7 @@ body:has(.mec-fes-form, .mec-search-form)
   padding-left: 10px;
 }
 
-.mec-single-modern .mec-single-event-bar > div dd {
+.mec-single-modern .mec-single-event-bar>div dd {
   font-size: 14px;
   color: #8d8d8d;
   padding-left: 34px;
@@ -14109,12 +13121,12 @@ body:has(.mec-fes-form, .mec-search-form)
 }
 
 @media only screen and (max-width: 960px) {
-  .mec-single-modern .mec-single-event-bar > div {
+  .mec-single-modern .mec-single-event-bar>div {
     display: block;
   }
 }
 
-.lity-content > div {
+.lity-content>div {
   overflow: auto;
   max-height: 80vh !important;
   border-radius: var(--mec-primary-border-radius);
@@ -14190,11 +13202,11 @@ body:has(.mec-fes-form, .mec-search-form)
   margin: 0 auto;
 }
 
-.mec-single-modal.mec-single-modern .mec-single-event-bar > div dd {
+.mec-single-modal.mec-single-modern .mec-single-event-bar>div dd {
   font-size: 13px;
 }
 
-.mec-single-modal.mec-single-modern .mec-single-event-bar > div h3 {
+.mec-single-modal.mec-single-modern .mec-single-event-bar>div h3 {
   font-size: 15px;
 }
 
@@ -14229,11 +13241,11 @@ body:has(.mec-fes-form, .mec-search-form)
   }
 
   /* Margin on Sticky Sidebar */
-  .single-mec-events .mec-sticky .col-md-8 > div:last-child {
+  .single-mec-events .mec-sticky .col-md-8>div:last-child {
     margin-bottom: 30px;
   }
 
-  .single-mec-events .mec-single-modern.mec-sticky .col-md-8 > div:last-child {
+  .single-mec-events .mec-single-modern.mec-sticky .col-md-8>div:last-child {
     margin-bottom: 70px;
   }
 }
@@ -14262,29 +13274,13 @@ body:has(.mec-fes-form, .mec-search-form)
   }
 }
 
-.mec-single-modal
-  .mec-event-export-module.mec-frontbox
-  .mec-event-exporting
-  .mec-export-details
-  ul
-  li,
-.mec-single-modal
-  .mec-event-export-module.mec-frontbox
-  .mec-event-exporting
-  .mec-export-details
-  ul
-  li
-  a.mec-events-button {
+.mec-single-modal .mec-event-export-module.mec-frontbox .mec-event-exporting .mec-export-details ul li,
+.mec-single-modal .mec-event-export-module.mec-frontbox .mec-event-exporting .mec-export-details ul li a.mec-events-button {
   display: block;
   text-align: center;
 }
 
-.mec-single-modal
-  .mec-event-export-module.mec-frontbox
-  .mec-event-exporting
-  .mec-export-details
-  ul
-  li:first-child {
+.mec-single-modal .mec-event-export-module.mec-frontbox .mec-event-exporting .mec-export-details ul li:first-child {
   margin-bottom: 20px;
 }
 
@@ -14444,6 +13440,7 @@ body .lity-close:active {
 }
 
 @media (max-width: 480px) {
+
   .featherlight .featherlight-content,
   body .mec-modal-wrap {
     max-width: 100%;
@@ -14471,11 +13468,7 @@ body .lity-close:active {
     padding: 20px 2px 20px 2px !important;
   }
 
-  body
-    .featherlight-content
-    .mec-modal-wrap
-    .mec-single-modal
-    .flip-clock-divider:not(:first-child) {
+  body .featherlight-content .mec-modal-wrap .mec-single-modal .flip-clock-divider:not(:first-child) {
     width: 3px !important;
   }
 }
@@ -14723,7 +13716,7 @@ body .lity-close:active {
   border-radius: var(--mec-primary-border-radius);
 }
 
-.mec-agenda-event > * {
+.mec-agenda-event>* {
   display: inline-block;
 }
 
@@ -14817,6 +13810,7 @@ body .lity-close:active {
 }
 
 @media only screen and (max-width: 767px) {
+
   .mec-agenda-date-wrap,
   .mec-agenda-events-wrap {
     float: none;
@@ -15001,6 +13995,7 @@ body .lity-close:active {
 }
 
 @media only screen and (max-width: 767px) {
+
   .mec-yearly-view-wrap .mec-yearly-calendar-sec,
   .mec-yearly-view-wrap .mec-yearly-agenda-sec {
     width: 100%;
@@ -16366,13 +15361,11 @@ body .lity-close:active {
 /* shadow */
 .flip-clock-wrapper ul.play li.flip-clock-before .up .shadow {
   background: -moz-linear-gradient(top, rgba(0, 0, 0, 0.1) 0%, rgba(64, 64, 64, 0.68) 100%);
-  background: -webkit-gradient(
-    linear,
-    left top,
-    left bottom,
-    color-stop(0%, rgba(0, 0, 0, 0.1)),
-    color-stop(100%, rgba(64, 64, 64, 0.68))
-  );
+  background: -webkit-gradient(linear,
+      left top,
+      left bottom,
+      color-stop(0%, rgba(0, 0, 0, 0.1)),
+      color-stop(100%, rgba(64, 64, 64, 0.68)));
   background: linear, top, rgba(0, 0, 0, 0.1) 0%, rgba(64, 64, 64, 0.68) 100%;
   background: -o-linear-gradient(top, rgba(0, 0, 0, 0.1) 0%, rgba(64, 64, 64, 0.68) 100%);
   background: -ms-linear-gradient(top, rgba(0, 0, 0, 0.1) 0%, rgba(64, 64, 64, 0.68) 100%);
@@ -16384,13 +15377,11 @@ body .lity-close:active {
 
 .flip-clock-wrapper ul.play li.flip-clock-active .up .shadow {
   background: -moz-linear-gradient(top, rgba(0, 0, 0, 0.1) 0%, rgba(64, 64, 64, 0.68) 100%);
-  background: -webkit-gradient(
-    linear,
-    left top,
-    left bottom,
-    color-stop(0%, rgba(0, 0, 0, 0.1)),
-    color-stop(100%, rgba(64, 64, 64, 0.68))
-  );
+  background: -webkit-gradient(linear,
+      left top,
+      left bottom,
+      color-stop(0%, rgba(0, 0, 0, 0.1)),
+      color-stop(100%, rgba(64, 64, 64, 0.68)));
   background: linear, top, rgba(0, 0, 0, 0.1) 0%, rgba(64, 64, 64, 0.68) 100%;
   background: -o-linear-gradient(top, rgba(0, 0, 0, 0.1) 0%, rgba(64, 64, 64, 0.68) 100%);
   background: -ms-linear-gradient(top, rgba(0, 0, 0, 0.1) 0%, rgba(64, 64, 64, 0.68) 100%);
@@ -16403,13 +15394,11 @@ body .lity-close:active {
 /*down*/
 .flip-clock-wrapper ul.play li.flip-clock-before .down .shadow {
   background: -moz-linear-gradient(top, rgba(64, 64, 64, 0.68) 0%, rgba(0, 0, 0, 0.1) 100%);
-  background: -webkit-gradient(
-    linear,
-    left top,
-    left bottom,
-    color-stop(0%, rgba(64, 64, 64, 0.68)),
-    color-stop(100%, rgba(0, 0, 0, 0.1))
-  );
+  background: -webkit-gradient(linear,
+      left top,
+      left bottom,
+      color-stop(0%, rgba(64, 64, 64, 0.68)),
+      color-stop(100%, rgba(0, 0, 0, 0.1)));
   background: linear, top, rgba(64, 64, 64, 0.68) 0%, rgba(0, 0, 0, 0.1) 100%;
   background: -o-linear-gradient(top, rgba(64, 64, 64, 0.68) 0%, rgba(0, 0, 0, 0.1) 100%);
   background: -ms-linear-gradient(top, rgba(64, 64, 64, 0.68) 0%, rgba(0, 0, 0, 0.1) 100%);
@@ -16421,13 +15410,11 @@ body .lity-close:active {
 
 .flip-clock-wrapper ul.play li.flip-clock-active .down .shadow {
   background: -moz-linear-gradient(top, rgba(64, 64, 64, 0.68) 0%, rgba(0, 0, 0, 0.1) 100%);
-  background: -webkit-gradient(
-    linear,
-    left top,
-    left bottom,
-    color-stop(0%, rgba(64, 64, 64, 0.68)),
-    color-stop(100%, rgba(0, 0, 0, 0.1))
-  );
+  background: -webkit-gradient(linear,
+      left top,
+      left bottom,
+      color-stop(0%, rgba(64, 64, 64, 0.68)),
+      color-stop(100%, rgba(0, 0, 0, 0.1)));
   background: linear, top, rgba(64, 64, 64, 0.68) 0%, rgba(0, 0, 0, 0.1) 100%;
   background: -o-linear-gradient(top, rgba(64, 64, 64, 0.68) 0%, rgba(0, 0, 0, 0.1) 100%);
   background: -ms-linear-gradient(top, rgba(64, 64, 64, 0.68) 0%, rgba(0, 0, 0, 0.1) 100%);
@@ -16711,7 +15698,7 @@ body .lity-close:active {
   display: none;
 }
 
-.mec-toggle-month-divider .mec-month-divider + article {
+.mec-toggle-month-divider .mec-month-divider+article {
   margin-top: 20px;
 }
 
@@ -16719,10 +15706,7 @@ body .lity-close:active {
   border-top: none;
 }
 
-.mec-toggle-month-divider
-  .mec-event-list-accordion
-  .mec-month-divider:not(:first-of-type)
-  ~ article {
+.mec-toggle-month-divider .mec-event-list-accordion .mec-month-divider:not(:first-of-type)~article {
   display: none;
 }
 
@@ -16835,12 +15819,9 @@ body .lity-close:active {
     content: attr(data-style);
 } */
 
-.mec-wrap
-  article:not([class^="mec-event-countdown"]):not([class^="mec-event-cover-"]).mec-label-featured,
-.mec-wrap
-  article:not([class^="mec-event-countdown"]):not([class^="mec-event-cover-"]).mec-label-canceled,
-.mec-wrap
-  article:not([class^="mec-event-countdown"]):not([class^="mec-event-cover-"]).mec-label-custom {
+.mec-wrap article:not([class^="mec-event-countdown"]):not([class^="mec-event-cover-"]).mec-label-featured,
+.mec-wrap article:not([class^="mec-event-countdown"]):not([class^="mec-event-cover-"]).mec-label-canceled,
+.mec-wrap article:not([class^="mec-event-countdown"]):not([class^="mec-event-cover-"]).mec-label-custom {
   overflow: hidden;
   position: relative;
 }
@@ -16875,10 +15856,7 @@ body .lity-close:active {
   display: none;
 }
 
-.mec-wrap
-  article:not([class^="mec-event-countdown"]):not(
-    [class^="mec-event-cover-"]
-  ).mec-label-canceled:before {
+.mec-wrap article:not([class^="mec-event-countdown"]):not([class^="mec-event-cover-"]).mec-label-canceled:before {
   background: #de0404;
 }
 
@@ -17159,22 +16137,13 @@ ul.mec-categories li.mec-category a {
   z-index: 0;
 }
 
-.mec-wrap
-  [id^="mec_skin_events_"]
-  .mec-event-data-fields
-  .mec-data-fields-tooltip
-  .mec-data-fields-tooltip-box {
+.mec-wrap [id^="mec_skin_events_"] .mec-event-data-fields .mec-data-fields-tooltip .mec-data-fields-tooltip-box {
   overflow: hidden;
   border-radius: 11px;
   padding: 12px 0;
 }
 
-.mec-wrap
-  [id^="mec_skin_events_"]
-  .mec-event-data-fields
-  .mec-data-fields-tooltip
-  .mec-data-fields-tooltip-box
-  ul {
+.mec-wrap [id^="mec_skin_events_"] .mec-event-data-fields .mec-data-fields-tooltip .mec-data-fields-tooltip-box ul {
   width: 100%;
   height: fit-content;
   overflow-y: scroll;
@@ -17182,42 +16151,21 @@ ul.mec-categories li.mec-category a {
   text-align: left;
 }
 
-.mec-wrap
-  [id^="mec_skin_events_"]
-  .mec-event-data-fields
-  .mec-data-fields-tooltip
-  .mec-data-fields-tooltip-box
-  ul::-webkit-scrollbar-track {
+.mec-wrap [id^="mec_skin_events_"] .mec-event-data-fields .mec-data-fields-tooltip .mec-data-fields-tooltip-box ul::-webkit-scrollbar-track {
   background-color: #fafafa;
 }
 
-.mec-wrap
-  [id^="mec_skin_events_"]
-  .mec-event-data-fields
-  .mec-data-fields-tooltip
-  .mec-data-fields-tooltip-box
-  ul::-webkit-scrollbar {
+.mec-wrap [id^="mec_skin_events_"] .mec-event-data-fields .mec-data-fields-tooltip .mec-data-fields-tooltip-box ul::-webkit-scrollbar {
   width: 4px;
   background-color: #fafafa;
 }
 
-.mec-wrap
-  [id^="mec_skin_events_"]
-  .mec-event-data-fields
-  .mec-data-fields-tooltip
-  .mec-data-fields-tooltip-box
-  ul::-webkit-scrollbar-thumb {
+.mec-wrap [id^="mec_skin_events_"] .mec-event-data-fields .mec-data-fields-tooltip .mec-data-fields-tooltip-box ul::-webkit-scrollbar-thumb {
   background-color: #40d9f1;
   border-radius: 4px;
 }
 
-.mec-wrap
-  [id^="mec_skin_events_"]
-  .mec-event-data-fields
-  .mec-data-fields-tooltip
-  .mec-data-fields-tooltip-box
-  ul
-  .mec-event-data-field-item {
+.mec-wrap [id^="mec_skin_events_"] .mec-event-data-fields .mec-data-fields-tooltip .mec-data-fields-tooltip-box ul .mec-event-data-field-item {
   display: block;
   width: 100%;
   text-transform: none;
@@ -17230,63 +16178,31 @@ ul.mec-categories li.mec-category a {
   border-bottom: 1px dashed #e1e2e3;
 }
 
-.mec-wrap
-  [id^="mec_skin_events_"]
-  .mec-event-data-fields
-  .mec-data-fields-tooltip
-  .mec-data-fields-tooltip-box
-  ul
-  .mec-event-data-field-item:last-child {
+.mec-wrap [id^="mec_skin_events_"] .mec-event-data-fields .mec-data-fields-tooltip .mec-data-fields-tooltip-box ul .mec-event-data-field-item:last-child {
   border-bottom: none;
 }
 
-.mec-wrap
-  [id^="mec_skin_events_"]
-  .mec-data-fields-tooltip
-  .mec-data-fields-tooltip-box
-  ul
-  .mec-event-data-field-item
-  a {
+.mec-wrap [id^="mec_skin_events_"] .mec-data-fields-tooltip .mec-data-fields-tooltip-box ul .mec-event-data-field-item a {
   color: #40d9f1;
   font-size: 13px;
   line-height: 1.5;
   font-weight: 400;
 }
 
-.mec-wrap
-  [id^="mec_skin_events_"]
-  .mec-data-fields-tooltip
-  .mec-data-fields-tooltip-box
-  ul
-  .mec-event-data-field-item
-  a:hover {
+.mec-wrap [id^="mec_skin_events_"] .mec-data-fields-tooltip .mec-data-fields-tooltip-box ul .mec-event-data-field-item a:hover {
   color: #000;
 }
 
 /* Custom Data with Label */
 .mec-wrap .mec-custom-data .mec-timetable-t2-content,
 .mec-wrap .mec-custom-data .mec-timetable-t2-content .mec-event-title,
-.mec-wrap
-  article:not([class^="mec-event-countdown"]):not(
-    [class^="mec-event-cover-"]
-  ).mec-custom-data.mec-label-canceled,
-.mec-wrap
-  article:not([class^="mec-event-countdown"]):not(
-    [class^="mec-event-cover-"]
-  ).mec-custom-data.mec-label-featured {
+.mec-wrap article:not([class^="mec-event-countdown"]):not([class^="mec-event-cover-"]).mec-custom-data.mec-label-canceled,
+.mec-wrap article:not([class^="mec-event-countdown"]):not([class^="mec-event-cover-"]).mec-custom-data.mec-label-featured {
   overflow: visible !important;
 }
 
-.mec-wrap
-  article:not([class^="mec-event-countdown"]):not(
-    [class^="mec-event-cover-"]
-  ).mec-custom-data.mec-label-canceled
-  .mec-event-label-captions,
-.mec-wrap
-  article:not([class^="mec-event-countdown"]):not(
-    [class^="mec-event-cover-"]
-  ).mec-custom-data.mec-label-featured
-  .mec-event-label-captions {
+.mec-wrap article:not([class^="mec-event-countdown"]):not([class^="mec-event-cover-"]).mec-custom-data.mec-label-canceled .mec-event-label-captions,
+.mec-wrap article:not([class^="mec-event-countdown"]):not([class^="mec-event-cover-"]).mec-custom-data.mec-label-featured .mec-event-label-captions {
   -ms-transform: rotate(0);
   -webkit-transform: rotate(0);
   transform: rotate(0);
@@ -17298,46 +16214,17 @@ ul.mec-categories li.mec-category a {
 }
 
 @media (min-width: 769px) {
-  .mec-wrap
-    [id^="mec_skin_events_"]
-    .mec-event-list-standard
-    .mec-label-custom
-    .mec-event-data-fields
-    .mec-data-fields-tooltip,
-  .mec-wrap
-    [id^="mec_skin_events_"]
-    .mec-event-list-standard
-    .mec-label-featured
-    .mec-event-data-fields
-    .mec-data-fields-tooltip,
-  .mec-wrap
-    [id^="mec_skin_events_"]
-    .mec-event-list-standard
-    .mec-label-canceled
-    .mec-event-data-fields
-    .mec-data-fields-tooltip {
+
+  .mec-wrap [id^="mec_skin_events_"] .mec-event-list-standard .mec-label-custom .mec-event-data-fields .mec-data-fields-tooltip,
+  .mec-wrap [id^="mec_skin_events_"] .mec-event-list-standard .mec-label-featured .mec-event-data-fields .mec-data-fields-tooltip,
+  .mec-wrap [id^="mec_skin_events_"] .mec-event-list-standard .mec-label-canceled .mec-event-data-fields .mec-data-fields-tooltip {
     bottom: calc(50% - 110px);
     left: 30px;
   }
 
-  .mec-wrap
-    [id^="mec_skin_events_"]
-    .mec-event-list-standard
-    .mec-label-custom
-    .mec-event-data-fields
-    .mec-data-fields-tooltip:before,
-  .mec-wrap
-    [id^="mec_skin_events_"]
-    .mec-event-list-standard
-    .mec-label-featured
-    .mec-event-data-fields
-    .mec-data-fields-tooltip:before,
-  .mec-wrap
-    [id^="mec_skin_events_"]
-    .mec-event-list-standard
-    .mec-label-canceled
-    .mec-event-data-fields
-    .mec-data-fields-tooltip:before {
+  .mec-wrap [id^="mec_skin_events_"] .mec-event-list-standard .mec-label-custom .mec-event-data-fields .mec-data-fields-tooltip:before,
+  .mec-wrap [id^="mec_skin_events_"] .mec-event-list-standard .mec-label-featured .mec-event-data-fields .mec-data-fields-tooltip:before,
+  .mec-wrap [id^="mec_skin_events_"] .mec-event-list-standard .mec-label-canceled .mec-event-data-fields .mec-data-fields-tooltip:before {
     left: -10px;
     top: calc(100% - 110px);
     box-shadow: -8px -5px 9px -4px #535a61;
@@ -17588,8 +16475,8 @@ ul.mec-categories li.mec-category a {
   font-size: 14px;
 }
 
-.mec-profile table tbody tr:hover > td,
-.mec-profile table tbody tr:hover > th {
+.mec-profile table tbody tr:hover>td,
+.mec-profile table tbody tr:hover>th {
   background-color: transparent;
 }
 
@@ -17765,7 +16652,7 @@ ul.mec-categories li.mec-category a {
 }
 
 .mec-booking-attendees-head span,
-.mec-booking-attendees-head-content > span {
+.mec-booking-attendees-head-content>span {
   vertical-align: middle;
   display: table-cell;
   padding: 7px;
@@ -17784,27 +16671,27 @@ ul.mec-categories li.mec-category a {
 }
 
 .mec-booking-attendees-head span:nth-child(1),
-.mec-booking-attendees-head-content > span:nth-child(1) {
+.mec-booking-attendees-head-content>span:nth-child(1) {
   width: 4%;
 }
 
 .mec-booking-attendees-head span:nth-child(2),
-.mec-booking-attendees-head-content > span:nth-child(2) {
+.mec-booking-attendees-head-content>span:nth-child(2) {
   width: 20%;
 }
 
 .mec-booking-attendees-head span:nth-child(3),
-.mec-booking-attendees-head-content > span:nth-child(3) {
+.mec-booking-attendees-head-content>span:nth-child(3) {
   width: 24%;
 }
 
 .mec-booking-attendees-head span:nth-child(4),
-.mec-booking-attendees-head-content > span:nth-child(4) {
+.mec-booking-attendees-head-content>span:nth-child(4) {
   width: 26%;
 }
 
 .mec-booking-attendees-head span:nth-child(5),
-.mec-booking-attendees-head-content > span:nth-child(5) {
+.mec-booking-attendees-head-content>span:nth-child(5) {
   width: 26%;
 }
 
@@ -17814,7 +16701,7 @@ ul.mec-categories li.mec-category a {
   }
 
   .mec-booking-attendees-head span,
-  .mec-booking-attendees-head-content > span {
+  .mec-booking-attendees-head-content>span {
     word-break: break-all;
   }
 }
@@ -17889,6 +16776,7 @@ ul.mec-categories li.mec-category a {
 }
 
 @media (max-width: 780px) {
+
   .mec-profile i,
   .mec-profile .mec-profile-bookings tbody tr {
     font-size: 12px;
@@ -17913,6 +16801,7 @@ ul.mec-categories li.mec-category a {
 }
 
 @media (max-width: 480px) {
+
   .mec-profile .mec-booking-number-of-attendees,
   .mec-profile i,
   .mec-profile .mec-profile-bookings tbody tr,
@@ -18297,6 +17186,7 @@ ul.mec-categories li.mec-category a {
 }
 
 @media only screen and (min-width: 1200px) {
+
   .mec-wrap .col-xs-1,
   .mec-wrap .col-sm-1,
   .mec-wrap .col-md-1,
@@ -18427,6 +17317,7 @@ ul.mec-categories li.mec-category a {
 }
 
 @media (min-width: 769px) {
+
   .mec-wrap .col-sm-1,
   .mec-wrap .col-sm-2,
   .mec-wrap .col-sm-3,
@@ -18492,6 +17383,7 @@ ul.mec-categories li.mec-category a {
 }
 
 @media (min-width: 961px) {
+
   .mec-wrap .col-md-1,
   .mec-wrap .col-md-2,
   .mec-wrap .col-md-3,
@@ -18557,6 +17449,7 @@ ul.mec-categories li.mec-category a {
 }
 
 @media (min-width: 1200px) {
+
   .mec-wrap .col-lg-1,
   .mec-wrap .col-lg-2,
   .mec-wrap .col-lg-3,
@@ -18692,7 +17585,7 @@ body.single-mec-events:has(.mec-event-banner) .mec-breadcrumbs-modern {
 
 /* Advanced Repeating */
 
-.mec-fes-form #mec-advanced-wraper div:first-child > ul {
+.mec-fes-form #mec-advanced-wraper div:first-child>ul {
   border: 1px solid var(--mec-fes-main-color-rgba-4);
   width: auto;
   box-shadow: 0 1px 4px -2px var(--mec-fes-main-color-rgba-5);
@@ -18702,15 +17595,15 @@ body.single-mec-events:has(.mec-event-banner) .mec-breadcrumbs-modern {
   border-radius: 2px;
 }
 
-.mec-fes-form #mec-advanced-wraper div:first-child > ul:last-of-type {
+.mec-fes-form #mec-advanced-wraper div:first-child>ul:last-of-type {
   margin-bottom: 35px;
 }
 
-#mec-advanced-wraper div:first-child > ul span {
+#mec-advanced-wraper div:first-child>ul span {
   display: none;
 }
 
-#mec-advanced-wraper div:first-child > ul * {
+#mec-advanced-wraper div:first-child>ul * {
   display: inline-block;
   background: #fff;
   font-size: 12px;
@@ -18718,7 +17611,7 @@ body.single-mec-events:has(.mec-event-banner) .mec-breadcrumbs-modern {
   text-align: center;
 }
 
-#mec-advanced-wraper div:first-child > ul > li {
+#mec-advanced-wraper div:first-child>ul>li {
   width: 60px;
   font-weight: 700;
   margin: 0 10px 0 0;
@@ -18726,7 +17619,7 @@ body.single-mec-events:has(.mec-event-banner) .mec-breadcrumbs-modern {
   border-right: 1px solid var(--mec-fes-main-color-rgba-4);
 }
 
-#mec-advanced-wraper div:first-child > ul > ul > li {
+#mec-advanced-wraper div:first-child>ul>ul>li {
   margin: 0;
   padding: 2px 10px;
   cursor: pointer;
@@ -18734,8 +17627,8 @@ body.single-mec-events:has(.mec-event-banner) .mec-breadcrumbs-modern {
   transition: all 0.18s ease;
 }
 
-.mec-fes-form #mec-advanced-wraper div:first-child > ul > ul > li:hover,
-.mec-fes-form #mec-advanced-wraper div:first-child > ul > ul > li.mec-active {
+.mec-fes-form #mec-advanced-wraper div:first-child>ul>ul>li:hover,
+.mec-fes-form #mec-advanced-wraper div:first-child>ul>ul>li.mec-active {
   background: var(--mec-fes-main-color) !important;
   box-shadow: 0 1px 9px -3px var(--mec-fes-main-color-rgba-5);
   color: #fff !important;
@@ -18759,7 +17652,7 @@ body.single-mec-events:has(.mec-event-banner) .mec-breadcrumbs-modern {
   font-weight: normal;
 }
 
-.mec-text-input-search + input#mec-search-bar-input {
+.mec-text-input-search+input#mec-search-bar-input {
   margin-left: -3px;
 }
 
@@ -18952,7 +17845,7 @@ article.mec-search-bar-result {
   font-weight: bold !important;
 }
 
-.mec-wrap.mec-modern-search-bar .mec-text-input-search + input#mec-search-bar-input {
+.mec-wrap.mec-modern-search-bar .mec-text-input-search+input#mec-search-bar-input {
   margin-left: 0;
 }
 
@@ -19009,7 +17902,7 @@ article.mec-search-bar-result {
     margin-bottom: 20px;
   }
 
-  .mec-wrap.mec-modern-search-bar .mec-text-input-search + input#mec-search-bar-input {
+  .mec-wrap.mec-modern-search-bar .mec-text-input-search+input#mec-search-bar-input {
     margin-left: 10px;
   }
 }
@@ -19240,7 +18133,7 @@ article.mec-search-bar-result {
   padding-top: 1px;
 }
 
-.mec-fes-form-cntt #mec-organizer-payments ul > li {
+.mec-fes-form-cntt #mec-organizer-payments ul>li {
   width: 100%;
   display: inline-block;
   vertical-align: top;
@@ -19456,31 +18349,19 @@ article.mec-search-bar-result {
   margin-bottom: 30px;
 }
 
-.mec-book-form-gateway-checkout
-  [id*="mec_do_transaction_stripe_"]
-  .mec-form-row.mec-stripe-name-and-email-wrapper {
+.mec-book-form-gateway-checkout [id*="mec_do_transaction_stripe_"] .mec-form-row.mec-stripe-name-and-email-wrapper {
   width: 100%;
 }
 
-.mec-book-form-gateway-checkout
-  [id*="mec_do_transaction_stripe_"]
-  .mec-form-row.mec-stripe-name-and-email-wrapper
-  .mec-form-row {
+.mec-book-form-gateway-checkout [id*="mec_do_transaction_stripe_"] .mec-form-row.mec-stripe-name-and-email-wrapper .mec-form-row {
   width: 50%;
 }
 
-.mec-book-form-gateway-checkout
-  [id*="mec_do_transaction_stripe_"]
-  .mec-form-row.mec-stripe-name-and-email-wrapper
-  .mec-form-row:nth-child(2) {
+.mec-book-form-gateway-checkout [id*="mec_do_transaction_stripe_"] .mec-form-row.mec-stripe-name-and-email-wrapper .mec-form-row:nth-child(2) {
   margin-left: 12px;
 }
 
-.mec-book-form-gateway-checkout
-  [id*="mec_do_transaction_stripe_"]
-  .mec-form-row.mec-stripe-name-and-email-wrapper
-  .mec-form-row
-  input {
+.mec-book-form-gateway-checkout [id*="mec_do_transaction_stripe_"] .mec-form-row.mec-stripe-name-and-email-wrapper .mec-form-row input {
   max-width: unset;
   margin-bottom: 20px;
 }
@@ -19523,11 +18404,7 @@ article.mec-search-bar-result {
   position: relative;
 }
 
-.mec-occurrences-wrapper
-  ul.mec-occurrences-list
-  li.mec_occurrences_item
-  h3
-  span.mec-occurrences-delete-button {
+.mec-occurrences-wrapper ul.mec-occurrences-list li.mec_occurrences_item h3 span.mec-occurrences-delete-button {
   position: absolute;
   right: 10px;
   top: 0;
@@ -19545,11 +18422,7 @@ article.mec-search-bar-result {
   letter-spacing: 0.4px;
 }
 
-.mec-occurrences-wrapper
-  ul.mec-occurrences-list
-  li.mec_occurrences_item
-  h3
-  span.mec-occurrences-delete-button:hover {
+.mec-occurrences-wrapper ul.mec-occurrences-list li.mec_occurrences_item h3 span.mec-occurrences-delete-button:hover {
   background: #ea6485;
   color: #fff;
   border-color: #ea6485;
@@ -19597,7 +18470,7 @@ ul#mec_reg_form_fields li .mec_reg_field_remove,
   border-color: #40d9f1;
 }
 
-.mec-fes-form .mec-form-row input + button.button {
+.mec-fes-form .mec-form-row input+button.button {
   vertical-align: top;
 }
 
@@ -19618,11 +18491,7 @@ ul#mec_reg_form_fields li .mec_reg_field_remove,
   box-shadow: none;
 }
 
-#wp-mec_fes_content-editor-container
-  .mce-toolbar
-  .mce-btn-group
-  .mce-btn.mce-menubtn:hover
-  button:hover {
+#wp-mec_fes_content-editor-container .mce-toolbar .mce-btn-group .mce-btn.mce-menubtn:hover button:hover {
   background: #fff;
 }
 
@@ -19642,29 +18511,15 @@ ul#mec_reg_form_fields li .mec_reg_field_remove,
   border: none;
 }
 
-#wp-mec_fes_content-editor-container
-  .mce-toolbar
-  .mce-btn-group
-  .mce-btn:not(.mce-menubtn)
-  button:hover {
+#wp-mec_fes_content-editor-container .mce-toolbar .mce-btn-group .mce-btn:not(.mce-menubtn) button:hover {
   background: var(--mec-fes-main-color);
 }
 
-#wp-mec_fes_content-editor-container
-  .mce-toolbar
-  .mce-btn-group
-  .mce-btn:not(.mce-menubtn)
-  button
-  .mce-ico {
+#wp-mec_fes_content-editor-container .mce-toolbar .mce-btn-group .mce-btn:not(.mce-menubtn) button .mce-ico {
   color: var(--mec-fes-main-color);
 }
 
-#wp-mec_fes_content-editor-container
-  .mce-toolbar
-  .mce-btn-group
-  .mce-btn:not(.mce-menubtn)
-  button:hover
-  .mce-ico {
+#wp-mec_fes_content-editor-container .mce-toolbar .mce-btn-group .mce-btn:not(.mce-menubtn) button:hover .mce-ico {
   color: #fff;
 }
 
@@ -19693,7 +18548,7 @@ ul#mec_reg_form_fields li .mec_reg_field_remove,
   height: 38px;
 }
 
-.mec-fes-form .mec-meta-box-fields > label {
+.mec-fes-form .mec-meta-box-fields>label {
   padding: 0;
 }
 
@@ -19962,22 +18817,22 @@ ul#mec_reg_form_fields li .mec_reg_field_remove:hover {
   font-size: 0;
 }
 
-.mec-form-row select + span.mec-tooltip,
-.mec-form-row input + span.mec-tooltip {
+.mec-form-row select+span.mec-tooltip,
+.mec-form-row input+span.mec-tooltip {
   bottom: 10px;
 }
 
-.mec-form-row label + span.mec-tooltip {
+.mec-form-row label+span.mec-tooltip {
   bottom: 8px;
 }
 
-.mec-form-row textarea + span.mec-tooltip {
+.mec-form-row textarea+span.mec-tooltip {
   bottom: auto;
   vertical-align: top;
   top: 12px;
 }
 
-.mec-form-row span + span.mec-tooltip {
+.mec-form-row span+span.mec-tooltip {
   bottom: 0;
   vertical-align: middle;
 }
@@ -20352,10 +19207,7 @@ body:has(.mec-fes-form, .mec-search-form) .ui-datepicker .ui-datepicker-calendar
   line-height: 30px;
 }
 
-body:has(.mec-fes-form, .mec-search-form)
-  .ui-datepicker.ui-widget
-  .ui-state-disabled
-  .ui-state-default {
+body:has(.mec-fes-form, .mec-search-form) .ui-datepicker.ui-widget .ui-state-disabled .ui-state-default {
   color: #ccc;
   width: 30px;
   height: 30px;
@@ -20624,23 +19476,13 @@ span.mec-event-export-csv:before,
   padding: 0;
 }
 
-.mec-fes-form
-  .mec-dropdown-wrap
-  span.select2
-  .selection
-  .select2-selection
-  .select2-selection__rendered {
+.mec-fes-form .mec-dropdown-wrap span.select2 .selection .select2-selection .select2-selection__rendered {
   color: #777;
   line-height: 34px;
   padding-left: 5px;
 }
 
-.mec-fes-form
-  .mec-dropdown-wrap
-  span.select2
-  .selection
-  .select2-selection
-  .select2-selection__arrow {
+.mec-fes-form .mec-dropdown-wrap span.select2 .selection .select2-selection .select2-selection__arrow {
   height: 34px;
 }
 
@@ -20664,9 +19506,7 @@ body:has(.mec-fes-form) .select2-container--default .select2-results__option--se
   background-color: var(--mec-fes-main-color-rgba-4) !important;
 }
 
-body:has(.mec-fes-form)
-  .select2-container--default
-  .select2-results__option--highlighted.select2-results__option--selectable {
+body:has(.mec-fes-form) .select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
   background-color: var(--mec-fes-main-color) !important;
 }
 
@@ -20682,36 +19522,24 @@ body:has(.mec-fes-form) .select2-container--default .select2-selection--multiple
   height: auto;
 }
 
-body:has(.mec-fes-form)
-  .select2-container--default
-  .select2-selection--single
-  .select2-selection__rendered {
+body:has(.mec-fes-form) .select2-container--default .select2-selection--single .select2-selection__rendered {
   line-height: 36px;
 }
 
-body:has(.mec-fes-form)
-  .select2-container--default
-  .select2-selection--multiple
-  .select2-selection__choice {
+body:has(.mec-fes-form) .select2-container--default .select2-selection--multiple .select2-selection__choice {
   margin: 2.5px 5px 2.5px 0;
   height: 23px;
   vertical-align: sub;
 }
 
-body:has(.mec-fes-form)
-  .select2-container--default
-  .select2-selection--multiple
-  .select2-selection__choice__remove {
+body:has(.mec-fes-form) .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
   padding: 0 4px !important;
   line-height: 20px;
   height: 21px;
   border-radius: 0;
 }
 
-body:has(.mec-fes-form)
-  .select2-container--default
-  .select2-selection--multiple
-  .select2-selection__choice__display {
+body:has(.mec-fes-form) .select2-container--default .select2-selection--multiple .select2-selection__choice__display {
   line-height: 20px;
   padding: 0 5px;
   position: static;
@@ -20796,7 +19624,7 @@ body:has(.mec-search-form) .ui-datepicker.ui-widget td a.ui-state-active {
   left: 95px;
 }
 
-.mec-timeline-month-divider + .mec-timeline-events-container {
+.mec-timeline-month-divider+.mec-timeline-events-container {
   padding-top: 110px;
 }
 
@@ -20956,7 +19784,7 @@ a.mec-timeline-readmore:hover {
   margin-bottom: 0;
 }
 
-.mec-timeline-event-details + .mec-timeline-event-details {
+.mec-timeline-event-details+.mec-timeline-event-details {
   margin-top: 12px;
 }
 
@@ -21033,6 +19861,7 @@ a.mec-timeline-readmore i {
 }
 
 @media (max-width: 992px) {
+
   .mec-timeline-right-content,
   .mec-timeline-left-content {
     float: none;
@@ -21058,6 +19887,7 @@ a.mec-timeline-readmore i {
 }
 
 @media (max-width: 320px) {
+
   .mec-timeline-event-date,
   .mec-timeline-event-content {
     float: none;
@@ -21142,12 +19972,7 @@ a.mec-timeline-readmore i {
   font-size: 16px;
 }
 
-.mec-event-tile-view
-  article.mec-tile-item
-  .mec-categories-wrapper
-  ul.mec-categories
-  li.mec-category
-  a,
+.mec-event-tile-view article.mec-tile-item .mec-categories-wrapper ul.mec-categories li.mec-category a,
 .mec-event-tile-view article.mec-tile-item .mec-shortcode-organizers {
   color: #fff;
   font-size: 15px;
@@ -21162,31 +19987,23 @@ a.mec-timeline-readmore i {
 .mec-event-tile-view article.mec-tile-item:before,
 .mec-event-tile-view article.mec-tile-item:after {
   position: absolute;
-  background: -moz-linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 0.35) 0%,
-    rgba(0, 0, 0, 0.48) 65%,
-    rgba(0, 0, 0, 0.72) 100%
-  );
-  background: -webkit-gradient(
-    left top,
-    right top,
-    color-stop(0%, rgba(0, 0, 0, 0.35)),
-    color-stop(65%, rgba(0, 0, 0, 0.48)),
-    color-stop(100%, rgba(0, 0, 0, 0.72))
-  );
-  background: -webkit-gradient(
-    180deg,
-    rgba(0, 0, 0, 0.35) 0%,
-    rgba(0, 0, 0, 0.48) 65%,
-    rgba(0, 0, 0, 0.72) 100%
-  );
-  background: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 0.35) 0%,
-    rgba(0, 0, 0, 0.48) 65%,
-    rgba(0, 0, 0, 0.72) 100%
-  );
+  background: -moz-linear-gradient(180deg,
+      rgba(0, 0, 0, 0.35) 0%,
+      rgba(0, 0, 0, 0.48) 65%,
+      rgba(0, 0, 0, 0.72) 100%);
+  background: -webkit-gradient(left top,
+      right top,
+      color-stop(0%, rgba(0, 0, 0, 0.35)),
+      color-stop(65%, rgba(0, 0, 0, 0.48)),
+      color-stop(100%, rgba(0, 0, 0, 0.72)));
+  background: -webkit-gradient(180deg,
+      rgba(0, 0, 0, 0.35) 0%,
+      rgba(0, 0, 0, 0.48) 65%,
+      rgba(0, 0, 0, 0.72) 100%);
+  background: linear-gradient(180deg,
+      rgba(0, 0, 0, 0.35) 0%,
+      rgba(0, 0, 0, 0.48) 65%,
+      rgba(0, 0, 0, 0.72) 100%);
   content: "";
   left: 0;
   right: 0;
@@ -21219,7 +20036,7 @@ a.mec-timeline-readmore i {
   text-transform: uppercase;
 }
 
-.mec-event-tile-view article.mec-tile-item .event-tile-view-head > div {
+.mec-event-tile-view article.mec-tile-item .event-tile-view-head>div {
   display: inline;
 }
 
@@ -21374,31 +20191,23 @@ a.mec-timeline-readmore i {
 /* Tile View Overlay */
 .mec-event-tile-view article.mec-tile-item .mec-tile-overlay {
   position: absolute;
-  background: -moz-linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 0.35) 0,
-    rgba(0, 0, 0, 0.48) 65%,
-    rgba(0, 0, 0, 0.72) 100%
-  );
-  background: -webkit-gradient(
-    left top,
-    right top,
-    color-stop(0, rgba(0, 0, 0, 0.35)),
-    color-stop(65%, rgba(0, 0, 0, 0.48)),
-    color-stop(100%, rgba(0, 0, 0, 0.72))
-  );
-  background: -webkit-gradient(
-    180deg,
-    rgba(0, 0, 0, 0.35) 0,
-    rgba(0, 0, 0, 0.48) 65%,
-    rgba(0, 0, 0, 0.72) 100%
-  );
-  background: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 0.35) 0,
-    rgba(0, 0, 0, 0.48) 65%,
-    rgba(0, 0, 0, 0.72) 100%
-  );
+  background: -moz-linear-gradient(180deg,
+      rgba(0, 0, 0, 0.35) 0,
+      rgba(0, 0, 0, 0.48) 65%,
+      rgba(0, 0, 0, 0.72) 100%);
+  background: -webkit-gradient(left top,
+      right top,
+      color-stop(0, rgba(0, 0, 0, 0.35)),
+      color-stop(65%, rgba(0, 0, 0, 0.48)),
+      color-stop(100%, rgba(0, 0, 0, 0.72)));
+  background: -webkit-gradient(180deg,
+      rgba(0, 0, 0, 0.35) 0,
+      rgba(0, 0, 0, 0.48) 65%,
+      rgba(0, 0, 0, 0.72) 100%);
+  background: linear-gradient(180deg,
+      rgba(0, 0, 0, 0.35) 0,
+      rgba(0, 0, 0, 0.48) 65%,
+      rgba(0, 0, 0, 0.72) 100%);
   content: "";
   left: 0;
   right: 0;
@@ -22406,16 +21215,8 @@ body.mec-dark-mode .mec-single-modern .mec-single-event-bar {
   border-color: #353535 transparent transparent transparent;
 }
 
-.mec-dark-mode
-  .mec-wrap
-  .mec-book-form-gateways
-  [id*="mec_book_form_gateway_checkout"]
-  input[type="text"],
-.mec-dark-mode
-  .mec-wrap
-  .mec-book-form-gateways
-  [id*="mec_book_form_gateway_checkout"]
-  input[type="email"],
+.mec-dark-mode .mec-wrap .mec-book-form-gateways [id*="mec_book_form_gateway_checkout"] input[type="text"],
+.mec-dark-mode .mec-wrap .mec-book-form-gateways [id*="mec_book_form_gateway_checkout"] input[type="email"],
 .mec-dark-mode .mec-events-meta-group-booking .StripeElement,
 .mec-dark-mode .mec-book-form-gateways [id*="mec_book_form_gateway_checkout"] input[type="text"] {
   background: #999 !important;
@@ -22441,9 +21242,7 @@ body.mec-dark-mode .mec-single-modern .mec-single-event-bar {
   box-shadow: 0 1px 5px 6px rgba(255, 255, 255, 0.005) inset;
 }
 
-.mec-dark-mode
-  .tooltipster-sidetip.tooltipster-shadow:not(.uael-tooltipster-active)
-  .tooltipster-box {
+.mec-dark-mode .tooltipster-sidetip.tooltipster-shadow:not(.uael-tooltipster-active) .tooltipster-box {
   border: 1px solid #282828 !important;
 }
 
@@ -22604,9 +21403,7 @@ body.mec-dark-mode .mec-single-modern .mec-single-event-bar {
   width: 100%;
 }
 
-.mec-booking-shortcode
-  .mec-form-row.mec-paypal-credit-card-expiration-date-month
-  .nice-select:first-of-type {
+.mec-booking-shortcode .mec-form-row.mec-paypal-credit-card-expiration-date-month .nice-select:first-of-type {
   margin-right: 10px;
 }
 
@@ -22636,10 +21433,7 @@ body.mec-dark-mode .mec-single-modern .mec-single-event-bar {
   margin-bottom: 0 !important;
 }
 
-.mec-booking-shortcode
-  .mec-book-form-gateways
-  [id*="mec_book_form_gateway_checkout"]
-  input[type="text"],
+.mec-booking-shortcode .mec-book-form-gateways [id*="mec_book_form_gateway_checkout"] input[type="text"],
 .mec-events-meta-group-booking .mec-booking-shortcode .StripeElement {
   box-shadow: none !important;
 }
@@ -22836,7 +21630,7 @@ body.mec-dark-mode .mec-single-modern .mec-single-event-bar {
   width: 2px;
 }
 
-.mec-booking-shortcode input[type="checkbox"]:checked + .wn-checkbox-label::after {
+.mec-booking-shortcode input[type="checkbox"]:checked+.wn-checkbox-label::after {
   height: 5px;
   left: 2px;
   top: 7px;
@@ -22846,7 +21640,7 @@ body.mec-dark-mode .mec-single-modern .mec-single-event-bar {
   animation: dothatopcheck 0.16s ease 0s forwards;
 }
 
-.mec-booking-shortcode input[type="checkbox"]:checked + .wn-checkbox-label::before {
+.mec-booking-shortcode input[type="checkbox"]:checked+.wn-checkbox-label::before {
   height: 6px;
   left: 7px;
   top: 9px;
@@ -22902,7 +21696,7 @@ body.mec-dark-mode .mec-single-modern .mec-single-event-bar {
 /* Date Selection > Navigation  */
 .mec-single-fluent-wrap .mec-booking-calendar-month-navigation .mec-calendar-header h2,
 .mec-booking-calendar-month-navigation .mec-calendar-header h2 {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   line-height: 40px;
   margin: 0 auto;
@@ -22972,6 +21766,7 @@ body.mec-dark-mode .mec-single-modern .mec-single-event-bar {
   border: 0;
   background: transparent;
   cursor: pointer;
+  font-weight: unset;
 }
 
 .mec-events-meta-group-booking .mec-booking-calendar .mec-calendar .mec-calendar-row dt:hover {
@@ -22979,11 +21774,7 @@ body.mec-dark-mode .mec-single-modern .mec-single-event-bar {
 }
 
 .mec-events-meta-group-booking .mec-booking-calendar .mec-calendar .mec-calendar-novel-selected-day,
-.mec-events-meta-group-booking
-  .mec-booking-calendar
-  .mec-calendar
-  .mec-calendar-novel-selected-day
-  span {
+.mec-events-meta-group-booking .mec-booking-calendar .mec-calendar .mec-calendar-novel-selected-day span {
   width: 32px;
   height: 32px;
   margin: auto;
@@ -22993,6 +21784,15 @@ body.mec-dark-mode .mec-single-modern .mec-single-event-bar {
   font-weight: 600;
   padding: 0;
 }
+
+.mec-booking-calendar .mec-calendar.mec-box-calendar .mec-table-nullday:last-child {
+  border: none;
+}
+
+.mec-booking-calendar .mec-calendar .mec-calendar-table-head dt {
+  font-size: 13px;
+}
+
 
 /* Bordered Date */
 .mec-has-event-for-booking {
@@ -23083,11 +21883,7 @@ body.mec-dark-mode .mec-single-modern .mec-single-event-bar {
   padding-left: 7px;
 }
 
-.mec-events-meta-group-booking
-  .mec-booking-calendar
-  .mec-calendar.mec-multiple-event
-  .first-day
-  .mec-calendar-novel-selected-day {
+.mec-events-meta-group-booking .mec-booking-calendar .mec-calendar.mec-multiple-event .first-day .mec-calendar-novel-selected-day {
   border-radius: 47px;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
@@ -23095,12 +21891,7 @@ body.mec-dark-mode .mec-single-modern .mec-single-event-bar {
   width: 100%;
 }
 
-.mec-events-meta-group-booking
-  .mec-booking-calendar
-  .mec-calendar.mec-multiple-event
-  .first-day
-  .mec-calendar-novel-selected-day
-  span {
+.mec-events-meta-group-booking .mec-booking-calendar .mec-calendar.mec-multiple-event .first-day .mec-calendar-novel-selected-day span {
   margin-left: -7px;
 }
 
@@ -23110,11 +21901,7 @@ body.mec-dark-mode .mec-single-modern .mec-single-event-bar {
   padding-right: 7px;
 }
 
-.mec-events-meta-group-booking
-  .mec-booking-calendar
-  .mec-calendar.mec-multiple-event
-  .last-day
-  .mec-calendar-novel-selected-day {
+.mec-events-meta-group-booking .mec-booking-calendar .mec-calendar.mec-multiple-event .last-day .mec-calendar-novel-selected-day {
   border-radius: 47px;
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
@@ -23122,21 +21909,12 @@ body.mec-dark-mode .mec-single-modern .mec-single-event-bar {
   width: 100%;
 }
 
-.mec-events-meta-group-booking
-  .mec-booking-calendar
-  .mec-calendar.mec-multiple-event
-  .last-day
-  .mec-calendar-novel-selected-day
-  span {
+.mec-events-meta-group-booking .mec-booking-calendar .mec-calendar.mec-multiple-event .last-day .mec-calendar-novel-selected-day span {
   margin-right: -7px;
 }
 
 /* Middle Day */
-.mec-events-meta-group-booking
-  .mec-booking-calendar
-  .mec-calendar.mec-multiple-event
-  .middle-day
-  .mec-calendar-novel-selected-day {
+.mec-events-meta-group-booking .mec-booking-calendar .mec-calendar.mec-multiple-event .middle-day .mec-calendar-novel-selected-day {
   border-radius: 0;
   border-right: 0;
   border-left: 0;
@@ -23168,9 +21946,7 @@ body.mec-dark-mode .mec-single-modern .mec-single-event-bar {
   -o-transition: all 0.17s ease;
 }
 
-.mec-calendar-day.mec-active
-  .mec-booking-tooltip.multiple-time
-  .mec-booking-calendar-date.mec-active,
+.mec-calendar-day.mec-active .mec-booking-tooltip.multiple-time .mec-booking-calendar-date.mec-active,
 .mec-booking-tooltip.multiple-time .mec-booking-calendar-date:hover {
   background: #40d9f1;
   border-color: #40d9f1;
@@ -23205,10 +21981,7 @@ body.mec-dark-mode .mec-single-modern .mec-single-event-bar {
 /* Booking Calendar Dark Mode */
 
 .mec-dark-mode .mec-single-event .mec-events-meta-group-booking .mec-calendar,
-.mec-dark-mode
-  .mec-single-event
-  .mec-events-meta-group-booking
-  .mec-booking-calendar-month-navigation {
+.mec-dark-mode .mec-single-event .mec-events-meta-group-booking .mec-booking-calendar-month-navigation {
   background: #000;
   border-color: #222;
   color: #999;
@@ -23225,12 +21998,7 @@ body.mec-dark-mode .mec-single-modern .mec-single-event-bar {
   border-color: #111;
 }
 
-.mec-dark-mode
-  .mec-events-meta-group-booking
-  .mec-booking-calendar
-  .mec-calendar
-  .mec-calendar-row
-  dt:hover {
+.mec-dark-mode .mec-events-meta-group-booking .mec-booking-calendar .mec-calendar .mec-calendar-row dt:hover {
   background: transparent !important;
 }
 
@@ -23257,7 +22025,7 @@ body.mec-dark-mode .mec-single-modern .mec-single-event-bar {
   background: unset !important;
 }
 
-.is-light-theme .mec-fes-form input + label {
+.is-light-theme .mec-fes-form input+label {
   padding-top: 0;
 }
 
@@ -23297,7 +22065,7 @@ span.mec-booking-field-required {
   align-items: center;
 }
 
-.mec-gCalendar-filters-wrap > div {
+.mec-gCalendar-filters-wrap>div {
   flex: 1 0 calc(43% - 10px);
   display: inline-flex;
 }
@@ -23320,7 +22088,7 @@ span.mec-booking-field-required {
   background-color: transparent;
 }
 
-.mec-gCalendar-filters-wrap .select2-container--default > ul {
+.mec-gCalendar-filters-wrap .select2-container--default>ul {
   margin-top: 2px;
   width: 100%;
 }
@@ -23329,7 +22097,7 @@ span.mec-booking-field-required {
   width: 100% !important;
 }
 
-.mec-gCalendar-filters-wrap .select2-container--default > ul > li {
+.mec-gCalendar-filters-wrap .select2-container--default>ul>li {
   width: 100%;
 }
 
@@ -23342,20 +22110,13 @@ span.mec-booking-field-required {
   height: 37px !important;
 }
 
-.mec-gCalendar-filters-wrap
-  .select2-container--default
-  .select2-selection--multiple
-  .select2-selection__choice {
+.mec-gCalendar-filters-wrap .select2-container--default .select2-selection--multiple .select2-selection__choice {
   margin: 0;
   background-color: #eeeeee;
   font-size: 11px;
 }
 
-.mec-gCalendar-filters-wrap
-  .select2-container--default
-  .select2-selection--multiple
-  .select2-selection__rendered
-  li {
+.mec-gCalendar-filters-wrap .select2-container--default .select2-selection--multiple .select2-selection__rendered li {
   line-height: 29px;
   margin-top: 5px;
   border: none;
@@ -23559,14 +22320,14 @@ span.mec-booking-field-required {
   font-size: 12px;
 }
 
-.mec-gCalendar-tooltip-date-text > div > span,
-.mec-gCalendar-tooltip-date-time > div > span {
+.mec-gCalendar-tooltip-date-text>div>span,
+.mec-gCalendar-tooltip-date-time>div>span {
   display: block;
   line-height: 23px;
 }
 
-.mec-gCalendar-tooltip-date-text > div > span:last-child,
-.mec-gCalendar-tooltip-date-time > div > span:last-child {
+.mec-gCalendar-tooltip-date-text>div>span:last-child,
+.mec-gCalendar-tooltip-date-time>div>span:last-child {
   margin: 0;
 }
 
@@ -23625,10 +22386,7 @@ span.mec-booking-field-required {
 }
 
 .mec-gCalendar .fc-header-toolbar .fc-toolbar-chunk,
-.mec-gCalendar
-  .fc-header-toolbar
-  .fc-toolbar-chunk
-  > div:not(#MonthPicker_mec-gCalendar-month-filter) {
+.mec-gCalendar .fc-header-toolbar .fc-toolbar-chunk>div:not(#MonthPicker_mec-gCalendar-month-filter) {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -23654,7 +22412,7 @@ span.mec-booking-field-required {
   position: relative;
 }
 
-.mec-gCalendar #mec-gCalendar-wrap h2.fc-toolbar-title > span {
+.mec-gCalendar #mec-gCalendar-wrap h2.fc-toolbar-title>span {
   font-weight: 100;
 }
 
@@ -23787,9 +22545,7 @@ span.mec-booking-field-required {
   box-shadow: none !important;
 }
 
-.mec-gCalendar
-  tr.fc-scrollgrid-section.fc-scrollgrid-section-header.fc-scrollgrid-section-sticky
-  > td {
+.mec-gCalendar tr.fc-scrollgrid-section.fc-scrollgrid-section-header.fc-scrollgrid-section-sticky>td {
   border-radius: 7px 7px 0 0;
   border: none;
 }
@@ -23874,11 +22630,11 @@ span.mec-booking-field-required {
   font-size: 17px;
 }
 
-.mec-gCalendar .fc-direction-ltr .fc-button-group > .fc-button:first-child {
+.mec-gCalendar .fc-direction-ltr .fc-button-group>.fc-button:first-child {
   margin-left: 7px !important;
 }
 
-.mec-gCalendar .fc-direction-ltr .fc-toolbar > * > :not(:first-child) {
+.mec-gCalendar .fc-direction-ltr .fc-toolbar>*> :not(:first-child) {
   margin-left: 0;
 }
 
@@ -23927,10 +22683,10 @@ span.mec-booking-field-required {
   height: auto;
 }
 
-.mec-month-picker.datepicker table caption + thead tr:first-child td,
-.mec-month-picker.datepicker table caption + thead tr:first-child th,
-.mec-month-picker.datepicker table colgroup + thead tr:first-child td,
-.mec-month-picker.datepicker table colgroup + thead tr:first-child th,
+.mec-month-picker.datepicker table caption+thead tr:first-child td,
+.mec-month-picker.datepicker table caption+thead tr:first-child th,
+.mec-month-picker.datepicker table colgroup+thead tr:first-child td,
+.mec-month-picker.datepicker table colgroup+thead tr:first-child th,
 .mec-month-picker.datepicker table thead:first-child tr:first-child td,
 .mec-month-picker.datepicker table thead:first-child tr:first-child th {
   border: none;
@@ -24069,6 +22825,7 @@ span.mec-booking-field-required {
 }
 
 @media (min-width: 992px) {
+
   #mec-gCalendar-wrap table.fc-scrollgrid,
   .fc-daygrid.fc-dayGridMonth-view.fc-view {
     overflow: visible;
@@ -24146,7 +22903,7 @@ span.mec-booking-field-required {
   display: inline-block;
 }
 
-.mec-gCalendar .fc .fc-scrollgrid-section-sticky > * {
+.mec-gCalendar .fc .fc-scrollgrid-section-sticky>* {
   position: relative;
   z-index: 1;
 }
@@ -24180,7 +22937,7 @@ span.mec-booking-field-required {
   font-weight: 500;
 }
 
-#mec-gCalendar-wrap .fc-scrollgrid-section-body > td {
+#mec-gCalendar-wrap .fc-scrollgrid-section-body>td {
   border: none !important;
   background-color: transparent !important;
 }
@@ -24209,6 +22966,7 @@ span.mec-booking-field-required {
 }
 
 @media (max-width: 991px) {
+
   .mec-gCalendar .mec-gCalendar-search-text-wrap input[type="text"],
   .mec-gCalendar .mec-gCalendar-search-text-wrap input[type="text"]:focus {
     width: auto;
@@ -24228,7 +22986,7 @@ span.mec-booking-field-required {
 }
 
 @media (max-width: 990px) {
-  .mec-gCalendar .fc-header-toolbar .fc-toolbar-chunk:first-child > div {
+  .mec-gCalendar .fc-header-toolbar .fc-toolbar-chunk:first-child>div {
     width: 100%;
     justify-content: flex-start !important;
     position: relative;
@@ -24240,6 +22998,7 @@ span.mec-booking-field-required {
 }
 
 @media (max-width: 480px) {
+
   .mec-gCalendar button.fc-today-button.fc-button.fc-button-primary,
   .mec-gCalendar button.fc-today-button.fc-button.fc-button-primary:active {
     padding: 6px 6px 9px;
@@ -24257,22 +23016,16 @@ span.mec-booking-field-required {
   }
 
   .mec-gCalendar .fc-header-toolbar .fc-toolbar-chunk,
-  .mec-gCalendar
-    .fc-header-toolbar
-    .fc-toolbar-chunk
-    > div:not(#MonthPicker_mec-gCalendar-month-filter) {
+  .mec-gCalendar .fc-header-toolbar .fc-toolbar-chunk>div:not(#MonthPicker_mec-gCalendar-month-filter) {
     flex-wrap: wrap;
   }
 
-  .mec-gCalendar
-    .fc-header-toolbar
-    .fc-toolbar-chunk:last-child
-    > div:not(#MonthPicker_mec-gCalendar-month-filter) {
+  .mec-gCalendar .fc-header-toolbar .fc-toolbar-chunk:last-child>div:not(#MonthPicker_mec-gCalendar-month-filter) {
     width: 100%;
     display: block;
   }
 
-  .mec-gCalendar .fc-header-toolbar .fc-toolbar-chunk:last-child > div.fc-button-group {
+  .mec-gCalendar .fc-header-toolbar .fc-toolbar-chunk:last-child>div.fc-button-group {
     text-align: right;
   }
 
@@ -24281,7 +23034,7 @@ span.mec-booking-field-required {
     width: 100%;
   }
 
-  .mec-gCalendar-filters-wrap > div {
+  .mec-gCalendar-filters-wrap>div {
     width: 100%;
   }
 
@@ -24343,14 +23096,11 @@ span.mec-booking-field-required {
 }
 
 @media (max-width: 360px) {
-  .mec-gCalendar .fc-header-toolbar .fc-toolbar-chunk:last-child > div.fc-button-group {
+  .mec-gCalendar .fc-header-toolbar .fc-toolbar-chunk:last-child>div.fc-button-group {
     text-align: left;
   }
 
-  .mec-gCalendar
-    .fc-header-toolbar
-    .fc-toolbar-chunk:last-child
-    > div:not(#MonthPicker_mec-gCalendar-month-filter) {
+  .mec-gCalendar .fc-header-toolbar .fc-toolbar-chunk:last-child>div:not(#MonthPicker_mec-gCalendar-month-filter) {
     margin-bottom: 8px;
   }
 
@@ -24359,7 +23109,7 @@ span.mec-booking-field-required {
     width: 100%;
   }
 
-  .mec-gCalendar .fc-header-toolbar .fc-toolbar-chunk:first-child > div {
+  .mec-gCalendar .fc-header-toolbar .fc-toolbar-chunk:first-child>div {
     justify-content: left !important;
   }
 
@@ -24428,7 +23178,7 @@ span.mec-booking-field-required {
     right: calc(50% - 4px);
   }
 
-  .mec-gCalendar .fc-header-toolbar .fc-toolbar-chunk:last-child > div.fc-button-group {
+  .mec-gCalendar .fc-header-toolbar .fc-toolbar-chunk:last-child>div.fc-button-group {
     text-align: right;
   }
 
@@ -24931,8 +23681,7 @@ a.mec-nextprev-next-button:hover {
 
 .mec-loading-events:after {
   content: "";
-  background: rgba(255, 255, 255, 0.88) url("../img/ajax-loader.gif") no-repeat center
-    calc(100% - 100px);
+  background: rgba(255, 255, 255, 0.88) url("../img/ajax-loader.gif") no-repeat center calc(100% - 100px);
   position: absolute;
   top: 0;
   right: 0;
@@ -24979,6 +23728,7 @@ body[class*="mec-theme"] .mec-wrap a {
   position: absolute !important;
   right: 0;
 }
+
 .gm-style .gm-style-iw-c button[aria-label="Close"]:hover {
   box-shadow: none !important;
 }
@@ -25029,12 +23779,10 @@ body[class*="mec-theme"] .mec-wrap a {
   width: 30%;
   height: 100%;
   background: rgb(0, 0, 0);
-  background: linear-gradient(
-    90deg,
-    rgba(0, 0, 0, 0) 0%,
-    rgba(255, 255, 255, 1) 95%,
-    rgba(255, 255, 255, 1) 100%
-  );
+  background: linear-gradient(90deg,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(255, 255, 255, 1) 95%,
+      rgba(255, 255, 255, 1) 100%);
   pointer-events: none;
 }
 
@@ -25131,7 +23879,7 @@ body[class*="mec-theme"] .mec-wrap a {
   gap: 16px;
 }
 
-.mec-event-banner-location > i {
+.mec-event-banner-location>i {
   display: none;
 }
 
@@ -25147,7 +23895,7 @@ body[class*="mec-theme"] .mec-wrap a {
   flex-direction: row;
 }
 
-.mec-event-banner-location .mec-single-event-location img + dl {
+.mec-event-banner-location .mec-single-event-location img+dl {
   flex-direction: column;
 }
 
@@ -25253,7 +24001,7 @@ body[class*="mec-theme"] .mec-wrap a {
 /* Banner Styles End*/
 
 /* Fix Twitter icon style */
-.mec-wrap li.mec-event-social-icon a > svg {
+.mec-wrap li.mec-event-social-icon a>svg {
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -25273,12 +24021,12 @@ body[class*="mec-theme"] .mec-wrap a {
   margin-bottom: -7px;
 }
 
-.mec-event-list-modern .mec-event-sharing > li a {
+.mec-event-list-modern .mec-event-sharing>li a {
   display: flex;
   align-items: center;
 }
 
-.mec-event-list-modern .mec-event-sharing > li a.twitter svg {
+.mec-event-list-modern .mec-event-sharing>li a.twitter svg {
   border: 1px solid #ddd;
 }
 
@@ -25388,7 +24136,7 @@ body[class*="mec-theme"] .mec-wrap a {
 .mec-events-meta-group-tags,
 .lity-content .mec-events-meta-group-booking .mec-event-ticket-available,
 .mec-single-event .mec-events-meta-group-booking .mec-event-ticket-available,
-.mec-single-modern .mec-single-event-bar > div dd,
+.mec-single-modern .mec-single-event-bar>div dd,
 .mec-single-event .mec-event-meta dd,
 .mec-single-event .mec-event-meta dd a,
 .mec-next-occ-booking span,
@@ -25427,7 +24175,7 @@ body[class*="mec-theme"] .mec-wrap a {
 .mec-wrap.colorskin-custom .mec-totalcal-box .mec-totalcal-view span:hover,
 .mec-wrap.colorskin-custom .mec-calendar.mec-event-calendar-classic .mec-selected-day,
 .mec-wrap.colorskin-custom .mec-color,
-.mec-wrap.colorskin-custom .mec-event-sharing-wrap .mec-event-sharing > li:hover a,
+.mec-wrap.colorskin-custom .mec-event-sharing-wrap .mec-event-sharing>li:hover a,
 .mec-wrap.colorskin-custom .mec-color-hover:hover,
 .mec-wrap.colorskin-custom .mec-color-before *:before,
 .mec-wrap.colorskin-custom .mec-widget .mec-event-grid-classic.owl-carousel .owl-nav i,
@@ -25465,9 +24213,7 @@ body[class*="mec-theme"] .mec-wrap a {
 .leaflet-popup-content .mec-wrap .mec-color,
 .leaflet-popup-content .mec-wrap .mec-color-before :before,
 .leaflet-popup-content .mec-wrap .mec-color-hover:hover,
-.mec-calendar.mec-calendar-daily
-  .mec-calendar-d-table
-  .mec-daily-view-day.mec-daily-view-day-active.mec-color,
+.mec-calendar.mec-calendar-daily .mec-calendar-d-table .mec-daily-view-day.mec-daily-view-day-active.mec-color,
 .mec-map-boxshow div .mec-map-view-event-detail.mec-event-detail i,
 .mec-map-boxshow div .mec-map-view-event-detail.mec-event-detail:hover,
 .mec-map-boxshow .mec-color,
@@ -25485,24 +24231,11 @@ body[class*="mec-theme"] .mec-wrap a {
 .mec-yearly-view-wrap .mec-yearly-title-sec .mec-next-year:hover,
 .mec-yearly-view-wrap .mec-yearly-title-sec .mec-previous-year:hover,
 .mec-av-spot .mec-av-spot-head .mec-av-spot-box span,
-.mec-wrap.colorskin-custom
-  .mec-calendar
-  .mec-calendar-side
-  .mec-previous-month:hover
-  .mec-load-month-link,
-.mec-wrap.colorskin-custom
-  .mec-calendar
-  .mec-calendar-side
-  .mec-next-month:hover
-  .mec-load-month-link,
+.mec-wrap.colorskin-custom .mec-calendar .mec-calendar-side .mec-previous-month:hover .mec-load-month-link,
+.mec-wrap.colorskin-custom .mec-calendar .mec-calendar-side .mec-next-month:hover .mec-load-month-link,
 .mec-yearly-view-wrap .mec-yearly-title-sec .mec-previous-year:hover .mec-load-month-link,
 .mec-yearly-view-wrap .mec-yearly-title-sec .mec-next-year:hover .mec-load-month-link,
-.mec-skin-list-events-container
-  .mec-data-fields-tooltip
-  .mec-data-fields-tooltip-box
-  ul
-  .mec-event-data-field-item
-  a,
+.mec-skin-list-events-container .mec-data-fields-tooltip .mec-data-fields-tooltip-box ul .mec-event-data-field-item a,
 .mec-wrap.mec-cart table tr td a,
 .mec-marker-infowindow-wp .mec-marker-infowindow-count,
 .mec-single-event .mec-speakers-details ul li .mec-speaker-name {
@@ -25510,7 +24243,7 @@ body[class*="mec-theme"] .mec-wrap a {
 }
 
 .mec-event-list-standard .mec-event-meta svg path,
-.mec-wrap .mec-event-sharing-wrap .mec-event-sharing > li:hover a svg {
+.mec-wrap .mec-event-sharing-wrap .mec-event-sharing>li:hover a svg {
   fill: var(--mec-color-skin);
 }
 
@@ -25519,12 +24252,8 @@ body[class*="mec-theme"] .mec-wrap a {
 .mec-skin-carousel-container .mec-event-footer-carousel-type3 .mec-modal-booking-button:hover,
 .mec-wrap.colorskin-custom .mec-event-sharing .mec-event-share:hover .event-sharing-icon,
 .mec-wrap.colorskin-custom .mec-event-grid-clean .mec-event-date,
-.mec-wrap.colorskin-custom .mec-event-list-modern .mec-event-sharing > li:hover a i,
-.mec-wrap.colorskin-custom
-  .mec-event-list-modern
-  .mec-event-sharing
-  .mec-event-share:hover
-  .mec-event-sharing-icon,
+.mec-wrap.colorskin-custom .mec-event-list-modern .mec-event-sharing>li:hover a i,
+.mec-wrap.colorskin-custom .mec-event-list-modern .mec-event-sharing .mec-event-share:hover .mec-event-sharing-icon,
 .mec-wrap.colorskin-custom .mec-event-list-modern .mec-event-sharing li:hover a i,
 .mec-wrap.colorskin-custom .mec-calendar:not(.mec-event-calendar-classic) .mec-selected-day,
 .mec-wrap.colorskin-custom .mec-calendar .mec-selected-day:hover,
@@ -25532,7 +24261,7 @@ body[class*="mec-theme"] .mec-wrap a {
 .mec-wrap.colorskin-custom .mec-calendar .mec-has-event:after,
 .mec-wrap.colorskin-custom .mec-bg-color,
 .mec-wrap.colorskin-custom .mec-bg-color-hover:hover,
-.colorskin-custom .mec-event-sharing-wrap:hover > li,
+.colorskin-custom .mec-event-sharing-wrap:hover>li,
 .mec-wrap.colorskin-custom .mec-totalcal-box .mec-totalcal-view span.mec-totalcalview-selected,
 .mec-wrap .flip-clock-wrapper ul li a div div.inn,
 .mec-wrap .mec-totalcal-box .mec-totalcal-view span.mec-totalcalview-selected,
@@ -25556,9 +24285,7 @@ span.mec-marker-wrap,
 }
 
 .mec-booking-tooltip.multiple-time .mec-booking-calendar-date:hover,
-.mec-calendar-day.mec-active
-  .mec-booking-tooltip.multiple-time
-  .mec-booking-calendar-date.mec-active {
+.mec-calendar-day.mec-active .mec-booking-tooltip.multiple-time .mec-booking-calendar-date.mec-active {
   background-color: var(--mec-color-skin);
 }
 
@@ -25566,20 +24293,9 @@ span.mec-marker-wrap,
 ------------------ */
 .mec-skin-carousel-container .mec-event-footer-carousel-type3 .mec-modal-booking-button:hover,
 .mec-timeline-month-divider,
-.mec-wrap.colorskin-custom
-  .mec-single-event
-  .mec-speakers-details
-  ul
-  li
-  .mec-speaker-avatar
-  a:hover
-  img,
-.mec-wrap.colorskin-custom .mec-event-list-modern .mec-event-sharing > li:hover a i,
-.mec-wrap.colorskin-custom
-  .mec-event-list-modern
-  .mec-event-sharing
-  .mec-event-share:hover
-  .mec-event-sharing-icon,
+.mec-wrap.colorskin-custom .mec-single-event .mec-speakers-details ul li .mec-speaker-avatar a:hover img,
+.mec-wrap.colorskin-custom .mec-event-list-modern .mec-event-sharing>li:hover a i,
+.mec-wrap.colorskin-custom .mec-event-list-modern .mec-event-sharing .mec-event-share:hover .mec-event-sharing-icon,
 .mec-wrap.colorskin-custom .mec-event-list-standard .mec-month-divider span:before,
 .mec-wrap.colorskin-custom .mec-single-event .mec-social-single:before,
 .mec-wrap.colorskin-custom .mec-single-event .mec-frontbox-title:before,
@@ -25588,7 +24304,7 @@ span.mec-marker-wrap,
 .mec-wrap.colorskin-custom .mec-border-color-hover:hover,
 .colorskin-custom .mec-single-event .mec-frontbox-title:before,
 .colorskin-custom .mec-single-event .mec-wrap-checkout h4:before,
-.colorskin-custom .mec-single-event .mec-events-meta-group-booking form > h4:before,
+.colorskin-custom .mec-single-event .mec-events-meta-group-booking form>h4:before,
 .mec-wrap.colorskin-custom .mec-totalcal-box .mec-totalcal-view span.mec-totalcalview-selected,
 .mec-wrap .mec-totalcal-box .mec-totalcal-view span.mec-totalcalview-selected,
 .event-carousel-type1-head .mec-event-date-carousel:after,
@@ -25600,19 +24316,17 @@ span.mec-marker-wrap,
 .mec-booking-tooltip.multiple-time .mec-booking-calendar-date:hover,
 .mec-virtual-event-history h3:before,
 .mec-booking-tooltip.multiple-time .mec-booking-calendar-date:hover,
-.mec-calendar-day.mec-active
-  .mec-booking-tooltip.multiple-time
-  .mec-booking-calendar-date.mec-active,
-.mec-rsvp-form-box form > h4:before,
+.mec-calendar-day.mec-active .mec-booking-tooltip.multiple-time .mec-booking-calendar-date.mec-active,
+.mec-rsvp-form-box form>h4:before,
 .mec-wrap .mec-box-title::before,
 .mec-box-title::before,
 .lity-content .mec-booking-progress-bar li.mec-active:after,
 .mec-single-event .mec-frontbox-title:before,
 .mec-single-event .mec-wrap-checkout h4:before,
 .mec-events-meta-group-booking .mec-booking-shortcode .mec-wrap-checkout h4:before,
-.lity-content .mec-events-meta-group-booking form > h4:before,
-.mec-single-event .mec-events-meta-group-booking form > h4:before,
-.mec-events-meta-group-booking .mec-booking-shortcode form > h4:before,
+.lity-content .mec-events-meta-group-booking form>h4:before,
+.mec-single-event .mec-events-meta-group-booking form>h4:before,
+.mec-events-meta-group-booking .mec-booking-shortcode form>h4:before,
 .lity-content .mec-events-meta-group-booking .mec-wrap-checkout h4:before,
 .mec-single-event .mec-events-meta-group-booking .mec-wrap-checkout h4:before,
 .mec-events-meta-group-booking .mec-booking-shortcode .mec-wrap-checkout h4:before {
@@ -25631,18 +24345,12 @@ span.mec-marker-wrap,
 }
 
 .mec-wrap .button,
-.mec-wrap
-  button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):not(
-    .mec-googlemap-details button
-  ):not(.mec-googlemap-details button):not(.elementor-add-section-inner button):not(.dismissButton),
+.mec-wrap button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):not(.mec-googlemap-details button):not(.mec-googlemap-details button):not(.elementor-add-section-inner button):not(.dismissButton):not([class*="et-"]),
 .mec-wrap input[type="submit"],
 .mec-wrap input[type="reset"],
 .mec-wrap input[type="button"],
 .lity-content .button,
-.lity-content
-  button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):not(
-    .mec-googlemap-details button
-  ):not(.mec-googlemap-details button):not(.elementor-add-section-inner button):not(.dismissButton),
+.lity-content button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):not(.mec-googlemap-details button):not(.mec-googlemap-details button):not(.elementor-add-section-inner button):not(.dismissButton):not([class*="et-"]),
 .lity-content input[type="submit"],
 .lity-content input[type="reset"],
 .lity-content input[type="button"],
@@ -25657,22 +24365,12 @@ span.mec-marker-wrap,
 
 .mec-wrap .button:hover,
 .mec-wrap a.button:hover,
-.mec-wrap
-  button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):not(
-    .mec-googlemap-details button
-  ):not(.mec-googlemap-details button):not(.elementor-add-section-inner button):not(
-    .dismissButton
-  ):hover,
+.mec-wrap button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):not(.mec-googlemap-details button):not(.mec-googlemap-details button):not(.elementor-add-section-inner button):not(.dismissButton):not([class*="et-"]):hover,
 .mec-wrap input[type="submit"]:hover,
 .mec-wrap input[type="reset"]:hover,
 .mec-wrap input[type="button"]:hover,
 .lity-content .button:hover,
-.lity-content
-  button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):not(
-    .mec-googlemap-details button
-  ):not(.mec-googlemap-details button):not(.elementor-add-section-inner button):not(
-    .dismissButton
-  ):hover,
+.lity-content button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):not(.mec-googlemap-details button):not(.mec-googlemap-details button):not(.elementor-add-section-inner button):not(.dismissButton):not([class*="et-"]):hover,
 .lity-content input[type="submit"]:hover,
 .lity-content input[type="reset"]:hover,
 .lity-content input[type="button"]:hover,
@@ -25690,18 +24388,12 @@ span.mec-marker-wrap,
 }
 
 .mec-wrap .button svg path,
-.mec-wrap
-  button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next)
-  svg
-  path,
+.mec-wrap button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):not([class*="et-"]) svg path,
 .mec-wrap input[type="submit"] svg path,
 .mec-wrap input[type="reset"] svg path,
 .mec-wrap input[type="button"] svg path,
 .lity-content .button svg path,
-.lity-content
-  button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next)
-  svg
-  path,
+.lity-content button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next) svg path,
 .lity-content input[type="submit"] svg path,
 .lity-content input[type="reset"] svg path,
 .lity-content input[type="button"] svg path,
@@ -25711,12 +24403,7 @@ span.mec-marker-wrap,
 }
 
 .mec-wrap .button svg.back path,
-.mec-wrap
-  button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):not(
-    .et-fb-button
-  )
-  svg.back
-  path {
+.mec-wrap button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):not(.et-fb-button) svg.back path {
   fill: #636f72;
 }
 
@@ -25747,6 +24434,7 @@ span.mec-marker-wrap,
 /* == Render Container Normal Width
 ------------------ */
 @media only screen and (min-width: 1200px) {
+
   .mec-container,
   body [id*="mec_skin_"].mec-fluent-wrap {
     width: var(--mec-container-normal-width);
@@ -25757,6 +24445,7 @@ span.mec-marker-wrap,
 /* == Render Container Large Width
 ------------------ */
 @media only screen and (min-width: 1921px) {
+
   .mec-container,
   body [id*="mec_skin_"].mec-fluent-wrap {
     width: var(--mec-container-large-width);
@@ -26029,15 +24718,12 @@ span.mec-marker-wrap,
 .mec-single-fluent-wrap .mec-single-event-additional-organizers dd.mec-organizer-description:before,
 .mec-single-fluent-wrap .mec-event-schedule-content dl dt.mec-schedule-time:before,
 .mec-single-fluent-wrap .mec-event-schedule-content dl dt.mec-schedule-time:before,
-.mec-single-fluent-wrap .mec-single-event-bar > div i,
+.mec-single-fluent-wrap .mec-single-event-bar>div i,
 .mec-single-fluent-wrap .mec-single-event-category a,
-.mec-fluent-wrap .mec-daily-view-events-left-side .mec-daily-view-events-item > span.mec-time,
-.mec-fluent-wrap .mec-daily-view-events-left-side .mec-daily-view-events-item > span.mec-time-end,
-.mec-fluent-wrap
-  .mec-calendar.mec-calendar-daily
-  .mec-calendar-d-table.mec-date-labels-container
-  span,
-.mec-fluent-wrap .mec-calendar .mec-week-events-container dl > span,
+.mec-fluent-wrap .mec-daily-view-events-left-side .mec-daily-view-events-item>span.mec-time,
+.mec-fluent-wrap .mec-daily-view-events-left-side .mec-daily-view-events-item>span.mec-time-end,
+.mec-fluent-wrap .mec-calendar.mec-calendar-daily .mec-calendar-d-table.mec-date-labels-container span,
+.mec-fluent-wrap .mec-calendar .mec-week-events-container dl>span,
 .mec-fluent-current-time-text,
 .mec-fluent-wrap.mec-timetable-wrap .mec-cell .mec-time,
 .mec-fluent-wrap.mec-skin-masonry-container .mec-events-masonry-cats a:hover,
@@ -26053,7 +24739,7 @@ span.mec-marker-wrap,
 .mec-fluent-wrap .mec-date-wrap i,
 .mec-fluent-wrap .mec-calendar.mec-yearly-calendar .mec-calendar-table-head dl dt:first-letter,
 .mec-fluent-wrap .mec-event-sharing-wrap .mec-event-sharing li:hover a,
-.mec-fluent-wrap .mec-agenda-event > i,
+.mec-fluent-wrap .mec-agenda-event>i,
 .mec-fluent-wrap .mec-totalcal-box .nice-select:after,
 .mec-fluent-wrap .mec-totalcal-box .mec-totalcal-view span,
 .mec-fluent-wrap .mec-totalcal-box input,
@@ -26103,6 +24789,7 @@ span.mec-marker-wrap,
 .mec-fluent-wrap .mec-calendar.mec-event-calendar-classic dl dt:hover {
   color: var(--mec-fluent-main-color-rgba-2) !important;
 }
+
 .mec-fluent-wrap .mec-event-sharing-wrap .mec-event-social-icon svg path {
   fill: var(--mec-fluent-main-color-rgba-2) !important;
 }
@@ -26138,13 +24825,7 @@ span.mec-marker-wrap,
 .mec-single-fluent-wrap .mec-event-schedule-content dl:before,
 .mec-single-fluent-wrap .mec-event-schedule-content dl:first-of-type:after,
 .mec-single-fluent-wrap .mec-event-schedule-content dl,
-.mec-single-fluent-wrap
-  .mec-event-export-module.mec-frontbox
-  .mec-event-exporting
-  .mec-export-details
-  ul
-  li
-  a:hover,
+.mec-single-fluent-wrap .mec-event-export-module.mec-frontbox .mec-event-exporting .mec-export-details ul li a:hover,
 .mec-fluent-wrap .mec-calendar-weekly .mec-calendar-d-top .mec-current-week,
 .mec-fluent-wrap .mec-calendar.mec-event-calendar-classic .mec-calendar-table-head,
 .mec-fluent-wrap .mec-yearly-view-wrap .mec-year-container,
@@ -26180,10 +24861,7 @@ span.mec-marker-wrap,
 
 .mec-fluent-wrap .mec-more-events,
 .mec-fluent-wrap .mec-calendar.mec-event-calendar-classic dl:last-of-type dt,
-.mec-fluent-wrap.mec-skin-full-calendar-container
-  > .mec-totalcal-box
-  .mec-totalcal-view
-  .mec-fluent-more-views-content:before,
+.mec-fluent-wrap.mec-skin-full-calendar-container>.mec-totalcal-box .mec-totalcal-view .mec-fluent-more-views-content:before,
 .mec-fluent-wrap .mec-filter-content:before {
   border-bottom-color: var(--mec-fluent-main-color) !important;
 }
@@ -26229,13 +24907,7 @@ span.mec-marker-wrap,
 .mec-single-fluent-wrap .mec-next-event-details a,
 .mec-single-fluent-wrap .mec-events-meta-group,
 .mec-single-fluent-wrap .mec-events-meta-group-tags a,
-.mec-single-fluent-wrap
-  .mec-event-export-module.mec-frontbox
-  .mec-event-exporting
-  .mec-export-details
-  ul
-  li
-  a,
+.mec-single-fluent-wrap .mec-event-export-module.mec-frontbox .mec-event-exporting .mec-export-details ul li a,
 .mec-fluent-wrap .mec-skin-weekly-view-events-container,
 .mec-fluent-wrap .mec-calendar .mec-week-events-container dt,
 .mec-fluent-wrap.mec-timetable-wrap .mec-timetable-t2-wrap,
@@ -26273,13 +24945,7 @@ span.mec-marker-wrap,
 
 .mec-fluent-wrap.mec-skin-grid-wrap .mec-event-article,
 .mec-single-fluent-wrap .mec-next-event-details a:hover,
-.mec-single-fluent-wrap
-  .mec-event-export-module.mec-frontbox
-  .mec-event-exporting
-  .mec-export-details
-  ul
-  li
-  a:hover {
+.mec-single-fluent-wrap .mec-event-export-module.mec-frontbox .mec-event-exporting .mec-export-details ul li a:hover {
   box-shadow: 0 4px 10px var(--mec-fluent-main-color-rgba-5) !important;
 }
 
@@ -26305,13 +24971,7 @@ span.mec-marker-wrap,
 .mec-single-fluent-wrap .mec-related-event-post .mec-date-wrap,
 .mec-single-fluent-wrap .mec-next-event-details a:hover,
 .mec-single-fluent-wrap .mec-events-meta-group-tags a:hover,
-.mec-single-fluent-wrap
-  .mec-event-export-module.mec-frontbox
-  .mec-event-exporting
-  .mec-export-details
-  ul
-  li
-  a:hover,
+.mec-single-fluent-wrap .mec-event-export-module.mec-frontbox .mec-event-exporting .mec-export-details ul li a:hover,
 .mec-fluent-wrap dt .mec-more-events .simple-skin-ended:hover,
 .mec-fluent-wrap .mec-more-events .simple-skin-ended:hover,
 .mec-fluent-wrap.mec-skin-countdown-container .mec-date-wrap,
@@ -26333,26 +24993,12 @@ span.mec-marker-wrap,
 .mec-fluent-wrap.mec-skin-cover-container .mec-date-wrap i,
 .mec-fluent-wrap.mec-skin-carousel-container .mec-event-carousel-type2 .owl-next:hover,
 .mec-fluent-wrap.mec-skin-carousel-container .mec-event-carousel-type2 .owl-prev:hover,
-.mec-fluent-wrap.mec-skin-slider-container
-  .mec-slider-t1-wrap
-  .mec-owl-theme
-  .owl-nav
-  .owl-next:hover,
-.mec-fluent-wrap.mec-skin-slider-container
-  .mec-slider-t1-wrap
-  .mec-owl-theme
-  .owl-nav
-  .owl-prev:hover,
+.mec-fluent-wrap.mec-skin-slider-container .mec-slider-t1-wrap .mec-owl-theme .owl-nav .owl-next:hover,
+.mec-fluent-wrap.mec-skin-slider-container .mec-slider-t1-wrap .mec-owl-theme .owl-nav .owl-prev:hover,
 .mec-fluent-wrap .mec-calendar-weekly .mec-calendar-d-top dt.active,
 .mec-fluent-wrap .mec-calendar-weekly .mec-calendar-d-top .mec-current-week,
-.mec-fluent-wrap.mec-skin-full-calendar-container
-  > .mec-totalcal-box
-  .mec-totalcal-view
-  span.mec-fluent-more-views-icon.active,
-.mec-fluent-wrap.mec-skin-full-calendar-container
-  > .mec-totalcal-box
-  .mec-totalcal-view
-  span.mec-totalcalview-selected,
+.mec-fluent-wrap.mec-skin-full-calendar-container>.mec-totalcal-box .mec-totalcal-view span.mec-fluent-more-views-icon.active,
+.mec-fluent-wrap.mec-skin-full-calendar-container>.mec-totalcal-box .mec-totalcal-view span.mec-totalcalview-selected,
 .mec-fluent-wrap i.mec-filter-icon.active,
 .mec-fluent-wrap .mec-filter-content i,
 .mec-single-fluent-wrap .mec-events-meta-group-countdown,
@@ -26369,10 +25015,7 @@ span.mec-marker-wrap,
 .mec-fluent-wrap.mec-skin-available-spot-container .mec-date-wrap span.mec-event-day-num,
 .mec-fluent-wrap.mec-skin-cover-container .mec-date-wrap span.mec-event-day-num,
 .mec-fluent-wrap.mec-skin-countdown-container .mec-date-wrap span.mec-event-day-num,
-.mec-fluent-wrap.mec-skin-carousel-container
-  .event-carousel-type2-head
-  .mec-date-wrap
-  span.mec-event-day-num,
+.mec-fluent-wrap.mec-skin-carousel-container .event-carousel-type2-head .mec-date-wrap span.mec-event-day-num,
 .mec-fluent-wrap.mec-skin-slider-container .mec-date-wrap span.mec-event-day-num,
 .mec-fluent-wrap.mec-skin-masonry-container .mec-masonry .mec-date-wrap span.mec-event-day-num,
 .mec-fluent-wrap .mec-calendar-weekly .mec-calendar-d-top dt.active,
@@ -26381,16 +25024,13 @@ span.mec-marker-wrap,
 .mec-fluent-wrap .mec-color,
 .mec-fluent-wrap a:hover,
 .mec-wrap .mec-color-hover:hover,
-.mec-fluent-wrap.mec-skin-full-calendar-container
-  > .mec-totalcal-box
-  .mec-totalcal-view
-  span.mec-totalcalview-selected,
+.mec-fluent-wrap.mec-skin-full-calendar-container>.mec-totalcal-box .mec-totalcal-view span.mec-totalcalview-selected,
 .mec-fluent-wrap .mec-load-more-button,
 .mec-fluent-wrap .mec-load-month i,
 .mec-fluent-wrap .mec-load-year i,
 .mec-fluent-wrap i.mec-filter-icon,
 .mec-fluent-wrap .mec-filter-content i,
-.mec-fluent-wrap .mec-event-sharing-wrap > li:first-of-type i,
+.mec-fluent-wrap .mec-event-sharing-wrap>li:first-of-type i,
 .mec-fluent-wrap .mec-available-tickets-details span.mec-available-tickets-number {
   color: var(--mec-fluent-bold-color);
 }
@@ -26400,15 +25040,8 @@ span.mec-marker-wrap,
 .mec-single-fluent-wrap .mec-event-social li.mec-event-social-icon a:hover,
 .mec-fluent-wrap .mec-load-month,
 .mec-fluent-wrap .mec-load-year,
-.mec-single-fluent-body
-  .lity-content
-  .mec-events-meta-group-booking
-  .mec-book-available-tickets-details
-  > .mec-book-available-tickets-details-header,
-.mec-single-fluent-wrap
-  .mec-events-meta-group-booking
-  .mec-book-available-tickets-details
-  > .mec-book-available-tickets-details-header {
+.mec-single-fluent-body .lity-content .mec-events-meta-group-booking .mec-book-available-tickets-details>.mec-book-available-tickets-details-header,
+.mec-single-fluent-wrap .mec-events-meta-group-booking .mec-book-available-tickets-details>.mec-book-available-tickets-details-header {
   border-color: var(--mec-fluent-bold-color) !important;
 }
 
@@ -26416,7 +25049,7 @@ span.mec-marker-wrap,
 .mec-fluent-wrap.mec-skin-cover-container .mec-event-cover-fluent-type4 .mec-booking-button,
 .mec-fluent-wrap.mec-skin-cover-container .mec-event-cover-fluent-type3 .mec-booking-button,
 .mec-fluent-wrap.mec-skin-cover-container .mec-event-cover-fluent-type1 .mec-booking-button,
-.mec-fluent-wrap .mec-event-cover-fluent-type2 .mec-event-sharing-wrap:hover > li:first-child,
+.mec-fluent-wrap .mec-event-cover-fluent-type2 .mec-event-sharing-wrap:hover>li:first-child,
 .mec-fluent-wrap.mec-skin-cover-container .mec-event-cover-fluent-type2 .mec-date-wrap,
 .mec-fluent-wrap.mec-skin-carousel-container .mec-owl-theme .owl-dots .owl-dot.active span,
 .mec-single-fluent-body .lity-content .mec-events-meta-group-booking button,
@@ -26431,12 +25064,7 @@ span.mec-marker-wrap,
 .mec-fluent-wrap .mec-load-year:hover,
 .mec-fluent-wrap .mec-booking-button:hover,
 .mec-wrap.mec-single-fluent-wrap .button:hover,
-.mec-wrap.mec-single-fluent-wrap
-  button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):not(
-    .mec-googlemap-details button
-  ):not(.mec-googlemap-details button):not(.elementor-add-section-inner button):not(
-    .dismissButton
-  ):hover,
+.mec-wrap.mec-single-fluent-wrap button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):not(.mec-googlemap-details button):not(.mec-googlemap-details button):not(.elementor-add-section-inner button):not(.dismissButton):hover,
 .mec-wrap.mec-single-fluent-wrap input[type="submit"]:hover,
 .mec-wrap.mec-single-fluent-wrap input[type="reset"]:hover,
 .mec-wrap.mec-single-fluent-wrap input[type="button"]:hover {
@@ -26462,6 +25090,7 @@ span.mec-marker-wrap,
 /* Saga theme compatibility */
 
 @media only screen and (min-width: 1200px) {
+
   .mec-theme-saga .mec-container,
   body [id*="mec_skin_"].mec-fluent-wrap {
     width: inherit;
@@ -26546,16 +25175,16 @@ span.mec-marker-wrap,
 .mec-theme-saga .lity-content .mec-events-meta-group-booking .mec-wrap-checkout h4,
 .mec-theme-saga .mec-single-event .mec-events-meta-group-booking .mec-wrap-checkout h4,
 .mec-theme-saga .mec-events-meta-group-booking .mec-booking-shortcode .mec-wrap-checkout h4,
-.mec-theme-saga .lity-content .mec-events-meta-group-booking form > h4,
-.mec-single-event .mec-events-meta-group-booking form > h4,
-.mec-theme-saga .mec-events-meta-group-booking .mec-booking-shortcode form > h4 {
+.mec-theme-saga .lity-content .mec-events-meta-group-booking form>h4,
+.mec-single-event .mec-events-meta-group-booking form>h4,
+.mec-theme-saga .mec-events-meta-group-booking .mec-booking-shortcode form>h4 {
   text-align: center;
 }
 
 /* Saga theme compatibility End*/
 
 /* Fix banner */
-.mec-event-banner-inner .mec-single-event-location > i {
+.mec-event-banner-inner .mec-single-event-location>i {
   display: none;
 }
 
@@ -26783,6 +25412,7 @@ span.load-more-text:before {
 }
 
 @media (min-width: 783px) {
+
   .mec-fes-event-fields .mec-form-row .mec-col-4,
   .mec-fes-event-fields .mec-form-row .mec-col-8 {
     width: 49%;
@@ -26870,6 +25500,22 @@ span.button {
   padding-left: 5px;
 }
 
+.mec-select-date-label {
+  color: #606367;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 19px;
+  letter-spacing: 0;
+  margin: 0 0 4px 0;
+  display: block;
+  clear: none;
+  padding: 0 1em 5px 0;
+}
+
+.mec-select-date-label span.mec-required {
+  color: red;
+}
+
 /* Fes Appointment */
 
 .mec-fes-form .mec-event-appointment-tab {
@@ -26910,13 +25556,9 @@ span.button {
 }
 
 .mec-fes-form .mec-entity-type-appointment .mec-date-time-inner-options,
-.mec-fes-form
-  .mec-entity-type-appointment
-  a.mec-add-event-tabs-link[data-href="mec_meta_box_repeat_form"],
+.mec-fes-form .mec-entity-type-appointment a.mec-add-event-tabs-link[data-href="mec_meta_box_repeat_form"],
 .mec-fes-form .mec-entity-type-appointment #mec_meta_box_repeat_form,
-.mec-fes-form
-  .mec-entity-type-appointment
-  a.mec-add-event-tabs-link[data-href="mec-hourly-schedule"],
+.mec-fes-form .mec-entity-type-appointment a.mec-add-event-tabs-link[data-href="mec-hourly-schedule"],
 .mec-fes-form .mec-entity-type-appointment #mec-hourly-schedule,
 .mec-fes-form .mec-entity-type-appointment a.mec-add-event-tabs-link[data-href="mec-schema"],
 .mec-fes-form .mec-entity-type-appointment #mec-schema {
@@ -26951,11 +25593,11 @@ span.button {
   margin-top: 10px;
 }
 
-.mec-fes-form .lsd-apt-day-timeslot-wrapper > div {
+.mec-fes-form .lsd-apt-day-timeslot-wrapper>div {
   width: calc(100% - 32px);
 }
 
-.mec-fes-form .mec-form-row .button.lsd-apt-day-timeslot-wrapper > span,
+.mec-fes-form .mec-form-row .button.lsd-apt-day-timeslot-wrapper>span,
 .mec-fes-form .mec-form-row .button.lsd-apt-day-icon-plus,
 .mec-fes-form .mec-form-row .button.lsd-apt-day-icon-copy,
 .mec-fes-form .mec-form-row .button.lsd-apt-adj-day-icon-plus,
@@ -26966,7 +25608,7 @@ span.button {
   margin: 0 2px 0 0 !important;
 }
 
-.mec-fes-form .lsd-apt-day-timeslot-wrapper > span svg,
+.mec-fes-form .lsd-apt-day-timeslot-wrapper>span svg,
 .mec-fes-form .lsd-apt-day-icon-plus svg,
 .mec-fes-form .lsd-apt-day-icon-copy svg,
 .mec-fes-form .button.lsd-apt-adj-day-icon-plus svg,
@@ -26975,7 +25617,7 @@ span.button {
   width: 12px;
 }
 
-.mec-fes-form .lsd-apt-day-timeslot-wrapper > span svg path,
+.mec-fes-form .lsd-apt-day-timeslot-wrapper>span svg path,
 .mec-fes-form .lsd-apt-day-icon-plus svg path,
 .mec-fes-form .lsd-apt-day-icon-copy svg path,
 .mec-fes-form .button.lsd-apt-adj-day-icon-plus svg path,
@@ -26984,7 +25626,7 @@ span.button {
   fill: #40d9f1;
 }
 
-.mec-fes-form .lsd-apt-day-timeslot-wrapper > span:hover svg path,
+.mec-fes-form .lsd-apt-day-timeslot-wrapper>span:hover svg path,
 .mec-fes-form .lsd-apt-day-icon-plus:hover svg path,
 .mec-fes-form .lsd-apt-day-icon-copy:hover svg path,
 .mec-fes-form .button.lsd-apt-adj-day-icon-plus:hover svg path,
@@ -27029,11 +25671,7 @@ span.button {
   display: flex;
 }
 
-.mec-fes-form
-  .lsd-apt-adjusted-days-wrapper
-  .lsd-apt-day-wrapper.mec-form-row
-  .lsd-apt-day-label
-  input {
+.mec-fes-form .lsd-apt-adjusted-days-wrapper .lsd-apt-day-wrapper.mec-form-row .lsd-apt-day-label input {
   width: calc(100% - 15px);
 }
 
@@ -27097,18 +25735,41 @@ span.button {
   font-weight: 600;
 }
 
+body:has(.mec-fes-form, .mec-search-form) .ui-datepicker .ui-datepicker-prev,
+body:has(.mec-fes-form, .mec-search-form) .ui-datepicker .ui-datepicker-next {
+  align-items: center;
+  display: inline-flex !important;
+  font-family: inherit;
+  font-size: 0;
+  justify-content: center;
+  line-height: 0;
+}
+
+body:has(.mec-fes-form, .mec-search-form) .ui-datepicker .ui-datepicker-prev:before,
+body:has(.mec-fes-form, .mec-search-form) .ui-datepicker .ui-datepicker-next:before {
+  border-right: 2px solid currentColor;
+  border-top: 2px solid currentColor;
+  content: "";
+  display: block;
+  height: 8px;
+  width: 8px;
+  position: relative;
+}
+
+body:has(.mec-fes-form, .mec-search-form) .ui-datepicker .ui-datepicker-prev:before {
+  transform: rotate(-135deg);
+  left: 2px;
+}
+
+body:has(.mec-fes-form, .mec-search-form) .ui-datepicker .ui-datepicker-next:before {
+  transform: rotate(45deg);
+  left: -2px;
+}
+
 .rtl .mec-yearly-view-wrap .mec-yearly-title-sec .mec-next-year i:before,
 .rtl .mec-yearly-view-wrap .mec-yearly-title-sec .mec-previous-year i:before,
-.rtl
-  .mec-box-calendar.mec-calendar.mec-event-calendar-classic
-  .mec-calendar-side
-  .mec-previous-month
-  i:before,
-.rtl
-  .mec-box-calendar.mec-calendar.mec-event-calendar-classic
-  .mec-calendar-side
-  .mec-next-month
-  i:before,
+.rtl .mec-box-calendar.mec-calendar.mec-event-calendar-classic .mec-calendar-side .mec-previous-month i:before,
+.rtl .mec-box-calendar.mec-calendar.mec-event-calendar-classic .mec-calendar-side .mec-next-month i:before,
 .rtl .mec-calendar .mec-calendar-side .mec-next-month i:before,
 .rtl .mec-calendar .mec-calendar-side .mec-previous-month i:before,
 .rtl .mec-calendar.mec-calendar-daily .mec-calendar-a-month .mec-next-month i:before,
@@ -27132,12 +25793,7 @@ span.button {
 .rtl .mec-slider-t5-wrap .mec-owl-theme .owl-nav .owl-next i:before,
 .rtl .mec-slider-t5-wrap .mec-owl-theme .owl-nav .owl-prev i:before,
 .rtl a.mec-timeline-readmore i:before,
-.rtl
-  .mec-wrap
-  button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):not(
-    .et-fb-button
-  )
-  svg,
+.rtl .mec-wrap button:not(.owl-dot):not(.gm-control-active):not(.mejs):not(.owl-prev):not(.owl-next):not(.et-fb-button) svg,
 .rtl .mec-breadcrumbs i:before {
   display: inline-block;
   transform: scaleX(-1);

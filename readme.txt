@@ -1,10 +1,10 @@
-=== Modern Events Calendar Lite ===
+﻿=== Modern Events Calendar Lite ===
 Contributors: webnus
 Donate link: https://webnus.net
 Tags: Event, Events, Calendar, Booking, Schedule, Organizer, Venue
 Requires at least: 4.0.0
 Tested up to: 6.9.0
-Stable tag: 7.31.0.1
+Stable tag: 7.32.0
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -472,9 +472,19 @@ You can see [plugin documentation](https://webnus.net/dox/modern-events-calendar
 43. WordPress Event Calendar - Daily view(Fluent View Layouts Addon)
 
 == Changelog ==
-v 7.31.0.1 - 5mar26
-- added missing timezone display, reformat
-- fixed countdown
+= v 7.32.0 - 7 April 2026 =
+- Added: Comprehensive attendees page for events to filter and manage attendees per occurrence.
+- Added: An ability to change the countdown method globally.
+- Enhanced: The security of Frontend Submission.
+- Enhanced: The Restful API for security and error handling.
+- Enhanced: X social network share option.
+- Fixed: An issue in booking module.
+- Fixed: Some issues in Divi integration.
+- Fixed: An issue in displaying localized date and times.
+- Fixed: An issue in next / previous icons of date picker.
+- Fixed: An issue in displaying content of agreement field when used in Per Attendee Fields.
+- Fixed: An issue in displaying per attendee price in booking exports.
+- Fixed: Some PHP errors related newer versions.
 
 = v 7.31.0 - 28 February 2026 =
 - Added: An option to import appointment services from Bookly and Amelia plugins.

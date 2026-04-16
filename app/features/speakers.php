@@ -35,28 +35,28 @@ class MEC_feature_speakers extends MEC_base
     public function init()
     {
         // Speakers Feature is Disabled
-        if(!isset($this->settings['speakers_status']) || !$this->settings['speakers_status']) return;
+        if (!isset($this->settings['speakers_status']) || !$this->settings['speakers_status']) return;
 
-        $this->factory->action('init', array($this, 'register_taxonomy'), 25);
-        $this->factory->action('mec_speaker_edit_form_fields', array($this, 'edit_form'));
-        $this->factory->action('mec_speaker_add_form_fields', array($this, 'add_form'));
-        $this->factory->action('edited_mec_speaker', array($this, 'save_metadata'));
-        $this->factory->action('created_mec_speaker', array($this, 'save_metadata'));
+        $this->factory->action('init', [$this, 'register_taxonomy'], 25);
+        $this->factory->action('mec_speaker_edit_form_fields', [$this, 'edit_form']);
+        $this->factory->action('mec_speaker_add_form_fields', [$this, 'add_form']);
+        $this->factory->action('edited_mec_speaker', [$this, 'save_metadata']);
+        $this->factory->action('created_mec_speaker', [$this, 'save_metadata']);
 
-        $this->factory->action('wp_ajax_mec_speaker_adding', array($this, 'fes_speaker_adding'));
-        $this->factory->action('wp_ajax_nopriv_mec_speaker_adding', array($this, 'fes_speaker_adding'));
-        $this->factory->action('current_screen', array($this, 'show_notices'));
+        $this->factory->action('wp_ajax_mec_speaker_adding', [$this, 'fes_speaker_adding']);
+        $this->factory->action('wp_ajax_nopriv_mec_speaker_adding', [$this, 'fes_speaker_adding']);
+        $this->factory->action('current_screen', [$this, 'show_notices']);
 
-        $this->factory->filter('manage_edit-mec_speaker_columns', array($this, 'filter_columns'));
-        $this->factory->filter('manage_mec_speaker_custom_column', array($this, 'filter_columns_content'), 10, 3);
+        $this->factory->filter('manage_edit-mec_speaker_columns', [$this, 'filter_columns']);
+        $this->factory->filter('manage_mec_speaker_custom_column', [$this, 'filter_columns_content'], 10, 3);
 
-        $this->factory->action('current_screen', array($this, 'update_speakers_list_admin'));
-        $this->factory->action('mec_fes_form_footer', array($this, 'update_speakers_list'));
+        $this->factory->action('current_screen', [$this, 'update_speakers_list_admin']);
+        $this->factory->action('mec_fes_form_footer', [$this, 'update_speakers_list']);
 
-        $this->factory->action('wp_ajax_update_speakers_list', array($this, 'get_speakers'));
-        $this->factory->action('wp_ajax_nopriv_update_speakers_list', array($this, 'get_speakers'));
+        $this->factory->action('wp_ajax_update_speakers_list', [$this, 'get_speakers']);
+        $this->factory->action('wp_ajax_nopriv_update_speakers_list', [$this, 'get_speakers']);
 
-        $this->factory->filter('post_edit_category_parent_dropdown_args', array($this, 'hide_parent_dropdown'));
+        $this->factory->filter('post_edit_category_parent_dropdown_args', [$this, 'hide_parent_dropdown']);
     }
 
     /**
@@ -69,29 +69,29 @@ class MEC_feature_speakers extends MEC_base
         $plural_label = $this->main->m('taxonomy_speakers', esc_html__('Speakers', 'modern-events-calendar-lite'));
         $speaker_args = apply_filters(
             'mec_register_taxonomy_args',
-            array(
-                'label'=>$plural_label,
-                'labels'=>array(
-                    'name'=>$plural_label,
-                    'singular_name'=>$singular_label,
-                    'all_items'=>sprintf(esc_html__('All %s', 'modern-events-calendar-lite'), $plural_label),
-                    'edit_item'=>sprintf(esc_html__('Edit %s', 'modern-events-calendar-lite'), $singular_label),
-                    'view_item'=>sprintf(esc_html__('View %s', 'modern-events-calendar-lite'), $singular_label),
-                    'update_item'=>sprintf(esc_html__('Update %s', 'modern-events-calendar-lite'), $singular_label),
-                    'add_new_item'=>sprintf(esc_html__('Add New %s', 'modern-events-calendar-lite'), $singular_label),
-                    'new_item_name'=>sprintf(esc_html__('New %s Name', 'modern-events-calendar-lite'), $singular_label),
-                    'popular_items'=>sprintf(esc_html__('Popular %s', 'modern-events-calendar-lite'), $plural_label),
-                    'search_items'=>sprintf(esc_html__('Search %s', 'modern-events-calendar-lite'), $plural_label),
-                    'back_to_items'=>sprintf(esc_html__('← Back to %s', 'modern-events-calendar-lite'), $plural_label),
-                    'not_found'=>sprintf(esc_html__('no %s found.', 'modern-events-calendar-lite'), strtolower($plural_label)),
-                ),
-                'rewrite'=>array('slug'=>'events-speaker'),
-                'public'=>false,
-                'show_ui'=>true,
-                'show_in_rest'=>true,
-                'hierarchical'=>false,
-                'meta_box_cb'=>(isset($_POST['_inline_edit']) ? '' : 'post_categories_meta_box'),
-            ),
+            [
+                'label' => $plural_label,
+                'labels' => [
+                    'name' => $plural_label,
+                    'singular_name' => $singular_label,
+                    'all_items' => sprintf(esc_html__('All %s', 'modern-events-calendar-lite'), $plural_label),
+                    'edit_item' => sprintf(esc_html__('Edit %s', 'modern-events-calendar-lite'), $singular_label),
+                    'view_item' => sprintf(esc_html__('View %s', 'modern-events-calendar-lite'), $singular_label),
+                    'update_item' => sprintf(esc_html__('Update %s', 'modern-events-calendar-lite'), $singular_label),
+                    'add_new_item' => sprintf(esc_html__('Add New %s', 'modern-events-calendar-lite'), $singular_label),
+                    'new_item_name' => sprintf(esc_html__('New %s Name', 'modern-events-calendar-lite'), $singular_label),
+                    'popular_items' => sprintf(esc_html__('Popular %s', 'modern-events-calendar-lite'), $plural_label),
+                    'search_items' => sprintf(esc_html__('Search %s', 'modern-events-calendar-lite'), $plural_label),
+                    'back_to_items' => sprintf(esc_html__('← Back to %s', 'modern-events-calendar-lite'), $plural_label),
+                    'not_found' => sprintf(esc_html__('no %s found.', 'modern-events-calendar-lite'), strtolower($plural_label)),
+                ],
+                'rewrite' => ['slug' => 'events-speaker'],
+                'public' => false,
+                'show_ui' => true,
+                'show_in_rest' => true,
+                'hierarchical' => false,
+                'meta_box_cb' => (isset($_POST['_inline_edit']) ? '' : 'post_categories_meta_box'),
+            ],
             'mec_speaker'
         );
         register_taxonomy(
@@ -105,8 +105,8 @@ class MEC_feature_speakers extends MEC_base
 
     /**
      * Show edit form of speaker taxonomy
-     * @author Webnus <info@webnus.net>
      * @param object $term
+     * @author Webnus <info@webnus.net>
      */
     public function edit_form($term)
     {
@@ -121,15 +121,17 @@ class MEC_feature_speakers extends MEC_base
         $linkedin = get_metadata('term', $term->term_id, 'linkedin', true);
         $twitter = get_metadata('term', $term->term_id, 'twitter', true);
         $thumbnail = get_metadata('term', $term->term_id, 'thumbnail', true);
-    ?>
+        ?>
         <tr class="form-field">
             <th scope="row">
                 <label for="mec_type"><?php esc_html_e('Type', 'modern-events-calendar-lite'); ?></label>
             </th>
             <td>
                 <select name="type" id="mec_type">
-                    <option value="person" <?php echo $type === 'person' ? 'selected' : ''; ?>><?php esc_html_e('Person', 'modern-events-calendar-lite'); ?></option>
-                    <option value="group" <?php echo $type === 'group' ? 'selected' : ''; ?>><?php esc_html_e('Group', 'modern-events-calendar-lite'); ?></option>
+                    <option
+                        value="person" <?php echo $type === 'person' ? 'selected' : ''; ?>><?php esc_html_e('Person', 'modern-events-calendar-lite'); ?></option>
+                    <option
+                        value="group" <?php echo $type === 'group' ? 'selected' : ''; ?>><?php esc_html_e('Group', 'modern-events-calendar-lite'); ?></option>
                 </select>
             </td>
         </tr>
@@ -138,7 +140,8 @@ class MEC_feature_speakers extends MEC_base
                 <label for="mec_job_title"><?php esc_html_e('Job Title', 'modern-events-calendar-lite'); ?></label>
             </th>
             <td>
-                <input type="text" placeholder="<?php esc_attr_e('Insert speaker job title.', 'modern-events-calendar-lite'); ?>" name="job_title" id="mec_job_title" value="<?php echo esc_attr($job_title); ?>" />
+                <input type="text" placeholder="<?php esc_attr_e('Insert speaker job title.', 'modern-events-calendar-lite'); ?>"
+                       name="job_title" id="mec_job_title" value="<?php echo esc_attr($job_title); ?>"/>
             </td>
         </tr>
         <tr class="form-field">
@@ -146,7 +149,8 @@ class MEC_feature_speakers extends MEC_base
                 <label for="mec_tel"><?php esc_html_e('Tel', 'modern-events-calendar-lite'); ?></label>
             </th>
             <td>
-                <input type="text" placeholder="<?php esc_attr_e('Insert speaker phone number.', 'modern-events-calendar-lite'); ?>" name="tel" id="mec_tel" value="<?php echo esc_attr($tel); ?>" />
+                <input type="text" placeholder="<?php esc_attr_e('Insert speaker phone number.', 'modern-events-calendar-lite'); ?>" name="tel"
+                       id="mec_tel" value="<?php echo esc_attr($tel); ?>"/>
             </td>
         </tr>
         <tr class="form-field">
@@ -154,7 +158,8 @@ class MEC_feature_speakers extends MEC_base
                 <label for="mec_email"><?php esc_html_e('Email', 'modern-events-calendar-lite'); ?></label>
             </th>
             <td>
-                <input type="text"  placeholder="<?php esc_attr_e('Insert speaker email address.', 'modern-events-calendar-lite'); ?>" name="email" id="mec_email" value="<?php echo esc_attr($email); ?>" />
+                <input type="text" placeholder="<?php esc_attr_e('Insert speaker email address.', 'modern-events-calendar-lite'); ?>"
+                       name="email" id="mec_email" value="<?php echo esc_attr($email); ?>"/>
             </td>
         </tr>
         <tr class="form-field">
@@ -162,7 +167,8 @@ class MEC_feature_speakers extends MEC_base
                 <label for="mec_website"><?php esc_html_e('Website', 'modern-events-calendar-lite'); ?></label>
             </th>
             <td>
-                <input type="text" placeholder="<?php esc_attr_e('Insert URL of Website', 'modern-events-calendar-lite'); ?>" name="website" id="mec_website" value="<?php echo esc_attr($website); ?>" />
+                <input type="text" placeholder="<?php esc_attr_e('Insert URL of Website', 'modern-events-calendar-lite'); ?>" name="website"
+                       id="mec_website" value="<?php echo esc_attr($website); ?>"/>
             </td>
         </tr>
         <tr class="form-field">
@@ -170,7 +176,8 @@ class MEC_feature_speakers extends MEC_base
                 <label for="mec_index"><?php esc_html_e('Index', 'modern-events-calendar-lite'); ?></label>
             </th>
             <td>
-                <input type="number" placeholder="<?php esc_attr_e('Index. Used for sorting.', 'modern-events-calendar-lite'); ?>" name="mec_index" id="mec_index" value="<?php echo esc_attr($index); ?>" min="0" step="0.01" />
+                <input type="number" placeholder="<?php esc_attr_e('Index. Used for sorting.', 'modern-events-calendar-lite'); ?>"
+                       name="mec_index" id="mec_index" value="<?php echo esc_attr($index); ?>" min="0" step="0.01"/>
                 <p class="description"><?php esc_html_e('Lower numbers appears first.'); ?></p>
             </td>
         </tr>
@@ -179,7 +186,8 @@ class MEC_feature_speakers extends MEC_base
                 <label for="mec_facebook"><?php esc_html_e('Facebook Page', 'modern-events-calendar-lite'); ?></label>
             </th>
             <td>
-                <input type="text" placeholder="<?php esc_attr_e('Insert URL of Facebook Page', 'modern-events-calendar-lite'); ?>" name="facebook" id="mec_facebook" value="<?php echo esc_attr($facebook); ?>" />
+                <input type="text" placeholder="<?php esc_attr_e('Insert URL of Facebook Page', 'modern-events-calendar-lite'); ?>"
+                       name="facebook" id="mec_facebook" value="<?php echo esc_attr($facebook); ?>"/>
             </td>
         </tr>
         <tr class="form-field">
@@ -187,7 +195,8 @@ class MEC_feature_speakers extends MEC_base
                 <label for="mec_instagram"><?php esc_html_e('Instagram', 'modern-events-calendar-lite'); ?></label>
             </th>
             <td>
-                <input type="text" placeholder="<?php esc_attr_e('Insert URL of Instagram', 'modern-events-calendar-lite'); ?>" name="instagram" id="mec_instagram" value="<?php echo esc_attr($instagram); ?>" />
+                <input type="text" placeholder="<?php esc_attr_e('Insert URL of Instagram', 'modern-events-calendar-lite'); ?>" name="instagram"
+                       id="mec_instagram" value="<?php echo esc_attr($instagram); ?>"/>
             </td>
         </tr>
         <tr class="form-field">
@@ -195,7 +204,8 @@ class MEC_feature_speakers extends MEC_base
                 <label for="mec_linkedin"><?php esc_html_e('LinkedIn', 'modern-events-calendar-lite'); ?></label>
             </th>
             <td>
-                <input type="text" placeholder="<?php esc_attr_e('Insert URL of LinkedIn', 'modern-events-calendar-lite'); ?>" name="linkedin" id="mec_linkedin" value="<?php echo esc_attr($linkedin); ?>" />
+                <input type="text" placeholder="<?php esc_attr_e('Insert URL of LinkedIn', 'modern-events-calendar-lite'); ?>" name="linkedin"
+                       id="mec_linkedin" value="<?php echo esc_attr($linkedin); ?>"/>
             </td>
         </tr>
         <tr class="form-field">
@@ -203,7 +213,8 @@ class MEC_feature_speakers extends MEC_base
                 <label for="mec_twitter"><?php esc_html_e('Twitter Page', 'modern-events-calendar-lite'); ?></label>
             </th>
             <td>
-                <input type="text" placeholder="<?php esc_attr_e('Insert URL of Twitter Page', 'modern-events-calendar-lite'); ?>" name="twitter" id="mec_twitter" value="<?php echo esc_attr($twitter); ?>" />
+                <input type="text" placeholder="<?php esc_attr_e('Insert URL of Twitter Page', 'modern-events-calendar-lite'); ?>"
+                       name="twitter" id="mec_twitter" value="<?php echo esc_attr($twitter); ?>"/>
             </td>
         </tr>
         <tr class="form-field">
@@ -211,14 +222,17 @@ class MEC_feature_speakers extends MEC_base
                 <label for="mec_thumbnail_button"><?php esc_html_e('Thumbnail', 'modern-events-calendar-lite'); ?></label>
             </th>
             <td>
-                <div id="mec_thumbnail_img"><?php if(trim($thumbnail) != '') echo '<img src="'.esc_url($thumbnail).'" />'; ?></div>
-                <input type="hidden" name="thumbnail" id="mec_thumbnail" value="<?php echo esc_attr($thumbnail); ?>" />
-                <button type="button" class="mec_upload_image_button button" id="mec_thumbnail_button"><?php echo esc_html__('Upload/Add image', 'modern-events-calendar-lite'); ?></button>
-                <button type="button" class="mec_remove_image_button button <?php echo (!trim($thumbnail) ? 'mec-util-hidden' : ''); ?>"><?php echo esc_html__('Remove', 'modern-events-calendar-lite'); ?></button>
+                <div
+                    id="mec_thumbnail_img"><?php if (trim($thumbnail) != '') echo '<img src="' . esc_url($thumbnail) . '" />'; ?></div>
+                <input type="hidden" name="thumbnail" id="mec_thumbnail" value="<?php echo esc_attr($thumbnail); ?>"/>
+                <button type="button" class="mec_upload_image_button button"
+                        id="mec_thumbnail_button"><?php echo esc_html__('Upload/Add image', 'modern-events-calendar-lite'); ?></button>
+                <button type="button"
+                        class="mec_remove_image_button button <?php echo(!trim($thumbnail) ? 'mec-util-hidden' : ''); ?>"><?php echo esc_html__('Remove', 'modern-events-calendar-lite'); ?></button>
             </td>
         </tr>
         <?php do_action('mec_edit_speaker_extra_fields', $term); ?>
-    <?php
+        <?php
     }
 
     /**
@@ -227,7 +241,7 @@ class MEC_feature_speakers extends MEC_base
      */
     public function add_form()
     {
-    ?>
+        ?>
         <div class="form-field">
             <label for="mec_type"><?php esc_html_e('Type', 'modern-events-calendar-lite'); ?></label>
             <select name="type" id="mec_type">
@@ -237,73 +251,84 @@ class MEC_feature_speakers extends MEC_base
         </div>
         <div class="form-field">
             <label for="mec_job_title"><?php esc_html_e('Job Title', 'modern-events-calendar-lite'); ?></label>
-            <input type="text" name="job_title" placeholder="<?php esc_attr_e('Insert speaker job title.', 'modern-events-calendar-lite'); ?>" id="mec_job_title" value="" />
+            <input type="text" name="job_title" placeholder="<?php esc_attr_e('Insert speaker job title.', 'modern-events-calendar-lite'); ?>"
+                   id="mec_job_title" value=""/>
         </div>
         <div class="form-field">
             <label for="mec_tel"><?php esc_html_e('Tel', 'modern-events-calendar-lite'); ?></label>
-            <input type="text" name="tel" placeholder="<?php esc_attr_e('Insert speaker phone number.', 'modern-events-calendar-lite'); ?>" id="mec_tel" value="" />
+            <input type="text" name="tel" placeholder="<?php esc_attr_e('Insert speaker phone number.', 'modern-events-calendar-lite'); ?>"
+                   id="mec_tel" value=""/>
         </div>
         <div class="form-field">
             <label for="mec_email"><?php esc_html_e('Email', 'modern-events-calendar-lite'); ?></label>
-            <input type="text" name="email" placeholder="<?php esc_attr_e('Insert speaker email address.', 'modern-events-calendar-lite'); ?>" id="mec_email" value="" />
+            <input type="text" name="email" placeholder="<?php esc_attr_e('Insert speaker email address.', 'modern-events-calendar-lite'); ?>"
+                   id="mec_email" value=""/>
         </div>
         <div class="form-field">
             <label for="mec_website"><?php esc_html_e('Website', 'modern-events-calendar-lite'); ?></label>
-            <input type="text" name="website" placeholder="<?php esc_attr_e('Insert URL of Website', 'modern-events-calendar-lite'); ?>" id="mec_website" value="" />
+            <input type="text" name="website" placeholder="<?php esc_attr_e('Insert URL of Website', 'modern-events-calendar-lite'); ?>"
+                   id="mec_website" value=""/>
         </div>
         <div class="form-field">
             <label for="mec_index"><?php esc_html_e('Index', 'modern-events-calendar-lite'); ?></label>
-            <input type="number" name="mec_index" placeholder="<?php esc_attr_e('Index. Used for sorting.', 'modern-events-calendar-lite'); ?>" id="mec_index" value="99" min="1" step="0.01" />
+            <input type="number" name="mec_index" placeholder="<?php esc_attr_e('Index. Used for sorting.', 'modern-events-calendar-lite'); ?>"
+                   id="mec_index" value="99" min="1" step="0.01"/>
             <p class="description"><?php esc_html_e('Lower numbers appears first.'); ?></p>
         </div>
         <div class="form-field">
             <label for="mec_facebook"><?php esc_html_e('Facebook Page', 'modern-events-calendar-lite'); ?></label>
-            <input type="text" name="facebook" placeholder="<?php esc_attr_e('Insert URL of Facebook Page', 'modern-events-calendar-lite'); ?>" id="mec_facebook" value="" />
+            <input type="text" name="facebook" placeholder="<?php esc_attr_e('Insert URL of Facebook Page', 'modern-events-calendar-lite'); ?>"
+                   id="mec_facebook" value=""/>
         </div>
         <div class="form-field">
             <label for="mec_instagram"><?php esc_html_e('Instagram', 'modern-events-calendar-lite'); ?></label>
-            <input type="text" name="instagram" placeholder="<?php esc_attr_e('Insert URL of Instagram', 'modern-events-calendar-lite'); ?>" id="mec_instagram" value="" />
+            <input type="text" name="instagram" placeholder="<?php esc_attr_e('Insert URL of Instagram', 'modern-events-calendar-lite'); ?>"
+                   id="mec_instagram" value=""/>
         </div>
         <div class="form-field">
             <label for="mec_linkedin"><?php esc_html_e('LinkedIn', 'modern-events-calendar-lite'); ?></label>
-            <input type="text" name="linkedin" placeholder="<?php esc_attr_e('Insert URL of linkedin', 'modern-events-calendar-lite'); ?>" id="mec_linkedin" value="" />
+            <input type="text" name="linkedin" placeholder="<?php esc_attr_e('Insert URL of linkedin', 'modern-events-calendar-lite'); ?>"
+                   id="mec_linkedin" value=""/>
         </div>
         <div class="form-field">
             <label for="mec_twitter"><?php esc_html_e('Twitter Page', 'modern-events-calendar-lite'); ?></label>
-            <input type="text" name="twitter" placeholder="<?php esc_attr_e('Insert URL of Twitter Page', 'modern-events-calendar-lite'); ?>" id="mec_twitter" value="" />
+            <input type="text" name="twitter" placeholder="<?php esc_attr_e('Insert URL of Twitter Page', 'modern-events-calendar-lite'); ?>"
+                   id="mec_twitter" value=""/>
         </div>
         <div class="form-field">
             <label for="mec_thumbnail_button"><?php esc_html_e('Thumbnail', 'modern-events-calendar-lite'); ?></label>
             <div id="mec_thumbnail_img"></div>
-            <input type="hidden" name="thumbnail" id="mec_thumbnail" value="" />
-            <button type="button" class="mec_upload_image_button button" id="mec_thumbnail_button"><?php echo esc_html__('Upload/Add image', 'modern-events-calendar-lite'); ?></button>
-            <button type="button" class="mec_remove_image_button button mec-util-hidden"><?php echo esc_html__('Remove', 'modern-events-calendar-lite'); ?></button>
+            <input type="hidden" name="thumbnail" id="mec_thumbnail" value=""/>
+            <button type="button" class="mec_upload_image_button button"
+                    id="mec_thumbnail_button"><?php echo esc_html__('Upload/Add image', 'modern-events-calendar-lite'); ?></button>
+            <button type="button"
+                    class="mec_remove_image_button button mec-util-hidden"><?php echo esc_html__('Remove', 'modern-events-calendar-lite'); ?></button>
         </div>
         <?php do_action('mec_add_speaker_extra_fields'); ?>
-    <?php
+        <?php
     }
 
     /**
      * Save meta data of speaker taxonomy
-     * @author Webnus <info@webnus.net>
      * @param int $term_id
+     * @author Webnus <info@webnus.net>
      */
     public function save_metadata($term_id)
     {
         // Quick Edit
-        if(!isset($_POST['job_title'])) return;
+        if (!isset($_POST['job_title'])) return;
 
-        $job_title  = sanitize_text_field($_POST['job_title']);
-        $type       = isset($_POST['type']) ? sanitize_text_field($_POST['type']) : 'person';
-        $tel        = isset($_POST['tel']) ? sanitize_text_field($_POST['tel']) : '';
-        $email      = isset($_POST['email']) ? sanitize_text_field($_POST['email']) : '';
-        $website    = (isset($_POST['website']) and trim($_POST['website'])) ? esc_url($_POST['website']) : '';
-        $index      = (isset($_POST['mec_index']) and trim($_POST['mec_index'])) ? sanitize_text_field($_POST['mec_index']) : 99;
-        $facebook   = (isset($_POST['facebook']) and trim($_POST['facebook'])) ? esc_url($_POST['facebook']) : '';
-        $twitter    = (isset($_POST['twitter']) and trim($_POST['twitter'])) ? esc_url($_POST['twitter']) : '';
-        $instagram  = (isset($_POST['instagram']) and trim($_POST['instagram'])) ? esc_url($_POST['instagram']) : '';
-        $linkedin   = (isset($_POST['linkedin']) and trim($_POST['linkedin'])) ? esc_url($_POST['linkedin']) : '';
-        $thumbnail  = isset($_POST['thumbnail']) ? sanitize_text_field($_POST['thumbnail']) : '';
+        $job_title = sanitize_text_field($_POST['job_title']);
+        $type = isset($_POST['type']) ? sanitize_text_field($_POST['type']) : 'person';
+        $tel = isset($_POST['tel']) ? sanitize_text_field($_POST['tel']) : '';
+        $email = isset($_POST['email']) ? sanitize_text_field($_POST['email']) : '';
+        $website = (isset($_POST['website']) and trim($_POST['website'])) ? esc_url($_POST['website']) : '';
+        $index = (isset($_POST['mec_index']) and trim($_POST['mec_index'])) ? sanitize_text_field($_POST['mec_index']) : 99;
+        $facebook = (isset($_POST['facebook']) and trim($_POST['facebook'])) ? esc_url($_POST['facebook']) : '';
+        $twitter = (isset($_POST['twitter']) and trim($_POST['twitter'])) ? esc_url($_POST['twitter']) : '';
+        $instagram = (isset($_POST['instagram']) and trim($_POST['instagram'])) ? esc_url($_POST['instagram']) : '';
+        $linkedin = (isset($_POST['linkedin']) and trim($_POST['linkedin'])) ? esc_url($_POST['linkedin']) : '';
+        $thumbnail = isset($_POST['thumbnail']) ? sanitize_text_field($_POST['thumbnail']) : '';
 
         update_term_meta($term_id, 'type', $type);
         update_term_meta($term_id, 'job_title', $job_title);
@@ -322,9 +347,9 @@ class MEC_feature_speakers extends MEC_base
 
     /**
      * Filter columns of speaker taxonomy
-     * @author Webnus <info@webnus.net>
      * @param array $columns
      * @return array
+     * @author Webnus <info@webnus.net>
      */
     public function filter_columns($columns)
     {
@@ -344,15 +369,15 @@ class MEC_feature_speakers extends MEC_base
 
     /**
      * Filter content of speaker taxonomy columns
-     * @author Webnus <info@webnus.net>
      * @param string $content
      * @param string $column_name
      * @param int $term_id
      * @return string
+     * @author Webnus <info@webnus.net>
      */
     public function filter_columns_content($content, $column_name, $term_id)
     {
-        switch($column_name)
+        switch ($column_name)
         {
             case 'id':
 
@@ -380,12 +405,20 @@ class MEC_feature_speakers extends MEC_base
 
     /**
      * Adding new speaker
-     * @author Webnus <info@webnus.net>
      * @return void
+     * @author Webnus <info@webnus.net>
      */
     public function fes_speaker_adding()
     {
-        $key = isset($_REQUEST['key']) ? sanitize_text_field($_REQUEST['key']) : NULL;
+        if (!class_exists('MEC_feature_fes')) MEC::import('app.features.fes');
+        $fes = class_exists('MEC_feature_fes') ? new MEC_feature_fes() : null;
+
+        if (!$fes || !$fes->validate_fes_term_creation_request())
+        {
+            wp_die(esc_html__('Sorry! You do not have permission to add speakers.', 'modern-events-calendar-lite'), 403);
+        }
+
+        $key = isset($_REQUEST['key']) ? sanitize_text_field($_REQUEST['key']) : null;
         $key = intval($key);
 
         if (isset($_REQUEST['content']))
@@ -408,7 +441,7 @@ class MEC_feature_speakers extends MEC_base
 
             wp_insert_term(trim($content), 'mec_speaker');
         }
-        elseif(isset($_REQUEST['name']))
+        else if (isset($_REQUEST['name']))
         {
             $name = sanitize_text_field($_REQUEST['name']);
             $type = isset($_REQUEST['type']) ? sanitize_text_field($_REQUEST['type']) : 'person';
@@ -435,7 +468,7 @@ class MEC_feature_speakers extends MEC_base
             }
 
             $speaker = wp_insert_term(trim($name), 'mec_speaker');
-            if(is_array($speaker))
+            if (is_array($speaker))
             {
                 $speaker_id = $speaker['term_id'];
 
@@ -454,12 +487,12 @@ class MEC_feature_speakers extends MEC_base
         }
 
         $speakers = '';
-        $speaker_terms = get_terms(array('taxonomy'=>'mec_speaker', 'hide_empty'=>false));
-        foreach($speaker_terms as $speaker_term)
+        $speaker_terms = get_terms(['taxonomy' => 'mec_speaker', 'hide_empty' => false]);
+        foreach ($speaker_terms as $speaker_term)
         {
-            $speakers .= '<label for="mec_fes_speakers'.esc_attr($speaker_term->term_id).'">
-                <input type="checkbox" name="mec[speakers]['.esc_attr($speaker_term->term_id).']" id="mec_fes_speakers'.esc_attr($speaker_term->term_id).'" value="1">
-                '.esc_html($speaker_term->name).'
+            $speakers .= '<label for="mec_fes_speakers' . esc_attr($speaker_term->term_id) . '">
+                <input type="checkbox" name="mec[speakers][' . esc_attr($speaker_term->term_id) . ']" id="mec_fes_speakers' . esc_attr($speaker_term->term_id) . '" value="1">
+                ' . esc_html($speaker_term->name) . '
             </label>';
         }
 
@@ -469,9 +502,9 @@ class MEC_feature_speakers extends MEC_base
 
     public function show_notices($screen)
     {
-        if(isset($screen->id) and $screen->id == 'edit-mec_speaker')
+        if (isset($screen->id) and $screen->id == 'edit-mec_speaker')
         {
-            add_action('admin_footer', function()
+            add_action('admin_footer', function ()
             {
                 echo "<script>
                 var xhrObject = window.XMLHttpRequest;
@@ -500,9 +533,9 @@ class MEC_feature_speakers extends MEC_base
 
     public function update_speakers_list_admin($screen)
     {
-        if(isset($screen->id) and $screen->id == 'mec-events' and isset($screen->base) and $screen->base == 'post')
+        if (isset($screen->id) and $screen->id == 'mec-events' and isset($screen->base) and $screen->base == 'post')
         {
-            add_action('admin_footer', array($this, 'update_speakers_list'));
+            add_action('admin_footer', [$this, 'update_speakers_list']);
         }
     }
 
@@ -513,7 +546,7 @@ class MEC_feature_speakers extends MEC_base
         {
             jQuery.ajax(
             {
-                url: '".admin_url('admin-ajax.php', NULL)."',
+                url: '" . admin_url('admin-ajax.php', null) . "',
                 type: 'POST',
                 data: 'action=update_speakers_list',
                 dataType: 'json'
@@ -545,24 +578,24 @@ class MEC_feature_speakers extends MEC_base
 
     public function get_speakers()
     {
-        $speakers = get_terms('mec_speaker', array(
+        $speakers = get_terms('mec_speaker', [
             'orderby' => 'name',
             'order' => 'ASC',
             'hide_empty' => '0',
-        ));
+        ]);
 
         $sp = [];
-        foreach($speakers as $speaker)
+        foreach ($speakers as $speaker)
         {
-            $sp[] = array($speaker->term_id, $speaker->name);
+            $sp[] = [$speaker->term_id, $speaker->name];
         }
 
-        wp_send_json(array('speakers' => $sp));
+        wp_send_json(['speakers' => $sp]);
     }
 
     public function hide_parent_dropdown($args)
     {
-        if('mec_speaker' == $args['taxonomy']) $args['echo'] = false;
+        if ('mec_speaker' == $args['taxonomy']) $args['echo'] = false;
         return $args;
     }
 }

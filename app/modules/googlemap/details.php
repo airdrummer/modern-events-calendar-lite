@@ -131,7 +131,7 @@ if($map_type === 'google') {
         }
         
         jQuery("#mec_map_canvas'.esc_js($uniqueid).'").mecOpenstreetMaps({
-            show_on_openstreetmap_text: "' . __('Show on OpenstreetMap', 'mec-map') . '",
+            show_on_openstreetmap_text: "' . esc_js( __( 'Show on OpenstreetMap', 'mec-advanced-map' ) ) . '",
             id: "'.esc_js($uniqueid).'",
             latitude: "'.esc_js($latitude).'",
             longitude: "'.esc_js($longitude).'",

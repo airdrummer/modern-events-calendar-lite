@@ -1876,35 +1876,42 @@ class MEC_book extends MEC_base
         $ticket_variations = $this->main->ticket_variations($event_id, $ticket_id);
 
         $ticket_price_booking_saved = get_post_meta($booking_id, 'mec_ticket_price_' . $ticket_id, true);
-        if (trim($ticket_price_booking_saved) === '') $ticket_price_booking_saved = 0;
+        $has_saved_ticket_price = (is_scalar($ticket_price_booking_saved) and trim((string) $ticket_price_booking_saved) !== '' and is_numeric($ticket_price_booking_saved));
 
-        $ticket_price = (isset($tickets[$ticket_id]) ? $tickets[$ticket_id]['price'] : $ticket_price_booking_saved);
-
-        $user = $this->getUser();
-        $booking_user = $user->booking($booking_id);
-
-        $ticket_price = $this->get_price_for_users($event_id, $ticket_price, $booking_user ? $booking_user->ID : 0);
-
-        // Price Per Date
-        if (isset($tickets[$ticket_id]['dates']) and is_array($tickets[$ticket_id]['dates']) and count($tickets[$ticket_id]['dates']))
+        if ($has_saved_ticket_price)
         {
-            $book_time = strtotime(get_post_meta($booking_id, 'mec_booking_time', true));
-            if ($book_time)
+            $ticket_price = $ticket_price_booking_saved;
+        }
+        else
+        {
+            $ticket_price = isset($tickets[$ticket_id]) ? $tickets[$ticket_id]['price'] : 0;
+
+            $user = $this->getUser();
+            $booking_user = $user->booking($booking_id);
+
+            $ticket_price = $this->get_price_for_users($event_id, $ticket_price, $booking_user ? $booking_user->ID : 0);
+
+            // Price Per Date
+            if (isset($tickets[$ticket_id]['dates']) and is_array($tickets[$ticket_id]['dates']) and count($tickets[$ticket_id]['dates']))
             {
-                $pdates = $tickets[$ticket_id]['dates'];
-                foreach ($pdates as $pdate)
+                $book_time = strtotime(get_post_meta($booking_id, 'mec_booking_time', true));
+                if ($book_time)
                 {
-                    if (!isset($pdate['start']) or !isset($pdate['end'])) continue;
-
-                    $t_start = strtotime($pdate['start']);
-                    $t_end = strtotime($pdate['end']);
-
-                    if ($book_time >= $t_start and $book_time <= $t_end and isset($pdate['price']))
+                    $pdates = $tickets[$ticket_id]['dates'];
+                    foreach ($pdates as $pdate)
                     {
-                        $ticket_price = $pdate['price'];
-                        break;
+                        if (!isset($pdate['start']) or !isset($pdate['end'])) continue;
+
+                        $t_start = strtotime($pdate['start']);
+                        $t_end = strtotime($pdate['end']);
+
+                        if ($book_time >= $t_start and $book_time <= $t_end and isset($pdate['price']))
+                        {
+                            $ticket_price = $pdate['price'];
+                            break;
+                        }
                     }
-                }
+                } 
             }
         }
 

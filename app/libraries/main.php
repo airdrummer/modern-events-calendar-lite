@@ -2295,7 +2295,7 @@ class MEC_main extends MEC_base
         $occurrence = (isset($_GET['occurrence']) ? sanitize_text_field($_GET['occurrence']) : '');
         if (trim($occurrence) != '') $url = $this->add_qs_var('occurrence', $occurrence, $url);
 
-        return '<li class="mec-event-social-icon"><a class="twitter" href="https://twitter.com/share?url=' . rawurlencode($url) . '" onclick="javascript:window.open(this.href, \'\', \'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=500\'); return false;" target="_blank" title="' . esc_attr__('X Social Network', 'modern-events-calendar-lite') . '"><svg xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd" clip-rule="evenodd" viewBox="0 0 512 462.799"><path fill-rule="nonzero" d="M403.229 0h78.506L310.219 196.04 512 462.799H354.002L230.261 301.007 88.669 462.799h-78.56l183.455-209.683L0 0h161.999l111.856 147.88L403.229 0zm-27.556 415.805h43.505L138.363 44.527h-46.68l283.99 371.278z"/></svg><span class="mec-social-title">' . ($social['name'] ?? '') . '</span></a></li>';
+        return '<li class="mec-event-social-icon"><a class="twitter" href="https://x.com/intent/tweet?url=' . rawurlencode($url) . '" onclick="javascript:window.open(this.href, \'\', \'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=500\'); return false;" target="_blank" title="' . esc_attr__('X Social Network', 'modern-events-calendar-lite') . '"><svg xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd" clip-rule="evenodd" viewBox="0 0 512 462.799"><path fill-rule="nonzero" d="M403.229 0h78.506L310.219 196.04 512 462.799H354.002L230.261 301.007 88.669 462.799h-78.56l183.455-209.683L0 0h161.999l111.856 147.88L403.229 0zm-27.556 415.805h43.505L138.363 44.527h-46.68l283.99 371.278z"/></svg><span class="mec-social-title">' . ($social['name'] ?? '') . '</span></a></li>';
     }
 
     /**
@@ -2768,6 +2768,26 @@ class MEC_main extends MEC_base
 
         $method = $settings['hide_time_method'] ?? 'start';
         return apply_filters('mec_hide_time_method', $method);
+    }
+
+    public function get_countdown_method($event = null)
+    {
+        $settings = $this->get_settings();
+
+        $method = $settings['countdown_method'] ?? '';
+        $method = in_array($method, ['start', 'end'], true) ? $method : ((isset($settings['hide_time_method']) && trim($settings['hide_time_method']) === 'end') ? 'end' : 'start');
+
+        $event_id = 0;
+        if (is_numeric($event)) $event_id = (int) $event;
+        elseif (is_object($event)) $event_id = (int) ($event->ID ?? ($event->data->ID ?? 0));
+
+        if ($event_id && !empty($settings['countdown_method_per_event']))
+        {
+            $event_method = get_post_meta($event_id, 'mec_countdown_method', true);
+            if (in_array($event_method, ['start', 'end'], true)) $method = $event_method;
+        }
+
+        return apply_filters('mec_countdown_method', $method, $event);
     }
 
     /**
@@ -5314,6 +5334,33 @@ class MEC_main extends MEC_base
     }
 
     /**
+     * Apply the ticket price label filter without letting custom callbacks break booking flows.
+     *
+     * @param mixed $label
+     * @param array $ticket
+     * @param int $event_id
+     * @param object|null $book
+     * @return string
+     */
+    public function filter_price_label($label, $ticket, $event_id, $book = null)
+    {
+        $fallback = is_scalar($label) || $label === null ? (string) $label : '';
+
+        try
+        {
+            $filtered = apply_filters('mec_filter_price_label', $fallback, $ticket, $event_id, $book);
+        }
+        catch (\Throwable $e)
+        {
+            $filtered = $fallback;
+        }
+
+        if (!is_scalar($filtered) && $filtered !== null) return $fallback;
+
+        return (string) $filtered;
+    }
+
+    /**
      * Returns thousands separator
      * @param int|object $event
      * @return string
@@ -5784,11 +5831,7 @@ class MEC_main extends MEC_base
         $date = $event->date;
         $start_date = (isset($date['start']) and isset($date['start']['date'])) ? $date['start']['date'] : date('Y-m-d');
 
-        $countdown_method = get_post_meta($event->ID, 'mec_countdown_method', true);
-        if (trim($countdown_method) == '') $countdown_method = 'global';
-
-        if ($countdown_method == 'global') $ongoing = isset($settings['hide_time_method']) && trim($settings['hide_time_method']) == 'end';
-        else $ongoing = $countdown_method == 'end';
+        $ongoing = $this->get_countdown_method($event) === 'end';
 
         // The event is Expired/Passed
         if ($this->is_past($start_date, date('Y-m-d')) and !$ongoing) return false;
@@ -6597,12 +6640,20 @@ class MEC_main extends MEC_base
         // Force to numeric
         if (!is_numeric($time) && $time) $time = strtotime($time);
 
-        if ($event and function_exists('wp_date'))
+        if (function_exists('wp_date'))
         {
             $TZO = ((isset($event->TZO) and $event->TZO and ($event->TZO instanceof DateTimeZone)) ? $event->TZO : $this->get_TZO($event));
 
-            // Force to UTC
-            $time = $time - $TZO->getOffset(new DateTime(date('Y-m-d H:i:s', $time)));
+            if (!is_null($time))
+            {
+                $php_timezone = new DateTimeZone(date_default_timezone_get());
+                $datetime = new DateTime(date('Y-m-d H:i:s', $time), $php_timezone);
+
+                $php_offset = $php_timezone->getOffset($datetime);
+                $target_offset = $TZO->getOffset($datetime);
+
+                $time += ($php_offset - $target_offset);
+            }
 
             return wp_date($format, $time, $TZO);
         }
@@ -6892,7 +6943,9 @@ class MEC_main extends MEC_base
         // Post Author
         if (isset($event['author']) and $event['author'] and is_numeric($event['author'])) $post['post_author'] = $event['author'];
 
-        $post_id = wp_insert_post($post);
+        $post_id = wp_insert_post($post, true);
+        if (is_wp_error($post_id)) return $post_id;
+        if (!$post_id) return new WP_Error('mec_event_insert_failed', esc_html__('The event could not be created.', 'modern-events-calendar-lite'), ['status' => 500]);
 
         update_post_meta($post_id, 'mec_location_id', ($event['location_id'] ?? 1));
         update_post_meta($post_id, 'mec_dont_show_map', 0);
@@ -7012,6 +7065,7 @@ class MEC_main extends MEC_base
 
         // MEC DB Library
         $db = $this->getDB();
+        $wpdb = $db->get_DBO();
 
         // Update MEC Events Table
         $mec_event_id = $db->select("SELECT `id` FROM `#__mec_events` WHERE `post_id`='$post_id'", 'loadResult');
@@ -7029,7 +7083,11 @@ class MEC_main extends MEC_base
                 else $q2 .= "'$value',";
             }
 
-            $db->q("INSERT INTO `#__mec_events` (" . trim($q1, ', ') . ") VALUES (" . trim($q2, ', ') . ")", 'INSERT');
+            $result = $db->q("INSERT INTO `#__mec_events` (" . trim($q1, ', ') . ") VALUES (" . trim($q2, ', ') . ")", 'INSERT');
+            if (!$result)
+            {
+                return new WP_Error('mec_event_record_insert_failed', ($wpdb->last_error ? $wpdb->last_error : esc_html__('The event schedule record could not be created.', 'modern-events-calendar-lite')), ['status' => 500]);
+            }
         }
         else
         {
@@ -7041,7 +7099,11 @@ class MEC_main extends MEC_base
                 else $q .= "`$key`='$value',";
             }
 
-            $db->q("UPDATE `#__mec_events` SET " . trim($q, ', ') . " WHERE `id`='$mec_event_id'");
+            $result = $db->q("UPDATE `#__mec_events` SET " . trim($q, ', ') . " WHERE `id`='$mec_event_id'");
+            if ($result === false)
+            {
+                return new WP_Error('mec_event_record_update_failed', ($wpdb->last_error ? $wpdb->last_error : esc_html__('The event schedule record could not be updated.', 'modern-events-calendar-lite')), ['status' => 500]);
+            }
         }
 
         if (isset($event['meta']) and is_array($event['meta'])) foreach ($event['meta'] as $key => $value) update_post_meta($post_id, $key, $value);

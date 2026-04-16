@@ -158,7 +158,7 @@ if(isset($map_eventss) and !empty($map_eventss))
             if(mapType === "openstreetmap"){
                 initWhenVisible(function(){
                     $(containerSelector).mecOpenstreetMaps({
-                        show_on_openstreetmap_text: "'.__('Show on OpenstreetMap', 'mec-map').'",
+                        show_on_openstreetmap_text: "'.esc_js( __( 'Show on OpenstreetMap', 'mec-advanced-map' ) ) . '",
                         id: "'.esc_js($this->id).'",
                         atts: "'.http_build_query(array('atts' => $this->atts), '', '&').'",
                         zoom: '.(isset($settings['google_maps_zoomlevel']) ? (int)$settings['google_maps_zoomlevel'] : 14).',

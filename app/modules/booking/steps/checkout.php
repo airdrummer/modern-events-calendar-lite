@@ -66,7 +66,7 @@ $free_booking = isset($price_details['total']) && $price_details['total'] == 0;
 $paid_booking = !$free_booking;
 ?>
 <style>.mec-book-price-detail-type-discount{display: none;}</style>
-<div id="mec_book_payment_form" class="mec-booking-form-container mec-wrap-checkout row">
+<div id="mec_book_payment_form" class="mec-booking-form-container mec-wrap-checkout">
 
     <?php if($display_progress_bar): ?>
         <ul class="mec-booking-progress-bar">

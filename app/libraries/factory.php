@@ -1551,6 +1551,12 @@ class MEC_factory extends MEC_base
      */
     public function disable_css_classes_in_divi()
     {
+
+        // Skip for Divi 5+
+        if (defined('ET_BUILDER_VERSION') && version_compare(ET_BUILDER_VERSION, '5.0', '>=')) {
+            return;
+        }
+
         // Only apply if Divi editor is active
         if (!$this->is_divi_editor_active())
         {

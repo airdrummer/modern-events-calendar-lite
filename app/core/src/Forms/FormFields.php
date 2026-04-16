@@ -80,6 +80,8 @@ class FormFields extends Singleton {
     public function field_name( $key, $values = array(), $prefix = 'reg' ) {
 
         $type = $values['type'];
+        $is_rsvp_required_field = str_contains( (string) $prefix, 'rsvp' ) && in_array( $type, array( 'first_name', 'last_name' ), true );
+        $remove_button_html = $is_rsvp_required_field ? '' : '<span class="mec_' . esc_attr( $prefix ) . '_field_remove mec_field_remove">' . esc_html__( 'Remove', 'modern-events-calendar-lite') . '</span>';
         switch($type){
             case 'first_name':
 
@@ -107,7 +109,7 @@ class FormFields extends Singleton {
                      ' . esc_html__( 'Required Field', 'modern-events-calendar-lite') . '
                  </label>
              </p>
-             <span class="mec_' . esc_attr( $prefix ) . '_field_remove mec_field_remove">' . esc_html__( 'Remove', 'modern-events-calendar-lite') . '</span>
+             ' . $remove_button_html . '
              <div>
                  <input type="hidden" name="mec[' . esc_attr( $prefix ) . '_fields][' . esc_attr( $key ) . '][type]" value="'.esc_attr($type).'" />
                  <input type="text" name="mec[' . esc_attr( $prefix ) . '_fields][' . esc_attr( $key ) . '][label]" placeholder="' . esc_attr__( 'Insert a label for this field', 'modern-events-calendar-lite') . '" value="' . ( isset( $values['label'] ) ? stripslashes( $values['label'] ) : '' ) . '" />
@@ -154,6 +156,8 @@ class FormFields extends Singleton {
      */
     public function field_mec_email( $key, $values = array(), $prefix = 'reg' ) {
 
+        $is_rsvp_required_field = str_contains( (string) $prefix, 'rsvp' );
+        $remove_button_html = $is_rsvp_required_field ? '' : '<span class="mec_' . esc_attr( $prefix ) . '_field_remove mec_field_remove">' . esc_html__( 'Remove', 'modern-events-calendar-lite') . '</span>';
         return '<li id="mec_' . esc_attr( $prefix ) . '_fields_' . esc_attr( $key ) . '">
              <span class="mec_' . esc_attr( $prefix ) . '_field_sort mec_field_sort">' . esc_html__( 'Sort', 'modern-events-calendar-lite') . '</span>
              <span class="mec_' . esc_attr( $prefix ) . '_field_type mec_field_type">' . esc_html__( 'MEC Email', 'modern-events-calendar-lite') . '</span>
@@ -165,7 +169,7 @@ class FormFields extends Singleton {
                      ' . esc_html__( 'Required Field', 'modern-events-calendar-lite') . '
                  </label>
              </p>
-             <span class="mec_' . esc_attr( $prefix ) . '_field_remove mec_field_remove">' . esc_html__( 'Remove', 'modern-events-calendar-lite') . '</span>
+             ' . $remove_button_html . '
              <div>
                  <input type="hidden" name="mec[' . esc_attr( $prefix ) . '_fields][' . esc_attr( $key ) . '][type]" value="mec_email" />
                  <input type="text" name="mec[' . esc_attr( $prefix ) . '_fields][' . esc_attr( $key ) . '][label]" placeholder="' . esc_attr__( 'Insert a label for this field', 'modern-events-calendar-lite') . '" value="' . ( isset( $values['label'] ) ? stripslashes( $values['label'] ) : '' ) . '" />

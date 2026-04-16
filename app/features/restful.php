@@ -253,6 +253,26 @@ class MEC_feature_restful extends MEC_base
         return $events;
     }
 
+    private function wp_error_status(WP_Error $error, $default = 500): int
+    {
+        $data = $error->get_error_data();
+
+        if (is_array($data) && isset($data['status']) && is_numeric($data['status']))
+        {
+            return (int) $data['status'];
+        }
+
+        return (int) $default;
+    }
+
+    private function error_response(WP_Error $error, $default = 500): WP_REST_Response
+    {
+        return $this->restful->response([
+            'data' => $error,
+            'status' => $this->wp_error_status($error, $default),
+        ]);
+    }
+
     public function events(WP_REST_Request $request)
     {
         $limit = $request->get_param('limit');
@@ -838,33 +858,85 @@ class MEC_feature_restful extends MEC_base
 
         // Insert the event into MEC
         $post_id = $main->save_event($args, $event_id);
+        if (is_wp_error($post_id)) return $this->error_response($post_id);
 
         // Set location to the post
-        if ($location_id) wp_set_object_terms($post_id, (int) $location_id, 'mec_location');
+        if ($location_id)
+        {
+            $result = wp_set_object_terms($post_id, (int) $location_id, 'mec_location');
+            if (is_wp_error($result)) return $this->error_response($result);
+        }
 
         // Set organizer to the post
-        if ($organizer_id) wp_set_object_terms($post_id, (int) $organizer_id, 'mec_organizer');
+        if ($organizer_id)
+        {
+            $result = wp_set_object_terms($post_id, (int) $organizer_id, 'mec_organizer');
+            if (is_wp_error($result)) return $this->error_response($result);
+        }
 
         // Set categories to the post
-        if (count($category_ids)) foreach ($category_ids as $category_id) wp_set_object_terms($post_id, (int) $category_id, 'mec_category', true);
+        if (count($category_ids))
+        {
+            foreach ($category_ids as $category_id)
+            {
+                $result = wp_set_object_terms($post_id, (int) $category_id, 'mec_category', true);
+                if (is_wp_error($result)) return $this->error_response($result);
+            }
+        }
 
         // Set tags to the post
-        if (count($tag_ids)) foreach ($tag_ids as $tag_id) wp_set_object_terms($post_id, (int) $tag_id, apply_filters('mec_taxonomy_tag', ''), true);
+        if (count($tag_ids))
+        {
+            foreach ($tag_ids as $tag_id)
+            {
+                $result = wp_set_object_terms($post_id, (int) $tag_id, apply_filters('mec_taxonomy_tag', ''), true);
+                if (is_wp_error($result)) return $this->error_response($result);
+            }
+        }
 
         // Set labels to the post
-        if (count($label_ids)) foreach ($label_ids as $label_id) wp_set_object_terms($post_id, (int) $label_id, 'mec_label', true);
+        if (count($label_ids))
+        {
+            foreach ($label_ids as $label_id)
+            {
+                $result = wp_set_object_terms($post_id, (int) $label_id, 'mec_label', true);
+                if (is_wp_error($result)) return $this->error_response($result);
+            }
+        }
 
         // Set speakers to the post
-        if (count($speaker_ids)) foreach ($speaker_ids as $speaker_id) wp_set_object_terms($post_id, (int) $speaker_id, 'mec_speaker', true);
+        if (count($speaker_ids))
+        {
+            foreach ($speaker_ids as $speaker_id)
+            {
+                $result = wp_set_object_terms($post_id, (int) $speaker_id, 'mec_speaker', true);
+                if (is_wp_error($result)) return $this->error_response($result);
+            }
+        }
 
         // Set sponsors to the post
-        if (count($sponsor_ids)) foreach ($sponsor_ids as $sponsor_id) wp_set_object_terms($post_id, (int) $sponsor_id, 'mec_sponsor', true);
+        if (count($sponsor_ids))
+        {
+            foreach ($sponsor_ids as $sponsor_id)
+            {
+                $result = wp_set_object_terms($post_id, (int) $sponsor_id, 'mec_sponsor', true);
+                if (is_wp_error($result)) return $this->error_response($result);
+            }
+        }
 
         // Featured Image
         if (isset($vars['thumbnail']) && $vars['thumbnail']) set_post_thumbnail($post_id, (int) $vars['thumbnail']);
 
         // Publish Event
-        if ($status === 'publish' && get_post_status($post_id) !== 'published') wp_publish_post($post_id);
+        if ($status === 'publish' && get_post_status($post_id) !== 'publish')
+        {
+            wp_publish_post($post_id);
+
+            if (get_post_status($post_id) !== 'publish')
+            {
+                return $this->error_response(new WP_Error('mec_event_publish_failed', esc_html__('The event could not be published.', 'modern-events-calendar-lite'), ['status' => 500]));
+            }
+        }
 
         if ($status === 'publish') $message = esc_html__('The event is published.', 'modern-events-calendar-lite');
         else $message = esc_html__('The event is submitted. It will publish as soon as possible.', 'modern-events-calendar-lite');

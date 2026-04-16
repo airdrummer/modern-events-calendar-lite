@@ -186,6 +186,16 @@ $pages = get_pages();
                                         </select>
                                     </div>
                                 </div>
+                                <?php $countdown_method = $this->main->get_countdown_method(); ?>
+                                <div class="mec-form-row">
+                                    <label class="mec-col-3" for="mec_settings_countdown_method"><?php esc_html_e('Countdown Method', 'modern-events-calendar-lite'); ?></label>
+                                    <div class="mec-col-9">
+                                        <select id="mec_settings_countdown_method" name="mec[settings][countdown_method]">
+                                            <option value="start" <?php echo $countdown_method === 'start' ? 'selected="selected"' : ''; ?>><?php esc_html_e('Count to Event Start', 'modern-events-calendar-lite'); ?></option>
+                                            <option value="end" <?php echo $countdown_method === 'end' ? 'selected="selected"' : ''; ?>><?php esc_html_e('Count to Event End', 'modern-events-calendar-lite'); ?></option>
+                                        </select>
+                                    </div>
+                                </div>
                                 <div class="mec-form-row">
                                     <div class="mec-col-12">
                                         <label for="mec_settings_countdown_disable_for_ongoing_events">

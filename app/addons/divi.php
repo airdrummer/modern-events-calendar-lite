@@ -37,13 +37,37 @@ class MEC_addon_divi extends MEC_base
      */
     public function init()
     {
+        if (did_action('after_setup_theme'))
+        {
+            return $this->register_divi_hooks();
+        }
+
+        add_action('after_setup_theme', [$this, 'register_divi_hooks']);
+
+        return true;
+    }
+
+    /**
+     * Register Divi-specific hooks after themes are initialized.
+     *
+     * @return bool
+     */
+    public function register_divi_hooks()
+    {
         // Divi is not installed
         $theme = wp_get_theme(); // gets the current theme
 
         if ('Divi' != $theme->get_template()) return false;
 
-        add_action('divi_extensions_init', [$this, 'mecdivi_initialize_extension']);
-        add_filter('et_builder_load_actions', [$this, 'add_ajax_actions']);
+        if (!has_action('divi_extensions_init', [$this, 'mecdivi_initialize_extension']))
+        {
+            add_action('divi_extensions_init', [$this, 'mecdivi_initialize_extension']);
+        }
+
+        if (!has_filter('et_builder_load_actions', [$this, 'add_ajax_actions']))
+        {
+            add_filter('et_builder_load_actions', [$this, 'add_ajax_actions']);
+        }
 
         return true;
     }

@@ -248,7 +248,11 @@ class DisplayFields {
 						break;
 				}
 
-				echo is_admin() ? '<div class="mec-col-2">'.\MEC_kses::form($input_html).'</div>' : \MEC_kses::form($input_html);
+				// Field HTML is generated internally by MEC form renderer and may include
+				// attributes/tags stripped by strict KSES on some AJAX/admin contexts.
+				echo is_admin()
+					? '<div class="mec-col-2">' . $input_html . '</div>' // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					: $input_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				?>
 			</div>
 		<?php endforeach;

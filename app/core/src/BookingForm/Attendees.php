@@ -332,7 +332,7 @@ class Attendees {
         static::enqueue();
 
         ?>
-        <form id="mec_book_form<?php echo esc_attr($uniqueid); ?>" class="mec-booking-form-container row" onsubmit="mec_book_form_submit(event, <?php echo esc_attr($uniqueid); ?>);" novalidate="novalidate" enctype="multipart/form-data" method="post">
+        <form id="mec_book_form<?php echo esc_attr($uniqueid); ?>" class="mec-booking-form-container" onsubmit="mec_book_form_submit(event, <?php echo esc_attr($uniqueid); ?>);" novalidate="novalidate" enctype="multipart/form-data" method="post">
 
             <?php if( $display_progress_bar ): ?>
                 <ul class="mec-booking-progress-bar">

@@ -11,6 +11,16 @@ $settings['view_mode'] = $this->atts['sk-options']['map']['view_mode'] ?? $setti
 
 $settings['map'] = $settings['default_maps_view'] ?? 'google';
 
+s// Determine zoom level: shortcode / skin options take precedence over global module setting
+$zoom_level = 14;
+if (isset($this->atts['zoom']) && is_numeric($this->atts['zoom'])) {
+    $zoom_level = (int) $this->atts['zoom'];
+} elseif (isset($this->skin_options['zoom']) && is_numeric($this->skin_options['zoom'])) {
+    $zoom_level = (int) $this->skin_options['zoom'];
+} elseif (isset($settings['google_maps_zoomlevel']) && is_numeric($settings['google_maps_zoomlevel'])) {
+    $zoom_level = (int) $settings['google_maps_zoomlevel'];
+}
+
 // Return the data if called by AJAX
 if(isset($this->atts['return_items']) and $this->atts['return_items'])
 {
@@ -98,10 +108,10 @@ if(count($this->events))
                 // Initialize OpenStreetMap
                 jQuery("#mec_map_canvas'.esc_js($this->id).'").mecOpenstreetMaps(
                 {
-                    show_on_openstreetmap_text: "'.__('Show on OpenstreetMap', 'mec-map').'",
+                    show_on_openstreetmap_text: "'.esc_js( __( 'Show on OpenstreetMap', 'mec-advanced-map' ) ) . '",
                     id: "'.esc_js($this->id).'",
                     atts: "'.http_build_query(array('atts' => $this->atts), '', '&').'",
-                    zoom: '.(isset($settings['google_maps_zoomlevel']) ? esc_js($settings['google_maps_zoomlevel']) : 14).',
+                    zoom: '.esc_js($zoom_level).',
                     scrollwheel: '.((isset($settings['default_maps_scrollwheel']) and $settings['default_maps_scrollwheel']) ? 'true' : 'false').',
                     markers: '.json_encode($events_data).',
                     HTML5geolocation: "'.esc_js($this->geolocation).'",
@@ -120,7 +130,7 @@ if(count($this->events))
                 {
                     id: "'.esc_js($this->id).'",
                     atts: "'.http_build_query(array('atts' => $this->atts), '', '&').'",
-                    zoom: '.(isset($settings['google_maps_zoomlevel']) ? esc_js($settings['google_maps_zoomlevel']) : 14).',
+                    zoom: '.esc_js($zoom_level).',
                     icon: "'.apply_filters('mec_marker_icon', $this->main->asset('img/m-04.png')).'",
                     styles: '.((isset($settings['google_maps_style']) and trim($settings['google_maps_style']) != '') ? $this->main->get_googlemap_style($settings['google_maps_style']) : "''").',
                     fullscreen_button: '.((isset($settings['google_maps_fullscreen_button']) and trim($settings['google_maps_fullscreen_button'])) ? 'true' : 'false').',
