@@ -1,4 +1,8 @@
-﻿v 7.33.0 - 16 May 2026
+v 7.33.0.1 - 19may26
+- added missing timezone display, reformat
+- fixed countdown
+
+v 7.33.0 - 16 May 2026
 - Added: Conditional form option to booking forms.
 - Added: Page number to attendees page.
 - Added: Export All Attendees buttons in attendees page.
