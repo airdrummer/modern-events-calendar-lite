@@ -28,9 +28,11 @@ class MEC_feature_attendees extends MEC_base
         $this->factory->action('admin_init', [$this, 'maybe_export_attendees'], 1);
         $this->factory->action('admin_head', [$this, 'hide_menu_item']);
         $this->factory->action('admin_notices', [$this, 'admin_notices']);
+        $this->factory->action('current_screen', [$this, 'setup_screen_options']);
         $this->factory->filter('submenu_file', [$this, 'submenu_file']);
         $this->factory->filter('parent_file', [$this, 'parent_file']);
         $this->factory->filter('admin_body_class', [$this, 'admin_body_class']);
+        $this->factory->filter('set-screen-option', [$this, 'set_screen_option'], 10, 3);
 
         return true;
     }
@@ -110,6 +112,30 @@ class MEC_feature_attendees extends MEC_base
     {
         if ($this->is_attendees_page()) $classes .= ' mec-attendees-page';
         return $classes;
+    }
+
+    public function setup_screen_options($screen)
+    {
+        if (!$this->is_attendees_page()) return;
+        if (!is_a($screen, '\WP_Screen') && function_exists('get_current_screen')) $screen = get_current_screen();
+        if (!is_a($screen, '\WP_Screen')) return;
+
+        add_screen_option('per_page', [
+            'label' => esc_html__('Number of items per page', 'modern-events-calendar-lite'),
+            'default' => 20,
+            'option' => 'mec_attendees_per_page',
+        ]);
+    }
+
+    public function set_screen_option($status, $option, $value)
+    {
+        if ($option !== 'mec_attendees_per_page') return $status;
+
+        $value = (int) $value;
+        if ($value < 1) $value = 20;
+        if ($value > 999) $value = 999;
+
+        return $value;
     }
 
     public function page()
@@ -266,6 +292,7 @@ class MEC_feature_attendees extends MEC_base
                 <?php if ($status_filter !== ''): ?>
                     <input type="hidden" name="status_filter" value="<?php echo esc_attr($status_filter); ?>">
                 <?php endif; ?>
+                <?php wp_nonce_field('bulk-attendees'); ?>
                 <?php $list_table->search_box(esc_html__('Search attendees', 'modern-events-calendar-lite'), 'mec-attendees-search'); ?>
                 <?php $list_table->display(); ?>
             </form>
@@ -318,6 +345,25 @@ class MEC_feature_attendees extends MEC_base
     {
         if (!$this->is_attendees_page() || !$this->can_access_page()) return;
 
+        $export_all = isset($_REQUEST['mec_export_all']) ? sanitize_text_field(wp_unslash($_REQUEST['mec_export_all'])) : '';
+        if (in_array($export_all, ['csv-export', 'ms-excel-export'], true))
+        {
+            check_admin_referer('bulk-attendees');
+
+            $event = $this->get_event_from_request();
+            if (!$event) return;
+
+            $occurrence = isset($_REQUEST['occurrence']) ? sanitize_text_field(wp_unslash($_REQUEST['occurrence'])) : '';
+            $search_term = isset($_REQUEST['s']) ? sanitize_text_field(wp_unslash($_REQUEST['s'])) : '';
+            $status_filter = $this->get_request_status_filter();
+            $selected = $this->get_filtered_attendee_row_ids($event->ID, $occurrence, $search_term, $status_filter);
+
+            if (!count($selected)) return;
+
+            $this->export_attendees($export_all, $selected);
+            return;
+        }
+
         $action = $this->get_request_bulk_action();
         if (!in_array($action, ['csv-export', 'ms-excel-export'], true)) return;
 
@@ -357,6 +403,7 @@ class MEC_feature_attendees extends MEC_base
 
                 $ticket_id = $attendee['id'] ?? 0;
                 $ticket_name = $tickets[$ticket_id]['name'] ?? esc_html__('Unknown', 'modern-events-calendar-lite');
+                $seats = (isset($tickets[$ticket_id]['seats']) && is_numeric($tickets[$ticket_id]['seats']) && (int) $tickets[$ticket_id]['seats'] > 0) ? (int) $tickets[$ticket_id]['seats'] : 1;
                 $checked_in = $this->is_attendee_checked_in($booking->ID, $attendee, $position);
 
                 $items[] = [
@@ -367,6 +414,7 @@ class MEC_feature_attendees extends MEC_base
                     'email' => trim((string) ($attendee['email'] ?? '')),
                     'ticket_id' => $ticket_id,
                     'ticket_name' => $ticket_name,
+                    'seats' => $seats,
                     'transaction_id' => $transaction_id,
                     'confirmation_status' => (int) get_post_meta($booking->ID, 'mec_confirmed', true),
                     'verification_status' => (int) get_post_meta($booking->ID, 'mec_verified', true),
@@ -398,6 +446,27 @@ class MEC_feature_attendees extends MEC_base
         $filename = 'attendees-' . md5(time() . mt_rand(100, 999)) . '.csv';
         $this->main->generate_download_csv($rows, $filename);
         exit;
+    }
+
+    public function filter_attendee_items(array $items, $search_term = '', $status_filter = '')
+    {
+        if ($status_filter !== '')
+        {
+            $items = array_values(array_filter($items, function ($item) use ($status_filter)
+            {
+                return $this->item_matches_status_filter($item, $status_filter);
+            }));
+        }
+
+        if ($search_term !== '')
+        {
+            $items = array_values(array_filter($items, function ($item) use ($search_term)
+            {
+                return (stripos($item['name'], $search_term) !== false) || (stripos($item['email'], $search_term) !== false);
+            }));
+        }
+
+        return $items;
     }
 
     public function get_summary_data($event, $occurrence, array $occurrence_context)
@@ -455,13 +524,13 @@ class MEC_feature_attendees extends MEC_base
                 if (!is_array($attendee)) continue;
 
                 $position++;
-                $attendee_total++;
-                $confirmation_counts[$confirmation_label]++;
-                $verification_counts[$verification_label]++;
-
                 $ticket_id = $attendee['id'] ?? 0;
                 $seats = 1;
                 if ($ticket_id && isset($tickets[$ticket_id]['seats']) && $tickets[$ticket_id]['seats']) $seats = (int) $tickets[$ticket_id]['seats'];
+
+                $attendee_total += $seats;
+                $confirmation_counts[$confirmation_label] += $seats;
+                $verification_counts[$verification_label] += $seats;
 
                 if (!isset($ticket_overview[$ticket_id]))
                 {
@@ -474,12 +543,12 @@ class MEC_feature_attendees extends MEC_base
                 $ticket_overview[$ticket_id]['count'] += $seats;
                 $ticket_total += $seats;
 
-                if ($has_checkin && $this->is_attendee_checked_in($booking->ID, $attendee, $position)) $checked_in_total++;
+                if ($has_checkin && $this->is_attendee_checked_in($booking->ID, $attendee, $position)) $checked_in_total += $seats;
             }
         }
 
         $selected_date = $occurrence_context['label'];
-        if ($selected_date === '') $selected_date = esc_html__('No occurrence selected', 'modern-events-calendar-lite');
+        if ($selected_date === '') $selected_date = esc_html__('Please select a date', 'modern-events-calendar-lite');
 
         return [
             'selected_date' => $selected_date,
@@ -796,6 +865,17 @@ class MEC_feature_attendees extends MEC_base
         return $filters;
     }
 
+    private function get_filtered_attendee_row_ids($event_id, $occurrence, $search_term = '', $status_filter = '')
+    {
+        $items = $this->get_attendee_items($event_id, $occurrence);
+        $items = $this->filter_attendee_items($items, $search_term, $status_filter);
+
+        return array_values(array_filter(array_map(function ($item)
+        {
+            return $item['row_id'] ?? '';
+        }, $items)));
+    }
+
     private function is_attendee_checked_in($booking_id, array $attendee, $position)
     {
         if (!class_exists('\MEC_Invoice\Attendee')) return false;
@@ -860,6 +940,7 @@ class MEC_Attendees_List_Table extends WP_List_Table
             'attendee_information' => esc_html__('Attendee Information', 'modern-events-calendar-lite'),
             'booking' => esc_html__('Booking', 'modern-events-calendar-lite'),
             'ticket' => esc_html($this->feature->main->m('ticket', esc_html__('Ticket', 'modern-events-calendar-lite'))),
+            'seats' => esc_html__('Seats', 'modern-events-calendar-lite'),
             'status' => esc_html__('Status', 'modern-events-calendar-lite'),
         ];
     }
@@ -911,6 +992,14 @@ class MEC_Attendees_List_Table extends WP_List_Table
         return esc_html($item['ticket_name']);
     }
 
+    public function column_seats($item)
+    {
+        $seats = isset($item['seats']) ? (int) $item['seats'] : 1;
+        if ($seats < 1) $seats = 1;
+
+        return esc_html(sprintf(_n('%d seat', '%d seats', $seats, 'modern-events-calendar-lite'), $seats));
+    }
+
     public function column_status($item)
     {
         $parts = [];
@@ -934,6 +1023,11 @@ class MEC_Attendees_List_Table extends WP_List_Table
         if (!$this->has_items()) return;
 
         echo '<button type="button" class="button mec-attendees-print-button" data-which="' . esc_attr($which) . '">' . esc_html__('Print', 'modern-events-calendar-lite') . '</button>';
+        if ($which === 'top')
+        {
+            echo ' <button type="submit" class="button" name="mec_export_all" value="csv-export">' . esc_html__('Export All CSV', 'modern-events-calendar-lite') . '</button>';
+            echo ' <button type="submit" class="button" name="mec_export_all" value="ms-excel-export">' . esc_html__('Export All Excel', 'modern-events-calendar-lite') . '</button>';
+        }
     }
 
     public function prepare_items()
@@ -946,30 +1040,15 @@ class MEC_Attendees_List_Table extends WP_List_Table
 
         $items = $this->feature->get_attendee_items($this->event_id, $this->occurrence);
 
-        if ($this->status_filter !== '')
-        {
-            $items = array_values(array_filter($items, function ($item)
-            {
-                return $this->feature->item_matches_status_filter($item, $this->status_filter);
-            }));
-        }
-
-        if ($this->search_term !== '')
-        {
-            $search = $this->search_term;
-
-            $items = array_values(array_filter($items, function ($item) use ($search)
-            {
-                return (stripos($item['name'], $search) !== false) || (stripos($item['email'], $search) !== false);
-            }));
-        }
+        $items = $this->feature->filter_attendee_items($items, $this->search_term, $this->status_filter);
 
         usort($items, function ($a, $b)
         {
             return strcasecmp($a['name'], $b['name']);
         });
 
-        $per_page = 20;
+        $per_page = $this->get_items_per_page('mec_attendees_per_page', 20);
+        if ($per_page < 1) $per_page = 20;
         $current_page = $this->get_pagenum();
         $total_items = count($items);
 

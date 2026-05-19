@@ -273,6 +273,43 @@ class MEC_feature_restful extends MEC_base
         ]);
     }
 
+    private function get_taxonomy_payload(array $vars, array $tax, string $key): array
+    {
+        if (isset($tax[$key]) && is_array($tax[$key])) return $tax[$key];
+        if (isset($vars[$key]) && is_array($vars[$key])) return $vars[$key];
+
+        $payload = [];
+        $taxonomy_prefix = 'taxonomies[' . $key . ']';
+        foreach ($vars as $param => $value)
+        {
+            if (strpos($param, $key . '[') === 0)
+            {
+                $sub_key = trim(substr($param, strlen($key)), '[]');
+            }
+            elseif (strpos($param, $taxonomy_prefix . '[') === 0)
+            {
+                $sub_key = trim(substr($param, strlen($taxonomy_prefix)), '[]');
+            }
+            else continue;
+
+            if ($sub_key === '') continue;
+
+            $payload[$sub_key] = $value;
+        }
+
+        return $payload;
+    }
+
+    private function get_taxonomy_id(array $vars, array $payload, string $key): int
+    {
+        $id_key = $key . '_id';
+        if (isset($vars[$id_key]) && is_numeric($vars[$id_key])) return (int) $vars[$id_key];
+        if (isset($payload['id']) && is_numeric($payload['id'])) return (int) $payload['id'];
+        if (isset($payload[$id_key]) && is_numeric($payload[$id_key])) return (int) $payload[$id_key];
+
+        return 0;
+    }
+
     public function events(WP_REST_Request $request)
     {
         $limit = $request->get_param('limit');
@@ -607,24 +644,36 @@ class MEC_feature_restful extends MEC_base
         if (current_user_can('publish_posts')) $status = 'publish';
 
         // Event location
-        $location = isset($tax['location']) && is_array($tax['location']) ? $tax['location'] : [];
-        $location_id = $location && isset($location['name']) ? $main->save_location([
-            'name' => trim($location['name']),
-            'address' => $location['address'] ?? '',
-            'latitude' => $location['latitude'] ?? 0,
-            'longitude' => $location['longitude'] ?? 0,
-            'thumbnail' => $location['thumbnail'] ?? '',
-        ]) : 1;
+        $location = $this->get_taxonomy_payload($vars, $tax, 'location');
+        $location_id = $this->get_taxonomy_id($vars, $location, 'location');
+        if (!$location_id && isset($location['name']) && trim($location['name']))
+        {
+            $location_id = $main->save_location([
+                'name' => trim($location['name']),
+                'address' => $location['address'] ?? '',
+                'latitude' => $location['latitude'] ?? 0,
+                'longitude' => $location['longitude'] ?? 0,
+                'thumbnail' => $location['thumbnail'] ?? '',
+            ]);
+        }
+
+        if (!$location_id) $location_id = 1;
 
         // Event Organizer
-        $organizer = isset($tax['organizer']) && is_array($tax['organizer']) ? $tax['organizer'] : [];
-        $organizer_id = $organizer && isset($organizer['name']) ? $main->save_organizer([
-            'name' => trim($organizer['name']),
-            'email' => $organizer['email'] ?? '',
-            'tel' => $organizer['tel'] ?? '',
-            'url' => $organizer['url'] ?? '',
-            'thumbnail' => $location['thumbnail'] ?? '',
-        ]) : 1;
+        $organizer = $this->get_taxonomy_payload($vars, $tax, 'organizer');
+        $organizer_id = $this->get_taxonomy_id($vars, $organizer, 'organizer');
+        if (!$organizer_id && isset($organizer['name']) && trim($organizer['name']))
+        {
+            $organizer_id = $main->save_organizer([
+                'name' => trim($organizer['name']),
+                'email' => $organizer['email'] ?? '',
+                'tel' => $organizer['tel'] ?? '',
+                'url' => $organizer['url'] ?? '',
+                'thumbnail' => $organizer['thumbnail'] ?? '',
+            ]);
+        }
+
+        if (!$organizer_id) $organizer_id = 1;
 
         // Event Categories
         $category_ids = [];

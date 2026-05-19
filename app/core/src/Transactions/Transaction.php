@@ -2196,6 +2196,9 @@ class Transaction
                 '_sale_price' => '',
                 '_price' => '',
 
+                '_tax_status' => 'taxable',
+                '_tax_class' => '',
+
                 'cantChangeQuantity' => true,
                 // 'm_product_type' => '',
                 // 'related_products' => '',

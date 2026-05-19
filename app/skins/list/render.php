@@ -96,6 +96,7 @@ $map_events = [];
                     <div class="mec-event-image"><?php echo MEC_kses::element($this->display_link($event, $thumbnail)); ?></div>
                     <?php if(isset($settings['multiple_day_show_method']) && $settings['multiple_day_show_method'] == 'all_days'): ?>
                         <div class="mec-event-date mec-color"><?php echo $this->icons->display('calendar'); ?> <?php echo esc_html($this->main->date_i18n($this->date_format_classic_1, strtotime($event->date['start']['date']))); ?></div>
+                        <div class="mec-event-time mec-color"><?php if($this->include_events_times and trim($start_time)) { echo $this->icons->display('clock'); echo MEC_kses::element($this->main->display_time($start_time, $end_time)); } ?></div>
                     <?php else: ?>
                         <div class="mec-event-date mec-color"><?php echo $this->icons->display('calendar'); ?> <?php echo MEC_kses::element($this->main->dateify($event, $this->date_format_classic_1)); ?></div>
                         <div class="mec-event-time mec-color"><?php if($this->include_events_times and trim($start_time)) { echo $this->icons->display('clock'); echo MEC_kses::element($this->main->display_time($start_time, $end_time)); } ?></div>

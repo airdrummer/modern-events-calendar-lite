@@ -40,9 +40,12 @@ class EventCountdown extends WidgetBase {
 
 			$wrap_class = (true === $this->is_editor_mode) ? 'mec-wrap' : '';
 
-			$html = '<div class="'. esc_attr( $wrap_class ) .' mec-events-meta-group mec-events-meta-group-countdown">'
-					. Base::get_main()->module('countdown.details', array('event'=>array($events_detail))) .
-				'</div>';
+			if ( Base::get_main()->can_show_countdown_module( $events_detail ) ) {
+
+				$html = '<div class="'. esc_attr( $wrap_class ) .' mec-events-meta-group mec-events-meta-group-countdown">'
+						. Base::get_main()->module('countdown.details', array('event'=>array($events_detail))) .
+					'</div>';
+			}
 		}
 
 		return $html;

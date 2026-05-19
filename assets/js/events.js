@@ -1,6 +1,27 @@
 // Set datepicker default value.
 var datepicker_format = 'yy-mm-dd';
 
+function mecEnhanceDatepickerAccessibility($inputs)
+{
+    if(!$inputs || !$inputs.length) return;
+
+    $inputs.attr('aria-haspopup', 'dialog');
+    $inputs.off('focus.mecDatepickerA11y').on('focus.mecDatepickerA11y', function()
+    {
+        window.setTimeout(function()
+        {
+            var $datepicker = jQuery('#ui-datepicker-div');
+            if(!$datepicker.length) return;
+
+            $datepicker.attr({
+                role: 'dialog',
+                'aria-live': 'polite',
+                'aria-label': (typeof mecdata !== 'undefined' && mecdata.a11y_calendar_dialog) ? mecdata.a11y_calendar_dialog : 'Calendar date picker'
+            });
+        }, 0);
+    });
+}
+
 jQuery(document).ready(function($)
 {
     // Image picker on terms menu
@@ -34,7 +55,7 @@ jQuery(document).ready(function($)
             // Grab the selected attachment.
             var attachment = frame.state().get('selection').first();
 
-            $('#'+preview_id).html('<img src="'+attachment.attributes.url+'" style="max-width: 100%;" />');
+            $('#'+preview_id).html('<img src="'+attachment.attributes.url+'" alt="Featured image preview" style="max-width: 100%;" />');
             $('#'+input_id).val(attachment.attributes.url);
 
             $('.mec_remove_image_button').toggleClass('mec-util-hidden');
@@ -238,6 +259,8 @@ jQuery(document).ready(function($)
 
     if($.fn.datepicker)
     {
+        mecEnhanceDatepickerAccessibility($('.mec-date-picker, .mec_date_picker_dynamic_format, .mec_date_picker, .mec_date_picker_dynamic_format_start, .mec_date_picker_dynamic_format_end, #mec_start_date, #mec_end_date, #mec_date_repeat_end_at_date'));
+
         $('.mec-date-picker').datepicker(
         {
             changeYear: true,
@@ -345,6 +368,8 @@ jQuery(document).ready(function($)
                 var $end_picker = $(this).next();
                 $end_picker.datepicker("option", "minDate", endDate);
                 $end_picker.datepicker("option", "maxDate", '+5y');
+
+                $(this).trigger('change');
             }
         });
 
@@ -617,10 +642,12 @@ jQuery(document).ready(function($)
 
         // Set onclick listener for add option fields
         mec_reg_fields_option_listeners();
+        mec_refresh_booking_condition_editors('reg');
     });
 
     // Set onclick listener for add option fields
     mec_reg_fields_option_listeners();
+    mec_refresh_booking_condition_editors('reg');
 
     // Advanced Repeating
     $('#mec-advanced-wraper ul > ul > li').click(function()
@@ -660,10 +687,40 @@ jQuery(document).ready(function($)
 
         // Set onclick listener for add option fields
         mec_bfixed_fields_option_listeners();
+        mec_refresh_booking_condition_editors('bfixed');
     });
 
     // Set onclick listener for add option fields
     mec_bfixed_fields_option_listeners();
+    mec_refresh_booking_condition_editors('bfixed');
+
+    jQuery(document).on('change', '.mec-booking-condition-enabled, .mec-booking-condition-source, .mec-booking-condition-option', function()
+    {
+        const $trigger = jQuery(this);
+        const $conditionBox = jQuery(this).closest('.mec-booking-condition-box');
+        const prefix = String($conditionBox.data('conditionPrefix') || '');
+
+        if($trigger.hasClass('mec-booking-condition-source'))
+        {
+            $conditionBox.data('currentSourceFieldId', String($trigger.val() || ''));
+            $conditionBox.data('currentOptionKey', '');
+            $conditionBox.find('.mec-booking-condition-option').val('');
+        }
+        else if($trigger.hasClass('mec-booking-condition-option'))
+        {
+            $conditionBox.data('currentOptionKey', String($trigger.val() || ''));
+        }
+
+        mec_refresh_booking_condition_editor($conditionBox);
+        if(prefix) mec_refresh_booking_condition_editors(prefix);
+    });
+
+    jQuery(document).on('input change', '#mec_reg_form_fields input[name*="[label]"], #mec_bfixed_form_fields input[name*="[label]"]', function()
+    {
+        const $field = jQuery(this).closest('li[id^="mec_reg_fields_"], li[id^="mec_bfixed_fields_"]');
+        if($field.attr('id') && $field.attr('id').indexOf('mec_reg_fields_') === 0) mec_refresh_booking_condition_editors('reg');
+        if($field.attr('id') && $field.attr('id').indexOf('mec_bfixed_fields_') === 0) mec_refresh_booking_condition_editors('bfixed');
+    });
 
     // Additional Organizers
     mec_additional_organizers_listeners();
@@ -907,6 +964,7 @@ function trigger_period_picker()
             const $end_picker = jQuery(this).next();
             $end_picker.datepicker("option", "minDate", endDate);
             $end_picker.datepicker("option", "maxDate", '+5y');
+            jQuery(this).trigger('change');
         }
     });
 
@@ -1184,6 +1242,184 @@ function mec_init_sortable_sections()
     mec_init_sortable_instance('#mec_faq_list', { handle: '.mec_field_sort', items: '> .mec_faq_row' });
 }
 
+function mec_get_booking_condition_form_fields(prefix)
+{
+    return jQuery('#mec_' + prefix + '_form_fields > li');
+}
+
+function mec_get_booking_condition_field_id($field, prefix)
+{
+    return String(($field.attr('id') || '').replace('mec_' + prefix + '_fields_', ''));
+}
+
+function mec_get_booking_condition_field_type($field, prefix)
+{
+    const fieldId = mec_get_booking_condition_field_id($field, prefix);
+    return String($field.find('input[name="mec[' + prefix + '_fields][' + fieldId + '][type]"]').val() || '');
+}
+
+function mec_get_booking_condition_field_label($field, prefix)
+{
+    const fieldId = mec_get_booking_condition_field_id($field, prefix);
+    const $labelInput = $field.find('input[name="mec[' + prefix + '_fields][' + fieldId + '][label]"]').first();
+    const fallback = jQuery.trim($field.find('.mec_' + prefix + '_field_type').first().text() || '');
+
+    return jQuery.trim(($labelInput.val() || fallback || ''));
+}
+
+function mec_get_booking_condition_field_option_list($field, prefix)
+{
+    const fieldId = mec_get_booking_condition_field_id($field, prefix);
+    const options = [];
+
+    $field.find('input[name^="mec[' + prefix + '_fields][' + fieldId + '][options]"][name$="[label]"]').each(function()
+    {
+        const name = jQuery(this).attr('name') || '';
+        const match = name.match(/\[options\]\[(.*?)\]\[label\]$/);
+        if(!match) return;
+
+        options.push({
+            key: String(match[1]),
+            label: jQuery.trim(jQuery(this).val() || '')
+        });
+    });
+
+    return options;
+}
+
+function mec_booking_condition_field_has_duplicate_options($field, prefix)
+{
+    const seen = {};
+    const options = mec_get_booking_condition_field_option_list($field, prefix);
+
+    for(let i = 0; i < options.length; i++)
+    {
+        const label = options[i].label;
+        if(!label) continue;
+        if(seen[label]) return true;
+
+        seen[label] = true;
+    }
+
+    return false;
+}
+
+function mec_refresh_booking_condition_editor($conditionBox)
+{
+    if(!$conditionBox || !$conditionBox.length) return;
+
+    const prefix = String($conditionBox.data('conditionPrefix') || '');
+    const currentFieldId = String($conditionBox.data('conditionFieldId') || '');
+    const $enabled = $conditionBox.find('.mec-booking-condition-enabled');
+    const $controls = $conditionBox.find('.mec-booking-condition-controls');
+    const $source = $conditionBox.find('.mec-booking-condition-source');
+    const $option = $conditionBox.find('.mec-booking-condition-option');
+    const $matchType = $conditionBox.find('.mec-booking-condition-match-type');
+    const $message = $conditionBox.find('.mec-booking-condition-message');
+    const enabled = $enabled.is(':checked');
+    const strings = (typeof mec_admin_localize !== 'undefined' && mec_admin_localize.booking_conditions) ? mec_admin_localize.booking_conditions : {};
+
+    $controls.toggleClass('mec-util-hidden', !enabled);
+    if(!enabled)
+    {
+        $message.text('');
+        return;
+    }
+
+    const currentSourceId = String($source.val() || $conditionBox.data('currentSourceFieldId') || '');
+    const currentOptionKey = String($option.val() || $conditionBox.data('currentOptionKey') || '');
+    const sourceFields = [];
+    const sourceMap = {};
+
+    mec_get_booking_condition_form_fields(prefix).each(function()
+    {
+        const $field = jQuery(this);
+        const fieldId = mec_get_booking_condition_field_id($field, prefix);
+        const fieldType = mec_get_booking_condition_field_type($field, prefix);
+
+        if(!fieldId) return;
+        if(fieldId === currentFieldId) return false;
+        if(jQuery.inArray(fieldType, ['checkbox', 'radio', 'select', 'agreement']) === -1) return;
+        if(jQuery.inArray(fieldType, ['checkbox', 'radio', 'select']) !== -1 && mec_booking_condition_field_has_duplicate_options($field, prefix)) return;
+
+        const sourceField = {
+            id: fieldId,
+            type: fieldType,
+            label: mec_get_booking_condition_field_label($field, prefix)
+        };
+
+        sourceFields.push(sourceField);
+        sourceMap[fieldId] = sourceField;
+    });
+
+    $source.empty().append('<option value="">' + (strings.select_field || 'Select a field') + '</option>');
+    jQuery.each(sourceFields, function(index, sourceField)
+    {
+        $source.append('<option value="' + sourceField.id + '">' + sourceField.label + '</option>');
+    });
+
+    if(currentSourceId && sourceMap[currentSourceId]) $source.val(currentSourceId);
+
+    const selectedSourceId = String($source.val() || '');
+    const selectedSource = sourceMap[selectedSourceId] || null;
+
+    $option.empty();
+
+    if(!selectedSource)
+    {
+        $matchType.val('');
+        $option.prop('disabled', true).append('<option value="">' + (strings.select_option || 'Select an option') + '</option>');
+        $message.text(sourceFields.length ? (strings.select_controller || 'Choose a controller field.') : (strings.no_sources || 'No eligible controller fields are available.'));
+        $conditionBox.data('currentSourceFieldId', '');
+        $conditionBox.data('currentOptionKey', '');
+        return;
+    }
+
+    if(selectedSource.type === 'agreement')
+    {
+        $matchType.val('checked');
+        $option.prop('disabled', true).append('<option value="">' + (strings.checked_state || 'Checked') + '</option>');
+        $message.text((strings.checked_message || 'This field will show when "%s" is checked.').replace('%s', selectedSource.label));
+        $conditionBox.data('currentSourceFieldId', selectedSourceId);
+        $conditionBox.data('currentOptionKey', '');
+        return;
+    }
+
+    const $sourceField = jQuery('#mec_' + prefix + '_fields_' + selectedSource.id);
+    const options = mec_get_booking_condition_field_option_list($sourceField, prefix);
+    const matchType = selectedSource.type === 'checkbox' ? 'contains_option' : 'equals_option';
+
+    $matchType.val(matchType);
+    $option.prop('disabled', false).append('<option value="">' + (strings.select_option || 'Select an option') + '</option>');
+
+    jQuery.each(options, function(index, option)
+    {
+        $option.append('<option value="' + option.key + '">' + option.label + '</option>');
+    });
+
+    if(currentOptionKey) $option.val(currentOptionKey);
+
+    if(!$option.val())
+    {
+        $message.text((strings.select_value || 'Choose the value that should reveal this field.').replace('%s', selectedSource.label));
+    }
+    else
+    {
+        $message.text('');
+    }
+
+    $conditionBox.data('currentSourceFieldId', selectedSourceId);
+    $conditionBox.data('currentOptionKey', String($option.val() || ''));
+}
+
+function mec_refresh_booking_condition_editors(prefix)
+{
+    jQuery('.mec-booking-condition-box[data-condition-prefix="' + prefix + '"]').each(function()
+    {
+        mec_refresh_booking_condition_editor(jQuery(this));
+    });
+}
+
 function mec_reg_fields_option_listeners()
 {
     jQuery('button.mec-reg-field-add-option').off('click').on('click', function()
@@ -1194,13 +1430,18 @@ function mec_reg_fields_option_listeners()
 
         jQuery('#mec_reg_fields_'+field_id+'_options_container').append(html);
         jQuery('#mec_new_reg_field_option_key_'+field_id).val(parseInt(key)+1);
+        mec_refresh_booking_condition_editors('reg');
     });
 
     if(typeof jQuery.fn.sortable !== 'undefined')
     {
         jQuery("#mec_reg_form_fields").sortable(
         {
-            handle: '.mec_reg_field_sort'
+            handle: '.mec_reg_field_sort',
+            stop: function()
+            {
+                mec_refresh_booking_condition_editors('reg');
+            }
         });
 
         jQuery(".mec_reg_fields_options_container").sortable(
@@ -1222,11 +1463,13 @@ function mec_reg_fields_option_listeners()
 function mec_reg_fields_option_remove(field_key, key)
 {
     jQuery("#mec_reg_fields_option_"+field_key+"_"+key).remove();
+    mec_refresh_booking_condition_editors('reg');
 }
 
 function mec_reg_fields_remove(key)
 {
     jQuery("#mec_reg_fields_"+key).remove();
+    mec_refresh_booking_condition_editors('reg');
 }
 
 function mec_handle_add_price_date_button(e)
@@ -1298,13 +1541,18 @@ function mec_bfixed_fields_option_listeners()
 
         jQuery('#mec_bfixed_fields_'+field_id+'_options_container').append(html);
         jQuery('#mec_new_bfixed_field_option_key_'+field_id).val(parseInt(key)+1);
+        mec_refresh_booking_condition_editors('bfixed');
     });
 
     if(typeof jQuery.fn.sortable !== 'undefined')
     {
         jQuery("#mec_bfixed_form_fields").sortable(
         {
-            handle: '.mec_bfixed_field_sort'
+            handle: '.mec_bfixed_field_sort',
+            stop: function()
+            {
+                mec_refresh_booking_condition_editors('bfixed');
+            }
         });
 
         jQuery(".mec_bfixed_fields_options_container").sortable(
@@ -1317,11 +1565,13 @@ function mec_bfixed_fields_option_listeners()
 function mec_bfixed_fields_option_remove(field_key, key)
 {
     jQuery("#mec_bfixed_fields_option_"+field_key+"_"+key).remove();
+    mec_refresh_booking_condition_editors('bfixed');
 }
 
 function mec_bfixed_fields_remove(key)
 {
     jQuery("#mec_bfixed_fields_"+key).remove();
+    mec_refresh_booking_condition_editors('bfixed');
 }
 
 function mec_additional_organizers_listeners()

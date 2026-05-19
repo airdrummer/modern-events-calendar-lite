@@ -93,7 +93,7 @@ class EventOrganizers extends WidgetBase {
 				?>
 				<div class="mec-single-event-organizer">
 					<i class="mec-sl-people"></i>
-					<h3 class="mec-events-single-section-title"><?php echo Base::get_main()->m('taxonomy_organizer', esc_html__('Organizer', 'modern-events-calendar-lite')); ?></h3>
+					<div class="mec-events-single-section-title"><?php echo Base::get_main()->m('taxonomy_organizer', esc_html__('Organizer', 'modern-events-calendar-lite')); ?></div>
 
 					<?php if(isset($organizer['thumbnail']) and trim($organizer['thumbnail'])): ?>
 						<img class="mec-img-organizer" src="<?php echo esc_url($organizer['thumbnail']); ?>" alt="<?php echo (isset($organizer['name']) ? esc_attr($organizer['name']) : ''); ?>">
@@ -103,32 +103,32 @@ class EventOrganizers extends WidgetBase {
                             <?php if( is_plugin_active('mec-advanced-organizer/mec-advanced-organizer.php') && ( $settings['advanced_organizer']['organizer_enable_link_section_title'] ?? false ) ): ?>
                                 <a href="<?php echo get_permalink( $settings['advanced_organizer']['single_page'] ).'?fesection=organizer&feparam='.$organizer['id']; ?>" target="<?php echo $settings['advanced_organizer']['organizer_link_target'] ?? '_blank'; ?>">
                                     <i class="mec-sl-link"></i>
-                                    <h6><?php echo (isset($organizer['name']) ? esc_html($organizer['name']) : ''); ?></h6>
+                                    <span class="mec-meta-label"><?php echo (isset($organizer['name']) ? esc_html($organizer['name']) : ''); ?></span>
                                 </a>
                             <?php else: ?>
                                 <i class="mec-sl-people"></i>
-                                <h6><?php echo (isset($organizer['name']) ? esc_html($organizer['name']) : ''); ?></h6>
+                                <span class="mec-meta-label"><?php echo (isset($organizer['name']) ? esc_html($organizer['name']) : ''); ?></span>
                             <?php endif; ?>
 						</dd>
 					<?php endif;
 					if(isset($organizer['tel']) && !empty($organizer['tel'])): ?>
 					<dd class="mec-organizer-tel">
 						<i class="mec-sl-phone"></i>
-						<h6><?php esc_html_e('Phone', 'modern-events-calendar-lite'); ?></h6>
+						<span class="mec-meta-label"><?php esc_html_e('Phone', 'modern-events-calendar-lite'); ?></span>
 						<a href="tel:<?php echo esc_attr($organizer['tel']); ?>"><?php echo esc_html( $organizer['tel'] ); ?></a>
 					</dd>
 					<?php endif;
 					if(isset($organizer['email']) && !empty($organizer['email'])): ?>
 					<dd class="mec-organizer-email">
 						<i class="mec-sl-envelope"></i>
-						<h6><?php esc_html_e('Email', 'modern-events-calendar-lite'); ?></h6>
+						<span class="mec-meta-label"><?php esc_html_e('Email', 'modern-events-calendar-lite'); ?></span>
 						<a href="mailto:<?php echo esc_attr( $organizer['email'] ); ?>"><?php echo esc_html( $organizer['email'] ); ?></a>
 					</dd>
 					<?php endif;
 					if(isset($organizer['url']) && !empty($organizer['url']) and $organizer['url'] != 'http://'): ?>
 					<dd class="mec-organizer-url">
 						<i class="mec-sl-sitemap"></i>
-						<h6><?php esc_html_e('Website', 'modern-events-calendar-lite'); ?></h6>
+						<span class="mec-meta-label"><?php esc_html_e('Website', 'modern-events-calendar-lite'); ?></span>
 						<span><a href="<?php echo esc_url($organizer['url']); ?>" class="mec-color-hover" target="<?php echo $settings['advanced_organizer']['organizer_link_target'] ?? '_blank'; ?>"><?php echo esc_url( $organizer['url'] ); ?></a></span>
 					</dd>
 					<?php endif;

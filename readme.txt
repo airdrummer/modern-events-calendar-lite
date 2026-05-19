@@ -4,7 +4,7 @@ Donate link: https://webnus.net
 Tags: Event, Events, Calendar, Booking, Schedule, Organizer, Venue
 Requires at least: 4.0.0
 Tested up to: 6.9.0
-Stable tag: 7.32.0
+Stable tag: 7.33.0
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -472,6 +472,30 @@ You can see [plugin documentation](https://webnus.net/dox/modern-events-calendar
 43. WordPress Event Calendar - Daily view(Fluent View Layouts Addon)
 
 == Changelog ==
+= v 7.33.0 - 16 May 2026 =
+- Added: Conditional form option to booking forms.
+- Added: Page number to attendees page.
+- Added: Export All Attendees buttons in attendees page.
+- Added: A category filter for countdown skin.
+- Added: Some accessibility enhancements.
+- Added: An ability to remove API keys.
+- Applied: Some enhancements.
+- Enhanced: The event creation API.
+- Applied: Some display enhancements regarding coupon module.
+- Suppress booking confirmations during booking import.
+- Suppress attendee reports notifications when no attendee is available.
+- Enhanced: Mailchimp integration.
+- Fixed: An issue in map skin and elementor.
+- Fixed: An issue in creating speakers in Frontend Event Submission.
+- Fixed: Some PHP issues and warnings.
+- Fixed: An issue in available ticket count.
+- Fixed: An issue in countdown module.
+- Fixed: An issue in free bookings in MEC Cart.
+- Fixed: An issue in locale loading.
+- Fixed: A time display issue in list view.
+- Fixed: An issue in certificate generation system.
+- Fixed: Some issues in search widget.
+
 = v 7.32.0 - 7 April 2026 =
 - Added: Comprehensive attendees page for events to filter and manage attendees per occurrence.
 - Added: An ability to change the countdown method globally.

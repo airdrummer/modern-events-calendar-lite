@@ -105,7 +105,7 @@ do_action('mec_full_skin_head');
             if($this->sf_dropdown_method == '2') $wrapper_class .= ' mec-dropdown-enhanced';
             else $wrapper_class .= ' mec-dropdown-classic';
             ?>
-            <form id="mec_search_form_<?php echo esc_attr($this->id); ?>" class="<?php echo esc_attr($wrapper_class); ?>" autocomplete="off">
+            <form id="mec_search_form_<?php echo esc_attr($this->id); ?>" class="<?php echo esc_attr($wrapper_class); ?>" autocomplete="off" role="search" aria-label="<?php esc_attr_e('Event search', 'modern-events-calendar-lite'); ?>">
                 <div>
 
                     <?php echo apply_filters('mec_filter_fields_search_form', '', $this); ?>
@@ -186,6 +186,7 @@ do_action('mec_full_skin_head');
                         </div>
                     </div>
                 </div>
+                <div id="mec_search_form_<?php echo esc_attr($this->id); ?>_status" class="mec-screen-reader-text" role="status" aria-live="polite" aria-atomic="true"></div>
             </form>
         <?php else: ?>
             <div class="mec-tab-loader">

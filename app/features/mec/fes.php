@@ -34,7 +34,7 @@ $mec_categories = get_terms(array(
         <?php $this->main->get_sidebar_menu('fes'); ?>
     </div>
 
-    <div class="wns-be-main">
+    <div class="wns-be-main fes-settings">
         <div id="wns-be-notification"></div>
         <div id="wns-be-content">
             <div class="wns-be-group-tab">

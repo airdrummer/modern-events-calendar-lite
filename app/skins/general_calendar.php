@@ -46,6 +46,7 @@ class MEC_skin_general_calendar extends MEC_skins
     /**
      * @param WP_REST_Request $request
      * @return array
+     * @throws Exception
      */
     public function get_general_calendar_events($request)
     {
@@ -243,7 +244,7 @@ class MEC_skin_general_calendar extends MEC_skins
         $this->events_str = '';
 
         // Generate an ID for the skin
-        $this->id = $this->atts['id'] ?? mt_rand(100, 999);
+        $this->id = $this->get_skin_dom_id();
 
         // Set the ID
         if (!isset($this->atts['id'])) $this->atts['id'] = $this->id;
@@ -253,13 +254,13 @@ class MEC_skin_general_calendar extends MEC_skins
         if ($this->style == 'fluent' and !is_plugin_active('mec-fluent-layouts/mec-fluent-layouts.php')) $this->style = 'modern';
 
         // Next/Previous Month
-        $this->next_previous_button = isset($this->skin_options['next_previous_button']) ? $this->skin_options['next_previous_button'] : true;
+        $this->next_previous_button = $this->skin_options['next_previous_button'] ?? true;
 
         // Display All Events
         $this->display_all = (((in_array($this->style, ['clean', 'modern']) and isset($this->skin_options['display_all']))) && $this->skin_options['display_all']);
 
         // Override the style if the style forced by us in a widget etc
-        if (isset($this->atts['style']) and trim($this->atts['style']) != '') $this->style = $this->atts['style'];
+        if (isset($this->atts['style']) && trim($this->atts['style']) != '') $this->style = $this->atts['style'];
 
         // HTML class
         $this->html_class = '';
@@ -353,6 +354,18 @@ class MEC_skin_general_calendar extends MEC_skins
 
         // Activate First Date With Event
         $this->activate_first_date = (isset($this->skin_options['activate_first_date']) and $this->skin_options['activate_first_date']);
+    }
+
+    public function sanitize_author_ids($authors): array
+    {
+        if (is_null($authors) || $authors === 'undefined') return [];
+
+        if (!is_array($authors)) $authors = explode(',', (string) $authors);
+
+        $authors = array_map('absint', $authors);
+        $authors = array_filter($authors);
+
+        return array_values(array_unique($authors));
     }
 
     /**
@@ -592,26 +605,6 @@ class MEC_skin_general_calendar extends MEC_skins
             ];
         }
 
-        if (!is_null($filter_author) && $filter_author != 'undefined')
-        {
-            $tax_query[] = [
-                'taxonomy' => 'mec_author',
-                'field' => 'id',
-                'terms' => is_array($filter_author) ? $filter_author : [$filter_author],
-                'operator' => 'IN',
-            ];
-        }
-
-        if (!is_null($filter_ex_author) && $filter_ex_author != 'undefined')
-        {
-            $tax_query[] = [
-                'taxonomy' => 'mec_author',
-                'field' => 'id',
-                'terms' => is_array($filter_ex_author) ? $filter_ex_author : [$filter_ex_author],
-                'operator' => 'NOT IN',
-            ];
-        }
-
         if (!is_null($filter_ex_tag) && $filter_ex_tag != 'undefined')
         {
             $tax_query[] = [
@@ -673,6 +666,8 @@ class MEC_skin_general_calendar extends MEC_skins
         $this->args['meta_query'] = $meta_query;
         $this->args['tag'] = $mec_tag_query;
         $this->args['lang'] = $locale;
+        $this->args['author'] = implode(',', $this->sanitize_author_ids($filter_author));
+        $this->args['author__not_in'] = $this->sanitize_author_ids($filter_ex_author);
 
         $dates = $this->period($start, $end, true);
         ksort($dates);
@@ -689,7 +684,7 @@ class MEC_skin_general_calendar extends MEC_skins
         foreach ($dates as $date => $IDs)
         {
             // No Event
-            if (!is_array($IDs) or (is_array($IDs) and !count($IDs))) continue;
+            if (!is_array($IDs) || !count($IDs)) continue;
 
             // Check Finish Date
             if (isset($this->maximum_date) and trim($this->maximum_date) and strtotime($date) > strtotime($this->maximum_date)) break;
@@ -787,6 +782,7 @@ class MEC_skin_general_calendar extends MEC_skins
 
         // Initialize Occurrences' Data
         MEC_feature_occurrences::fetch($events);
+
         // custom sort events by publish date
         $events = apply_filters('mec_skin_events', $events, $this);
 

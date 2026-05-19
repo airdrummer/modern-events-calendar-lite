@@ -100,7 +100,7 @@ class MEC_skin_full_calendar extends MEC_skins
         $this->start_date = $this->get_start_date();
 
         // Generate an ID for the skin
-        $this->id = $this->atts['id'] ?? mt_rand(100, 999);
+        $this->id = $this->get_skin_dom_id();
 
         // Booking Button
         $this->booking_button = isset($this->skin_options['booking_button']) ? (int) $this->skin_options['booking_button'] : 0;

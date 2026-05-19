@@ -41,7 +41,7 @@ if(is_array($fonts))
         <?php $this->main->get_sidebar_menu('styling'); ?>
     </div>
 
-    <div class="wns-be-main">
+    <div class="wns-be-main styling-settings">
 
         <div id="wns-be-notification"></div>
 

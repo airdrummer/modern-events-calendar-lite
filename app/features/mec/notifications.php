@@ -29,7 +29,7 @@ $additional_organizers = (isset($settings['additional_organizers']) and $setting
         <?php $this->main->get_sidebar_menu('notifications'); ?>
     </div>
 
-    <div class="wns-be-main">
+    <div class="wns-be-main notifications-settings">
         <div id="wns-be-notification"></div>
         <div id="wns-be-content">
             <div class="wns-be-group-tab">

@@ -92,7 +92,7 @@ class MEC_skin_slider extends MEC_skins
         $this->sf_status = false;
         
         // Generate an ID for the skin
-        $this->id = isset($this->atts['id']) ? $this->atts['id'] : mt_rand(100, 999);
+        $this->id = $this->get_skin_dom_id();
         
         // Set the ID
         if(!isset($this->atts['id'])) $this->atts['id'] = $this->id;

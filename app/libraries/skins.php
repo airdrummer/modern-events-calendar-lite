@@ -185,6 +185,24 @@ class MEC_skins extends MEC_base
     }
 
     /**
+     * Unique id for HTML and JS (#mec_skin_*, search form bindings). Calendar settings stay in $this->atts['id'].
+     *
+     * @return int|string
+     */
+    public function get_skin_dom_id()
+    {
+        if (!empty($this->atts['instance_id'])) {
+            return $this->atts['instance_id'];
+        }
+
+        if (isset($this->atts['id']) && $this->atts['id'] !== '' && $this->atts['id'] !== null) {
+            return $this->atts['id'];
+        }
+
+        return mt_rand(100, 999);
+    }
+
+    /**
      * Registers skin actions into WordPress hooks
      * @author Webnus <info@webnus.net>
      */
@@ -1356,8 +1374,9 @@ class MEC_skins extends MEC_base
             $skip_attr = '';
             if(isset($_REQUEST['sf']) && is_array($_REQUEST['sf']) && count($_REQUEST['sf'])) $skip_attr = ' data-mec-skip-initial-search="1"';
 
-            $form .= '<form id="mec_search_form_' . esc_attr($this->id) . '" class="mec-search-form mec-totalcal-box mec-dropdown-' . ($this->sf_dropdown_method == '2' ? 'enhanced' : 'classic') . '" autocomplete="off"' . $skip_attr . '>';
+            $form .= '<form id="mec_search_form_' . esc_attr($this->id) . '" class="mec-search-form mec-totalcal-box mec-dropdown-' . ($this->sf_dropdown_method == '2' ? 'enhanced' : 'classic') . '" autocomplete="off" role="search" aria-label="' . esc_attr__('Event search', 'modern-events-calendar-lite') . '"' . $skip_attr . '>';
             $form .= $fields;
+            $form .= '<div id="mec_search_form_' . esc_attr($this->id) . '_status" class="mec-screen-reader-text" role="status" aria-live="polite" aria-atomic="true"></div>';
 
             // Reset Button
             if ($this->sf_reset_button) $form .= '<div class="mec-search-reset-button"><button class="button mec-button" id="mec_search_form_' . esc_attr($this->id) . '_reset" type="button">' . esc_html__('Reset', 'modern-events-calendar-lite') . '</button></div>';
@@ -1368,6 +1387,20 @@ class MEC_skins extends MEC_base
         }
 
         return apply_filters('mec_sf_search_form', $form, $this);
+    }
+
+    protected function sf_accessible_label($label, $context = '')
+    {
+        $parts = array_filter([trim((string) $label), trim((string) $context)]);
+        return implode(' ', $parts);
+    }
+
+    protected function sf_dropdown_with_aria($html, $label, $context = '')
+    {
+        if (!trim((string) $html)) return $html;
+
+        $aria_label = esc_attr($this->sf_accessible_label($label, $context));
+        return preg_replace('/<select\b/', '<select aria-label="' . $aria_label . '"', $html, 1);
     }
 
     /**
@@ -1425,7 +1458,7 @@ class MEC_skins extends MEC_base
 
                 $args = apply_filters('mec_map_customize_args_dropdown_categories', $args);
 
-                $output .= wp_dropdown_categories($args);
+                $output .= $this->sf_dropdown_with_aria(wp_dropdown_categories($args), $label);
 
                 $output .= '</div>';
             }
@@ -1500,7 +1533,7 @@ class MEC_skins extends MEC_base
                 $include = (isset($this->atts['location']) and trim($this->atts['location'])) ? explode(',', trim($this->atts['location'], ', ')) : [];
                 $include = $this->sf_only_valid_terms('mec_location', $include);
 
-                $output .= wp_dropdown_categories([
+                $output .= $this->sf_dropdown_with_aria(wp_dropdown_categories([
                     'echo' => false,
                     'taxonomy' => 'mec_location',
                     'name' => ' ',
@@ -1513,7 +1546,7 @@ class MEC_skins extends MEC_base
                     'orderby' => 'name',
                     'order' => 'ASC',
                     'show_count' => 0,
-                ]);
+                ]), $label);
 
                 $output .= '</div>';
             }
@@ -1559,7 +1592,7 @@ class MEC_skins extends MEC_base
                 $include = (isset($this->atts['organizer']) and trim($this->atts['organizer'])) ? explode(',', trim($this->atts['organizer'], ', ')) : [];
                 $include = $this->sf_only_valid_terms('mec_organizer', $include);
 
-                $output .= wp_dropdown_categories([
+                $output .= $this->sf_dropdown_with_aria(wp_dropdown_categories([
                     'echo' => false,
                     'taxonomy' => 'mec_organizer',
                     'name' => ' ',
@@ -1572,7 +1605,7 @@ class MEC_skins extends MEC_base
                     'orderby' => 'name',
                     'order' => 'ASC',
                     'show_count' => 0,
-                ]);
+                ]), $label);
 
                 $output .= '</div>';
             }
@@ -1618,7 +1651,7 @@ class MEC_skins extends MEC_base
                 $include = (isset($this->atts['speaker']) and trim($this->atts['speaker'])) ? explode(',', trim($this->atts['speaker'], ', ')) : [];
                 $include = $this->sf_only_valid_terms('mec_speaker', $include);
 
-                $output .= wp_dropdown_categories([
+                $output .= $this->sf_dropdown_with_aria(wp_dropdown_categories([
                     'echo' => false,
                     'taxonomy' => 'mec_speaker',
                     'name' => ' ',
@@ -1631,7 +1664,7 @@ class MEC_skins extends MEC_base
                     'orderby' => 'name',
                     'order' => 'ASC',
                     'show_count' => 0,
-                ]);
+                ]), $label);
 
                 $output .= '</div>';
             }
@@ -1678,7 +1711,7 @@ class MEC_skins extends MEC_base
                 $include = $this->main->convert_term_name_to_id($include, apply_filters('mec_taxonomy_tag', ''));
                 $include = $this->sf_only_valid_terms(apply_filters('mec_taxonomy_tag', ''), $include);
 
-                $output .= wp_dropdown_categories([
+                $output .= $this->sf_dropdown_with_aria(wp_dropdown_categories([
                     'echo' => false,
                     'taxonomy' => apply_filters('mec_taxonomy_tag', ''),
                     'name' => ' ',
@@ -1691,7 +1724,7 @@ class MEC_skins extends MEC_base
                     'orderby' => 'name',
                     'order' => 'ASC',
                     'show_count' => 0,
-                ]);
+                ]), $label);
 
                 $output .= '</div>';
             }
@@ -1709,7 +1742,7 @@ class MEC_skins extends MEC_base
                 $include = (isset($this->atts['label']) and trim($this->atts['label'])) ? explode(',', trim($this->atts['label'], ', ')) : [];
                 $include = $this->sf_only_valid_terms('mec_label', $include);
 
-                $output .= wp_dropdown_categories([
+                $output .= $this->sf_dropdown_with_aria(wp_dropdown_categories([
                     'echo' => false,
                     'taxonomy' => 'mec_label',
                     'name' => ' ',
@@ -1722,7 +1755,7 @@ class MEC_skins extends MEC_base
                     'orderby' => 'name',
                     'order' => 'ASC',
                     'show_count' => 0,
-                ]);
+                ]), $label);
 
                 $output .= '</div>';
             }
@@ -1775,7 +1808,7 @@ class MEC_skins extends MEC_base
                 $output .= '<div class="mec-date-search"><input type="hidden" id="mec-filter-none" value="' . esc_attr($item) . '">';
                 if ($display_label == 1) $output .= '<label for="mec_sf_month_' . esc_attr($this->id) . '">' . esc_html($label) . ': </label>';
                 $output .= $this->icons->display('calendar') . '
-                    <select id="mec_sf_month_' . esc_attr($this->id) . '" title="' . esc_attr__('Month Filter', 'modern-events-calendar-lite') . '">
+                    <select id="mec_sf_month_' . esc_attr($this->id) . '" title="' . esc_attr__('Month Filter', 'modern-events-calendar-lite') . '" aria-label="' . esc_attr($this->sf_accessible_label($label, __('month', 'modern-events-calendar-lite'))) . '">
                         ' . ($option ? '' : '<option value="">' . esc_html__('Select Month', 'modern-events-calendar-lite') . '</option>');
 
                 $output .= $option;
@@ -1788,7 +1821,7 @@ class MEC_skins extends MEC_base
                 }
 
                 $output .= '</select>';
-                $output .= '<select id="mec_sf_year_' . esc_attr($this->id) . '" title="' . esc_attr__('Year Filter', 'modern-events-calendar-lite') . '">' . $option;
+                $output .= '<select id="mec_sf_year_' . esc_attr($this->id) . '" title="' . esc_attr__('Year Filter', 'modern-events-calendar-lite') . '" aria-label="' . esc_attr($this->sf_accessible_label($label, __('year', 'modern-events-calendar-lite'))) . '">' . $option;
 
                 $start_year = $min_start_year = $this->db->select("SELECT MIN(cast(meta_value as unsigned)) AS date FROM `#__postmeta` WHERE `meta_key`='mec_start_date'", 'loadResult');
                 $end_year = $this->db->select("SELECT YEAR(MAX(dend)) FROM `#__mec_dates` WHERE `status`='publish' AND `public`=1", 'loadResult');
@@ -1827,11 +1860,11 @@ class MEC_skins extends MEC_base
                     <input class="mec-col-3 mec_date_picker_dynamic_format_start" data-min="' . esc_attr($min_date) . '" type="text"
                            id="mec_sf_date_start_' . esc_attr($this->id) . '"
                            name="sf[date_start]"
-                           placeholder="' . esc_attr__('Start', 'modern-events-calendar-lite') . '" title="' . esc_attr__('Start', 'modern-events-calendar-lite') . '" autocomplete="off">
+                           placeholder="' . esc_attr__('Start', 'modern-events-calendar-lite') . '" title="' . esc_attr__('Start', 'modern-events-calendar-lite') . '" aria-label="' . esc_attr($this->sf_accessible_label($label, __('start date', 'modern-events-calendar-lite'))) . '" aria-haspopup="dialog" autocomplete="off">
                     <input class="mec-col-3 mec_date_picker_dynamic_format_end" type="text"
                            id="mec_sf_date_end_' . esc_attr($this->id) . '"
                            name="sf[date_end]"
-                           placeholder="' . esc_attr__('End', 'modern-events-calendar-lite') . '" title="' . esc_attr__('End', 'modern-events-calendar-lite') . '" autocomplete="off">
+                           placeholder="' . esc_attr__('End', 'modern-events-calendar-lite') . '" title="' . esc_attr__('End', 'modern-events-calendar-lite') . '" aria-label="' . esc_attr($this->sf_accessible_label($label, __('end date', 'modern-events-calendar-lite'))) . '" aria-haspopup="dialog" autocomplete="off">
                 </div>';
             }
         }
@@ -1845,8 +1878,8 @@ class MEC_skins extends MEC_base
                 $output .= '<div class="mec-time-picker-search">';
                 if ($display_label == 1) $output .= '<label for="mec_sf_timepicker_start_' . esc_attr($this->id) . '">' . esc_html($label) . ': </label>';
                 $output .= $this->icons->display('clock') . '
-                    <input type="text" class="mec-timepicker-start" id="mec_sf_timepicker_start_' . esc_attr($this->id) . '" placeholder="' . esc_html__('Start Time', 'modern-events-calendar-lite') . '" title="' . esc_html__('Start Time', 'modern-events-calendar-lite') . '" data-format="' . esc_attr($this->main->get_hour_format()) . '" />
-                    <input type="text" class="mec-timepicker-end" id="mec_sf_timepicker_end_' . esc_attr($this->id) . '" placeholder="' . esc_html__('End Time', 'modern-events-calendar-lite') . '" title="' . esc_html__('End Time', 'modern-events-calendar-lite') . '" data-format="' . esc_attr($this->main->get_hour_format()) . '" />
+                    <input type="text" class="mec-timepicker-start" id="mec_sf_timepicker_start_' . esc_attr($this->id) . '" placeholder="' . esc_html__('Start Time', 'modern-events-calendar-lite') . '" title="' . esc_html__('Start Time', 'modern-events-calendar-lite') . '" aria-label="' . esc_attr($this->sf_accessible_label($label, __('start time', 'modern-events-calendar-lite'))) . '" data-format="' . esc_attr($this->main->get_hour_format()) . '" />
+                    <input type="text" class="mec-timepicker-end" id="mec_sf_timepicker_end_' . esc_attr($this->id) . '" placeholder="' . esc_html__('End Time', 'modern-events-calendar-lite') . '" title="' . esc_html__('End Time', 'modern-events-calendar-lite') . '" aria-label="' . esc_attr($this->sf_accessible_label($label, __('end time', 'modern-events-calendar-lite'))) . '" data-format="' . esc_attr($this->main->get_hour_format()) . '" />
                 </div>';
             }
         }
@@ -1860,7 +1893,7 @@ class MEC_skins extends MEC_base
                 $output .= '<div class="mec-text-input-search">';
                 if ($display_label == 1) $output .= '<label for="mec_sf_s_' . esc_attr($this->id) . '">' . esc_html($label) . ': </label>';
                 $output .= $this->icons->display('magnifier') . '
-                    <input type="search" value="' . ($this->atts['s'] ?? '') . '" id="mec_sf_s_' . esc_attr($this->id) . '" placeholder="' . esc_attr($placeholder) . '" title="' . esc_attr($placeholder) . '" />
+                    <input type="search" value="' . ($this->atts['s'] ?? '') . '" id="mec_sf_s_' . esc_attr($this->id) . '" placeholder="' . esc_attr($placeholder) . '" title="' . esc_attr($placeholder) . '" aria-label="' . esc_attr($label) . '" />
                 </div>';
             }
         }
@@ -1874,7 +1907,7 @@ class MEC_skins extends MEC_base
                 $output .= '<div class="mec-text-address-search">';
                 if ($display_label == 1) $output .= '<label for="mec_sf_address_s_' . esc_attr($this->id) . '">' . esc_html($label) . ': </label>';
                 $output .= $this->icons->display('map') . '
-                    <input type="search" value="' . ($this->atts['address'] ?? '') . '" id="mec_sf_address_s_' . esc_attr($this->id) . '" placeholder="' . esc_attr($placeholder) . '" title="' . esc_attr($placeholder) . '" />
+                    <input type="search" value="' . ($this->atts['address'] ?? '') . '" id="mec_sf_address_s_' . esc_attr($this->id) . '" placeholder="' . esc_attr($placeholder) . '" title="' . esc_attr($placeholder) . '" aria-label="' . esc_attr($label) . '" />
                 </div>';
             }
             else if ($type == 'radius_search')
@@ -1885,7 +1918,7 @@ class MEC_skins extends MEC_base
                 $output .= '<div class="mec-text-address-search">';
                 if ($display_label == 1) $output .= '<label for="mec_sf_address_s_' . esc_attr($this->id) . '">' . esc_html($label) . ': </label>';
                 $output .= $this->icons->display('map') . '
-                    <input type="search" value="' . ($this->atts['address'] ?? '') . '" id="mec_sf_address_s_' . esc_attr($this->id) . '" placeholder="' . esc_attr($placeholder) . '" title="' . esc_attr($placeholder) . '" />
+                    <input type="search" value="' . ($this->atts['address'] ?? '') . '" id="mec_sf_address_s_' . esc_attr($this->id) . '" placeholder="' . esc_attr($placeholder) . '" title="' . esc_attr($placeholder) . '" aria-label="' . esc_attr($label) . '" />
                     <input type="hidden" value="' . esc_attr($radius_value) . '" id="mec_sf_address_radius_' . esc_attr($this->id) . '" />
                     <input type="hidden" value="m" id="mec_sf_address_radius_unit_' . esc_attr($this->id) . '" />
                 </div>';
@@ -1899,8 +1932,8 @@ class MEC_skins extends MEC_base
                 $output .= '<div class="mec-minmax-event-cost">';
                 if ($display_label == 1) $output .= '<label for="mec_sf_event_cost_min_' . esc_attr($this->id) . '">' . esc_html($label) . ': </label>';
                 $output .= $this->icons->display('credit-card') . '
-                    <input type="number" min="0" step="0.01" value="' . ($this->atts['event-cost-min'] ?? '') . '" id="mec_sf_event_cost_min_' . esc_attr($this->id) . '" class="mec-minmax-price" placeholder="' . esc_attr__('Min Price', 'modern-events-calendar-lite') . '" title="' . esc_attr__('Min Price', 'modern-events-calendar-lite') . '" />
-                    <input type="number" min="0" step="0.01" value="' . ($this->atts['event-cost-max'] ?? '') . '" id="mec_sf_event_cost_max_' . esc_attr($this->id) . '" class="mec-minmax-price" placeholder="' . esc_attr__('Max Price', 'modern-events-calendar-lite') . '" title="' . esc_attr__('Max Price', 'modern-events-calendar-lite') . '" />
+                    <input type="number" min="0" step="0.01" value="' . ($this->atts['event-cost-min'] ?? '') . '" id="mec_sf_event_cost_min_' . esc_attr($this->id) . '" class="mec-minmax-price" placeholder="' . esc_attr__('Min Price', 'modern-events-calendar-lite') . '" title="' . esc_attr__('Min Price', 'modern-events-calendar-lite') . '" aria-label="' . esc_attr($this->sf_accessible_label($label, __('minimum price', 'modern-events-calendar-lite'))) . '" />
+                    <input type="number" min="0" step="0.01" value="' . ($this->atts['event-cost-max'] ?? '') . '" id="mec_sf_event_cost_max_' . esc_attr($this->id) . '" class="mec-minmax-price" placeholder="' . esc_attr__('Max Price', 'modern-events-calendar-lite') . '" title="' . esc_attr__('Max Price', 'modern-events-calendar-lite') . '" aria-label="' . esc_attr($this->sf_accessible_label($label, __('maximum price', 'modern-events-calendar-lite'))) . '" />
                 </div>';
             }
         }
@@ -1924,7 +1957,7 @@ class MEC_skins extends MEC_base
                     if ($display_label == 1) $output .= '<label for="mec_sf_fields_' . esc_attr($this->id) . '_' . esc_attr($field_id) . '">' . esc_html($label) . ': </label>';
 
                     $output .= $this->icons->display('magnifier') . '
-                        <input type="search" value="" class="mec-custom-event-field" data-field-id="' . esc_attr($field_id) . '" id="mec_sf_fields_' . esc_attr($this->id) . '_' . esc_attr($field_id) . '" placeholder="' . esc_attr($label) . '" title="' . esc_attr($label) . '" />
+                        <input type="search" value="" class="mec-custom-event-field" data-field-id="' . esc_attr($field_id) . '" id="mec_sf_fields_' . esc_attr($this->id) . '_' . esc_attr($field_id) . '" placeholder="' . esc_attr($label) . '" title="' . esc_attr($label) . '" aria-label="' . esc_attr($label) . '" />
                     </div>';
                 }
                 else if ($type === 'dropdown')
@@ -1933,7 +1966,7 @@ class MEC_skins extends MEC_base
                     if ($display_label == 1) $output .= '<label for="mec_sf_fields_' . esc_attr($this->id) . '_' . esc_attr($field_id) . '">' . esc_html($label) . ': </label>';
 
                     $output .= $this->icons->display('pin');
-                    $output .= '<select class="mec-custom-event-field" data-field-id="' . esc_attr($field_id) . '" id="mec_sf_fields_' . esc_attr($this->id) . '_' . esc_attr($field_id) . '" title="' . esc_attr($label) . '">';
+                    $output .= '<select class="mec-custom-event-field" data-field-id="' . esc_attr($field_id) . '" id="mec_sf_fields_' . esc_attr($this->id) . '_' . esc_attr($field_id) . '" title="' . esc_attr($label) . '" aria-label="' . esc_attr($label) . '">';
                     $output .= '<option value="">' . esc_html($label) . '</option>';
 
                     foreach ($field_values as $field_value)
@@ -1956,10 +1989,10 @@ class MEC_skins extends MEC_base
                     $output .= $this->icons->display('calendar') . '
                         <input class="mec-col-3 mec-custom-event-field mec_date_picker_dynamic_format_start" data-field-id="' . esc_attr($field_id) . '" data-request-key="date_min" data-min="' . esc_attr($min_date) . '" type="text"
                                id="mec_sf_fields_' . esc_attr($this->id) . '_' . esc_attr($field_id) . '_start"
-                               placeholder="' . esc_attr__('Start', 'modern-events-calendar-lite') . '" title="' . esc_attr__('Start', 'modern-events-calendar-lite') . '" autocomplete="off">
+                               placeholder="' . esc_attr__('Start', 'modern-events-calendar-lite') . '" title="' . esc_attr__('Start', 'modern-events-calendar-lite') . '" aria-label="' . esc_attr($this->sf_accessible_label($label, __('start date', 'modern-events-calendar-lite'))) . '" aria-haspopup="dialog" autocomplete="off">
                         <input class="mec-col-3 mec-custom-event-field mec_date_picker_dynamic_format_end" data-field-id="' . esc_attr($field_id) . '" data-request-key="date_max" type="text"
                                id="mec_sf_fields_' . esc_attr($this->id) . '_' . esc_attr($field_id) . '_end"
-                               placeholder="' . esc_attr__('End', 'modern-events-calendar-lite') . '" title="' . esc_attr__('End', 'modern-events-calendar-lite') . '" autocomplete="off">
+                               placeholder="' . esc_attr__('End', 'modern-events-calendar-lite') . '" title="' . esc_attr__('End', 'modern-events-calendar-lite') . '" aria-label="' . esc_attr($this->sf_accessible_label($label, __('end date', 'modern-events-calendar-lite'))) . '" aria-haspopup="dialog" autocomplete="off">
                     </div>';
                 }
             }

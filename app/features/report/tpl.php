@@ -133,7 +133,7 @@ if($dark_mode == 1) $logo = plugin_dir_url(__FILE__ ) . '../../../assets/img/mec
                                 <input type="hidden" id="mec-send-email-no-user-selected" value="<?php echo esc_attr__('No user selected!', 'modern-events-calendar-lite'); ?>" />
                                 <input type="hidden" id="mec-send-email-empty-subject" value="<?php echo esc_attr__('Email subject cannot be empty!', 'modern-events-calendar-lite'); ?>" />
                                 <input type="hidden" id="mec-send-email-empty-content" value="<?php echo esc_attr__('Email content cannot be empty!', 'modern-events-calendar-lite'); ?>" />
-                                <input type="hidden" id="mec-send-email-error" value="<?php echo esc_attr__('There was an error please try again!', 'modern-events-calendar-lite'); ?>" />
+                                <input type="hidden" id="mec-send-email-error" value="<?php echo esc_attr__('An error occurred. Please try again.', 'modern-events-calendar-lite'); ?>" />
                                 <span class="mec-send-email-button"><?php echo esc_html($send_email_label); ?></span>
                             </div>
                             <?php wp_enqueue_editor(); ?>

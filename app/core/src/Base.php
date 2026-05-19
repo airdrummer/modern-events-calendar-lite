@@ -229,8 +229,8 @@ final class Base
 
 			$upgrade_url = admin_url('?mec_upgrade_db=true');
 			$message        = '<p>'
-				. __('Your booking database needs updating. To do that, click the button below and wait until the operation is over. Do not refresh the page until the end.', 'modern-events-calendar-lite')
-				. '<br><b>' . __('Note: if you have many bookings, the operation might take longer, please be patient.', 'modern-events-calendar-lite') . '</b>'
+				. __('Your booking database needs updating. Click the button below and wait for it to complete. Do not refresh the page.', 'modern-events-calendar-lite')
+				. '<br><b>' . __('Note: If you have many bookings, this may take longer. Please be patient.', 'modern-events-calendar-lite') . '</b>'
 				. '</p>';
 			$message       .= '<p>' . sprintf('<a href="%s" class="button-primary mec-upgrade-db">%s</a>', $upgrade_url, __('Upgrade Database Now', 'modern-events-calendar-lite')) . '</p>';
 

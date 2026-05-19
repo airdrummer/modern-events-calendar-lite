@@ -49,7 +49,7 @@ class EventDate extends WidgetBase {
                         echo $this->icons->display('calendar');
 					 } ?>
 					<?php if( isset( $atts['mec_date_show_title'] ) && $atts['mec_date_show_title'] ){ ?>
-						<h3 class="mec-date"><?php esc_html_e('Date', 'modern-events-calendar-lite'); ?></h3>
+						<div class="mec-date"><?php esc_html_e('Date', 'modern-events-calendar-lite'); ?></div>
 					<?php } ?>
 					<dl>
 						<?php if($midnight_event): ?>

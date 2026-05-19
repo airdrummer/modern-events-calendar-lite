@@ -2403,12 +2403,27 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                 </div>
                 <div class="mec-form-row">
                     <label class="mec-col-4" for="mec_skin_countdown_event_id"><?php esc_html_e('Event', 'modern-events-calendar-lite'); ?></label>
-                    <select class="mec-col-4 wn-mec-select" name="mec[sk-options][countdown][event_id]" id="mec_skin_countdown_event_id">
+                    <select class="mec-col-4 wn-mec-select" name="mec[sk-options][countdown][event_id]" id="mec_skin_countdown_event_id" onchange="mec_toggle_countdown_category(this.value);">
                         <option value="-1" <?php if(isset($sk_options_countdown['event_id']) and $sk_options_countdown['event_id'] == '-1') echo 'selected="selected"'; ?>><?php echo esc_html__(' -- Next Upcoming Event -- ', 'modern-events-calendar-lite') ?></option>
                         <?php foreach($upcoming_event_ids as $upcoming_event_id): $event = get_post($upcoming_event_id); ?>
                             <option value="<?php echo esc_attr($event->ID); ?>" <?php if(isset($sk_options_countdown['event_id']) and $sk_options_countdown['event_id'] == $event->ID) echo 'selected="selected"'; ?>><?php echo esc_html($event->post_title); ?></option>
                         <?php endforeach; ?>
                     </select>
+                </div>
+                <div class="mec-form-row <?php if(isset($sk_options_countdown['event_id']) and $sk_options_countdown['event_id'] != '-1') echo 'mec-util-hidden'; ?>" id="mec_skin_countdown_category_container">
+                    <label class="mec-col-4" for="mec_skin_countdown_category"><?php esc_html_e('Category', 'modern-events-calendar-lite'); ?></label>
+                    <?php wp_dropdown_categories([
+                        'echo' => 1,
+                        'taxonomy' => 'mec_category',
+                        'name' => 'mec[sk-options][countdown][category]',
+                        'id' => 'mec_skin_countdown_category',
+                        'class' => 'mec-col-4 wn-mec-select',
+                        'hide_empty' => false,
+                        'orderby' => 'name',
+                        'show_option_none' => esc_html__('None', 'modern-events-calendar-lite'),
+                        'option_none_value' => '',
+                        'selected' => $sk_options_countdown['category'] ?? '',
+                    ]); ?>
                 </div>
                 <div class="mec-form-row mec-not-countdown-fluent mec-not-countdown-liquid">
                     <label class="mec-col-4" for="mec_skin_countdown_bg_color"><?php esc_html_e('Background Color', 'modern-events-calendar-lite'); ?></label>
@@ -3384,6 +3399,14 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
 </div>
 
 <script>
+    function mec_toggle_countdown_category(value) {
+        var $container = jQuery('#mec_skin_countdown_category_container');
+        if(!$container.length) return;
+
+        if(value === '-1') $container.removeClass('mec-util-hidden').show();
+        else $container.addClass('mec-util-hidden').hide();
+    }
+
     // Niceselect
     jQuery(document).ready(function() {
         var $coverEventSelect = jQuery('#mec_skin_cover_event_id');
@@ -3396,6 +3419,8 @@ $upcoming_event_ids = $this->main->get_upcoming_event_ids();
                 dropdownParent: $coverEventWrapper.length ? $coverEventWrapper : $coverEventSelect.parent()
             });
         }
+
+        mec_toggle_countdown_category(jQuery('#mec_skin_countdown_event_id').val());
 
         jQuery('.mec-custom-nice-select').find('li').each( function(index, elemement) {
             var $this = jQuery(this),

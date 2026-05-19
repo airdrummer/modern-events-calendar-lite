@@ -20,6 +20,7 @@ class MEC_skin_countdown extends MEC_skins
     public $date_format_style32;
     public $date_format_style33;
     public $bg_color;
+    public $category;
 
     /**
      * Constructor method
@@ -67,7 +68,7 @@ class MEC_skin_countdown extends MEC_skins
         // Search Form Status
         $this->sf_status = false;
         
-        $this->id = mt_rand(100, 999);
+        $this->id = $this->get_skin_dom_id();
         
         // Set the ID
         if(!isset($this->atts['id'])) $this->atts['id'] = $this->id;
@@ -98,6 +99,9 @@ class MEC_skin_countdown extends MEC_skins
         // Event ID
         $this->event_id = $this->skin_options['event_id'] ?? '-1';
         if(!get_post($this->event_id)) $this->event_id = '-1';
+
+        // Category
+        $this->category = isset($this->skin_options['category']) ? trim($this->skin_options['category'], ', ') : '';
     }
     
     /**
@@ -112,7 +116,9 @@ class MEC_skin_countdown extends MEC_skins
         // Get next upcoming event ID
         if($this->event_id == '-1')
         {
-            $events[] = $this->main->get_next_upcoming_event();
+            $events[] = $this->main->get_next_upcoming_event([
+                'category' => $this->category,
+            ]);
         }
         else
         {

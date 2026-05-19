@@ -500,6 +500,17 @@ class MEC_feature_speakers extends MEC_base
         exit;
     }
 
+    private function authorize_speakers_list_request(): bool
+    {
+        $nonce = isset($_REQUEST['mec_speakers_nonce']) ? sanitize_text_field(wp_unslash($_REQUEST['mec_speakers_nonce'])) : '';
+        if ($nonce && is_user_logged_in() && current_user_can('edit_posts') && wp_verify_nonce($nonce, 'mec_speakers_list')) return true;
+
+        if (!class_exists('MEC_feature_fes')) MEC::import('app.features.fes');
+        $fes = class_exists('MEC_feature_fes') ? new MEC_feature_fes() : null;
+
+        return $fes && $fes->validate_fes_term_creation_request();
+    }
+
     public function show_notices($screen)
     {
         if (isset($screen->id) and $screen->id == 'edit-mec_speaker')
@@ -541,6 +552,7 @@ class MEC_feature_speakers extends MEC_base
 
     public function update_speakers_list()
     {
+        $speakers_nonce = wp_create_nonce('mec_speakers_list');
         echo "<script>
         jQuery('body').on('DOMSubtreeModified', 'ul.tagchecklist, #mec-fes-speakers-list', function()
         {
@@ -548,7 +560,12 @@ class MEC_feature_speakers extends MEC_base
             {
                 url: '" . admin_url('admin-ajax.php', null) . "',
                 type: 'POST',
-                data: 'action=update_speakers_list',
+                data:
+                {
+                    action: 'update_speakers_list',
+                    fes_nonce: (typeof mecdata !== 'undefined' ? mecdata.fes_nonce : ''),
+                    mec_speakers_nonce: '" . esc_js($speakers_nonce) . "'
+                },
                 dataType: 'json'
             })
             .done(function(response)
@@ -578,6 +595,11 @@ class MEC_feature_speakers extends MEC_base
 
     public function get_speakers()
     {
+        if (!$this->authorize_speakers_list_request())
+        {
+            wp_send_json_error(['message' => esc_html__('Sorry! You do not have permission to view speakers.', 'modern-events-calendar-lite')], 403);
+        }
+
         $speakers = get_terms('mec_speaker', [
             'orderby' => 'name',
             'order' => 'ASC',

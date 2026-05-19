@@ -192,7 +192,7 @@ class MEC_addon_PMP extends MEC_base
             {
                 $availability[$ticket['id']] = 0;
                 $availability['stop_selling_'.$ticket['id']] = true;
-                $availability['stop_selling_'.$ticket['id'].'_message'] = esc_html__("You do not have access to book %s ticket.", 'modern-events-calendar-lite');
+                $availability['stop_selling_'.$ticket['id'].'_message'] = esc_html__("You do not have access to book the %s ticket.", 'modern-events-calendar-lite');
             }
         }
 

@@ -21,7 +21,7 @@ $pages = get_pages();
         <?php $this->main->get_sidebar_menu('modules'); ?>
     </div>
 
-    <div class="wns-be-main">
+    <div class="wns-be-main modules-settings">
         <div id="wns-be-notification"></div>
         <div id="wns-be-content">
             <div class="wns-be-group-tab">

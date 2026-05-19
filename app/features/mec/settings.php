@@ -39,7 +39,7 @@ $shortcodes = get_posts(array(
         <?php $this->main->get_sidebar_menu('settings'); ?>
     </div>
 
-    <div class="wns-be-main">
+    <div class="wns-be-main general-settings">
         <div id="wns-be-notification"></div>
         <div id="wns-be-content">
             <div class="wns-be-group-tab">
@@ -1204,21 +1204,22 @@ $shortcodes = get_posts(array(
                                     <div class="mec-form-row">
                                         <button type="button" class="button button-secondary" id="mec_add_new_api_key"><?php esc_html_e('Add', 'modern-events-calendar-lite'); ?></button>
                                     </div>
+                                    <input type="hidden" name="mec[settings][api_keys_present]" value="1" />
                                     <div class="mec-api-key-wrapper">
                                         <?php $i = 0; if(isset($settings['api_keys']) && is_array($settings['api_keys'])): ?>
-                                            <?php foreach($settings['api_keys'] as $k => $api_key): if(!is_numeric($k)) continue; ?>
-                                                <div class="mec-form-row">
+                                            <?php foreach($settings['api_keys'] as $k => $api_key): if(!is_numeric($k) || (($api_key['key'] ?? '') === ':k:')) continue; ?>
+                                                <div class="mec-form-row mec-api-key-row">
                                                     <div class="mec-col-3"><input type="text" name="mec[settings][api_keys][<?php echo esc_attr($i); ?>][name]" title="<?php esc_attr_e('Display Name', 'modern-events-calendar-lite'); ?>" placeholder="<?php esc_attr_e('Display Name', 'modern-events-calendar-lite'); ?>" value="<?php echo esc_attr($api_key['name']); ?>"></div>
-                                                    <div class="mec-col-9"><input type="hidden" name="mec[settings][api_keys][<?php echo esc_attr($i); ?>][key]" value="<?php echo esc_attr($api_key['key']); ?>"><code><?php echo esc_html($api_key['key']); ?></code></div>
+                                                    <div class="mec-col-9"><input type="hidden" name="mec[settings][api_keys][<?php echo esc_attr($i); ?>][key]" value="<?php echo esc_attr($api_key['key']); ?>"><code><?php echo esc_html($api_key['key']); ?></code><button type="button" class="button button-secondary mec-remove-api-key"><?php esc_html_e('Remove', 'modern-events-calendar-lite'); ?></button></div>
                                                 </div>
                                             <?php $i++; endforeach; ?>
                                         <?php endif; ?>
                                     </div>
                                     <input type="hidden" id="mec_next_api_key_id" value="<?php echo esc_attr($i); ?>">
                                     <div id="mec_api_key_template" class="mec-util-hidden">
-                                        <div class="mec-form-row">
-                                            <div class="mec-col-3"><input type="text" name="mec[settings][api_keys][:i:][name]" title="<?php esc_attr_e('Display Name', 'modern-events-calendar-lite'); ?>" placeholder="<?php esc_attr_e('Display Name', 'modern-events-calendar-lite'); ?>"></div>
-                                            <div class="mec-col-9"><input type="hidden" name="mec[settings][api_keys][:i:][key]" value=":k:"><code>:k:</code></div>
+                                        <div class="mec-form-row mec-api-key-row">
+                                            <div class="mec-col-3"><input type="text" disabled="disabled" name="mec[settings][api_keys][:i:][name]" title="<?php esc_attr_e('Display Name', 'modern-events-calendar-lite'); ?>" placeholder="<?php esc_attr_e('Display Name', 'modern-events-calendar-lite'); ?>"></div>
+                                            <div class="mec-col-9"><input type="hidden" disabled="disabled" name="mec[settings][api_keys][:i:][key]" value=":k:"><code>:k:</code><button type="button" class="button button-secondary mec-remove-api-key"><?php esc_html_e('Remove', 'modern-events-calendar-lite'); ?></button></div>
                                         </div>
                                     </div>
                                 </div>

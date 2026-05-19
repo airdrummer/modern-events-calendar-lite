@@ -432,7 +432,7 @@ class Attendees {
                     <input type="hidden" name="book[first_for_all]" value="0" />
                     <input type="checkbox" name="book[first_for_all]" value="1" checked="checked" class="mec_book_first_for_all" id="mec_book_first_for_all<?php echo esc_attr($uniqueid); ?>" onchange="mec_toggle_first_for_all<?php echo esc_attr($uniqueid); ?>(this);" />
                     <label for="pages1" onclick="mec_label_first_for_all<?php echo esc_attr($uniqueid); ?>(this);" class="wn-checkbox-label"></label>
-                    <?php esc_html_e("Fill other attendees information like the first form.", 'modern-events-calendar-lite'); ?>
+                    <?php esc_html_e("Fill in other attendees information the same as the first form.", 'modern-events-calendar-lite'); ?>
                 </label>
             </div>
             <?php endif; ?>

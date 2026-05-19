@@ -184,6 +184,9 @@ class MEC_notifications extends MEC_base
 
         $attendees = $this->main->get_event_attendees($event_id, $start_timestamp);
 
+        // No Attendee
+        if (!is_array($attendees) || !count($attendees)) return false;
+
         $headers = ['Content-Type: text/html; charset=UTF-8'];
 
         $to = $this->get_organizer_email($event_id);

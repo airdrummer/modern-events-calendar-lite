@@ -15,7 +15,7 @@ $styles = $this->main->get_styles();
         <?php $this->main->get_sidebar_menu('customcss'); ?>
     </div>
 
-    <div class="wns-be-main">
+    <div class="wns-be-main customcss-settings">
 
         <div id="wns-be-notification"></div>
 

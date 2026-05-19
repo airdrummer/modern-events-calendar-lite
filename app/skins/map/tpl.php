@@ -7,18 +7,30 @@ defined('MECEXEC') or die();
 // MEC Settings
 $settings = $this->main->get_settings();
 $settings['view_mode'] = $this->atts['location_view_mode'] ?? 'normal';
-$settings['view_mode'] = $this->atts['sk-options']['map']['view_mode'] ?? $settings['view_mode'];
+$sk_options_map = (isset($this->atts['sk-options']['map']) && is_array($this->atts['sk-options']['map'])) ? $this->atts['sk-options']['map'] : [];
+$settings['view_mode'] = $sk_options_map['view_mode'] ?? $settings['view_mode'];
 
 $settings['map'] = $settings['default_maps_view'] ?? 'google';
 
-s// Determine zoom level: shortcode / skin options take precedence over global module setting
+// Zoom: per-shortcode / skin / location_map_zoom (mec-advanced-map) override Event Modules → Map zoom.
+// enforce_map_skin_zoom tells the map script to apply this level after fitBounds (multi-marker).
 $zoom_level = 14;
+$enforce_map_skin_zoom = false;
 if (isset($this->atts['zoom']) && is_numeric($this->atts['zoom'])) {
     $zoom_level = (int) $this->atts['zoom'];
+    $enforce_map_skin_zoom = true;
 } elseif (isset($this->skin_options['zoom']) && is_numeric($this->skin_options['zoom'])) {
     $zoom_level = (int) $this->skin_options['zoom'];
+    $enforce_map_skin_zoom = true;
+} elseif (isset($this->skin_options['map_zoom']) && $this->skin_options['map_zoom'] !== '' && is_numeric($this->skin_options['map_zoom'])) {
+    $zoom_level = (int) $this->skin_options['map_zoom'];
+    $enforce_map_skin_zoom = true;
+} elseif (isset($this->atts['location_map_zoom']) && $this->atts['location_map_zoom'] !== '' && is_numeric($this->atts['location_map_zoom'])) {
+    $zoom_level = (int) $this->atts['location_map_zoom'];
+    $enforce_map_skin_zoom = true;
 } elseif (isset($settings['google_maps_zoomlevel']) && is_numeric($settings['google_maps_zoomlevel'])) {
     $zoom_level = (int) $settings['google_maps_zoomlevel'];
+    $enforce_map_skin_zoom = false;
 }
 
 // Return the data if called by AJAX
@@ -111,6 +123,7 @@ if(count($this->events))
                     show_on_openstreetmap_text: "'.esc_js( __( 'Show on OpenstreetMap', 'mec-advanced-map' ) ) . '",
                     id: "'.esc_js($this->id).'",
                     atts: "'.http_build_query(array('atts' => $this->atts), '', '&').'",
+                    enforce_skin_zoom: '.($enforce_map_skin_zoom ? 'true' : 'false').',
                     zoom: '.esc_js($zoom_level).',
                     scrollwheel: '.((isset($settings['default_maps_scrollwheel']) and $settings['default_maps_scrollwheel']) ? 'true' : 'false').',
                     markers: '.json_encode($events_data).',
@@ -130,6 +143,7 @@ if(count($this->events))
                 {
                     id: "'.esc_js($this->id).'",
                     atts: "'.http_build_query(array('atts' => $this->atts), '', '&').'",
+                    enforce_skin_zoom: '.($enforce_map_skin_zoom ? 'true' : 'false').',
                     zoom: '.esc_js($zoom_level).',
                     icon: "'.apply_filters('mec_marker_icon', $this->main->asset('img/m-04.png')).'",
                     styles: '.((isset($settings['google_maps_style']) and trim($settings['google_maps_style']) != '') ? $this->main->get_googlemap_style($settings['google_maps_style']) : "''").',

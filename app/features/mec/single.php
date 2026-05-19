@@ -29,7 +29,7 @@ $event_fields = $this->main->get_event_fields();
         <?php $this->main->get_sidebar_menu('single_event'); ?>
     </div>
 
-    <div class="wns-be-main">
+    <div class="wns-be-main single-settings">
         <div id="wns-be-notification"></div>
         <div id="wns-be-content">
             <div class="wns-be-group-tab">

@@ -69,7 +69,7 @@ class MEC_skin_available_spot extends MEC_skins
         // Search Form Status
         $this->sf_status = false;
 
-        $this->id = mt_rand(100, 999);
+        $this->id = $this->get_skin_dom_id();
 
         // Set the ID
         if(!isset($this->atts['id'])) $this->atts['id'] = $this->id;

@@ -48,7 +48,7 @@ $query = new WP_Query($q);
 
 $id = 1;
 ?>
-<div class="mec-profile">
+<div class="mec-wrap mec-profile">
     <?php if($query->have_posts()): ?>
     <table class="mec-profile-bookings">
         <tr>
@@ -115,7 +115,8 @@ $id = 1;
             $db = $this->getDB();
             $check_event_exist = $db->select("SELECT `ID` FROM `#__posts` WHERE `ID`=$event_id", 'loadResult');
 
-            $event = trim($check_event_exist) ? $render->data($event_id) : [];
+            $event = trim($check_event_exist) ? $render->data($event_id) : null;
+            $resolved_event_id = (is_object($event) && isset($event->ID)) ? (int) $event->ID : (int) $event_id;
 
             // Multiple Dates
             $all_dates = (isset($transaction['all_dates']) and is_array($transaction['all_dates'])) ? $transaction['all_dates'] : [];
@@ -125,7 +126,7 @@ $id = 1;
                 <span class="mec-event-id"><?php echo esc_html($id); ?></span>
             </td>
             <td>
-                <?php if(!isset($event->ID) or !isset($event->title)) : ?>
+                <?php if(!is_object($event) or !isset($event->ID) or !isset($event->title)) : ?>
                 <span class="mec-event-title"><?php esc_html_e('N/A', 'modern-events-calendar-lite'); ?></span>
                 <?php else : ?>
                 <a class="mec-event-title" href="<?php echo esc_url(get_the_permalink($event->ID)); ?>"><?php echo esc_html($event->title); ?></a>
@@ -170,7 +171,7 @@ $id = 1;
             </td>
             <td>
                 <?php
-                if(isset($event->ID))
+                if(is_object($event) and isset($event->ID))
                 {
                     $location_id = $this->main->get_master_location_id($event);
                     $location_latitude = $event->locations[$location_id]['latitude'] ?? NULL;
@@ -185,12 +186,12 @@ $id = 1;
                     <?php endif; ?>
                 </span>
             </td>
-            <?php do_action('mec_profile_event_detail', $event->ID, $ID, $event); ?>
+            <?php do_action('mec_profile_event_detail', $resolved_event_id, $ID, $event); ?>
             <td>
                 <?php $mec_verified = get_post_meta($ID, 'mec_verified', true); ?>
                 <span class="mec-profile-bookings-cancelation">
                     <?php if(intval($mec_verified) != -1): ?>
-                    <a href="<?php echo esc_url_raw($this->getBook()->get_cancel_url($event->ID, $ID)); ?>"><i class="mec-fa-calendar-times-o"></i></a>
+                    <a href="<?php echo esc_url_raw($this->getBook()->get_cancel_url($resolved_event_id, $ID)); ?>"><i class="mec-fa-calendar-times-o"></i></a>
                     <?php else: ?>
                     <i class="mec-sl-close mec-profile-cancel-booking"></i>
                     <?php endif; ?>

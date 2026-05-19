@@ -48,7 +48,7 @@ class EventLabels extends WidgetBase {
 					<i class="mec-fa-bookmark-o"></i>
 				<?php } ?>
 				<?php if( isset( $atts['mec_labels_show_title'] ) && $atts['mec_labels_show_title'] ){ ?>
-					<h3 class="mec-cost"><?php echo Base::get_main()->m('taxonomy_labels', esc_html__('Labels', 'modern-events-calendar-lite')); ?></h3>
+					<div class="mec-cost"><?php echo Base::get_main()->m('taxonomy_labels', esc_html__('Labels', 'modern-events-calendar-lite')); ?></div>
 				<?php } ?>
 				<?php foreach ($labels as $k => $label) :
 					$seperator = (++$mec_i === $mec_items) ? '' : ',';

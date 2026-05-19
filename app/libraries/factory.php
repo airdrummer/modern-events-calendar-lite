@@ -335,7 +335,7 @@ class MEC_factory extends MEC_base
             'mec-lity-style' => $this->main->asset('packages/lity/lity.min.css'),
             'mec-owl-carousel-style' => $this->main->asset('packages/owl-carousel/owl.carousel.min.css'),
             'mec-niceselect-style' => $this->main->asset('css/nice-select.min.css'),
-            'mec-frontend-style' => $this->main->asset('css/frontend.min.css'),
+            'mec-frontend-style' => $this->main->asset('css/frontend.css'),
             'mec-frontend-rtl-style' => $this->main->asset('css/frontend-rtl.min.css'),
             'accessibility' => $this->main->asset('css/a11y.min.css'),
             'mec-tooltip-style' => $this->main->asset('packages/tooltip/tooltip.css'),
@@ -361,6 +361,15 @@ class MEC_factory extends MEC_base
             'ajax_nonce' => wp_create_nonce('mec_settings_nonce'),
             'mce_items' => $this->main->mce_get_shortcode_list(),
             'datepicker_format' => (isset($settings['datepicker_format']) and trim($settings['datepicker_format'])) ? trim($settings['datepicker_format']) : 'yy-mm-dd',
+            'booking_conditions' => [
+                'select_field' => __('Select a field', 'modern-events-calendar-lite'),
+                'select_option' => __('Select an option', 'modern-events-calendar-lite'),
+                'select_controller' => __('Choose a controller field.', 'modern-events-calendar-lite'),
+                'no_sources' => __('No eligible controller fields are available.', 'modern-events-calendar-lite'),
+                'checked_state' => __('Checked', 'modern-events-calendar-lite'),
+                'checked_message' => __('This field will show when "%s" is checked.', 'modern-events-calendar-lite'),
+                'select_value' => __('Choose the value that should reveal this field.', 'modern-events-calendar-lite'),
+            ],
         ]);
 
         if (did_action('elementor/loaded')) $elementor_edit_mode = !\Elementor\Plugin::$instance->editor->is_edit_mode() ? 'no' : 'yes';
@@ -393,6 +402,11 @@ class MEC_factory extends MEC_base
             'datepicker_format' => (isset($settings['datepicker_format']) and trim($settings['datepicker_format'])) ? trim($settings['datepicker_format']) : 'yy-mm-dd',
             // Frontend behavior flags
             'sf_update_url' => (isset($settings['sf_update_url']) && $settings['sf_update_url']) ? 1 : 0,
+            'a11y_search_results' => __('Search updated. %1$s events found%2$s.', 'modern-events-calendar-lite'),
+            'a11y_search_result' => __('Search updated. %1$s event found%2$s.', 'modern-events-calendar-lite'),
+            'a11y_search_query' => __(' for "%s"', 'modern-events-calendar-lite'),
+            'a11y_search_address' => __(' near "%s"', 'modern-events-calendar-lite'),
+            'a11y_calendar_dialog' => __('Calendar date picker', 'modern-events-calendar-lite'),
         ]);
 
         // Localize Some Strings
@@ -454,6 +468,15 @@ class MEC_factory extends MEC_base
                 'ajax_nonce' => wp_create_nonce('mec_settings_nonce'),
                 'mce_items' => $this->main->mce_get_shortcode_list(),
                 'datepicker_format' => (isset($settings['datepicker_format']) and trim($settings['datepicker_format'])) ? trim($settings['datepicker_format']) : 'yy-mm-dd',
+                'booking_conditions' => [
+                    'select_field' => __('Select a field', 'modern-events-calendar-lite'),
+                    'select_option' => __('Select an option', 'modern-events-calendar-lite'),
+                    'select_controller' => __('Choose a controller field.', 'modern-events-calendar-lite'),
+                    'no_sources' => __('No eligible controller fields are available.', 'modern-events-calendar-lite'),
+                    'checked_state' => __('Checked', 'modern-events-calendar-lite'),
+                    'checked_message' => __('This field will show when "%s" is checked.', 'modern-events-calendar-lite'),
+                    'select_value' => __('Choose the value that should reveal this field.', 'modern-events-calendar-lite'),
+                ],
             ]);
 
             wp_enqueue_script('mec-events-script');
@@ -562,6 +585,11 @@ class MEC_factory extends MEC_base
                 'datepicker_format' => (isset($settings['datepicker_format']) and trim($settings['datepicker_format'])) ? trim($settings['datepicker_format']) : 'yy-mm-dd',
                 // Frontend behavior flags
                 'sf_update_url' => (isset($settings['sf_update_url']) && $settings['sf_update_url']) ? 1 : 0,
+                'a11y_search_results' => __('Search updated. %1$s events found%2$s.', 'modern-events-calendar-lite'),
+                'a11y_search_result' => __('Search updated. %1$s event found%2$s.', 'modern-events-calendar-lite'),
+                'a11y_search_query' => __(' for "%s"', 'modern-events-calendar-lite'),
+                'a11y_search_address' => __(' near "%s"', 'modern-events-calendar-lite'),
+                'a11y_calendar_dialog' => __('Calendar date picker', 'modern-events-calendar-lite'),
             ]);
 
             // Localize Some Strings

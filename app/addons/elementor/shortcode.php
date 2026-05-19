@@ -101,6 +101,14 @@ class MEC_addon_elementor_shortcode extends \Elementor\Widget_Base
 	 */
 	protected function render()
     {
+        if(wp_doing_ajax() && isset(\Elementor\Plugin::instance()->common))
+        {
+            $ajax = \Elementor\Plugin::instance()->common->get_component('ajax');
+            $action_data = ($ajax && method_exists($ajax, 'get_current_action_data')) ? $ajax->get_current_action_data() : false;
+
+            if(isset($action_data['action']) && $action_data['action'] === 'save_builder') return;
+        }
+
         $settings = $this->get_settings_for_display();
         if(!empty($settings['type']))
         {

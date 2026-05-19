@@ -31,7 +31,7 @@ $constantcontact_refresh_token = get_option('mec_constantcontact_refresh_token',
         <?php $this->main->get_sidebar_menu('integrations'); ?>
     </div>
 
-    <div class="wns-be-main">
+    <div class="wns-be-main integrations-settings">
         <div id="wns-be-notification"></div>
         <div id="wns-be-content">
             <div class="wns-be-group-tab">
@@ -92,6 +92,7 @@ $constantcontact_refresh_token = get_option('mec_constantcontact_refresh_token',
                                             <input type="hidden" name="mec[settings][mchimp_segment_status]" value="0" />
                                             <input value="1" type="checkbox" name="mec[settings][mchimp_segment_status]" <?php if(isset($settings['mchimp_segment_status']) and $settings['mchimp_segment_status']) echo 'checked="checked"'; ?> /><?php esc_html_e('Enable Segment Creation by Event Title and Booking Date', 'modern-events-calendar-lite'); ?>
                                         </label>
+                                        <p class="description"><?php esc_html_e('If the generated Mailchimp tag or segment name becomes longer than 100 characters, MEC will use a shorter Event ID based label automatically.', 'modern-events-calendar-lite'); ?></p>
                                     </div>
                                 </div>
                             </div>

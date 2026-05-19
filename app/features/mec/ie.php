@@ -11,7 +11,7 @@ defined('MECEXEC') or die();
         <?php $this->main->get_sidebar_menu('ie'); ?>
     </div>
 
-    <div class="wns-be-main">
+    <div class="wns-be-main ie-settings">
 
         <div id="wns-be-notification"></div>
 

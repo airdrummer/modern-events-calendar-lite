@@ -61,11 +61,12 @@ $d2 = new DateTime(current_time("D M j Y G:i:s"), $TZO);
 $d3 = new DateTime($end_time, $TZO);
 
 $ongoing = $this->main->get_countdown_method($event) === 'end';
+$disable_for_ongoing = isset($settings['countdown_disable_for_ongoing_events']) && $settings['countdown_disable_for_ongoing_events'];
 
 if($ongoing and $d3 < $d2) $ongoing = false;
 
 // Skip if event is ongoing
-if($d1 < $d2 and !$ongoing) return;
+if($d1 < $d2 and (!$ongoing or $disable_for_ongoing)) return;
 
 $gmt_offset = $this->main->get_gmt_offset($event, strtotime($start_date));
 if(isset($_SERVER['HTTP_USER_AGENT']) and strpos($_SERVER['HTTP_USER_AGENT'], 'Safari') === false) $gmt_offset = ' : '.$gmt_offset;

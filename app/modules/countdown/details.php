@@ -55,9 +55,13 @@ $disable_for_ongoing = isset($settings['countdown_disable_for_ongoing_events']) 
 if ($d3 < $d2) {
     echo '<div class="mec-end-counts"><h3>' . esc_html__('The event is finished.', 'modern-events-calendar-lite') . '</h3></div>';
     return;
-} elseif (($d1 < $d2 and !$ongoing) or ($d1 < $d2 and $disable_for_ongoing)) {
-    echo '<div class="mec-end-counts"><h3>' . esc_html__('The event is ongoing.', 'modern-events-calendar-lite') . '</h3></div>';
-    return;
+} elseif ($d1 < $d2) {
+    if ($ongoing && $disable_for_ongoing) return;
+    if (!$ongoing)
+    {
+        echo '<div class="mec-end-counts"><h3>' . esc_html__('The event is ongoing.', 'modern-events-calendar-lite') . '</h3></div>';
+        return;
+    }
 }
 
 $gmt_offset = $this->get_gmt_offset($event, strtotime($start_date . ' ' . $s_time));

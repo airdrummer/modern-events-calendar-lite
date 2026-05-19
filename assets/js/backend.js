@@ -658,9 +658,16 @@ jQuery(document).ready(function ($) {
     }
 
     const html = $('#mec_api_key_template').html().replace(/:i:/g, id).replace(/:k:/g, key);
+    const $row = $(html);
 
-    $wrapper.append(html);
+    $row.find(':input').prop('disabled', false);
+    $wrapper.append($row);
     $new_id.val(parseInt(id) + 1);
+  });
+
+  $(document).on('click', '.mec-remove-api-key', function()
+  {
+    $(this).closest('.mec-api-key-row').remove();
   });
 
   // User Registration

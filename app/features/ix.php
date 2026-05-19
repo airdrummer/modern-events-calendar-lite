@@ -217,7 +217,7 @@ class MEC_feature_ix extends MEC_base
         $uploaded = move_uploaded_file($feed_file['tmp_name'], $target_path);
 
         // Error on Upload
-        if (!$uploaded) return ['success' => 0, 'message' => esc_html__("An error occurred during the file upload! Please check permissions!", 'modern-events-calendar-lite')];
+        if (!$uploaded) return ['success' => 0, 'message' => esc_html__("File upload failed. Please check your file permissions and try again.", 'modern-events-calendar-lite')];
 
         if ($type = mime_content_type($target_path) and $type == 'text/x-php')
         {
@@ -408,6 +408,8 @@ class MEC_feature_ix extends MEC_base
 
             // MEC User
             $u = $this->getUser();
+            $disable_booking_confirmation = '__return_false';
+            add_filter('mec_booking_confirmation', $disable_booking_confirmation);
 
             foreach ($bookings as $transaction_id => $transaction)
             {
@@ -505,6 +507,8 @@ class MEC_feature_ix extends MEC_base
                 update_post_meta($book_id, 'mec_confirmed', $transaction['confirmed']);
                 update_post_meta($book_id, 'mec_verified', $transaction['verified']);
             }
+
+            remove_filter('mec_booking_confirmation', $disable_booking_confirmation);
         }
 
         // Delete File
@@ -534,7 +538,7 @@ class MEC_feature_ix extends MEC_base
         $uploaded_file = wp_handle_upload($feed_file, ['test_form' => false, 'test_type' => false]);
         if (!is_array($uploaded_file) or isset($uploaded_file['error']) or !isset($uploaded_file['file']) or !file_exists($uploaded_file['file']))
         {
-            return ['success' => 0, 'message' => esc_html__("An error occurred during the file upload! Please check permissions!", 'modern-events-calendar-lite')];
+            return ['success' => 0, 'message' => esc_html__("File upload failed. Please check your file permissions and try again.", 'modern-events-calendar-lite')];
         }
 
         $target_path = $uploaded_file['file'];
@@ -5930,7 +5934,7 @@ class MEC_feature_ix extends MEC_base
         $start_date = $this->ix['google_import_start_date'] ?? 'Today';
         $end_date = (isset($this->ix['google_import_end_date']) and trim($this->ix['google_import_end_date'])) ? $this->ix['google_import_end_date'] : 'Tomorrow';
 
-        if (!trim($api_key) or !trim($calendar_id)) return ['success' => 0, 'error' => __('API key and Calendar ID are required!', 'modern-events-calendar-lite')];
+        if (!trim($api_key) or !trim($calendar_id)) return ['success' => 0, 'error' => __('API key and Calendar ID are required.', 'modern-events-calendar-lite')];
 
         // Save options
         $this->main->save_ix_options(['google_import_api_key' => $api_key, 'google_import_calendar_id' => $calendar_id, 'google_import_start_date' => $start_date, 'google_import_end_date' => $end_date]);
@@ -5997,7 +6001,7 @@ class MEC_feature_ix extends MEC_base
         $api_key = $this->ix['google_import_api_key'] ?? null;
         $calendar_id = $this->ix['google_import_calendar_id'] ?? null;
 
-        if (!trim($api_key) or !trim($calendar_id)) return ['success' => 0, 'error' => __('API key and Calendar ID are required!', 'modern-events-calendar-lite')];
+        if (!trim($api_key) or !trim($calendar_id)) return ['success' => 0, 'error' => __('API key and Calendar ID are required.', 'modern-events-calendar-lite')];
 
         // Timezone
         $timezone = $this->main->get_timezone();
@@ -7004,7 +7008,7 @@ class MEC_feature_ix extends MEC_base
         $refresh_token = $ix['google_export_refresh_token'] ?? null;
         $calendar_id = $ix['google_export_calendar_id'] ?? null;
 
-        if (!trim($client_id) or !trim($client_secret) or !trim($calendar_id)) $this->main->response(['success' => 0, 'message' => __('Client App, Client Secret, and Calendar ID are all required!', 'modern-events-calendar-lite')]);
+        if (!trim($client_id) or !trim($client_secret) or !trim($calendar_id)) $this->main->response(['success' => 0, 'message' => __('Client App, Client Secret, and Calendar ID are required.', 'modern-events-calendar-lite')]);
 
         $client = new Google_Client();
         $client->setApplicationName('Modern Events Calendar');
@@ -7167,7 +7171,7 @@ class MEC_feature_ix extends MEC_base
         foreach ($g_events_not_inserted as $g_event_not_inserted) $results .= '<li><strong>' . MEC_kses::element($g_event_not_inserted['title']) . '</strong>: ' . MEC_kses::element($g_event_not_inserted['message']) . '</li>';
         $results .= '<ul>';
 
-        $message = (count($g_events_inserted) ? sprintf(esc_html__('%s events added to Google Calendar with success.', 'modern-events-calendar-lite'), '<strong>' . count($g_events_inserted) . '</strong>') : '');
+        $message = (count($g_events_inserted) ? sprintf(esc_html__('%s events added to Google Calendar successfully.', 'modern-events-calendar-lite'), '<strong>' . count($g_events_inserted) . '</strong>') : '');
         $message .= (count($g_events_updated) ? ' ' . sprintf(esc_html__('%s Updated previously added events.', 'modern-events-calendar-lite'), '<strong>' . count($g_events_updated) . '</strong>') : '');
         $message .= (count($g_events_not_inserted) ? ' ' . sprintf(esc_html__('%s events failed to add for following reasons: %s', 'modern-events-calendar-lite'), '<strong>' . count($g_events_not_inserted) . '</strong>', $results) : '');
 

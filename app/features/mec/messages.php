@@ -24,7 +24,7 @@ $values = $this->main->get_messages_options(($multilingual ? $locale : NULL));
         <?php $this->main->get_sidebar_menu('messages'); ?>
     </div>
 
-    <div class="wns-be-main">
+    <div class="wns-be-main messages-settings">
 
         <div id="wns-be-notification"></div>
 

@@ -47,6 +47,11 @@ class DisplayFields {
 				continue;
 			}
 
+			$condition = ( isset( $field['condition'] ) && is_array( $field['condition'] ) ) ? $field['condition'] : null;
+			$condition_source_field_id = $condition['source_field_id'] ?? '';
+			$condition_match_type = $condition['match_type'] ?? '';
+			$condition_option_key = $condition['option_key'] ?? '';
+
 			$j          = !is_null($j) ? $j : $f_id;
 			$field_id = !empty($field['key']) ? $field['key'] : $f_id;
 			$html_id  = 'mec_field_' . $group_id . '_' . $type . '_' . $j;
@@ -128,7 +133,7 @@ class DisplayFields {
 			    $close_row_after_li = false;
 			}
 			?>
-                        <li class="mec-<?php echo esc_attr( $group_id ); ?>-field-<?php echo esc_attr( $field['type'] ); ?> mec-<?php echo esc_attr( $group_id ); ?>-<?php echo esc_attr($form_type); ?>-field-<?php echo esc_attr( $field['type'] ); ?> <?php echo esc_attr( join( ' ', $classes ) ); ?>" data-field-id="<?php echo esc_attr( $f_id ); ?>" data-ticket-id="<?php echo esc_attr($j); ?>"<?php echo $pattern_attribute; ?>>
+                        <li class="mec-<?php echo esc_attr( $group_id ); ?>-field-<?php echo esc_attr( $field['type'] ); ?> mec-<?php echo esc_attr( $group_id ); ?>-<?php echo esc_attr($form_type); ?>-field-<?php echo esc_attr( $field['type'] ); ?> <?php echo esc_attr( join( ' ', $classes ) ); ?>" data-field-id="<?php echo esc_attr( $f_id ); ?>" data-field-type="<?php echo esc_attr( $type ); ?>" data-ticket-id="<?php echo esc_attr($j); ?>"<?php echo $pattern_attribute; ?><?php echo $condition ? ' data-condition-source-field-id="' . esc_attr( $condition_source_field_id ) . '" data-condition-match-type="' . esc_attr( $condition_match_type ) . '" data-condition-option-key="' . esc_attr( $condition_option_key ) . '"' : ''; ?>>
 				<?php
 					global $current_user;
 					$attributes = '';
@@ -294,25 +299,25 @@ class DisplayFields {
 						$rd = 0;
 						$selected = $value;
                                                $options = isset($field['options']) ? $field['options'] : [];
-                                               foreach ( $options as $field_option ) {
+                                               foreach ( $options as $option_key => $field_option ) {
                                                        $rd++;
                                                        $field_label = is_array( $field_option ) ? ( $field_option['label'] ?? '' ) : $field_option;
                                                        $option_text  = esc_html__( $field_label, 'modern-events-calendar-lite');
                                                        $option_value = ( $rd === 1 and isset( $field['ignore'] ) and $field['ignore'] ) ? '' : esc_attr__( $field_label, 'modern-events-calendar-lite');
 
-							$input_html .= '<option value="' . esc_attr($option_value) . '" ' . selected( $selected, $option_value, false ) . '>' . esc_html($option_text) . '</option>';
+							$input_html .= '<option value="' . esc_attr($option_value) . '" data-option-key="' . esc_attr( $option_key ) . '" ' . selected( $selected, $option_value, false ) . '>' . esc_html($option_text) . '</option>';
 						}
 						$input_html .= '</select>';
 
 						break;
 					case 'radio':
                                                $options = isset($field['options']) ? $field['options'] : [];
-                                               foreach ( $options as $field_option ) {
+                                               foreach ( $options as $option_key => $field_option ) {
                                                        $field_label   = is_array( $field_option ) ? ( $field_option['label'] ?? '' ) : $field_option;
                                                        $current_value = esc_html__( $field_label, 'modern-events-calendar-lite');
                                                        $checked       = in_array( $current_value, (array) $value );
                                                        $input_html   .= '<label>'
-                                                                . '<input type="' . esc_attr( $field_type ) . '" id="mec_' . esc_attr( $form_type . '_field_' . $type . $j . '_' . $field_id . '_' . strtolower( str_replace( ' ', '_', $field_label ) ) ) . '" name="' . esc_attr( $field_name ) . '" value="' . esc_attr( $current_value ) . '" ' . checked( $checked, true, false ) . '/>'
+                                                                . '<input type="' . esc_attr( $field_type ) . '" id="mec_' . esc_attr( $form_type . '_field_' . $type . $j . '_' . $field_id . '_' . strtolower( str_replace( ' ', '_', $field_label ) ) ) . '" name="' . esc_attr( $field_name ) . '" value="' . esc_attr( $current_value ) . '" data-option-key="' . esc_attr( $option_key ) . '" ' . checked( $checked, true, false ) . '/>'
                                                                 . esc_html__( $field_label, 'modern-events-calendar-lite')
                                                                 . '</label>';
                                                }
@@ -321,12 +326,12 @@ class DisplayFields {
 
 					case 'checkbox':
                                                $options = isset($field['options']) ? $field['options'] : [];
-                                               foreach ( $options as $field_option ) {
+                                               foreach ( $options as $option_key => $field_option ) {
                                                        $field_label   = is_array( $field_option ) ? ( $field_option['label'] ?? '' ) : $field_option;
                                                        $current_value = esc_html__( $field_label, 'modern-events-calendar-lite');
                                                        $checked       = in_array( $current_value, (array) $value );
                                                        $input_html   .= '<label>'
-                                                                . '<input type="' . esc_attr( $field_type ) . '" id="mec_' . esc_attr( $form_type . '_field_' . $type . $j . '_' . $field_id . '_' . strtolower( str_replace( ' ', '_', $field_label ) ) ) . '" name="' . esc_attr( $field_name ) . '[]" value="' . esc_attr( $current_value ) . '" ' . checked( $checked, true, false ) . '/>'
+                                                                . '<input type="' . esc_attr( $field_type ) . '" id="mec_' . esc_attr( $form_type . '_field_' . $type . $j . '_' . $field_id . '_' . strtolower( str_replace( ' ', '_', $field_label ) ) ) . '" name="' . esc_attr( $field_name ) . '[]" value="' . esc_attr( $current_value ) . '" data-option-key="' . esc_attr( $option_key ) . '" ' . checked( $checked, true, false ) . '/>'
                                                                 . esc_html__( $field_label, 'modern-events-calendar-lite')
                                                                 . '</label>';
                                                }

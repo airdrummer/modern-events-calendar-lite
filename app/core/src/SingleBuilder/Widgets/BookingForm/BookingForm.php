@@ -52,7 +52,7 @@ class BookingForm extends WidgetBase {
 			$html = '<div class="mec-content-notification">
 					<p>'
 						.'<span>'
-							. esc_html__('To show this widget, you need to set "Tickets" for your latest event.', 'modern-events-calendar-lite')
+							. esc_html__('To show this widget, you need to set tickets for your event.', 'modern-events-calendar-lite')
 						.'</span>'
 						.'<a href="https://webnus.net/dox/modern-events-calendar/add-event/#Tickets" target="_blank">' . esc_html__('Read More', 'modern-events-calendar-lite') . ' </a>'
 					.'</p>'
@@ -77,7 +77,7 @@ class BookingForm extends WidgetBase {
 
 				$html .= '<div class="mec-content-notification"><p>'
 						.'<span>'
-							. esc_html__('To show this widget, you need to set "Tickets" for your latest event.', 'modern-events-calendar-lite')
+							. esc_html__('To show this widget, you need to set tickets for your event.', 'modern-events-calendar-lite')
 						.'</span>'
 						.'<a href="https://webnus.net/dox/modern-events-calendar/add-event/#Tickets" target="_blank">' . esc_html__('Read More', 'modern-events-calendar-lite') . ' </a>'
 					.'</p></div>';

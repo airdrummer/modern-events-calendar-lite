@@ -16,6 +16,7 @@
             sf: {},
             geolocation: 0,
             getDirection: 0,
+            enforce_skin_zoom: false,
             directionOptions: {
                 form: '#mec_get_direction_form',
                 reset: '.mec-map-get-direction-reset',
@@ -36,12 +37,36 @@
         var infowindow;
         var loadedMarkers = [];
         var markerCluster;
+        function skinZoomEnforced()
+        {
+            if (settings.enforce_skin_zoom === true || settings.enforce_skin_zoom === 1 || settings.enforce_skin_zoom === '1') return true;
+            return detectCustomZoomFromAtts();
+        }
 
         var canvas = this;
         var DOM = canvas[0];
 
         // Init the Map
         if (settings.autoinit) init();
+
+        function detectCustomZoomFromAtts()
+        {
+            if (typeof settings.atts !== 'string' || settings.atts === '') return false;
+
+            var atts = settings.atts;
+            try
+            {
+                atts = decodeURIComponent(settings.atts.replace(/\+/g, '%20'));
+            }
+            catch (e)
+            {
+                atts = settings.atts;
+            }
+
+            return /(?:^|&)(?:atts\[zoom\]|atts\[location_map_zoom\]|atts\[sk-options\]\[map\]\[map_zoom\]|atts\[sk-options\]\[map\]\[zoom\])=\d+/.test(atts)
+                || /(?:^|&)atts%5Blocation_map_zoom%5D=\d+/.test(atts)
+                || /(?:^|&)atts%5Bzoom%5D=\d+/.test(atts);
+        }
 
         function init()
         {
@@ -274,12 +299,21 @@
                 loadedMarkers.push(marker);
             }
 
-            if (f > 1) map.fitBounds(bounds);
+            if (f > 1)
+            {
+                if (skinZoomEnforced())
+                {
+                    map.fitBounds(bounds);
+                    map.setZoom(parseInt(settings.zoom, 10));
+                }
+                else map.fitBounds(bounds);
+            }
 
             // Set map center if only 1 marker found
             if (f === 1)
             {
                 map.setCenter(new google.maps.LatLng(dataMarker.latitude, dataMarker.longitude));
+                if (skinZoomEnforced()) map.setZoom(parseInt(settings.zoom, 10));
             }
 
             $(document).trigger('mec_map_load_markers', [markers, settings]);

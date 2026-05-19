@@ -11,10 +11,10 @@ $settings = $this->get_settings();
 if(!isset($settings['speakers_status']) || !$settings['speakers_status']) return;
 
 // Event Speakers
-$speakers = (isset($event->data->speakers) and is_array($event->data->speakers)) ? $event->data->speakers : [];
+$speakers = isset($event->data->speakers) && is_array($event->data->speakers) ? $event->data->speakers : [];
 
 // No Speaker
-if(!count($speakers)) return false;
+if (!count($speakers)) return false;
 
 $id_speaker_page = "";
 $name_speaker = "";
@@ -25,7 +25,7 @@ foreach($speakers as $speaker)
     break;
 }
 
-$type_link=$settings['advanced_speaker']['speaker_type_link']??'dialog';
+$type_link = $settings['advanced_speaker']['speaker_type_link'] ?? 'dialog';
 ?>
 <div class="mec-speakers-details mec-frontbox" id="mec_speakers_details">
     <h3 class="mec-speakers mec-frontbox-title"><?php if(count($speakers) == 1): echo esc_html($this->m('taxonomy_speaker', esc_html__('Speaker', 'modern-events-calendar-lite'))); else: echo esc_html($this->m('taxonomy_speakers', esc_html__('Speakers', 'modern-events-calendar-lite'))); endif; ?></h3>

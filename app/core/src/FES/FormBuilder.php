@@ -30,7 +30,7 @@ class FormBuilder extends Singleton
             echo '<div class="mec-content-notification">
 					<p>'
                 . '<span>'
-                . esc_html__('To show this widget, you need to set "Tickets" for your latest event.', 'modern-events-calendar-lite')
+                . esc_html__('To show this widget, you need to set tickets for your event.', 'modern-events-calendar-lite')
                 . '</span>'
                 . '<a href="https://webnus.net/dox/modern-events-calendar/add-event/#Tickets" target="_blank">' . esc_html__('Read More', 'modern-events-calendar-lite') . ' </a>'
                 . '</p>'
@@ -869,7 +869,7 @@ class FormBuilder extends Singleton
                 echo '<div class="mec-content-notification">
 					<p>'
                     . '<span>'
-                    . esc_html__('The output cannot be displayed.', 'modern-events-calendar-lite')
+                    . esc_html__('This content cannot be displayed.', 'modern-events-calendar-lite')
                     . '</span>'
                     . '</p>'
                     . '</div>';
@@ -955,7 +955,7 @@ class FormBuilder extends Singleton
             <div class="mec-form-row">
                 <label class="mec-col-12" for="mec_read_more_link"><?php echo esc_html(\MEC\Base::get_main()->m('read_more_link', esc_html__('Event Link', 'modern-events-calendar-lite'))); ?> <?php echo ($event_link_required ? '<span class="mec-required">*</span>' : ''); ?></label>
                 <input class="mec-col-12" type="text" name="mec[read_more]" id="mec_read_more_link" value="<?php echo esc_attr($read_more); ?>" placeholder="<?php esc_html_e('eg. http://yoursite.com/your-event', 'modern-events-calendar-lite'); ?>" <?php echo ($event_link_required ? 'required' : ''); ?> />
-                <p class="description"><?php esc_html_e('If you fill it, it will replace the default event page link. Insert full link including http(s)://', 'modern-events-calendar-lite'); ?></p>
+                <p class="description"><?php esc_html_e('If filled, this will replace the default event page link. Include the full URL with http(s)://', 'modern-events-calendar-lite'); ?></p>
             </div>
             <div class="mec-form-row">
                 <label class="mec-col-12" for="mec_more_info_link"><?php echo esc_html(\MEC\Base::get_main()->m('more_info_link', esc_html__('More Info', 'modern-events-calendar-lite'))); ?> <?php echo $more_info_required ? '<span class="mec-required">*</span>' : ''; ?></label>
@@ -1162,6 +1162,7 @@ class FormBuilder extends Singleton
 
         $featured_image_caption = $atts['featured_image_caption'] ?? false;
         $media_access = current_user_can('upload_files');
+        $preview_alt = esc_attr__('Featured image preview', 'modern-events-calendar-lite');
     ?>
         <!-- Event Featured Image Section -->
         <div class="mec-meta-box-fields mec-fes-featured-image" id="mec-featured-image">
@@ -1170,20 +1171,22 @@ class FormBuilder extends Singleton
             <?php if ($media_access): ?>
                 <div class="mec-form-row">
                     <div id="mec_thumbnail_img">
-                        <?php echo (trim($featured_image) ? '<img src="' . esc_attr($featured_image) . '" />' : ''); ?>
+                        <?php echo (trim($featured_image) ? '<img src="' . esc_attr($featured_image) . '" alt="' . $preview_alt . '" />' : ''); ?>
                     </div>
                     <input type="hidden" id="mec_thumbnail" name="mec[featured_image]" value="<?php if (isset($attachment_id) and intval($attachment_id)) the_guid($attachment_id); ?>" />
-                    <button type="button" class="mec_upload_image_button button" data-post-id="<?php echo esc_attr($post->ID); ?>" id="mec_thumbnail_button"><?php echo esc_html__('Choose image', 'modern-events-calendar-lite'); ?></button>
-                    <p class="description"><?php esc_html_e('png, jpg, gif, and webp files are allowed.', 'modern-events-calendar-lite'); ?></p>
-                    <button type="button" class="mec_remove_image_button button <?php echo (trim($featured_image) ? '' : 'mec-util-hidden'); ?>"><?php echo esc_html__('Remove', 'modern-events-calendar-lite'); ?></button>
+                    <button type="button" class="mec_upload_image_button button" data-post-id="<?php echo esc_attr($post->ID); ?>" id="mec_thumbnail_button" aria-label="<?php esc_attr_e('Choose featured image', 'modern-events-calendar-lite'); ?>"><?php echo esc_html__('Choose image', 'modern-events-calendar-lite'); ?></button>
+                    <p class="description" id="mec_featured_image_help"><?php esc_html_e('png, jpg, gif, and webp files are allowed.', 'modern-events-calendar-lite'); ?></p>
+                    <button type="button" class="mec_remove_image_button button <?php echo (trim($featured_image) ? '' : 'mec-util-hidden'); ?>" aria-label="<?php esc_attr_e('Remove featured image', 'modern-events-calendar-lite'); ?>"><?php echo esc_html__('Remove', 'modern-events-calendar-lite'); ?></button>
                 </div>
             <?php else: ?>
                 <div class="mec-form-row">
-                    <span id="mec_fes_thumbnail_img"><?php echo (trim($featured_image) ? '<img src="' . esc_attr($featured_image) . '" />' : ''); ?></span>
+                    <span id="mec_fes_thumbnail_img"><?php echo (trim($featured_image) ? '<img src="' . esc_attr($featured_image) . '" alt="' . $preview_alt . '" />' : ''); ?></span>
                     <input type="hidden" id="mec_fes_thumbnail" name="mec[featured_image]" value="<?php if (isset($attachment_id) and intval($attachment_id)) the_guid($attachment_id); ?>" />
-                    <input type="file" id="mec_featured_image_file" onchange="mec_fes_upload_featured_image();" />
-                    <span id="mec_fes_remove_image_button" class="<?php echo (trim($featured_image) ? '' : 'mec-util-hidden'); ?>"><?php esc_html_e('Remove Image', 'modern-events-calendar-lite'); ?></span>
-                    <div class="mec-error mec-util-hidden" id="mec_fes_thumbnail_error"></div>
+                    <label class="mec-screen-reader-text" for="mec_featured_image_file"><?php esc_html_e('Featured Image', 'modern-events-calendar-lite'); ?></label>
+                    <input type="file" id="mec_featured_image_file" aria-describedby="mec_featured_image_help mec_fes_thumbnail_error" aria-label="<?php esc_attr_e('Featured image', 'modern-events-calendar-lite'); ?>" onchange="mec_fes_upload_featured_image();" />
+                    <button type="button" id="mec_fes_remove_image_button" class="button <?php echo (trim($featured_image) ? '' : 'mec-util-hidden'); ?>" aria-label="<?php esc_attr_e('Remove featured image', 'modern-events-calendar-lite'); ?>"><?php esc_html_e('Remove Image', 'modern-events-calendar-lite'); ?></button>
+                    <div class="mec-error mec-util-hidden" id="mec_fes_thumbnail_error" aria-live="polite"></div>
+                    <p class="description" id="mec_featured_image_help"><?php esc_html_e('png, jpg, gif, and webp files are allowed.', 'modern-events-calendar-lite'); ?></p>
                 </div>
             <?php endif; ?>
 
@@ -1497,7 +1500,7 @@ class FormBuilder extends Singleton
                 echo '<div class="mec-content-notification">
 					<p>'
                     . '<span>'
-                    . esc_html__('The output cannot be displayed.', 'modern-events-calendar-lite')
+                    . esc_html__('This content cannot be displayed.', 'modern-events-calendar-lite')
                     . '</span>'
                     . '</p>'
                     . '</div>';
@@ -2012,7 +2015,7 @@ class FormBuilder extends Singleton
                         <div class="box top">
                             <h5 class="title"><?php esc_html_e('Latitude/Longitude', 'modern-events-calendar-lite'); ?></h5>
                             <div class="content">
-                                <p><?php esc_attr_e('Latitude and Longitude are parameters that represent the coordinates in the geographic coordinate system. You can find your venue\'s Latitude and Longitude measurments via the link below. ', 'modern-events-calendar-lite'); ?><a href="https://latlong.net" target="_blank"><?php esc_html_e('Get Latitude and Longitude', 'modern-events-calendar-lite'); ?></a></p>
+                                <p><?php esc_attr_e('Latitude and Longitude represent coordinates in the geographic coordinate system. Find your venue\'s measurements at the link below.', 'modern-events-calendar-lite'); ?><a href="https://latlong.net" target="_blank"><?php esc_html_e('Get Latitude and Longitude', 'modern-events-calendar-lite'); ?></a></p>
                             </div>
                         </div>
                         <i title="" class="dashicons-before dashicons-editor-help"></i>
@@ -2871,7 +2874,7 @@ class FormBuilder extends Singleton
                 echo '<div class="mec-content-notification">
 					<p>'
                     . '<span>'
-                    . esc_html__('Payment gateways per event is disabled.', 'modern-events-calendar-lite')
+                    . esc_html__('Payment gateways are disabled for this event.', 'modern-events-calendar-lite')
                     . '</span>'
                     . '</p>'
                     . '</div>';
@@ -2893,7 +2896,7 @@ class FormBuilder extends Singleton
             echo '<div class="mec-content-notification">
                 <p>'
                 . '<span>'
-                . esc_html__('There is no payment gateway to show.', 'modern-events-calendar-lite')
+                . esc_html__('No payment gateway is available.', 'modern-events-calendar-lite')
                 . '</span>'
                 . '</p>'
                 . '</div>';
@@ -2906,7 +2909,7 @@ class FormBuilder extends Singleton
     ?>
         <div class="mec-meta-box-fields mec-booking-tab-content" id="mec_meta_box_booking_options_form_gateways_per_event">
             <h4 class="mec-title"><?php esc_html_e('Disabled Gateways', 'modern-events-calendar-lite'); ?></h4>
-            <p class="description"><?php esc_html_e("You can disable some of the following payment gateways by checking them otherwise they will be enabled.", 'modern-events-calendar-lite'); ?></p>
+            <p class="description"><?php esc_html_e("You can disable payment gateways by unchecking them. Unchecked gateways will be enabled.", 'modern-events-calendar-lite'); ?></p>
 
             <?php foreach ($enableds_gateways as $g): ?>
                 <div class="mec-form-row" style="margin-bottom: 0;">
@@ -3166,91 +3169,93 @@ class FormBuilder extends Singleton
 
                     <div class="mec-booking-per-attendee-fields">
                         <h5 class="mec-form-subtitle"><?php esc_html_e('Per Attendee Fields', 'modern-events-calendar-lite'); ?></h5>
-                        <?php /** Don't remove this hidden field **/ ?>
-                        <input type="hidden" name="mec[reg_fields]" value="" />
+                        <div class="mec-form-row" id="mec_reg_form_container">
+                            <?php /** Don't remove this hidden field **/ ?>
+                            <input type="hidden" name="mec[reg_fields]" value="" />
 
-                        <ul id="mec_reg_form_fields">
-                            <?php
-                            $i = 0;
-                            foreach ($reg_fields as $key => $reg_field) {
-                                if (!is_numeric($key)) continue;
+                            <ul id="mec_reg_form_fields">
+                                <?php
+                                $i = 0;
+                                foreach ($reg_fields as $key => $reg_field) {
+                                    if (!is_numeric($key)) continue;
 
-                                $i = max($i, $key);
+                                    $i = max($i, $key);
 
-                                if ($reg_field['type'] == 'text') echo \MEC_kses::form(\MEC\Base::get_main()->field_text($key, $reg_field));
-                                elseif ($reg_field['type'] == 'mec_email') echo \MEC_kses::form(\MEC\Base::get_main()->field_mec_email($key, $reg_field));
-                                elseif ($reg_field['type'] == 'name') echo \MEC_kses::form(\MEC\Base::get_main()->field_name($key, $reg_field));
-                                elseif ($reg_field['type'] == 'email') echo \MEC_kses::form(\MEC\Base::get_main()->field_email($key, $reg_field));
-                                elseif ($reg_field['type'] == 'date') echo \MEC_kses::form(\MEC\Base::get_main()->field_date($key, $reg_field));
-                                elseif ($reg_field['type'] == 'file') echo \MEC_kses::form(\MEC\Base::get_main()->field_file($key, $reg_field));
-                                elseif ($reg_field['type'] == 'tel') echo \MEC_kses::form(\MEC\Base::get_main()->field_tel($key, $reg_field));
-                                elseif ($reg_field['type'] == 'textarea') echo \MEC_kses::form(\MEC\Base::get_main()->field_textarea($key, $reg_field));
-                                elseif ($reg_field['type'] == 'p') echo \MEC_kses::form(\MEC\Base::get_main()->field_p($key, $reg_field));
-                                elseif ($reg_field['type'] == 'checkbox') echo \MEC_kses::form(\MEC\Base::get_main()->field_checkbox($key, $reg_field));
-                                elseif ($reg_field['type'] == 'radio') echo \MEC_kses::form(\MEC\Base::get_main()->field_radio($key, $reg_field));
-                                elseif ($reg_field['type'] == 'select') echo \MEC_kses::form(\MEC\Base::get_main()->field_select($key, $reg_field));
-                                elseif ($reg_field['type'] == 'agreement') echo \MEC_kses::form(\MEC\Base::get_main()->field_agreement($key, $reg_field));
-                            }
-                            ?>
-                        </ul>
-                        <div id="mec_reg_form_field_types">
-                            <button type="button" class="button red" data-type="name"><?php esc_html_e('MEC Name', 'modern-events-calendar-lite'); ?></button>
-                            <button type="button" class="button red" data-type="mec_email"><?php esc_html_e('MEC Email', 'modern-events-calendar-lite'); ?></button>
-                            <button type="button" class="button" data-type="text"><?php esc_html_e('Text', 'modern-events-calendar-lite'); ?></button>
-                            <button type="button" class="button" data-type="email"><?php esc_html_e('Email', 'modern-events-calendar-lite'); ?></button>
-                            <button type="button" class="button" data-type="date"><?php esc_html_e('Date', 'modern-events-calendar-lite'); ?></button>
-                            <button type="button" class="button" data-type="tel"><?php esc_html_e('Tel', 'modern-events-calendar-lite'); ?></button>
-                            <button type="button" class="button" data-type="file"><?php esc_html_e('File', 'modern-events-calendar-lite'); ?></button>
-                            <button type="button" class="button" data-type="textarea"><?php esc_html_e('Textarea', 'modern-events-calendar-lite'); ?></button>
-                            <button type="button" class="button" data-type="checkbox"><?php esc_html_e('Checkboxes', 'modern-events-calendar-lite'); ?></button>
-                            <button type="button" class="button" data-type="radio"><?php esc_html_e('Radio Buttons', 'modern-events-calendar-lite'); ?></button>
-                            <button type="button" class="button" data-type="select"><?php esc_html_e('Dropdown', 'modern-events-calendar-lite'); ?></button>
-                            <button type="button" class="button" data-type="agreement"><?php esc_html_e('Agreement', 'modern-events-calendar-lite'); ?></button>
-                            <button type="button" class="button" data-type="p"><?php esc_html_e('Paragraph', 'modern-events-calendar-lite'); ?></button>
-                        </div>
-                        <input type="hidden" id="mec_new_reg_field_key" value="<?php echo ($i + 1); ?>" />
-                        <div class="mec-util-hidden">
-                            <div id="mec_reg_field_text">
-                                <?php echo \MEC_kses::form(\MEC\Base::get_main()->field_text(':i:')); ?>
+                                    if ($reg_field['type'] == 'text') echo \MEC_kses::form(\MEC\Base::get_main()->field_text($key, $reg_field));
+                                    elseif ($reg_field['type'] == 'mec_email') echo \MEC_kses::form(\MEC\Base::get_main()->field_mec_email($key, $reg_field));
+                                    elseif ($reg_field['type'] == 'name') echo \MEC_kses::form(\MEC\Base::get_main()->field_name($key, $reg_field));
+                                    elseif ($reg_field['type'] == 'email') echo \MEC_kses::form(\MEC\Base::get_main()->field_email($key, $reg_field));
+                                    elseif ($reg_field['type'] == 'date') echo \MEC_kses::form(\MEC\Base::get_main()->field_date($key, $reg_field));
+                                    elseif ($reg_field['type'] == 'file') echo \MEC_kses::form(\MEC\Base::get_main()->field_file($key, $reg_field));
+                                    elseif ($reg_field['type'] == 'tel') echo \MEC_kses::form(\MEC\Base::get_main()->field_tel($key, $reg_field));
+                                    elseif ($reg_field['type'] == 'textarea') echo \MEC_kses::form(\MEC\Base::get_main()->field_textarea($key, $reg_field));
+                                    elseif ($reg_field['type'] == 'p') echo \MEC_kses::form(\MEC\Base::get_main()->field_p($key, $reg_field));
+                                    elseif ($reg_field['type'] == 'checkbox') echo \MEC_kses::form(\MEC\Base::get_main()->field_checkbox($key, $reg_field));
+                                    elseif ($reg_field['type'] == 'radio') echo \MEC_kses::form(\MEC\Base::get_main()->field_radio($key, $reg_field));
+                                    elseif ($reg_field['type'] == 'select') echo \MEC_kses::form(\MEC\Base::get_main()->field_select($key, $reg_field));
+                                    elseif ($reg_field['type'] == 'agreement') echo \MEC_kses::form(\MEC\Base::get_main()->field_agreement($key, $reg_field));
+                                }
+                                ?>
+                            </ul>
+                            <div id="mec_reg_form_field_types">
+                                <button type="button" class="button red" data-type="name"><?php esc_html_e('MEC Name', 'modern-events-calendar-lite'); ?></button>
+                                <button type="button" class="button red" data-type="mec_email"><?php esc_html_e('MEC Email', 'modern-events-calendar-lite'); ?></button>
+                                <button type="button" class="button" data-type="text"><?php esc_html_e('Text', 'modern-events-calendar-lite'); ?></button>
+                                <button type="button" class="button" data-type="email"><?php esc_html_e('Email', 'modern-events-calendar-lite'); ?></button>
+                                <button type="button" class="button" data-type="date"><?php esc_html_e('Date', 'modern-events-calendar-lite'); ?></button>
+                                <button type="button" class="button" data-type="tel"><?php esc_html_e('Tel', 'modern-events-calendar-lite'); ?></button>
+                                <button type="button" class="button" data-type="file"><?php esc_html_e('File', 'modern-events-calendar-lite'); ?></button>
+                                <button type="button" class="button" data-type="textarea"><?php esc_html_e('Textarea', 'modern-events-calendar-lite'); ?></button>
+                                <button type="button" class="button" data-type="checkbox"><?php esc_html_e('Checkboxes', 'modern-events-calendar-lite'); ?></button>
+                                <button type="button" class="button" data-type="radio"><?php esc_html_e('Radio Buttons', 'modern-events-calendar-lite'); ?></button>
+                                <button type="button" class="button" data-type="select"><?php esc_html_e('Dropdown', 'modern-events-calendar-lite'); ?></button>
+                                <button type="button" class="button" data-type="agreement"><?php esc_html_e('Agreement', 'modern-events-calendar-lite'); ?></button>
+                                <button type="button" class="button" data-type="p"><?php esc_html_e('Paragraph', 'modern-events-calendar-lite'); ?></button>
                             </div>
-                            <div id="mec_reg_field_email">
-                                <?php echo \MEC_kses::form(\MEC\Base::get_main()->field_email(':i:')); ?>
-                            </div>
-                            <div id="mec_reg_field_mec_email">
-                                <?php echo \MEC_kses::form(\MEC\Base::get_main()->field_mec_email(':i:')); ?>
-                            </div>
-                            <div id="mec_reg_field_name">
-                                <?php echo \MEC_kses::form(\MEC\Base::get_main()->field_name(':i:')); ?>
-                            </div>
-                            <div id="mec_reg_field_tel">
-                                <?php echo \MEC_kses::form(\MEC\Base::get_main()->field_tel(':i:')); ?>
-                            </div>
-                            <div id="mec_reg_field_date">
-                                <?php echo \MEC_kses::form(\MEC\Base::get_main()->field_date(':i:')); ?>
-                            </div>
-                            <div id="mec_reg_field_file">
-                                <?php echo \MEC_kses::form(\MEC\Base::get_main()->field_file(':i:')); ?>
-                            </div>
-                            <div id="mec_reg_field_textarea">
-                                <?php echo \MEC_kses::form(\MEC\Base::get_main()->field_textarea(':i:')); ?>
-                            </div>
-                            <div id="mec_reg_field_checkbox">
-                                <?php echo \MEC_kses::form(\MEC\Base::get_main()->field_checkbox(':i:')); ?>
-                            </div>
-                            <div id="mec_reg_field_radio">
-                                <?php echo \MEC_kses::form(\MEC\Base::get_main()->field_radio(':i:')); ?>
-                            </div>
-                            <div id="mec_reg_field_select">
-                                <?php echo \MEC_kses::form(\MEC\Base::get_main()->field_select(':i:')); ?>
-                            </div>
-                            <div id="mec_reg_field_agreement">
-                                <?php echo \MEC_kses::form(\MEC\Base::get_main()->field_agreement(':i:')); ?>
-                            </div>
-                            <div id="mec_reg_field_p">
-                                <?php echo \MEC_kses::form(\MEC\Base::get_main()->field_p(':i:')); ?>
-                            </div>
-                            <div id="mec_reg_field_option">
-                                <?php echo \MEC_kses::form(\MEC\Base::get_main()->field_option(':fi:', ':i:')); ?>
+                            <input type="hidden" id="mec_new_reg_field_key" value="<?php echo ($i + 1); ?>" />
+                            <div class="mec-util-hidden">
+                                <div id="mec_reg_field_text">
+                                    <?php echo \MEC_kses::form(\MEC\Base::get_main()->field_text(':i:')); ?>
+                                </div>
+                                <div id="mec_reg_field_email">
+                                    <?php echo \MEC_kses::form(\MEC\Base::get_main()->field_email(':i:')); ?>
+                                </div>
+                                <div id="mec_reg_field_mec_email">
+                                    <?php echo \MEC_kses::form(\MEC\Base::get_main()->field_mec_email(':i:')); ?>
+                                </div>
+                                <div id="mec_reg_field_name">
+                                    <?php echo \MEC_kses::form(\MEC\Base::get_main()->field_name(':i:')); ?>
+                                </div>
+                                <div id="mec_reg_field_tel">
+                                    <?php echo \MEC_kses::form(\MEC\Base::get_main()->field_tel(':i:')); ?>
+                                </div>
+                                <div id="mec_reg_field_date">
+                                    <?php echo \MEC_kses::form(\MEC\Base::get_main()->field_date(':i:')); ?>
+                                </div>
+                                <div id="mec_reg_field_file">
+                                    <?php echo \MEC_kses::form(\MEC\Base::get_main()->field_file(':i:')); ?>
+                                </div>
+                                <div id="mec_reg_field_textarea">
+                                    <?php echo \MEC_kses::form(\MEC\Base::get_main()->field_textarea(':i:')); ?>
+                                </div>
+                                <div id="mec_reg_field_checkbox">
+                                    <?php echo \MEC_kses::form(\MEC\Base::get_main()->field_checkbox(':i:')); ?>
+                                </div>
+                                <div id="mec_reg_field_radio">
+                                    <?php echo \MEC_kses::form(\MEC\Base::get_main()->field_radio(':i:')); ?>
+                                </div>
+                                <div id="mec_reg_field_select">
+                                    <?php echo \MEC_kses::form(\MEC\Base::get_main()->field_select(':i:')); ?>
+                                </div>
+                                <div id="mec_reg_field_agreement">
+                                    <?php echo \MEC_kses::form(\MEC\Base::get_main()->field_agreement(':i:')); ?>
+                                </div>
+                                <div id="mec_reg_field_p">
+                                    <?php echo \MEC_kses::form(\MEC\Base::get_main()->field_p(':i:')); ?>
+                                </div>
+                                <div id="mec_reg_field_option">
+                                    <?php echo \MEC_kses::form(\MEC\Base::get_main()->field_option(':fi:', ':i:')); ?>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -3874,7 +3879,7 @@ class FormBuilder extends Singleton
                                 jQuery("#mec_downloadable_file_uploader").val('');
                             })
                             .fail(function() {
-                                jQuery("#mec_downloadable_file_error").html("<?php echo esc_js(__('An unknown error occurred during uploading the file.', 'modern-events-calendar-lite')); ?>").removeClass("mec-util-hidden");
+                                jQuery("#mec_downloadable_file_error").html("<?php echo esc_js(__('An unknown error occurred while uploading the file.', 'modern-events-calendar-lite')); ?>").removeClass("mec-util-hidden");
                             });
 
                         return false;
@@ -4101,7 +4106,7 @@ class FormBuilder extends Singleton
 
         $imported_from_google = get_post_meta($post->ID, 'mec_imported_from_google', true);
         if ($imported_from_google): ?>
-            <p class="info-msg"><?php esc_html_e("This event is imported from Google calendar so if you modify it would overwrite in the next import from Google.", 'modern-events-calendar-lite'); ?></p>
+            <p class="info-msg"><?php esc_html_e("This event is imported from Google Calendar. Modifications will be overwritten on the next import.", 'modern-events-calendar-lite'); ?></p>
         <?php endif;
     }
 

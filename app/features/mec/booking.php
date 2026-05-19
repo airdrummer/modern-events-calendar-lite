@@ -95,7 +95,7 @@ if(isset($_POST['mec']['settings']['booking_registration'])) {
         <?php $this->main->get_sidebar_menu('booking'); ?>
     </div>
 
-    <div class="wns-be-main">
+    <div class="wns-be-main booking-settings">
         <div id="wns-be-notification"></div>
         <div id="wns-be-content">
             <div class="wns-be-group-tab">
@@ -352,12 +352,12 @@ if(isset($_POST['mec']['settings']['booking_registration'])) {
                                         <label for="mec_settings_booking_ticket_availability_dates">
                                             <input type="hidden" name="mec[settings][booking_ticket_availability_dates]" value="0" />
                                             <input type="checkbox" name="mec[settings][booking_ticket_availability_dates]" id="mec_settings_booking_ticket_availability_dates" <?php echo ((isset($settings['booking_ticket_availability_dates']) and $settings['booking_ticket_availability_dates'] == '1') ? 'checked="checked"' : ''); ?> value="1" />
-                                            <?php esc_html_e('Availability Date', 'modern-events-calendar-lite'); ?>
+                                            <?php esc_html_e('Occurrence Availability Date', 'modern-events-calendar-lite'); ?>
                                         </label>
                                         <span class="mec-tooltip">
                                             <div class="box right">
-                                                <h5 class="title"><?php esc_html_e('Availability Date', 'modern-events-calendar-lite'); ?></h5>
-                                                <div class="content"><p><?php esc_attr_e("By default all tickets are available for all occurrences. By enabling availability date option you can set the tickets availability for certain dates.", 'modern-events-calendar-lite'); ?></p></div>
+                                                <h5 class="title"><?php esc_html_e('Occurrence Availability Date', 'modern-events-calendar-lite'); ?></h5>
+                                                <div class="content"><p><?php esc_attr_e("By default all tickets are available for all occurrences. Enable this option to limit a ticket to certain event dates only. It does not control when ticket sales start or end.", 'modern-events-calendar-lite'); ?></p></div>
                                             </div>
                                             <i title="" class="dashicons-before dashicons-editor-help"></i>
                                         </span>

@@ -14,23 +14,24 @@ $display_label = (isset($this->skin_options['display_label']) and !empty( $this-
 $reason_for_cancellation = (isset($this->skin_options['reason_for_cancellation']) and !empty( $this->skin_options['reason_for_cancellation'] )) ? $this->skin_options['reason_for_cancellation'] : false;
 $more_event = (isset($this->skin_options['more_event']) and !empty( $this->skin_options['more_event'] )) ? (int) $this->skin_options['more_event'] : 10;
 $image_size = $this->skin_options['image_size'] ?? 'default';
+$calendar_id = isset($this->atts['id']) ? (int) $this->atts['id'] : 0;
 
 $sed_method = '';
 if(isset($this->skin_options['sed_method']) and !empty($this->skin_options['sed_method'])) $sed_method = ($this->skin_options['sed_method']  == 'new') ? '_blank' : ($this->skin_options['sed_method']  == '0' ? '_self' : $this->skin_options['sed_method']);
 
 // Shortcode Filters
-$filter_category = get_post_meta($this->id, 'category', true) ? get_post_meta($this->id, 'category', true) : '';
-$filter_ex_category = get_post_meta($this->id, 'ex_category', true) ? get_post_meta($this->id, 'ex_category', true) : '';
-$filter_location = get_post_meta($this->id, 'location', true) ? get_post_meta($this->id, 'location', true) : '';
-$filter_ex_location = get_post_meta($this->id, 'ex_location', true) ? get_post_meta($this->id, 'ex_location', true) : '';
-$filter_organizer = get_post_meta($this->id, 'organizer', true) ? get_post_meta($this->id, 'organizer', true) : '';
-$filter_ex_organizer = get_post_meta($this->id, 'ex_organizer', true) ? get_post_meta($this->id, 'ex_organizer', true) : '';
-$filter_label = get_post_meta($this->id, 'label', true) ? get_post_meta($this->id, 'label', true) : '';
-$filter_ex_label = get_post_meta($this->id, 'ex_label', true) ? get_post_meta($this->id, 'ex_label', true) : '';
-$filter_tag = get_post_meta($this->id, 'tag', true) ? get_post_meta($this->id, 'tag', true) : '';
-$filter_ex_tag = get_post_meta($this->id, 'ex_tag', true) ? get_post_meta($this->id, 'ex_tag', true) : '';
-$filter_author = get_post_meta($this->id, 'author', true) ? get_post_meta($this->id, 'author', true) : '';
-$filter_ex_author = get_post_meta($this->id, 'ex_author', true) ? get_post_meta($this->id, 'ex_author', true) : '';
+$filter_category = $calendar_id ? get_post_meta($calendar_id, 'category', true) : '';
+$filter_ex_category = $calendar_id ? get_post_meta($calendar_id, 'ex_category', true) : '';
+$filter_location = $calendar_id ? get_post_meta($calendar_id, 'location', true) : '';
+$filter_ex_location = $calendar_id ? get_post_meta($calendar_id, 'ex_location', true) : '';
+$filter_organizer = $calendar_id ? get_post_meta($calendar_id, 'organizer', true) : '';
+$filter_ex_organizer = $calendar_id ? get_post_meta($calendar_id, 'ex_organizer', true) : '';
+$filter_label = $calendar_id ? get_post_meta($calendar_id, 'label', true) : '';
+$filter_ex_label = $calendar_id ? get_post_meta($calendar_id, 'ex_label', true) : '';
+$filter_tag = $calendar_id ? get_post_meta($calendar_id, 'tag', true) : '';
+$filter_ex_tag = $calendar_id ? get_post_meta($calendar_id, 'ex_tag', true) : '';
+$filter_author = $calendar_id ? get_post_meta($calendar_id, 'author', true) : '';
+$filter_ex_author = $calendar_id ? get_post_meta($calendar_id, 'ex_author', true) : '';
 $show_past_events = ($this->atts['show_past_events'] ?? '0');
 $show_only_past_events = ($this->atts['show_only_past_events'] ?? '0');
 $show_only_one_occurrence = (isset($this->atts['show_only_one_occurrence']) && $this->atts['show_only_one_occurrence'] != '0')  ?  '1' : '0';

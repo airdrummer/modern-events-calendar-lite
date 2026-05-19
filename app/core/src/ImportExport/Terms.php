@@ -217,7 +217,7 @@ class Terms {
         $uploaded = move_uploaded_file($feed_file['tmp_name'], $target_path);
 
         // Error on Upload
-        if (!$uploaded) return array('success' => 0, 'message' => __("An error occurred during the file upload! Please check permissions!", 'mec-organizer'));
+        if (!$uploaded) return array('success' => 0, 'message' => __("File upload failed. Please check your file permissions and try again.", 'mec-organizer'));
 
         if ($type = mime_content_type($target_path) and $type == 'text/x-php') {
             unlink($target_path);

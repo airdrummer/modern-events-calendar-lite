@@ -240,7 +240,7 @@ $category_restricted = false;
 						?>
 						<div class="mec-event-cost">
 							<?php echo $this->icons->display('wallet'); ?>
-							<h3 class="mec-cost"><?php echo esc_html($this->main->m('cost', esc_html__('Cost', 'modern-events-calendar-lite'))); ?></h3>
+							<div class="mec-cost"><?php echo esc_html($this->main->m('cost', esc_html__('Cost', 'modern-events-calendar-lite'))); ?></div>
 							<dl><dd class="mec-events-event-cost"><?php echo MEC_kses::element($cost); ?></dd></dl>
 						</div>
 						<?php
@@ -258,7 +258,7 @@ $category_restricted = false;
 						?>
 						<div class="mec-event-more-info">
 							<?php echo $this->icons->display('info'); ?>
-							<h3 class="mec-cost"><?php echo esc_html($this->main->m('more_info_link', esc_html__('More Info', 'modern-events-calendar-lite'))); ?></h3>
+							<div class="mec-cost"><?php echo esc_html($this->main->m('more_info_link', esc_html__('More Info', 'modern-events-calendar-lite'))); ?></div>
 							<dl><dd class="mec-events-event-more-info"><a class="mec-more-info-button mec-color-hover" target="<?php echo esc_attr($more_info_target); ?>" href="<?php echo esc_url($more_info); ?>"><?php echo esc_html($more_info_title); ?></a></dd></dl>
 						</div>
 						<?php
@@ -289,7 +289,7 @@ $category_restricted = false;
 						?>
 						<div class="mec-single-event-category">
 							<?php echo $this->icons->display('folder'); ?>
-							<h3 class="mec-events-single-section-title mec-category"><?php echo esc_html($this->main->m('taxonomy_categories', esc_html__('Category', 'modern-events-calendar-lite'))); ?></h3>
+							<div class="mec-events-single-section-title mec-category"><?php echo esc_html($this->main->m('taxonomy_categories', esc_html__('Category', 'modern-events-calendar-lite'))); ?></div>
 							<dl>
 							<?php
 							foreach($event->data->categories as $category)
@@ -319,7 +319,7 @@ $category_restricted = false;
 						?>
 						<div class="mec-single-event-organizer">
 							<?php echo $this->icons->display('people'); ?>
-                            <h3 class="mec-events-single-section-title"><?php echo esc_html($this->main->m('taxonomy_organizer', esc_html__('Organizer', 'modern-events-calendar-lite'))); ?></h3>
+                            <div class="mec-events-single-section-title"><?php echo esc_html($this->main->m('taxonomy_organizer', esc_html__('Organizer', 'modern-events-calendar-lite'))); ?></div>
 
 							<?php if(isset($organizer['thumbnail']) and trim($organizer['thumbnail'])): ?>
 								<img class="mec-img-organizer" src="<?php echo esc_url($organizer['thumbnail']); ?>" alt="<?php echo (isset($organizer['name']) ? esc_attr($organizer['name']) : ''); ?>">
@@ -333,32 +333,32 @@ $category_restricted = false;
                                         ?>
                                         <a href="<?php echo $organizer_link;?>" target="<?php echo $settings['advanced_organizer']['organizer_link_target']; ?>">
                                             <i class="mec-sl-link"></i>
-                                            <h6><?php echo (isset($organizer['name']) ? esc_html($organizer['name']) : ''); ?></h6>
+                                            <span class="mec-meta-label"><?php echo (isset($organizer['name']) ? esc_html($organizer['name']) : ''); ?></span>
                                         </a>
                                     <?php }else{ ?>
 										<?php echo $this->icons->display('people'); ?>
-                                        <h6><?php echo (isset($organizer['name']) ? esc_html($organizer['name']) : ''); ?></h6>
+                                        <span class="mec-meta-label"><?php echo (isset($organizer['name']) ? esc_html($organizer['name']) : ''); ?></span>
                                     <?php } ?>
                                 </dd>
 							<?php endif;
 							if(isset($organizer['tel']) && !empty($organizer['tel'])): ?>
 								<dd class="mec-organizer-tel">
 									<?php echo $this->icons->display('phone'); ?>
-									<h6><?php esc_html_e('Phone', 'modern-events-calendar-lite'); ?></h6>
+									<span class="mec-meta-label"><?php esc_html_e('Phone', 'modern-events-calendar-lite'); ?></span>
 									<a href="tel:<?php echo esc_attr($organizer['tel']); ?>"><?php echo esc_html($organizer['tel']); ?></a>
 								</dd>
 							<?php endif;
 							if(isset($organizer['email']) && !empty($organizer['email'])): ?>
 								<dd class="mec-organizer-email">
 									<?php echo $this->icons->display('envelope'); ?>
-									<h6><?php esc_html_e('Email', 'modern-events-calendar-lite'); ?></h6>
+									<span class="mec-meta-label"><?php esc_html_e('Email', 'modern-events-calendar-lite'); ?></span>
 									<a href="mailto:<?php echo esc_attr($organizer['email']); ?>"><?php echo esc_html($organizer['email']); ?></a>
 								</dd>
 							<?php endif;
 							if(isset($organizer['url']) && !empty($organizer['url']) and $organizer['url'] != 'http://'): ?>
 								<dd class="mec-organizer-url">
 									<?php echo $this->icons->display('sitemap'); ?>
-									<h6><?php esc_html_e('Website', 'modern-events-calendar-lite'); ?></h6>
+									<span class="mec-meta-label"><?php esc_html_e('Website', 'modern-events-calendar-lite'); ?></span>
                                     <span><a href="<?php echo esc_url($organizer['url']); ?>" class="mec-color-hover" target="<?php echo isset($settings['advanced_organizer']) ? $settings['advanced_organizer']['organizer_link_target'] : ''; ?>"><?php echo (isset($organizer['page_label']) and trim($organizer['page_label'])) ? esc_html($organizer['page_label']) : esc_html($organizer['url']); ?></a></span>
                                     <?php do_action('mec_single_default_organizer', $organizer); ?>
 								</dd>

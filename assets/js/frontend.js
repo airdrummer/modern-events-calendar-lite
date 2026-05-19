@@ -1,59 +1,75 @@
 // MEC Single Event Displayer
 var mecSingleEventDisplayer =
 {
-    getSinglePage: function(id, occurrence, time, ajaxurl, layout, image_popup)
-    {
-        if(jQuery('.mec-modal-result').length === 0) jQuery('.mec-wrap').append('<div class="mec-modal-result"></div>');
+    getSinglePage: function (id, occurrence, time, ajaxurl, layout, image_popup) {
+        if (jQuery('.mec-modal-result').length === 0) jQuery('.mec-wrap').append('<div class="mec-modal-result"></div>');
         jQuery('.mec-modal-result').addClass('mec-modal-preloader');
 
         jQuery.ajax(
-        {
-            url: ajaxurl,
-            data: "action=mec_load_single_page&id=" + id + (occurrence != null ? "&occurrence=" + occurrence : "") + (time != null ? "&time=" + time : "") + "&layout=" + layout,
-            type: "get",
-            success: function(response)
             {
-                jQuery('.mec-modal-result').removeClass("mec-modal-preloader");
-                jQuery.featherlight(response);
+                url: ajaxurl,
+                data: "action=mec_load_single_page&id=" + id + (occurrence != null ? "&occurrence=" + occurrence : "") + (time != null ? "&time=" + time : "") + "&layout=" + layout,
+                type: "get",
+                success: function (response) {
+                    jQuery('.mec-modal-result').removeClass("mec-modal-preloader");
+                    jQuery.featherlight(response);
 
-                setTimeout(function()
-                {
-                    if(typeof grecaptcha !== 'undefined' && jQuery('#g-recaptcha').length > 0)
-                    {
-                        grecaptcha.render("g-recaptcha", {
-                            sitekey: mecdata.recapcha_key
-                        });
+                    setTimeout(function () {
+                        if (typeof grecaptcha !== 'undefined' && jQuery('#g-recaptcha').length > 0) {
+                            grecaptcha.render("g-recaptcha", {
+                                sitekey: mecdata.recapcha_key
+                            });
+                        }
+
+                        // Event Gallery
+                        mec_init_event_gallery();
+
+                        // Number Spinner
+                        mec_init_number_spinner();
+                    }, 1000);
+
+                    if (image_popup != 0) {
+                        if (jQuery('.featherlight-content .mec-events-content a img').length > 0) {
+                            jQuery('.featherlight-content .mec-events-content a img').each(function () {
+                                if (jQuery(this).attr('src') === jQuery(this).closest('a').attr('href')) {
+                                    jQuery(this).closest('a').attr('data-featherlight', 'image');
+                                }
+                            });
+                        }
                     }
 
-                    // Event Gallery
-                    mec_init_event_gallery();
-
-                    // Number Spinner
-                    mec_init_number_spinner();
-                }, 1000);
-
-                if(image_popup != 0)
-                {
-                    if(jQuery('.featherlight-content .mec-events-content a img').length > 0)
-                    {
-                        jQuery('.featherlight-content .mec-events-content a img').each(function()
-                        {
-                            if(jQuery(this).attr('src') === jQuery(this).closest('a').attr('href'))
-                            {
-                                jQuery(this).closest('a').attr('data-featherlight', 'image');
-                            }
-                        });
-                    }
-                }
-
-                if(typeof mecdata.enableSingleFluent != 'undefined' && mecdata.enableSingleFluent) mecFluentSinglePage();
-            },
-            error: function () { }
-        });
+                    if (typeof mecdata.enableSingleFluent != 'undefined' && mecdata.enableSingleFluent) mecFluentSinglePage();
+                },
+                error: function () { }
+            });
     }
 };
 
 var mec_search_callbacks = [];
+
+function mecApplySelect2Accessibility($select)
+{
+    if(!$select || !$select.length) return;
+
+    var ariaLabel = $select.attr('aria-label') || $select.attr('title') || '';
+    if(!ariaLabel || !$select.attr('id')) return;
+
+    var $selection = jQuery('#select2-' + $select.attr('id') + '-container').closest('.select2-selection');
+    if(!$selection.length) return;
+
+    $selection.attr('aria-label', ariaLabel);
+}
+
+function mecFormatA11yString(template, replacements)
+{
+    var output = String(template || '');
+
+    jQuery.each(replacements || [], function (index, value) {
+        output = output.replace('%' + (index + 1) + '$s', value);
+    });
+
+    return output;
+}
 
 // MEC SEARCH FORM PLUGIN
 (function ($) {
@@ -71,10 +87,10 @@ var mec_search_callbacks = [];
             callback: function () { }
         }, options);
 
-        if(typeof mec_search_callbacks[settings.id] === 'undefined') mec_search_callbacks[settings.id] = [];
+        if (typeof mec_search_callbacks[settings.id] === 'undefined') mec_search_callbacks[settings.id] = [];
         mec_search_callbacks[settings.id].push(settings.callback);
 
-        $('#mec_search_form_'+settings.id).on('submit', (e) => {
+        $('#mec_search_form_' + settings.id).on('submit', (e) => {
             e.preventDefault();
         });
 
@@ -90,10 +106,11 @@ var mec_search_callbacks = [];
         var $event_type = $('#mec_sf_event_type_' + settings.id);
         var $event_type_2 = $('#mec_sf_event_type_2_' + settings.id);
         var $attribute = $('#mec_sf_attribute_' + settings.id);
-        var $custom_fields = $('.mec-custom-event-field');
         const $wrapper = $("#mec_search_form_" + settings.id);
+        var $custom_fields = $wrapper.find('.mec-custom-event-field');
+        const $status = $("#mec_search_form_" + settings.id + "_status");
         var $reset = $("#mec_search_form_" + settings.id + '_reset');
-        var $event_status = $(".mec_sf_event_status_" + settings.id );
+        var $event_status = $(".mec_sf_event_status_" + settings.id);
         var last_field;
 
         // URL Sync option
@@ -104,7 +121,13 @@ var mec_search_callbacks = [];
         // Trigger
         trigger();
 
-        $custom_fields.off('change').on('change', function(e) {
+        $(document).off('mec_search_init.mecSearchA11y' + settings.id).on('mec_search_init.mecSearchA11y' + settings.id, function (event, view, viewSettings, response) {
+            if (!viewSettings || String(viewSettings.id) !== String(settings.id)) return;
+
+            announceSearchResults(response);
+        });
+
+        $custom_fields.off('change.mecSf' + settings.id).on('change.mecSf' + settings.id, function (e) {
             last_field = $(this).data('field-id');
             search();
         });
@@ -139,30 +162,30 @@ var mec_search_callbacks = [];
         if ($time_start.length) {
             var format = (($time_start.data('format') === 12) ? 'hh:mm p' : 'HH:mm');
             $time_start.timepicker(
-            {
-                timeFormat: format,
-                minTime: new Date(0, 0, 0, 0, 0, 0),
-                maxTime: new Date(0, 0, 0, 23, 55, 0),
-                interval: 5,
-                dropdown: false,
-                change: function () {
-                    last_field = 'time-start';
-                    search();
-                }
-            });
+                {
+                    timeFormat: format,
+                    minTime: new Date(0, 0, 0, 0, 0, 0),
+                    maxTime: new Date(0, 0, 0, 23, 55, 0),
+                    interval: 5,
+                    dropdown: false,
+                    change: function () {
+                        last_field = 'time-start';
+                        search();
+                    }
+                });
 
             $time_end.timepicker(
-            {
-                timeFormat: format,
-                minTime: new Date(0, 0, 0, 0, 0, 0),
-                maxTime: new Date(0, 0, 0, 23, 55, 0),
-                interval: 5,
-                dropdown: false,
-                change: function () {
-                    last_field = 'time-end';
-                    search();
-                }
-            });
+                {
+                    timeFormat: format,
+                    minTime: new Date(0, 0, 0, 0, 0, 0),
+                    maxTime: new Date(0, 0, 0, 23, 55, 0),
+                    interval: 5,
+                    dropdown: false,
+                    change: function () {
+                        last_field = 'time-end';
+                        search();
+                    }
+                });
         }
 
         var $month = $("#mec_sf_month_" + settings.id);
@@ -176,6 +199,11 @@ var mec_search_callbacks = [];
             var mec_year_val = $year.val();
 
             if ((mec_month_val !== 'none' && mec_year_val !== 'none') || ((mec_month_val === 'none' && mec_year_val === 'none'))) search();
+        });
+
+        $date_start.off('change').on('change', function () {
+            last_field = 'date-start';
+            search();
         });
 
         $date_end.off('change').on('change', function () {
@@ -220,7 +248,7 @@ var mec_search_callbacks = [];
             });
         }
 
-        function get_fields(){
+        function get_fields() {
             return [
                 'state',
                 'city',
@@ -231,12 +259,50 @@ var mec_search_callbacks = [];
             ];
         }
 
+        function getSearchResultCount(response) {
+            if (response && typeof response.count !== 'undefined' && !isNaN(parseInt(response.count, 10))) {
+                return Math.max(parseInt(response.count, 10), 0);
+            }
+
+            var $noEvents = $("#mec_skin_no_events_" + settings.id);
+            if ($noEvents.length && !$noEvents.hasClass("mec-util-hidden")) return 0;
+
+            return $("#mec_skin_events_" + settings.id).find(".mec-event-article").length;
+        }
+
+        function getSearchContextSuffix() {
+            var query = $s.length ? $.trim($s.val()) : '';
+            if (query) {
+                return mecFormatA11yString(mecdata.a11y_search_query || ' for "%s"', [query]).replace('%s', query);
+            }
+
+            var addressQuery = $address.length ? $.trim($address.val()) : '';
+            if (addressQuery) {
+                return mecFormatA11yString(mecdata.a11y_search_address || ' near "%s"', [addressQuery]).replace('%s', addressQuery);
+            }
+
+            return '';
+        }
+
+        function announceSearchResults(response) {
+            if (!$status.length) return;
+
+            var count = getSearchResultCount(response);
+            var suffix = getSearchContextSuffix();
+            var template = count === 1
+                ? (mecdata.a11y_search_result || 'Search updated. %1$s event found%2$s.')
+                : (mecdata.a11y_search_results || 'Search updated. %1$s events found%2$s.');
+
+            window.setTimeout(function () {
+                $status.text(mecFormatA11yString(template, [count, suffix]));
+            }, 0);
+        }
+
         function trigger() {
-            if ($wrapper.hasClass('mec-dropdown-enhanced'))
-            {
-                $wrapper.find($('select')).each(function()
-                {
+            if ($wrapper.hasClass('mec-dropdown-enhanced')) {
+                $wrapper.find($('select')).each(function () {
                     $(this).select2();
+                    mecApplySelect2Accessibility($(this));
                 });
             }
 
@@ -271,8 +337,8 @@ var mec_search_callbacks = [];
             });
 
             var fields = get_fields();
-            $.each(fields, function(i, field) {
-                $("#mec_sf_"+ field +"_" + settings.id).on('change', function (e) {
+            $.each(fields, function (i, field) {
+                $("#mec_sf_" + field + "_" + settings.id).on('change', function (e) {
                     last_field = field;
                     search();
                 });
@@ -281,114 +347,114 @@ var mec_search_callbacks = [];
 
         function getRawNonSfQuery() {
             var search = window.location.search;
-            if(search.indexOf('?') === 0) search = search.substring(1);
-            if(!search) return '';
+            if (search.indexOf('?') === 0) search = search.substring(1);
+            if (!search) return '';
             var parts = search.split('&');
             var kept = [];
-            for(var i=0;i<parts.length;i++){
+            for (var i = 0; i < parts.length; i++) {
                 var p = parts[i];
-                if(!p) continue;
+                if (!p) continue;
                 var key = p.split('=')[0] || '';
-                if(key.indexOf('sf[') === 0 || key.indexOf('sf%5B') === 0) continue;
+                if (key.indexOf('sf[') === 0 || key.indexOf('sf%5B') === 0) continue;
                 kept.push(p);
             }
             return kept.join('&');
         }
 
-        function encodeSfQuery(sfQS){
-            if(!sfQS) return '';
+        function encodeSfQuery(sfQS) {
+            if (!sfQS) return '';
             var out = [];
             var parts = sfQS.split('&');
-            for(var i=0;i<parts.length;i++){
+            for (var i = 0; i < parts.length; i++) {
                 var p = parts[i];
-                if(!p) continue;
+                if (!p) continue;
                 var eq = p.indexOf('=');
                 var key = eq > -1 ? p.substring(0, eq) : p;
-                var val = eq > -1 ? p.substring(eq+1) : '';
-                if(val === '') continue;
+                var val = eq > -1 ? p.substring(eq + 1) : '';
+                if (val === '') continue;
                 out.push(key + '=' + encodeURIComponent(val));
             }
             return out.join('&');
         }
 
         function pushFiltersToUrl(sfQS) {
-            if(!updateUrl) return;
+            if (!updateUrl) return;
             try {
                 var base = window.location.origin + window.location.pathname;
                 var preserved = getRawNonSfQuery();
                 var sfRaw = encodeSfQuery(sfQS); // keep keys as sf[...]
                 var qs = '';
-                if(preserved) qs = preserved;
-                if(sfRaw) qs = qs ? (qs + '&' + sfRaw) : sfRaw;
+                if (preserved) qs = preserved;
+                if (sfRaw) qs = qs ? (qs + '&' + sfRaw) : sfRaw;
                 var finalUrl = qs ? (base + '?' + qs + window.location.hash) : (base + window.location.hash);
-                window.history.pushState({mec_sf: true, id: settings.id}, '', finalUrl);
-            } catch (e) {}
+                window.history.pushState({ mec_sf: true, id: settings.id }, '', finalUrl);
+            } catch (e) { }
         }
 
-        function extractSfFromRawSearch(){
+        function extractSfFromRawSearch() {
             var res = {};
             try {
                 var raw = window.location.search;
-                if(raw.indexOf('?') === 0) raw = raw.substring(1);
+                if (raw.indexOf('?') === 0) raw = raw.substring(1);
                 var regex = /(?:^|&)sf(?:%5B|\[)([^\]=%]+)(?:%5D|\])=([^&]*)/g;
                 var m;
-                while((m = regex.exec(raw)) !== null){
+                while ((m = regex.exec(raw)) !== null) {
                     var k = m[1];
                     var v = decodeURIComponent(m[2] || '');
                     res[k] = v;
                 }
-            } catch(e) {}
+            } catch (e) { }
             return res;
         }
 
         function applyURLToFormAndSearch() {
-            if(!updateUrl) return;
+            if (!updateUrl) return;
             try {
                 var sfObj = extractSfFromRawSearch();
 
-                if(Object.keys(sfObj).length === 0) return;
+                if (Object.keys(sfObj).length === 0) return;
 
                 isApplyingFromURL = true;
 
                 // Simple fields
-                if(typeof sfObj['s'] !== 'undefined' && $s.length) $s.val(sfObj['s']);
-                if(typeof sfObj['address'] !== 'undefined' && $address.length) $address.val(sfObj['address']);
-                if(typeof sfObj['address_radius'] !== 'undefined' && $address_radius.length) $address_radius.val(sfObj['address_radius']);
-                if(typeof sfObj['cost-min'] !== 'undefined' && $event_cost_min.length) $event_cost_min.val(sfObj['cost-min']);
-                if(typeof sfObj['cost-max'] !== 'undefined' && $event_cost_max.length) $event_cost_max.val(sfObj['cost-max']);
-                if(typeof sfObj['time-start'] !== 'undefined' && $time_start.length) $time_start.val(sfObj['time-start']);
-                if(typeof sfObj['time-end'] !== 'undefined' && $time_end.length) $time_end.val(sfObj['time-end']);
-                if(typeof sfObj['month'] !== 'undefined' && $month.length) $month.val(sfObj['month']);
-                if(typeof sfObj['year'] !== 'undefined' && $year.length) $year.val(sfObj['year']);
-                if(typeof sfObj['start'] !== 'undefined' && $date_start.length) $date_start.val(sfObj['start']);
-                if(typeof sfObj['end'] !== 'undefined' && $date_end.length) $date_end.val(sfObj['end']);
-                if(typeof sfObj['date_start'] !== 'undefined' && $date_start.length) $date_start.val(sfObj['date_start']);
-                if(typeof sfObj['date_end'] !== 'undefined' && $date_end.length) $date_end.val(sfObj['date_end']);
-                if(typeof sfObj['event_type'] !== 'undefined' && $event_type.length) $event_type.val(sfObj['event_type']);
-                if(typeof sfObj['event_type_2'] !== 'undefined' && $event_type_2.length) $event_type_2.val(sfObj['event_type_2']);
-                if(typeof sfObj['attribute'] !== 'undefined' && $attribute.length) $attribute.val(sfObj['attribute']);
+                if (typeof sfObj['s'] !== 'undefined' && $s.length) $s.val(sfObj['s']);
+                if (typeof sfObj['address'] !== 'undefined' && $address.length) $address.val(sfObj['address']);
+                if (typeof sfObj['address_radius'] !== 'undefined' && $address_radius.length) $address_radius.val(sfObj['address_radius']);
+                if (typeof sfObj['cost-min'] !== 'undefined' && $event_cost_min.length) $event_cost_min.val(sfObj['cost-min']);
+                if (typeof sfObj['cost-max'] !== 'undefined' && $event_cost_max.length) $event_cost_max.val(sfObj['cost-max']);
+                if (typeof sfObj['time-start'] !== 'undefined' && $time_start.length) $time_start.val(sfObj['time-start']);
+                if (typeof sfObj['time-end'] !== 'undefined' && $time_end.length) $time_end.val(sfObj['time-end']);
+                if (typeof sfObj['month'] !== 'undefined' && $month.length) $month.val(sfObj['month']);
+                if (typeof sfObj['year'] !== 'undefined' && $year.length) $year.val(sfObj['year']);
+                if (typeof sfObj['start'] !== 'undefined' && $date_start.length) $date_start.val(sfObj['start']);
+                if (typeof sfObj['end'] !== 'undefined' && $date_end.length) $date_end.val(sfObj['end']);
+                if (typeof sfObj['date_start'] !== 'undefined' && $date_start.length) $date_start.val(sfObj['date_start']);
+                if (typeof sfObj['date_end'] !== 'undefined' && $date_end.length) $date_end.val(sfObj['date_end']);
+                if (typeof sfObj['event_type'] !== 'undefined' && $event_type.length) $event_type.val(sfObj['event_type']);
+                if (typeof sfObj['event_type_2'] !== 'undefined' && $event_type_2.length) $event_type_2.val(sfObj['event_type_2']);
+                if (typeof sfObj['attribute'] !== 'undefined' && $attribute.length) $attribute.val(sfObj['attribute']);
 
                 // Event status (radio)
-                if(typeof sfObj['event_status'] !== 'undefined' && $event_status.length){
+                if (typeof sfObj['event_status'] !== 'undefined' && $event_status.length) {
                     $event_status.prop('checked', false);
-                    $event_status.filter('[value="'+sfObj['event_status']+'"]').prop('checked', true);
+                    $event_status.filter('[value="' + sfObj['event_status'] + '"]').prop('checked', true);
                 }
 
                 // Taxonomies: select/ul checkboxes
-                function applyTaxonomy($el, csv){
-                    if(!$el.length) return;
-                    var vals = (csv||'').split(',').filter(function(x){return x!==''});
-                    var tag = ($el.prop('tagName')||'').toLowerCase();
-                    if(tag === 'select'){
-                        $el.val(vals.length>1 ? vals : (vals[0]||''));
-                        if($wrapper.hasClass('mec-dropdown-enhanced') && jQuery().select2){
+                function applyTaxonomy($el, csv) {
+                    if (!$el.length) return;
+                    var vals = (csv || '').split(',').filter(function (x) { return x !== '' });
+                    var tag = ($el.prop('tagName') || '').toLowerCase();
+                    if (tag === 'select') {
+                        $el.val(vals.length > 1 ? vals : (vals[0] || ''));
+                        if ($wrapper.hasClass('mec-dropdown-enhanced') && jQuery().select2) {
                             $el.trigger('change.select2');
-                        } else if(jQuery().niceSelect){
+                        } else if (jQuery().niceSelect) {
                             $el.niceSelect('update');
                         }
-                    } else if(tag === 'ul'){
+                    } else if (tag === 'ul') {
                         var set = new Set(vals);
-                        $el.find('input[type=checkbox]').each(function(){
+                        $el.find('input[type=checkbox]').each(function () {
                             var v = jQuery(this).val();
                             jQuery(this).prop('checked', set.has(v));
                         });
@@ -403,11 +469,11 @@ var mec_search_callbacks = [];
                 applyTaxonomy($("#mec_sf_label_" + settings.id), sfObj['label']);
 
                 // Update UI for simple selects in enhanced mode
-                function updateSelectUI($sel){
-                    if(!$sel || !$sel.length) return;
-                    if($wrapper.hasClass('mec-dropdown-enhanced') && jQuery().select2){
+                function updateSelectUI($sel) {
+                    if (!$sel || !$sel.length) return;
+                    if ($wrapper.hasClass('mec-dropdown-enhanced') && jQuery().select2) {
                         $sel.trigger('change.select2');
-                    } else if(jQuery().niceSelect){
+                    } else if (jQuery().niceSelect) {
                         $sel.niceSelect('update');
                     }
                 }
@@ -419,22 +485,22 @@ var mec_search_callbacks = [];
                 updateSelectUI($attribute);
 
                 // Trigger a search with these values (skip once if server already applied them)
-                setTimeout(function(){
+                setTimeout(function () {
                     isApplyingFromURL = false;
                     var skipOnce = $wrapper.data('mec-skip-initial-search');
-                    if(skipOnce){
+                    if (skipOnce) {
                         $wrapper.removeAttr('data-mec-skip-initial-search');
                     } else {
                         search();
                     }
                 }, 50);
 
-            } catch (e) {}
+            } catch (e) { }
         }
 
         // Handle browser back/forward to re-apply filters
-        if(updateUrl && !$wrapper.data('mec-popstate-bound')){
-            jQuery(window).on('popstate', function(){
+        if (updateUrl && !$wrapper.data('mec-popstate-bound')) {
+            jQuery(window).on('popstate', function () {
                 applyURLToFormAndSearch();
             });
             $wrapper.data('mec-popstate-bound', true);
@@ -461,7 +527,7 @@ var mec_search_callbacks = [];
             var attribute = $attribute.length ? $attribute.val() : '';
             var event_status = $event_status.filter(':checked').length ? $event_status.filter(':checked').val() : 'all';
 
-            if(month === null) month = '';
+            if (month === null) month = '';
 
             var start = $date_start.length ? $date_start.val() : '';
             var end = $date_end.length ? $date_end.val() : '';
@@ -476,14 +542,14 @@ var mec_search_callbacks = [];
             if ($category.prop('tagName') && $category.prop('tagName').toLowerCase() === 'div') {
                 category = [];
                 $category.find($('select')).each(function () {
-                    category.push( $(this).val() );
+                    category.push($(this).val());
                 });
                 category = category.join(',');
             }
             else if ($category.prop('tagName') && $category.prop('tagName').toLowerCase() === 'ul') {
                 category = [];
                 $category.find($('input[type=checkbox]:checked')).each(function () {
-                    category.push( $(this).val() );
+                    category.push($(this).val());
                 });
                 category = category.join(',');
             }
@@ -493,7 +559,7 @@ var mec_search_callbacks = [];
             if ($location.prop('tagName') && $location.prop('tagName').toLowerCase() === 'ul') {
                 location = [];
                 $location.find($('input[type=checkbox]:checked')).each(function () {
-                    location.push( $(this).val() );
+                    location.push($(this).val());
                 });
                 location = location.join(',');
             }
@@ -503,7 +569,7 @@ var mec_search_callbacks = [];
             if ($organizer.prop('tagName') && $organizer.prop('tagName').toLowerCase() === 'ul') {
                 organizer = [];
                 $organizer.find($('input[type=checkbox]:checked')).each(function () {
-                    organizer.push( $(this).val() );
+                    organizer.push($(this).val());
                 });
                 organizer = organizer.join(',');
             }
@@ -513,7 +579,7 @@ var mec_search_callbacks = [];
             if ($speaker.prop('tagName') && $speaker.prop('tagName').toLowerCase() === 'ul') {
                 speaker = [];
                 $speaker.find($('input[type=checkbox]:checked')).each(function () {
-                    speaker.push( $(this).val() );
+                    speaker.push($(this).val());
                 });
                 speaker = speaker.join(',');
             }
@@ -523,7 +589,7 @@ var mec_search_callbacks = [];
             if ($label.prop('tagName') && $label.prop('tagName').toLowerCase() === 'ul') {
                 label = [];
                 $label.find($('input[type=checkbox]:checked')).each(function () {
-                    label.push( $(this).val() );
+                    label.push($(this).val());
                 });
                 label = label.join(',');
             }
@@ -534,7 +600,7 @@ var mec_search_callbacks = [];
                 month = '';
             }
 
-            if(!year) year = '';
+            if (!year) year = '';
 
             var addation_attr = '';
             if (settings.fields && settings.fields.length > 0) {
@@ -550,40 +616,36 @@ var mec_search_callbacks = [];
             var sf = 'sf[s]=' + s + '&sf[address]=' + address + '&sf[address_radius]=' + address_radius + '&sf[cost-min]=' + cost_min + '&sf[cost-max]=' + cost_max + '&sf[time-start]=' + time_start + '&sf[time-end]=' + time_end + '&sf[month]=' + month + '&sf[year]=' + year + '&sf[start]=' + start + '&sf[end]=' + end + '&sf[category]=' + category + '&sf[location]=' + location + '&sf[organizer]=' + organizer + '&sf[speaker]=' + speaker + '&sf[tag]=' + tag + '&sf[label]=' + label + '&sf[event_type]=' + event_type + '&sf[event_type_2]=' + event_type_2 + '&sf[event_status]=' + event_status + '&sf[attribute]=' + attribute + addation_attr;
 
             // Event Fields
-            $custom_fields.each(function()
-            {
+            $custom_fields.each(function () {
                 var custom_field_id = $(this).data('field-id');
                 var custom_request_key = $(this).data('request-key');
                 var custom_field_value = $(this).val();
 
-                if(custom_request_key) sf += '&sf[fields]['+ custom_field_id +']['+custom_request_key+']=' + custom_field_value;
-                else sf += '&sf[fields]['+ custom_field_id +']=' + custom_field_value;
+                if (custom_request_key) sf += '&sf[fields][' + custom_field_id + '][' + custom_request_key + ']=' + custom_field_value;
+                else sf += '&sf[fields][' + custom_field_id + ']=' + custom_field_value;
             });
 
             var fields = get_fields();
-            $.each(fields, function(i, field)
-            {
-                if($("#mec_sf_"+ field +"_" + settings.id).length)
-                {
-                    v = $("#mec_sf_"+ field +"_" + settings.id).val();
-                    sf += '&sf['+ field +']=' + v;
+            $.each(fields, function (i, field) {
+                if ($("#mec_sf_" + field + "_" + settings.id).length) {
+                    v = $("#mec_sf_" + field + "_" + settings.id).val();
+                    sf += '&sf[' + field + ']=' + v;
                 }
             });
 
             // Refine Parameters
-            if(settings.refine) refine(sf);
+            if (settings.refine) refine(sf);
 
             // Attributes
             var atts = settings.atts + '&' + sf;
 
             // Search
-            if(typeof mec_search_callbacks[settings.id] !== 'undefined')
-            {
-                for(const cb of mec_search_callbacks[settings.id]) cb(atts);
+            if (typeof mec_search_callbacks[settings.id] !== 'undefined') {
+                for (const cb of mec_search_callbacks[settings.id]) cb(atts);
             }
 
             // Update URL after search so it can be shared
-            if(updateUrl && !isApplyingFromURL){
+            if (updateUrl && !isApplyingFromURL) {
                 pushFiltersToUrl(sf);
             }
         }
@@ -601,20 +663,27 @@ var mec_search_callbacks = [];
                 $category.find('select').each(function () {
                     $(this).val(null).trigger('change');
                 });
-                if(isEnhanced && jQuery().select2) $category.find('select').select2();
-                else if(jQuery().niceSelect) $category.find('select').niceSelect('update');
+                    if (isEnhanced && jQuery().select2) {
+                        $category.find('select').select2();
+                        $category.find('select').each(function () {
+                            mecApplySelect2Accessibility($(this));
+                        });
+                    }
+                else if (jQuery().niceSelect) $category.find('select').niceSelect('update');
             }
             else if ($category.length && $category.prop('tagName') && $category.prop('tagName').toLowerCase() === 'ul') {
                 $category.find($('input[type=checkbox]:checked')).each(function () {
                     $(this).prop('checked', false);
                 });
             }
-            else if ($category.length)
-            {
+            else if ($category.length) {
                 $category.val(null);
                 if ($category.prop('tagName') && $category.prop('tagName').toLowerCase() === 'select') {
-                    if(isEnhanced && jQuery().select2) $category.select2();
-                    else if(jQuery().niceSelect) $category.niceSelect('update');
+                if (isEnhanced && jQuery().select2) {
+                    $category.select2();
+                    mecApplySelect2Accessibility($category);
+                }
+                    else if (jQuery().niceSelect) $category.niceSelect('update');
                 }
             }
 
@@ -623,12 +692,14 @@ var mec_search_callbacks = [];
                     $(this).prop('checked', false);
                 });
             }
-            else if ($location.length)
-            {
+            else if ($location.length) {
                 $location.val(null);
                 if ($location.prop('tagName') && $location.prop('tagName').toLowerCase() === 'select') {
-                    if(isEnhanced && jQuery().select2) $location.select2();
-                    else if(jQuery().niceSelect) $location.niceSelect('update');
+                    if (isEnhanced && jQuery().select2) {
+                        $location.select2();
+                        mecApplySelect2Accessibility($location);
+                    }
+                    else if (jQuery().niceSelect) $location.niceSelect('update');
                 }
             }
 
@@ -637,12 +708,14 @@ var mec_search_callbacks = [];
                     $(this).prop('checked', false);
                 });
             }
-            else if ($organizer.length)
-            {
+            else if ($organizer.length) {
                 $organizer.val(null);
                 if ($organizer.prop('tagName') && $organizer.prop('tagName').toLowerCase() === 'select') {
-                    if(isEnhanced && jQuery().select2) $organizer.select2();
-                    else if(jQuery().niceSelect) $organizer.niceSelect('update');
+                    if (isEnhanced && jQuery().select2) {
+                        $organizer.select2();
+                        mecApplySelect2Accessibility($organizer);
+                    }
+                    else if (jQuery().niceSelect) $organizer.niceSelect('update');
                 }
             }
 
@@ -651,12 +724,14 @@ var mec_search_callbacks = [];
                     $(this).prop('checked', false);
                 });
             }
-            else if ($speaker.length)
-            {
+            else if ($speaker.length) {
                 $speaker.val(null);
                 if ($speaker.prop('tagName') && $speaker.prop('tagName').toLowerCase() === 'select') {
-                    if(isEnhanced && jQuery().select2) $speaker.select2();
-                    else if(jQuery().niceSelect) $speaker.niceSelect('update');
+                    if (isEnhanced && jQuery().select2) {
+                        $speaker.select2();
+                        mecApplySelect2Accessibility($speaker);
+                    }
+                    else if (jQuery().niceSelect) $speaker.niceSelect('update');
                 }
             }
 
@@ -665,12 +740,14 @@ var mec_search_callbacks = [];
                     $(this).prop('checked', false);
                 });
             }
-            else if ($label.length)
-            {
+            else if ($label.length) {
                 $label.val(null);
                 if ($label.prop('tagName') && $label.prop('tagName').toLowerCase() === 'select') {
-                    if(isEnhanced && jQuery().select2) $label.select2();
-                    else if(jQuery().niceSelect) $label.niceSelect('update');
+                    if (isEnhanced && jQuery().select2) {
+                        $label.select2();
+                        mecApplySelect2Accessibility($label);
+                    }
+                    else if (jQuery().niceSelect) $label.niceSelect('update');
                 }
             }
 
@@ -686,51 +763,50 @@ var mec_search_callbacks = [];
             if ($date_end.length) $date_end.val(null);
             if ($time_start.length) $time_start.val(null);
             if ($time_end.length) $time_end.val(null);
-            if ($event_status.length)
-            {
+            if ($event_status.length) {
                 $event_status.prop('checked', false);
                 $event_status.filter('[value="all"]').prop('checked', true);
             }
 
             // Reset map fields specifically
             var mapFields = ['state', 'city', 'region', 'street', 'postal_code'];
-            $.each(mapFields, function(i, field) {
+            $.each(mapFields, function (i, field) {
                 var $mapField = $("#mec_sf_" + field + "_" + settings.id);
-                if($mapField.length) {
+                if ($mapField.length) {
                     $mapField.val(null);
-                    if($mapField.is('select')) {
-                        if(isEnhanced && jQuery().select2) $mapField.select2();
-                        else if(jQuery().niceSelect) jQuery("#mec_sf_" + field + "_" + settings.id).niceSelect('update');
+                    if ($mapField.is('select')) {
+                        if (isEnhanced && jQuery().select2) {
+                            $mapField.select2();
+                            mecApplySelect2Accessibility($mapField);
+                        }
+                        else if (jQuery().niceSelect) jQuery("#mec_sf_" + field + "_" + settings.id).niceSelect('update');
                     }
                 }
             });
 
             var fields = get_fields();
-            $.each(fields,function(i,field)
-            {
-                const $f = $("#mec_sf_"+ field +"_" + settings.id);
-                if($f.length)
-                {
+            $.each(fields, function (i, field) {
+                const $f = $("#mec_sf_" + field + "_" + settings.id);
+                if ($f.length) {
                     $f.val(null);
-                    if($f.is('select') && jQuery().niceSelect)
-                    {
-                        jQuery("#mec_sf_"+ field +"_" + settings.id).niceSelect('update');
+                    if ($f.is('select') && jQuery().niceSelect) {
+                        jQuery("#mec_sf_" + field + "_" + settings.id).niceSelect('update');
                     }
                 }
             });
 
-            if(jQuery().niceSelect){
+            if (jQuery().niceSelect) {
 
                 jQuery('.mec-fluent-wrap').find('.mec-filter-content').find('select:not([multiple])').niceSelect('update');
             }
 
             // Clean URL query if enabled
-            if(updateUrl){
-                try{
+            if (updateUrl) {
+                try {
                     var url = new URL(window.location.href);
                     url = removeSfParamsFromUrl(url);
-                    window.history.pushState({mec_sf: true, id: settings.id}, '', url.toString());
-                }catch(e){}
+                    window.history.pushState({ mec_sf: true, id: settings.id }, '', url.toString());
+                } catch (e) { }
             }
 
             // Search Again
@@ -769,103 +845,118 @@ var mec_search_callbacks = [];
             else if ($label.length) label_type = 'dropdown';
 
             $.ajax(
-            {
-                url: settings.ajax_url,
-                data: "action=mec_refine_search_items&mec_start_date=" + settings.start_date + "&" + sf + '&last_field=' + last_field + '&category_type=' + category_type + '&location_type=' + location_type + '&organizer_type=' + organizer_type + '&speaker_type=' + speaker_type + '&label_type=' + label_type + '&id=' + settings.id,
-                dataType: "json",
-                type: "post",
-                success: function (response) {
-                    // Categories
-                    if (typeof response.categories !== 'undefined' && response.categories !== '') {
-                        // Multi Select
-                        if ($category.length && category_type === 'checkboxes') {
-                            $category.html(response.categories);
-                        }
-                        // Checkboxes
-                        else if ($category.length && category_type === 'simple-checkboxes') {
-                            $category.html(response.categories);
-                        }
-                        // Dropdown
-                        else if ($category.length) {
-                            $category.replaceWith(response.categories);
+                {
+                    url: settings.ajax_url,
+                    data: "action=mec_refine_search_items&mec_start_date=" + settings.start_date + "&" + sf + '&last_field=' + last_field + '&category_type=' + category_type + '&location_type=' + location_type + '&organizer_type=' + organizer_type + '&speaker_type=' + speaker_type + '&label_type=' + label_type + '&id=' + settings.id,
+                    dataType: "json",
+                    type: "post",
+                    success: function (response) {
+                        // Categories
+                        if (typeof response.categories !== 'undefined' && response.categories !== '') {
+                            // Multi Select
+                            if ($category.length && category_type === 'checkboxes') {
+                                $category.html(response.categories);
+                            }
+                            // Checkboxes
+                            else if ($category.length && category_type === 'simple-checkboxes') {
+                                $category.html(response.categories);
+                            }
+                            // Dropdown
+                            else if ($category.length) {
+                                $category.replaceWith(response.categories);
+                            }
+
+                            // Categories Search bar
+                            if (jQuery(".mec-searchbar-category-wrap select").length > 0 && jQuery().niceSelect) jQuery(".mec-searchbar-category-wrap select").niceSelect();
                         }
 
-                        // Categories Search bar
-                        if ( jQuery(".mec-searchbar-category-wrap select").length > 0 && jQuery().niceSelect) jQuery(".mec-searchbar-category-wrap select").niceSelect();
-                    }
+                        // Locations
+                        if (typeof response.locations !== 'undefined' && response.locations !== '') {
+                            // Checkboxes
+                            if ($location.length && location_type === 'simple-checkboxes') {
+                                $location.html(response.locations);
+                            }
+                            // Dropdown
+                            else if ($location.length) {
+                                $location.replaceWith(response.locations);
+                            }
+                        }
 
-                    // Locations
-                    if (typeof response.locations !== 'undefined' && response.locations !== '') {
-                        // Checkboxes
-                        if ($location.length && location_type === 'simple-checkboxes') {
-                            $location.html(response.locations);
+                        // Organizers
+                        if (typeof response.organizers !== 'undefined' && response.organizers !== '') {
+                            // Checkboxes
+                            if ($organizer.length && organizer_type === 'simple-checkboxes') {
+                                $organizer.html(response.organizers);
+                            }
+                            // Dropdown
+                            else if ($organizer.length) {
+                                $organizer.replaceWith(response.organizers);
+                            }
                         }
-                        // Dropdown
-                        else if ($location.length) {
-                            $location.replaceWith(response.locations);
-                        }
-                    }
 
-                    // Organizers
-                    if (typeof response.organizers !== 'undefined' && response.organizers !== '') {
-                        // Checkboxes
-                        if ($organizer.length && organizer_type === 'simple-checkboxes') {
-                            $organizer.html(response.organizers);
+                        // Speakers
+                        if (typeof response.speakers !== 'undefined' && response.speakers !== '') {
+                            // Checkboxes
+                            if ($speaker.length && speaker_type === 'simple-checkboxes') {
+                                $speaker.html(response.speakers);
+                            }
+                            // Dropdown
+                            else if ($speaker.length) {
+                                $speaker.replaceWith(response.speakers);
+                            }
                         }
-                        // Dropdown
-                        else if ($organizer.length) {
-                            $organizer.replaceWith(response.organizers);
-                        }
-                    }
 
-                    // Speakers
-                    if (typeof response.speakers !== 'undefined' && response.speakers !== '') {
-                        // Checkboxes
-                        if ($speaker.length && speaker_type === 'simple-checkboxes') {
-                            $speaker.html(response.speakers);
+                        // Labels
+                        if (typeof response.labels !== 'undefined' && response.labels !== '') {
+                            // Checkboxes
+                            if ($label.length && label_type === 'simple-checkboxes') {
+                                $label.html(response.labels);
+                            }
+                            // Dropdown
+                            else if ($label.length) {
+                                $label.replaceWith(response.labels);
+                            }
                         }
-                        // Dropdown
-                        else if ($speaker.length) {
-                            $speaker.replaceWith(response.speakers);
-                        }
-                    }
 
-                    // Labels
-                    if (typeof response.labels !== 'undefined' && response.labels !== '') {
-                        // Checkboxes
-                        if ($label.length && label_type === 'simple-checkboxes') {
-                            $label.html(response.labels);
+                        // Tags
+                        if (typeof response.tags !== 'undefined' && response.tags !== '') {
+                            $tag.replaceWith(response.tags);
                         }
-                        // Dropdown
-                        else if ($label.length) {
-                            $label.replaceWith(response.labels);
-                        }
-                    }
 
-                    // Tags
-                    if (typeof response.tags !== 'undefined' && response.tags !== '') {
-                        $tag.replaceWith(response.tags);
-                    }
-
-                    // Trigger
-                    trigger();
-                },
-                error: function () { }
-            });
+                        // Trigger
+                        trigger();
+                    },
+                    error: function () { }
+                });
         }
     };
 }(jQuery));
 
 jQuery(document).ready(function ($) {
     // Select2
-    if ( jQuery(".mec-fes-form-cntt #mec-location select").length > 0 ) jQuery(".mec-fes-form-cntt #mec-location select").select2();
-    if ( jQuery(".mec-fes-form-cntt #mec-organizer select").length > 0 ) jQuery(".mec-fes-form-cntt #mec-organizer select").select2();
+    if (jQuery(".mec-fes-form-cntt #mec-location select").length > 0) {
+        jQuery(".mec-fes-form-cntt #mec-location select").select2();
+        jQuery(".mec-fes-form-cntt #mec-location select").each(function () { mecApplySelect2Accessibility(jQuery(this)); });
+    }
+    if (jQuery(".mec-fes-form-cntt #mec-organizer select").length > 0) {
+        jQuery(".mec-fes-form-cntt #mec-organizer select").select2();
+        jQuery(".mec-fes-form-cntt #mec-organizer select").each(function () { mecApplySelect2Accessibility(jQuery(this)); });
+    }
     // Location select2
-    if ( jQuery("#mec_location_id").length > 0 ) jQuery("#mec_location_id").select2();
+    if (jQuery("#mec_location_id").length > 0) {
+        jQuery("#mec_location_id").select2();
+        mecApplySelect2Accessibility(jQuery("#mec_location_id"));
+    }
     // Organizer Select2
-    if ( jQuery("#mec_organizer_id").length > 0 ) jQuery("#mec_organizer_id").select2();
+    if (jQuery("#mec_organizer_id").length > 0) {
+        jQuery("#mec_organizer_id").select2();
+        mecApplySelect2Accessibility(jQuery("#mec_organizer_id"));
+    }
     // Categories Search bar
-    if ( jQuery(".mec-searchbar-category-wrap select").length > 0 ) jQuery(".mec-searchbar-category-wrap select").select2();
+    if (jQuery(".mec-searchbar-category-wrap select").length > 0) {
+        jQuery(".mec-searchbar-category-wrap select").select2();
+        jQuery(".mec-searchbar-category-wrap select").each(function () { mecApplySelect2Accessibility(jQuery(this)); });
+    }
 
     jQuery(".mec-search-form.mec-totalcal-box").find(".mec-search-reset-button").parents().eq(2).addClass("mec-there-reset-button");
 
@@ -880,27 +971,24 @@ jQuery(document).ready(function ($) {
     jQuery(".mec-search-form.mec-totalcal-box").find(".mec-date-search").parent().find(".mec-time-picker-search").addClass("with-mec-date-search");
     jQuery(".mec-search-form.mec-totalcal-box").find(".mec-time-picker-search").parent().find(".mec-date-search").addClass("with-mec-time-picker");
 
-    jQuery('#mec-gCalendar-wrap .openMonthFilter').on('click', function(e){
+    jQuery('#mec-gCalendar-wrap .openMonthFilter').on('click', function (e) {
         jQuery(this).toggleClass('open');
     });
 
-    jQuery('body').on('click', function(e){
+    jQuery('body').on('click', function (e) {
         jQuery('#mec-gCalendar-wrap .openMonthFilter').removeClass('open');
     });
 
     mec_init_number_spinner();
 });
 
-function mec_init_number_spinner()
-{
+function mec_init_number_spinner() {
     /* buttons functions */
-    jQuery('.mec-booking .mec-event-tickets-list .mec-ticket-style-row div a').off('click').on('click', function()
-    {
+    jQuery('.mec-booking .mec-event-tickets-list .mec-ticket-style-row div a').off('click').on('click', function () {
         var $input = jQuery(this).parents('.mec-ticket-style-row div').find(jQuery('input.in-num'));
 
         var count = parseFloat($input.val());
-        if(jQuery(this).hasClass('minus'))
-        {
+        if (jQuery(this).hasClass('minus')) {
             count = count - 1;
             count = count < 1 ? 0 : count;
             if (count < 1) {
@@ -924,8 +1012,7 @@ function mec_init_number_spinner()
     });
 }
 
-jQuery(window).on('load', function()
-{
+jQuery(window).on('load', function () {
     jQuery(".single-mec-events").find(".mejs-controls button").addClass("mejs")
 });
 
@@ -954,7 +1041,7 @@ jQuery(window).on('load', function()
 
         function setListeners() {
             // Search Widget
-            if ( settings.sf.container !== '' && false == $(settings.sf.container).hasClass('mec-skin-search-init') ) {
+            if (settings.sf.container !== '' && false == $(settings.sf.container).hasClass('mec-skin-search-init')) {
                 sf = $(settings.sf.container).mecSearchForm({
                     id: settings.id,
                     refine: settings.sf.refine,
@@ -963,7 +1050,7 @@ jQuery(window).on('load', function()
                     atts: settings.atts,
                     callback: function (atts) {
                         settings.atts = atts;
-                        if( false == $("#mec_skin_" + settings.id).hasClass('mec-fluent-wrap') && false == $("#mec_skin_" + settings.id).hasClass('mec-liquid-wrap') ){
+                        if (false == $("#mec_skin_" + settings.id).hasClass('mec-fluent-wrap') && false == $("#mec_skin_" + settings.id).hasClass('mec-liquid-wrap')) {
 
                             search();
                         }
@@ -973,10 +1060,10 @@ jQuery(window).on('load', function()
                 $(settings.sf.container).addClass('mec-skin-search-init');
             }
 
-            $('.mec-subscribe-to-calendar-btn').off('click').on('click', function() {
+            $('.mec-subscribe-to-calendar-btn').off('click').on('click', function () {
                 $(this).parent().find('>.mec-subscribe-to-calendar-items').toggle();
             });
-            
+
             // Add the onclick event
             $("#mec_skin_" + settings.id + " .mec-totalcal-box .mec-totalcal-view span:not(.mec-fluent-more-views-icon):not(.mec-fluent-more-views-content)").on('click', function (e) {
                 e.preventDefault();
@@ -1026,16 +1113,15 @@ jQuery(window).on('load', function()
             settings.skin = skin;
 
             // Add Loading Class
-            if(jQuery('.mec-modal-result').length === 0) jQuery('.mec-wrap').append('<div class="mec-modal-result"></div>');
+            if (jQuery('.mec-modal-result').length === 0) jQuery('.mec-wrap').append('<div class="mec-modal-result"></div>');
             jQuery('.mec-modal-result').addClass('mec-month-navigator-loading');
 
             var $month_picker = $("#mec_sf_month_" + settings.id);
             var $year_picker = $("#mec_sf_year_" + settings.id);
 
             // Add Month & Year
-            if(settings.atts.indexOf('sf[month]') <= -1 && $month_picker.length && $year_picker.length)
-            {
-                settings.atts += '&sf[month]='+$month_picker.val()+'&sf[year]='+$year_picker.val();
+            if (settings.atts.indexOf('sf[month]') <= -1 && $month_picker.length && $year_picker.length) {
+                settings.atts += '&sf[month]=' + $month_picker.val() + '&sf[year]=' + $year_picker.val();
             }
 
             $.ajax({
@@ -1044,7 +1130,7 @@ jQuery(window).on('load', function()
                 type: "post",
                 success: function (response) {
 
-                    jQuery(document).trigger( 'mec_before_load_skin_success', [$("#mec_full_calendar_container_" + settings.id), settings.id] );
+                    jQuery(document).trigger('mec_before_load_skin_success', [$("#mec_full_calendar_container_" + settings.id), settings.id]);
 
                     $("#mec_full_calendar_container_" + settings.id).html(response);
 
@@ -1057,7 +1143,7 @@ jQuery(window).on('load', function()
                     mecFluentCurrentTimePosition();
                     mecFluentCustomScrollbar();
 
-                    jQuery(document).trigger( 'mec_load_skin_success', $("#mec_full_calendar_container_" + settings.id) );
+                    jQuery(document).trigger('mec_load_skin_success', $("#mec_full_calendar_container_" + settings.id));
                 },
                 error: function () { }
             });
@@ -1072,8 +1158,7 @@ jQuery(window).on('load', function()
                 url: settings.ajax_url,
                 data: "action=mec_full_calendar_switch_skin&skin=" + settings.skin + "&" + settings.atts + "&apply_sf_date=1",
                 type: "post",
-                success: function (response)
-                {
+                success: function (response) {
                     $("#mec_full_calendar_container_" + settings.id).html(response);
 
                     // Remove loader
@@ -1088,7 +1173,7 @@ jQuery(window).on('load', function()
                     mecFluentCurrentTimePosition();
                     mecFluentCustomScrollbar();
 
-                    jQuery(document).trigger( 'mec_search_success', $("#mec_full_calendar_container_" + settings.id) );
+                    jQuery(document).trigger('mec_search_success', $("#mec_full_calendar_container_" + settings.id));
                 },
                 error: function () { }
             });
@@ -1131,7 +1216,7 @@ jQuery(window).on('load', function()
         });
 
         // Search Widget
-        if ( settings.sf.container !== '' ) {
+        if (settings.sf.container !== '') {
             sf = $(settings.sf.container).mecSearchForm({
                 id: settings.id,
                 refine: settings.sf.refine,
@@ -1193,7 +1278,7 @@ jQuery(window).on('load', function()
                     mecFluentYearlyUI(settings.id, active_year);
                     mecFluentCustomScrollbar();
 
-                    $(document).trigger('mec_search_init',['yearly_view',settings,response]);
+                    $(document).trigger('mec_search_init', ['yearly_view', settings, response]);
 
                 },
                 error: function () { }
@@ -1277,10 +1362,10 @@ jQuery(window).on('load', function()
                 sed();
             }
 
-            $('.mec-subscribe-to-calendar-btn').off('click').on('click', function() {
+            $('.mec-subscribe-to-calendar-btn').off('click').on('click', function () {
                 $(this).parent().find('>.mec-subscribe-to-calendar-items').toggle();
             });
-            
+
             // Yearly view
             $("#mec_skin_" + settings.id + " .mec-has-event a").on('click', function (e) {
                 e.preventDefault();
@@ -1331,7 +1416,7 @@ jQuery(window).on('load', function()
                 var occurrence = get_parameter_by_name('occurrence', href);
                 var time = get_parameter_by_name('time', href);
 
-                if( 'undefined' == typeof id ){
+                if ('undefined' == typeof id) {
                     return;
                 }
 
@@ -1403,7 +1488,7 @@ jQuery(window).on('load', function()
                 var occurrence = get_parameter_by_name('occurrence', href);
                 var time = get_parameter_by_name('time', href);
 
-                if( 'undefined' == typeof id ){
+                if ('undefined' == typeof id) {
                     return;
                 }
 
@@ -1445,7 +1530,7 @@ jQuery(window).on('load', function()
         setListeners();
 
         // Search Widget
-        if ( settings.sf.container !== '' ) {
+        if (settings.sf.container !== '') {
             sf = $(settings.sf.container).mecSearchForm({
                 id: settings.id,
                 refine: settings.sf.refine,
@@ -1474,51 +1559,49 @@ jQuery(window).on('load', function()
             });
         }
 
-        function search(year, month)
-        {
+        function search(year, month) {
             // Modal
             var $modal = jQuery('.mec-modal-result');
 
             // Add Loading Class
-            if($modal.length === 0) jQuery('.mec-wrap').append('<div class="mec-modal-result"></div>');
+            if ($modal.length === 0) jQuery('.mec-wrap').append('<div class="mec-modal-result"></div>');
             $modal.addClass('mec-month-navigator-loading');
 
             $.ajax(
-            {
-                url: settings.ajax_url,
-                data: "action=mec_monthly_view_load_month&mec_year=" + year + "&mec_month=" + month + "&" + settings.atts + "&apply_sf_date=1",
-                dataType: "json",
-                type: "post",
-                success: function (response)
                 {
-                    // Append Month
-                    $("#mec_skin_events_" + settings.id).html('<div class="mec-month-container" id="mec_monthly_view_month_' + settings.id + '_' + response.current_month.id + '" data-month-id="' + response.current_month.id + '">' + response.month + '</div>');
+                    url: settings.ajax_url,
+                    data: "action=mec_monthly_view_load_month&mec_year=" + year + "&mec_month=" + month + "&" + settings.atts + "&apply_sf_date=1",
+                    dataType: "json",
+                    type: "post",
+                    success: function (response) {
+                        // Append Month
+                        $("#mec_skin_events_" + settings.id).html('<div class="mec-month-container" id="mec_monthly_view_month_' + settings.id + '_' + response.current_month.id + '" data-month-id="' + response.current_month.id + '">' + response.month + '</div>');
 
-                    // Append Month Navigator
-                    $("#mec_skin_" + settings.id + " .mec-skin-monthly-view-month-navigator-container").html('<div class="mec-month-navigator" id="mec_month_navigator_' + settings.id + '_' + response.current_month.id + '">' + response.navigator + '</div>');
+                        // Append Month Navigator
+                        $("#mec_skin_" + settings.id + " .mec-skin-monthly-view-month-navigator-container").html('<div class="mec-month-navigator" id="mec_month_navigator_' + settings.id + '_' + response.current_month.id + '">' + response.navigator + '</div>');
 
-                    // Append Events Side
-                    $("#mec_skin_" + settings.id + " .mec-calendar-events-side").html('<div class="mec-month-side" id="mec_month_side_' + settings.id + '_' + response.current_month.id + '">' + response.events_side + '</div>');
+                        // Append Events Side
+                        $("#mec_skin_" + settings.id + " .mec-calendar-events-side").html('<div class="mec-month-side" id="mec_month_side_' + settings.id + '_' + response.current_month.id + '">' + response.events_side + '</div>');
 
-                    // Re-initialize Month Navigator
-                    initMonthNavigator();
+                        // Re-initialize Month Navigator
+                        initMonthNavigator();
 
-                    // Set onclick Listeners
-                    setListeners();
+                        // Set onclick Listeners
+                        setListeners();
 
-                    // Toggle Month
-                    toggleMonth(response.current_month.id);
+                        // Toggle Month
+                        toggleMonth(response.current_month.id);
 
-                    jQuery(document).trigger('load_calendar_data');
+                        jQuery(document).trigger('load_calendar_data');
 
-                    // Remove loading Class
-                    $('.mec-modal-result').removeClass("mec-month-navigator-loading");
+                        // Remove loading Class
+                        $('.mec-modal-result').removeClass("mec-month-navigator-loading");
 
-                    $(document).trigger('mec_search_init',['monthly_view',settings,response]);
+                        $(document).trigger('mec_search_init', ['monthly_view', settings, response]);
 
-                },
-                error: function () { }
-            });
+                    },
+                    error: function () { }
+                });
         }
 
         function setMonth(year, month, do_in_background, navigator_click) {
@@ -1532,8 +1615,7 @@ jQuery(window).on('load', function()
             }
 
             // Month exists so we just show it
-            if ($("#mec_monthly_view_month_" + settings.id + "_" + month_id).length)
-            {
+            if ($("#mec_monthly_view_month_" + settings.id + "_" + month_id).length) {
                 // Set Month Filter values in search widget
                 $("#mec_sf_month_" + settings.id).val(month);
                 $("#mec_sf_year_" + settings.id).val(year);
@@ -1657,7 +1739,7 @@ jQuery(window).on('load', function()
                 }
             });
 
-            $('.mec-subscribe-to-calendar-btn').off('click').on('click', function() {
+            $('.mec-subscribe-to-calendar-btn').off('click').on('click', function () {
                 $(this).parent().find('>.mec-subscribe-to-calendar-items').toggle();
             });
 
@@ -1693,7 +1775,7 @@ jQuery(window).on('load', function()
                 var occurrence = get_parameter_by_name('occurrence', href);
                 var time = get_parameter_by_name('time', href);
 
-                if( 'undefined' == typeof id ){
+                if ('undefined' == typeof id) {
                     return;
                 }
 
@@ -1783,7 +1865,7 @@ jQuery(window).on('load', function()
         active_month = settings.current_month;
 
         // Search Widget
-        if ( settings.sf.container !== '' ) {
+        if (settings.sf.container !== '') {
             $(settings.sf.container).mecSearchForm({
                 id: settings.id,
                 refine: settings.sf.refine,
@@ -1846,10 +1928,10 @@ jQuery(window).on('load', function()
                 }
             });
 
-            $('.mec-subscribe-to-calendar-btn').off('click').on('click', function() {
+            $('.mec-subscribe-to-calendar-btn').off('click').on('click', function () {
                 $(this).parent().find('>.mec-subscribe-to-calendar-items').toggle();
             });
-            
+
             // Single Event Method
             if (settings.sed_method != '0') {
                 sed();
@@ -1940,7 +2022,7 @@ jQuery(window).on('load', function()
                     setThisWeek(response.week_id, true);
                     mecFluentCustomScrollbar();
 
-                    $(document).trigger('mec_search_init',['weekly_view',settings,response]);
+                    $(document).trigger('mec_search_init', ['weekly_view', settings, response]);
                 },
                 error: function () { }
             });
@@ -1955,8 +2037,7 @@ jQuery(window).on('load', function()
             navigation_click = navigation_click || false;
 
             // Month exists so we just show it
-            if ($("#mec_weekly_view_month_" + settings.id + "_" + month_id).length)
-            {
+            if ($("#mec_weekly_view_month_" + settings.id + "_" + month_id).length) {
                 // Set Month Filter values in search widget
                 $("#mec_sf_month_" + settings.id).val(month);
                 $("#mec_sf_year_" + settings.id).val(year);
@@ -2037,7 +2118,7 @@ jQuery(window).on('load', function()
                 var occurrence = get_parameter_by_name('occurrence', href);
                 var time = get_parameter_by_name('time', href);
 
-                if( 'undefined' == typeof id ){
+                if ('undefined' == typeof id) {
                     return;
                 }
 
@@ -2091,7 +2172,7 @@ jQuery(window).on('load', function()
         mecFocusDay(settings);
 
         // Search Widget
-        if ( settings.sf.container !== '' ) {
+        if (settings.sf.container !== '') {
             $(settings.sf.container).mecSearchForm({
                 id: settings.id,
                 refine: settings.sf.refine,
@@ -2114,7 +2195,7 @@ jQuery(window).on('load', function()
                 mecFluentCustomScrollbar();
             });
 
-            $('.mec-subscribe-to-calendar-btn').off('click').on('click', function() {
+            $('.mec-subscribe-to-calendar-btn').off('click').on('click', function () {
                 $(this).parent().find('>.mec-subscribe-to-calendar-items').toggle();
             });
 
@@ -2174,33 +2255,40 @@ jQuery(window).on('load', function()
 
             // Init Days slider
             var owl = $("#mec-owl-calendar-d-table-" + settings.id + "-" + month_id);
-            if(owl.hasClass('owl-loaded')){
+            if (owl.hasClass('owl-loaded')) {
                 owl.trigger('destroy.owl.carousel');
                 owl.removeClass('owl-loaded');
                 owl.find('.owl-stage-outer').children().unwrap();
             }
+
+            // Check if carousel is in a narrow container (like sidebar)
+            var parentWidth = owl.parent().width();
+            var isNarrowContainer = parentWidth < 500;
+
+            var responsiveConfig = {
+                0: {
+                    items: owl.closest('.mec-fluent-wrap,.mec-liquid-wrap').length > 0 ? 3 : 2,
+                },
+                479: {
+                    items: isNarrowContainer ? 3 : 4,
+                },
+                767: {
+                    items: isNarrowContainer ? 4 : 7,
+                },
+                960: {
+                    items: isNarrowContainer ? 5 : 14,
+                },
+                1000: {
+                    items: isNarrowContainer ? 6 : 19,
+                },
+                1200: {
+                    items: isNarrowContainer ? 7 : 22,
+                }
+            };
+
             owl.owlCarousel({
                 responsiveClass: true,
-                responsive: {
-                    0: {
-                        items: owl.closest('.mec-fluent-wrap,.mec-liquid-wrap').length > 0 ? 3 : 2,
-                    },
-                    479: {
-                        items: 4,
-                    },
-                    767: {
-                        items: 7,
-                    },
-                    960: {
-                        items: 14,
-                    },
-                    1000: {
-                        items: 19,
-                    },
-                    1200: {
-                        items: 22,
-                    }
-                },
+                responsive: responsiveConfig,
                 dots: false,
                 loop: false,
                 rtl: owl_rtl,
@@ -2266,7 +2354,7 @@ jQuery(window).on('load', function()
                     mecFocusDay(settings);
                     mecFluentCustomScrollbar();
 
-                    $(document).trigger('mec_search_init',['daily_view',settings,response]);
+                    $(document).trigger('mec_search_init', ['daily_view', settings, response]);
                 },
                 error: function () { }
             });
@@ -2281,8 +2369,7 @@ jQuery(window).on('load', function()
             navigation_click = navigation_click || false;
 
             // Month exists so we just show it
-            if ($("#mec_daily_view_month_" + settings.id + "_" + month_id).length)
-            {
+            if ($("#mec_daily_view_month_" + settings.id + "_" + month_id).length) {
                 // Set Month Filter values in search widget
                 $("#mec_sf_month_" + settings.id).val(month);
                 $("#mec_sf_year_" + settings.id).val(year);
@@ -2366,7 +2453,7 @@ jQuery(window).on('load', function()
                 var occurrence = get_parameter_by_name('occurrence', href);
                 var time = get_parameter_by_name('time', href);
 
-                if( 'undefined' == typeof id ){
+                if ('undefined' == typeof id) {
                     return;
                 }
 
@@ -2401,7 +2488,7 @@ jQuery(window).on('load', function()
         }, options);
 
         // Search Widget
-        if ( settings.sf.container !== '' ) {
+        if (settings.sf.container !== '') {
             $(settings.sf.container).mecSearchForm({
                 id: settings.id,
                 refine: settings.sf.refine,
@@ -2575,7 +2662,7 @@ jQuery(window).on('load', function()
 
                     mecFluentCustomScrollbar();
 
-                    $(document).trigger('mec_search_init',['timetable',settings,response]);
+                    $(document).trigger('mec_search_init', ['timetable', settings, response]);
                 },
                 error: function () { }
             });
@@ -2657,7 +2744,7 @@ jQuery(window).on('load', function()
                 var occurrence = get_parameter_by_name('occurrence', href);
                 var time = get_parameter_by_name('time', href);
 
-                if( 'undefined' == typeof id ){
+                if ('undefined' == typeof id) {
                     return;
                 }
 
@@ -2680,7 +2767,7 @@ jQuery(window).on('load', function()
         }, options);
 
         // Search Widget
-        if ( settings.sf.container !== '' ) {
+        if (settings.sf.container !== '') {
             $(settings.sf.container).mecSearchForm({
                 id: settings.id,
                 refine: settings.sf.refine,
@@ -2728,7 +2815,7 @@ jQuery(window).on('load', function()
                     // Set Listeners
                     setListeners();
 
-                    $(document).trigger('mec_search_init',['weeklyprogram',settings,response]);
+                    $(document).trigger('mec_search_init', ['weeklyprogram', settings, response]);
                 },
                 error: function () { }
             });
@@ -2749,7 +2836,7 @@ jQuery(window).on('load', function()
                 var occurrence = get_parameter_by_name('occurrence', href);
                 var time = get_parameter_by_name('time', href);
 
-                if( 'undefined' == typeof id ){
+                if ('undefined' == typeof id) {
                     return;
                 }
 
@@ -2914,12 +3001,12 @@ jQuery(window).on('load', function()
             });
 
             // Scroll
-            if(settings.pagination === 'scroll') {
+            if (settings.pagination === 'scroll') {
                 $(window).on("scroll", function (event) {
                     var $target = $("#mec_skin_" + settings.id + " .mec-load-more-wrap");
 
                     var finished = $target.data('page-finished');
-                    if(finished) return;
+                    if (finished) return;
 
                     var hT = $target.offset().top,
                         hH = $target.outerHeight(),
@@ -2935,25 +3022,22 @@ jQuery(window).on('load', function()
             }
 
             // Next Prev Pagination
-            if(settings.pagination === 'nextprev')
-            {
+            if (settings.pagination === 'nextprev') {
                 // Events Wrapper
                 const $EW = $("#mec_skin_" + settings.id + " .mec-event-masonry");
 
                 let next_disabled = false;
 
                 // Previous Button
-                $prev.on('click', function()
-                {
-                    if(history.length)
-                    {
+                $prev.on('click', function () {
+                    if (history.length) {
                         let page = history.pop();
 
                         var oldItems = $EW.find('.mec-masonry-item-wrap');
                         $EW.isotope('remove', oldItems);
 
                         // Display Events
-                        var newItems = $('<div>'+page.html+'</div>').find('.mec-masonry-item-wrap');
+                        var newItems = $('<div>' + page.html + '</div>').find('.mec-masonry-item-wrap');
                         newItems.each(function (index) {
                             $EW.isotope()
                                 .append(newItems[index])
@@ -2970,17 +3054,16 @@ jQuery(window).on('load', function()
                     }
 
                     // Hide Previous Button
-                    if(!history.length) $prev.addClass('mec-util-hidden');
+                    if (!history.length) $prev.addClass('mec-util-hidden');
                 });
 
                 // Next Button
-                $next.on('click', function(e)
-                {
+                $next.on('click', function (e) {
                     // Prevent Redirect
                     e.preventDefault();
 
                     // Currently Disabled
-                    if(next_disabled) return;
+                    if (next_disabled) return;
 
                     // Disable Button
                     next_disabled = true;
@@ -2996,11 +3079,9 @@ jQuery(window).on('load', function()
                         html: $EW.html()
                     });
 
-                    loadMore(function(response)
-                    {
+                    loadMore(function (response) {
                         // Display New Events
-                        if(response.count)
-                        {
+                        if (response.count) {
                             var oldItems = $EW.find('.mec-masonry-item-wrap');
                             $EW.isotope('remove', oldItems);
 
@@ -3021,9 +3102,9 @@ jQuery(window).on('load', function()
                         $EW.removeClass('mec-loading-events');
 
                         // Display Previous Button
-                        if(history.length) $prev.removeClass('mec-util-hidden');
+                        if (history.length) $prev.removeClass('mec-util-hidden');
                         // Hide Next Button
-                        if(response.count === 0 || (typeof response.has_more_event !== 'undefined' && !response.has_more_event)) $next.addClass('mec-util-hidden');
+                        if (response.count === 0 || (typeof response.has_more_event !== 'undefined' && !response.has_more_event)) $next.addClass('mec-util-hidden');
                     });
                 });
             }
@@ -3048,7 +3129,7 @@ jQuery(window).on('load', function()
                 var occurrence = get_parameter_by_name('occurrence', href);
                 var time = get_parameter_by_name('time', href);
 
-                if( 'undefined' == typeof id ){
+                if ('undefined' == typeof id) {
                     return;
                 }
 
@@ -3078,17 +3159,16 @@ jQuery(window).on('load', function()
                         $("#mec_skin_" + settings.id + " .mec-load-more-wrap").data('page-finished', true).removeClass('mec-load-more-scroll-loading');
 
                         // Run Callback
-                        if(typeof callback === 'function') callback(response);
+                        if (typeof callback === 'function') callback(response);
                     } else {
                         // Show load more button
                         if (typeof response.has_more_event === 'undefined' || (typeof response.has_more_event !== 'undefined' && response.has_more_event)) $("#mec_skin_" + settings.id + " .mec-load-more-button").removeClass("mec-util-hidden");
                         else $("#mec_skin_" + settings.id + " .mec-load-more-button").addClass("mec-util-hidden");
 
                         // Run Callback
-                        if(typeof callback === 'function') callback(response);
+                        if (typeof callback === 'function') callback(response);
                         // Append Items
-                        else
-                        {
+                        else {
                             var node = $("#mec_skin_" + settings.id + " .mec-event-masonry");
                             var newItems = $(response.html).find('.mec-masonry-item-wrap');
 
@@ -3115,7 +3195,7 @@ jQuery(window).on('load', function()
                         settings.infinite_locked = false;
                         $("#mec_skin_" + settings.id + " .mec-load-more-wrap").removeClass('mec-load-more-scroll-loading');
 
-                        $(document).trigger('mec_load_more_init',['masonry',settings]);
+                        $(document).trigger('mec_load_more_init', ['masonry', settings]);
                     }
                 },
                 error: function () { }
@@ -3153,7 +3233,7 @@ jQuery(window).on('load', function()
 
         function setListeners() {
             // Search Widget
-            if ( settings.sf.container !== '' ) {
+            if (settings.sf.container !== '') {
                 sf = $(settings.sf.container).mecSearchForm({
                     id: settings.id,
                     refine: settings.sf.refine,
@@ -3199,18 +3279,15 @@ jQuery(window).on('load', function()
             }
 
             // Next Prev Pagination
-            if(settings.pagination === 'nextprev')
-            {
+            if (settings.pagination === 'nextprev') {
                 // Events Wrapper
                 const $EW = $("#mec_skin_events_" + settings.id);
 
                 let next_disabled = false;
 
                 // Previous Button
-                $prev.on('click', function()
-                {
-                    if(history.length)
-                    {
+                $prev.on('click', function () {
+                    if (history.length) {
                         let page = history.pop();
 
                         // Display Events
@@ -3226,17 +3303,16 @@ jQuery(window).on('load', function()
                     }
 
                     // Hide Previous Button
-                    if(!history.length) $prev.addClass('mec-util-hidden');
+                    if (!history.length) $prev.addClass('mec-util-hidden');
                 });
 
                 // Next Button
-                $next.on('click', function(e)
-                {
+                $next.on('click', function (e) {
                     // Prevent Redirect
                     e.preventDefault();
 
                     // Currently Disabled
-                    if(next_disabled) return;
+                    if (next_disabled) return;
 
                     // Disable Button
                     next_disabled = true;
@@ -3252,10 +3328,9 @@ jQuery(window).on('load', function()
                         html: $EW.html()
                     });
 
-                    loadMore(function(response)
-                    {
+                    loadMore(function (response) {
                         // Display New Events
-                        if(response.count) $EW.html(response.html);
+                        if (response.count) $EW.html(response.html);
                         // Remove Last Page
                         else history.pop();
 
@@ -3266,10 +3341,10 @@ jQuery(window).on('load', function()
                         $EW.removeClass('mec-loading-events');
 
                         // Display Previous Button
-                        if(history.length) $prev.removeClass('mec-util-hidden');
+                        if (history.length) $prev.removeClass('mec-util-hidden');
 
                         // Hide Next Button
-                        if(response.count === 0 || (typeof response.has_more_event !== 'undefined' && !response.has_more_event)) $next.addClass('mec-util-hidden');
+                        if (response.count === 0 || (typeof response.has_more_event !== 'undefined' && !response.has_more_event)) $next.addClass('mec-util-hidden');
                     });
                 });
             }
@@ -3345,10 +3420,10 @@ jQuery(window).on('load', function()
                 // Trigger Google Map
                 var unique_id = $(this).parent().find(".mec-modal-wrap").data('unique-id');
 
-                if(typeof window['mec_init_gmap' + unique_id] === 'function') window['mec_init_gmap' + unique_id]();
+                if (typeof window['mec_init_gmap' + unique_id] === 'function') window['mec_init_gmap' + unique_id]();
             });
 
-            $(document).trigger('mec_skin_accordion_init', settings );
+            $(document).trigger('mec_skin_accordion_init', settings);
         }
 
         function sed() {
@@ -3361,7 +3436,7 @@ jQuery(window).on('load', function()
                 var occurrence = get_parameter_by_name('occurrence', href);
                 var time = get_parameter_by_name('time', href);
 
-                if( 'undefined' == typeof id ){
+                if ('undefined' == typeof id) {
                     return;
                 }
 
@@ -3376,7 +3451,7 @@ jQuery(window).on('load', function()
                 var occurrence = get_parameter_by_name('occurrence', href);
                 var time = get_parameter_by_name('time', href);
 
-                if( 'undefined' == typeof id ){
+                if ('undefined' == typeof id) {
                     return;
                 }
 
@@ -3406,14 +3481,14 @@ jQuery(window).on('load', function()
                         mec_toggle_shortcode_pagination(settings.id, 'hide');
 
                         // Run Callback
-                        if(typeof callback === 'function') callback(response);
+                        if (typeof callback === 'function') callback(response);
                     } else {
                         // Show load more button
                         if (typeof response.has_more_event === 'undefined' || (typeof response.has_more_event !== 'undefined' && response.has_more_event)) mec_toggle_shortcode_pagination(settings.id, 'show');
                         else mec_toggle_shortcode_pagination(settings.id, 'hide');
 
                         // Run Callback
-                        if(typeof callback === 'function') callback(response);
+                        if (typeof callback === 'function') callback(response);
                         // Append Items
                         else $("#mec_skin_events_" + settings.id).append(response.html);
 
@@ -3442,9 +3517,9 @@ jQuery(window).on('load', function()
                         $("#mec_skin_" + settings.id + " .mec-load-more-wrap").removeClass('mec-load-more-scroll-loading');
                     }
 
-                    $(document).trigger('mec_load_more_init',['list',settings]);
+                    $(document).trigger('mec_load_more_init', ['list', settings]);
                 },
-                error: function() {}
+                error: function () { }
             });
         }
 
@@ -3452,18 +3527,18 @@ jQuery(window).on('load', function()
             // Hide no event message
             $("#mec_skin_no_events_" + settings.id).addClass("mec-util-hidden");
 
-            var $loading_element = jQuery("#mec_skin_" + settings.id + " .mec-modal-result");
+            var $skinRoot = jQuery("#mec_skin_" + settings.id);
+            var $loading_element = $skinRoot.find('.mec-modal-result');
 
             // Add loading Class
-            if($loading_element.length === 0)
-            {
-                jQuery("#mec_skin_" + settings.id).append('<div class="mec-modal-result"></div>');
-                $loading_element = jQuery("#mec_skin_" + settings.id + " .mec-modal-result");
+            if ($loading_element.length === 0) {
+                $skinRoot.append('<div class="mec-modal-result"></div>');
+                $loading_element = $skinRoot.find('.mec-modal-result');
             }
 
             $loading_element.addClass('mec-month-navigator-loading');
 
-            jQuery("#gmap-data-"+settings.id).val("");
+            jQuery("#gmap-data-" + settings.id).val("");
             history = [];
             $prev.addClass('mec-util-hidden');
 
@@ -3481,7 +3556,7 @@ jQuery(window).on('load', function()
                         $loading_element.removeClass("mec-month-navigator-loading");
 
                         // Hide Map
-                        $('.mec-skin-map-container').addClass("mec-util-hidden");
+                        $skinRoot.find('.mec-skin-map-container').addClass("mec-util-hidden");
 
                         // Hide pagination
                         mec_toggle_shortcode_pagination(settings.id, 'hide');
@@ -3496,7 +3571,7 @@ jQuery(window).on('load', function()
                         $loading_element.removeClass("mec-month-navigator-loading");
 
                         // Show Map
-                        $('.mec-skin-map-container').removeClass("mec-util-hidden");
+                        $skinRoot.find('.mec-skin-map-container').removeClass("mec-util-hidden");
 
                         // Show load more button
                         if (response.count >= settings.limit) mec_toggle_shortcode_pagination(settings.id, 'show');
@@ -3521,7 +3596,7 @@ jQuery(window).on('load', function()
                         }
                     }
 
-                    $(document).trigger('mec_search_init',['list',settings,response]);
+                    $(document).trigger('mec_search_init', ['list', settings, response]);
                 },
                 error: function () { }
             });
@@ -3558,7 +3633,7 @@ jQuery(window).on('load', function()
 
         function setListeners() {
             // Search Widget
-            if ( settings.sf.container !== '' ) {
+            if (settings.sf.container !== '') {
                 sf = $(settings.sf.container).mecSearchForm({
                     id: settings.id,
                     refine: settings.sf.refine,
@@ -3580,12 +3655,12 @@ jQuery(window).on('load', function()
             });
 
             // Scroll
-            if(settings.pagination === 'scroll') {
+            if (settings.pagination === 'scroll') {
                 $(window).on("scroll", function (event) {
                     var $target = $("#mec_skin_" + settings.id + " .mec-load-more-wrap");
 
                     var finished = $target.data('page-finished');
-                    if(finished) return;
+                    if (finished) return;
 
                     var hT = $target.offset().top,
                         hH = $target.outerHeight(),
@@ -3601,18 +3676,15 @@ jQuery(window).on('load', function()
             }
 
             // Next Prev Pagination
-            if(settings.pagination === 'nextprev')
-            {
+            if (settings.pagination === 'nextprev') {
                 // Events Wrapper
                 const $EW = $("#mec_skin_events_" + settings.id);
 
                 let next_disabled = false;
 
                 // Previous Button
-                $prev.on('click', function()
-                {
-                    if(history.length)
-                    {
+                $prev.on('click', function () {
+                    if (history.length) {
                         let page = history.pop();
 
                         // Display Events
@@ -3628,17 +3700,16 @@ jQuery(window).on('load', function()
                     }
 
                     // Hide Previous Button
-                    if(!history.length) $prev.addClass('mec-util-hidden');
+                    if (!history.length) $prev.addClass('mec-util-hidden');
                 });
 
                 // Next Button
-                $next.on('click', function(e)
-                {
+                $next.on('click', function (e) {
                     // Prevent Redirect
                     e.preventDefault();
 
                     // Currently Disabled
-                    if(next_disabled) return;
+                    if (next_disabled) return;
 
                     // Disable Button
                     next_disabled = true;
@@ -3654,10 +3725,9 @@ jQuery(window).on('load', function()
                         html: $EW.html()
                     });
 
-                    loadMore(function(response)
-                    {
+                    loadMore(function (response) {
                         // Display New Events
-                        if(response.count) $EW.html(response.html);
+                        if (response.count) $EW.html(response.html);
                         // Remove Last Page
                         else history.pop();
 
@@ -3668,9 +3738,9 @@ jQuery(window).on('load', function()
                         $EW.removeClass('mec-loading-events');
 
                         // Display Previous Button
-                        if(history.length) $prev.removeClass('mec-util-hidden');
+                        if (history.length) $prev.removeClass('mec-util-hidden');
                         // Hide Next Button
-                        if(response.count === 0 || (typeof response.has_more_event !== 'undefined' && !response.has_more_event)) $next.addClass('mec-util-hidden');
+                        if (response.count === 0 || (typeof response.has_more_event !== 'undefined' && !response.has_more_event)) $next.addClass('mec-util-hidden');
                     });
                 });
             }
@@ -3691,7 +3761,7 @@ jQuery(window).on('load', function()
                 var occurrence = get_parameter_by_name('occurrence', href);
                 var time = get_parameter_by_name('time', href);
 
-                if( 'undefined' == typeof id ){
+                if ('undefined' == typeof id) {
                     return;
                 }
 
@@ -3705,7 +3775,7 @@ jQuery(window).on('load', function()
                 var occurrence = get_parameter_by_name('occurrence', href);
                 var time = get_parameter_by_name('time', href);
 
-                if( 'undefined' == typeof id ){
+                if ('undefined' == typeof id) {
                     return;
                 }
 
@@ -3732,14 +3802,14 @@ jQuery(window).on('load', function()
                         $("#mec_skin_" + settings.id + " .mec-load-more-wrap").data('page-finished', true).removeClass('mec-load-more-scroll-loading');
 
                         // Run Callback
-                        if(typeof callback === 'function') callback(response);
+                        if (typeof callback === 'function') callback(response);
                     } else {
                         // Show load more button
                         if (typeof response.has_more_event === 'undefined' || (typeof response.has_more_event !== 'undefined' && response.has_more_event)) $("#mec_skin_" + settings.id + " .mec-load-more-button").removeClass("mec-util-hidden");
                         else $("#mec_skin_" + settings.id + " .mec-load-more-button").addClass("mec-util-hidden");
 
                         // Run Callback
-                        if(typeof callback === 'function') callback(response);
+                        if (typeof callback === 'function') callback(response);
                         // Append Items
                         else $("#mec_skin_events_" + settings.id).append(response.html);
 
@@ -3760,7 +3830,7 @@ jQuery(window).on('load', function()
                         $("#mec_skin_" + settings.id + " .mec-load-more-wrap").removeClass('mec-load-more-scroll-loading');
                     }
 
-                    $(document).trigger('mec_load_more_init',['grid',settings]);
+                    $(document).trigger('mec_load_more_init', ['grid', settings]);
                 },
                 error: function () { }
             });
@@ -3770,10 +3840,14 @@ jQuery(window).on('load', function()
             // Hide no event message
             $("#mec_skin_no_events_" + settings.id).addClass("mec-util-hidden");
 
-            // Add loading Class
-            if (jQuery('.mec-modal-result').length === 0) jQuery('.mec-wrap').append('<div class="mec-modal-result"></div>');
-            jQuery('.mec-modal-result').addClass('mec-month-navigator-loading');
-            jQuery("#gmap-data-"+settings.id).val("");
+            var $skinRoot = jQuery("#mec_skin_" + settings.id);
+            var $loading_element = $skinRoot.find('.mec-modal-result');
+            if ($loading_element.length === 0) {
+                $skinRoot.append('<div class="mec-modal-result"></div>');
+                $loading_element = $skinRoot.find('.mec-modal-result');
+            }
+            $loading_element.addClass('mec-month-navigator-loading');
+            jQuery("#gmap-data-" + settings.id).val("");
 
             $.ajax({
                 url: settings.ajax_url,
@@ -3786,10 +3860,10 @@ jQuery(window).on('load', function()
                         $("#mec_skin_events_" + settings.id).html('');
 
                         // Remove loading Class
-                        $('.mec-modal-result').removeClass("mec-month-navigator-loading");
+                        $loading_element.removeClass("mec-month-navigator-loading");
 
                         // Hide Map
-                        $('.mec-skin-map-container').addClass("mec-util-hidden");
+                        $skinRoot.find('.mec-skin-map-container').addClass("mec-util-hidden");
 
                         // Hide it
                         $("#mec_skin_" + settings.id + " .mec-load-more-button").addClass("mec-util-hidden");
@@ -3801,10 +3875,10 @@ jQuery(window).on('load', function()
                         $("#mec_skin_events_" + settings.id).html(response.html);
 
                         // Remove loading Class
-                        $('.mec-modal-result').removeClass("mec-month-navigator-loading");
+                        $loading_element.removeClass("mec-month-navigator-loading");
 
                         // Show Map
-                        $('.mec-skin-map-container').removeClass("mec-util-hidden");
+                        $skinRoot.find('.mec-skin-map-container').removeClass("mec-util-hidden");
 
                         // Show load more button
                         if (response.count >= settings.limit) $("#mec_skin_" + settings.id + " .mec-load-more-button").removeClass("mec-util-hidden");
@@ -3821,7 +3895,7 @@ jQuery(window).on('load', function()
                         }
                     }
 
-                    $(document).trigger('mec_search_init',['grid',settings,response]);
+                    $(document).trigger('mec_search_init', ['grid', settings, response]);
                 },
                 error: function () { }
             });
@@ -3854,7 +3928,7 @@ jQuery(window).on('load', function()
 
         function setListeners() {
             // Search Widget
-            if ( settings.sf.container !== '' ) {
+            if (settings.sf.container !== '') {
                 sf = $(settings.sf.container).mecSearchForm({
                     id: settings.id,
                     refine: settings.sf.refine,
@@ -3876,12 +3950,12 @@ jQuery(window).on('load', function()
             });
 
             // Scroll
-            if(settings.pagination === 'scroll') {
+            if (settings.pagination === 'scroll') {
                 $(window).on("scroll", function (event) {
                     var $target = $("#mec_skin_" + settings.id + " .mec-load-more-wrap");
 
                     var finished = $target.data('page-finished');
-                    if(finished) return;
+                    if (finished) return;
 
                     var hT = $target.offset().top,
                         hH = $target.outerHeight(),
@@ -3912,7 +3986,7 @@ jQuery(window).on('load', function()
                 var occurrence = get_parameter_by_name('occurrence', href);
                 var time = get_parameter_by_name('time', href);
 
-                if( 'undefined' == typeof id ){
+                if ('undefined' == typeof id) {
                     return;
                 }
 
@@ -3926,7 +4000,7 @@ jQuery(window).on('load', function()
                 var occurrence = get_parameter_by_name('occurrence', href);
                 var time = get_parameter_by_name('time', href);
 
-                if( 'undefined' == typeof id ){
+                if ('undefined' == typeof id) {
                     return;
                 }
 
@@ -4001,7 +4075,7 @@ jQuery(window).on('load', function()
 
                     }
 
-                    $(document).trigger('mec_load_more_init',['custom',settings]);
+                    $(document).trigger('mec_load_more_init', ['custom', settings]);
                 },
                 error: function () { }
             });
@@ -4011,10 +4085,14 @@ jQuery(window).on('load', function()
             // Hide no event message
             $("#mec_skin_no_events_" + settings.id).addClass("mec-util-hidden");
 
-            // Add loading Class
-            if (jQuery('.mec-modal-result').length === 0) jQuery('.mec-wrap').append('<div class="mec-modal-result"></div>');
-            jQuery('.mec-modal-result').addClass('mec-month-navigator-loading');
-            jQuery("#gmap-data-"+settings.id).val("");
+            var $skinRoot = jQuery("#mec_skin_" + settings.id);
+            var $loading_element = $skinRoot.find('.mec-modal-result');
+            if ($loading_element.length === 0) {
+                $skinRoot.append('<div class="mec-modal-result"></div>');
+                $loading_element = $skinRoot.find('.mec-modal-result');
+            }
+            $loading_element.addClass('mec-month-navigator-loading');
+            jQuery("#gmap-data-" + settings.id).val("");
 
             $.ajax({
                 url: settings.ajax_url,
@@ -4027,10 +4105,10 @@ jQuery(window).on('load', function()
                         $("#mec_skin_events_" + settings.id).html('');
 
                         // Remove loading Class
-                        $('.mec-modal-result').removeClass("mec-month-navigator-loading");
+                        $loading_element.removeClass("mec-month-navigator-loading");
 
                         // Hide Map
-                        $('.mec-skin-map-container').addClass("mec-util-hidden");
+                        $skinRoot.find('.mec-skin-map-container').addClass("mec-util-hidden");
 
                         // Hide it
                         $("#mec_skin_" + settings.id + " .mec-load-more-button").addClass("mec-util-hidden");
@@ -4042,10 +4120,10 @@ jQuery(window).on('load', function()
                         $("#mec_skin_events_" + settings.id).html(response.html);
 
                         // Remove loading Class
-                        $('.mec-modal-result').removeClass("mec-month-navigator-loading");
+                        $loading_element.removeClass("mec-month-navigator-loading");
 
                         // Show Map
-                        $('.mec-skin-map-container').removeClass("mec-util-hidden");
+                        $skinRoot.find('.mec-skin-map-container').removeClass("mec-util-hidden");
 
                         // Show load more button
                         if (response.count >= settings.limit) $("#mec_skin_" + settings.id + " .mec-load-more-button").removeClass("mec-util-hidden");
@@ -4062,7 +4140,7 @@ jQuery(window).on('load', function()
                         }
                     }
 
-                    $(document).trigger('mec_search_init',['custom',settings,response]);
+                    $(document).trigger('mec_search_init', ['custom', settings, response]);
                 },
                 error: function () { }
             });
@@ -4099,7 +4177,7 @@ jQuery(window).on('load', function()
 
         function setListeners() {
             // Search Widget
-            if ( settings.sf.container !== '' ) {
+            if (settings.sf.container !== '') {
                 sf = $(settings.sf.container).mecSearchForm({
                     id: settings.id,
                     refine: settings.sf.refine,
@@ -4121,12 +4199,12 @@ jQuery(window).on('load', function()
             });
 
             // Scroll
-            if(settings.pagination === 'scroll') {
+            if (settings.pagination === 'scroll') {
                 $(window).on("scroll", function (event) {
                     var $target = $("#mec_skin_" + settings.id + " .mec-load-more-wrap");
 
                     var finished = $target.data('page-finished');
-                    if(finished) return;
+                    if (finished) return;
 
                     var hT = $target.offset().top,
                         hH = $target.outerHeight(),
@@ -4142,18 +4220,15 @@ jQuery(window).on('load', function()
             }
 
             // Next Prev Pagination
-            if(settings.pagination === 'nextprev')
-            {
+            if (settings.pagination === 'nextprev') {
                 // Events Wrapper
                 const $EW = $("#mec_skin_events_" + settings.id);
 
                 let next_disabled = false;
 
                 // Previous Button
-                $prev.on('click', function()
-                {
-                    if(history.length)
-                    {
+                $prev.on('click', function () {
+                    if (history.length) {
                         let page = history.pop();
 
                         // Display Events
@@ -4169,17 +4244,16 @@ jQuery(window).on('load', function()
                     }
 
                     // Hide Previous Button
-                    if(!history.length) $prev.addClass('mec-util-hidden');
+                    if (!history.length) $prev.addClass('mec-util-hidden');
                 });
 
                 // Next Button
-                $next.on('click', function(e)
-                {
+                $next.on('click', function (e) {
                     // Prevent Redirect
                     e.preventDefault();
 
                     // Currently Disabled
-                    if(next_disabled) return;
+                    if (next_disabled) return;
 
                     // Disable Button
                     next_disabled = true;
@@ -4195,10 +4269,9 @@ jQuery(window).on('load', function()
                         html: $EW.html()
                     });
 
-                    loadMore(function(response)
-                    {
+                    loadMore(function (response) {
                         // Display New Events
-                        if(response.count) $EW.html(response.html);
+                        if (response.count) $EW.html(response.html);
                         // Remove Last Page
                         else history.pop();
 
@@ -4209,9 +4282,9 @@ jQuery(window).on('load', function()
                         $EW.removeClass('mec-loading-events');
 
                         // Display Previous Button
-                        if(history.length) $prev.removeClass('mec-util-hidden');
+                        if (history.length) $prev.removeClass('mec-util-hidden');
                         // Hide Next Button
-                        if(response.count === 0 || (typeof response.has_more_event !== 'undefined' && !response.has_more_event)) $next.addClass('mec-util-hidden');
+                        if (response.count === 0 || (typeof response.has_more_event !== 'undefined' && !response.has_more_event)) $next.addClass('mec-util-hidden');
                     });
                 });
             }
@@ -4232,7 +4305,7 @@ jQuery(window).on('load', function()
                 var occurrence = get_parameter_by_name('occurrence', href);
                 var time = get_parameter_by_name('time', href);
 
-                if( 'undefined' == typeof id ){
+                if ('undefined' == typeof id) {
                     return;
                 }
 
@@ -4246,7 +4319,7 @@ jQuery(window).on('load', function()
                 var occurrence = get_parameter_by_name('occurrence', href);
                 var time = get_parameter_by_name('time', href);
 
-                if( 'undefined' == typeof id ){
+                if ('undefined' == typeof id) {
                     return;
                 }
 
@@ -4273,14 +4346,14 @@ jQuery(window).on('load', function()
                         $("#mec_skin_" + settings.id + " .mec-load-more-wrap").data('page-finished', true).removeClass('mec-load-more-scroll-loading');
 
                         // Run Callback
-                        if(typeof callback === 'function') callback(response);
+                        if (typeof callback === 'function') callback(response);
                     } else {
                         // Show load more button
                         if (typeof response.has_more_event === 'undefined' || (typeof response.has_more_event !== 'undefined' && response.has_more_event)) $("#mec_skin_" + settings.id + " .mec-load-more-button").removeClass("mec-util-hidden");
                         else $("#mec_skin_" + settings.id + " .mec-load-more-button").addClass("mec-util-hidden");
 
                         // Run Callback
-                        if(typeof callback === 'function') callback(response);
+                        if (typeof callback === 'function') callback(response);
                         // Append Items
                         else $("#mec_skin_events_" + settings.id).append(response.html);
 
@@ -4301,7 +4374,7 @@ jQuery(window).on('load', function()
                         $("#mec_skin_" + settings.id + " .mec-load-more-wrap").removeClass('mec-load-more-scroll-loading');
                     }
 
-                    $(document).trigger('mec_load_more_init',['timeline',settings]);
+                    $(document).trigger('mec_load_more_init', ['timeline', settings]);
                 },
                 error: function () { }
             });
@@ -4311,9 +4384,13 @@ jQuery(window).on('load', function()
             // Hide no event message
             $("#mec_skin_no_events_" + settings.id).addClass("mec-util-hidden");
 
-            // Add loading Class
-            if (jQuery('.mec-modal-result').length === 0) jQuery('.mec-wrap').append('<div class="mec-modal-result"></div>');
-            jQuery('.mec-modal-result').addClass('mec-month-navigator-loading');
+            var $skinRoot = jQuery("#mec_skin_" + settings.id);
+            var $loading_element = $skinRoot.find('.mec-modal-result');
+            if ($loading_element.length === 0) {
+                $skinRoot.append('<div class="mec-modal-result"></div>');
+                $loading_element = $skinRoot.find('.mec-modal-result');
+            }
+            $loading_element.addClass('mec-month-navigator-loading');
 
             $.ajax({
                 url: settings.ajax_url,
@@ -4326,10 +4403,10 @@ jQuery(window).on('load', function()
                         $("#mec_skin_events_" + settings.id).html('');
 
                         // Remove loading Class
-                        $('.mec-modal-result').removeClass("mec-month-navigator-loading");
+                        $loading_element.removeClass("mec-month-navigator-loading");
 
                         // Hide Map
-                        $('.mec-skin-map-container').addClass("mec-util-hidden");
+                        $skinRoot.find('.mec-skin-map-container').addClass("mec-util-hidden");
 
                         // Hide it
                         $("#mec_skin_" + settings.id + " .mec-load-more-button").addClass("mec-util-hidden");
@@ -4341,10 +4418,10 @@ jQuery(window).on('load', function()
                         $("#mec_skin_events_" + settings.id).html(response.html);
 
                         // Remove loading Class
-                        $('.mec-modal-result').removeClass("mec-month-navigator-loading");
+                        $loading_element.removeClass("mec-month-navigator-loading");
 
                         // Show Map
-                        $('.mec-skin-map-container').removeClass("mec-util-hidden");
+                        $skinRoot.find('.mec-skin-map-container').removeClass("mec-util-hidden");
 
                         // Show load more button
                         if (response.count >= settings.limit) $("#mec_skin_" + settings.id + " .mec-load-more-button").removeClass("mec-util-hidden");
@@ -4361,7 +4438,7 @@ jQuery(window).on('load', function()
                         }
                     }
 
-                    $(document).trigger('mec_search_init',['timeline',settings,response]);
+                    $(document).trigger('mec_search_init', ['timeline', settings, response]);
                 },
                 error: function () { }
             });
@@ -4398,7 +4475,7 @@ jQuery(window).on('load', function()
 
         function setListeners() {
             // Search Widget
-            if ( settings.sf.container !== '' ) {
+            if (settings.sf.container !== '') {
                 sf = $(settings.sf.container).mecSearchForm({
                     id: settings.id,
                     refine: settings.sf.refine,
@@ -4420,12 +4497,12 @@ jQuery(window).on('load', function()
             });
 
             // Scroll
-            if(settings.pagination === 'scroll') {
+            if (settings.pagination === 'scroll') {
                 $(window).on("scroll", function (event) {
                     var $target = $("#mec_skin_" + settings.id + " .mec-load-more-wrap");
 
                     var finished = $target.data('page-finished');
-                    if(finished) return;
+                    if (finished) return;
 
                     var hT = $target.offset().top,
                         hH = $target.outerHeight(),
@@ -4441,18 +4518,15 @@ jQuery(window).on('load', function()
             }
 
             // Next Prev Pagination
-            if(settings.pagination === 'nextprev')
-            {
+            if (settings.pagination === 'nextprev') {
                 // Events Wrapper
                 const $EW = $("#mec_skin_events_" + settings.id + " .mec-events-agenda-container");
 
                 let next_disabled = false;
 
                 // Previous Button
-                $prev.on('click', function()
-                {
-                    if(history.length)
-                    {
+                $prev.on('click', function () {
+                    if (history.length) {
                         let page = history.pop();
 
                         // Display Events
@@ -4468,17 +4542,16 @@ jQuery(window).on('load', function()
                     }
 
                     // Hide Previous Button
-                    if(!history.length) $prev.addClass('mec-util-hidden');
+                    if (!history.length) $prev.addClass('mec-util-hidden');
                 });
 
                 // Next Button
-                $next.on('click', function(e)
-                {
+                $next.on('click', function (e) {
                     // Prevent Redirect
                     e.preventDefault();
 
                     // Currently Disabled
-                    if(next_disabled) return;
+                    if (next_disabled) return;
 
                     // Disable Button
                     next_disabled = true;
@@ -4494,10 +4567,9 @@ jQuery(window).on('load', function()
                         html: $EW.html()
                     });
 
-                    loadMore(function(response)
-                    {
+                    loadMore(function (response) {
                         // Display New Events
-                        if(response.count) $EW.html(response.html);
+                        if (response.count) $EW.html(response.html);
                         // Remove Last Page
                         else history.pop();
 
@@ -4508,9 +4580,9 @@ jQuery(window).on('load', function()
                         $EW.removeClass('mec-loading-events');
 
                         // Display Previous Button
-                        if(history.length) $prev.removeClass('mec-util-hidden');
+                        if (history.length) $prev.removeClass('mec-util-hidden');
                         // Hide Next Button
-                        if(response.count === 0 || (typeof response.has_more_event !== 'undefined' && !response.has_more_event)) $next.addClass('mec-util-hidden');
+                        if (response.count === 0 || (typeof response.has_more_event !== 'undefined' && !response.has_more_event)) $next.addClass('mec-util-hidden');
                     });
                 });
             }
@@ -4536,7 +4608,7 @@ jQuery(window).on('load', function()
                 var occurrence = get_parameter_by_name('occurrence', href);
                 var time = get_parameter_by_name('time', href);
 
-                if( 'undefined' == typeof id ){
+                if ('undefined' == typeof id) {
                     return;
                 }
 
@@ -4563,14 +4635,14 @@ jQuery(window).on('load', function()
                         $("#mec_skin_" + settings.id + " .mec-load-more-wrap").data('page-finished', true).removeClass('mec-load-more-scroll-loading');
 
                         // Run Callback
-                        if(typeof callback === 'function') callback(response);
+                        if (typeof callback === 'function') callback(response);
                     } else {
                         // Show load more button
                         if (typeof response.has_more_event === 'undefined' || (typeof response.has_more_event !== 'undefined' && response.has_more_event)) $("#mec_skin_" + settings.id + " .mec-load-more-button").removeClass("mec-util-hidden");
                         else $("#mec_skin_" + settings.id + " .mec-load-more-button").addClass("mec-util-hidden");
 
                         // Run Callback
-                        if(typeof callback === 'function') callback(response);
+                        if (typeof callback === 'function') callback(response);
                         // Append Items
                         else $("#mec_skin_events_" + settings.id + " .mec-events-agenda-container").append(response.html);
 
@@ -4593,7 +4665,7 @@ jQuery(window).on('load', function()
                         $("#mec_skin_" + settings.id + " .mec-load-more-wrap").removeClass('mec-load-more-scroll-loading');
                     }
 
-                    $(document).trigger('mec_load_more_init',['agenda',settings]);
+                    $(document).trigger('mec_load_more_init', ['agenda', settings]);
                 },
                 error: function () { }
             });
@@ -4650,7 +4722,7 @@ jQuery(window).on('load', function()
                     }
                     mecFluentCustomScrollbar();
 
-                    $(document).trigger('mec_search_init',['agenda',settings,response]);
+                    $(document).trigger('mec_search_init', ['agenda', settings, response]);
                 },
                 error: function () { }
             });
@@ -4817,7 +4889,7 @@ jQuery(window).on('load', function()
             var occurrence = get_parameter_by_name('occurrence', href);
             var time = get_parameter_by_name('time', href);
 
-            if( 'undefined' == typeof id ){
+            if ('undefined' == typeof id) {
                 return;
             }
 
@@ -4901,8 +4973,14 @@ jQuery(window).on('load', function()
             var currentDate = Math.floor($.now() / 1000);
 
             if (eventDate <= currentDate) {
+                selector.find(".mec-days").text("00");
+                selector.find(".mec-hours").text("00");
+                selector.find(".mec-minutes").text("00");
+                selector.find(".mec-seconds").text("00");
+
                 callback.call(this);
                 clearInterval(interval);
+                return;
             }
 
             var seconds = eventDate - currentDate;
@@ -4988,18 +5066,18 @@ jQuery(window).on('load', function()
         setListeners();
 
         // Search Widget
-        if ( settings.sf.container !== '' ) {
+        if (settings.sf.container !== '') {
             $(settings.sf.container).mecSearchForm(
-            {
-                id: settings.id,
-                refine: settings.sf.refine,
-                ajax_url: settings.ajax_url,
-                atts: settings.atts,
-                callback: function (atts) {
-                    settings.atts = atts;
-                    search(active_year, active_month);
-                }
-            });
+                {
+                    id: settings.id,
+                    refine: settings.sf.refine,
+                    ajax_url: settings.ajax_url,
+                    atts: settings.atts,
+                    callback: function (atts) {
+                        settings.atts = atts;
+                        search(active_year, active_month);
+                    }
+                });
 
             $(settings.sf.container).addClass('mec-skin-search-init');
         }
@@ -5064,7 +5142,7 @@ jQuery(window).on('load', function()
                         // Remove loading Class
                         $('.mec-modal-result').removeClass("mec-month-navigator-loading");
 
-                        $(document).trigger('mec_search_init',['tile',settings,response]);
+                        $(document).trigger('mec_search_init', ['tile', settings, response]);
                     },
                     error: function () { }
                 });
@@ -5159,12 +5237,12 @@ jQuery(window).on('load', function()
             });
 
             // Scroll
-            if(settings.pagination === 'scroll') {
+            if (settings.pagination === 'scroll') {
                 $(window).on("scroll", function (event) {
                     var $target = $("#mec_skin_" + settings.id + " .mec-load-more-wrap");
 
                     var finished = $target.data('page-finished');
-                    if(finished) return;
+                    if (finished) return;
 
                     var hT = $target.offset().top,
                         hH = $target.outerHeight(),
@@ -5180,18 +5258,15 @@ jQuery(window).on('load', function()
             }
 
             // Next Prev Pagination
-            if(settings.pagination === 'nextprev')
-            {
+            if (settings.pagination === 'nextprev') {
                 // Events Wrapper
                 const $EW = $("#mec_skin_events_" + settings.id);
 
                 let next_disabled = false;
 
                 // Previous Button
-                $prev.on('click', function()
-                {
-                    if(history.length)
-                    {
+                $prev.on('click', function () {
+                    if (history.length) {
                         let page = history.pop();
 
                         // Display Events
@@ -5207,17 +5282,16 @@ jQuery(window).on('load', function()
                     }
 
                     // Hide Previous Button
-                    if(!history.length) $prev.addClass('mec-util-hidden');
+                    if (!history.length) $prev.addClass('mec-util-hidden');
                 });
 
                 // Next Button
-                $next.on('click', function(e)
-                {
+                $next.on('click', function (e) {
                     // Prevent Redirect
                     e.preventDefault();
 
                     // Currently Disabled
-                    if(next_disabled) return;
+                    if (next_disabled) return;
 
                     // Disable Button
                     next_disabled = true;
@@ -5233,10 +5307,9 @@ jQuery(window).on('load', function()
                         html: $EW.html()
                     });
 
-                    loadMore(function(response)
-                    {
+                    loadMore(function (response) {
                         // Display New Events
-                        if(response.count) $EW.html(response.html);
+                        if (response.count) $EW.html(response.html);
                         // Remove Last Page
                         else history.pop();
 
@@ -5247,9 +5320,9 @@ jQuery(window).on('load', function()
                         $EW.removeClass('mec-loading-events');
 
                         // Display Previous Button
-                        if(history.length) $prev.removeClass('mec-util-hidden');
+                        if (history.length) $prev.removeClass('mec-util-hidden');
                         // Hide Next Button
-                        if(response.count === 0 || (typeof response.has_more_event !== 'undefined' && !response.has_more_event)) $next.addClass('mec-util-hidden');
+                        if (response.count === 0 || (typeof response.has_more_event !== 'undefined' && !response.has_more_event)) $next.addClass('mec-util-hidden');
                     });
                 });
             }
@@ -5307,7 +5380,7 @@ jQuery(window).on('load', function()
                 var occurrence = get_parameter_by_name('occurrence', href);
                 var time = get_parameter_by_name('time', href);
 
-                if( 'undefined' == typeof id ){
+                if ('undefined' == typeof id) {
                     return;
                 }
 
@@ -5341,7 +5414,7 @@ jQuery(window).on('load', function()
                             $("#mec_skin_" + settings.id + " .mec-load-more-wrap").data('page-finished', true).removeClass('mec-load-more-scroll-loading');
 
                             // Run Callback
-                            if(typeof callback === 'function') callback(response);
+                            if (typeof callback === 'function') callback(response);
                         }
                         else {
                             // Show load more button
@@ -5349,7 +5422,7 @@ jQuery(window).on('load', function()
                             else $load_more_button.addClass("mec-util-hidden");
 
                             // Run Callback
-                            if(typeof callback === 'function') callback(response);
+                            if (typeof callback === 'function') callback(response);
                             // Append Items
                             else $("#mec_skin_events_" + settings.id).append(response.html);
 
@@ -5371,7 +5444,7 @@ jQuery(window).on('load', function()
                             $("#mec_skin_" + settings.id + " .mec-load-more-wrap").removeClass('mec-load-more-scroll-loading');
                         }
 
-                        $(document).trigger('mec_load_more_init',['tile',settings]);
+                        $(document).trigger('mec_load_more_init', ['tile', settings]);
                     },
                     error: function () { }
                 });
@@ -5560,7 +5633,7 @@ function mec_focus_week(id, skin) {
                 if (target.length) {
                     var scrollTopVal = target.offset().top - 30;
 
-                    if($('body[class^="mec-events-template"]').length > 0 ) {
+                    if ($('body[class^="mec-events-template"]').length > 0) {
                         $('html, body').animate({
                             scrollTop: scrollTopVal
                         }, 600);
@@ -5588,8 +5661,7 @@ function mec_focus_week(id, skin) {
         }
 
         // FAQ
-        $(document).on('click', '.mec-faq-toggle-icon', function()
-        {
+        $(document).on('click', '.mec-faq-toggle-icon', function () {
             $(this).parent().toggleClass('close');
         });
     });
@@ -5663,19 +5735,19 @@ function mec_focus_week(id, skin) {
                 fes_nonce: mecdata.fes_nonce,
                 key: key
             })
-            .done(function (data) {
-                if ($(data).hasClass('mec-error')) {
-                    list.prepend(data);
-                    setTimeout(function () {
-                        $('#mec-speaker-error-${key}').remove();
-                    }, 1500);
-                } else {
-                    list.html(data);
-                    content.val('');
-                }
+                .done(function (data) {
+                    if ($(data).hasClass('mec-error')) {
+                        list.prepend(data);
+                        setTimeout(function () {
+                            $('#mec-speaker-error-${key}').remove();
+                        }, 1500);
+                    } else {
+                        list.html(data);
+                        content.val('');
+                    }
 
-                $($this).prop("disabled", false).css('cursor', 'pointer');
-            });
+                    $($this).prop("disabled", false).css('cursor', 'pointer');
+                });
         });
 
         // FES Speaker Adding - Full Details
@@ -5712,30 +5784,30 @@ function mec_focus_week(id, skin) {
                 fes_nonce: mecdata.fes_nonce,
                 key: key
             })
-            .done(function (data) {
-                if ($(data).hasClass('mec-error')) {
-                    list.prepend(data);
-                    setTimeout(function () {
-                        $('#mec-speaker-error-${key}').remove();
-                    }, 1500);
-                } else {
-                    list.html(data);
-                    name.val('');
-                    type.val('');
-                    job_title.val('');
-                    tel.val('');
-                    email.val('');
-                    website.val('');
-                    facebook.val('');
-                    instagram.val('');
-                    linkedin.val('');
-                    twitter.val('');
+                .done(function (data) {
+                    if ($(data).hasClass('mec-error')) {
+                        list.prepend(data);
+                        setTimeout(function () {
+                            $('#mec-speaker-error-${key}').remove();
+                        }, 1500);
+                    } else {
+                        list.html(data);
+                        name.val('');
+                        type.val('');
+                        job_title.val('');
+                        tel.val('');
+                        email.val('');
+                        website.val('');
+                        facebook.val('');
+                        instagram.val('');
+                        linkedin.val('');
+                        twitter.val('');
 
-                    $('#mec_fes_speaker_remove_image_button').trigger('click');
-                }
+                        $('#mec_fes_speaker_remove_image_button').trigger('click');
+                    }
 
-                $($this).prop("disabled", false).css('cursor', 'pointer');
-            });
+                    $($this).prop("disabled", false).css('cursor', 'pointer');
+                });
         });
 
         // FES Sponsor Adding - Name Only
@@ -5752,19 +5824,19 @@ function mec_focus_week(id, skin) {
                 fes_nonce: mecdata.fes_nonce,
                 key: key
             })
-            .done(function (data) {
-                if ($(data).hasClass('mec-error')) {
-                    list.prepend(data);
-                    setTimeout(function () {
-                        $('#mec-sponsor-error-${key}').remove();
-                    }, 1500);
-                } else {
-                    list.html(data);
-                    content.val('');
-                }
+                .done(function (data) {
+                    if ($(data).hasClass('mec-error')) {
+                        list.prepend(data);
+                        setTimeout(function () {
+                            $('#mec-sponsor-error-${key}').remove();
+                        }, 1500);
+                    } else {
+                        list.html(data);
+                        content.val('');
+                    }
 
-                $($this).prop("disabled", false).css('cursor', 'pointer');
-            });
+                    $($this).prop("disabled", false).css('cursor', 'pointer');
+                });
         });
 
         // FES Sponsor Adding - Full Details
@@ -5785,29 +5857,29 @@ function mec_focus_week(id, skin) {
                 fes_nonce: mecdata.fes_nonce,
                 key: key
             })
-            .done(function (data) {
-                if ($(data).hasClass('mec-error')) {
-                    list.prepend(data);
-                    setTimeout(function () {
-                        $('#mec-sponsor-error-${key}').remove();
-                    }, 1500);
-                } else {
-                    list.html(data);
-                    name.val('');
-                    url.val('');
+                .done(function (data) {
+                    if ($(data).hasClass('mec-error')) {
+                        list.prepend(data);
+                        setTimeout(function () {
+                            $('#mec-sponsor-error-${key}').remove();
+                        }, 1500);
+                    } else {
+                        list.html(data);
+                        name.val('');
+                        url.val('');
 
-                    $('#mec_fes_sponsor_remove_image_button').trigger('click');
-                }
+                        $('#mec_fes_sponsor_remove_image_button').trigger('click');
+                    }
 
-                $($this).prop("disabled", false).css('cursor', 'pointer');
-            });
+                    $($this).prop("disabled", false).css('cursor', 'pointer');
+                });
         });
 
         // Check RTL website
         var owl_rtl = $('body').hasClass('rtl') ? true : false;
 
         // MEC FES Date Item Event
-        $(document).on( 'click', '.mec-export-list-wrapper .mec-export-list-item', function () {
+        $(document).on('click', '.mec-export-list-wrapper .mec-export-list-item', function () {
             $('.mec-export-list-item').removeClass('fes-export-date-active');
             $(this).addClass('fes-export-date-active');
         });
@@ -5819,7 +5891,7 @@ function mec_focus_week(id, skin) {
         });
 
         // MEC FES export csv
-        $(document).on( 'click','.mec-event-export-csv, .mec-event-export-excel', function () {
+        $(document).on('click', '.mec-event-export-csv, .mec-event-export-excel', function () {
             var mec_event_id = $(this).parent().parent().data('event-id');
 
             var time = $(this).parent().parent().find($('.fes-export-date-active')).data('time');
@@ -5863,10 +5935,8 @@ function mec_book_form_back_btn_click(context, unique_id) {
         var mec_form_data_step_1 = jQuery('body').data('mec-book-form-data-step-1');
 
         jQuery('#mec_booking' + unique_id).html(jQuery('body').data('mec-book-form-step-1'));
-        jQuery.each(mec_form_data_step_1, function(index, object_item)
-        {
-            if(object_item.name === 'book[date][]')
-            {
+        jQuery.each(mec_form_data_step_1, function (index, object_item) {
+            if (object_item.name === 'book[date][]') {
                 jQuery('[value="' + object_item.value + '"]').prop('checked', true);
             }
             else jQuery('[name="' + object_item.name + '"]').val(object_item.value);
@@ -5916,7 +5986,7 @@ function mec_book_form_back_btn_click(context, unique_id) {
 
 // Google map Skin
 function gmapSkin(NewJson, id) {
-    var gmap_temp = jQuery("#gmap-data-"+id);
+    var gmap_temp = jQuery("#gmap-data-" + id);
     var beforeJson = gmap_temp.val();
     if (typeof beforeJson === 'undefined') beforeJson = '';
 
@@ -6116,7 +6186,7 @@ function mecFluentNiceSelect() {
 
 function mecFluentCustomScrollbar(y) {
 
-    jQuery(document).trigger( 'mec_custom_scrollbar_init', [y] );
+    jQuery(document).trigger('mec_custom_scrollbar_init', [y]);
 
     if (jQuery('.mec-fluent-wrap').length < 0) {
         return;
@@ -6166,10 +6236,10 @@ function mecFluentTimeTableUI() {
 
 function mecFluentSliderUI() {
     jQuery(window).on('load', function () {
-        if(typeof mecdata === 'undefined') return;
+        if (typeof mecdata === 'undefined') return;
 
-        jQuery('.mec-fluent-wrap.mec-skin-slider-container .owl-next').prepend('<span>'+ mecdata.next +'</span>');
-        jQuery('.mec-fluent-wrap.mec-skin-slider-container .owl-prev').append('<span>'+  mecdata.prev +'</span>');
+        jQuery('.mec-fluent-wrap.mec-skin-slider-container .owl-next').prepend('<span>' + mecdata.next + '</span>');
+        jQuery('.mec-fluent-wrap.mec-skin-slider-container .owl-prev').append('<span>' + mecdata.prev + '</span>');
     });
 }
 
@@ -6322,7 +6392,7 @@ function mecFluentYearlyUI(eventID, yearID) {
                         initLoadMore('#mec_list_view_month_' + settings.id + '_' + response.current_month.id);
                     }
 
-                    $(document).trigger('mec_load_more_init',['list',settings]);
+                    $(document).trigger('mec_load_more_init', ['list', settings]);
                 },
                 error: function () { }
             });
@@ -6340,7 +6410,7 @@ function mecFluentYearlyUI(eventID, yearID) {
         active_year = initYear = settings.active_month.year;
 
         // Search Widget
-        if ( settings.sf.container !== '' ) {
+        if (settings.sf.container !== '') {
             sf = $(settings.sf.container).mecSearchForm({
                 id: settings.id,
                 refine: settings.sf.refine,
@@ -6423,9 +6493,9 @@ function mecFluentYearlyUI(eventID, yearID) {
 
                     mecFluentCustomScrollbar();
 
-                    $(document).trigger('mec_search_process_end', {r:response, settings_id: settings.id});
+                    $(document).trigger('mec_search_process_end', { r: response, settings_id: settings.id });
 
-                    $(document).trigger('mec_search_init',['list',settings,response]);
+                    $(document).trigger('mec_search_init', ['list', settings, response]);
                 },
                 error: function () { }
             });
@@ -6496,9 +6566,9 @@ function mecFluentYearlyUI(eventID, yearID) {
                             mecFluentCustomScrollbar(0);
                         }
 
-                        if(jQuery().niceSelect) jQuery('.mec-fluent-wrap').find('.mec-filter-content').find('select').niceSelect();
+                        if (jQuery().niceSelect) jQuery('.mec-fluent-wrap').find('.mec-filter-content').find('select').niceSelect();
 
-                        $(document).trigger('mec_set_month_process_end', {r:response, settings_id: settings.id});
+                        $(document).trigger('mec_set_month_process_end', { r: response, settings_id: settings.id });
                     },
                     error: function () { }
                 });
@@ -6538,7 +6608,7 @@ function mecFluentYearlyUI(eventID, yearID) {
                 var occurrence = get_parameter_by_name('occurrence', href);
                 var time = get_parameter_by_name('time', href);
 
-                if( 'undefined' == typeof id ){
+                if ('undefined' == typeof id) {
                     return;
                 }
 
@@ -6607,7 +6677,7 @@ function mecFluentYearlyUI(eventID, yearID) {
                         initLoadMore('#mec_grid_view_month_' + settings.id + '_' + response.current_month.id);
                     }
 
-                    $(document).trigger('mec_load_more_init',['grid',settings]);
+                    $(document).trigger('mec_load_more_init', ['grid', settings]);
                 },
                 error: function () { }
             });
@@ -6625,7 +6695,7 @@ function mecFluentYearlyUI(eventID, yearID) {
         active_year = initYear = settings.active_month.year;
 
         // Search Widget
-        if ( settings.sf.container !== '' ) {
+        if (settings.sf.container !== '') {
             sf = $(settings.sf.container).mecSearchForm({
                 id: settings.id,
                 refine: settings.sf.refine,
@@ -6708,7 +6778,7 @@ function mecFluentYearlyUI(eventID, yearID) {
 
                     mecFluentCustomScrollbar();
 
-                    $(document).trigger('mec_search_init',['grid',settings,response]);
+                    $(document).trigger('mec_search_init', ['grid', settings, response]);
                 },
                 error: function () { }
             });
@@ -6817,7 +6887,7 @@ function mecFluentYearlyUI(eventID, yearID) {
                 var occurrence = get_parameter_by_name('occurrence', href);
                 var time = get_parameter_by_name('time', href);
 
-                if( 'undefined' == typeof id ){
+                if ('undefined' == typeof id) {
                     return;
                 }
 
@@ -6828,10 +6898,8 @@ function mecFluentYearlyUI(eventID, yearID) {
 }(jQuery));
 
 // MEC Booking Calendar
-(function($)
-{
-    $.fn.mecBookingCalendar = function(options)
-    {
+(function ($) {
+    $.fn.mecBookingCalendar = function (options) {
         var active_month;
         var active_year;
 
@@ -6854,11 +6922,9 @@ function mecFluentYearlyUI(eventID, yearID) {
         // Set onclick Listeners
         setListeners();
 
-        function initMonthNavigator()
-        {
+        function initMonthNavigator() {
             // Add onclick event
-            $("#mec_booking_calendar_" + settings.id + " .mec-load-month").off('click').on('click', function()
-            {
+            $("#mec_booking_calendar_" + settings.id + " .mec-load-month").off('click').on('click', function () {
                 var year = $(this).data('mec-year');
                 var month = $(this).data('mec-month');
 
@@ -6866,8 +6932,7 @@ function mecFluentYearlyUI(eventID, yearID) {
             });
         }
 
-        function setMonth(year, month)
-        {
+        function setMonth(year, month) {
             active_month = month;
             active_year = year;
 
@@ -6878,45 +6943,40 @@ function mecFluentYearlyUI(eventID, yearID) {
             $modal.addClass('mec-month-navigator-loading');
 
             $.ajax(
-            {
-                url: settings.ajax_url,
-                data: "action=mec_booking_calendar_load_month&event_id=" + settings.event_id + "&uniqueid=" + settings.id + "&year=" + year + "&month=" + month,
-                dataType: "json",
-                type: "post",
-                success: function(response)
                 {
-                    const $month_wrapper = $('#mec_booking_calendar_wrapper' + settings.id + ' .mec-select-date-calendar-container');
+                    url: settings.ajax_url,
+                    data: "action=mec_booking_calendar_load_month&event_id=" + settings.event_id + "&uniqueid=" + settings.id + "&year=" + year + "&month=" + month,
+                    dataType: "json",
+                    type: "post",
+                    success: function (response) {
+                        const $month_wrapper = $('#mec_booking_calendar_wrapper' + settings.id + ' .mec-select-date-calendar-container');
 
-                    // HTML
-                    $month_wrapper.html(response.html);
+                        // HTML
+                        $month_wrapper.html(response.html);
 
-                    // Hide Message
-                    $('#mec_book_form' + settings.id + ' .mec-ticket-unavailable-spots').addClass('mec-util-hidden');
+                        // Hide Message
+                        $('#mec_book_form' + settings.id + ' .mec-ticket-unavailable-spots').addClass('mec-util-hidden');
 
-                    // Empty the Date
-                    $('#mec_book_form_date' + settings.id).val('').trigger('change');
+                        // Empty the Date
+                        $('#mec_book_form_date' + settings.id).val('').trigger('change');
 
-                    // Remove loading Class
-                    $modal.removeClass("mec-month-navigator-loading");
+                        // Remove loading Class
+                        $modal.removeClass("mec-month-navigator-loading");
 
-                    setTimeout(function()
-                    {
-                        $month_wrapper.find($('.mec-booking-calendar-date')).first().trigger('click');
-                    }, 200);
-                },
-                error: function()
-                {
-                    // Remove loading Class
-                    $modal.removeClass("mec-month-navigator-loading");
-                }
-            });
+                        setTimeout(function () {
+                            $month_wrapper.find($('.mec-booking-calendar-date')).first().trigger('click');
+                        }, 200);
+                    },
+                    error: function () {
+                        // Remove loading Class
+                        $modal.removeClass("mec-month-navigator-loading");
+                    }
+                });
         }
 
-        function setListeners()
-        {
+        function setListeners() {
             // Add the onclick event
-            $("#mec_booking_calendar_" + settings.id + " .mec-booking-calendar-date").off('click').on('click', function(e)
-            {
+            $("#mec_booking_calendar_" + settings.id + " .mec-booking-calendar-date").off('click').on('click', function (e) {
                 e.preventDefault();
 
                 // Activate
@@ -6935,8 +6995,7 @@ function mecFluentYearlyUI(eventID, yearID) {
             });
 
             // Add the onclick event on calendar date
-            $("#mec_booking_calendar_" + settings.id + " .mec-has-one-repeat-in-day").off('click').on('click', function(e)
-            {
+            $("#mec_booking_calendar_" + settings.id + " .mec-has-one-repeat-in-day").off('click').on('click', function (e) {
                 e.preventDefault();
 
                 var mec_date_value = $(this).attr('data-timestamp');
@@ -6955,8 +7014,7 @@ function mecFluentYearlyUI(eventID, yearID) {
             });
 
             // If day has some time slot
-            $("#mec_booking_calendar_" + settings.id + " .mec-has-time-repeat .mec-calendar-novel-selected-day").off('click').on('click', function(e)
-            {
+            $("#mec_booking_calendar_" + settings.id + " .mec-has-time-repeat .mec-calendar-novel-selected-day").off('click').on('click', function (e) {
                 $("#mec_booking_calendar_" + settings.id + " .mec-has-time-repeat").removeClass('mec-wrap-active').removeClass('mec-active');
                 $(".mec-has-time-repeat").find('.mec-booking-calendar-date').hide();
                 $(this).parents(".mec-has-time-repeat").find('.mec-booking-calendar-date').toggle();
@@ -6966,11 +7024,9 @@ function mecFluentYearlyUI(eventID, yearID) {
             var $has_time_repeat = $("#mec_booking_calendar_" + settings.id + " .mec-has-time-repeat");
 
             // Find more time in tooltip to set button
-            $has_time_repeat.on('mouseenter', function()
-            {
+            $has_time_repeat.on('mouseenter', function () {
                 var moreTimeFinder = $(this).find(".mec-booking-calendar-date");
-                if(moreTimeFinder.length >= 1)
-                {
+                if (moreTimeFinder.length >= 1) {
                     $(this).find(".mec-booking-tooltip").removeClass("multiple-time");
                     $(this).find(".mec-booking-tooltip").addClass("multiple-time");
                 }
@@ -6978,8 +7034,7 @@ function mecFluentYearlyUI(eventID, yearID) {
                 $(this).find(".mec-booking-calendar-date").css("display", "block");
             });
 
-            $has_time_repeat.off('click').on('click', function()
-            {
+            $has_time_repeat.off('click').on('click', function () {
                 $("#mec_booking_calendar_" + settings.id + " .mec-has-time-repeat").removeClass('mec-wrap-active').removeClass('mec-active');
                 $(this).addClass("mec-active");
 
@@ -6992,51 +7047,44 @@ function mecFluentYearlyUI(eventID, yearID) {
             });
 
             // Selected DateTime
-            if(settings.selected_datetime && $has_time_repeat.length)
-            {
-                var $selected_datetime = $(".mec-booking-calendar-date[data-timestamp='"+settings.selected_datetime+"']");
-                if($selected_datetime.length)
-                {
+            if (settings.selected_datetime && $has_time_repeat.length) {
+                var $selected_datetime = $(".mec-booking-calendar-date[data-timestamp='" + settings.selected_datetime + "']");
+                if ($selected_datetime.length) {
                     $selected_datetime.parent().addClass("multiple-time");
                     $selected_datetime.addClass("mec-active").trigger('click');
                 }
             }
 
             // Dropdown Toggle
-            $("#mec_booking_calendar_wrapper" + settings.id + " .mec-select-date-calendar-dropdown").off('click').on('click', function()
-            {
+            $("#mec_booking_calendar_wrapper" + settings.id + " .mec-select-date-calendar-dropdown").off('click').on('click', function () {
                 var $up = $("#mec_booking_calendar_wrapper" + settings.id + " .mec-select-date-calendar-icons-up");
                 var $down = $("#mec_booking_calendar_wrapper" + settings.id + " .mec-select-date-calendar-icons-down");
                 var $calendar = $("#mec_booking_calendar_wrapper" + settings.id + " .mec-select-date-calendar-container");
 
                 var $current = $(this).find($('.mec-select-date-calendar-icons span:not(.mec-util-hidden)'));
-                if($current.hasClass('mec-select-date-calendar-icons-up'))
-                {
+                if ($current.hasClass('mec-select-date-calendar-icons-up')) {
                     $up.addClass('mec-util-hidden');
                     $down.removeClass('mec-util-hidden');
                     $calendar.removeClass('mec-util-hidden');
 
-                    setTimeout(function()
-                    {
+                    setTimeout(function () {
                         $('body').off('click').on('click', mec_calendar_close_calendar_on_body_click);
                     }, 100);
                 }
-                else
-                {
+                else {
                     $up.removeClass('mec-util-hidden');
                     $down.addClass('mec-util-hidden');
                     $calendar.addClass('mec-util-hidden');
                 }
             });
 
-            function mec_calendar_close_calendar_on_body_click(e)
-            {
+            function mec_calendar_close_calendar_on_body_click(e) {
                 var $up = $("#mec_booking_calendar_wrapper" + settings.id + " .mec-select-date-calendar-icons-up");
                 var $down = $("#mec_booking_calendar_wrapper" + settings.id + " .mec-select-date-calendar-icons-down");
                 var $calendar = $("#mec_booking_calendar_wrapper" + settings.id + " .mec-select-date-calendar-container");
 
                 // Click was inside calendar
-                if($(e.target).closest($calendar).length > 0) return false;
+                if ($(e.target).closest($calendar).length > 0) return false;
 
                 $up.removeClass('mec-util-hidden');
                 $down.addClass('mec-util-hidden');
@@ -7049,10 +7097,8 @@ function mecFluentYearlyUI(eventID, yearID) {
 }(jQuery));
 
 // MEC Cart
-(function($)
-{
-    $.fn.mecCart = function(options)
-    {
+(function ($) {
+    $.fn.mecCart = function (options) {
         // Default Options
         var settings = $.extend({
             // These are the defaults.
@@ -7062,64 +7108,56 @@ function mecFluentYearlyUI(eventID, yearID) {
         // Set DOM Listeners
         setListeners();
 
-        function setListeners()
-        {
+        function setListeners() {
             // Add the onclick event
-            $(".mec-cart-remove-transactions").off('click').on('click', function(e)
-            {
+            $(".mec-cart-remove-transactions").off('click').on('click', function (e) {
                 e.preventDefault();
 
                 var transaction_id = $(this).data('transaction-id');
                 remove(transaction_id);
             });
 
-            $('#mec_cart_coupon_form').off('submit').on('submit', function(e)
-            {
+            $('#mec_cart_coupon_form').off('submit').on('submit', function (e) {
                 e.preventDefault();
                 coupon();
             });
         }
 
-        function remove(transaction_id)
-        {
+        function remove(transaction_id) {
             var $wrapper = $('.mec-cart');
 
             // Add loading Class
             $wrapper.addClass('mec-loading');
 
             $.ajax(
-            {
-                url: settings.ajax_url,
-                data: "action=mec_cart_remove_transaction&transaction_id=" + transaction_id,
-                dataType: "json",
-                type: "post",
-                success: function(response)
                 {
-                    // Remove Loading Class
-                    $wrapper.removeClass('mec-loading');
+                    url: settings.ajax_url,
+                    data: "action=mec_cart_remove_transaction&transaction_id=" + transaction_id,
+                    dataType: "json",
+                    type: "post",
+                    success: function (response) {
+                        // Remove Loading Class
+                        $wrapper.removeClass('mec-loading');
 
-                    if(response.success)
-                    {
-                        // Remove Transaction Row
-                        $('#mec_cart_transactions_'+transaction_id).remove();
+                        if (response.success) {
+                            // Remove Transaction Row
+                            $('#mec_cart_transactions_' + transaction_id).remove();
 
-                        if(!$('#mec_cart_transactions_table>tbody>tr').length)
-                        {
-                            $('#mec_cart_transactions_table').remove();
-                            $('.mec-cart-coupon-checkout-action').remove();
-                            $('.mec-cart-empty-wrapper').removeClass('mec-util-hidden');
+                            if (!$('#mec_cart_transactions_table>tbody>tr').length) {
+                                $('#mec_cart_transactions_table').remove();
+                                $('.mec-cart-coupon-checkout-action').remove();
+                                $('.mec-cart-empty-wrapper').removeClass('mec-util-hidden');
+                            }
+
+                            // Update Total Payable Price
+                            $('#mec_cart_total_payable').html(response.total);
                         }
-
-                        // Update Total Payable Price
-                        $('#mec_cart_total_payable').html(response.total);
-                    }
-                },
-                error: function(){}
-            });
+                    },
+                    error: function () { }
+                });
         }
 
-        function coupon()
-        {
+        function coupon() {
             var $wrapper = $('.mec-cart');
             var $message = $('#mec_cart_message');
 
@@ -7132,41 +7170,35 @@ function mecFluentYearlyUI(eventID, yearID) {
             var coupon = $('#mec_cart_coupon_input').val();
 
             $.ajax(
-            {
-                url: settings.ajax_url,
-                data: "action=mec_cart_coupon&coupon=" + coupon,
-                dataType: "json",
-                type: "post",
-                success: function(response)
                 {
-                    // Remove Loading Class
-                    $wrapper.removeClass('mec-loading');
+                    url: settings.ajax_url,
+                    data: "action=mec_cart_coupon&coupon=" + coupon,
+                    dataType: "json",
+                    type: "post",
+                    success: function (response) {
+                        // Remove Loading Class
+                        $wrapper.removeClass('mec-loading');
 
-                    if(response.success)
-                    {
-                        $message.html('<p class="mec-success">'+response.message+'</p>');
+                        if (response.success) {
+                            $message.html('<p class="mec-success">' + response.message + '</p>');
 
-                        setTimeout(function()
-                        {
-                            location.reload();
-                        }, 2000);
-                    }
-                    else
-                    {
-                        $message.html('<p class="mec-error">'+response.message+'</p>');
-                    }
-                },
-                error: function(){}
-            });
+                            setTimeout(function () {
+                                location.reload();
+                            }, 2000);
+                        }
+                        else {
+                            $message.html('<p class="mec-error">' + response.message + '</p>');
+                        }
+                    },
+                    error: function () { }
+                });
         }
     };
 }(jQuery));
 
 // MEC Checkout
-(function($)
-{
-    $.fn.mecCheckout = function(options)
-    {
+(function ($) {
+    $.fn.mecCheckout = function (options) {
         // Default Options
         var settings = $.extend({
             // These are the defaults.
@@ -7176,11 +7208,9 @@ function mecFluentYearlyUI(eventID, yearID) {
         // Set DOM Listeners
         setListeners();
 
-        function setListeners()
-        {
+        function setListeners() {
             // Add the onclick event
-            $(".mec-checkout-gateways-radio").off('change').on('change', function(e)
-            {
+            $(".mec-checkout-gateways-radio").off('change').on('change', function (e) {
                 e.preventDefault();
 
                 var gateway_id = $('.mec-checkout-gateways-radio:checked').val();
@@ -7196,23 +7226,21 @@ function mecFluentYearlyUI(eventID, yearID) {
                 jQuery("#mec-checkout-price-wrapper-" + gateway_id).removeClass("mec-util-hidden");
             });
 
-            if( $(".mec-checkout-gateways-radio:first").length ){
+            if ($(".mec-checkout-gateways-radio:first").length) {
 
-                $(".mec-checkout-gateways-radio:first").prop('checked',true).change();
-            }else{
+                $(".mec-checkout-gateways-radio:first").prop('checked', true).change();
+            } else {
 
                 jQuery(".mec-checkout-price-details-wrapper:first").removeClass("mec-util-hidden");
             }
 
-            $('#mec_checkout_form_free_booking').off('submit').on('submit', function(e)
-            {
+            $('#mec_checkout_form_free_booking').off('submit').on('submit', function (e) {
                 e.preventDefault();
                 free();
             });
         }
 
-        function free()
-        {
+        function free() {
             var $wrapper = $('.mec-checkout');
             var $message = $('#mec_checkout_message');
 
@@ -7225,35 +7253,36 @@ function mecFluentYearlyUI(eventID, yearID) {
             var data = $('#mec_checkout_form_free_booking').serialize();
 
             $.ajax(
-            {
-                url: settings.ajax_url,
-                data: data,
-                dataType: "json",
-                type: "post",
-                success: function(response)
                 {
-                    // Remove Loading Class
-                    $wrapper.removeClass('mec-loading');
-
-                    if(response.success)
-                    {
-                        $message.html('<div class="mec-success">'+response.message+'</div>');
-                        $wrapper.slideUp().html('');
-                    }
-                    else
-                    {
-                        $message.html('<div class="mec-error">'+response.message+'</div>');
-                    }
-                },
-                error: function(){}
-            });
+                    url: settings.ajax_url,
+                    data: data,
+                    dataType: "json",
+                    type: "post",
+	                    success: function (response) {
+	                        // Remove Loading Class
+	                        $wrapper.removeClass('mec-loading');
+	
+	                        if (response.success) {
+	                            $message.html('<div class="mec-success">' + response.message + '</div>');
+	                            if (response.data && typeof response.data.redirect_to !== "undefined" && response.data.redirect_to !== "") {
+	                                setTimeout(function () {
+	                                    window.location.href = response.data.redirect_to;
+	                                }, 2000);
+	                            }
+	                            $wrapper.slideUp().html('');
+	                        }
+	                        else {
+	                            $message.html('<div class="mec-error">' + response.message + '</div>');
+	                        }
+                    },
+                    error: function () { }
+                });
         }
     };
 }(jQuery));
 
 // Booking Shortcode Scripts
-jQuery(document).ready(function()
-{
+jQuery(document).ready(function () {
     // Event Gallery
     mec_init_event_gallery();
 
@@ -7266,7 +7295,7 @@ jQuery(document).ready(function()
     }
 
     // General Calendar
-    if ( jQuery("#gCalendarMonthFilterButton").length > 0 ) {
+    if (jQuery("#gCalendarMonthFilterButton").length > 0) {
         jQuery("#gCalendarMonthFilterButton").monthPicker({
             format: "yyyy-mm",
             viewMode: "months",
@@ -7276,15 +7305,12 @@ jQuery(document).ready(function()
     }
 });
 
-function mec_init_event_gallery()
-{
+function mec_init_event_gallery() {
     // Event Gallery
-    jQuery('.mec-event-gallery-wrapper').each(function()
-    {
+    jQuery('.mec-event-gallery-wrapper').each(function () {
         let $gallery = jQuery(this);
 
-        $gallery.find(jQuery('.mec-event-gallery-list li')).on('click', function()
-        {
+        $gallery.find(jQuery('.mec-event-gallery-list li')).on('click', function () {
             let $image = jQuery(this).find(jQuery('img'));
             let src = $image.data('full-src');
             let alt = $image.attr('alt');
@@ -7298,15 +7324,12 @@ function mec_init_event_gallery()
     });
 }
 
-function mec_toggle_shortcode_pagination(shortcode_id, method)
-{
-    if(method === 'show')
-    {
+function mec_toggle_shortcode_pagination(shortcode_id, method) {
+    if (method === 'show') {
         jQuery("#mec_skin_" + shortcode_id + " .mec-load-more-button").removeClass("mec-util-hidden");
         jQuery('#mec-nextprev-wrap-' + shortcode_id + ' .mec-nextprev-next-button').removeClass("mec-util-hidden");
     }
-    else
-    {
+    else {
         jQuery("#mec_skin_" + shortcode_id + " .mec-load-more-button").addClass("mec-util-hidden");
         jQuery('#mec-nextprev-wrap-' + shortcode_id + ' .mec-nextprev-next-button').addClass("mec-util-hidden");
         jQuery('#mec-nextprev-wrap-' + shortcode_id + ' .mec-nextprev-hide-button').addClass("mec-util-hidden");
@@ -7338,7 +7361,7 @@ function mec_toggle_shortcode_pagination(shortcode_id, method)
         var interval = setInterval(startProgress, 1000);
 
         function startProgress() {
-            if(value >= max) {
+            if (value >= max) {
                 clearInterval(interval);
                 return;
             }
@@ -7373,13 +7396,13 @@ function mec_toggle_shortcode_pagination(shortcode_id, method)
 
             remained_seconds = remained;
 
-            if(passed_days > 0) passed_str += (passed_days < 10 ? '0' : '') + passed_days + ':';
-            if(passed_days > 0 || passed_hours > 0) passed_str += (passed_hours < 10 ? '0' : '') + passed_hours + ':';
+            if (passed_days > 0) passed_str += (passed_days < 10 ? '0' : '') + passed_days + ':';
+            if (passed_days > 0 || passed_hours > 0) passed_str += (passed_hours < 10 ? '0' : '') + passed_hours + ':';
             passed_str += (passed_minutes < 10 ? '0' : '') + passed_minutes + ':';
             passed_str += (passed_seconds < 10 ? '0' : '') + passed_seconds;
 
-            if(remained_days > 0) remained_str += (remained_days < 10 ? '0' : '') + remained_days + ':';
-            if(remained_days > 0 || remained_hours > 0) remained_str += (remained_hours < 10 ? '0' : '') + remained_hours + ':';
+            if (remained_days > 0) remained_str += (remained_days < 10 ? '0' : '') + remained_days + ':';
+            if (remained_days > 0 || remained_hours > 0) remained_str += (remained_hours < 10 ? '0' : '') + remained_hours + ':';
             remained_str += (remained_minutes < 10 ? '0' : '') + remained_minutes + ':';
             remained_str += (remained_seconds < 10 ? '0' : '') + remained_seconds;
 

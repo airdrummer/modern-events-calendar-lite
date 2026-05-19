@@ -50,7 +50,7 @@ class EventLocations extends WidgetBase {
 				?>
 				<div class="mec-single-event-location">
                     <?php echo $this->icons->display('location-pin'); ?>
-                    <h3 class="mec-events-single-section-title mec-location"><?php echo Base::get_main()->m('taxonomy_location', esc_html__('Location', 'modern-events-calendar-lite')); ?></h3>
+                    <div class="mec-events-single-section-title mec-location"><?php echo Base::get_main()->m('taxonomy_location', esc_html__('Location', 'modern-events-calendar-lite')); ?></div>
 
 					<?php if ($location['thumbnail']) : ?>
 						<img class="mec-img-location" src="<?php echo esc_url($location['thumbnail']); ?>" alt="<?php echo (isset($location['name']) ? esc_attr($location['name']) : ''); ?>">
@@ -65,7 +65,7 @@ class EventLocations extends WidgetBase {
 						<?php if(isset($location['opening_hour']) and trim($location['opening_hour'])): ?>
 							<dd class="mec-location-opening-hour">
 								<?php echo $this->icons->display('clock'); ?>
-								<h6><?php esc_html_e('Opening Hour', 'modern-events-calendar-lite'); ?></h6>
+								<span class="mec-meta-label"><?php esc_html_e('Opening Hour', 'modern-events-calendar-lite'); ?></span>
 								<span><?php echo esc_html($location['opening_hour']); ?></span>
 							</dd>
 						<?php endif; ?>
@@ -73,7 +73,7 @@ class EventLocations extends WidgetBase {
 						<?php if(isset($location['url']) and trim($location['url'])): ?>
 							<dd class="mec-location-url">
 								<i class="mec-sl-sitemap"></i>
-								<h6><?php esc_html_e('Website', 'modern-events-calendar-lite'); ?></h6>
+								<span class="mec-meta-label"><?php esc_html_e('Website', 'modern-events-calendar-lite'); ?></span>
 								<span><a href="<?php echo esc_url($location['url']); ?>" class="mec-color-hover" target="<?php echo $this->settings['advanced_location']['location_link_target'] ?? '_blank'; ?>"><?php echo esc_url( $location['url'] ); ?></a></span>
 							</dd>
 						<?php endif;?>
@@ -81,7 +81,7 @@ class EventLocations extends WidgetBase {
 						<?php if(isset($location['tel']) and trim($location['tel'])): ?>
 						<dd class="mec-location-tel">
 							<?php echo $this->icons->display('phone'); ?>
-							<h6><?php esc_html_e('Phone', 'modern-events-calendar-lite'); ?></h6>
+							<span class="mec-meta-label"><?php esc_html_e('Phone', 'modern-events-calendar-lite'); ?></span>
 							<span><a href="tel:<?php echo $location['tel']; ?>" class="mec-color-hover"><?php echo esc_html($location['tel']); ?></a></span>
 						</dd>
 					</dl>

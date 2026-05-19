@@ -346,6 +346,11 @@ function mec_toggle_first_for_all'.esc_js($uniqueid).'(context)
         jQuery("#mec_booking'.esc_js($uniqueid).' .mec-book-ticket-container").removeClass("mec-util-hidden");
         jQuery(context).parent().find("input[type=\"checkbox\"]").removeAttr("checked");
     }
+
+    jQuery("#mec_booking'.esc_js($uniqueid).' .mec-book-ticket-container").each(function()
+    {
+        mec_apply_booking_conditions_in_scope'.esc_js($uniqueid).'(jQuery(this));
+    });
 }
 
 function mec_label_first_for_all'.esc_js($uniqueid).'(context)
@@ -415,6 +420,148 @@ function mec_validate_date_value'.esc_js($uniqueid).'($field, dateValue)
     }
 
     return !isNaN(Date.parse(dateValue));
+}
+
+function mec_clear_booking_condition_errors'.esc_js($uniqueid).'($field)
+{
+    $field.find(".mec-booking-field-required").remove();
+    $field.removeClass("mec-red-notification");
+}
+
+function mec_set_booking_condition_visibility'.esc_js($uniqueid).'($field, isVisible)
+{
+    const $inputs = $field.find("input, select, textarea, button");
+
+    if(isVisible)
+    {
+        $field.removeClass("mec-util-hidden").show();
+        $inputs.prop("disabled", false);
+        return;
+    }
+
+    mec_clear_booking_condition_errors'.esc_js($uniqueid).'($field);
+    $field.addClass("mec-util-hidden").hide();
+    $inputs.prop("disabled", true);
+}
+
+function mec_get_booking_condition_source_option_keys'.esc_js($uniqueid).'($sourceField)
+{
+    const sourceType = String($sourceField.data("fieldType") || "");
+
+    if(sourceType === "agreement")
+    {
+        return $sourceField.find("input[type=checkbox]").first().is(":checked") ? ["checked"] : [];
+    }
+
+    if(sourceType === "select")
+    {
+        const optionKey = $sourceField.find("select option:selected").data("optionKey");
+        return typeof optionKey === "undefined" || optionKey === "" ? [] : [String(optionKey)];
+    }
+
+    if(sourceType === "radio")
+    {
+        const optionKey = $sourceField.find("input[type=radio]:checked").data("optionKey");
+        return typeof optionKey === "undefined" || optionKey === "" ? [] : [String(optionKey)];
+    }
+
+    if(sourceType === "checkbox")
+    {
+        return $sourceField.find("input[type=checkbox]:checked").map(function()
+        {
+            const optionKey = jQuery(this).data("optionKey");
+            return typeof optionKey === "undefined" || optionKey === "" ? null : String(optionKey);
+        }).get().filter(Boolean);
+    }
+
+    return [];
+}
+
+function mec_booking_condition_matches'.esc_js($uniqueid).'($field, $sourceField)
+{
+    if(!$sourceField || !$sourceField.length || !$sourceField.is(":visible"))
+    {
+        return false;
+    }
+
+    const sourceType = String($sourceField.data("fieldType") || "");
+    const matchType = String($field.data("conditionMatchType") || "");
+    const optionKey = String($field.data("conditionOptionKey") || "");
+    const selectedOptionKeys = mec_get_booking_condition_source_option_keys'.esc_js($uniqueid).'($sourceField);
+
+    if(sourceType === "agreement" || matchType === "checked")
+    {
+        return selectedOptionKeys.length > 0;
+    }
+
+    if(!optionKey) return true;
+
+    if(matchType === "contains_option")
+    {
+        return selectedOptionKeys.indexOf(optionKey) !== -1;
+    }
+
+    if(matchType === "equals_option")
+    {
+        return selectedOptionKeys.length === 1 && selectedOptionKeys[0] === optionKey;
+    }
+
+    return true;
+}
+
+function mec_apply_booking_conditions_in_scope'.esc_js($uniqueid).'($scope)
+{
+    if(!$scope || !$scope.length) return;
+
+    $scope.find("li[data-condition-source-field-id]").each(function()
+    {
+        const $field = jQuery(this);
+        const sourceFieldId = String($field.data("conditionSourceFieldId") || "");
+
+        if(!sourceFieldId)
+        {
+            mec_set_booking_condition_visibility'.esc_js($uniqueid).'($field, true);
+            return;
+        }
+
+        const $sourceField = $scope.find("li[data-field-id=\'" + sourceFieldId + "\']").first();
+        if(!$sourceField.length)
+        {
+            mec_set_booking_condition_visibility'.esc_js($uniqueid).'($field, true);
+            return;
+        }
+
+        mec_set_booking_condition_visibility'.esc_js($uniqueid).'($field, mec_booking_condition_matches'.esc_js($uniqueid).'($field, $sourceField));
+    });
+}
+
+function mec_init_booking_field_conditions'.esc_js($uniqueid).'()
+{
+    const $form = jQuery("#mec_book_form'.esc_js($uniqueid).'");
+    if(!$form.length) return;
+
+    mec_apply_booking_conditions_in_scope'.esc_js($uniqueid).'($form.find(".mec-book-bfixed-fields-container").first());
+
+    $form.find(".mec-book-ticket-container").each(function()
+    {
+        mec_apply_booking_conditions_in_scope'.esc_js($uniqueid).'(jQuery(this));
+    });
+
+    $form.off("change.mecBookingConditions input.mecBookingConditions");
+    $form.on("change.mecBookingConditions input.mecBookingConditions", ".mec-book-bfixed-fields-container :input, .mec-book-ticket-container :input", function()
+    {
+        const $input = jQuery(this);
+        const $ticketScope = $input.closest(".mec-book-ticket-container");
+
+        if($ticketScope.length)
+        {
+            mec_apply_booking_conditions_in_scope'.esc_js($uniqueid).'($ticketScope);
+            return;
+        }
+
+        const $fixedScope = $input.closest(".mec-book-bfixed-fields-container");
+        if($fixedScope.length) mec_apply_booking_conditions_in_scope'.esc_js($uniqueid).'($fixedScope);
+    });
 }
 
 function mec_recaptcha_v3_submit()
@@ -1272,6 +1419,8 @@ function mec_book_form_submit'.esc_js($uniqueid).'()
                 {
                     jQuery(".mec-single-fluent-wrap").find("select").niceSelect();
                 }
+
+                mec_init_booking_field_conditions'.esc_js($uniqueid).'();
             }
             else
             {
@@ -1523,6 +1672,7 @@ jQuery(document).ready(function()
     setTimeout(function()
     {
        mec_display_total_tickets'.esc_js($uniqueid).'();
+       mec_init_booking_field_conditions'.esc_js($uniqueid).'();
     }, 100);
 });
 

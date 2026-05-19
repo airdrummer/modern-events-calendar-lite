@@ -49,7 +49,7 @@ class EventCost extends WidgetBase
                             echo $this->icons->display('wallet');
                         } ?>
                         <?php if (isset($atts['mec_cost_show_title']) && $atts['mec_cost_show_title']) { ?>
-                            <h3 class="mec-cost"><?php echo esc_html(\MEC\Base::get_main()->m('cost', esc_html__('Cost', 'modern-events-calendar-lite'))); ?></h3>
+                            <div class="mec-cost"><?php echo esc_html(\MEC\Base::get_main()->m('cost', esc_html__('Cost', 'modern-events-calendar-lite'))); ?></div>
                         <?php } ?>
                         <dl>
                             <dd class="mec-events-event-cost">
@@ -83,7 +83,7 @@ class EventCost extends WidgetBase
                         echo $this->icons->display('wallet');
                     } ?>
                     <?php if (isset($atts['mec_cost_show_title']) && $atts['mec_cost_show_title']) { ?>
-                        <h3 class="mec-cost"><?php echo esc_html(\MEC\Base::get_main()->m('cost', esc_html__('Cost', 'modern-events-calendar-lite'))); ?></h3>
+                        <div class="mec-cost"><?php echo esc_html(\MEC\Base::get_main()->m('cost', esc_html__('Cost', 'modern-events-calendar-lite'))); ?></div>
                     <?php } ?>
                     <dl>
                         <dd class="mec-events-event-cost">

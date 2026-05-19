@@ -136,8 +136,8 @@ $paid_booking = !$free_booking;
 
     <?php if($paid_booking): ?>
     <div class="mec-booking-checkout-coupon-total-wrapper">
+        <?php if (isset($this->settings['coupons_status']) && $this->settings['coupons_status']): ?>
         <div class="mec-booking-checkout-coupon-wrapper">
-            <?php if (isset($this->settings['coupons_status']) && $this->settings['coupons_status']): ?>
             <div class="mec-book-form-coupon">
                 <form id="mec_book_form_coupon<?php echo esc_attr($uniqueid); ?>" onsubmit="mec_book_apply_coupon<?php echo esc_attr($uniqueid); ?>(); return false;">
                     <span class="mec-booking-coupon-field-wrapper">
@@ -152,8 +152,8 @@ $paid_booking = !$free_booking;
                 </form>
                 <div class="mec-coupon-message mec-util-hidden"></div>
             </div>
-            <?php endif; ?>
         </div>
+        <?php endif; ?>
         <div class="mec-booking-checkout-total-wrapper">
             <ul>
                 <?php if(isset($this->settings['coupons_status']) && $this->settings['coupons_status']): ?>

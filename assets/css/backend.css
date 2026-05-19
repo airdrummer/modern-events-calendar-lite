@@ -168,40 +168,60 @@ body.toplevel_page_mec-intro #webnus-dashboard .mec-cmsg-2-notification-box-wrap
   border-radius: 0 0 15px 0;
 }
 
-body:has(input[name="_wp_http_referer"][value*="/admin.php?page=MEC-settings"]) .wns-be-main {
-  min-height: 850px;
+.wns-be-main.general-settings {
+  min-height: 1110px;
 }
 
-body:has(input[name="_wp_http_referer"][value*="/admin.php?page=MEC-settings&tab=MEC-single"]) .wns-be-main {
-  min-height: 700px;
+.wns-be-main.single-settings {
+  min-height: 800px;
 }
 
-body:has(input[name="_wp_http_referer"][value*="/admin.php?page=MEC-settings&tab=MEC-modules"]) .wns-be-main {
-  min-height: 1200px;
+.wns-be-main.modules-settings {
+  min-height: 1310px;
 }
 
-body:has(input[name="_wp_http_referer"][value*="/admin.php?page=MEC-settings&tab=MEC-booking"]) .wns-be-main {
-  min-height: 850px;
+.wns-be-main.booking-settings {
+  min-height: 1040px;
 }
 
-body:has(input[name="_wp_http_referer"][value*="/admin.php?page=MEC-settings&tab=MEC-fes"]) .wns-be-main {
-  min-height: 700px;
+.wns-be-main.fes-settings {
+  min-height: 800px;
 }
 
-body:has(input[name="_wp_http_referer"][value*="/admin.php?page=MEC-settings&tab=MEC-integrations"]) .wns-be-main {
-  min-height: 950px;
+.wns-be-main.integrations-settings {
+  min-height: 1040px;
 }
 
-body:has(input[name="_wp_http_referer"][value*="/admin.php?page=MEC-settings&tab=MEC-notifications"]) .wns-be-main {
-  min-height: 1100px;
+.wns-be-main.notifications-settings {
+  min-height: 1560px;
 }
 
-body:has(input[name="_wp_http_referer"][value*="/admin.php?page=MEC-settings&tab=MEC-customcss"]) .wns-be-main {
-  min-height: 520px;
+.wns-be-main.rsvp-settings {
+  min-height: 900px;
 }
 
-body:has(input[name="_wp_http_referer"][value*="/admin.php?page=MEC-settings&tab=MEC-invoice"]) .wns-be-main {
-  min-height: 950px;
+.wns-be-main.seat-settings {
+  min-height: 770px;
+}
+
+.wns-be-main.invoice-settings {
+  min-height: 1010px;
+}
+
+.wns-be-main.styling-settings {
+  min-height: 650px;
+}
+
+.wns-be-main.customcss-settings {
+  min-height: 650px;
+}
+
+.wns-be-main.messages-settings {
+  min-height: 650px;
+}
+
+.wns-be-main.ie-settings {
+  min-height: 650px;
 }
 
 .wns-be-main .wns-saved-settings {
@@ -895,7 +915,6 @@ body.post-type-mec-books th.column-author {
   box-shadow: 0 1px 5px rgb(0 0 0 / 2%);
 }
 
-#mec_reg_form_fields li div input,
 #mec_reg_form_fields li div select {
   display: block;
 }
@@ -912,6 +931,16 @@ body.post-type-mec-books th.column-author {
 #mec_event_form_fields li ul li,
 #mec_reg_form_fields li ul li {
   padding: 7px 30px 7px 46px;
+}
+
+#mec_event_form_fields li > div * {
+    display: block
+}
+
+#mec_event_form_fields li .mec_event_notification_placeholder,
+#mec_bfixed_form_fields li .mec_bfixed_notification_placeholder {
+  display: block;
+  margin: 20px 0 10px 0;
 }
 
 #mec_bfixed_form_fields span.mec_bfixed_field_type,
@@ -1002,6 +1031,11 @@ body.post-type-mec-books th.column-author {
   color: #f96666;
   cursor: pointer;
   font-size: 18px;
+}
+
+#mec_reg_form_fields span.mec_reg_field_remove:before {
+  font-size: 20px;
+  right: 25px;
 }
 
 #mec_bfixed_form_fields span.mec_bfixed_field_option_sort:before,
@@ -1117,6 +1151,11 @@ body.post-type-mec-books th.column-author {
   font-family: simple-line-icons;
   font-size: 13px;
   display: inline-block;
+}
+
+#mec_reg_form_fields .mec-field-regex-wrapper {
+  margin-bottom: 20px;
+  `
 }
 
 .mec_form_fields .notification_placeholder,
@@ -1486,7 +1525,9 @@ body.post-type-mec-books th.column-author {
 }
 
 #mec_reg_form_fields label,
-#mec_reg_form_fields p.description {
+#mec_bfixed_form_fields label,
+#mec_reg_form_fields p.description,
+#mec_bfixed_form_fields p.description {
   display: block;
 }
 
@@ -1507,7 +1548,7 @@ body.post-type-mec-books th.column-author {
   min-height: 0;
   background: #f7f8f9;
   border: none;
-  margin: -1px 5px 0 0;
+  margin: -1px 8px 0 0;
   vertical-align: middle;
   box-shadow: inset 0 1px 2px rgb(0 0 0 / 7%);
 }
@@ -1588,10 +1629,12 @@ body.post-type-mec-books th.column-author {
 .mec-form-row .description {
   display: inline-block;
   border-left: 1px dashed #ccc;
-  line-height: 32px;
   padding-left: 12px;
-  margin-top: 5px;
-  color: #555;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #8d9599;
+  font-weight: 400;
+  margin: 0;
 }
 
 .mec-form-row .description code {
@@ -5413,12 +5456,12 @@ a.mec-intro-section-link-tag.button.button-secondary.button-hero {
   box-shadow: none;
 }
 
-#mec_booking_form .mec-options-fields,
+/* #mec_booking_form .mec-options-fields,
 #mec_modules_form .mec-options-fields,
 #mec_settings_form .mec-options-fields,
 #mec_single_form .mec-options-fields {
   padding-bottom: 80px !important;
-}
+} */
 
 #mec_taxes_fees_container_toggle {
   margin-bottom: 60px;
@@ -13497,6 +13540,7 @@ body[class*="page_MEC-settings"] .mec-new-addons-wrap .mec-addons-notification-b
 
 body.toplevel_page_mec-intro .ui-datepicker,
 body.post-type-mec-events .ui-datepicker,
+body.post-type-mec-books .ui-datepicker,
 body.post-type-mec_calendars .ui-datepicker,
 body[class*="m-e-calendar_page_"] .ui-datepicker,
 body.index-php .ui-datepicker {
@@ -13512,11 +13556,13 @@ body.index-php .ui-datepicker {
 
 body.toplevel_page_mec-intro .ui-datepicker a,
 body.post-type-mec-events .ui-datepicker a,
+body.post-type-mec-books .ui-datepicker a,
 body.post-type-mec_calendars .ui-datepicker a,
 body[class*="m-e-calendar_page_"] .ui-datepicker a,
 body.index-php .ui-datepicker a,
 body.toplevel_page_mec-intro .ui-datepicker a:hover,
 body.post-type-mec-events .ui-datepicker a:hover,
+body.post-type-mec-books .ui-datepicker a:hover,
 body.post-type-mec_calendars .ui-datepicker a:hover,
 body[class*="m-e-calendar_page_"] .ui-datepicker a:hover,
 body.index-php .ui-datepicker a:hover {
@@ -13526,11 +13572,13 @@ body.index-php .ui-datepicker a:hover {
 
 body.toplevel_page_mec-intro .ui-datepicker a:hover,
 body.post-type-mec-events .ui-datepicker a:hover,
+body.post-type-mec-books .ui-datepicker a:hover,
 body.post-type-mec_calendars .ui-datepicker a:hover,
 body[class*="m-e-calendar_page_"] .ui-datepicker a:hover,
 body.index-php .ui-datepicker a:hover,
 body.toplevel_page_mec-intro .ui-datepicker td:hover a,
 body.post-type-mec-events .ui-datepicker td:hover a,
+body.post-type-mec-books .ui-datepicker td:hover a,
 body.post-type-mec_calendars .ui-datepicker td:hover a,
 body[class*="m-e-calendar_page_"] .ui-datepicker td:hover a,
 body.index-php .ui-datepicker td:hover a {
@@ -13543,6 +13591,7 @@ body.index-php .ui-datepicker td:hover a {
 
 body.toplevel_page_mec-intro .ui-datepicker .ui-datepicker-header,
 body.post-type-mec-events .ui-datepicker .ui-datepicker-header,
+body.post-type-mec-books .ui-datepicker .ui-datepicker-header,
 body.post-type-mec_calendars .ui-datepicker .ui-datepicker-header,
 body[class*="m-e-calendar_page_"] .ui-datepicker .ui-datepicker-header,
 body.index-php .ui-datepicker .ui-datepicker-header {
@@ -13552,6 +13601,7 @@ body.index-php .ui-datepicker .ui-datepicker-header {
 
 body.toplevel_page_mec-intro .ui-datepicker .ui-datepicker-title,
 body.post-type-mec-events .ui-datepicker .ui-datepicker-title,
+body.post-type-mec-books .ui-datepicker .ui-datepicker-title,
 body.post-type-mec_calendars .ui-datepicker .ui-datepicker-title,
 body[class*="m-e-calendar_page_"] .ui-datepicker .ui-datepicker-title,
 body.index-php .ui-datepicker .ui-datepicker-title {
@@ -13560,11 +13610,13 @@ body.index-php .ui-datepicker .ui-datepicker-title {
 
 body.toplevel_page_mec-intro .ui-datepicker .ui-datepicker-next,
 body.post-type-mec-events .ui-datepicker .ui-datepicker-next,
+body.post-type-mec-books .ui-datepicker .ui-datepicker-next,
 body.post-type-mec_calendars .ui-datepicker .ui-datepicker-next,
 body[class*="m-e-calendar_page_"] .ui-datepicker .ui-datepicker-next,
 body.index-php .ui-datepicker .ui-datepicker-next,
 body.toplevel_page_mec-intro .ui-datepicker .ui-datepicker-prev,
 body.post-type-mec-events .ui-datepicker .ui-datepicker-prev,
+body.post-type-mec-books .ui-datepicker .ui-datepicker-prev,
 body.post-type-mec_calendars .ui-datepicker .ui-datepicker-prev,
 body[class*="m-e-calendar_page_"] .ui-datepicker .ui-datepicker-prev,
 body.index-php .ui-datepicker .ui-datepicker-prev {
@@ -13581,6 +13633,7 @@ body.index-php .ui-datepicker .ui-datepicker-prev {
 
 body.toplevel_page_mec-intro .ui-datepicker .ui-datepicker-prev:before,
 body.post-type-mec-events .ui-datepicker .ui-datepicker-prev:before,
+body.post-type-mec-books .ui-datepicker .ui-datepicker-prev:before,
 body.post-type-mec_calendars .ui-datepicker .ui-datepicker-prev:before,
 body[class*="m-e-calendar_page_"] .ui-datepicker .ui-datepicker-prev:before,
 body.index-php .ui-datepicker .ui-datepicker-prev:before {
@@ -13589,6 +13642,7 @@ body.index-php .ui-datepicker .ui-datepicker-prev:before {
 
 body.toplevel_page_mec-intro .ui-datepicker .ui-datepicker-next:before,
 body.post-type-mec-events .ui-datepicker .ui-datepicker-next:before,
+body.post-type-mec-books .ui-datepicker .ui-datepicker-next:before,
 body.post-type-mec_calendars .ui-datepicker .ui-datepicker-next:before,
 body[class*="m-e-calendar_page_"] .ui-datepicker .ui-datepicker-next:before,
 body.index-php .ui-datepicker .ui-datepicker-next:before {
@@ -13597,6 +13651,7 @@ body.index-php .ui-datepicker .ui-datepicker-next:before {
 
 body.toplevel_page_mec-intro .ui-datepicker .ui-icon,
 body.post-type-mec-events .ui-datepicker .ui-icon,
+body.post-type-mec-books .ui-datepicker .ui-icon,
 body.post-type-mec_calendars .ui-datepicker .ui-icon,
 body[class*="m-e-calendar_page_"] .ui-datepicker .ui-icon,
 body.index-php .ui-datepicker .ui-icon {
@@ -13605,6 +13660,7 @@ body.index-php .ui-datepicker .ui-icon {
 
 body.toplevel_page_mec-intro .ui-datepicker .ui-datepicker-calendar,
 body.post-type-mec-events .ui-datepicker .ui-datepicker-calendar,
+body.post-type-mec-books .ui-datepicker .ui-datepicker-calendar,
 body.post-type-mec_calendars .ui-datepicker .ui-datepicker-calendar,
 body[class*="m-e-calendar_page_"] .ui-datepicker .ui-datepicker-calendar,
 body.index-php .ui-datepicker .ui-datepicker-calendar {
@@ -13614,11 +13670,13 @@ body.index-php .ui-datepicker .ui-datepicker-calendar {
 
 body.toplevel_page_mec-intro .ui-datepicker .ui-datepicker-calendar td,
 body.post-type-mec-events .ui-datepicker .ui-datepicker-calendar td,
+body.post-type-mec-books .ui-datepicker .ui-datepicker-calendar td,
 body.post-type-mec_calendars .ui-datepicker .ui-datepicker-calendar td,
 body[class*="m-e-calendar_page_"] .ui-datepicker .ui-datepicker-calendar td,
 body.index-php .ui-datepicker .ui-datepicker-calendar td,
 body.toplevel_page_mec-intro .ui-datepicker .ui-datepicker-calendar th,
 body.post-type-mec-events .ui-datepicker .ui-datepicker-calendar th,
+body.post-type-mec-books .ui-datepicker .ui-datepicker-calendar th,
 body.post-type-mec_calendars .ui-datepicker .ui-datepicker-calendar th,
 body[class*="m-e-calendar_page_"] .ui-datepicker .ui-datepicker-calendar th,
 body.index-php .ui-datepicker .ui-datepicker-calendar th {
@@ -13628,6 +13686,7 @@ body.index-php .ui-datepicker .ui-datepicker-calendar th {
 
 body.toplevel_page_mec-intro .ui-datepicker .ui-datepicker-calendar td,
 body.post-type-mec-events .ui-datepicker .ui-datepicker-calendar td,
+body.post-type-mec-books .ui-datepicker .ui-datepicker-calendar td,
 body.post-type-mec_calendars .ui-datepicker .ui-datepicker-calendar td,
 body[class*="m-e-calendar_page_"] .ui-datepicker .ui-datepicker-calendar td,
 body.index-php .ui-datepicker .ui-datepicker-calendar td {
@@ -13640,6 +13699,7 @@ body.index-php .ui-datepicker .ui-datepicker-calendar td {
 
 body.toplevel_page_mec-intro .ui-datepicker .ui-datepicker-calendar td:hover,
 body.post-type-mec-events .ui-datepicker .ui-datepicker-calendar td:hover,
+body.post-type-mec-books .ui-datepicker .ui-datepicker-calendar td:hover,
 body.post-type-mec_calendars .ui-datepicker .ui-datepicker-calendar td:hover,
 body[class*="m-e-calendar_page_"] .ui-datepicker .ui-datepicker-calendar td:hover,
 body.index-php .ui-datepicker .ui-datepicker-calendar td:hover {
@@ -13649,6 +13709,7 @@ body.index-php .ui-datepicker .ui-datepicker-calendar td:hover {
 
 body.toplevel_page_mec-intro .ui-datepicker .ui-datepicker-calendar td a,
 body.post-type-mec-events .ui-datepicker .ui-datepicker-calendar td a,
+body.post-type-mec-books .ui-datepicker .ui-datepicker-calendar td a,
 body.post-type-mec_calendars .ui-datepicker .ui-datepicker-calendar td a,
 body[class*="m-e-calendar_page_"] .ui-datepicker .ui-datepicker-calendar td a,
 body.index-php .ui-datepicker .ui-datepicker-calendar td a {
@@ -13657,6 +13718,7 @@ body.index-php .ui-datepicker .ui-datepicker-calendar td a {
 
 body.toplevel_page_mec-intro .ui-datepicker .ui-datepicker-current-day,
 body.post-type-mec-events .ui-datepicker .ui-datepicker-current-day,
+body.post-type-mec-books .ui-datepicker .ui-datepicker-current-day,
 body.post-type-mec_calendars .ui-datepicker .ui-datepicker-current-day,
 body[class*="m-e-calendar_page_"] .ui-datepicker .ui-datepicker-current-day,
 body.index-php .ui-datepicker .ui-datepicker-current-day {
@@ -13665,6 +13727,7 @@ body.index-php .ui-datepicker .ui-datepicker-current-day {
 
 body.toplevel_page_mec-intro .ui-datepicker .ui-datepicker-current-day a,
 body.post-type-mec-events .ui-datepicker .ui-datepicker-current-day a,
+body.post-type-mec-books .ui-datepicker .ui-datepicker-current-day a,
 body.post-type-mec_calendars .ui-datepicker .ui-datepicker-current-day a,
 body[class*="m-e-calendar_page_"] .ui-datepicker .ui-datepicker-current-day a,
 body.index-php .ui-datepicker .ui-datepicker-current-day a {
@@ -13673,6 +13736,7 @@ body.index-php .ui-datepicker .ui-datepicker-current-day a {
 
 body.toplevel_page_mec-intro .ui-datepicker .ui-datepicker-calendar .ui-datepicker-unselectable:hover,
 body.post-type-mec-events .ui-datepicker .ui-datepicker-calendar .ui-datepicker-unselectable:hover,
+body.post-type-mec-books .ui-datepicker .ui-datepicker-calendar .ui-datepicker-unselectable:hover,
 body.post-type-mec_calendars .ui-datepicker .ui-datepicker-calendar .ui-datepicker-unselectable:hover,
 body[class*="m-e-calendar_page_"] .ui-datepicker .ui-datepicker-calendar .ui-datepicker-unselectable:hover,
 body.index-php .ui-datepicker .ui-datepicker-calendar .ui-datepicker-unselectable:hover {
@@ -13682,6 +13746,7 @@ body.index-php .ui-datepicker .ui-datepicker-calendar .ui-datepicker-unselectabl
 
 body.toplevel_page_mec-intro .ui-datepicker select,
 body.post-type-mec-events .ui-datepicker select,
+body.post-type-mec-books .ui-datepicker select,
 body.post-type-mec_calendars .ui-datepicker select,
 body[class*="m-e-calendar_page_"] .ui-datepicker select,
 body.index-php .ui-datepicker select {
@@ -13690,6 +13755,7 @@ body.index-php .ui-datepicker select {
 
 body.toplevel_page_mec-intro .ui-datepicker.ui-widget,
 body.post-type-mec-events .ui-datepicker.ui-widget,
+body.post-type-mec-books .ui-datepicker.ui-widget,
 body.post-type-mec_calendars .ui-datepicker.ui-widget,
 body[class*="m-e-calendar_page_"] .ui-datepicker.ui-widget,
 body.index-php .ui-datepicker.ui-widget {
@@ -13699,6 +13765,7 @@ body.index-php .ui-datepicker.ui-widget {
 
 body.toplevel_page_mec-intro .ui-datepicker.ui-widget select,
 body.post-type-mec-events .ui-datepicker.ui-widget select,
+body.post-type-mec-books .ui-datepicker.ui-widget select,
 body.post-type-mec_calendars .ui-datepicker.ui-widget select,
 body[class*="m-e-calendar_page_"] .ui-datepicker.ui-widget select,
 body.index-php .ui-datepicker.ui-widget select {
@@ -13712,6 +13779,7 @@ body.index-php .ui-datepicker.ui-widget select {
 
 body.toplevel_page_mec-intro .ui-datepicker.ui-widget table,
 body.post-type-mec-events .ui-datepicker.ui-widget table,
+body.post-type-mec-books .ui-datepicker.ui-widget table,
 body.post-type-mec_calendars .ui-datepicker.ui-widget table,
 body[class*="m-e-calendar_page_"] .ui-datepicker.ui-widget table,
 body.index-php .ui-datepicker.ui-widget table {
@@ -13720,11 +13788,13 @@ body.index-php .ui-datepicker.ui-widget table {
 
 body.toplevel_page_mec-intro .ui-datepicker.ui-widget td,
 body.post-type-mec-events .ui-datepicker.ui-widget td,
+body.post-type-mec-books .ui-datepicker.ui-widget td,
 body.post-type-mec_calendars .ui-datepicker.ui-widget td,
 body[class*="m-e-calendar_page_"] .ui-datepicker.ui-widget td,
 body.index-php .ui-datepicker.ui-widget td,
 body.toplevel_page_mec-intro .ui-datepicker.ui-widget tr,
 body.post-type-mec-events .ui-datepicker.ui-widget tr,
+body.post-type-mec-books .ui-datepicker.ui-widget tr,
 body.post-type-mec_calendars .ui-datepicker.ui-widget tr,
 body[class*="m-e-calendar_page_"] .ui-datepicker.ui-widget tr,
 body.index-php .ui-datepicker.ui-widget tr {
@@ -13735,6 +13805,8 @@ body.index-php .ui-datepicker.ui-widget tr {
 body.toplevel_page_mec-intro .ui-datepicker.ui-widget td a,
 body.post-type-mec-events .ui-datepicker.ui-widget td a,
 body.post-type-mec-events .ui-datepicker.ui-widget td span,
+body.post-type-mec-books .ui-datepicker.ui-widget td a,
+body.post-type-mec-books .ui-datepicker.ui-widget td span,
 body.post-type-mec_calendars .ui-datepicker.ui-widget td a,
 body[class*="m-e-calendar_page_"] .ui-datepicker.ui-widget td a,
 body.index-php .ui-datepicker.ui-widget td a {
@@ -13750,17 +13822,20 @@ body.index-php .ui-datepicker.ui-widget td a {
   transition: all 0.2s ease;
 }
 
-body.post-type-mec-events .ui-datepicker.ui-widget td.ui-datepicker-unselectable.ui-state-disabled span {
+body.post-type-mec-events .ui-datepicker.ui-widget td.ui-datepicker-unselectable.ui-state-disabled span,
+body.post-type-mec-books .ui-datepicker.ui-widget td.ui-datepicker-unselectable.ui-state-disabled span {
   color: #d1d2d3;
 }
 
 body.toplevel_page_mec-intro .ui-datepicker.ui-widget td a.ui-state-active,
 body.post-type-mec-events .ui-datepicker.ui-widget td a.ui-state-active,
+body.post-type-mec-books .ui-datepicker.ui-widget td a.ui-state-active,
 body.post-type-mec_calendars .ui-datepicker.ui-widget td a.ui-state-active,
 body[class*="m-e-calendar_page_"] .ui-datepicker.ui-widget td a.ui-state-active,
 body.index-php .ui-datepicker.ui-widget td a.ui-state-active,
 body.toplevel_page_mec-intro .ui-datepicker.ui-widget td a:hover,
 body.post-type-mec-events .ui-datepicker.ui-widget td a:hover,
+body.post-type-mec-books .ui-datepicker.ui-widget td a:hover,
 body.post-type-mec_calendars .ui-datepicker.ui-widget td a:hover,
 body[class*="m-e-calendar_page_"] .ui-datepicker.ui-widget td a:hover,
 body.index-php .ui-datepicker.ui-widget td a:hover {
@@ -13770,11 +13845,13 @@ body.index-php .ui-datepicker.ui-widget td a:hover {
 
 body.toplevel_page_mec-intro .ui-datepicker.ui-widget .ui-datepicker-next,
 body.post-type-mec-events .ui-datepicker.ui-widget .ui-datepicker-next,
+body.post-type-mec-books .ui-datepicker.ui-widget .ui-datepicker-next,
 body.post-type-mec_calendars .ui-datepicker.ui-widget .ui-datepicker-next,
 body[class*="m-e-calendar_page_"] .ui-datepicker.ui-widget .ui-datepicker-next,
 body.index-php .ui-datepicker.ui-widget .ui-datepicker-next,
 body.toplevel_page_mec-intro .ui-datepicker.ui-widget .ui-datepicker-prev,
 body.post-type-mec-events .ui-datepicker.ui-widget .ui-datepicker-prev,
+body.post-type-mec-books .ui-datepicker.ui-widget .ui-datepicker-prev,
 body.post-type-mec_calendars .ui-datepicker.ui-widget .ui-datepicker-prev,
 body[class*="m-e-calendar_page_"] .ui-datepicker.ui-widget .ui-datepicker-prev,
 body.index-php .ui-datepicker.ui-widget .ui-datepicker-prev {
@@ -13791,11 +13868,13 @@ body.index-php .ui-datepicker.ui-widget .ui-datepicker-prev {
 
 body.toplevel_page_mec-intro .ui-datepicker.ui-widget .ui-datepicker-next:hover,
 body.post-type-mec-events .ui-datepicker.ui-widget .ui-datepicker-next:hover,
+body.post-type-mec-books .ui-datepicker.ui-widget .ui-datepicker-next:hover,
 body.post-type-mec_calendars .ui-datepicker.ui-widget .ui-datepicker-next:hover,
 body[class*="m-e-calendar_page_"] .ui-datepicker.ui-widget .ui-datepicker-next:hover,
 body.index-php .ui-datepicker.ui-widget .ui-datepicker-next:hover,
 body.toplevel_page_mec-intro .ui-datepicker.ui-widget .ui-datepicker-prev:hover,
 body.post-type-mec-events .ui-datepicker.ui-widget .ui-datepicker-prev:hover,
+body.post-type-mec-books .ui-datepicker.ui-widget .ui-datepicker-prev:hover,
 body.post-type-mec_calendars .ui-datepicker.ui-widget .ui-datepicker-prev:hover,
 body[class*="m-e-calendar_page_"] .ui-datepicker.ui-widget .ui-datepicker-prev:hover,
 body.index-php .ui-datepicker.ui-widget .ui-datepicker-prev:hover {
@@ -13805,6 +13884,7 @@ body.index-php .ui-datepicker.ui-widget .ui-datepicker-prev:hover {
 
 body.toplevel_page_mec-intro .ui-datepicker.ui-widget .ui-icon,
 body.post-type-mec-events .ui-datepicker.ui-widget .ui-icon,
+body.post-type-mec-books .ui-datepicker.ui-widget .ui-icon,
 body.post-type-mec_calendars .ui-datepicker.ui-widget .ui-icon,
 body[class*="m-e-calendar_page_"] .ui-datepicker.ui-widget .ui-icon,
 body.index-php .ui-datepicker.ui-widget .ui-icon {
@@ -13813,6 +13893,7 @@ body.index-php .ui-datepicker.ui-widget .ui-icon {
 
 body.toplevel_page_mec-intro .ui-datepicker .ui-datepicker-prev,
 body.post-type-mec-events .ui-datepicker .ui-datepicker-prev,
+body.post-type-mec-books .ui-datepicker .ui-datepicker-prev,
 body.post-type-mec_calendars .ui-datepicker .ui-datepicker-prev,
 body[class*="m-e-calendar_page_"] .ui-datepicker .ui-datepicker-prev,
 body.index-php .ui-datepicker .ui-datepicker-prev {
@@ -13821,6 +13902,7 @@ body.index-php .ui-datepicker .ui-datepicker-prev {
 
 body.toplevel_page_mec-intro .ui-datepicker .ui-datepicker-next,
 body.post-type-mec-events .ui-datepicker .ui-datepicker-next,
+body.post-type-mec-books .ui-datepicker .ui-datepicker-next,
 body.post-type-mec_calendars .ui-datepicker .ui-datepicker-next,
 body[class*="m-e-calendar_page_"] .ui-datepicker .ui-datepicker-next,
 body.index-php .ui-datepicker .ui-datepicker-next {
@@ -14142,4 +14224,18 @@ body.post-type-mec_invoice #post-body-content {
     border-radius: 0;
     border: 1px solid #c3c4c7;
   }
+}
+
+.mec-booking-condition-row {
+  margin: 0 0 10px;
+}
+
+.mec-booking-condition-row label {
+  display: block;
+  margin: 0 0 6px;
+  font-weight: 600;
+}
+
+.mec-booking-condition-message {
+  margin: 0;
 }

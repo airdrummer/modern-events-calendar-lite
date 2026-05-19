@@ -66,7 +66,7 @@ do_action('mec_full_skin_head');
 
             $sf_columns = 7;
         ?>
-        <form id="mec_search_form_<?php echo esc_attr($this->id); ?>" autocomplete="off">
+        <form id="mec_search_form_<?php echo esc_attr($this->id); ?>" autocomplete="off" role="search" aria-label="<?php esc_attr_e('Event search', 'modern-events-calendar-lite'); ?>">
             <?php if($sf_month_filter_status): $sf_columns -= 3; ?>
                 <div class="col-md-3">
                     <?php echo MEC_kses::form($this->sf_search_field('month_filter', $sf_month_filter , 0)); ?>
@@ -78,6 +78,7 @@ do_action('mec_full_skin_head');
                     <?php endif; ?>
                 </div>
             <?php endif; ?>
+            <div id="mec_search_form_<?php echo esc_attr($this->id); ?>_status" class="mec-screen-reader-text" role="status" aria-live="polite" aria-atomic="true"></div>
         </form>
         <div class="col-md-5">
             <div class="mec-totalcal-view">

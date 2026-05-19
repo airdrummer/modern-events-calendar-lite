@@ -1669,12 +1669,19 @@ class MEC_feature_mec extends MEC_base
     public function widget_news()
     {
         $add_new_event_button = '';
-        if (current_user_can('edit_posts')) $add_new_event_button = '<a href="' . esc_html__(admin_url('post-new.php?post_type=mec-events')) . '" class="button"><span aria-hidden="true" class="dashicons dashicons-plus"></span> Create New Event</a>';
+
+        if (current_user_can('edit_posts'))
+        {
+            $add_new_event_button = '<a href="' . esc_url(admin_url('post-new.php?post_type=mec-events')) . '" class="button">
+                <span aria-hidden="true" class="dashicons dashicons-plus"></span>
+                ' . esc_html__('Create New Event', 'modern-events-calendar-lite') . '
+            </a>';
+        }
 
         // Head Section
         echo '<div class="mec-metabox-head-wrap">
             <div class="mec-metabox-head-version">
-                <img alt="" src="' . plugin_dir_url(__FILE__) . '../../assets/img/mec-logo-icon.png" with="32" height="32" />
+                <img alt="" src="' . esc_url(plugin_dir_url(__FILE__) . '../../assets/img/mec-logo-icon.png') . '" width="32" height="32" />
                 <p>' . ($this->getPRO() ? esc_html__('Modern Events Calendar', 'modern-events-calendar-lite') : esc_html__('Modern Events Calendar (Lite)', 'modern-events-calendar-lite')) . '</p>
                 ' . $add_new_event_button . '
             </div>
@@ -1684,7 +1691,11 @@ class MEC_feature_mec extends MEC_base
 
         // Upcoming Events
         $upcoming_events = $this->main->get_upcoming_events(3);
-        echo '<div class="mec-metabox-upcoming-wrap"><h3 class="mec-metabox-feed-head">' . esc_html__('Upcoming Events', 'modern-events-calendar-lite') . '</h3><ul>';
+
+        echo '<div class="mec-metabox-upcoming-wrap">
+            <h3 class="mec-metabox-feed-head">' . esc_html__('Upcoming Events', 'modern-events-calendar-lite') . '</h3>
+            <ul>';
+
         foreach ($upcoming_events as $date => $content)
         {
             foreach ($content as $array_id => $event)
@@ -1692,20 +1703,33 @@ class MEC_feature_mec extends MEC_base
                 $location_id = $this->main->get_master_location_id($event);
 
                 $event_title = $event->data->title;
-                $event_link = $event->data->permalink;
-                $event_date = $this->main->date_i18n(get_option('date_format'), $event->date['start']['date']);
+                $event_link  = $event->data->permalink;
+                $event_date  = $this->main->date_i18n(get_option('date_format'), $event->date['start']['date']);
+
                 $location = get_term($location_id, 'mec_location');
 
-                $locationName = '';
-                if (isset($location->name)) $locationName = $location->name;
+                $location_name = '';
+
+                if (isset($location->name))
+                {
+                    $location_name = $location->name;
+                }
 
                 echo '<li>
                     <span aria-hidden="true" class="dashicons dashicons-calendar-alt"></span>
+
                     <div class="mec-metabox-upcoming-event">
-                        <a href="' . esc_url($event_link) . '" target="">' . esc_html($event_title) . '</a>
-                        <div class="mec-metabox-upcoming-event-location">' . esc_html($locationName) . '</div>
+                        <a href="' . esc_url($event_link) . '">' . esc_html($event_title) . '</a>
+
+                        <div class="mec-metabox-upcoming-event-location">
+                            ' . esc_html($location_name) . '
+                        </div>
                     </div>
-                    <div class="mec-metabox-upcoming-event-date">' . esc_html($event_date) . '</div>
+
+                    <div class="mec-metabox-upcoming-event-date">
+                        ' . esc_html($event_date) . '
+                    </div>
+
                     <div style="clear:both"></div>
                 </li>';
             }
@@ -1713,39 +1737,71 @@ class MEC_feature_mec extends MEC_base
 
         echo '</ul></div>';
 
-        $mec_get_webnus_news_time = get_option('mec_get_webnus_news_time');
-        if (!isset($mec_get_webnus_news_time) || !$mec_get_webnus_news_time)
-        {
-            $data_url = wp_remote_get('https://webnus.net/wp-json/wninfo/v1/posts', ['user-agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36']);
-            $obj = ((is_array($data_url) and isset($data_url['body'])) ? json_decode($data_url['body']) : '');
+        /**
+         * News Cache
+         */
+        $obj = get_transient('mec_webnus_news');
 
-            update_option('mec_get_webnus_news_time', date("Y-m-d"));
-            update_option('mec_get_webnus_news_html', $obj);
-        }
-        else
+        // Fetch fresh data if transient expired
+        if (false === $obj)
         {
-            if (strtotime(date("Y-m-d")) > strtotime($mec_get_webnus_news_time))
-            {
-                $data_url = wp_remote_get('https://webnus.net/wp-json/wninfo/v1/posts', ['user-agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36']);
-                $obj = ((is_array($data_url) and isset($data_url['body'])) ? json_decode($data_url['body']) : '');
+            $response = wp_remote_get(
+                'https://webnus.net/wp-json/wninfo/v1/posts/',
+                [
+                    'timeout'     => 15,
+                    'redirection' => 5,
+                    'sslverify'   => true,
+                    'user-agent'  => 'Mozilla/5.0',
+                    'headers'     => [
+                        'Accept' => 'application/json',
+                    ],
+                ]
+            );
 
-                update_option('mec_get_webnus_news_time', date("Y-m-d"));
-                update_option('mec_get_webnus_news_html', $obj);
-            }
-            else
+            // Default empty array
+            $obj = [];
+
+            // Ensure request succeeded
+            if (!is_wp_error($response))
             {
-                $obj = get_option('mec_get_webnus_news_html');
+                $body = wp_remote_retrieve_body($response);
+
+                $decoded = json_decode($body);
+
+                // Ensure valid array response
+                if (is_array($decoded) && !empty($decoded))
+                {
+                    $obj = $decoded;
+
+                    // Cache for 24 hours
+                    set_transient('mec_webnus_news', $obj, DAY_IN_SECONDS);
+                }
             }
         }
 
         // News
-        if (!empty($obj))
+        if (!empty($obj) && is_array($obj))
         {
-            echo '<h3 class="mec-metabox-feed-head">' . esc_html__('News & Updates', 'modern-events-calendar-lite') . '</h3><div class="mec-metabox-feed-content"><ul>';
+            echo '<h3 class="mec-metabox-feed-head">' . esc_html__('News & Updates', 'modern-events-calendar-lite') . '</h3>
+            <div class="mec-metabox-feed-content">
+                <ul>';
+
             foreach ($obj as $key => $value)
             {
+                if (
+                    !isset($value->title)
+                    || !isset($value->content)
+                    || !isset($value->link)
+                )
+                {
+                    continue;
+                }
+
                 echo '<li>
-                    <a href="' . esc_url($value->link) . '" target="_blank">' . esc_html($value->title) . '</a>
+                    <a href="' . esc_url($value->link) . '" target="_blank" rel="noopener noreferrer">
+                        ' . esc_html($value->title) . '
+                    </a>
+
                     <p>' . esc_html($value->content) . '</p>
                 </li>';
             }
@@ -1753,9 +1809,26 @@ class MEC_feature_mec extends MEC_base
             echo '</ul></div>';
         }
 
-        // Links
-        echo '<div class="mec-metabox-footer"><a href="https://webnus.net/blog/" target="_blank">' . esc_html__('Blog', 'modern-events-calendar-lite') . '<span aria-hidden="true" class="dashicons dashicons-external"></span></a><a href="https://webnus.net/dox/modern-events-calendar/" target="_blank">' . esc_html__('Help', 'modern-events-calendar-lite') . '<span aria-hidden="true" class="dashicons dashicons-external"></span></a>';
-        if ($this->getPRO()) echo '<a href="https://webnus.net/mec-purchase" target="_blank">' . esc_html__('Go Pro', 'modern-events-calendar-lite') . '<span aria-hidden="true" class="dashicons dashicons-external"></span></a>';
+        // Footer Links
+        echo '<div class="mec-metabox-footer">
+            <a href="https://webnus.net/blog/" target="_blank" rel="noopener noreferrer">
+                ' . esc_html__('Blog', 'modern-events-calendar-lite') . '
+                <span aria-hidden="true" class="dashicons dashicons-external"></span>
+            </a>
+
+            <a href="https://webnus.net/dox/modern-events-calendar/" target="_blank" rel="noopener noreferrer">
+                ' . esc_html__('Help', 'modern-events-calendar-lite') . '
+                <span aria-hidden="true" class="dashicons dashicons-external"></span>
+            </a>';
+
+        if ($this->getPRO())
+        {
+            echo '<a href="https://webnus.net/mec-purchase" target="_blank" rel="noopener noreferrer">
+                ' . esc_html__('Go Pro', 'modern-events-calendar-lite') . '
+                <span aria-hidden="true" class="dashicons dashicons-external"></span>
+            </a>';
+        }
+
         echo '</div>';
     }
 

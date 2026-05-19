@@ -124,8 +124,8 @@ class MEC
         // Register the shortcodes
         $factory->action('init', array($factory, 'load_shortcodes'));
 
-        // Register language files for localization
-        $factory->action('init', array($factory, 'load_languages'));
+        // Register language files for localization before MEC triggers translations.
+        $factory->action('plugins_loaded', array($factory, 'load_languages'));
 
         // Plugin Update Notification
         $factory->action('in_plugin_update_message-' . MEC_BASENAME , array($factory, 'mecShowUpgradeNotification') , 10,2);

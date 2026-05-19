@@ -79,7 +79,7 @@ class MEC_skin_tile extends MEC_skins
         $this->sf_refine = $this->atts['sf_refine'] ?? false;
 
         // Generate an ID for the skin
-        $this->id = $this->atts['id'] ?? mt_rand(100, 999);
+        $this->id = $this->get_skin_dom_id();
 
         // Show "Load More" button or not
         $this->load_more_button = $this->skin_options['load_more_button'] ?? true;

@@ -32,7 +32,7 @@ class EventTime extends WidgetBase {
 
 		ob_start();
 			echo '<div class="mec-event-meta">';
-			echo '<style>.mec-single-event-time h3{display:inline;}</style>';
+			echo '<style>.mec-single-event-time .mec-time{display:inline;}</style>';
 			// Event Time
 			if (isset($event_detail->data->meta['mec_date']['start']) and !empty($event_detail->data->meta['mec_date']['start'])) {
 				if (isset($event_detail->data->meta['mec_hide_time']) and $event_detail->data->meta['mec_hide_time'] == '0') {
@@ -44,7 +44,7 @@ class EventTime extends WidgetBase {
                                 <?php echo $this->icons->display('clock'); ?>
 							<?php } ?>
 							<?php if( isset( $atts['mec_time_show_title'] ) && $atts['mec_time_show_title'] ){ ?>
-								<h3 class="mec-time"><?php esc_html_e('Time', 'modern-events-calendar-lite'); ?></h3>
+								<div class="mec-time"><?php esc_html_e('Time', 'modern-events-calendar-lite'); ?></div>
 							<?php } ?>
 							<i class="mec-time-comment"><?php echo (isset($time_comment) ? esc_html($time_comment) : ''); ?></i>
 							<dl>

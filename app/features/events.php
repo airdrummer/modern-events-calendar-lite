@@ -2902,12 +2902,14 @@ class MEC_feature_events extends MEC_base
 
         $reg_fields = $_mec['reg_fields'] ?? [];
         if ($reg_fields_global_inheritance) $reg_fields = [];
+        else $reg_fields = $this->main->sanitize_booking_condition_fields($reg_fields, 'reg');
 
         do_action('mec_save_reg_fields', $post_id, $reg_fields);
         update_post_meta($post_id, 'mec_reg_fields', $reg_fields);
 
         $bfixed_fields = $_mec['bfixed_fields'] ?? [];
         if ($reg_fields_global_inheritance) $bfixed_fields = [];
+        else $bfixed_fields = $this->main->sanitize_booking_condition_fields($bfixed_fields, 'bfixed');
 
         do_action('mec_save_bfixed_fields', $post_id, $bfixed_fields);
         update_post_meta($post_id, 'mec_bfixed_fields', $bfixed_fields);

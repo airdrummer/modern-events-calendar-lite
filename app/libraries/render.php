@@ -58,6 +58,10 @@ class MEC_render extends MEC_base
         $MEC_Shortcode_id = $calendar_id;
         $atts = apply_filters('mec_calendar_atts', $this->parse($calendar_id, $atts));
 
+        if (empty($atts['instance_id'])) {
+            $atts['instance_id'] = function_exists('wp_unique_id') ? wp_unique_id('mec') : uniqid('mec', false);
+        }
+
         $skin = $atts['skin'] ?? $this->get_default_layout();
         return $this->skin($skin, $atts);
     }
@@ -72,6 +76,10 @@ class MEC_render extends MEC_base
     {
         $calendar_id = $atts['id'] ?? 0;
         $atts = apply_filters('mec_calendar_atts', $this->parse($calendar_id, $atts));
+
+        if (empty($atts['instance_id'])) {
+            $atts['instance_id'] = function_exists('wp_unique_id') ? wp_unique_id('mec') : uniqid('mec', false);
+        }
 
         $skin = $atts['skin'] ?? $this->get_default_layout();
         $json = $this->skin($skin, $atts);
@@ -567,6 +575,10 @@ class MEC_render extends MEC_base
             return '';
         }
 
+        if (empty($atts['instance_id'])) {
+            $atts['instance_id'] = function_exists('wp_unique_id') ? wp_unique_id('mec') : uniqid('mec', false);
+        }
+
         $path = MEC::import('app.skins.' . $skin, true, true);
         $skin_path = apply_filters('mec_skin_path', $skin);
 
@@ -856,9 +868,19 @@ class MEC_render extends MEC_base
         {
             $terms = wp_get_post_terms($post_id, 'mec_speaker', [
                 'fields' => 'all',
-                'orderby' => 'meta_value_num',
-                'meta_key' => 'mec_index',
             ]);
+
+            usort($terms, function ($a, $b)
+            {
+                $a_index = get_metadata('term', $a->term_id, 'mec_index', true);
+                $b_index = get_metadata('term', $b->term_id, 'mec_index', true);
+
+                $a_index = $a_index === '' ? 99 : (float) $a_index;
+                $b_index = $b_index === '' ? 99 : (float) $b_index;
+
+                if ($a_index === $b_index) return strnatcasecmp($a->name, $b->name);
+                return $a_index <=> $b_index;
+            });
 
             foreach ($terms as $term)
             {

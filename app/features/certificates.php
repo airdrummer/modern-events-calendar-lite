@@ -180,6 +180,76 @@ class MEC_feature_certificates extends MEC_base
         return $this->getDB()->select("SELECT * FROM `#__mec_booking_attendees` WHERE `id`='".esc_sql($attendee_id)."'", 'loadObject');
     }
 
+    private function get_requested_booking_attendee_data()
+    {
+        $booking = $this->get_requested_booking();
+        $requested_attendee = $this->get_requested_attendee();
+
+        list(
+            $attendee_id,
+            $mec_booking_id,
+            $transaction_id,
+            $ticket_id
+        ) = $this->get_request();
+
+        $user_email = '';
+        if ($requested_attendee && isset($requested_attendee->user_id))
+        {
+            $user = $this->getUser()->get($requested_attendee->user_id);
+            $user_email = $user->user_email ?? '';
+        }
+
+        $sources = [];
+
+        $booking_post_id = (int) ($booking->booking_id ?? 0);
+        if ($booking_post_id)
+        {
+            $attendees = get_post_meta($booking_post_id, 'mec_attendees', true);
+            if (is_array($attendees)) $sources[] = $attendees;
+
+            $attendee = get_post_meta($booking_post_id, 'mec_attendee', true);
+            if (is_array($attendee)) $sources[] = [$attendee];
+        }
+
+        if (isset($booking->transaction_id) && trim($booking->transaction_id))
+        {
+            $transaction = $this->getBook()->get_transaction($booking->transaction_id);
+            $tickets = $transaction['tickets'] ?? [];
+            if (is_array($tickets)) $sources[] = $tickets;
+        }
+
+        foreach ($sources as $source)
+        {
+            $candidate = $this->match_requested_attendee($source, $ticket_id, $user_email);
+            if ($candidate) return $candidate;
+        }
+
+        return null;
+    }
+
+    private function match_requested_attendee($attendees, $ticket_id, $user_email = '')
+    {
+        if (!is_array($attendees) || !count($attendees)) return null;
+
+        $matches = [];
+        foreach ($attendees as $key => $attendee)
+        {
+            if ($key === 'attachments' || !is_array($attendee)) continue;
+
+            $attendee_ticket_id = $attendee['id'] ?? null;
+            if ($ticket_id && (string) $attendee_ticket_id !== (string) $ticket_id) continue;
+
+            if ($user_email && isset($attendee['email']) && strtolower((string) $attendee['email']) === strtolower((string) $user_email))
+            {
+                return $attendee;
+            }
+
+            $matches[] = $attendee;
+        }
+
+        return count($matches) ? $matches[0] : null;
+    }
+
     /**
      * @return string
      */
@@ -221,11 +291,18 @@ class MEC_feature_certificates extends MEC_base
      */
     public function shortcode_attendee_name()
     {
+        $attendee = $this->get_requested_booking_attendee_data();
+        if (is_array($attendee) && isset($attendee['name']) && trim((string) $attendee['name']))
+        {
+            return $attendee['name'];
+        }
+
         $attendee = $this->get_requested_attendee();
-        if($attendee)
+        if ($attendee)
         {
             $user = $this->getUser()->get($attendee->user_id);
-            return $user->first_name . ' ' . $user->last_name;
+            $name = trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? ''));
+            if (trim($name)) return $name;
         }
 
         return 'N/A';
