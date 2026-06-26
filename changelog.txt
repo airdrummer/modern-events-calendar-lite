@@ -1,4 +1,8 @@
-﻿v 7.34.1 - 22 June 2026
+v 7.34.1.1 - 6jun26
+- added missing timezone display, reformat
+- fixed countdown
+
+v 7.34.1 - 22 June 2026
 - Fixed: A styling issue in the classic calendar view within booking calendar.
 - Fixed: An issue in Novel style of the monthly view skin.
 
