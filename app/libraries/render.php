@@ -99,6 +99,7 @@ class MEC_render extends MEC_base
 
         // Create Skin Object Class
         $SKO = new $skin_class_name();
+        $SKO->sf_base_atts = $atts;
 
         // Apply URL search filters on initial render (so no flash of unfiltered results)
         $sf = (isset($_REQUEST['sf']) and is_array($_REQUEST['sf'])) ? $this->main->sanitize_deep_array($_REQUEST['sf']) : [];
@@ -329,8 +330,26 @@ class MEC_render extends MEC_base
         if ($category and is_tax('mec_category') and get_queried_object_id()) $shortcode = str_replace(']', ' category="' . get_queried_object_id() . '"]', $shortcode);
         if ($tag and is_tax('mec_tag') and get_queried_object_id()) $shortcode = str_replace(']', ' tag="' . get_queried_object_id() . '"]', $shortcode);
 
-        if (trim($shortcode)) return do_shortcode($shortcode);
+        if (trim($shortcode) && $this->is_allowed_custom_shortcode($shortcode)) return do_shortcode($shortcode);
         return '';
+    }
+
+    protected function is_allowed_custom_shortcode($shortcode)
+    {
+        preg_match_all('/\[\/?([A-Za-z0-9_-]+)/', $shortcode, $matches);
+        $tags = array_unique($matches[1] ?? []);
+
+        if (!count($tags)) return false;
+
+        foreach ($tags as $tag)
+        {
+            if (!shortcode_exists($tag)) return false;
+
+            $allowed = (bool) preg_match('/^mec([_-]|$)/i', $tag);
+            if (!apply_filters('mec_allowed_custom_shortcode_tag', $allowed, $tag, $shortcode)) return false;
+        }
+
+        return true;
     }
 
     /**
@@ -594,6 +613,7 @@ class MEC_render extends MEC_base
 
         // Create Skin Object Class
         $SKO = new $skin_class_name();
+        $SKO->sf_base_atts = $atts;
 
         // Apply URL search filters on initial render to avoid flash of unfiltered content
         // Mirrors AJAX paths that call sf_apply() before initializing the skin.

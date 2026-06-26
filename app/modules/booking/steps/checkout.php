@@ -68,12 +68,18 @@ $paid_booking = !$free_booking;
 <style>.mec-book-price-detail-type-discount{display: none;}</style>
 <div id="mec_book_payment_form" class="mec-booking-form-container mec-wrap-checkout">
 
+    <?php
+    $__spb_active = function_exists('mec_seat_builder_uses_booking_flow') ? mec_seat_builder_uses_booking_flow($event_id) : (class_exists('\MEC\SeatBuilder\Booking\SeatPlanBookingHelper') && \MEC\SeatBuilder\Booking\SeatPlanBookingHelper::uses_seat_builder_booking_flow($event_id));
+    ?>
     <?php if($display_progress_bar): ?>
         <ul class="mec-booking-progress-bar">
             <li class="mec-booking-progress-bar-date-and-ticket mec-active"><span class="progress-index"><?php esc_html_e('1', 'modern-events-calendar-lite'); ?></span><?php esc_html_e('Select Ticket', 'modern-events-calendar-lite'); ?></li>
             <li class="mec-booking-progress-bar-attendee-info mec-active"><span class="progress-index"><?php esc_html_e('2', 'modern-events-calendar-lite'); ?></span><?php esc_html_e('Attendees', 'modern-events-calendar-lite'); ?></li>
-            <li class="mec-booking-progress-bar-payment mec-active"><span class="progress-index"><?php esc_html_e('3', 'modern-events-calendar-lite'); ?></span><?php esc_html_e('Payment', 'modern-events-calendar-lite'); ?></li>
-            <li class="mec-booking-progress-bar-complete"><span class="progress-index"><?php esc_html_e('4', 'modern-events-calendar-lite'); ?></span><?php esc_html_e('Confirmation', 'modern-events-calendar-lite'); ?></li>
+            <?php if($__spb_active): ?>
+                <li class="mec-booking-progress-bar-seat-selection mec-active"><span class="progress-index"><?php esc_html_e('3', 'modern-events-calendar-lite'); ?></span><?php esc_html_e('Seat Selection', 'modern-events-calendar-lite'); ?></li>
+            <?php endif; ?>
+            <li class="mec-booking-progress-bar-payment mec-active"><span class="progress-index"><?php echo $__spb_active ? '4' : '3'; ?></span><?php esc_html_e('Payment', 'modern-events-calendar-lite'); ?></li>
+            <li class="mec-booking-progress-bar-complete"><span class="progress-index"><?php echo $__spb_active ? '5' : '4'; ?></span><?php esc_html_e('Confirmation', 'modern-events-calendar-lite'); ?></li>
         </ul>
     <?php else: ?>
         <h4><?php esc_html_e('Checkout', 'modern-events-calendar-lite'); ?></h4>

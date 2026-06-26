@@ -15,6 +15,10 @@ $pages = get_pages();
 
 // Event Fields
 $event_fields = $this->main->get_event_fields();
+
+// Event Colors
+$available_colors = $this->main->get_available_colors();
+if(!is_array($available_colors)) $available_colors = [];
 ?>
 <div class="wns-be-container wns-be-container-sticky">
     <div id="wns-be-infobar">
@@ -450,6 +454,35 @@ $event_fields = $this->main->get_event_fields();
 
                         </div>
 
+                        <div id="event_color_options" class="mec-options-fields">
+                            <h4 class="mec-form-subtitle"><?php esc_html_e('Colors', 'modern-events-calendar-lite'); ?></h4>
+                            <div class="mec-form-row">
+                                <div class="mec-col-12">
+                                    <input type="hidden" name="mec[colors][]" value="" />
+                                    <?php $colors_count = 0; ?>
+                                    <?php foreach($available_colors as $available_color): ?>
+                                        <?php
+                                        if(!is_scalar($available_color)) continue;
+
+                                        $available_color = sanitize_hex_color_no_hash(trim($available_color, '# '));
+                                        if(!$available_color) continue;
+
+                                        $colors_count++;
+                                        ?>
+                                        <div class="mec-available-color-item" style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                                            <span style="display: inline-block; width: 24px; height: 24px; border-radius: 3px; background-color: #<?php echo esc_attr($available_color); ?>"></span>
+                                            <code style="min-width: 80px;">#<?php echo esc_html($available_color); ?></code>
+                                            <button type="button" class="button button-secondary mec-remove-available-color"><?php esc_html_e('Remove', 'modern-events-calendar-lite'); ?></button>
+                                            <input type="hidden" name="mec[colors][]" value="<?php echo esc_attr($available_color); ?>" />
+                                        </div>
+                                    <?php endforeach; ?>
+                                    <?php if(!$colors_count): ?>
+                                        <p><?php esc_html_e('No colors found.', 'modern-events-calendar-lite'); ?></p>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+
                         <div id="event_form_option" class="mec-options-fields">
                             <h4 class="mec-form-subtitle"><?php esc_html_e('Custom Fields', 'modern-events-calendar-lite'); ?></h4>
                             <div class="mec-container">
@@ -745,6 +778,11 @@ jQuery(document).ready(function()
     {
         event.preventDefault();
         jQuery("#mec_single_form_button").trigger("click");
+    });
+
+    jQuery(document).on("click", ".mec-remove-available-color", function()
+    {
+        jQuery(this).closest(".mec-available-color-item").remove();
     });
 });
 

@@ -503,10 +503,11 @@ class MEC_search extends MEC_base
         $address = str_replace(' ', ',', $address);
         $locations = explode(',', $address);
         $query = "SELECT `term_id` FROM `#__termmeta` WHERE `meta_key` = 'address'";
-
-        foreach($locations as $location) if(trim($location)) $query .= " AND `meta_value` LIKE '%" . trim($location) . "%'";
-
         $db = $this->getDB();
+        $database = $db->get_DBO();
+
+        foreach($locations as $location) if(trim($location)) $query .= $db->prepare(" AND `meta_value` LIKE %s", '%' . $database->esc_like(trim($location)) . '%');
+
         $locations_id = $db->select($query, 'loadAssocList');
         return array_map(function($value)
         {

@@ -100,6 +100,38 @@ class MEC_feature_restful extends MEC_base
             'permission_callback' => [$this->restful, 'permission'],
         ]);
 
+        // Taxonomy Entities
+        register_rest_route($this->restful->get_namespace(), 'taxonomies/(?P<entity>categories|tags|labels|speakers|sponsors)', [
+            [
+                'methods' => 'GET',
+                'callback' => [$this, 'list_taxonomy_entities'],
+                'permission_callback' => [$this->restful, 'permission'],
+            ],
+            [
+                'methods' => 'POST',
+                'callback' => [$this, 'create_taxonomy_entity'],
+                'permission_callback' => [$this->restful, 'permission'],
+            ],
+        ]);
+
+        register_rest_route($this->restful->get_namespace(), 'taxonomies/(?P<entity>categories|tags|labels|speakers|sponsors)/(?P<id>\d+)', [
+            [
+                'methods' => 'GET',
+                'callback' => [$this, 'get_taxonomy_entity'],
+                'permission_callback' => [$this->restful, 'permission'],
+            ],
+            [
+                'methods' => 'PUT',
+                'callback' => [$this, 'update_taxonomy_entity'],
+                'permission_callback' => [$this->restful, 'permission'],
+            ],
+            [
+                'methods' => 'DELETE',
+                'callback' => [$this, 'delete_taxonomy_entity'],
+                'permission_callback' => [$this->restful, 'permission'],
+            ],
+        ]);
+
         // My Events
         register_rest_route($this->restful->get_namespace(), 'my-events', [
             'methods' => 'GET',
@@ -308,6 +340,325 @@ class MEC_feature_restful extends MEC_base
         if (isset($payload[$id_key]) && is_numeric($payload[$id_key])) return (int) $payload[$id_key];
 
         return 0;
+    }
+
+    private function get_taxonomy_entities(): array
+    {
+        return [
+            'categories' => [
+                'single' => 'category',
+                'taxonomy' => 'mec_category',
+                'save_method' => 'save_category',
+            ],
+            'tags' => [
+                'single' => 'tag',
+                'taxonomy' => apply_filters('mec_taxonomy_tag', ''),
+                'save_method' => 'save_tag',
+            ],
+            'labels' => [
+                'single' => 'label',
+                'taxonomy' => 'mec_label',
+                'save_method' => 'save_label',
+            ],
+            'speakers' => [
+                'single' => 'speaker',
+                'taxonomy' => 'mec_speaker',
+                'save_method' => 'save_speaker',
+            ],
+            'sponsors' => [
+                'single' => 'sponsor',
+                'taxonomy' => 'mec_sponsor',
+                'save_method' => 'save_sponsor',
+            ],
+        ];
+    }
+
+    private function get_taxonomy_entity_config(string $entity): ?array
+    {
+        $entities = $this->get_taxonomy_entities();
+        $config = $entities[$entity] ?? null;
+        if (!$config) return null;
+
+        if ($entity === 'tags' && !trim((string) $config['taxonomy'])) return null;
+        if ($entity === 'speakers' && (!isset($this->settings['speakers_status']) || !$this->settings['speakers_status'])) return null;
+        if ($entity === 'sponsors' && (!$this->getPRO() || !isset($this->settings['sponsors_status']) || !$this->settings['sponsors_status'])) return null;
+
+        return $config;
+    }
+
+    private function get_taxonomy_entity_items(array $vars, array $tax, string $entity): array
+    {
+        $items = [];
+
+        if (isset($tax[$entity]) && is_array($tax[$entity])) $items = $tax[$entity];
+        elseif (isset($vars[$entity]) && is_array($vars[$entity])) $items = $vars[$entity];
+
+        $ids_key = $this->get_taxonomy_entities()[$entity]['single'] . '_ids';
+        if (isset($vars[$ids_key]) && is_array($vars[$ids_key])) $items = array_merge($items, $vars[$ids_key]);
+
+        return $items;
+    }
+
+    private function sanitize_taxonomy_entity_value($value, string $entity, string $field = '')
+    {
+        if (is_array($value)) return '';
+
+        switch ($entity)
+        {
+            case 'categories':
+                if ($field === 'mec_cat_color') return sanitize_text_field($value);
+                if ($field === 'mec_cat_fallback_image') return sanitize_text_field($value);
+                return sanitize_text_field($value);
+
+            case 'labels':
+                return sanitize_text_field($value);
+
+            case 'speakers':
+                if (in_array($field, ['facebook', 'twitter', 'instagram', 'linkedin', 'website'], true)) return trim((string) $value) ? esc_url_raw($value) : '';
+                if ($field === 'email') return sanitize_email($value);
+                if ($field === 'mec_index') return is_numeric($value) ? (string) $value : '99';
+                if ($field === 'type') return in_array($value, ['person', 'group'], true) ? $value : 'person';
+                return sanitize_text_field($value);
+
+            case 'sponsors':
+                if (in_array($field, ['link', 'logo'], true)) return trim((string) $value) ? esc_url_raw($value) : '';
+                return sanitize_text_field($value);
+
+            case 'tags':
+            default:
+                return sanitize_text_field($value);
+        }
+    }
+
+    private function get_taxonomy_entity_meta_input($payload, string $entity): array
+    {
+        if (!is_array($payload)) return [];
+
+        switch ($entity)
+        {
+            case 'categories':
+                return [
+                    'mec_cat_icon' => $this->sanitize_taxonomy_entity_value($payload['icon'] ?? ($payload['mec_cat_icon'] ?? ''), $entity, 'mec_cat_icon'),
+                    'mec_cat_color' => $this->sanitize_taxonomy_entity_value($payload['color'] ?? ($payload['mec_cat_color'] ?? ''), $entity, 'mec_cat_color'),
+                    'mec_cat_fallback_image' => $this->sanitize_taxonomy_entity_value($payload['fallback_image'] ?? ($payload['mec_cat_fallback_image'] ?? ''), $entity, 'mec_cat_fallback_image'),
+                ];
+
+            case 'labels':
+                return [
+                    'color' => $this->sanitize_taxonomy_entity_value($payload['color'] ?? '', $entity, 'color'),
+                    'style' => $this->sanitize_taxonomy_entity_value($payload['style'] ?? '', $entity, 'style'),
+                ];
+
+            case 'speakers':
+                return [
+                    'type' => $this->sanitize_taxonomy_entity_value($payload['type'] ?? 'person', $entity, 'type'),
+                    'job_title' => $this->sanitize_taxonomy_entity_value($payload['job_title'] ?? '', $entity, 'job_title'),
+                    'tel' => $this->sanitize_taxonomy_entity_value($payload['tel'] ?? '', $entity, 'tel'),
+                    'email' => $this->sanitize_taxonomy_entity_value($payload['email'] ?? '', $entity, 'email'),
+                    'website' => $this->sanitize_taxonomy_entity_value($payload['website'] ?? '', $entity, 'website'),
+                    'mec_index' => $this->sanitize_taxonomy_entity_value($payload['mec_index'] ?? 99, $entity, 'mec_index'),
+                    'facebook' => $this->sanitize_taxonomy_entity_value($payload['facebook'] ?? '', $entity, 'facebook'),
+                    'twitter' => $this->sanitize_taxonomy_entity_value($payload['twitter'] ?? '', $entity, 'twitter'),
+                    'instagram' => $this->sanitize_taxonomy_entity_value($payload['instagram'] ?? '', $entity, 'instagram'),
+                    'linkedin' => $this->sanitize_taxonomy_entity_value($payload['linkedin'] ?? '', $entity, 'linkedin'),
+                    'thumbnail' => $this->sanitize_taxonomy_entity_value($payload['thumbnail'] ?? '', $entity, 'thumbnail'),
+                ];
+
+            case 'sponsors':
+                return [
+                    'link' => $this->sanitize_taxonomy_entity_value($payload['link'] ?? '', $entity, 'link'),
+                    'logo' => $this->sanitize_taxonomy_entity_value($payload['logo'] ?? '', $entity, 'logo'),
+                ];
+
+            case 'tags':
+            default:
+                return [];
+        }
+    }
+
+    private function filter_taxonomy_entity_meta(array $meta): array
+    {
+        foreach ($meta as $key => $value)
+        {
+            if ($value === '' || $value === null) unset($meta[$key]);
+        }
+
+        return $meta;
+    }
+
+    private function format_taxonomy_entity($term, string $entity): array
+    {
+        $term = get_term($term);
+        if (!$term || is_wp_error($term)) return [];
+
+        $data = [
+            'id' => (int) $term->term_id,
+            'name' => $term->name,
+            'slug' => $term->slug,
+            'description' => $term->description,
+            'count' => (int) $term->count,
+            'taxonomy' => $term->taxonomy,
+        ];
+
+        if ($entity === 'categories')
+        {
+            $data['icon'] = get_term_meta($term->term_id, 'mec_cat_icon', true);
+            $data['color'] = get_term_meta($term->term_id, 'mec_cat_color', true);
+            $data['fallback_image'] = get_term_meta($term->term_id, 'mec_cat_fallback_image', true);
+            $data['parent'] = (int) $term->parent;
+        }
+        elseif ($entity === 'labels')
+        {
+            $data['color'] = get_term_meta($term->term_id, 'color', true);
+            $data['style'] = get_term_meta($term->term_id, 'style', true);
+        }
+        elseif ($entity === 'speakers')
+        {
+            $data['type'] = get_term_meta($term->term_id, 'type', true);
+            $data['job_title'] = get_term_meta($term->term_id, 'job_title', true);
+            $data['tel'] = get_term_meta($term->term_id, 'tel', true);
+            $data['email'] = get_term_meta($term->term_id, 'email', true);
+            $data['website'] = get_term_meta($term->term_id, 'website', true);
+            $data['mec_index'] = get_term_meta($term->term_id, 'mec_index', true);
+            $data['facebook'] = get_term_meta($term->term_id, 'facebook', true);
+            $data['twitter'] = get_term_meta($term->term_id, 'twitter', true);
+            $data['instagram'] = get_term_meta($term->term_id, 'instagram', true);
+            $data['linkedin'] = get_term_meta($term->term_id, 'linkedin', true);
+            $data['thumbnail'] = get_term_meta($term->term_id, 'thumbnail', true);
+        }
+        elseif ($entity === 'sponsors')
+        {
+            $data['link'] = get_term_meta($term->term_id, 'link', true);
+            $data['logo'] = get_term_meta($term->term_id, 'logo', true);
+        }
+
+        return $data;
+    }
+
+    private function current_user_can_manage_taxonomy(string $taxonomy, string $action = 'assign_terms'): bool
+    {
+        $taxonomy_object = get_taxonomy($taxonomy);
+        if (!$taxonomy_object || !isset($taxonomy_object->cap)) return false;
+
+        $cap = $taxonomy_object->cap->{$action} ?? '';
+        if (!trim($cap)) return false;
+
+        return current_user_can($cap);
+    }
+
+    private function taxonomy_entity_capability_error(string $action = 'manage'): WP_REST_Response
+    {
+        return $this->restful->response([
+            'data' => new WP_Error('401', esc_html__("You're not authorized to manage this taxonomy!", 'modern-events-calendar-lite')),
+            'status' => 401,
+        ]);
+    }
+
+    private function taxonomy_entity_not_found_response(): WP_REST_Response
+    {
+        return $this->restful->response([
+            'data' => new WP_Error('404', esc_html__('Taxonomy entity not found!', 'modern-events-calendar-lite')),
+            'status' => 404,
+        ]);
+    }
+
+    private function get_term_id_from_event_item($item, string $entity)
+    {
+        $config = $this->get_taxonomy_entity_config($entity);
+        if (!$config) return 0;
+
+        $taxonomy = $config['taxonomy'];
+        if (!$taxonomy || !taxonomy_exists($taxonomy)) return 0;
+
+        if (is_numeric($item))
+        {
+            $term = get_term((int) $item, $taxonomy);
+            return ($term && !is_wp_error($term)) ? (int) $term->term_id : 0;
+        }
+
+        if (is_string($item))
+        {
+            $name = trim($item);
+            if ($name === '') return 0;
+
+            return (int) $this->getMain()->{$config['save_method']}([
+                'name' => $name,
+            ]);
+        }
+
+        if (!is_array($item)) return 0;
+
+        if (isset($item['id']) && is_numeric($item['id']))
+        {
+            $term = get_term((int) $item['id'], $taxonomy);
+            return ($term && !is_wp_error($term)) ? (int) $term->term_id : 0;
+        }
+
+        $payload = ['name' => trim((string) ($item['name'] ?? ''))];
+        if ($payload['name'] === '') return 0;
+
+        $existing = get_term_by('name', $payload['name'], $taxonomy);
+        if ($existing && !is_wp_error($existing) && isset($existing->term_id)) return (int) $existing->term_id;
+
+        if ($entity === 'labels') $payload['color'] = $item['color'] ?? '';
+        elseif ($entity === 'speakers')
+        {
+            $payload['job_title'] = $item['job_title'] ?? '';
+            $payload['tel'] = $item['tel'] ?? '';
+            $payload['email'] = $item['email'] ?? '';
+            $payload['facebook'] = $item['facebook'] ?? '';
+            $payload['twitter'] = $item['twitter'] ?? '';
+            $payload['instagram'] = $item['instagram'] ?? '';
+            $payload['linkedin'] = $item['linkedin'] ?? '';
+            $payload['website'] = $item['website'] ?? '';
+            $payload['thumbnail'] = $item['thumbnail'] ?? '';
+        }
+        elseif ($entity === 'sponsors')
+        {
+            $payload['link'] = $item['link'] ?? '';
+            $payload['logo'] = $item['logo'] ?? '';
+        }
+
+        $term_id = (int) $this->getMain()->{$config['save_method']}($payload);
+        if ($term_id) $this->save_taxonomy_entity_meta($term_id, $entity, $item);
+
+        return $term_id;
+    }
+
+    private function get_term_ids_from_event_items(array $vars, array $tax, string $entity): array
+    {
+        $items = $this->get_taxonomy_entity_items($vars, $tax, $entity);
+        $ids = [];
+
+        foreach ($items as $item)
+        {
+            $id = $this->get_term_id_from_event_item($item, $entity);
+            if ($id) $ids[] = $id;
+        }
+
+        return array_values(array_unique(array_map('intval', $ids)));
+    }
+
+    private function insert_taxonomy_entity_term(array $config, array $params)
+    {
+        $taxonomy = $config['taxonomy'];
+
+        $args = [];
+        if (isset($params['slug']) && trim($params['slug'])) $args['slug'] = sanitize_title($params['slug']);
+        if (isset($params['description'])) $args['description'] = sanitize_textarea_field($params['description']);
+        if ($taxonomy === 'mec_category' && isset($params['parent']) && is_numeric($params['parent'])) $args['parent'] = (int) $params['parent'];
+
+        return wp_insert_term(sanitize_text_field($params['name']), $taxonomy, $args);
+    }
+
+    private function save_taxonomy_entity_meta(int $term_id, string $entity, array $payload): void
+    {
+        $meta = $this->filter_taxonomy_entity_meta($this->get_taxonomy_entity_meta_input($payload, $entity));
+
+        foreach ($meta as $key => $value)
+        {
+            update_term_meta($term_id, $key, $value);
+        }
     }
 
     public function events(WP_REST_Request $request)
@@ -675,86 +1026,12 @@ class MEC_feature_restful extends MEC_base
 
         if (!$organizer_id) $organizer_id = 1;
 
-        // Event Categories
-        $category_ids = [];
-        if (isset($tax['categories']) && is_array($tax['categories']))
-        {
-            foreach ($tax['categories'] as $category)
-            {
-                $category_id = $main->save_category([
-                    'name' => trim($category),
-                ]);
-
-                if ($category_id) $category_ids[] = $category_id;
-            }
-        }
-
-        // Event Tags
-        $tag_ids = [];
-        if (isset($tax['tags']) && is_array($tax['tags']))
-        {
-            foreach ($tax['tags'] as $tag)
-            {
-                $tag_id = $main->save_tag([
-                    'name' => trim($tag),
-                ]);
-
-                if ($tag_id) $tag_ids[] = $tag_id;
-            }
-        }
-
-        // Event Labels
-        $label_ids = [];
-        if (isset($tax['labels']) && is_array($tax['labels']))
-        {
-            foreach ($tax['labels'] as $label)
-            {
-                $label_id = isset($label['name']) && trim($label['name']) ? $main->save_label([
-                    'name' => trim($label['name']),
-                    'color' => $label['color'] ?? '',
-                ]) : 0;
-
-                if ($label_id) $label_ids[] = $label_id;
-            }
-        }
-
-        // Event Speakers
-        $speaker_ids = [];
-        if (isset($tax['speakers']) && is_array($tax['speakers']))
-        {
-            foreach ($tax['speakers'] as $speaker)
-            {
-                $speaker_id = isset($speaker['name']) && trim($speaker['name']) ? $main->save_speaker([
-                    'name' => trim($speaker['name']),
-                    'job_title' => $speaker['job_title'] ?? '',
-                    'tel' => $speaker['tel'] ?? '',
-                    'email' => $speaker['email'] ?? '',
-                    'facebook' => $speaker['facebook'] ?? '',
-                    'twitter' => $speaker['twitter'] ?? '',
-                    'instagram' => $speaker['instagram'] ?? '',
-                    'linkedin' => $speaker['linkedin'] ?? '',
-                    'website' => $speaker['website'] ?? '',
-                    'thumbnail' => $speaker['thumbnail'] ?? '',
-                ]) : 0;
-
-                if ($speaker_id) $speaker_ids[] = $speaker_id;
-            }
-        }
-
-        // Event Sponsors
-        $sponsor_ids = [];
-        if (isset($tax['sponsors']) && is_array($tax['sponsors']) && isset($this->settings['sponsors_status']) && $this->settings['sponsors_status'])
-        {
-            foreach ($tax['sponsors'] as $sponsor)
-            {
-                $sponsor_id = isset($sponsor['name']) && trim($sponsor['name']) ? $main->save_sponsor([
-                    'name' => trim($sponsor['name']),
-                    'link' => $sponsor['link'] ?? '',
-                ]) : 0;
-
-                if ($sponsor_id) $sponsor_ids[] = $sponsor_id;
-            }
-        }
+        // Event Categories, Tags, Labels, Speakers and Sponsors
+        $category_ids = $this->get_term_ids_from_event_items($vars, $tax, 'categories');
+        $tag_ids = $this->get_term_ids_from_event_items($vars, $tax, 'tags');
+        $label_ids = $this->get_term_ids_from_event_items($vars, $tax, 'labels');
+        $speaker_ids = $this->get_term_ids_from_event_items($vars, $tax, 'speakers');
+        $sponsor_ids = $this->get_term_ids_from_event_items($vars, $tax, 'sponsors');
 
         // Start
         $start_date = $vars['start_date'] ?? current_time('Y-m-d');
@@ -866,7 +1143,7 @@ class MEC_feature_restful extends MEC_base
             'meta' => [
                 'mec_source' => 'mec-calendar',
                 'mec_dont_show_map' => $vars['dont_show_map'] ?? '',
-                'mec_color' => $vars['color'] ?? '',
+                'mec_color' => $vars['color'] ?? ($vars['event_color'] ?? ''),
                 'mec_read_more' => $vars['read_more'] ?? '',
                 'mec_more_info' => $vars['more_info'] ?? '',
                 'mec_more_info_title' => $vars['more_info_title'] ?? '',
@@ -1072,6 +1349,186 @@ class MEC_feature_restful extends MEC_base
                     'current_page' => $paged,
                     'total_pages' => $query->max_num_pages,
                 ],
+            ],
+            'status' => 200,
+        ]);
+    }
+
+    public function list_taxonomy_entities(WP_REST_Request $request): WP_REST_Response
+    {
+        $entity = $request->get_param('entity');
+        $config = $this->get_taxonomy_entity_config($entity);
+        if (!$config) return $this->taxonomy_entity_not_found_response();
+
+        if (!$this->current_user_can_manage_taxonomy($config['taxonomy'], 'assign_terms')) return $this->taxonomy_entity_capability_error('read');
+
+        $limit = (int) $request->get_param('limit');
+        if ($limit < 1) $limit = 20;
+
+        $paged = (int) $request->get_param('paged');
+        if ($paged < 1) $paged = 1;
+
+        $orderby = sanitize_text_field($request->get_param('orderby') ?: 'name');
+        if (!in_array($orderby, ['name', 'slug', 'count', 'term_id'], true)) $orderby = 'name';
+
+        $order = strtoupper(sanitize_text_field($request->get_param('order') ?: 'ASC'));
+        if (!in_array($order, ['ASC', 'DESC'], true)) $order = 'ASC';
+
+        $terms = get_terms([
+            'taxonomy' => $config['taxonomy'],
+            'hide_empty' => (bool) $request->get_param('hide_empty'),
+            'number' => $limit,
+            'offset' => ($paged - 1) * $limit,
+            'search' => sanitize_text_field((string) $request->get_param('search')),
+            'orderby' => $orderby,
+            'order' => $order,
+        ]);
+
+        if (is_wp_error($terms)) return $this->error_response($terms, 400);
+
+        $total = wp_count_terms([
+            'taxonomy' => $config['taxonomy'],
+            'hide_empty' => (bool) $request->get_param('hide_empty'),
+            'search' => sanitize_text_field((string) $request->get_param('search')),
+        ]);
+
+        $items = [];
+        foreach ($terms as $term)
+        {
+            $items[] = $this->format_taxonomy_entity($term, $entity);
+        }
+
+        return $this->restful->response([
+            'data' => [
+                $entity => $items,
+                'pagination' => [
+                    'current_page' => $paged,
+                    'per_page' => $limit,
+                    'total' => (int) $total,
+                    'total_pages' => $limit ? (int) ceil(((int) $total) / $limit) : 1,
+                ],
+            ],
+            'status' => 200,
+        ]);
+    }
+
+    public function get_taxonomy_entity(WP_REST_Request $request): WP_REST_Response
+    {
+        $entity = $request->get_param('entity');
+        $config = $this->get_taxonomy_entity_config($entity);
+        if (!$config) return $this->taxonomy_entity_not_found_response();
+
+        if (!$this->current_user_can_manage_taxonomy($config['taxonomy'], 'assign_terms')) return $this->taxonomy_entity_capability_error('read');
+
+        $term = get_term((int) $request->get_param('id'), $config['taxonomy']);
+        if (!$term || is_wp_error($term)) return $this->taxonomy_entity_not_found_response();
+
+        return $this->restful->response([
+            'data' => [
+                $config['single'] => $this->format_taxonomy_entity($term, $entity),
+            ],
+            'status' => 200,
+        ]);
+    }
+
+    public function create_taxonomy_entity(WP_REST_Request $request): WP_REST_Response
+    {
+        $entity = $request->get_param('entity');
+        $config = $this->get_taxonomy_entity_config($entity);
+        if (!$config) return $this->taxonomy_entity_not_found_response();
+
+        if (!$this->current_user_can_manage_taxonomy($config['taxonomy'], 'edit_terms')) return $this->taxonomy_entity_capability_error();
+
+        $params = $request->get_params();
+        $name = isset($params['name']) ? sanitize_text_field($params['name']) : '';
+        if (!trim($name))
+        {
+            return $this->restful->response([
+                'data' => new WP_Error('400', esc_html__('Name field is required!', 'modern-events-calendar-lite')),
+                'status' => 400,
+            ]);
+        }
+
+        $params['name'] = $name;
+        $result = $this->insert_taxonomy_entity_term($config, $params);
+        if (is_wp_error($result)) return $this->error_response($result, 400);
+
+        $term_id = isset($result['term_id']) ? (int) $result['term_id'] : 0;
+        if (!$term_id) return $this->taxonomy_entity_not_found_response();
+
+        $this->save_taxonomy_entity_meta($term_id, $entity, $params);
+
+        $term = get_term($term_id, $config['taxonomy']);
+        if (!$term || is_wp_error($term)) return $this->taxonomy_entity_not_found_response();
+
+        return $this->restful->response([
+            'data' => [
+                'success' => 1,
+                $config['single'] => $this->format_taxonomy_entity($term, $entity),
+            ],
+            'status' => 200,
+        ]);
+    }
+
+    public function update_taxonomy_entity(WP_REST_Request $request): WP_REST_Response
+    {
+        $entity = $request->get_param('entity');
+        $config = $this->get_taxonomy_entity_config($entity);
+        if (!$config) return $this->taxonomy_entity_not_found_response();
+
+        if (!$this->current_user_can_manage_taxonomy($config['taxonomy'], 'edit_terms')) return $this->taxonomy_entity_capability_error();
+
+        $term_id = (int) $request->get_param('id');
+        $term = get_term($term_id, $config['taxonomy']);
+        if (!$term || is_wp_error($term)) return $this->taxonomy_entity_not_found_response();
+
+        $params = $request->get_params();
+        $args = [];
+
+        if (isset($params['name']) && trim((string) $params['name'])) $args['name'] = sanitize_text_field($params['name']);
+        if (isset($params['slug'])) $args['slug'] = sanitize_title($params['slug']);
+        if (isset($params['description'])) $args['description'] = sanitize_textarea_field($params['description']);
+        if ($config['taxonomy'] === 'mec_category' && isset($params['parent']) && is_numeric($params['parent'])) $args['parent'] = (int) $params['parent'];
+
+        if (count($args))
+        {
+            $result = wp_update_term($term_id, $config['taxonomy'], $args);
+            if (is_wp_error($result)) return $this->error_response($result, 400);
+        }
+
+        $this->save_taxonomy_entity_meta($term_id, $entity, $params);
+
+        $term = get_term($term_id, $config['taxonomy']);
+        if (!$term || is_wp_error($term)) return $this->taxonomy_entity_not_found_response();
+
+        return $this->restful->response([
+            'data' => [
+                'success' => 1,
+                $config['single'] => $this->format_taxonomy_entity($term, $entity),
+            ],
+            'status' => 200,
+        ]);
+    }
+
+    public function delete_taxonomy_entity(WP_REST_Request $request): WP_REST_Response
+    {
+        $entity = $request->get_param('entity');
+        $config = $this->get_taxonomy_entity_config($entity);
+        if (!$config) return $this->taxonomy_entity_not_found_response();
+
+        if (!$this->current_user_can_manage_taxonomy($config['taxonomy'], 'delete_terms')) return $this->taxonomy_entity_capability_error();
+
+        $term_id = (int) $request->get_param('id');
+        $term = get_term($term_id, $config['taxonomy']);
+        if (!$term || is_wp_error($term)) return $this->taxonomy_entity_not_found_response();
+
+        $result = wp_delete_term($term_id, $config['taxonomy']);
+        if (is_wp_error($result)) return $this->error_response($result, 400);
+        if (!$result) return $this->taxonomy_entity_not_found_response();
+
+        return $this->restful->response([
+            'data' => [
+                'success' => 1,
             ],
             'status' => 200,
         ]);

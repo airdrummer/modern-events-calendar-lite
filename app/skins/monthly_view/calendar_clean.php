@@ -8,7 +8,7 @@ defined('MECEXEC') or die();
 
 // table headings
 $headings = $this->main->get_weekday_abbr_labels();
-echo '<dl class="mec-calendar-table-head"><dt class="mec-calendar-day-head">'.MEC_kses::element(implode('</dt><dt class="mec-calendar-day-head">', $headings)).'</dt></dl>';
+echo '<div class="mec-calendar-table-head"><div class="mec-calendar-day-head">'.MEC_kses::element(implode('</div><div class="mec-calendar-day-head">', $headings)).'</div></div>';
 
 // Start day of week
 $week_start = $this->main->get_first_day_of_week();

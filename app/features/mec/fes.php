@@ -602,6 +602,24 @@ $mec_categories = get_terms(array(
                                         <input value="1" type="checkbox" name="mec[settings][fes_section_tickets]" <?php if(!isset($settings['fes_section_tickets']) or (isset($settings['fes_section_tickets']) and $settings['fes_section_tickets'])) echo 'checked="checked"'; ?> /><?php esc_html_e('Ticket Options', 'modern-events-calendar-lite'); ?>
                                     </label>
                                 </div>
+                                <div class="mec-form-row" style="padding-left: 22px;">
+                                    <label>
+                                        <input type="hidden" name="mec[settings][fes_section_ticket_show_mt]" value="0" />
+                                        <input value="1" type="checkbox" name="mec[settings][fes_section_ticket_show_mt]" <?php if(!isset($settings['fes_section_ticket_show_mt']) or (isset($settings['fes_section_ticket_show_mt']) and $settings['fes_section_ticket_show_mt'])) echo 'checked="checked"'; ?> /><?php esc_html_e('Minimum Ticket (per Ticket)', 'modern-events-calendar-lite'); ?>
+                                    </label>
+                                </div>
+                                <div class="mec-form-row" style="padding-left: 22px;">
+                                    <label>
+                                        <input type="hidden" name="mec[settings][fes_section_ticket_show_mxt]" value="0" />
+                                        <input value="1" type="checkbox" name="mec[settings][fes_section_ticket_show_mxt]" <?php if(!isset($settings['fes_section_ticket_show_mxt']) or (isset($settings['fes_section_ticket_show_mxt']) and $settings['fes_section_ticket_show_mxt'])) echo 'checked="checked"'; ?> /><?php esc_html_e('Maximum Ticket (per Ticket)', 'modern-events-calendar-lite'); ?>
+                                    </label>
+                                </div>
+                                <div class="mec-form-row" style="padding-left: 22px;">
+                                    <label>
+                                        <input type="hidden" name="mec[settings][fes_section_ticket_show_sst]" value="0" />
+                                        <input value="1" type="checkbox" name="mec[settings][fes_section_ticket_show_sst]" <?php if(!isset($settings['fes_section_ticket_show_sst']) or (isset($settings['fes_section_ticket_show_sst']) and $settings['fes_section_ticket_show_sst'])) echo 'checked="checked"'; ?> /><?php esc_html_e('Stop Selling Ticket', 'modern-events-calendar-lite'); ?>
+                                    </label>
+                                </div>
                                 <div class="mec-form-row">
                                 <label>
                                     <input type="hidden" name="mec[settings][booking_private_description]" value="0" />

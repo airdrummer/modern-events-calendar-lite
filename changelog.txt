@@ -1,6 +1,32 @@
-v 7.33.0.1 - 19may26
-- added missing timezone display, reformat
-- fixed countdown
+﻿v 7.34.1 - 22 June 2026
+- Fixed: A styling issue in the classic calendar view within booking calendar.
+- Fixed: An issue in Novel style of the monthly view skin.
+
+v 7.34.0 - 21 June 2026
+- Added: A new feature in shortcodes to display only events, only appointments, or both at the same time.
+- Added: An interface to manage event colors.
+- Added: More details to PayPal transactions.
+- Added: An option to control visibility of ticket fields (minimum ticket, maximum ticket, stop selling) in Frontend Event Submission.
+- Enhanced: MEC security by hardening some sections.
+- Improved: The search module functionality.
+- Enhanced: Accessibility of frontend calendars.
+- Improved: MEC Restful API by adding new endpoints for category, label, speaker, tag, and sponsor management.
+- Improved: Accessibility of social share module.
+- Enhanced: The search functionality to include multiple day events in applicable months.
+- Improved: WooCommerce integration.
+- Improved: The ticket section UX in Frontend Event Submission with labels and tooltips.
+- Improved: The Booking Express Calendar with a new design.
+- Fixed: A date format issue in map module.
+- Fixed: An issue in XML import of events.
+- Fixed: A localization issue in General calendar.
+- Fixed: An issue in bulk actions of MEC backend in large scale websites.
+- Fixed: An issue in displaying true seats in exports.
+- Fixed: Some PHP issues.
+- Fixed: A date format issue in Masonry skin.
+- Fixed: An issue in Stripe connect gateway.
+- Fixed: An issue in displaying booking data in PDF invoices.
+- Fixed: Some issues in invalid single event pages.
+- Fixed: Centered the wizard popup on all screen sizes.
 
 v 7.33.0 - 16 May 2026
 - Added: Conditional form option to booking forms.

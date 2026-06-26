@@ -144,8 +144,9 @@ class MEC_bookingRecord extends MEC_base
     {
         // Get Booking by ID
         if (is_numeric($booking)) $booking = get_post($booking);
+        if (!$booking || !is_a($booking, '\WP_Post')) return;
 
-        $this->db->q("DELETE FROM `#__mec_bookings` WHERE `booking_id`='" . $booking->ID . "'");
+        $this->db->q("DELETE FROM `#__mec_bookings` WHERE `booking_id`='" . ((int) $booking->ID) . "'");
     }
 
     public function confirm($booking)
@@ -192,6 +193,6 @@ class MEC_bookingRecord extends MEC_base
         // Nothing to Update!
         if (trim($q) == '') return false;
 
-        return $this->db->q("UPDATE `#__mec_bookings` SET " . trim($q, ', ') . " WHERE `booking_id`='" . esc_sql($booking->ID) . "'");
+        return $this->db->q("UPDATE `#__mec_bookings` SET " . trim($q, ', ') . " WHERE `booking_id`='" . ((int) $booking->ID) . "'");
     }
 }

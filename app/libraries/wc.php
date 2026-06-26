@@ -42,7 +42,7 @@ class MEC_wc extends MEC_base
                 $ticket_key = $translated_event_id.':'.$ticket_id;
 
                 // Get Product ID
-                $product_id = $db->select("SELECT `post_id` FROM `#__postmeta` WHERE `meta_key`='mec_ticket' AND `meta_value`='".$ticket_key."'", 'loadResult');
+                $product_id = $db->select($db->prepare("SELECT `post_id` FROM `#__postmeta` WHERE `meta_key`=%s AND `meta_value`=%s", 'mec_ticket', $ticket_key), 'loadResult');
 
                 // Create Product if Doesn't Exist
                 if(!$product_id) $product_id = $this->create($translated_event_id, $ticket_id);
@@ -71,7 +71,7 @@ class MEC_wc extends MEC_base
                 $ticket_key = $translated_event_id.':'.$ticket_id;
 
                 // Get Product ID
-                $product_id = $db->select("SELECT `post_id` FROM `#__postmeta` WHERE `meta_key`='mec_ticket' AND `meta_value`='".$ticket_key."'", 'loadResult');
+                $product_id = $db->select($db->prepare("SELECT `post_id` FROM `#__postmeta` WHERE `meta_key`=%s AND `meta_value`=%s", 'mec_ticket', $ticket_key), 'loadResult');
 
                 // Create Product if Doesn't Exist
                 if(!$product_id) $product_id = $this->create($translated_event_id, $ticket_id);
@@ -518,8 +518,8 @@ class MEC_wc extends MEC_base
         if($thankyou_page_id and !is_admin())
         {
             $redirect_to = $book->get_thankyou_page($thankyou_page_id, ($transaction_id ?? NULL));
-
-            wp_redirect($redirect_to);
+            $redirect_to = wp_validate_redirect($redirect_to, home_url('/'));
+            wp_safe_redirect($redirect_to);
             exit;
         }
 

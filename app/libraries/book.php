@@ -1707,9 +1707,12 @@ class MEC_book extends MEC_base
 
         $tickets = get_post_meta($event_id, 'mec_tickets', true);
 
-        $dates = explode(':', $transaction['date']);
+        $dates = explode(':', ($transaction['date'] ?? ''));
+        $timestamp = $dates[0] ?? '';
+        $timestamp = is_numeric($timestamp) ? (int) $timestamp : strtotime($timestamp);
+        if (!$timestamp) return false;
 
-        $ticket_price = isset($tickets[$attendee['id']]) ? $this->get_ticket_price($tickets[$attendee['id']], date('Y-m-d', $dates[0]), $event_id, $dates[0]) : 0;
+        $ticket_price = isset($tickets[$attendee['id']]) ? $this->get_ticket_price($tickets[$attendee['id']], date('Y-m-d', $timestamp), $event_id, $timestamp) : 0;
         if (!$ticket_price) return false;
 
         $variation_price = 0;

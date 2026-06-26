@@ -747,10 +747,8 @@ class MEC_skin_general_calendar extends MEC_skins
                         $data->ID = $ID;
                         $data->data = $rendered;
 
-                        $data->date = [
-                            'start' => ['date' => $this->main->get_start_of_multiple_days($ID, $date)],
-                            'end' => ['date' => $this->main->get_end_date($date, $rendered)],
-                        ];
+                        $data->date = $this->get_render_date($date, $ID, $rendered);
+                        if ($data->date['start']['date'] === $date) $data->date['start']['date'] = $this->main->get_start_of_multiple_days($ID, $date);
                         $d[] = $this->render->after_render($data, $this, $i);
 
                         $found++;

@@ -23,11 +23,12 @@ html.wp-toolbar:has(.m-e-calendar_page_MEC-wizard) {
     background: #FFFFFF;
     padding: 40px 100px;
     max-width: 720px;
-    margin: 20px auto;
+    margin: 0 auto;
     border-radius: 22px;
     box-shadow: 0 3px 20px rgba(0,0,0,0.1);
     position: relative;
     box-sizing: border-box;
+    flex-shrink: 0;
 }
 #mec_popup_settings_form {
     height: calc(100% - 37px);
@@ -408,11 +409,21 @@ ul#mec_export_module_options {
     overflow-x: hidden!important;
     min-height: 100vh;
 }
+
+.m-e-calendar_page_MEC-wizard #wpbody-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    box-sizing: border-box;
+}
 @media (max-width: 860px) {
     .mec-wizard-wrap {padding: 30px 80px;}
 }
 @media (max-width: 690px) {
-    .mec-wizard-wrap {padding: 30px 40px; margin-top: 50px;}
+    .mec-wizard-wrap {padding: 30px 40px;}
+    .m-e-calendar_page_MEC-wizard #wpbody-content {padding: 30px 16px;}
     .mec-wizard-open-popup-box,
     .mec-wizard-import-dummy {margin-top: 20px;}
     .mec-wizard-import-dummy .mec-wizard-import-events,
@@ -423,7 +434,8 @@ ul#mec_export_module_options {
     button.mec-wizard-open-popup {margin-right: 20px;}
 }
 @media (max-width: 480px) {
-    .mec-wizard-wrap {padding: 30px 40px; margin-top: 50px;}
+    .mec-wizard-wrap {padding: 30px 40px;}
+    .m-e-calendar_page_MEC-wizard #wpbody-content {padding: 24px 12px;}
     .mec-wizard-open-popup-box {display: block;}
     button.mec-wizard-open-popup {margin: 0 0 20px 0; padding: 1.161rem 18px; width: 100%; height: auto;}
     button.mec-wizard-open-popup span,

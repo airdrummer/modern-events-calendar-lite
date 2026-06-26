@@ -280,38 +280,28 @@ class MEC_main extends MEC_base
      */
     public function get_lat_lng($address)
     {
-        $address = urlencode($address);
+        $address = trim(preg_replace('/[\r\n\t]+/', ' ', wp_strip_all_tags((string) $address)));
+        $address = rawurlencode($address);
         if (!trim($address)) return [0, 0];
 
         // MEC Settings
         $settings = $this->get_settings();
 
         $url1 = "https://maps.googleapis.com/maps/api/geocode/json?address=" . $address . ((isset($settings['google_maps_api_key']) and trim($settings['google_maps_api_key']) != '') ? '&key=' . $settings['google_maps_api_key'] : '');
-        $url2 = 'http://www.datasciencetoolkit.org/maps/api/geocode/json?sensor=false&address=' . $address;
 
         // Get Latitude and Longitude by First URL
-        $JSON = wp_remote_retrieve_body(wp_remote_get($url1, [
+        $response = wp_safe_remote_get($url1, [
             'body' => null,
             'timeout' => '10',
             'redirection' => '10',
-        ]));
+        ]);
 
-        $data = json_decode($JSON, true);
-
-        $location_point = isset($data['results'][0]) ? $data['results'][0]['geometry']['location'] : [];
-        if ((isset($location_point['lat']) and $location_point['lat']) and (isset($location_point['lng']) and $location_point['lng']))
+        $data = [];
+        if (!is_wp_error($response) && wp_remote_retrieve_response_code($response) === 200)
         {
-            return [$location_point['lat'], $location_point['lng']];
+            $JSON = wp_remote_retrieve_body($response);
+            $data = json_decode($JSON, true);
         }
-
-        // Get Latitude and Longitude by Second URL
-        $JSON = wp_remote_retrieve_body(wp_remote_get($url2, [
-            'body' => null,
-            'timeout' => '10',
-            'redirection' => '10',
-        ]));
-
-        $data = json_decode($JSON, true);
 
         $location_point = isset($data['results'][0]) ? $data['results'][0]['geometry']['location'] : [];
         if ((isset($location_point['lat']) and $location_point['lat']) and (isset($location_point['lng']) and $location_point['lng']))
@@ -440,11 +430,35 @@ class MEC_main extends MEC_base
             foreach ($raw_data as $key => $val)
             {
                 if ($skip and strpos($key, 'mec') === false and strpos($key, 'event') === false) continue;
-                $data[$key] = isset($val[0]) ? (!is_serialized($val[0]) ? $val[0] : unserialize($val[0])) : null;
+                $data[$key] = isset($val[0]) ? (!is_serialized($val[0]) ? $val[0] : $this->safe_unserialize($val[0])) : null;
             }
 
             return $data;
         });
+    }
+
+    protected function safe_unserialize($value)
+    {
+        if (!is_string($value) || !is_serialized($value)) return $value;
+
+        $data = @unserialize(trim($value), ['allowed_classes' => false]);
+        if ($data === false && trim($value) !== 'b:0;') return null;
+        if ($this->contains_object($data)) return null;
+
+        return $data;
+    }
+
+    protected function contains_object($data)
+    {
+        if (is_object($data)) return true;
+        if (!is_array($data)) return false;
+
+        foreach ($data as $value)
+        {
+            if ($this->contains_object($value)) return true;
+        }
+
+        return false;
     }
 
     /**
@@ -751,6 +765,7 @@ class MEC_main extends MEC_base
 
         $single_event = apply_filters('mec-settings-item-single_event', [
             esc_html__('Single Event Page', 'modern-events-calendar-lite') => 'event_options',
+            esc_html__('Colors', 'modern-events-calendar-lite') => 'event_color_options',
             esc_html__('Custom Fields', 'modern-events-calendar-lite') => 'event_form_option',
             esc_html__('Sidebar', 'modern-events-calendar-lite') => 'single_sidebar_options',
             esc_html__('Icons', 'modern-events-calendar-lite') => 'single_icons_options',
@@ -2011,6 +2026,21 @@ class MEC_main extends MEC_base
         // Get mec options
         $mec = isset($_REQUEST['mec']) ? $this->sanitize_deep_array($_REQUEST['mec']) : [];
 
+        if (isset($mec['colors']) and is_array($mec['colors']))
+        {
+            $colors = [];
+            foreach ($mec['colors'] as $color)
+            {
+                if (!is_scalar($color)) continue;
+
+                $color = sanitize_hex_color_no_hash(trim($color, '# '));
+                if ($color) $colors[] = $color;
+            }
+
+            update_option('mec_colors', array_values(array_unique($colors)));
+            unset($mec['colors']);
+        }
+
         if (isset($mec['reg_fields']) and !is_array($mec['reg_fields'])) $mec['reg_fields'] = [];
         if (isset($mec['bfixed_fields']) and !is_array($mec['bfixed_fields'])) $mec['bfixed_fields'] = [];
         if (isset($mec['event_fields']) and !is_array($mec['event_fields'])) $mec['event_fields'] = [];
@@ -2616,23 +2646,16 @@ class MEC_main extends MEC_base
      */
     public function get_marker_lightbox($event, $date_format = 'M d Y', $skin_style = 'classic')
     {
-        $ex_format = explode(' ', $date_format);
-        $format_1 = $ex_format[0] ?? 'M';
-        $format_2 = $ex_format[1] ?? 'd';
-        $format_3 = $ex_format[2] ?? 'Y';
-
         $link = $this->get_event_date_permalink($event, (isset($event->date['start']) ? $event->date['start']['date'] : null));
         $infowindow_thumb = trim($event->data->featured_image['thumbnail']) ? '<div class="mec-event-image"><a data-event-id="' . esc_attr($event->data->ID) . '" href="' . esc_url($link) . '"><img src="' . esc_url($event->data->featured_image['thumbnail']) . '" alt="' . esc_attr($event->data->title) . '" /></a></div>' : '';
-        $event_start_date_day = !empty($event->date['start']['date']) ? $this->date_i18n($format_1, strtotime($event->date['start']['date'])) : '';
-        $event_start_date_month = !empty($event->date['start']['date']) ? $this->date_i18n($format_2, strtotime($event->date['start']['date'])) : '';
-        $event_start_date_year = !empty($event->date['start']['date']) ? $this->date_i18n($format_3, strtotime($event->date['start']['date'])) : '';
+        $event_start_date = !empty($event->date['start']['date']) ? $this->date_i18n($date_format, strtotime($event->date['start']['date'])) : '';
 
         $content = '
 		<div class="mec-wrap">
 			<div class="mec-map-lightbox-wp mec-event-list-classic">
 				<article class="' . ((isset($event->data->meta['event_past']) and trim($event->data->meta['event_past'])) ? 'mec-past-event ' : '') . 'mec-event-article mec-clear">
 					' . MEC_kses::element($infowindow_thumb) . '
-                    <a data-event-id="' . esc_attr($event->data->ID) . '" href="' . esc_url($link) . '"><div class="mec-event-date mec-color"><i class="mec-sl-calendar"></i> <span class="mec-map-lightbox-month">' . esc_html($event_start_date_month) . '</span><span class="mec-map-lightbox-day"> ' . esc_html($event_start_date_day) . '</span><span class="mec-map-lightbox-year"> ' . esc_html($event_start_date_year) . '</span></div></a>
+                    <a data-event-id="' . esc_attr($event->data->ID) . '" href="' . esc_url($link) . '"><div class="mec-event-date mec-color"><i class="mec-sl-calendar"></i> <span class="mec-map-lightbox-date">' . esc_html($event_start_date) . '</span></div></a>
                     <h4 class="mec-event-title">
                     <a data-event-id="' . esc_attr($event->data->ID) . '" class="mec-color-hover" href="' . esc_url($link) . '">' . esc_html($event->data->title) . '</a>
                     ' . MEC_kses::element($this->get_flags($event)) . '
@@ -2682,7 +2705,7 @@ class MEC_main extends MEC_base
         $occurrence = (isset($_GET['occurrence']) ? sanitize_text_field($_GET['occurrence']) : '');
         if (trim($occurrence) != '') $url = $this->add_qs_var('occurrence', $occurrence, $url);
 
-        return '<li class="mec-event-social-icon"><a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=' . rawurlencode($url) . '" onclick="javascript:window.open(this.href, \'\', \'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=500,width=600\'); return false;" target="_blank" title="' . esc_attr__('Share on Facebook', 'modern-events-calendar-lite') . '"><i class="mec-fa-facebook"></i><span class="mec-social-title">' . ($social['name'] ?? '') . '</span></a></li>';
+        return '<li class="mec-event-social-icon"><a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=' . rawurlencode($url) . '" onclick="javascript:window.open(this.href, \'\', \'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=500,width=600\'); return false;" target="_blank" title="' . esc_attr__('Share on Facebook', 'modern-events-calendar-lite') . '" aria-label="' . esc_attr__('Share on Facebook', 'modern-events-calendar-lite') . '"><i class="mec-fa-facebook"></i><span class="mec-social-title">' . ($social['name'] ?? '') . '</span></a></li>';
     }
 
     /**
@@ -2698,7 +2721,7 @@ class MEC_main extends MEC_base
         $occurrence = (isset($_GET['occurrence']) ? sanitize_text_field($_GET['occurrence']) : '');
         if (trim($occurrence) != '') $url = $this->add_qs_var('occurrence', $occurrence, $url);
 
-        return '<li class="mec-event-social-icon"><a class="twitter" href="https://x.com/intent/tweet?url=' . rawurlencode($url) . '" onclick="javascript:window.open(this.href, \'\', \'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=500\'); return false;" target="_blank" title="' . esc_attr__('X Social Network', 'modern-events-calendar-lite') . '"><svg xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd" clip-rule="evenodd" viewBox="0 0 512 462.799"><path fill-rule="nonzero" d="M403.229 0h78.506L310.219 196.04 512 462.799H354.002L230.261 301.007 88.669 462.799h-78.56l183.455-209.683L0 0h161.999l111.856 147.88L403.229 0zm-27.556 415.805h43.505L138.363 44.527h-46.68l283.99 371.278z"/></svg><span class="mec-social-title">' . ($social['name'] ?? '') . '</span></a></li>';
+        return '<li class="mec-event-social-icon"><a class="twitter" href="https://x.com/intent/tweet?url=' . rawurlencode($url) . '" onclick="javascript:window.open(this.href, \'\', \'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=500\'); return false;" target="_blank" title="' . esc_attr__('X Social Network', 'modern-events-calendar-lite') . '" aria-label="' . esc_attr__('Share on X', 'modern-events-calendar-lite') . '"><svg xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd" clip-rule="evenodd" viewBox="0 0 512 462.799"><path fill-rule="nonzero" d="M403.229 0h78.506L310.219 196.04 512 462.799H354.002L230.261 301.007 88.669 462.799h-78.56l183.455-209.683L0 0h161.999l111.856 147.88L403.229 0zm-27.556 415.805h43.505L138.363 44.527h-46.68l283.99 371.278z"/></svg><span class="mec-social-title">' . ($social['name'] ?? '') . '</span></a></li>';
     }
 
     /**
@@ -2714,7 +2737,7 @@ class MEC_main extends MEC_base
         $occurrence = (isset($_GET['occurrence']) ? sanitize_text_field($_GET['occurrence']) : '');
         if (trim($occurrence) != '') $url = $this->add_qs_var('occurrence', $occurrence, $url);
 
-        return '<li class="mec-event-social-icon"><a class="linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=' . rawurlencode($url) . '" onclick="javascript:window.open(this.href, \'\', \'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=500\'); return false;" target="_blank" title="' . esc_attr__('Linkedin', 'modern-events-calendar-lite') . '"><i class="mec-fa-linkedin"></i><span class="mec-social-title">' . ($social['name'] ?? '') . '</span></a></li>';
+        return '<li class="mec-event-social-icon"><a class="linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=' . rawurlencode($url) . '" onclick="javascript:window.open(this.href, \'\', \'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=500\'); return false;" target="_blank" title="' . esc_attr__('Linkedin', 'modern-events-calendar-lite') . '" aria-label="' . esc_attr__('Share on Linkedin', 'modern-events-calendar-lite') . '"><i class="mec-fa-linkedin"></i><span class="mec-social-title">' . ($social['name'] ?? '') . '</span></a></li>';
     }
 
     /**
@@ -2736,7 +2759,7 @@ class MEC_main extends MEC_base
         $event->data->title = str_replace('&', '%26', $event->data->title);
         $event->data->title = str_replace('#038;', '', $event->data->title);
 
-        return '<li class="mec-event-social-icon"><a class="email" href="mailto:?subject=' . rawurlencode($event->data->title) . '&body=' . rawurlencode($url) . '" title="' . esc_attr__('Email', 'modern-events-calendar-lite') . '"><i class="mec-fa-envelope"></i><span class="mec-social-title">' . ($social['name'] ?? '') . '</span></a></li>';
+        return '<li class="mec-event-social-icon"><a class="email" href="mailto:?subject=' . rawurlencode($event->data->title) . '&body=' . rawurlencode($url) . '" title="' . esc_attr__('Email', 'modern-events-calendar-lite') . '" aria-label="' . esc_attr__('Share via Email', 'modern-events-calendar-lite') . '"><i class="mec-fa-envelope"></i><span class="mec-social-title">' . ($social['name'] ?? '') . '</span></a></li>';
     }
 
     /**
@@ -2752,7 +2775,7 @@ class MEC_main extends MEC_base
         $occurrence = (isset($_GET['occurrence']) ? sanitize_text_field($_GET['occurrence']) : '');
         if (trim($occurrence) != '') $url = $this->add_qs_var('occurrence', $occurrence, $url);
 
-        return '<li class="mec-event-social-icon"><a class="vk" href=" http://vk.com/share.php?url=' . rawurlencode($url) . '" title="' . esc_attr__('VK', 'modern-events-calendar-lite') . '" target="_blank"><i class="mec-fa-vk"></i><span class="mec-social-title">' . ($social['name'] ?? '') . '</span></a></li>';
+        return '<li class="mec-event-social-icon"><a class="vk" href=" http://vk.com/share.php?url=' . rawurlencode($url) . '" title="' . esc_attr__('VK', 'modern-events-calendar-lite') . '" aria-label="' . esc_attr__('Share on VK', 'modern-events-calendar-lite') . '" target="_blank"><i class="mec-fa-vk"></i><span class="mec-social-title">' . ($social['name'] ?? '') . '</span></a></li>';
     }
 
 
@@ -2768,7 +2791,7 @@ class MEC_main extends MEC_base
     {
         $occurrence = (isset($_GET['occurrence']) ? sanitize_text_field($_GET['occurrence']) : '');
         if (trim($occurrence) != '') $url = $this->add_qs_var('occurrence', $occurrence, $url);
-        return '<li class="mec-event-social-icon"><a class="tumblr" href="https://www.tumblr.com/widgets/share/tool?canonicalUrl=' . rawurlencode($url) . '&title' . rawurlencode($event->data->title) . '&caption=' . rawurlencode($event->data->title) . '" target="_blank" title="' . esc_attr__('Share on Tumblr', 'modern-events-calendar-lite') . '"><i class="mec-fa-tumblr"></i><span class="mec-social-title">' . ($social['name'] ?? '') . '</span></a></li>';
+        return '<li class="mec-event-social-icon"><a class="tumblr" href="https://www.tumblr.com/widgets/share/tool?canonicalUrl=' . rawurlencode($url) . '&title' . rawurlencode($event->data->title) . '&caption=' . rawurlencode($event->data->title) . '" target="_blank" title="' . esc_attr__('Share on Tumblr', 'modern-events-calendar-lite') . '" aria-label="' . esc_attr__('Share on Tumblr', 'modern-events-calendar-lite') . '"><i class="mec-fa-tumblr"></i><span class="mec-social-title">' . ($social['name'] ?? '') . '</span></a></li>';
     }
 
     /**
@@ -2784,7 +2807,7 @@ class MEC_main extends MEC_base
         $occurrence = (isset($_GET['occurrence']) ? sanitize_text_field($_GET['occurrence']) : '');
         if (trim($occurrence) != '') $url = $this->add_qs_var('occurrence', $occurrence, $url);
 
-        return '<li class="mec-event-social-icon"><a class="pinterest" href="http://pinterest.com/pin/create/button/?url=' . rawurlencode($url) . '" target="_blank" title="' . esc_attr__('Share on Pinterest', 'modern-events-calendar-lite') . '"><i class="mec-fa-pinterest"></i><span class="mec-social-title">' . ($social['name'] ?? '') . '</span></a></li>';
+        return '<li class="mec-event-social-icon"><a class="pinterest" href="http://pinterest.com/pin/create/button/?url=' . rawurlencode($url) . '" target="_blank" title="' . esc_attr__('Share on Pinterest', 'modern-events-calendar-lite') . '" aria-label="' . esc_attr__('Share on Pinterest', 'modern-events-calendar-lite') . '"><i class="mec-fa-pinterest"></i><span class="mec-social-title">' . ($social['name'] ?? '') . '</span></a></li>';
     }
 
     /**
@@ -2800,7 +2823,7 @@ class MEC_main extends MEC_base
         $occurrence = (isset($_GET['occurrence']) ? sanitize_text_field($_GET['occurrence']) : '');
         if (trim($occurrence) != '') $url = $this->add_qs_var('occurrence', $occurrence, $url);
 
-        return '<li class="mec-event-social-icon"><a class="flipboard" href="https://share.flipboard.com/bookmarklet/popout?v=2&title=' . esc_attr($event->data->title) . '&url=' . rawurlencode($url) . '" target="_blank" title="' . esc_attr__('Share on Flipboard', 'modern-events-calendar-lite') . '">
+        return '<li class="mec-event-social-icon"><a class="flipboard" href="https://share.flipboard.com/bookmarklet/popout?v=2&title=' . esc_attr($event->data->title) . '&url=' . rawurlencode($url) . '" target="_blank" title="' . esc_attr__('Share on Flipboard', 'modern-events-calendar-lite') . '" aria-label="' . esc_attr__('Share on Flipboard', 'modern-events-calendar-lite') . '">
             <i><svg aria-hidden="true" focusable="false" data-prefix="fab" data-icon="flipboard" class="svg-inline--fa fa-flipboard fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M0 32v448h448V32H0zm358.4 179.2h-89.6v89.6h-89.6v89.6H89.6V121.6h268.8v89.6z"></path></svg></i>
             <span class="mec-social-title">' . ($social['name'] ?? '') . '</span>
         </a></li>';
@@ -2819,7 +2842,7 @@ class MEC_main extends MEC_base
         $occurrence = (isset($_GET['occurrence']) ? sanitize_text_field($_GET['occurrence']) : '');
         if (trim($occurrence) != '') $url = $this->add_qs_var('occurrence', $occurrence, $url);
 
-        return '<li class="mec-event-social-icon"><a class="pocket" href="https://getpocket.com/edit?url=' . rawurlencode($url) . '" target="_blank" title="' . esc_attr__('Share on GetPocket', 'modern-events-calendar-lite') . '"><i class="mec-fa-get-pocket"></i><span class="mec-social-title">' . ($social['name'] ?? '') . '</span></a></li>';
+        return '<li class="mec-event-social-icon"><a class="pocket" href="https://getpocket.com/edit?url=' . rawurlencode($url) . '" target="_blank" title="' . esc_attr__('Share on GetPocket', 'modern-events-calendar-lite') . '" aria-label="' . esc_attr__('Share on GetPocket', 'modern-events-calendar-lite') . '"><i class="mec-fa-get-pocket"></i><span class="mec-social-title">' . ($social['name'] ?? '') . '</span></a></li>';
     }
 
     /**
@@ -2835,7 +2858,7 @@ class MEC_main extends MEC_base
         $occurrence = (isset($_GET['occurrence']) ? sanitize_text_field($_GET['occurrence']) : '');
         if (trim($occurrence) != '') $url = $this->add_qs_var('occurrence', $occurrence, $url);
 
-        return '<li class="mec-event-social-icon"><a class="reddit" href="https://reddit.com/submit?url=' . rawurlencode($url) . '&title=' . esc_attr($event->data->title) . '" target="_blank" title="' . esc_attr__('Share on Reddit', 'modern-events-calendar-lite') . '"><i class="mec-fa-reddit"></i><span class="mec-social-title">' . ($social['name'] ?? '') . '</span></a></li>';
+        return '<li class="mec-event-social-icon"><a class="reddit" href="https://reddit.com/submit?url=' . rawurlencode($url) . '&title=' . esc_attr($event->data->title) . '" target="_blank" title="' . esc_attr__('Share on Reddit', 'modern-events-calendar-lite') . '" aria-label="' . esc_attr__('Share on Reddit', 'modern-events-calendar-lite') . '"><i class="mec-fa-reddit"></i><span class="mec-social-title">' . ($social['name'] ?? '') . '</span></a></li>';
     }
 
     /**
@@ -2851,7 +2874,7 @@ class MEC_main extends MEC_base
         $occurrence = (isset($_GET['occurrence']) ? sanitize_text_field($_GET['occurrence']) : '');
         if (trim($occurrence) != '') $url = $this->add_qs_var('occurrence', $occurrence, $url);
 
-        return '<li class="mec-event-social-icon"><a class="telegram" href="https://telegram.me/share/url?url=' . rawurlencode($url) . '&text=' . esc_attr($event->data->title) . '" target="_blank" title="' . esc_attr__('Share on Telegram', 'modern-events-calendar-lite') . '">
+        return '<li class="mec-event-social-icon"><a class="telegram" href="https://telegram.me/share/url?url=' . rawurlencode($url) . '&text=' . esc_attr($event->data->title) . '" target="_blank" title="' . esc_attr__('Share on Telegram', 'modern-events-calendar-lite') . '" aria-label="' . esc_attr__('Share on Telegram', 'modern-events-calendar-lite') . '">
             <i><svg aria-hidden="true" focusable="false" data-prefix="fab" data-icon="telegram" class="svg-inline--fa fa-telegram fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path fill="currentColor" d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm121.8 169.9l-40.7 191.8c-3 13.6-11.1 16.9-22.4 10.5l-62-45.7-29.9 28.8c-3.3 3.3-6.1 6.1-12.5 6.1l4.4-63.1 114.9-103.8c5-4.4-1.1-6.9-7.7-2.5l-142 89.4-61.2-19.1c-13.3-4.2-13.6-13.3 2.8-19.7l239.1-92.2c11.1-4 20.8 2.7 17.2 19.5z"></path></svg></i>
             <span class="mec-social-title">' . ($social['name'] ?? '') . '</span>
         </a></li>';
@@ -2870,7 +2893,7 @@ class MEC_main extends MEC_base
         $occurrence = (isset($_GET['occurrence']) ? sanitize_text_field($_GET['occurrence']) : '');
         if (trim($occurrence) != '') $url = $this->add_qs_var('occurrence', $occurrence, $url);
 
-        return '<li class="mec-event-social-icon"><a class="whatsapp" href="https://api.whatsapp.com/send?text=' . rawurlencode($url) . '" target="_blank" title="' . esc_attr__('Share on WhatsApp', 'modern-events-calendar-lite') . '"><i class="mec-fa-whatsapp"></i><span class="mec-social-title">' . ($social['name'] ?? '') . '</span></a></li>';
+        return '<li class="mec-event-social-icon"><a class="whatsapp" href="https://api.whatsapp.com/send?text=' . rawurlencode($url) . '" target="_blank" title="' . esc_attr__('Share on WhatsApp', 'modern-events-calendar-lite') . '" aria-label="' . esc_attr__('Share on WhatsApp', 'modern-events-calendar-lite') . '"><i class="mec-fa-whatsapp"></i><span class="mec-social-title">' . ($social['name'] ?? '') . '</span></a></li>';
     }
 
     /**
@@ -3709,7 +3732,7 @@ class MEC_main extends MEC_base
         $requested_event_id = $transaction['translated_event_id'] ?? $event_id;
 
         if ($args['book_id']) $book_id = absint($args['book_id']);
-        else $book_id = $db->select("SELECT `post_id` FROM `#__postmeta` WHERE `meta_value`='" . $transaction_id . "' AND `meta_key`='mec_transaction_id'", 'loadResult');
+        else $book_id = $db->select($db->prepare("SELECT `post_id` FROM `#__postmeta` WHERE `meta_value`=%s AND `meta_key`=%s", $transaction_id, 'mec_transaction_id'), 'loadResult');
 
         if (!$book_id)
         {
@@ -3881,12 +3904,20 @@ class MEC_main extends MEC_base
         {
             foreach ($transaction['fields'] as $field_id => $value)
             {
-                $field = (isset($reg_fields[$field_id]) and is_array($reg_fields[$field_id])) ? $reg_fields[$field_id] : [];
+                $field = (isset($bfixed_fields[$field_id]) and is_array($bfixed_fields[$field_id])) ? $bfixed_fields[$field_id] : [];
                 if (!count($field)) continue;
 
                 $pdf->SetFont('DejaVu', '', 12);
-                $pdf->Write(6, $field['label'] . ': ');
-                $pdf->Write(6, (is_array($value) ? implode(', ', $value) : $value));
+                if (($field['type'] ?? '') == 'agreement')
+                {
+                    $pdf->Write(6, sprintf(esc_html__($field['label'], 'modern-events-calendar-lite'), get_the_title($field['page'])) . ': ');
+                    $pdf->Write(6, ($value == '1' ? esc_html__('Yes', 'modern-events-calendar-lite') : esc_html__('No', 'modern-events-calendar-lite')));
+                }
+                else
+                {
+                    $pdf->Write(6, $field['label'] . ': ');
+                    $pdf->Write(6, (is_array($value) ? implode(', ', $value) : $value));
+                }
                 $pdf->Ln();
             }
         }
@@ -4113,7 +4144,7 @@ class MEC_main extends MEC_base
             $requested_event_id = $transaction['translated_event_id'] ?? $event_id;
 
             // Don't Show PDF If Booking is Pending
-            $book_id = $db->select("SELECT `post_id` FROM `#__postmeta` WHERE `meta_value`='" . $transaction_id . "' AND `meta_key`='mec_transaction_id'", 'loadResult');
+            $book_id = $db->select($db->prepare("SELECT `post_id` FROM `#__postmeta` WHERE `meta_value`=%s AND `meta_key`=%s", $transaction_id, 'mec_transaction_id'), 'loadResult');
             $mec_confirmed = get_post_meta($book_id, 'mec_confirmed', true);
 
             $event = $render->data($event_id);
@@ -8826,15 +8857,17 @@ class MEC_main extends MEC_base
     public function get_end_date_by_occurrence($event_id, $occurrence)
     {
         $event_date = get_post_meta($event_id, 'mec_date', true);
+        if (!is_array($event_date)) return $occurrence;
 
         $start_date = $event_date['start'] ?? [];
         $end_date = $event_date['end'] ?? [];
+        if (!isset($start_date['date'], $end_date['date']) || !strtotime($start_date['date']) || !strtotime($end_date['date'])) return $occurrence;
 
         $event_period = $this->date_diff($start_date['date'], $end_date['date']);
         $event_period_days = $event_period ? $event_period->days : 0;
 
         // Single Day Event
-        if (!$event_period_days) return $occurrence;
+        if (!$event_period_days || !strtotime($occurrence)) return $occurrence;
 
         return date('Y-m-d', strtotime('+' . $event_period_days . ' days', strtotime($occurrence)));
     }
@@ -8861,7 +8894,7 @@ class MEC_main extends MEC_base
     public function get_post_id_by_meta($meta_key, $meta_value)
     {
         $db = $this->getDB();
-        return $db->select("SELECT `post_id` FROM `#__postmeta` WHERE `meta_value`='$meta_value' AND `meta_key`='$meta_key'", 'loadResult');
+        return $db->select($db->prepare("SELECT `post_id` FROM `#__postmeta` WHERE `meta_value`=%s AND `meta_key`=%s", $meta_value, $meta_key), 'loadResult');
     }
 
     /**
@@ -8873,33 +8906,69 @@ class MEC_main extends MEC_base
      */
     public function set_featured_image($image_url, $post_id, $allowed_extensions = [])
     {
+        $image_url = trim(esc_url_raw((string) $image_url));
+        if (!$image_url || !wp_http_validate_url($image_url)) return false;
+
+        $scheme = wp_parse_url($image_url, PHP_URL_SCHEME);
+        if (!in_array(strtolower((string) $scheme), ['http', 'https'], true)) return false;
+
         $attach_id = $this->get_attach_id($image_url);
         if (!$attach_id)
         {
             $upload_dir = wp_upload_dir();
-            $filename = basename($image_url);
+            $filename = wp_basename((string) wp_parse_url($image_url, PHP_URL_PATH));
+            $filename = sanitize_file_name($filename);
+            if (!trim($filename)) return false;
 
             $ex = explode('.', $filename);
-            $extension = end($ex);
+            $extension = strtolower((string) end($ex));
 
             // Invalid Extension
-            if (count($allowed_extensions) && !in_array($extension, $allowed_extensions)) return false;
+            if (count($allowed_extensions) && !in_array($extension, array_map('strtolower', $allowed_extensions), true)) return false;
 
             $validate = wp_check_filetype($filename);
-            if ($validate['type'] === false) return false;
+            if ($validate['type'] === false || strpos((string) $validate['type'], 'image/') !== 0) return false;
 
             if (wp_mkdir_p($upload_dir['path'])) $file = $upload_dir['path'] . '/' . $filename;
             else $file = $upload_dir['basedir'] . '/' . $filename;
 
             if (!file_exists($file))
             {
-                $image_data = $this->get_web_page($image_url);
-                file_put_contents($file, $image_data);
+                $response = wp_safe_remote_get($image_url, [
+                    'timeout' => 20,
+                    'redirection' => 5,
+                    'reject_unsafe_urls' => true,
+                ]);
+
+                if (is_wp_error($response) || wp_remote_retrieve_response_code($response) !== 200) return false;
+
+                $image_data = wp_remote_retrieve_body($response);
+                if (!is_string($image_data) || $image_data === '') return false;
+
+                $content_type = strtolower((string) wp_remote_retrieve_header($response, 'content-type'));
+                if ($content_type && strpos($content_type, 'image/') !== 0) return false;
+
+                $image_mime = $validate['type'];
+                if (function_exists('getimagesizefromstring'))
+                {
+                    $image_info = @getimagesizefromstring($image_data);
+                    if ($image_info === false || empty($image_info['mime'])) return false;
+
+                    $image_mime = $image_info['mime'];
+                }
+                elseif ($content_type)
+                {
+                    $image_mime = trim(strtok($content_type, ';'));
+                }
+
+                if (strpos((string) $image_mime, 'image/') !== 0) return false;
+
+                if (file_put_contents($file, $image_data) === false) return false;
             }
 
             $wp_filetype = wp_check_filetype($filename, null);
             $attachment = [
-                'post_mime_type' => $wp_filetype['type'],
+                'post_mime_type' => $image_mime ?? $wp_filetype['type'],
                 'post_title' => sanitize_file_name($filename),
                 'post_content' => '',
                 'post_status' => 'inherit',
@@ -11731,7 +11800,7 @@ class MEC_main extends MEC_base
         foreach ($inputs as $key => $val)
         {
             $p = $path . $key . '.';
-            if ((is_array($excludes) and in_array(trim($p, '. '), $excludes)) or (is_array($excludes) and !count($excludes)))
+            if (is_array($excludes) and in_array(trim($p, '. '), $excludes))
             {
                 $sanitized[$key] = wp_unslash($val);
                 continue;
@@ -12206,6 +12275,8 @@ class MEC_main extends MEC_base
 
             foreach ($dates as $d => $date)
             {
+                if (!isset($date['start'], $date['end']) || !is_array($date['start']) || !is_array($date['end'])) continue;
+
                 $start_date = (isset($date['start']) and isset($date['start']['date'])) ? $date['start']['date'] : current_time('Y-m-d H:i:s');
                 $end_date = (isset($date['end']) and isset($date['end']['date'])) ? $date['end']['date'] : current_time('Y-m-d H:i:s');
 

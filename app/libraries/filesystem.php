@@ -134,6 +134,9 @@ class MEC_file extends MEC_base
      */
 	public static function read($filename)
 	{
+		$filename = MEC_path::clean($filename);
+		if (!self::isSafePath($filename)) return false;
+
 		// Initialise variables.
 		$fh = fopen($filename, 'rb');
 		
@@ -165,13 +168,15 @@ class MEC_file extends MEC_base
 	{
 		@set_time_limit(ini_get('max_execution_time'));
 
+		$file = MEC_path::clean($file);
+		if (!self::isSafePath($file) || !self::hasSafeExtension($file)) return false;
+
 		// If the destination directory doesn't exist we need to create it
 		if (!file_exists(dirname($file)))
 		{
 			MEC_folder::create(dirname($file));
 		}
 
-		$file = MEC_path::clean($file);
 		$ret = is_int(file_put_contents($file, $buffer)) ? true : false;
 
 		return $ret;
@@ -187,6 +192,8 @@ class MEC_file extends MEC_base
 	{
 		// Ensure that the path is valid and clean
 		$dest = MEC_path::clean($dest);
+		if (!self::isSafePath($dest) || !self::hasSafeExtension($dest) || !is_uploaded_file($src)) return false;
+
 		$baseDir = dirname($dest);
 
 		if (!file_exists($baseDir))
@@ -204,6 +211,23 @@ class MEC_file extends MEC_base
 
 		return $ret;
 	}
+
+    protected static function hasSafeExtension($file)
+    {
+        $extension = strtolower((string) pathinfo($file, PATHINFO_EXTENSION));
+        if ($extension === '') return true;
+
+        return !in_array($extension, ['php', 'php3', 'php4', 'php5', 'php7', 'php8', 'phtml', 'phar', 'cgi', 'pl', 'py', 'sh', 'exe'], true);
+    }
+
+    protected static function isSafePath($path)
+    {
+        if (!is_string($path) || trim($path) === '') return false;
+        if (strpos($path, "\0") !== false) return false;
+        if (preg_match('#^[a-z0-9.+-]+://#i', $path)) return false;
+
+        return true;
+    }
     
     /**
      * @author Webnus <info@webnus.net>

@@ -79,6 +79,14 @@ class MEC_user extends MEC_base
             function_exists('bp_is_active') || class_exists('BP_Core_Bootstrap') ||
             defined('BP_PLUGIN_DIR') || class_exists('BuddyBoss'));
 
+        $book_post = isset($_POST['book']) && is_array($_POST['book']) ? wp_unslash($_POST['book']) : [];
+        $waiting_post = isset($_POST['waiting']) && is_array($_POST['waiting']) ? wp_unslash($_POST['waiting']) : [];
+        $allow_posted_credentials = $this->has_valid_registration_request();
+        $posted_book_username = $allow_posted_credentials && isset($book_post['username']) ? $this->sanitize_username($book_post['username']) : '';
+        $posted_username = $allow_posted_credentials && isset($_POST['username']) ? $this->sanitize_username(wp_unslash($_POST['username'])) : '';
+        $posted_book_password = $allow_posted_credentials && isset($book_post['password']) ? (string) $book_post['password'] : '';
+        $waiting_ticket = isset($waiting_post['tickets'][1]) && is_array($waiting_post['tickets'][1]) ? $waiting_post['tickets'][1] : [];
+
         // BuddyBoss specific registration with enhanced username handling
         if ($buddyboss_active) {
             // Check if registration is disabled for BuddyBoss - if so, only create MEC user, not WordPress/BuddyBoss user
@@ -133,36 +141,24 @@ class MEC_user extends MEC_base
             }
             
             // PRIORITY 2: $_POST['book']['username'] (manual mode)
-            if (empty($username) && isset($_POST['book']['username']) && !empty(trim($_POST['book']['username']))) {
-                $form_username = function_exists('sanitize_user') ? sanitize_user(trim($_POST['book']['username'])) : trim($_POST['book']['username']);
-                if (!empty($form_username) && $form_username !== $email) {
-                    $username = $form_username;
+            if (empty($username) && $posted_book_username !== '') {
+                if ($posted_book_username !== $email) {
+                    $username = $posted_book_username;
                     // Store in session for later use
                     $_SESSION['mec_form_username_' . $email] = $username;
                 }
             }
 
             // PRIORITY 3: $_POST['username'] 
-            if (empty($username) && isset($_POST['username']) && !empty(trim($_POST['username']))) {
-                $form_username = function_exists('sanitize_user') ? sanitize_user(trim($_POST['username'])) : trim($_POST['username']);
-                if (!empty($form_username) && $form_username !== $email) {
-                    $username = $form_username;
+            if (empty($username) && $posted_username !== '') {
+                if ($posted_username !== $email) {
+                    $username = $posted_username;
                     // Store in session for later use
                     $_SESSION['mec_form_username_' . $email] = $username;
                 }
             }
 
-            // PRIORITY 4: $_REQUEST['book']['username']
-            if (empty($username) && isset($_REQUEST['book']['username']) && !empty(trim($_REQUEST['book']['username']))) {
-                $form_username = function_exists('sanitize_user') ? sanitize_user(trim($_REQUEST['book']['username'])) : trim($_REQUEST['book']['username']);
-                if (!empty($form_username) && $form_username !== $email) {
-                    $username = $form_username;
-                    // Store in session for later use
-                    $_SESSION['mec_form_username_' . $email] = $username;
-                }
-            }
-
-            // PRIORITY 5: Check session for previously stored username
+            // PRIORITY 4: Check session for previously stored username
             if (empty($username) && isset($_SESSION['mec_form_username_' . $email]) && !empty($_SESSION['mec_form_username_' . $email])) {
                 $session_username = function_exists('sanitize_user') ? sanitize_user($_SESSION['mec_form_username_' . $email]) : $_SESSION['mec_form_username_' . $email];
                 if (!empty($session_username) && $session_username !== $email) {
@@ -170,7 +166,7 @@ class MEC_user extends MEC_base
                 }
             }
             
-            // PRIORITY 6: Fallback to email if no valid username found
+            // PRIORITY 5: Fallback to email if no valid username found
             if (empty($username)) {
                 $username = function_exists('sanitize_user') ? sanitize_user($email) : $email;
             }
@@ -190,8 +186,8 @@ class MEC_user extends MEC_base
 
             // Generate password from form or auto-generate
             $password = wp_generate_password(12); // Default password
-            if (isset($_POST['book']['password']) && !empty($_POST['book']['password'])) {
-                $password = sanitize_text_field($_POST['book']['password']);
+            if ($this->is_strong_password($posted_book_password)) {
+                $password = $posted_book_password;
             }
 
             // Register User
@@ -246,11 +242,11 @@ class MEC_user extends MEC_base
             } else {
                 // 🔥 Extract username/password from $_POST and inject into $args if empty
                 if (!isset($args['username']) || !trim($args['username'])) {
-                    $args['username'] = $_POST['waiting']['tickets'][1]['username'] ?? '';
+                    $args['username'] = $allow_posted_credentials ? $this->sanitize_username($waiting_ticket['username'] ?? '') : '';
                 }
 
                 if (!isset($args['password']) || !trim($args['password'])) {
-                    $args['password'] = $_POST['waiting']['tickets'][1]['password'] ?? '';
+                    $args['password'] = ($allow_posted_credentials && $this->is_strong_password($waiting_ticket['password'] ?? '')) ? $waiting_ticket['password'] : '';
                 }
 
                 $username = $email;
@@ -313,6 +309,36 @@ class MEC_user extends MEC_base
         }
 
         return $user_id;
+    }
+
+    protected function sanitize_username($username)
+    {
+        $username = trim((string) $username);
+        return function_exists('sanitize_user') ? sanitize_user($username) : $username;
+    }
+
+    protected function has_valid_registration_request()
+    {
+        $nonce = isset($_POST['_wpnonce']) ? sanitize_text_field(wp_unslash($_POST['_wpnonce'])) : '';
+        if (!$nonce) return false;
+
+        $cart_id = isset($_POST['cart_id']) ? sanitize_text_field(wp_unslash($_POST['cart_id'])) : '';
+        if ($cart_id && wp_verify_nonce($nonce, 'mec_cart_form_' . $cart_id)) return true;
+
+        $transaction_id = isset($_POST['transaction_id']) ? sanitize_text_field(wp_unslash($_POST['transaction_id'])) : '';
+        if ($transaction_id && wp_verify_nonce($nonce, 'mec_transaction_form_' . $transaction_id)) return true;
+
+        return false;
+    }
+
+    protected function is_strong_password($password)
+    {
+        $password = (string) $password;
+        if (strlen($password) < 8) return false;
+        if (!preg_match('/[A-Za-z]/', $password)) return false;
+        if (!preg_match('/\d/', $password)) return false;
+
+        return true;
     }
 
     public function save_mapped_data($event_id, $user_id, $reg)

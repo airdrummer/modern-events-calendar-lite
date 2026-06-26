@@ -1789,7 +1789,8 @@ class MEC_feature_mec extends MEC_base
             foreach ($obj as $key => $value)
             {
                 if (
-                    !isset($value->title)
+                    !is_object($value)
+                    || !isset($value->title)
                     || !isset($value->content)
                     || !isset($value->link)
                 )

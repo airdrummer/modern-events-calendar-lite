@@ -977,7 +977,9 @@ function mec_skin_style_changed(skin, style, context) {
   }
 
   jQuery(".mec-skin-" + skin + "-date-format-container").hide();
-  if(skin === 'cover' && style === 'liquid-type1') {
+  if(skin === 'masonry') {
+    jQuery(".mec-skin-masonry-date-format-container").show();
+  } else if(skin === 'cover' && style === 'liquid-type1') {
     jQuery("#mec_skin_cover_date_format_liquid_container").show();
   } else {
     jQuery("#mec_skin_" + skin + "_date_format_" + style + "_container").show();

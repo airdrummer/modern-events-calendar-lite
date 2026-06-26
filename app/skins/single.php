@@ -45,6 +45,7 @@ class MEC_skin_single extends MEC_skins
     {
         $this->factory->action('wp_ajax_mec_load_single_page', array($this, 'load_single_page'));
         $this->factory->action('wp_ajax_nopriv_mec_load_single_page', array($this, 'load_single_page'));
+        $this->factory->action('template_redirect', array($this, 'validate_single_occurrence_request'));
 
         if(!self::$cache_hooks_registered)
         {
@@ -75,6 +76,62 @@ class MEC_skin_single extends MEC_skins
                 add_action($hook, array(__CLASS__, 'invalidate_single_page_cache_from_booking'));
             }
         }
+    }
+
+    public function validate_single_occurrence_request()
+    {
+        if (!isset($_GET['occurrence']) || is_admin() || (function_exists('wp_doing_ajax') && wp_doing_ajax())) return;
+        if (!is_singular($this->main->get_main_post_type())) return;
+
+        $event_id = get_queried_object_id();
+        $occurrence = sanitize_text_field(wp_unslash($_GET['occurrence']));
+        $occurrence_time = isset($_GET['time']) ? sanitize_text_field(wp_unslash($_GET['time'])) : null;
+
+        if ($event_id && !$this->is_valid_occurrence_request($event_id, $occurrence, $occurrence_time)) $this->not_found();
+    }
+
+    protected function is_valid_occurrence_request($event_id, $occurrence, $occurrence_time = null)
+    {
+        $occurrence = trim((string) $occurrence);
+        if ($occurrence === '') return true;
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $occurrence)) return false;
+
+        [$year, $month, $day] = array_map('intval', explode('-', $occurrence));
+        if (!checkdate($month, $day, $year)) return false;
+
+        $rendered = $this->render->data($event_id);
+        $occurrence_time = is_numeric($occurrence_time) ? (int) $occurrence_time : null;
+        [$start, $time] = $this->main->get_start_date_to_get_event_dates($event_id, $occurrence, $occurrence_time);
+        if (!$start && !$time) return false;
+
+        $dates = $this->render->dates($event_id, $rendered, 1, ($time ? date('Y-m-d H:i:s', $time) : $start));
+        foreach ($dates as $date)
+        {
+            $start_date = $date['start']['date'] ?? null;
+            $end_date = $date['end']['date'] ?? $start_date;
+
+            if ($start_date && $occurrence >= $start_date && $occurrence <= $end_date) return true;
+        }
+
+        return false;
+    }
+
+    protected function not_found()
+    {
+        global $wp_query;
+
+        if ($wp_query) $wp_query->set_404();
+        status_header(404);
+        nocache_headers();
+
+        $template = get_404_template();
+        if ($template)
+        {
+            include $template;
+            exit;
+        }
+
+        wp_die(esc_html__('Event not found.', 'modern-events-calendar-lite'), '', ['response' => 404]);
     }
 
     /**
@@ -901,6 +958,11 @@ class MEC_skin_single extends MEC_skins
         if(!$post)
         {
             wp_die(esc_html__('Event not found.', 'modern-events-calendar-lite'));
+        }
+
+        if($occurrence !== '' && !$this->is_valid_occurrence_request($id, $occurrence, $occurrence_time))
+        {
+            wp_die(esc_html__('Event not found.', 'modern-events-calendar-lite'), '', ['response' => 404]);
         }
 
         setup_postdata($GLOBALS['post'] =& $post);

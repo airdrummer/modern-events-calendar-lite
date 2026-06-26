@@ -140,7 +140,8 @@ if ($mec_h_fontfamily_arr): ?>
 	/* == Custom Fonts For H Tag
 	---------------- */
 	--mec-heading-font-family: '<?php echo esc_html($mec_h_fontfamily_arr[0]); ?>';
-
+<?php else: ?>
+	--mec-heading-font-family: inherit;
 <?php endif;
 
 // render paragraph font familty
@@ -148,6 +149,8 @@ if ($mec_p_fontfamily_arr): ?>
 	/* == Custom Fonts For P Tag
 	---------------- */
 	--mec-paragraph-font-family: '<?php echo esc_html($mec_p_fontfamily_arr[0]); ?>';
+<?php else: ?>
+	--mec-paragraph-font-family: inherit;
 <?php endif;
 
 // render colorskin
@@ -167,13 +170,13 @@ if ($color && $color != '#40d9f1'): ?>
 	--mec-color-skin-rgba-4: rgba(64, 217, 241, .11);
 <?php endif;
 
-if (isset($mec_primary_border_radius)): ?>
+if ($mec_primary_border_radius): ?>
 	--mec-primary-border-radius: <?php echo esc_html($mec_primary_border_radius); ?>;
 <?php else: ?>
-	--mec-primary-border-radius: 3px;
+	--mec-primary-border-radius: 12px;
 <?php endif;
 
-if (isset($mec_secondary_border_radius)): ?>
+if ($mec_secondary_border_radius): ?>
 	--mec-secondary-border-radius: <?php echo esc_html($mec_secondary_border_radius); ?>;
 <?php else: ?>
 	--mec-secondary-border-radius: 3px;

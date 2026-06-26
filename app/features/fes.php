@@ -482,6 +482,7 @@ class MEC_feature_fes extends MEC_base
                 if (isset($attendee[0]['MEC_TYPE_OF_DATA'])) continue;
 
                 $ticket_id = $attendee['id'] ?? get_post_meta($post_id, 'mec_ticket_id', true);
+                $ticket_seats = (isset($tickets[$ticket_id]['seats']) && is_numeric($tickets[$ticket_id]['seats']) && (int) $tickets[$ticket_id]['seats'] > 0) ? (int) $tickets[$ticket_id]['seats'] : 1;
                 $transactionKey = $transaction_id . '-' . $ticket_id . '-' . ($attendee['email'] ?? '');
 
                 // Ticket Variation output
@@ -535,7 +536,7 @@ class MEC_feature_fes extends MEC_base
                 if (!isset($uniqueBookings[$transactionKey]))
                 {
                     $uniqueBookings[$transactionKey] = [
-                        'count' => 1,
+                        'count' => $ticket_seats,
                         'booking' => [
                             $post_id,
                             html_entity_decode(get_the_title($event_id), ENT_QUOTES | ENT_HTML5),
@@ -558,7 +559,7 @@ class MEC_feature_fes extends MEC_base
                 }
                 else
                 {
-                    $uniqueBookings[$transactionKey]['count'] += 1;
+                    $uniqueBookings[$transactionKey]['count'] += $ticket_seats;
                 }
             }
         }

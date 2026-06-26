@@ -7,7 +7,7 @@ $fonts = include MEC::import('app.features.mec.webfonts.webfonts', true, true);
 
 $google_fonts = [];
 $google_fonts['none'] = array(
-	'label'=>esc_html__('Default Font', 'modern-events-calendar-lite'),
+	'label'=>esc_html__('Inherit from theme', 'modern-events-calendar-lite'),
 	'variants'=>array('regular'),
 	'subsets'=>array(),
 	'category'=>'',
@@ -114,7 +114,7 @@ if(is_array($fonts))
                             <div class="mec-form-row">
                                 <label class="mec-col-3" for="mec_styling_primary_border_radius"><?php esc_html_e('Primary border-radius', 'modern-events-calendar-lite'); ?></label>
                                 <div class="mec-col-9">
-                                    <input type="text" id="mec_styling_primary_border_radius" name="mec[styling][primary_border_radius]" value="<?php echo ((isset($styling['primary_border_radius']) and trim($styling['primary_border_radius']) != '') ? $styling['primary_border_radius'] : ''); ?>" />
+                                    <input type="text" id="mec_styling_primary_border_radius" name="mec[styling][primary_border_radius]" placeholder="12" value="<?php echo ((isset($styling['primary_border_radius']) and trim($styling['primary_border_radius']) != '') ? $styling['primary_border_radius'] : ''); ?>" />
                                     <span class="mec-tooltip">
                                         <div class="box left">
                                             <h5 class="title"><?php esc_html_e('Primary border-radius', 'modern-events-calendar-lite'); ?></h5>
@@ -127,7 +127,7 @@ if(is_array($fonts))
                             <div class="mec-form-row">
                                 <label class="mec-col-3" for="mec_styling_secondary_border_radius"><?php esc_html_e('Secondary border-radius', 'modern-events-calendar-lite'); ?></label>
                                 <div class="mec-col-9">
-                                    <input type="text" id="mec_styling_secondary_border_radius" name="mec[styling][secondary_border_radius]" value="<?php echo ((isset($styling['secondary_border_radius']) and trim($styling['secondary_border_radius']) != '') ? $styling['secondary_border_radius'] : ''); ?>" />
+                                    <input type="text" id="mec_styling_secondary_border_radius" name="mec[styling][secondary_border_radius]" placeholder="3" value="<?php echo ((isset($styling['secondary_border_radius']) and trim($styling['secondary_border_radius']) != '') ? $styling['secondary_border_radius'] : ''); ?>" />
                                     <span class="mec-tooltip">
                                         <div class="box left">
                                             <h5 class="title"><?php esc_html_e('Secondary border-radius', 'modern-events-calendar-lite'); ?></h5>
@@ -201,7 +201,7 @@ if(is_array($fonts))
                                             }
 
                                             $value = (isset($google_font['value']) ? $google_font['value'] : '['. $google_font['label'] .','. $variants .']');
-                                            if($value == '['.esc_html__('Default Font', 'modern-events-calendar-lite').',regular]') $value = '';
+                                            if($value == '['.esc_html__('Default Font', 'modern-events-calendar-lite').',regular]' or $value == '['.esc_html__('Inherit from theme', 'modern-events-calendar-lite').',regular]') $value = '';
                                             ?>
                                             <option value="<?php echo esc_attr($value); ?>" <?php if(isset($styling['mec_h_fontfamily']) and ($styling['mec_h_fontfamily'] == $value)) echo 'selected="selected"'; ?>><?php echo esc_html($google_font['label']); ?></option>
                                             <?php
@@ -228,7 +228,7 @@ if(is_array($fonts))
                                             }
 
                                             $value = (isset($google_font['value']) ? $google_font['value'] : '['. $google_font['label'] .','. $variants .']');
-                                            if($value == '['.esc_html__('Default Font', 'modern-events-calendar-lite').',regular]') $value = '';
+                                            if($value == '['.esc_html__('Default Font', 'modern-events-calendar-lite').',regular]' or $value == '['.esc_html__('Inherit from theme', 'modern-events-calendar-lite').',regular]') $value = '';
                                             ?>
                                             <option value="<?php echo esc_attr($value); ?>" <?php if(isset($styling['mec_p_fontfamily'] ) && ($styling['mec_p_fontfamily'] == $value ) ) echo 'selected'; ?>><?php echo esc_html($google_font['label']); ?></option>
                                             <?php

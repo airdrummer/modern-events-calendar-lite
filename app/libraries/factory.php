@@ -335,7 +335,7 @@ class MEC_factory extends MEC_base
             'mec-lity-style' => $this->main->asset('packages/lity/lity.min.css'),
             'mec-owl-carousel-style' => $this->main->asset('packages/owl-carousel/owl.carousel.min.css'),
             'mec-niceselect-style' => $this->main->asset('css/nice-select.min.css'),
-            'mec-frontend-style' => $this->main->asset('css/frontend.css'),
+            'mec-frontend-style' => $this->main->asset('css/frontend.min.css'),
             'mec-frontend-rtl-style' => $this->main->asset('css/frontend-rtl.min.css'),
             'accessibility' => $this->main->asset('css/a11y.min.css'),
             'mec-tooltip-style' => $this->main->asset('packages/tooltip/tooltip.css'),

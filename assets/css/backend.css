@@ -933,8 +933,8 @@ body.post-type-mec-books th.column-author {
   padding: 7px 30px 7px 46px;
 }
 
-#mec_event_form_fields li > div * {
-    display: block
+#mec_event_form_fields li>div * {
+  display: block
 }
 
 #mec_event_form_fields li .mec_event_notification_placeholder,
@@ -14238,4 +14238,8 @@ body.post-type-mec_invoice #post-body-content {
 
 .mec-booking-condition-message {
   margin: 0;
+}
+
+#mec_select_entity_type label {
+  display: block
 }

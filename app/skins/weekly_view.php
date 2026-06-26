@@ -292,10 +292,7 @@ class MEC_skin_weekly_view extends MEC_skins
                         $data->data = $rendered;
 
                         $data->dates = $dates;
-                        $data->date = [
-                            'start' => ['date' => $date],
-                            'end' => ['date' => $this->main->get_end_date($date, $rendered)],
-                        ];
+                        $data->date = $this->get_render_date($date, $ID, $rendered);
 
                         $d[] = $this->render->after_render($data, $this, $i);
                     }

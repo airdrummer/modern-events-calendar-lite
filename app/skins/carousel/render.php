@@ -92,8 +92,8 @@ $reason_for_cancellation = isset($this->skin_options['reason_for_cancellation'])
                         <?php if($settings['social_network_status'] != '0') : ?>
                         <ul class="mec-event-sharing-wrap">
                             <li class="mec-event-share">
-                                <a href="#" class="mec-event-share-icon">
-                                    <i class="mec-sl-share mec-bg-color-hover mec-border-color-hover" title="<?php esc_attr_e('Share', 'modern-events-calendar-lite') ?>" alt="<?php esc_attr_e('Share', 'modern-events-calendar-lite') ?>"></i>
+                                <a href="#" class="mec-event-share-icon" role="button" aria-haspopup="true" aria-expanded="false" aria-label="<?php esc_attr_e('Share', 'modern-events-calendar-lite') ?>">
+                                    <i class="mec-sl-share mec-bg-color-hover mec-border-color-hover" title="<?php esc_attr_e('Share', 'modern-events-calendar-lite') ?>"></i>
                                 </a>
                             </li>
                             <li>
@@ -132,8 +132,8 @@ $reason_for_cancellation = isset($this->skin_options['reason_for_cancellation'])
                         <?php if($settings['social_network_status'] != '0'): ?>
                             <ul class="mec-event-sharing-wrap">
                                 <li class="mec-event-share">
-                                    <a href="#" class="mec-event-share-icon">
-                                        <i class="mec-sl-share mec-bg-color-hover mec-border-color-hover" title="<?php esc_attr_e('Share', 'modern-events-calendar-lite') ?>" alt="<?php esc_attr_e('Share', 'modern-events-calendar-lite') ?>"></i>
+                                    <a href="#" class="mec-event-share-icon" role="button" aria-haspopup="true" aria-expanded="false" aria-label="<?php esc_attr_e('Share', 'modern-events-calendar-lite') ?>">
+                                        <i class="mec-sl-share mec-bg-color-hover mec-border-color-hover" title="<?php esc_attr_e('Share', 'modern-events-calendar-lite') ?>"></i>
                                     </a>
                                 </li>
                                 <li>

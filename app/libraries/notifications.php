@@ -217,15 +217,18 @@ class MEC_notifications extends MEC_base
         $rows = [['Name', 'Email', 'Ticket', 'Quantity']];
         $tickets = get_post_meta($event_id, 'mec_tickets', true);
         $booking_prices = [];
+        $total_attendees = 0;
         foreach ($attendees as $attendee)
         {
             $ticket_id = $attendee['id'] ?? '';
             $ticket_name = $tickets[$ticket_id]['name'] ?? '';
+            $ticket_seats = (isset($tickets[$ticket_id]['seats']) && is_numeric($tickets[$ticket_id]['seats']) && (int) $tickets[$ticket_id]['seats'] > 0) ? (int) $tickets[$ticket_id]['seats'] : 1;
+            $total_attendees += $ticket_seats;
             $rows[] = [
                 $attendee['name'] ?? '',
                 $attendee['email'] ?? '',
                 $ticket_name,
-                1,
+                $ticket_seats,
             ];
 
             $bid = $attendee['book_id'] ?? 0;
@@ -237,7 +240,7 @@ class MEC_notifications extends MEC_base
         }
 
         $total_money = array_sum($booking_prices);
-        $rows[] = ['Total Attendees', count($attendees), '', ''];
+        $rows[] = ['Total Attendees', $total_attendees, '', ''];
         $rows[] = ['Total Money Collected', $total_money, '', ''];
 
         $upload_dir = wp_upload_dir();

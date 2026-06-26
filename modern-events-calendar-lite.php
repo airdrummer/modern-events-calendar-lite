@@ -8,7 +8,7 @@
  *   Author URI: https://webnus.net
  *   Developer: Webnus
  *   Developer URI: https://webnus.net
- *   Version: 7.33.0.1
+ *   Version: 7.34.1
  *   Text Domain: modern-events-calendar-lite
  *   Domain Path: /languages
  **/
@@ -33,7 +33,7 @@ if (!defined('MECEXEC')) {
     define('MEC_BASENAME', plugin_basename(__FILE__)); // modern-events-calendar/mec.php
 
     /** Plugin Version **/
-    define('MEC_VERSION', '7.33.0.1');
+    define('MEC_VERSION', '7.34.1');
 
     /** API URL **/
     define('MEC_API_ACTIVATION', 'https://my.webnus.net/api/v3');
@@ -41,6 +41,14 @@ if (!defined('MECEXEC')) {
 
     /** Include Webnus MEC class if not included before **/
     if (!class_exists('MEC')) require_once MEC_ABSPATH . 'mec-init.php';
+
+    add_action('before_woocommerce_init', function ()
+    {
+        if (class_exists('\Automattic\WooCommerce\Utilities\FeaturesUtil'))
+        {
+            \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility('custom_order_tables', __FILE__, true);
+        }
+    });
 
     /** Initialize Webnus MEC Plugin **/
     $MEC = MEC::instance();

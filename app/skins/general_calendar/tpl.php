@@ -116,6 +116,30 @@ wp_enqueue_script('mec-niceselect-script');
 <?php
 $javascript = '<script>
     document.addEventListener("DOMContentLoaded", function () {
+			if ("'. esc_js($lang) .'" === "is" && typeof FullCalendar !== "undefined" && FullCalendar.globalLocales && !FullCalendar.globalLocales.some(function(locale) { return locale.code === "is"; })) {
+				FullCalendar.globalLocales.push({
+					code: "is",
+					week: { dow: 1, doy: 4 },
+					buttonText: {
+						prev: "Fyrri",
+						next: "N\u00e6sti",
+						today: "\u00cd dag",
+						year: "\u00c1r",
+						month: "M\u00e1nu\u00f0ur",
+						week: "Vika",
+						day: "Dagur",
+						list: "Dagskr\u00e1"
+					},
+					weekText: "Vika",
+					allDayText: "Allan daginn",
+					moreLinkText: "meira",
+					noEventsText: "Engir vi\u00f0bur\u00f0ir til a\u00f0 s\u00fdna",
+					dayNames: ["Sunnudagur", "M\u00e1nudagur", "\u00deri\u00f0judagur", "Mi\u00f0vikudagur", "Fimmtudagur", "F\u00f6studagur", "Laugardagur"],
+					dayNamesShort: ["Sun", "M\u00e1n", "\u00deri", "Mi\u00f0", "Fim", "F\u00f6s", "Lau"],
+					monthNames: ["Jan\u00faar", "Febr\u00faar", "Mars", "Apr\u00edl", "Ma\u00ed", "J\u00fan\u00ed", "J\u00fal\u00ed", "\u00c1g\u00fast", "September", "Okt\u00f3ber", "N\u00f3vember", "Desember"],
+					monthNamesShort: ["Jan", "Feb", "Mar", "Apr", "Ma\u00ed", "J\u00fan", "J\u00fal", "\u00c1g\u00fa", "Sep", "Okt", "N\u00f3v", "Des"]
+				});
+			}
 		var calendarEl = document.getElementById("mec-gCalendar-wrap");
 		var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: "dayGridMonth",
@@ -124,10 +148,8 @@ $javascript = '<script>
 			selectable: false,
 			businessHours: false,
 			height: "auto",
-			eventLimit: false,
 			direction: "'. $direction .'",
 			locale: "'. esc_js($lang) .'",
-			lang: "'. esc_js($lang) .'",
 	';
 if (mec_general_calendar_find_event($this->sf_options, 'find')) :
 $javascript .='
@@ -180,7 +202,6 @@ $javascript .='
 								filter_author: "'. esc_js($filter_author) .'",
 								filter_ex_author: "'. esc_js($filter_ex_author) .'",
 								locale: "'. esc_js($lang) .'",
-								lang: "'. esc_js($lang) .'",
 							},
 						});
 						calendar.refetchEvents();
@@ -200,6 +221,20 @@ endif;
 $javascript .='
 			},
 			';
+endif;
+if ($lang === 'is') :
+$javascript .='
+			dayHeaderContent: function(arg) {
+			    return ["Sun", "M\u00e1n", "\u00deri", "Mi\u00f0", "Fim", "F\u00f6s", "Lau"][arg.date.getDay()];
+			},
+			datesSet: function(arg) {
+			    var months = ["Jan\u00faar", "Febr\u00faar", "Mars", "Apr\u00edl", "Ma\u00ed", "J\u00fan\u00ed", "J\u00fal\u00ed", "\u00c1g\u00fast", "September", "Okt\u00f3ber", "N\u00f3vember", "Desember"];
+			    var titleEl = document.querySelector("#mec_skin_'.esc_js($this->id).' .fc-toolbar-title");
+			    if (titleEl) {
+			        titleEl.textContent = months[arg.start.getMonth()] + " " + arg.start.getFullYear();
+			    }
+			},
+';
 endif;
 $javascript .='
 			firstDay: "'.esc_js($week_start_day).'",
@@ -383,7 +418,6 @@ $javascript .= '
 					filter_author: "' . esc_js($filter_author) . '",
 					filter_ex_author: "' . esc_js($filter_ex_author) . '",
 					locale: "' . esc_js($lang) . '",
-					lang: "' . esc_js($lang) . '",
 				},
 				failure: function() {
 					alert("there was an error while fetching events!");

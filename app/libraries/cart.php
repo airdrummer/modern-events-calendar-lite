@@ -124,22 +124,25 @@ class MEC_cart extends MEC_base
 
     public function get_cart_id()
     {
-        $cart_id = (isset($_COOKIE['mec_cart']) && trim($_COOKIE['mec_cart'])) ? sanitize_text_field($_COOKIE['mec_cart']) : null;
+        $cart_id = (isset($_COOKIE['mec_cart']) && trim($_COOKIE['mec_cart'])) ? sanitize_text_field(wp_unslash($_COOKIE['mec_cart'])) : null;
+        if ($cart_id && !$this->is_valid_cart_id($cart_id)) $cart_id = null;
 
         if (!$cart_id && isset($_REQUEST['cart_id']) && trim((string) $_REQUEST['cart_id']))
         {
-            $cart_id = sanitize_text_field($_REQUEST['cart_id']);
+            $request_cart_id = sanitize_text_field(wp_unslash($_REQUEST['cart_id']));
+            $request_cart_key = isset($_REQUEST['mec_cart_key']) ? sanitize_text_field(wp_unslash($_REQUEST['mec_cart_key'])) : '';
 
-            if (!headers_sent()) setcookie('mec_cart', $cart_id, (time() + (30 * 86400)), '/');
-            $_COOKIE['mec_cart'] = $cart_id;
+            if ($this->is_valid_cart_id($request_cart_id) && hash_equals($this->get_cart_key($request_cart_id), $request_cart_key))
+            {
+                $cart_id = $request_cart_id;
+                $this->set_cart_cookie($cart_id);
+            }
         }
 
         if (!$cart_id)
         {
             $cart_id = (string) mt_rand(100000000, 999999999);
-
-            if (!headers_sent()) setcookie('mec_cart', $cart_id, (time() + (30 * 86400)), '/');
-            $_COOKIE['mec_cart'] = $cart_id;
+            $this->set_cart_cookie($cart_id);
         }
 
         return $cart_id;
@@ -148,7 +151,7 @@ class MEC_cart extends MEC_base
     public function get_fresh_cart_id()
     {
         $cart_id = mt_rand(100000000, 999999999);
-        setcookie('mec_cart', $cart_id, (time() + (30 * 86400)), '/');
+        $this->set_cart_cookie((string) $cart_id);
 
         return $cart_id;
     }
@@ -191,9 +194,26 @@ class MEC_cart extends MEC_base
         {
             $cart_id = $this->get_cart_id();
             $url = $this->main->add_qs_var('cart_id', $cart_id, $url);
+            $url = $this->main->add_qs_var('mec_cart_key', $this->get_cart_key($cart_id), $url);
         }
 
         return $url;
+    }
+
+    protected function get_cart_key($cart_id)
+    {
+        return hash_hmac('sha256', (string) $cart_id, wp_salt('auth'));
+    }
+
+    protected function is_valid_cart_id($cart_id)
+    {
+        return (bool) preg_match('/^[A-Za-z0-9_-]{6,64}$/', (string) $cart_id);
+    }
+
+    protected function set_cart_cookie($cart_id)
+    {
+        if (!headers_sent()) setcookie('mec_cart', $cart_id, (time() + (30 * 86400)), '/');
+        $_COOKIE['mec_cart'] = $cart_id;
     }
 
     private function get_localized_page_id($page_id, $event_id = null)

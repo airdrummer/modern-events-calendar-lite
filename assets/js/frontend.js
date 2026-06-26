@@ -613,7 +613,14 @@ function mecFormatA11yString(template, replacements)
             }
 
             // Search Parameters
-            var sf = 'sf[s]=' + s + '&sf[address]=' + address + '&sf[address_radius]=' + address_radius + '&sf[cost-min]=' + cost_min + '&sf[cost-max]=' + cost_max + '&sf[time-start]=' + time_start + '&sf[time-end]=' + time_end + '&sf[month]=' + month + '&sf[year]=' + year + '&sf[start]=' + start + '&sf[end]=' + end + '&sf[category]=' + category + '&sf[location]=' + location + '&sf[organizer]=' + organizer + '&sf[speaker]=' + speaker + '&sf[tag]=' + tag + '&sf[label]=' + label + '&sf[event_type]=' + event_type + '&sf[event_type_2]=' + event_type_2 + '&sf[event_status]=' + event_status + '&sf[attribute]=' + attribute + addation_attr;
+            var sf = 'sf[s]=' + s + '&sf[address]=' + address + '&sf[address_radius]=' + address_radius + '&sf[cost-min]=' + cost_min + '&sf[cost-max]=' + cost_max + '&sf[time-start]=' + time_start + '&sf[time-end]=' + time_end + '&sf[month]=' + month + '&sf[year]=' + year + '&sf[start]=' + start + '&sf[end]=' + end + '&sf[event_type]=' + event_type + '&sf[event_type_2]=' + event_type_2 + '&sf[event_status]=' + event_status + '&sf[attribute]=' + attribute + addation_attr;
+
+            if ($category.length) sf += '&sf[category]=' + category;
+            if ($location.length) sf += '&sf[location]=' + location;
+            if ($organizer.length) sf += '&sf[organizer]=' + organizer;
+            if ($speaker.length) sf += '&sf[speaker]=' + speaker;
+            if ($tag.length) sf += '&sf[tag]=' + tag;
+            if ($label.length) sf += '&sf[label]=' + label;
 
             // Event Fields
             $custom_fields.each(function () {
@@ -4956,29 +4963,31 @@ jQuery(window).on('load', function () {
 (function ($) {
     $.fn.mecCountDown = function (options, callBack) {
         // Default Options
-        var settings = $.extend(
-		{
+        var settings = $.extend({
             // These are the defaults.
             date: null,
-            format: null,
-            interval: 1000
+            format: null
         }, options);
 
         var callback = callBack;
         var selector = $(this);
 
         startCountdown();
-        var intervalID = setInterval(startCountdown, settings.interval);
+        var interval = setInterval(startCountdown, 1000);
 
-        function startCountdown() 
-        {
+        function startCountdown() {
             var eventDate = Date.parse(settings.date) / 1000;
             var currentDate = Math.floor($.now() / 1000);
 
-            if (eventDate <= currentDate) 
-            {
+            if (eventDate <= currentDate) {
+                selector.find(".mec-days").text("00");
+                selector.find(".mec-hours").text("00");
+                selector.find(".mec-minutes").text("00");
+                selector.find(".mec-seconds").text("00");
+
                 callback.call(this);
-                clearInterval(intervalID);
+                clearInterval(interval);
+                return;
             }
 
             var seconds = eventDate - currentDate;
@@ -4992,18 +5001,17 @@ jQuery(window).on('load', function () {
             var minutes = Math.floor(seconds / 60);
             seconds -= minutes * 60;
 
-            selector.find(".mec-timeRefDays").text((days == 1 
-            					? mecdata.day
-            					: mecdata.days));
-            selector.find(".mec-timeRefHours").text((hours == 1
-            					? mecdata.hour
-            					: mecdata.hours));
-			selector.find(".mec-timeRefMinutes").text((minutes == 1
-            					? mecdata.minute
-            					: mecdata.minutes));
-            selector.find(".mec-timeRefSeconds").text((seconds == 1
-								? mecdata.second
-								: mecdata.seconds));
+            if (days == 1) selector.find(".mec-timeRefDays").text(mecdata.day);
+            else selector.find(".mec-timeRefDays").text(mecdata.days);
+
+            if (hours == 1) selector.find(".mec-timeRefHours").text(mecdata.hour);
+            else selector.find(".mec-timeRefHours").text(mecdata.hours);
+
+            if (minutes == 1) selector.find(".mec-timeRefMinutes").text(mecdata.minute);
+            else selector.find(".mec-timeRefMinutes").text(mecdata.minutes);
+
+            if (seconds == 1) selector.find(".mec-timeRefSeconds").text(mecdata.second);
+            else selector.find(".mec-timeRefSeconds").text(mecdata.seconds);
 
             if (settings.format === "on") {
                 days = (String(days).length >= 2) ? days : "0" + days;
@@ -5018,7 +5026,7 @@ jQuery(window).on('load', function () {
                 selector.find(".mec-minutes").text(minutes);
                 selector.find(".mec-seconds").text(seconds);
             } else {
-                clearInterval(intervalID);
+                clearInterval(interval);
             }
         }
     };
@@ -6156,8 +6164,35 @@ function mecFluentUI() {
         jQuery('.mec-filter-icon').hide();
     }
     // Prevend Default For Event Share Icon
-    jQuery(document).on('click', '.mec-event-share-icon', function (e) {
+    jQuery(document).on('click keydown', '.mec-event-share-icon', function (e) {
+        if (e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ') return;
         e.preventDefault();
+
+        var $wrap = jQuery(this).closest('.mec-event-sharing-wrap');
+        var isOpen = $wrap.hasClass('active');
+
+        // Close all other share popups
+        jQuery('.mec-event-sharing-wrap.active').not($wrap).removeClass('active').find('.mec-event-share-icon').attr('aria-expanded', 'false');
+
+        // Toggle current
+        $wrap.toggleClass('active');
+        jQuery(this).attr('aria-expanded', !isOpen);
+    });
+
+    // Close share popup on Escape
+    jQuery(document).on('keydown', '.mec-event-sharing-wrap.active .mec-event-share-icon', function (e) {
+        if (e.key === 'Escape') {
+            var $wrap = jQuery(this).closest('.mec-event-sharing-wrap');
+            $wrap.removeClass('active');
+            jQuery(this).attr('aria-expanded', 'false').focus();
+        }
+    });
+
+    // Close share popup when clicking outside
+    jQuery(document).on('click', function (e) {
+        if (!jQuery(e.target).closest('.mec-event-sharing-wrap').length) {
+            jQuery('.mec-event-sharing-wrap.active').removeClass('active').find('.mec-event-share-icon').attr('aria-expanded', 'false');
+        }
     });
 }
 
@@ -6974,8 +7009,8 @@ function mecFluentYearlyUI(eventID, yearID) {
         }
 
         function setListeners() {
-            // Add the onclick event
-            $("#mec_booking_calendar_" + settings.id + " .mec-booking-calendar-date").off('click').on('click', function (e) {
+            // Add the onclick event (delegated so cloned sidebar items also work)
+            $("#mec_booking_calendar_" + settings.id).off('click', '.mec-booking-calendar-date').on('click', '.mec-booking-calendar-date', function (e) {
                 e.preventDefault();
 
                 // Activate
@@ -6991,6 +7026,11 @@ function mecFluentYearlyUI(eventID, yearID) {
                 // Set Formatted Date
                 var formatted_date = $(this).data('formatted-date');
                 $("#mec_booking_calendar_wrapper" + settings.id + " .mec-select-date-calendar-formatted-date").html(formatted_date);
+
+                // Update chosen time message
+                var $chosenMsg = $(this).closest(".mec-booking-calendar-container").find(".mec-choosen-time-message");
+                $chosenMsg.removeClass("disable");
+                $chosenMsg.find(".mec-choosen-time").empty().append($(this).data('formatted-date'));
             });
 
             // Add the onclick event on calendar date
@@ -7010,47 +7050,44 @@ function mecFluentYearlyUI(eventID, yearID) {
                 // Set Formatted Date
                 var formatted_date = $(this).data('formatted-date');
                 $("#mec_booking_calendar_wrapper" + settings.id + " .mec-select-date-calendar-formatted-date").html(formatted_date);
-            });
 
-            // If day has some time slot
-            $("#mec_booking_calendar_" + settings.id + " .mec-has-time-repeat .mec-calendar-novel-selected-day").off('click').on('click', function (e) {
-                $("#mec_booking_calendar_" + settings.id + " .mec-has-time-repeat").removeClass('mec-wrap-active').removeClass('mec-active');
-                $(".mec-has-time-repeat").find('.mec-booking-calendar-date').hide();
-                $(this).parents(".mec-has-time-repeat").find('.mec-booking-calendar-date').toggle();
-                $(this).parents(".mec-has-time-repeat").addClass('mec-active');
+                // Update chosen time message
+                var $chosenMsg = $(this).closest(".mec-booking-calendar-container").find(".mec-choosen-time-message");
+                $chosenMsg.removeClass("disable");
+                $chosenMsg.find(".mec-choosen-time").empty().append($(this).data('formatted-date'));
+
+                // Hide sidebar when a single-time day is selected
+                $("#mec_booking_calendar_" + settings.id + " .mec-booking-tooltip-container").hide();
             });
 
             var $has_time_repeat = $("#mec_booking_calendar_" + settings.id + " .mec-has-time-repeat");
-
-            // Find more time in tooltip to set button
-            $has_time_repeat.on('mouseenter', function () {
-                var moreTimeFinder = $(this).find(".mec-booking-calendar-date");
-                if (moreTimeFinder.length >= 1) {
-                    $(this).find(".mec-booking-tooltip").removeClass("multiple-time");
-                    $(this).find(".mec-booking-tooltip").addClass("multiple-time");
-                }
-
-                $(this).find(".mec-booking-calendar-date").css("display", "block");
-            });
 
             $has_time_repeat.off('click').on('click', function () {
                 $("#mec_booking_calendar_" + settings.id + " .mec-has-time-repeat").removeClass('mec-wrap-active').removeClass('mec-active');
                 $(this).addClass("mec-active");
 
-                // Send message under the calendar for multiple time in one day
-                var sendTimeToMessage = $(this).find(".multiple-time .mec-booking-calendar-date.mec-active").text();
+                // Populate sidebar with time slots from this day
+                var $container = $("#mec_booking_calendar_" + settings.id + " .mec-booking-tooltip-container");
+                var $tooltip = $(this).find(".mec-booking-tooltip");
+                var $content = $tooltip.children().clone();
+                $content.css('display', '').removeAttr('style');
+                $container.empty().append($content).show();
 
-                $(this).parents().eq(3).find(".mec-choosen-time-message").removeClass("disable");
-                $(this).parents().eq(3).find(".mec-choosen-time-message .mec-choosen-time").empty();
-                $(this).parents().eq(3).find(".mec-choosen-time-message .mec-choosen-time").append(sendTimeToMessage);
+                // Send message under the calendar
+                var $activeDate = $(this).find(".mec-booking-calendar-date.mec-active");
+                var sendTimeToMessage = $activeDate.length ? $activeDate.data('formatted-date') : '';
+                var $chosenMsg = $(this).closest(".mec-booking-calendar-container").find(".mec-choosen-time-message");
+                $chosenMsg.removeClass("disable");
+                $chosenMsg.find(".mec-choosen-time").empty().append(sendTimeToMessage);
             });
 
             // Selected DateTime
             if (settings.selected_datetime && $has_time_repeat.length) {
                 var $selected_datetime = $(".mec-booking-calendar-date[data-timestamp='" + settings.selected_datetime + "']");
                 if ($selected_datetime.length) {
-                    $selected_datetime.parent().addClass("multiple-time");
-                    $selected_datetime.addClass("mec-active").trigger('click');
+                    $selected_datetime.closest(".mec-has-time-repeat").trigger('click');
+                    var $sidebarDate = $(".mec-booking-tooltip-container .mec-booking-calendar-date[data-timestamp='" + settings.selected_datetime + "']");
+                    if ($sidebarDate.length) $sidebarDate.trigger('click');
                 }
             }
 

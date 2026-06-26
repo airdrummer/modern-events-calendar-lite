@@ -941,7 +941,7 @@ class MEC_feature_ix extends MEC_base
                         'mec_hourly_schedules' => $hourly_schedules,
                         'mec_booking' => [
                             'bookings_limit_unlimited' => (int) $meta->mec_booking->bookings_limit_unlimited,
-                            'bookings_limit' => (int) $meta->mec_booking->bookings_limit,
+                            'bookings_limit' => (isset($meta->mec_booking->bookings_limit) and trim((string) $meta->mec_booking->bookings_limit) !== '') ? (int) $meta->mec_booking->bookings_limit : '',
                         ],
                         'mec_tickets' => $tickets,
                         'mec_fees_global_inheritance' => (int) $meta->mec_fees_global_inheritance,

@@ -59,7 +59,13 @@ class MEC_db extends MEC_base
 	public function num($query, $table = '')
 	{
         // If table is filled, generate the query
-		if(trim($table) != '') $query = "SELECT COUNT(*) FROM `#__$table`";
+		if(trim($table) != '')
+        {
+            $table = $this->sanitize_table_name($table);
+            if($table === '') return 0;
+
+            $query = "SELECT COUNT(*) FROM `#__$table`";
+        }
 		
 		// Apply DB prefix
 		$query = $this->_prefix($query);
@@ -110,18 +116,35 @@ class MEC_db extends MEC_base
 		
 		if(is_array($selects))
 		{
-			foreach($selects as $select) $fields .= '`'.$select.'`,';
+			foreach($selects as $select)
+            {
+                $select = $this->sanitize_identifier($select);
+                if($select === '') return false;
+
+                $fields .= '`'.$select.'`,';
+            }
 			$fields = trim($fields, ' ,');
 		}
 		else
 		{
-			$fields = $selects;
+			$fields = $this->sanitize_select_fields($selects);
+            if($fields === '') return false;
 		}
 		
         // Generate the condition
-		if(trim($condition) == '') $condition = "`$field`='".esc_sql($value)."'";
+		if(trim($condition) == '')
+        {
+            $field = $this->sanitize_identifier($field);
+            if($field === '') return false;
+
+            $condition = "`$field`='".esc_sql($value)."'";
+        }
+        elseif(!$this->is_safe_condition($condition)) return false;
         
         // Generate the query
+        $table = $this->sanitize_table_name($table);
+        if($table === '') return false;
+
 		$query = "SELECT $fields FROM `#__$table` WHERE $condition";
 		
 		// Apply DB prefix
@@ -144,6 +167,8 @@ class MEC_db extends MEC_base
     public function columns($table = 'mec_dates', $column = NULL)
     {
         if(trim($table) == '') return false;
+        $table = $this->sanitize_table_name($table);
+        if($table === '') return false;
 
         $query = "SHOW COLUMNS FROM `#__".$table."`";
         $results = $this->q($query, "select");
@@ -164,8 +189,59 @@ class MEC_db extends MEC_base
      */
     public function exists($table)
     {
+        $table = $this->sanitize_table_name($table);
+        if($table === '') return false;
+
         $query = "SHOW TABLES LIKE '#__".$table."'";
         return (bool) $this->select($query, "loadObject");
+    }
+
+    protected function sanitize_table_name($table)
+    {
+        return preg_replace('/[^A-Za-z0-9_]/', '', (string) $table);
+    }
+
+    protected function sanitize_identifier($identifier)
+    {
+        return preg_replace('/[^A-Za-z0-9_]/', '', (string) $identifier);
+    }
+
+    protected function sanitize_select_fields($fields)
+    {
+        $fields = trim((string) $fields);
+        if($fields === '*') return '*';
+
+        $sanitized = [];
+        foreach(explode(',', $fields) as $field)
+        {
+            $field = trim(str_replace('`', '', $field));
+            if($field === '') continue;
+
+            $parts = preg_split('/\s+AS\s+/i', $field);
+            $column = preg_replace('/[^A-Za-z0-9_\.]/', '', $parts[0] ?? '');
+            if($column === '') return '';
+
+            $entry = $column;
+            if(isset($parts[1]))
+            {
+                $alias = $this->sanitize_identifier($parts[1]);
+                if($alias === '') return '';
+
+                $entry .= ' AS `'.$alias.'`';
+            }
+
+            $sanitized[] = $entry;
+        }
+
+        return count($sanitized) ? implode(', ', $sanitized) : '';
+    }
+
+    protected function is_safe_condition($condition)
+    {
+        $condition = trim((string) $condition);
+        if($condition === '') return false;
+
+        return !preg_match('/(;|--|#|\/\*|\*\/|\bUNION\b|\bSELECT\b|\bINSERT\b|\bUPDATE\b|\bDELETE\b|\bDROP\b|\bALTER\b|\bCREATE\b)/i', $condition);
     }
 	
     /**

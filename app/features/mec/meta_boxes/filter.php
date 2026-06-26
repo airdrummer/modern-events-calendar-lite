@@ -74,7 +74,8 @@ $MEC_tax_walker = new MEC_tax_walker();
     <div class="mec-meta-box-fields" id="mec_meta_box_calendar_filter">
         <div class="mec-create-shortcode-tabs-wrap">
             <div class="mec-create-shortcode-tabs-left">
-                <a class="mec-create-shortcode-tabs-link mec-tab-active" data-href="mec_select_categories" href="#"><?php echo esc_html__('Categories' , 'modern-events-calendar-lite'); ?></a>
+                <a class="mec-create-shortcode-tabs-link mec-tab-active" data-href="mec_select_entity_type" href="#"><?php echo esc_html__('Entity Type' , 'modern-events-calendar-lite'); ?></a>
+                <a class="mec-create-shortcode-tabs-link" data-href="mec_select_categories" href="#"><?php echo esc_html__('Categories' , 'modern-events-calendar-lite'); ?></a>
                 <a class="mec-create-shortcode-tabs-link" data-href="mec_select_locations" href="#"><?php echo esc_html__('Locations' , 'modern-events-calendar-lite'); ?></a>
                 <?php if(!isset($this->settings['organizers_status']) || $this->settings['organizers_status']): ?>
                 <a class="mec-create-shortcode-tabs-link" data-href="mec_select_organizers" href="#"><?php echo esc_html__('Organizers' , 'modern-events-calendar-lite'); ?></a>
@@ -93,7 +94,25 @@ $MEC_tax_walker = new MEC_tax_walker();
                 <?php do_action( 'mec_shortcode_filters_tab_links', $post ); ?>
             </div>
             <div class="mec-add-booking-tabs-right">
-                <div class="mec-form-row mec-create-shortcode-tab-content mec-tab-active" id="mec_select_categories">
+                <div class="mec-form-row mec-create-shortcode-tab-content mec-tab-active" id="mec_select_entity_type">
+                    <?php $entity_type_filter = get_post_meta($post->ID, 'entity_type_filter', true); ?>
+                    <?php if (!in_array($entity_type_filter, ['all', 'event', 'appointment'], true)) $entity_type_filter = 'all'; ?>
+                    <h3 class="mec-title"><?php esc_html_e('Entity Type', 'modern-events-calendar-lite'); ?></h3>
+                    <p class="description"><?php esc_html_e('Choose the type of content to display in the shortcode.', 'modern-events-calendar-lite'); ?></p>
+                        <label for="mec_entity_type_all">
+                            <input type="radio" name="mec[entity_type_filter]" value="all" id="mec_entity_type_all" <?php checked($entity_type_filter, 'all'); ?>>
+                            <?php esc_html_e('Both Events and Appointments', 'modern-events-calendar-lite'); ?>
+                        </label>
+                        <label for="mec_entity_type_event">
+                            <input type="radio" name="mec[entity_type_filter]" value="event" id="mec_entity_type_event" <?php checked($entity_type_filter, 'event'); ?>>
+                            <?php esc_html_e('Events', 'modern-events-calendar-lite'); ?>
+                        </label>
+                        <label for="mec_entity_type_appointment">
+                            <input type="radio" name="mec[entity_type_filter]" value="appointment" id="mec_entity_type_appointment" <?php checked($entity_type_filter, 'appointment'); ?>>
+                            <?php esc_html_e('Appointments', 'modern-events-calendar-lite'); ?>
+                        </label>
+                </div>
+                <div class="mec-form-row mec-create-shortcode-tab-content" id="mec_select_categories">
                     <h3><?php echo esc_html($this->main->m('taxonomy_categories', esc_html__('Categories', 'modern-events-calendar-lite'))); ?></h3>
                     <h4 style="margin-bottom: 10px;"><?php echo esc_html__('Include', 'modern-events-calendar-lite'); ?></h4>
                     <p class="description"><?php esc_html_e('Choose your desired categories for filtering the events.', 'modern-events-calendar-lite'); ?></p>
@@ -361,7 +380,7 @@ $MEC_tax_walker = new MEC_tax_walker();
                     <?php $show_only_one_occurrence = get_post_meta($post->ID, 'show_only_one_occurrence', true); ?>
                     <div class="mec-form-row mec-switcher">
                         <div class="mec-col-4">
-                            <label for="show_only_one_occurrence"><?php esc_html_e('Show only one occurrence of events', 'modern-events-calendar-lite'); ?></label>
+                            <label for="show_only_one_occurrence"><?php esc_html_e('Show only one occurrence', 'modern-events-calendar-lite'); ?></label>
                         </div>
                         <div class="mec-col-4">
                             <input type="hidden" name="mec[show_only_one_occurrence]" value="0" />
@@ -432,14 +451,20 @@ $MEC_tax_walker = new MEC_tax_walker();
         </div>
     </div>
 </div>
-<script>
-jQuery(".mec-create-shortcode-tabs-link").on("click", function(e)
-{
-    e.preventDefault();
-    var href = jQuery(this).attr("data-href");
 
-    jQuery(".mec-create-shortcode-tab-content,.mec-create-shortcode-tabs-link").removeClass("mec-tab-active");
-    jQuery(this).addClass("mec-tab-active");
-    jQuery("#" + href ).addClass("mec-tab-active");
+<script>
+jQuery(function($)
+{
+    $(".mec-create-shortcode-tabs-link").on("click", function(e)
+    {
+        e.preventDefault();
+        var href = $(this).attr("data-href");
+
+        $(".mec-create-shortcode-tab-content,.mec-create-shortcode-tabs-link").removeClass("mec-tab-active");
+        $(this).addClass("mec-tab-active");
+        $("#" + href ).addClass("mec-tab-active");
+    });
+
+    // All tabs remain visible regardless of entity type selection
 });
 </script>

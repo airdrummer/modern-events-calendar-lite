@@ -828,7 +828,7 @@ if(isset($_POST['mec']['settings']['booking_registration'])) {
                                 <div class="form-col-12">
                                     <label>
                                         <input type="hidden" name="mec[settings][appointments_status]" value="0" />
-                                        <input onchange="jQuery('#mec_appointments_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][appointments_status]" <?php if(isset($settings['appointments_status']) and $settings['appointments_status']) echo 'checked="checked"'; ?> /><?php esc_html_e('Enable', 'modern-events-calendar-lite'); ?>
+                                        <input onchange="jQuery('#mec_appointments_container_toggle').toggle();" value="1" type="checkbox" name="mec[settings][appointments_status]" <?php if(isset($settings['appointments_status']) and $settings['appointments_status']) echo 'checked="checked"'; ?> /><?php esc_html_e('Enable appointment module', 'modern-events-calendar-lite'); ?>
                                     </label>
                                     <p><?php esc_html_e("If you need appointment booking, you can enable this option; otherwise, keep it disabled for simplicity. If enabled, you can select between events and appointments when creating an event.", 'modern-events-calendar-lite'); ?></p>
                                 </div>
@@ -858,7 +858,7 @@ if(isset($_POST['mec']['settings']['booking_registration'])) {
                                 <label for="mec_settings_booking_default_tickets_status">
                                     <input type="hidden" name="mec[settings][default_tickets_status]" value="0" />
                                     <input type="checkbox" name="mec[settings][default_tickets_status]" id="mec_settings_booking_default_tickets_status" <?php echo (isset($settings['default_tickets_status']) && $settings['default_tickets_status'] == '1') ? 'checked="checked"' : ''; ?> value="1" onchange="jQuery('#mec_settings_booking_default_tickets_wrapper').toggleClass('mec-util-hidden');" />
-                                    <?php esc_html_e('Enable', 'modern-events-calendar-lite'); ?>
+                                    <?php esc_html_e('Enable global tickets', 'modern-events-calendar-lite'); ?>
                                 </label>
                             </div>
                             <div id="mec_settings_booking_default_tickets_wrapper" class="<?php echo (isset($settings['default_tickets_status']) && $settings['default_tickets_status'] == '1') ? '' : 'mec-util-hidden'; ?>">

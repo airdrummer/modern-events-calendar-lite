@@ -2145,8 +2145,37 @@ class MEC_feature_events extends MEC_base
      */
     public function meta_box_tickets($post)
     {
+        $FES = !is_admin();
+
+        if ($FES)
+        {
+            $settings = $this->settings;
+
+            add_filter('mec_fes_ticket_field_visibility', function($visible, $field) use ($settings)
+            {
+                $map = array(
+                    'minimum_ticket' => 'fes_section_ticket_show_mt',
+                    'maximum_ticket' => 'fes_section_ticket_show_mxt',
+                    'stop_selling' => 'fes_section_ticket_show_sst',
+                );
+
+                if (isset($map[$field]))
+                {
+                    $setting = $map[$field];
+                    $result = (!isset($settings[$setting]) or (isset($settings[$setting]) and $settings[$setting]));
+                    return $result;
+                }
+
+                return $visible;
+            }, 10, 2);
+        }
 
         FormBuilder::tickets($post);
+
+        if ($FES)
+        {
+            remove_all_filters('mec_fes_ticket_field_visibility');
+        }
     }
 
     /**
@@ -3104,22 +3133,25 @@ class MEC_feature_events extends MEC_base
             );
         }
 
-        $taxonomy = 'mec_organizer';
-        if (wp_count_terms($taxonomy))
+        if (!isset($this->settings['organizers_status']) || $this->settings['organizers_status'])
         {
-            wp_dropdown_categories(
-                [
-                    'show_option_all' => sprintf(esc_html__('Show all %s', 'modern-events-calendar-lite'), $this->main->m('taxonomy_organizers', esc_html__('organizers', 'modern-events-calendar-lite'))),
-                    'taxonomy' => $taxonomy,
-                    'name' => $taxonomy,
-                    'value_field' => 'slug',
-                    'orderby' => 'name',
-                    'order' => 'ASC',
-                    'selected' => (isset($_GET[$taxonomy]) ? sanitize_text_field($_GET[$taxonomy]) : ''),
-                    'show_count' => false,
-                    'hide_empty' => false,
-                ]
-            );
+            $taxonomy = 'mec_organizer';
+            if (wp_count_terms($taxonomy))
+            {
+                wp_dropdown_categories(
+                    [
+                        'show_option_all' => sprintf(esc_html__('Show all %s', 'modern-events-calendar-lite'), $this->main->m('taxonomy_organizers', esc_html__('organizers', 'modern-events-calendar-lite'))),
+                        'taxonomy' => $taxonomy,
+                        'name' => $taxonomy,
+                        'value_field' => 'slug',
+                        'orderby' => 'name',
+                        'order' => 'ASC',
+                        'selected' => (isset($_GET[$taxonomy]) ? sanitize_text_field($_GET[$taxonomy]) : ''),
+                        'show_count' => false,
+                        'hide_empty' => false,
+                    ]
+                );
+            }
         }
 
         $taxonomy = 'mec_category';
