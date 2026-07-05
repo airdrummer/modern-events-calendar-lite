@@ -1,4 +1,8 @@
-﻿v 7.34.2 - 25 June 2026
+v 7.34.2.1 - 5jul26
+- added missing timezone display, reformat
+- fixed countdown
+
+v 7.34.2 - 25 June 2026
 - Fixed: An issue with HTML content in notification settings not being properly preserved.
 
 v 7.34.1 - 22 June 2026
