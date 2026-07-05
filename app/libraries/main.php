@@ -2212,10 +2212,22 @@ class MEC_main extends MEC_base
         // Locale
         $locale = isset($_REQUEST['mec_locale']) ? sanitize_text_field($_REQUEST['mec_locale']) : null;
 
+        // Get raw notification data for HTML content fields
+        $raw_notifications = isset($_REQUEST['mec']['notifications']) && is_array($_REQUEST['mec']['notifications']) ? $_REQUEST['mec']['notifications'] : [];
+
         // Get mec options
         $mec = isset($_REQUEST['mec']) ? $this->sanitize_deep_array($_REQUEST['mec']) : [];
         $notifications = $mec['notifications'] ?? [];
         $settings = $mec['settings'] ?? [];
+
+        // Restore HTML content fields from raw request with wp_kses_post to preserve HTML while preventing XSS
+        foreach ($raw_notifications as $notif_key => $raw_notification)
+        {
+            if (isset($raw_notification['content']))
+            {
+                $notifications[$notif_key]['content'] = wp_kses_post(wp_unslash($raw_notification['content']));
+            }
+        }
 
         $rendered = [];
         foreach ($notifications as $notif_key => $notification)
