@@ -1,4 +1,8 @@
-﻿v 7.35.1 - 3 August 2026
+v 7.35.1.1 - 11aug26
+- added missing timezone display, reformat
+- fixed countdown
+
+v 7.35.1 - 3 August 2026
 - Fixed: Some minor styling issues in frontend.
 
 v 7.35.0 - 1 August 2026
