@@ -1685,6 +1685,8 @@ class MEC_main extends MEC_base
     {
         if (!is_array($fields)) return [];
 
+        $fields = $this->sanitize_booking_paragraph_fields($fields);
+
         $field_map = $this->get_booking_condition_field_map($fields);
         $positions = $this->get_booking_condition_field_positions($fields);
 
@@ -1694,6 +1696,22 @@ class MEC_main extends MEC_base
             if (!is_array($field)) continue;
 
             $fields[$raw_field_id] = $this->sanitize_booking_condition_definition($field_id, $field, $fields, $field_map, $positions);
+        }
+
+        return $fields;
+    }
+
+    public function sanitize_booking_paragraph_fields($fields, $raw_fields = [])
+    {
+        if (!is_array($fields)) return [];
+
+        foreach ($fields as $field_id => $field)
+        {
+            if (!is_array($field)) continue;
+            if (($field['type'] ?? '') !== 'p') continue;
+
+            $raw_content = $raw_fields[$field_id]['content'] ?? ($field['content'] ?? '');
+            $fields[$field_id]['content'] = MEC_kses::page(wp_unslash($raw_content));
         }
 
         return $fields;
@@ -2023,6 +2041,8 @@ class MEC_main extends MEC_base
         // Current User is not Permitted
         if (!current_user_can('mec_settings') and !current_user_can('administrator')) $this->response(['success' => 0, 'code' => 'ADMIN_ONLY']);
 
+        $raw_mec = isset($_REQUEST['mec']) && is_array($_REQUEST['mec']) ? wp_unslash($_REQUEST['mec']) : [];
+
         // Get mec options
         $mec = isset($_REQUEST['mec']) ? $this->sanitize_deep_array($_REQUEST['mec']) : [];
 
@@ -2086,6 +2106,7 @@ class MEC_main extends MEC_base
         if (isset($filtered['reg_fields']))
         {
             if (!is_array($filtered['reg_fields'])) $filtered['reg_fields'] = [];
+            $filtered['reg_fields'] = $this->sanitize_booking_paragraph_fields($filtered['reg_fields'], $raw_mec['reg_fields'] ?? []);
         }
 
         if (isset($current['reg_fields']) and isset($filtered['reg_fields']))
@@ -2097,6 +2118,7 @@ class MEC_main extends MEC_base
         if (isset($filtered['bfixed_fields']))
         {
             if (!is_array($filtered['bfixed_fields'])) $filtered['bfixed_fields'] = [];
+            $filtered['bfixed_fields'] = $this->sanitize_booking_paragraph_fields($filtered['bfixed_fields'], $raw_mec['bfixed_fields'] ?? []);
         }
 
         if (isset($current['bfixed_fields']) and isset($filtered['bfixed_fields']))
@@ -2389,6 +2411,7 @@ class MEC_main extends MEC_base
      */
     public function response($response)
     {
+        $response = apply_filters('mec_ajax_response', $response);
         wp_send_json($response);
     }
 
@@ -3701,7 +3724,17 @@ class MEC_main extends MEC_base
         }
         else if (get_query_var('gateway-return'))
         {
-            echo '<p class="info-msg">' . esc_html__('You returned from payment gateway successfully.', 'modern-events-calendar-lite') . '</p>';
+            $transaction_id = isset($_REQUEST['mec_stripe_redirect_transaction_id']) ? sanitize_text_field(wp_unslash($_REQUEST['mec_stripe_redirect_transaction_id'])) : '';
+            if (!$transaction_id) {
+                $transaction_id = isset($_REQUEST['mec_stripe_connect_redirect_transaction_id']) ? sanitize_text_field(wp_unslash($_REQUEST['mec_stripe_connect_redirect_transaction_id'])) : '';
+            }
+
+            $transaction = $transaction_id ? $this->getBook()->get_transaction($transaction_id) : [];
+            if (!empty($transaction['mec_capacity_refunded'])) {
+                echo '<p class="mec-error">' . esc_html__('Sorry, this event has just sold out. Your payment has been refunded.', 'modern-events-calendar-lite') . '</p>';
+            } else {
+                echo '<p class="info-msg">' . esc_html__('You returned from payment gateway successfully.', 'modern-events-calendar-lite') . '</p>';
+            }
         }
 
         // Trigger Actions
@@ -5568,7 +5601,7 @@ class MEC_main extends MEC_base
             ' . $this->get_form_field_description($key, $values, $prefix, 'p') . '
             <div>
                 <input type="hidden" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][type]" value="p" />
-                <textarea name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][content]">' . (isset($values['content']) ? htmlentities(stripslashes($values['content'])) : '') . '</textarea>
+                <textarea name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][content]">' . (isset($values['content']) ? esc_textarea(stripslashes($values['content'])) : '') . '</textarea>
                 <p class="description">' . esc_html__('HTML and shortcode are allowed.') . '</p>
             </div>
         </li>';
@@ -7635,7 +7668,7 @@ class MEC_main extends MEC_base
 
         // Update Schedule
         $schedule = $this->getSchedule();
-        $schedule->reschedule($post_id, $schedule->get_reschedule_maximum($event['repeat_type']));
+        $schedule->reschedule($post_id, $schedule->get_reschedule_maximum($event['repeat_type'], $post_id));
 
         return $post_id;
     }
@@ -11388,7 +11421,7 @@ class MEC_main extends MEC_base
         if (!wp_verify_nonce($wpnonce, 'mec_options_wizard')) $this->response(['success' => 0, 'code' => 'NONCE_IS_INVALID']);
 
         // Current User is not Permitted
-        if (!current_user_can('mec_settings') and !current_user_can('administrator')) $this->response(['success' => 0, 'code' => 'ADMIN_ONLY']);
+        if (!current_user_can('mec_settings') and !current_user_can('administrator') and !current_user_can('edit_pages')) $this->response(['success' => 0, 'code' => 'ADMIN_ONLY']);
 
         $mec = isset($_REQUEST['mec']) ? $this->sanitize_deep_array($_REQUEST['mec']) : [];
 

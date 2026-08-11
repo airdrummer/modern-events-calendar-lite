@@ -33,6 +33,20 @@ if (isset($this->atts['zoom']) && is_numeric($this->atts['zoom'])) {
     $enforce_map_skin_zoom = false;
 }
 
+// Map center: shortcode Center fields override; otherwise JS falls back to first event marker.
+$map_center_lat = '';
+$map_center_long = '';
+if (isset($this->atts['location_center_lat']) && trim((string) $this->atts['location_center_lat']) !== '') {
+    $map_center_lat = $this->atts['location_center_lat'];
+} elseif (isset($sk_options_map['map_center_lat']) && trim((string) $sk_options_map['map_center_lat']) !== '') {
+    $map_center_lat = $sk_options_map['map_center_lat'];
+}
+if (isset($this->atts['location_center_long']) && trim((string) $this->atts['location_center_long']) !== '') {
+    $map_center_long = $this->atts['location_center_long'];
+} elseif (isset($sk_options_map['map_center_long']) && trim((string) $sk_options_map['map_center_long']) !== '') {
+    $map_center_long = $sk_options_map['map_center_long'];
+}
+
 // Return the data if called by AJAX
 if(isset($this->atts['return_items']) and $this->atts['return_items'])
 {
@@ -133,8 +147,8 @@ if(count($this->events))
                     {
                         container: "'.($this->sf_status ? '#mec_search_form_'.esc_js($this->id) : '').'",
                     },
-                    latitude: "",
-                    longitude: "",
+                    latitude: "'.esc_js($map_center_lat).'",
+                    longitude: "'.esc_js($map_center_long).'",
                     fields: '.json_encode(array()).'
                 });
             } else {
@@ -154,6 +168,8 @@ if(count($this->events))
                     clustering_images: "'.esc_js($this->main->asset('img/cluster1/m')).'",
                     getDirection: 0,
                     ajax_url: "'.admin_url('admin-ajax.php', NULL).'",
+                    latitude: "'.esc_js($map_center_lat).'",
+                    longitude: "'.esc_js($map_center_long).'",
                     sf:
                     {
                         container: "'.($this->sf_status ? '#mec_search_form_'.esc_js($this->id) : '').'",

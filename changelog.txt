@@ -1,6 +1,34 @@
-v 7.34.2.1 - 5jul26
-- added missing timezone display, reformat
-- fixed countdown
+﻿v 7.35.1 - 3 August 2026
+- Fixed: Some minor styling issues in frontend.
+
+v 7.35.0 - 1 August 2026
+- Added: Opt-in product usage tracking with consent.
+- Added: The ability to set a custom center point for the map skin.
+- Added: Setup Wizard menu access for editor users.
+- Fixed: The date display in timetable skin.
+- Fixed: TEC to MEC migration process.
+- Fixed: The install and update queries.
+- Fixed: The booking CSV and Excel export to respect the backend filters.
+- Fixed: The CSV booking import to support custom column headers and seat counts.
+- Fixed: The HTML sanitizer to preserve inline script and style tags.
+- Fixed: Some issues in General Calendar skin.
+- Fixed: An issue in custom repeat events.
+- Fixed: Some issues in notifications templates per event.
+- Fixed: Some issues in paragraph tag of booking fields.
+- Fixed: Some security issues reported by PatchStack and others.
+- Fixed: An HTML formatting issue in Frontend Event Submission.
+- Fixed: An issue in user registration after booking.
+- Fixed: A filter issue in booking management menu in backend.
+- Fixed: An issue in RESTful API.
+- Fixed: An image issue in tile skin.
+- Fixed: Some issues in rendering notification placeholders.
+- Fixed: Some issues in Event Banner module.
+- Fixed: Some issues in running MEC cron tasks.
+- Fixed: An issue in Pay Locally gateway.
+- Fixed: An issue with the Full Calendar skin on archive pages.
+- Fixed: An issue in map events rendering of the Custom skin.
+- Fixed: An issue in detecting the WordPress root path in PayPal IPN handlers.
+- Fixed: Some minor styling issues in frontend and backend.
 
 v 7.34.2 - 25 June 2026
 - Fixed: An issue with HTML content in notification settings not being properly preserved.

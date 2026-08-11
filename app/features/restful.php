@@ -1064,6 +1064,7 @@ class MEC_feature_restful extends MEC_base
         $weekdays = $vars['weekdays'] ?? '';
         $days = $vars['days'] ?? '';
         $not_in_days = $vars['not_in_days'] ?? '';
+        $event_color = trim(sanitize_text_field($vars['color'] ?? ($vars['event_color'] ?? '')), '# ');
 
         $additional_organizer_ids = [];
         if (isset($vars['additional_organizer_ids']) && is_array($vars['additional_organizer_ids']))
@@ -1143,7 +1144,7 @@ class MEC_feature_restful extends MEC_base
             'meta' => [
                 'mec_source' => 'mec-calendar',
                 'mec_dont_show_map' => $vars['dont_show_map'] ?? '',
-                'mec_color' => $vars['color'] ?? ($vars['event_color'] ?? ''),
+                'mec_color' => $event_color,
                 'mec_read_more' => $vars['read_more'] ?? '',
                 'mec_more_info' => $vars['more_info'] ?? '',
                 'mec_more_info_title' => $vars['more_info_title'] ?? '',
@@ -1185,6 +1186,7 @@ class MEC_feature_restful extends MEC_base
         // Insert the event into MEC
         $post_id = $main->save_event($args, $event_id);
         if (is_wp_error($post_id)) return $this->error_response($post_id);
+        if (trim($event_color)) $main->add_to_available_colors($event_color);
 
         // Set location to the post
         if ($location_id)

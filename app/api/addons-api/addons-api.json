@@ -317,7 +317,7 @@
           "version": "1.0.0",
           "purchase": "https://webnus.net/checkout?edd_action=add_to_cart&download_id=34436692&edd_options[price_id]=1",
           "video": "https://youtu.be/hSa9d30AvLA",
-          "desc": "With this addon you can define a layout for your venue and then set various prices for different rows and have users pick their own spot and purchase the ticket.",
+          "desc": "Build a free-form canvas seat map with drag-and-drop. Assign ticket prices per seat, add decorations, mark handicap-accessible spots, and let attendees pick their exact seat during booking.",
           "comingsoon": "false",
           "pro": "true",
           "page": "https://webnus.net/modern-events-calendar/addons/seat/",

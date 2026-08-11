@@ -2247,8 +2247,18 @@ class MEC_feature_events extends MEC_base
         // If this is an autosave, our form has not been submitted, so we don't want to do anything.
         if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
 
+        $raw_mec = isset($_POST['mec']) && is_array($_POST['mec']) ? wp_unslash($_POST['mec']) : [];
+        $sanitize_excludes = [];
+        if (isset($raw_mec['notifications']) && is_array($raw_mec['notifications']))
+        {
+            foreach (array_keys($raw_mec['notifications']) as $notification_key)
+            {
+                $sanitize_excludes[] = 'notifications.' . $notification_key . '.content';
+            }
+        }
+
         // Get Modern Events Calendar Data
-        $_mec = isset($_POST['mec']) ? $this->main->sanitize_deep_array($_POST['mec']) : [];
+        $_mec = isset($_POST['mec']) ? $this->main->sanitize_deep_array($_POST['mec'], 'text', $sanitize_excludes) : [];
 
         // Entity Type
         $entity_type = isset($_mec['entity_type']) && in_array($_mec['entity_type'], ['event', 'appointment']) ? $_mec['entity_type'] : 'event';
@@ -2839,7 +2849,7 @@ class MEC_feature_events extends MEC_base
 
         // Update Schedule
         $schedule = $this->getSchedule();
-        $schedule->reschedule($post_id, $schedule->get_reschedule_maximum($repeat_type));
+        $schedule->reschedule($post_id, $schedule->get_reschedule_maximum($repeat_type, $post_id));
 
         // Hourly Schedule Options
         $raw_hourly_schedules = $_mec['hourly_schedules'] ?? [];
@@ -2931,14 +2941,22 @@ class MEC_feature_events extends MEC_base
 
         $reg_fields = $_mec['reg_fields'] ?? [];
         if ($reg_fields_global_inheritance) $reg_fields = [];
-        else $reg_fields = $this->main->sanitize_booking_condition_fields($reg_fields, 'reg');
+        else
+        {
+            $reg_fields = $this->main->sanitize_booking_paragraph_fields($reg_fields, $raw_mec['reg_fields'] ?? []);
+            $reg_fields = $this->main->sanitize_booking_condition_fields($reg_fields, 'reg');
+        }
 
         do_action('mec_save_reg_fields', $post_id, $reg_fields);
         update_post_meta($post_id, 'mec_reg_fields', $reg_fields);
 
         $bfixed_fields = $_mec['bfixed_fields'] ?? [];
         if ($reg_fields_global_inheritance) $bfixed_fields = [];
-        else $bfixed_fields = $this->main->sanitize_booking_condition_fields($bfixed_fields, 'bfixed');
+        else
+        {
+            $bfixed_fields = $this->main->sanitize_booking_paragraph_fields($bfixed_fields, $raw_mec['bfixed_fields'] ?? []);
+            $bfixed_fields = $this->main->sanitize_booking_condition_fields($bfixed_fields, 'bfixed');
+        }
 
         do_action('mec_save_bfixed_fields', $post_id, $bfixed_fields);
         update_post_meta($post_id, 'mec_bfixed_fields', $bfixed_fields);
@@ -2999,6 +3017,16 @@ class MEC_feature_events extends MEC_base
         // Notifications
         if (isset($_mec['notifications']))
         {
+            // Restore HTML content from raw POST data to preserve formatting
+            $raw_notifications = isset($raw_mec['notifications']) && is_array($raw_mec['notifications']) ? $raw_mec['notifications'] : [];
+            foreach ($raw_notifications as $notif_key => $raw_notification)
+            {
+                if (isset($raw_notification['content']))
+                {
+                    $_mec['notifications'][$notif_key]['content'] = wp_kses_post($raw_notification['content']);
+                }
+            }
+
             $notifications = is_array($_mec['notifications']) ? $_mec['notifications'] : [];
             update_post_meta($post_id, 'mec_notifications', $notifications);
         }

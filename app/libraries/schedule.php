@@ -184,7 +184,7 @@ class MEC_schedule extends MEC_base
         return date($format, $time);
     }
 
-    public function get_reschedule_maximum($repeat_type)
+    public function get_reschedule_maximum($repeat_type, $event_id = 0)
     {
         if ($repeat_type == 'daily') return 370;
         else if ($repeat_type == 'weekday') return 270;
@@ -192,6 +192,18 @@ class MEC_schedule extends MEC_base
         else if ($repeat_type == 'weekend') return 200;
         else if ($repeat_type == 'certain_weekdays') return 200;
         else if ($repeat_type == 'weekly') return 100;
+        else if ($repeat_type == 'custom_days')
+        {
+            $days = '';
+            if ($event_id)
+            {
+                $days = get_post_meta($event_id, 'mec_in_days', true);
+                if (!trim($days)) $days = $this->db->select("SELECT `days` FROM `#__mec_events` WHERE `post_id`='" . esc_sql($event_id) . "'", 'loadResult');
+            }
+
+            $custom_days = array_filter(array_map('trim', explode(',', (string) $days)));
+            return max(200, count($custom_days) + 1);
+        }
         else if ($repeat_type == 'monthly') return 50;
         else if ($repeat_type == 'yearly') return 50;
         else return 50;

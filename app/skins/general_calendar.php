@@ -35,11 +35,17 @@ class MEC_skin_general_calendar extends MEC_skins
         ]);
     }
 
-    public function switch_language()
+    public function switch_language($language = null)
     {
-        $language = false;
+        if (class_exists('SitePress') && trim((string) $language))
+        {
+            do_action('wpml_switch_language', sanitize_text_field($language));
+            return;
+        }
 
-        if (function_exists('PLL')) $language = PLL()->curlang->locale;
+        if (function_exists('PLL') && trim((string) $language)) pll_switch_language(sanitize_text_field($language));
+        else if (function_exists('PLL') && isset(PLL()->curlang->locale)) $language = PLL()->curlang->locale;
+
         if ($language) switch_to_locale($language);
     }
 
@@ -83,10 +89,11 @@ class MEC_skin_general_calendar extends MEC_skins
         $filter_author = $request->get_param('filter_author') ? explode(',', $request->get_param('filter_author')) : null;
         $filter_ex_author = $request->get_param('filter_ex_author') ? explode(',', $request->get_param('filter_ex_author')) : null;
         $locale = $request->get_param('locale');
+        $lang = $request->get_param('lang') ?: $locale;
         $type_event = $request->get_param('type_event');
         $image_size = $request->get_param('image_size');
 
-        $this->switch_language();
+        $this->switch_language($lang);
 
         // Attributes
         $skin_options = [
@@ -665,7 +672,7 @@ class MEC_skin_general_calendar extends MEC_skins
         $this->args['tax_query'] = $tax_query;
         $this->args['meta_query'] = $meta_query;
         $this->args['tag'] = $mec_tag_query;
-        $this->args['lang'] = $locale;
+        if ($lang) $this->args['lang'] = sanitize_text_field($lang);
         $this->args['author'] = implode(',', $this->sanitize_author_ids($filter_author));
         $this->args['author__not_in'] = $this->sanitize_author_ids($filter_ex_author);
 
@@ -690,7 +697,7 @@ class MEC_skin_general_calendar extends MEC_skins
             if (isset($this->maximum_date) and trim($this->maximum_date) and strtotime($date) > strtotime($this->maximum_date)) break;
 
             // Include Available Events
-            $this->args['post__in'] = $IDs;
+            $this->args['post__in'] = array_unique($IDs);
 
             // Count of events per day
             $IDs_count = array_count_values($IDs);

@@ -2108,14 +2108,15 @@ class MEC_skin_single extends MEC_skins
             if(trim($color) === '') $color = '#333333';
         }
 
-        if($featured_image) $image = (string) get_the_post_thumbnail_url($event->ID, 'full');
+        if($featured_image) $image = $this->get_featured_image_url($event, 'full');
+        $image = $this->get_banner_image_url($image);
 
         $mode = 'color';
         $bg = 'background: '.$color;
 
         if(trim($image))
         {
-            $bg = 'background: url(\''.$image.'\') no-repeat center; background-size: cover';
+            $bg = 'background: url('.$image.') no-repeat center; background-size: cover';
             $mode = trim($color) ? 'color-image' : 'image';
         }
 
@@ -2143,11 +2144,19 @@ class MEC_skin_single extends MEC_skins
             $content .= '<div class="mec-event-banner-location">'.ob_get_clean().'</div>';
         }
 
-        return '<div class="mec-event-banner mec-event-banner-mode-'.esc_attr($mode).'" style="'.$bg.';"> <div class="mec-event-banner-inner">'
+        return '<div class="mec-event-banner mec-event-banner-mode-'.esc_attr($mode).'" style="'.esc_attr($bg).'"> <div class="mec-event-banner-inner">'
             .$content.
             '</div>'.
-            ($mode === 'color-image' ? '<div class="mec-event-banner-color" style="background: '.$color.'; opacity: 0.3;"></div>' : '').
+            ($mode === 'color-image' ? '<div class="mec-event-banner-color" style="'.esc_attr('background: '.$color.'; opacity: 0.3;').'"></div>' : '').
         '</div>';
+    }
+
+    public function get_banner_image_url($image)
+    {
+        if(is_array($image)) $image = $image['url'] ?? ($image['full'] ?? '');
+        if(is_numeric($image)) $image = wp_get_attachment_image_url((int) $image, 'full');
+
+        return esc_url((string) $image);
     }
 
     public function can_display_banner_module($event)
@@ -2166,7 +2175,7 @@ class MEC_skin_single extends MEC_skins
         if(!isset($banner['status']) || !$banner['status']) return false;
 
         $color = $banner['color'] ?? '';
-        $image = $banner['image'] ?? '';
+        $image = $this->get_banner_image_url($banner['image'] ?? '');
         $use_featured_image = $banner['use_featured_image'] ?? 0;
 
         // No Color and No Image

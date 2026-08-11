@@ -82,7 +82,7 @@ jQuery(document).ready(function()
             end_date: "'.esc_js($this->end_date).'",
             offset: "'.esc_js($this->next_offset).'",
             limit: "'.esc_js($this->limit).'",
-            pagination: "'.$this->pagination.'",
+            pagination: "'.esc_js($this->pagination).'",
             load_method: "'.esc_js($this->load_method).'",
             today: "'.date('Ymd', strtotime($this->active_day)).'",
             month_id: "'.date('Ym', $current_month_time).'",

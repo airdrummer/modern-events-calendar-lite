@@ -39,6 +39,9 @@ $mec_tax_input = (isset($this->atts['mec_tax_input']) && $this->atts['mec_tax_in
 
 // WordPress Options
 $lang = !empty(substr(get_locale(), 0, strpos(get_locale(), "_"))) ? substr(get_locale(), 0, strpos(get_locale(), "_")) : get_locale();
+$mec_lang = $lang;
+if (class_exists('SitePress')) $mec_lang = apply_filters('wpml_current_language', null) ?: $mec_lang;
+else if (function_exists('pll_current_language')) $mec_lang = pll_current_language() ?: $mec_lang;
 $direction = is_rtl() ? 'rtl' : 'ltr';
 $border_direction = is_rtl() ? 'border-right-width' : 'border-left-width';
 $border_direction_style = is_rtl() ? 'border-left-style' : 'border-right-style';
@@ -187,9 +190,9 @@ $javascript .='
 								reason_for_cancellation: "'. esc_js($reason_for_cancellation) .'",
 								is_category_page: "'. esc_js($is_category_page) .'",
 								cat_id: "'. esc_js($cat_id) .'",
-                                                                local_time: "'. esc_js($local_time) .'",
-                                                                image_size: "'. esc_js($image_size) .'",
-                                                                filter_category: "'. esc_js($filter_category) .'",
+								local_time: "'. esc_js($local_time) .'",
+								image_size: "'. esc_js($image_size) .'",
+								filter_category: "'. esc_js($filter_category) .'",
 								filter_ex_category: "'. esc_js($filter_ex_category) .'",
 								filter_location: "'. esc_js($filter_location) .'",
 								filter_ex_location: "'. esc_js($filter_ex_location) .'",
@@ -202,6 +205,7 @@ $javascript .='
 								filter_author: "'. esc_js($filter_author) .'",
 								filter_ex_author: "'. esc_js($filter_ex_author) .'",
 								locale: "'. esc_js($lang) .'",
+								lang: "'. esc_js($mec_lang) .'",
 							},
 						});
 						calendar.refetchEvents();
@@ -418,6 +422,7 @@ $javascript .= '
 					filter_author: "' . esc_js($filter_author) . '",
 					filter_ex_author: "' . esc_js($filter_ex_author) . '",
 					locale: "' . esc_js($lang) . '",
+					lang: "' . esc_js($mec_lang) . '",
 				},
 				failure: function() {
 					alert("there was an error while fetching events!");

@@ -515,6 +515,7 @@
 .mec-event-grid-classic img {
   margin-bottom: 0;
   width: 100%;
+  height: auto;
   display: block;
 }
 
@@ -973,6 +974,7 @@
 .mec-event-grid-clean img {
   margin-bottom: 0;
   width: 100%;
+  height: auto;
   border-radius: var(--mec-secondary-border-radius);
 }
 
@@ -995,7 +997,6 @@
   text-transform: uppercase;
   font-size: 17px;
   line-height: 20px;
-  padding-top: 4px;
 }
 
 .mec-event-grid-clean .event-grid-t2-head .mec-event-detail {
@@ -1507,13 +1508,13 @@ span.mec-event-title-soldout {
 
 .mec-event-list-modern .mec-event-date {
   text-transform: uppercase;
-  padding: 10px 0;
+  padding: 0;
 }
 
 .mec-event-list-modern .mec-event-date .event-d {
   font-size: 48px;
   display: table-cell;
-  padding: 10px 0 0;
+  padding: 0;
 }
 
 .mec-event-list-modern .mec-event-date .event-d.mec-multiple-dates {
@@ -6768,7 +6769,7 @@ address.mec-events-address {
 }
 
 .mec-calendar .mec-calendar-topsec {
-  display: table;
+  display: block;
   background: #fff;
   border-radius: var(--mec-primary-border-radius);
 }
@@ -7052,6 +7053,8 @@ address.mec-events-address {
 
 .mec-calendar:not(.mec-liquid-custom-scrollbar, .mec-liquid-daily) .mec-event-article .mec-event-image img {
   border-radius: var(--mec-secondary-border-radius);
+  max-width: 100%;
+  height: auto;
 }
 
 .mec-calendar .mec-event-article .mec-localtime-details div,
@@ -7369,7 +7372,7 @@ address.mec-events-address {
   display: block;
 }
 
-.mec-calendar.mec-event-calendar-classic dl.mec-calendar-table-head,
+.mec-calendar.mec-event-calendar-classic .mec-calendar-table-head,
 .mec-calendar.mec-event-calendar-classic .mec-calendar-table-head,
 .mec-calendar.mec-event-calendar-classic dl.mec-calendar-row {
   width: 100%;
@@ -7378,23 +7381,23 @@ address.mec-events-address {
 
 .mec-booking-calendar .mec-calendar.mec-event-calendar-classic .mec-calendar-table-head,
 .mec-booking-calendar .mec-calendar.mec-event-calendar-classic dl.mec-calendar-row,
-.mec-booking-calendar .mec-calendar.mec-event-calendar-classic dl.mec-calendar-table-head {
+.mec-booking-calendar .mec-calendar.mec-event-calendar-classic .mec-calendar-table-head {
   width: auto;
-  padding: 0 15px;
+  padding: 0 10px;
   height: 40px;
   border: none;
 
 }
 
 .mec-booking-calendar .mec-calendar.mec-event-calendar-classic .mec-calendar-table-head,
-.mec-booking-calendar .mec-calendar.mec-event-calendar-classic dl.mec-calendar-table-head {
+.mec-booking-calendar .mec-calendar.mec-event-calendar-classic .mec-calendar-table-head {
   border: none;
   border-top-width: 1px;
   border-top-style: solid;
   border-top-color: #eaeaea;
 }
 
-.mec-calendar.mec-event-calendar-classic dl.mec-calendar-table-head,
+.mec-calendar.mec-event-calendar-classic .mec-calendar-table-head,
 .mec-calendar.mec-event-calendar-classic .mec-calendar-table-head {
   background: #f5f6f7;
   border-width: 1px;
@@ -7402,10 +7405,12 @@ address.mec-events-address {
   border-color: #eaeaea;
 }
 
-.mec-calendar.mec-event-calendar-classic dl.mec-calendar-table-head .mec-calendar-day-head {
+.mec-calendar.mec-event-calendar-classic .mec-calendar-table-head .mec-calendar-day-head {
   background: transparent;
   height: unset;
   line-height: 36px;
+  padding: 5px 7px;
+  text-align: right;
 }
 
 .mec-calendar.mec-event-calendar-classic dl dt {
@@ -7612,7 +7617,8 @@ address.mec-events-address {
 .mec-event-container-simple .mec-monthly-tooltip.event-single-link-simple {
   border-bottom: 1px dashed #e3e3e3;
   padding: 5px 2px;
-  display: block;
+  display: flex;
+  flex-direction: column;
 }
 
 .mec-event-container-simple .simple-skin-ended:nth-last-of-type(2) .mec-monthly-tooltip.event-single-link-simple {
@@ -8288,6 +8294,7 @@ li.mec-no-event-found .mec-event-title {
 
 .mec-event-list-classic .mec-event-image img {
   width: 100%;
+  height: auto;
 }
 
 .mec-widget .mec-event-list-classic .mec-event-detail {
@@ -9164,7 +9171,8 @@ li.mec-no-event-found .mec-event-title {
   box-shadow: 0 4px 45px -8px #444b50;
   visibility: hidden;
   opacity: 0;
-  transition: opacity 0.23s;
+  transition: opacity 0.23s ease, visibility 0s ease;
+  transition-delay: 1s, 1s;
 }
 
 #webnus-dashboard .mec-fes-form .mec-tooltip .box p,
@@ -9178,6 +9186,7 @@ li.mec-no-event-found .mec-event-title {
 .mec-fes-form .mec-tooltip:hover .box {
   visibility: visible;
   opacity: 1;
+  transition-delay: 0s, 0s;
 }
 
 .mec-fes-form .mec-tooltip:hover .box {
@@ -14782,6 +14791,7 @@ body .lity-close:active {
 
 .mec-masonry .mec-masonry-img img {
   width: 100%;
+  height: auto;
   display: block;
 }
 
@@ -18315,6 +18325,7 @@ article.mec-search-bar-result {
   padding-right: 10px;
   padding-left: 0;
   margin-right: 0;
+  width: 100%;
 }
 
 #mec-login-form.mec-login-form .mec-login-input input:focus {
@@ -24705,6 +24716,7 @@ span.mec-marker-wrap,
 
 /* .mec-fes-form, */
 .mec-fes-form {
+  font-family: var(--mec-paragraph-font-family);
   padding: 30px 3%;
 }
 

@@ -2016,7 +2016,9 @@ class Transaction
             }
         }
 
-        $user_id = $this->register_user($main_attendee);
+        $user_id = $this->register_user($main_attendee, $this->data);
+        unset($this->data['username'], $this->data['password']);
+
         $user = \MEC::getInstance('app.libraries.user');
 
         $gateway = $args['mec_gateway'] ?? $this->get_gateway();

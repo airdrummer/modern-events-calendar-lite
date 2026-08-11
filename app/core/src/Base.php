@@ -142,7 +142,18 @@ final class Base
 	 *
 	 * @return void
 	 */
-	public function init() {}
+	public function init()
+	{
+		// PostHog product tracking. Only needed in wp-admin (settings save,
+		// consent popup, cron scheduling) and during WP-Cron (the snapshot job).
+		// Skip front-end visitor requests entirely so page loads are untouched.
+		if (is_admin() || (defined('DOING_CRON') && DOING_CRON))
+		{
+			(new \MEC\Tracking\PostHog())->init();
+			(new \MEC\Tracking\Consent())->init();
+			(new \MEC\Tracking\Snapshot())->init();
+		}
+	}
 
 	public static function should_include_assets()
 	{

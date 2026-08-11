@@ -1885,7 +1885,7 @@ class FormBuilder extends Singleton
             <h4><?php esc_html_e('Event Banner', 'modern-events-calendar-lite'); ?></h4>
             <div class="mec-form-row">
                 <label>
-                    <input type="hidden" name="mec[banner][display]" value="0" />
+                    <input type="hidden" name="mec[banner][status]" value="0" />
                     <input value="1" onchange="jQuery('#mec_meta_box_event_banner_options').toggleClass('mec-util-hidden');" type="checkbox" name="mec[banner][status]" <?php echo $mec_banner_status ? 'checked="checked"' : ''; ?> /><?php esc_html_e('Display Banner', 'modern-events-calendar-lite'); ?>
                 </label>
             </div>

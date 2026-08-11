@@ -78,7 +78,7 @@ class MEC_notifications extends MEC_base
         $notif_settings = $this->get_notification_content($book_id);
 
         $subject = isset($notif_settings['email_verification']['subject']) ? stripslashes(esc_html__($notif_settings['email_verification']['subject'], 'modern-events-calendar-lite')) : esc_html__('Please verify your email.', 'modern-events-calendar-lite');
-        $subject = $this->content($this->get_subject($subject, 'email_verification', $event_id, $book_id), $book_id);
+        $subject = $this->get_subject($subject, 'email_verification', $event_id, $book_id);
 
         $headers = ['Content-Type: text/html; charset=UTF-8'];
 
@@ -141,11 +141,12 @@ class MEC_notifications extends MEC_base
             $message = preg_replace('/%%.*%%/', '', $message);
 
             $message = $this->add_template($message);
+            $mail_subject = $this->content($subject, $book_id, $attendee);
 
             // Filter the email
             $mail_arg = [
                 'to' => $to,
-                'subject' => $subject,
+                'subject' => $mail_subject,
                 'message' => $message,
                 'headers' => $headers,
                 'attachments' => [],
@@ -318,7 +319,7 @@ class MEC_notifications extends MEC_base
         $event_id = get_post_meta($book_id, 'mec_event_id', true);
 
         $subject = isset($notif_settings['booking_notification']['subject']) ? stripslashes(esc_html__($notif_settings['booking_notification']['subject'], 'modern-events-calendar-lite')) : esc_html__('Your booking is received.', 'modern-events-calendar-lite');
-        $subject = $this->content($this->get_subject($subject, 'booking_notification', $event_id, $book_id), $book_id);
+        $subject = $this->get_subject($subject, 'booking_notification', $event_id, $book_id);
 
         $headers = ['Content-Type: text/html; charset=UTF-8'];
 
@@ -391,11 +392,12 @@ class MEC_notifications extends MEC_base
             $message = preg_replace('/%%.*%%/', '', $message);
 
             $message = $this->add_template($message);
+            $mail_subject = $this->content($subject, $book_id, $attendee);
 
             // Filter the email
             $mail_arg = [
                 'to' => $to,
-                'subject' => $subject,
+                'subject' => $mail_subject,
                 'message' => $message,
                 'headers' => $headers,
                 'attachments' => [],
@@ -458,7 +460,7 @@ class MEC_notifications extends MEC_base
         $event_id = get_post_meta($book_id, 'mec_event_id', true);
 
         $subject = isset($notif_settings['booking_confirmation']['subject']) ? stripslashes(esc_html__($notif_settings['booking_confirmation']['subject'], 'modern-events-calendar-lite')) : esc_html__('Your booking is confirmed.', 'modern-events-calendar-lite');
-        $subject = $this->content($this->get_subject($subject, 'booking_confirmation', $event_id, $book_id), $book_id);
+        $subject = $this->get_subject($subject, 'booking_confirmation', $event_id, $book_id);
 
         $headers = ['Content-Type: text/html; charset=UTF-8'];
 
@@ -561,11 +563,12 @@ class MEC_notifications extends MEC_base
             $message = preg_replace('/%%.*%%/', '', $message);
 
             $message = $this->add_template($message);
+            $mail_subject = $this->content($subject, $book_id, $attendee);
 
             // Filter the email
             $mail_arg = [
                 'to' => $to,
-                'subject' => $subject,
+                'subject' => $mail_subject,
                 'message' => $message,
                 'headers' => $headers,
                 'attachments' => $invoice_attachments,
@@ -699,7 +702,7 @@ class MEC_notifications extends MEC_base
         $event_id = get_post_meta($book_id, 'mec_event_id', true);
 
         $subject = isset($notif_settings['cancellation_notification']['subject']) ? stripslashes(esc_html__($notif_settings['cancellation_notification']['subject'], 'modern-events-calendar-lite')) : esc_html__('booking canceled.', 'modern-events-calendar-lite');
-        $subject = $this->content($this->get_subject($subject, 'cancellation_notification', $event_id, $book_id), $book_id);
+        $subject = $this->get_subject($subject, 'cancellation_notification', $event_id, $book_id);
 
         // Changing some sender email info.
         $this->mec_sender_email_notification_filter();
@@ -726,11 +729,12 @@ class MEC_notifications extends MEC_base
             $message = preg_replace('/%%.*%%/', '', $message);
 
             $message = $this->add_template($message);
+            $mail_subject = $this->content($subject, $book_id, (is_array($to) ? $to : null));
 
             // Filter the email
             $mail_arg = [
                 'to' => $mailto,
-                'subject' => $subject,
+                'subject' => $mail_subject,
                 'message' => $message,
                 'headers' => $headers,
                 'attachments' => [],
@@ -856,7 +860,7 @@ class MEC_notifications extends MEC_base
         $event_id = get_post_meta($book_id, 'mec_event_id', true);
 
         $subject = isset($notif_settings['booking_rejection']['subject']) ? stripslashes(esc_html__($notif_settings['booking_rejection']['subject'], 'modern-events-calendar-lite')) : esc_html__('booking rejected.', 'modern-events-calendar-lite');
-        $subject = $this->content($this->get_subject($subject, 'booking_rejection', $event_id, $book_id), $book_id);
+        $subject = $this->get_subject($subject, 'booking_rejection', $event_id, $book_id);
 
         // Changing some sender email info.
         $this->mec_sender_email_notification_filter();
@@ -883,11 +887,12 @@ class MEC_notifications extends MEC_base
             $message = preg_replace('/%%.*%%/', '', $message);
 
             $message = $this->add_template($message);
+            $mail_subject = $this->content($subject, $book_id, (is_array($to) ? $to : null));
 
             // Filter the email
             $mail_arg = [
                 'to' => $mailto,
-                'subject' => $subject,
+                'subject' => $mail_subject,
                 'message' => $message,
                 'headers' => $headers,
                 'attachments' => [],
@@ -926,7 +931,6 @@ class MEC_notifications extends MEC_base
 
         $to = get_bloginfo('admin_email');
         $subject = isset($notif_settings['admin_notification']['subject']) ? stripslashes(esc_html__($notif_settings['admin_notification']['subject'], 'modern-events-calendar-lite')) : esc_html__('A new booking is received.', 'modern-events-calendar-lite');
-        $subject = $this->content($this->get_subject($subject, 'admin_notification', $event_id, $book_id), $book_id);
 
         $headers = ['Content-Type: text/html; charset=UTF-8'];
 
@@ -998,6 +1002,8 @@ class MEC_notifications extends MEC_base
 
         $main_attendee = $attendees[0] ?? [];
 
+        $subject = $this->content($this->get_subject($subject, 'admin_notification', $event_id, $book_id), $book_id, $main_attendee);
+
         $message = $notif_settings['admin_notification']['content'] ?? '';
         $message = $this->content($this->get_content($message, 'admin_notification', $event_id, $book_id), $book_id, $main_attendee);
 
@@ -1054,7 +1060,7 @@ class MEC_notifications extends MEC_base
         $event_id = get_post_meta($book_id, 'mec_event_id', true);
 
         $subject = isset($notif_settings['booking_reminder']['subject']) ? stripslashes(esc_html__($notif_settings['booking_reminder']['subject'], 'modern-events-calendar-lite')) : esc_html__('Booking Reminder', 'modern-events-calendar-lite');
-        $subject = $this->content($this->get_subject($subject, 'booking_reminder', $event_id, $book_id), $book_id);
+        $subject = $this->get_subject($subject, 'booking_reminder', $event_id, $book_id);
 
         $headers = ['Content-Type: text/html; charset=UTF-8'];
 
@@ -1121,11 +1127,12 @@ class MEC_notifications extends MEC_base
             $message = preg_replace('/%%.*%%/', '', $message);
 
             $message = $this->add_template($message);
+            $mail_subject = $this->content($subject, $book_id, $attendee);
 
             // Filter the email
             $mail_arg = [
                 'to' => $to,
-                'subject' => $subject,
+                'subject' => $mail_subject,
                 'message' => $message,
                 'headers' => $headers,
                 'attachments' => [],
@@ -1929,7 +1936,7 @@ class MEC_notifications extends MEC_base
         }
 
         $subject = isset($this->notif_settings['event_soldout']['subject']) ? stripslashes(esc_html__($this->notif_settings['event_soldout']['subject'], 'modern-events-calendar-lite')) : esc_html__('Event is soldout!', 'modern-events-calendar-lite');
-        $subject = $this->content($this->get_subject($subject, 'event_soldout', $event_id, $book_id), $book_id);
+        $subject = $this->get_subject($subject, 'event_soldout', $event_id, $book_id);
 
         // Changing some sender email info.
         $this->mec_sender_email_notification_filter();
@@ -1948,6 +1955,7 @@ class MEC_notifications extends MEC_base
 
             $message = $this->notif_settings['event_soldout']['content'] ?? '';
             $message = $this->content($this->get_content($message, 'event_soldout', $event_id, $book_id), $book_id, (is_array($to) ? $to : null));
+            $email_subject = $this->content($subject, $book_id, (is_array($to) ? $to : null));
 
             // Book Data
             $message = str_replace('%%admin_link%%', $this->link(['post_type' => $this->main->get_book_post_type()], $this->main->URL('admin') . 'edit.php'), $message);
@@ -1960,7 +1968,7 @@ class MEC_notifications extends MEC_base
             // Filter the email
             $mail_arg = [
                 'to' => $mailto,
-                'subject' => $subject,
+                'subject' => $email_subject,
                 'message' => $message,
                 'headers' => $headers,
                 'attachments' => [],
@@ -2089,9 +2097,6 @@ class MEC_notifications extends MEC_base
         $booker = $this->u->booking($book_id);
         if (!isset($booker->user_email)) return false;
 
-        // Subject
-        $subject = $this->content($subject, $book_id);
-
         $headers = ['Content-Type: text/html; charset=UTF-8'];
 
         // Attendees
@@ -2117,20 +2122,20 @@ class MEC_notifications extends MEC_base
             if (!trim($to)) continue;
             if (in_array($to, $done_emails) or !filter_var($to, FILTER_VALIDATE_EMAIL)) continue;
 
-            // Message
-            $message = $this->content($message, $book_id, $attendee, $timestamps);
+            $mail_subject = $this->content($subject, $book_id, $attendee, $timestamps);
+            $mail_message = $this->content($message, $book_id, $attendee, $timestamps);
 
             // Remove remained placeholders
-            $message = preg_replace('/%%.*%%/', '', $message);
+            $mail_message = preg_replace('/%%.*%%/', '', $mail_message);
 
             // Add Template
-            $message = $this->add_template($message);
+            $mail_message = $this->add_template($mail_message);
 
             // Filter the email
             $mail_arg = [
                 'to' => $to,
-                'subject' => $subject,
-                'message' => $message,
+                'subject' => $mail_subject,
+                'message' => $mail_message,
                 'headers' => $headers,
                 'attachments' => [],
             ];
@@ -2172,9 +2177,14 @@ class MEC_notifications extends MEC_base
         // Event ID
         $event_id = get_post_meta($book_id, 'mec_event_id', true);
 
+        $attendee = [
+            'name' => trim($booker->first_name.' '.$booker->last_name),
+            'email' => $booker->user_email
+        ];
+
         // Subject
         $subject = isset($notif_settings['certificate_send']['subject']) ? stripslashes(esc_html__($notif_settings['certificate_send']['subject'], 'modern-events-calendar-lite')) : esc_html__('Download your certificate.', 'modern-events-calendar-lite');
-        $subject = $this->content($this->get_subject($subject, 'certificate_send', $event_id, $book_id), $book_id);
+        $subject = $this->content($this->get_subject($subject, 'certificate_send', $event_id, $book_id), $book_id, $attendee);
 
         $headers = ['Content-Type: text/html; charset=UTF-8'];
 
@@ -2186,10 +2196,7 @@ class MEC_notifications extends MEC_base
 
         // Message
         $message = $notif_settings['certificate_send']['content'] ?? '';
-        $message = $this->content($message, $book_id, [
-            'name' => trim($booker->first_name.' '.$booker->last_name),
-            'email' => $booker->user_email
-        ]);
+        $message = $this->content($message, $book_id, $attendee);
 
         $certificate_link = $this->main->get_certificate_link($booking_attendee_id, $template);
 
@@ -2239,7 +2246,7 @@ class MEC_notifications extends MEC_base
         $event_id = get_post_meta($book_id, 'mec_event_id', true);
 
         $subject = isset($notif_settings['booking_moved']['subject']) ? stripslashes(esc_html__($notif_settings['booking_moved']['subject'], 'modern-events-calendar-lite')) : esc_html__('Your booking has been rescheduled.', 'modern-events-calendar-lite');
-        $subject = $this->content($this->get_subject($subject, 'booking_moved', $event_id, $book_id), $book_id);
+        $subject = $this->get_subject($subject, 'booking_moved', $event_id, $book_id);
 
         $headers = ['Content-Type: text/html; charset=UTF-8'];
 
@@ -2301,11 +2308,12 @@ class MEC_notifications extends MEC_base
             $message = preg_replace('/%%.*%%/', '', $message);
 
             $message = $this->add_template($message);
+            $mail_subject = $this->content($subject, $book_id, $attendee);
 
             // Filter the email
             $mail_arg = [
                 'to' => $to,
-                'subject' => $subject,
+                'subject' => $mail_subject,
                 'message' => $message,
                 'headers' => $headers,
                 'attachments' => [],
@@ -2371,6 +2379,21 @@ class MEC_notifications extends MEC_base
 
         // DB
         $db = $this->getDB();
+
+        if (!is_array($attendee) || !count($attendee))
+        {
+            $attendees = get_post_meta($book_id, 'mec_attendees', true);
+            if (!is_array($attendees) || !count($attendees)) $attendees = [get_post_meta($book_id, 'mec_attendee', true)];
+
+            foreach ($attendees as $book_attendee)
+            {
+                if (!is_array($book_attendee) || isset($book_attendee[0]['MEC_TYPE_OF_DATA'])) continue;
+                if (!isset($book_attendee['name']) && !isset($book_attendee['email'])) continue;
+
+                $attendee = $book_attendee;
+                break;
+            }
+        }
 
         /**
          * Get the data from Attendee instead of main booker user

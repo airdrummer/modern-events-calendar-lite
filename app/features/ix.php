@@ -237,7 +237,7 @@ class MEC_feature_ix extends MEC_base
             $first = fgets($h);
             foreach ($delimiters as $delimiter => &$count)
             {
-                $count = count(str_getcsv($first, $delimiter));
+                $count = count(str_getcsv($first, $delimiter, '"', '\\'));
             }
 
             $separator = array_search(max($delimiters), $delimiters);
@@ -247,19 +247,39 @@ class MEC_feature_ix extends MEC_base
             $bfixed_fields = $this->main->get_bfixed_fields();
 
             $columns = [];
+            $column_key = function ($labels) use (&$columns)
+            {
+                foreach ((array) $labels as $label)
+                {
+                    $key = array_search(strtolower(trim($label)), array_map('strtolower', $columns));
+                    if ($key !== false) return $key;
+                }
+
+                return false;
+            };
+            $column_value = function ($data, $labels, $fallback = null) use ($column_key)
+            {
+                $key = $column_key($labels);
+                if ($key !== false) return $data[$key] ?? '';
+
+                return !is_null($fallback) ? ($data[$fallback] ?? '') : '';
+            };
             $r = 0;
-            while (($data = fgetcsv($h, 1000, $separator)) !== false)
+            while (($data = fgetcsv($h, 0, $separator, '"', '\\')) !== false)
             {
                 $r++;
 
-                $booking_id = $data[0];
+                $booking_id = $data[0] ?? '';
                 if ($r === 1 && !is_numeric($booking_id))
                 {
-                    $columns = $data;
+                    $columns = array_map(static function ($column)
+                    {
+                        return trim($column, "\xEF\xBB\xBF \t\n\r\0\x0B");
+                    }, $data);
                     continue;
                 }
 
-                $event_title = $data[1];
+                $event_title = $column_value($data, [esc_html__('Event', 'modern-events-calendar-lite'), 'Event'], 1);
                 $event_id = post_exists($event_title, '', '', $this->main->get_main_post_type());
 
                 // Event not Found
@@ -269,7 +289,7 @@ class MEC_feature_ix extends MEC_base
                 if (!is_array($tickets)) $tickets = [];
 
                 $ticket_id = null;
-                $ticket_name = $data[6];
+                $ticket_name = $column_value($data, [$this->main->m('ticket', esc_html__('Ticket', 'modern-events-calendar-lite')), esc_html__('Ticket', 'modern-events-calendar-lite'), 'Ticket'], 6);
 
                 foreach ($tickets as $tid => $ticket)
                 {
@@ -283,28 +303,29 @@ class MEC_feature_ix extends MEC_base
                 // Ticket ID not found!
                 if (is_null($ticket_id)) continue;
 
-                $transaction_id = $data[7];
+                $ticket_count = max(1, (int) $column_value($data, [esc_html__('Seats', 'modern-events-calendar-lite'), 'Seats'], null));
+                $transaction_id = $column_value($data, [esc_html__('Transaction ID', 'modern-events-calendar-lite'), 'Transaction ID'], 7);
 
                 // Transaction Exists
                 $transaction_exists = $book->get_transaction($transaction_id);
                 if (is_array($transaction_exists) and count($transaction_exists)) continue;
 
-                $start_datetime = $data[2];
-                $end_datetime = $data[3];
-                $name = $data[10];
-                $email = $data[11];
+                $start_datetime = $column_value($data, [esc_html__('Start Date & Time', 'modern-events-calendar-lite'), 'Start Date & Time'], 2);
+                $end_datetime = $column_value($data, [esc_html__('End Date & Time', 'modern-events-calendar-lite'), 'End Date & Time'], 3);
+                $name = $column_value($data, [esc_html__('Name', 'modern-events-calendar-lite'), 'Name'], 10);
+                $email = $column_value($data, [esc_html__('Email', 'modern-events-calendar-lite'), 'Email'], 11);
 
-                $confirmed_label = $data[13];
+                $confirmed_label = $column_value($data, [esc_html__('Confirmation', 'modern-events-calendar-lite'), 'Confirmation'], 13);
                 if ($confirmed_label == esc_html__('Confirmed', 'modern-events-calendar-lite')) $confirmed = 1;
                 else if ($confirmed_label == esc_html__('Rejected', 'modern-events-calendar-lite')) $confirmed = -1;
                 else $confirmed = 0;
 
-                $verified_label = $data[14];
+                $verified_label = $column_value($data, [esc_html__('Verification', 'modern-events-calendar-lite'), 'Verification'], 14);
                 if ($verified_label == esc_html__('Verified', 'modern-events-calendar-lite')) $verified = 1;
                 else if ($verified_label == esc_html__('Canceled', 'modern-events-calendar-lite')) $verified = -1;
                 else $verified = 0;
 
-                $other_dates_str = $data[15] ?? '';
+                $other_dates_str = $column_value($data, [esc_html__('Other Dates', 'modern-events-calendar-lite'), 'Other Dates'], 15);
                 $other_dates = [];
 
                 if (trim($other_dates_str))
@@ -322,7 +343,7 @@ class MEC_feature_ix extends MEC_base
                 $all_dates = [];
                 if (count($other_dates)) $all_dates = array_merge([$main_date], $other_dates);
 
-                $ticket_variations = explode(',', $data[12]);
+                $ticket_variations = explode(',', $column_value($data, [esc_html__('Ticket Variation', 'modern-events-calendar-lite'), 'Ticket Variation'], 12));
                 $variations = $this->main->ticket_variations($event_id, $ticket_id);
 
                 $v = [];
@@ -377,7 +398,7 @@ class MEC_feature_ix extends MEC_base
                     'variations' => $v,
                     'id' => $ticket_id,
                     'reg' => $reg,
-                    'count' => 1,
+                    'count' => $ticket_count,
                 ];
 
                 if (!isset($bookings[$transaction_id]['date'])) $bookings[$transaction_id]['date'] = $main_date;
@@ -424,8 +445,9 @@ class MEC_feature_ix extends MEC_base
 
                 foreach ($tickets as $ticket)
                 {
-                    if (!isset($raw_tickets[$ticket['id']])) $raw_tickets[$ticket['id']] = 1;
-                    else $raw_tickets[$ticket['id']] += 1;
+                    $ticket_count = $ticket['count'] ?? 1;
+                    if (!isset($raw_tickets[$ticket['id']])) $raw_tickets[$ticket['id']] = $ticket_count;
+                    else $raw_tickets[$ticket['id']] += $ticket_count;
 
                     if (isset($ticket['variations']) and is_array($ticket['variations']) and count($ticket['variations']))
                     {
@@ -4158,6 +4180,16 @@ class MEC_feature_ix extends MEC_base
                 set_post_thumbnail($post_id, $thumbnail_id);
             }
 
+            if (!empty($this->ix['import_tickets']) || !empty($this->ix['import_bookings']))
+            {
+                $ticket_map = $this->thirdparty_tec_import_tickets($third_party_id, $post_id);
+
+                if (!empty($this->ix['import_bookings']))
+                {
+                    $this->thirdparty_tec_import_bookings($third_party_id, $post_id, $ticket_map, strtotime($metas['_EventStartDate']) . ':' . strtotime($metas['_EventEndDate']));
+                }
+            }
+
             $count++;
         }
 
@@ -4527,6 +4559,370 @@ class MEC_feature_ix extends MEC_base
         }
 
         return ['success' => 1, 'data' => $count];
+    }
+
+    private function thirdparty_tec_import_tickets($tec_event_id, $mec_event_id)
+    {
+        $ticket_map = get_post_meta($mec_event_id, 'mec_tec_ticket_map', true);
+        if (!is_array($ticket_map)) $ticket_map = [];
+
+        if (!class_exists('Tribe__Tickets__Tickets') || !method_exists('Tribe__Tickets__Tickets', 'get_all_event_tickets')) return $ticket_map;
+
+        $tec_tickets = Tribe__Tickets__Tickets::get_all_event_tickets($tec_event_id);
+        if (!is_array($tec_tickets) || !count($tec_tickets)) return $ticket_map;
+
+        $mec_tickets = get_post_meta($mec_event_id, 'mec_tickets', true);
+        if (!is_array($mec_tickets)) $mec_tickets = [];
+
+        $next_id = 1;
+        foreach (array_keys($mec_tickets) as $ticket_id)
+        {
+            if (is_numeric($ticket_id)) $next_id = max($next_id, ((int) $ticket_id) + 1);
+        }
+
+        foreach ($tec_tickets as $tec_ticket)
+        {
+            $tec_ticket_id = (int) $this->thirdparty_tec_get_value($tec_ticket, 'ID', 0);
+            if (!$tec_ticket_id) continue;
+
+            $mec_ticket_id = isset($ticket_map[$tec_ticket_id]) ? (int) $ticket_map[$tec_ticket_id] : 0;
+            if (!$mec_ticket_id || !isset($mec_tickets[$mec_ticket_id]))
+            {
+                $mec_ticket_id = $this->thirdparty_tec_find_mec_ticket_id($mec_tickets, $tec_ticket_id, $tec_ticket);
+            }
+
+            if (!$mec_ticket_id)
+            {
+                while (isset($mec_tickets[$next_id])) $next_id++;
+                $mec_ticket_id = $next_id++;
+            }
+
+            $mec_tickets[$mec_ticket_id] = $this->thirdparty_tec_prepare_ticket($tec_ticket, $mec_ticket_id, $tec_ticket_id);
+            $ticket_map[$tec_ticket_id] = $mec_ticket_id;
+        }
+
+        update_post_meta($mec_event_id, 'mec_tickets', $mec_tickets);
+        update_post_meta($mec_event_id, 'mec_tec_ticket_map', $ticket_map);
+
+        return $ticket_map;
+    }
+
+    private function thirdparty_tec_find_mec_ticket_id($mec_tickets, $tec_ticket_id, $tec_ticket)
+    {
+        foreach ($mec_tickets as $mec_ticket_id => $mec_ticket)
+        {
+            if (!is_array($mec_ticket)) continue;
+            if (isset($mec_ticket['tec_ticket_id']) && (int) $mec_ticket['tec_ticket_id'] === (int) $tec_ticket_id) return (int) $mec_ticket_id;
+        }
+
+        $ticket_name = strtolower(trim((string) $this->thirdparty_tec_get_value($tec_ticket, 'name', '')));
+        if (!trim($ticket_name)) return 0;
+
+        $matches = [];
+        foreach ($mec_tickets as $mec_ticket_id => $mec_ticket)
+        {
+            if (!is_array($mec_ticket)) continue;
+            if (strtolower(trim((string) ($mec_ticket['name'] ?? ''))) === $ticket_name) $matches[] = (int) $mec_ticket_id;
+        }
+
+        return count($matches) === 1 ? $matches[0] : 0;
+    }
+
+    private function thirdparty_tec_prepare_ticket($tec_ticket, $mec_ticket_id, $tec_ticket_id)
+    {
+        $price = $this->thirdparty_tec_get_value($tec_ticket, 'price', '');
+        if ($price === '') $price = $this->thirdparty_tec_get_value($tec_ticket, 'regular_price', 0);
+        $price = is_numeric($price) ? (float) $price : 0;
+
+        $capacity = $this->thirdparty_tec_get_value($tec_ticket, 'capacity', '');
+        $managing_stock = $this->thirdparty_tec_get_value($tec_ticket, 'managing_stock', null);
+        $unlimited = (!$managing_stock || $capacity === '' || (is_numeric($capacity) && (int) $capacity < 0));
+        $limit = $unlimited ? '' : max(0, (int) $capacity);
+
+        return [
+            'id' => $mec_ticket_id,
+            'name' => wp_strip_all_tags((string) $this->thirdparty_tec_get_value($tec_ticket, 'name', sprintf(__('Ticket %s', 'modern-events-calendar-lite'), $tec_ticket_id))),
+            'description' => wp_kses_post((string) $this->thirdparty_tec_get_value($tec_ticket, 'description', '')),
+            'price' => $price,
+            'price_label' => '',
+            'limit' => $limit,
+            'unlimited' => $unlimited ? 1 : 0,
+            'seats' => 1,
+            'minimum_ticket' => 0,
+            'maximum_ticket' => '',
+            'stop_selling_value' => 0,
+            'stop_selling_type' => 'day',
+            'dates' => [],
+            'category_ids' => [],
+            'tec_ticket_id' => $tec_ticket_id,
+        ];
+    }
+
+    private function thirdparty_tec_get_value($source, $key, $default = '')
+    {
+        if (is_array($source) && array_key_exists($key, $source)) return $source[$key];
+        if (is_object($source) && isset($source->{$key})) return $source->{$key};
+
+        if (is_object($source) && method_exists($source, $key))
+        {
+            try
+            {
+                return $source->{$key}();
+            }
+            catch (Exception $e)
+            {
+                return $default;
+            }
+        }
+
+        return $default;
+    }
+
+    private function thirdparty_tec_import_bookings($tec_event_id, $mec_event_id, $ticket_map, $booking_date)
+    {
+        if (!class_exists('Tribe__Tickets__Tickets') || !method_exists('Tribe__Tickets__Tickets', 'get_event_attendees')) return 0;
+        if (!is_array($ticket_map) || !count($ticket_map)) return 0;
+
+        $tec_attendees = Tribe__Tickets__Tickets::get_event_attendees($tec_event_id);
+        if (!is_array($tec_attendees) || !count($tec_attendees)) return 0;
+
+        $orders = [];
+        foreach ($tec_attendees as $tec_attendee)
+        {
+            if (!is_array($tec_attendee)) continue;
+
+            $tec_ticket_id = (int) ($tec_attendee['product_id'] ?? ($tec_attendee['ticket_id'] ?? 0));
+            if (!$tec_ticket_id || !isset($ticket_map[$tec_ticket_id])) continue;
+
+            $name = $this->thirdparty_tec_attendee_name($tec_attendee);
+            $email = $this->thirdparty_tec_attendee_email($tec_attendee);
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) continue;
+
+            $order_id = (string) ($tec_attendee['order_id'] ?? '');
+            if (!trim($order_id)) $order_id = 'attendee-' . (string) ($tec_attendee['attendee_id'] ?? md5(wp_json_encode($tec_attendee)));
+
+            if (!isset($orders[$order_id]))
+            {
+                $orders[$order_id] = [
+                    'status' => $tec_attendee['order_status'] ?? '',
+                    'attendees' => [],
+                ];
+            }
+
+            $orders[$order_id]['attendees'][] = [
+                'email' => $email,
+                'name' => $name,
+                'variations' => [],
+                'id' => (int) $ticket_map[$tec_ticket_id],
+                'reg' => [],
+                'count' => 1,
+                'event_id' => $mec_event_id,
+                'tec_attendee_id' => $tec_attendee['attendee_id'] ?? '',
+            ];
+        }
+
+        if (!count($orders)) return 0;
+
+        $booking_date = $this->thirdparty_tec_normalize_booking_date($booking_date);
+        $event_tickets = get_post_meta($mec_event_id, 'mec_tickets', true);
+        if (!is_array($event_tickets)) $event_tickets = [];
+
+        $book = $this->getBook();
+        $gateway = new MEC_gateway();
+        $u = $this->getUser();
+        $disable_booking_confirmation = '__return_false';
+        add_filter('mec_booking_confirmation', $disable_booking_confirmation);
+
+        $imported = 0;
+        foreach ($orders as $order_id => $order)
+        {
+            $transaction_id = 'TEC' . substr(md5($mec_event_id . ':' . $order_id), 0, 17);
+            if ($this->thirdparty_tec_booking_exists($mec_event_id, $order_id, $transaction_id)) continue;
+
+            $attendees = $order['attendees'];
+            $main_attendee = $attendees[0] ?? [];
+            if (!count($main_attendee)) continue;
+
+            $raw_tickets = [];
+            $ticket_ids = '';
+            $attendees_info = [];
+            foreach ($attendees as $attendee)
+            {
+                $ticket_id = $attendee['id'];
+                $raw_tickets[$ticket_id] = ($raw_tickets[$ticket_id] ?? 0) + 1;
+                $ticket_ids .= $ticket_id . ',';
+
+                if (!isset($attendees_info[$attendee['email']])) $attendees_info[$attendee['email']] = ['count' => 1];
+                else $attendees_info[$attendee['email']]['count']++;
+            }
+
+            $price_details = $book->get_price_details($raw_tickets, $mec_event_id, $event_tickets, [], [$booking_date]);
+            $transaction = [
+                'event_id' => $mec_event_id,
+                'date' => $booking_date,
+                'timestamps' => [$booking_date],
+                'tickets' => $attendees,
+                'price_details' => $price_details,
+                'total' => $price_details['total'],
+                'discount' => 0,
+                'price' => $price_details['total'],
+                'payable' => $price_details['payable'],
+                'coupon' => null,
+                'locale' => get_locale(),
+                'tec_event_id' => $tec_event_id,
+                'tec_order_id' => $order_id,
+            ];
+
+            update_option($transaction_id, $transaction, 'no');
+
+            [$confirmed, $verified] = $this->thirdparty_tec_status_to_mec($this->thirdparty_tec_order_status($order_id, $order['status']));
+            $order_date = $this->thirdparty_tec_order_date($order_id, $booking_date);
+            $user_id = $gateway->register_user($main_attendee, ['event_id' => $mec_event_id]);
+            $book_subject = $main_attendee['name'] . ' - ' . ($main_attendee['email'] ?? ($u->get($user_id)->user_email ?? ''));
+
+            $book_id = $book->add(
+                [
+                    'post_author' => $user_id,
+                    'post_type' => $this->main->get_book_post_type(),
+                    'post_title' => $book_subject,
+                    'post_date' => $order_date,
+                    'attendees_info' => $attendees_info,
+                    'mec_attendees' => $attendees,
+                    'mec_gateway' => 'MEC_gateway',
+                    'mec_gateway_label' => $this->thirdparty_tec_gateway_label($order_id),
+                ],
+                $transaction_id,
+                ',' . trim($ticket_ids, ', ') . ','
+            );
+
+            if (!$book_id) continue;
+
+            $u->assign($book_id, $user_id);
+            update_post_meta($book_id, 'mec_confirmed', $confirmed);
+            update_post_meta($book_id, 'mec_verified', $verified);
+            update_post_meta($book_id, 'mec_booking_time', $order_date);
+            update_post_meta($book_id, 'mec_book_date_submit', date('YmdHis', strtotime($order_date)));
+            update_post_meta($book_id, 'mec_source', 'the-events-calendar');
+            update_post_meta($book_id, 'mec_tec_event_id', $tec_event_id);
+            update_post_meta($book_id, 'mec_tec_order_id', $order_id);
+
+            $this->getBookingRecord()->update($book_id);
+            $imported++;
+        }
+
+        remove_filter('mec_booking_confirmation', $disable_booking_confirmation);
+
+        return $imported;
+    }
+
+    private function thirdparty_tec_attendee_name($attendee)
+    {
+        $attendee_id = $attendee['attendee_id'] ?? 0;
+        $name = $attendee['holder_name'] ?? ($attendee['attendee_name'] ?? ($attendee['purchaser_name'] ?? ''));
+        if (!trim((string) $name) && $attendee_id) $name = get_post_meta($attendee_id, '_tribe_tickets_full_name', true);
+        if (!trim((string) $name)) $name = $attendee['purchaser_email'] ?? ($attendee['holder_email'] ?? '');
+
+        return trim((string) $name);
+    }
+
+    private function thirdparty_tec_attendee_email($attendee)
+    {
+        $attendee_id = $attendee['attendee_id'] ?? 0;
+        $email = $attendee['holder_email'] ?? ($attendee['attendee_email'] ?? ($attendee['purchaser_email'] ?? ''));
+        if (!trim((string) $email) && $attendee_id) $email = get_post_meta($attendee_id, '_tribe_tickets_email', true);
+
+        return trim((string) $email);
+    }
+
+    private function thirdparty_tec_booking_exists($mec_event_id, $order_id, $transaction_id)
+    {
+        $transaction = $this->getBook()->get_transaction($transaction_id);
+        if (is_array($transaction) && count($transaction)) return true;
+
+        $bookings = get_posts([
+            'post_type' => $this->main->get_book_post_type(),
+            'post_status' => 'any',
+            'numberposts' => 1,
+            'fields' => 'ids',
+            'meta_query' => [
+                [
+                    'key' => 'mec_event_id',
+                    'value' => $mec_event_id,
+                ],
+                [
+                    'key' => 'mec_tec_order_id',
+                    'value' => (string) $order_id,
+                ],
+            ],
+        ]);
+
+        return count($bookings) > 0;
+    }
+
+    private function thirdparty_tec_order_status($order_id, $fallback = '')
+    {
+        if (function_exists('wc_get_order') && is_numeric($order_id))
+        {
+            $order = wc_get_order($order_id);
+            if ($order && method_exists($order, 'get_status')) return $order->get_status();
+        }
+
+        return $fallback;
+    }
+
+    private function thirdparty_tec_status_to_mec($status)
+    {
+        $status = strtolower(trim(str_replace('wc-', '', (string) $status)));
+
+        if (in_array($status, ['cancelled', 'canceled', 'failed', 'refunded', 'not-going', 'no'], true)) return [-1, -1];
+        if (in_array($status, ['pending', 'pending-payment', 'on-hold', 'created'], true)) return [0, 0];
+
+        return [1, 1];
+    }
+
+    private function thirdparty_tec_order_date($order_id, $fallback_date)
+    {
+        if (function_exists('wc_get_order') && is_numeric($order_id))
+        {
+            $order = wc_get_order($order_id);
+            if ($order && method_exists($order, 'get_date_created'))
+            {
+                $date = $order->get_date_created();
+                if ($date && method_exists($date, 'date')) return $date->date('Y-m-d H:i:s');
+            }
+        }
+
+        $times = explode(':', $fallback_date);
+        $timestamp = isset($times[0]) && is_numeric($times[0]) ? (int) $times[0] : current_time('timestamp');
+
+        return date('Y-m-d H:i:s', $timestamp);
+    }
+
+    private function thirdparty_tec_gateway_label($order_id)
+    {
+        if (function_exists('wc_get_order') && is_numeric($order_id))
+        {
+            $order = wc_get_order($order_id);
+            if ($order && method_exists($order, 'get_payment_method_title'))
+            {
+                $label = $order->get_payment_method_title();
+                if (trim((string) $label)) return $label;
+            }
+        }
+
+        return esc_html__('Imported from The Events Calendar', 'modern-events-calendar-lite');
+    }
+
+    private function thirdparty_tec_normalize_booking_date($booking_date)
+    {
+        $times = explode(':', (string) $booking_date);
+        $start = isset($times[0]) && is_numeric($times[0]) ? (int) $times[0] : 0;
+        $end = isset($times[1]) && is_numeric($times[1]) ? (int) $times[1] : 0;
+
+        if (!$start) $start = current_time('timestamp');
+        if (!$end || $end < $start) $end = $start;
+
+        return $start . ':' . $end;
     }
 
     public function thirdparty_weekly_class_import_do($IDs)

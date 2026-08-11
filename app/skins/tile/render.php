@@ -34,7 +34,7 @@ $map_events = [];
                 $event_start_date = !empty($event->date['start']['date']) ? $event->date['start']['date'] : '';
                 $event_color = $this->get_event_color_dot($event, true);
                 $tile_url = $this->get_featured_image_url($event, 'tileview');
-                $background_image = $tile_url ? ' url(\''.trim($tile_url).'\')' : '';
+                $background_image = $tile_url ? ' background-image: url('.esc_url(trim($tile_url)).');' : '';
 
                 $mec_data = $this->display_custom_data($event);
                 $custom_data_class = !empty($mec_data) ? 'mec-custom-data' : '';
@@ -47,7 +47,7 @@ $map_events = [];
                 $date_format_clean_1 = apply_filters( 'mec_skin_tile_date_format_1', $this->date_format_clean_1 );
                 $date_format_clean_2 = apply_filters( 'mec_skin_tile_date_format_2', $this->date_format_clean_2 );
                 ?>
-                    <article <?php if($method != 'no'): ?> data-href="<?php echo esc_url($this->main->get_event_date_permalink($event, $event->date['start']['date'])); ?>" data-target="<?php echo ($method == 'new' ? 'blank' : ($method ? $method : '')); ?>"<?php endif; ?> <?php echo 'style="background:' . esc_attr($event_color) . $background_image. '"'; ?> class="<?php echo ((isset($event->data->meta['event_past']) and trim($event->data->meta['event_past'])) ? 'mec-past-event' : ''); ?> <?php echo ($method == 'no' ? 'mec-no-pointer' : ''); ?> mec-event-article mec-tile-item <?php echo esc_attr($me_class); ?> mec-clear <?php echo esc_attr($this->get_event_classes($event)); ?> <?php echo esc_attr($custom_data_class); ?>">
+                    <article <?php if($method != 'no'): ?> data-href="<?php echo esc_url($this->main->get_event_date_permalink($event, $event->date['start']['date'])); ?>" data-target="<?php echo ($method == 'new' ? 'blank' : ($method ? $method : '')); ?>"<?php endif; ?> <?php echo 'style="background-color:' . esc_attr($event_color) . ';' . esc_attr($background_image). '"'; ?> class="<?php echo ((isset($event->data->meta['event_past']) and trim($event->data->meta['event_past'])) ? 'mec-past-event' : ''); ?> <?php echo ($method == 'no' ? 'mec-no-pointer' : ''); ?> mec-event-article mec-tile-item <?php echo esc_attr($me_class); ?> mec-clear <?php echo esc_attr($this->get_event_classes($event)); ?> <?php echo esc_attr($custom_data_class); ?>">
                         <?php do_action('mec_skin_tile_view', $event); ?>
                         <?php echo MEC_kses::element($this->get_label_captions($event)); ?>
                         <div class="event-tile-view-head clearfix">

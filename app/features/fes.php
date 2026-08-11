@@ -790,6 +790,7 @@ class MEC_feature_fes extends MEC_base
         // Verify that the nonce is valid.
         if (!wp_verify_nonce(sanitize_text_field($_POST['_wpnonce']), 'mec_fes_form')) $this->main->response(['success' => 0, 'code' => 'NONCE_IS_INVALID']);
 
+        $raw_mec = isset($_POST['mec']) && is_array($_POST['mec']) ? wp_unslash($_POST['mec']) : [];
         $mec = isset($_POST['mec']) ? $this->main->sanitize_deep_array($_POST['mec']) : [];
 
         // Post ID
@@ -816,8 +817,8 @@ class MEC_feature_fes extends MEC_base
         $end_date = (isset($mec['date']['end']['date']) and trim($mec['date']['end']['date'])) ? $this->main->standardize_format(sanitize_text_field($mec['date']['end']['date'])) : date('Y-m-d');
 
         $post_title = isset($mec['title']) ? sanitize_text_field($mec['title']) : '';
-        $post_content = isset($mec['content']) ? MEC_kses::page($mec['content']) : '';
-        $post_excerpt = isset($mec['excerpt']) ? MEC_kses::page($mec['excerpt']) : '';
+        $post_content = isset($raw_mec['content']) ? MEC_kses::page($raw_mec['content']) : '';
+        $post_excerpt = isset($raw_mec['excerpt']) ? MEC_kses::page($raw_mec['excerpt']) : '';
         $post_tags = isset($mec['tags']) ? sanitize_text_field($mec['tags']) : '';
         $post_categories = isset($mec['categories']) ? array_map('sanitize_text_field', $mec['categories']) : [];
         $post_speakers = isset($mec['speakers']) ? array_map('sanitize_text_field', $mec['speakers']) : [];
@@ -1827,7 +1828,11 @@ class MEC_feature_fes extends MEC_base
 
                 $reg_fields = $mec['reg_fields'] ?? [];
                 if ($reg_fields_global_inheritance) $reg_fields = [];
-                else $reg_fields = $this->main->sanitize_booking_condition_fields($reg_fields, 'reg');
+                else
+                {
+                    $reg_fields = $this->main->sanitize_booking_paragraph_fields($reg_fields, $raw_mec['reg_fields'] ?? []);
+                    $reg_fields = $this->main->sanitize_booking_condition_fields($reg_fields, 'reg');
+                }
 
                 // Trigger action for form builder compatibility
                 do_action('mec_save_reg_fields', $post_id, $reg_fields);
@@ -1836,7 +1841,11 @@ class MEC_feature_fes extends MEC_base
 
                 $bfixed_fields = $mec['bfixed_fields'] ?? [];
                 if ($reg_fields_global_inheritance) $bfixed_fields = [];
-                else $bfixed_fields = $this->main->sanitize_booking_condition_fields($bfixed_fields, 'bfixed');
+                else
+                {
+                    $bfixed_fields = $this->main->sanitize_booking_paragraph_fields($bfixed_fields, $raw_mec['bfixed_fields'] ?? []);
+                    $bfixed_fields = $this->main->sanitize_booking_condition_fields($bfixed_fields, 'bfixed');
+                }
 
                 update_post_meta($post_id, 'mec_bfixed_fields', $bfixed_fields);
             }

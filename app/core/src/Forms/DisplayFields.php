@@ -241,11 +241,11 @@ class DisplayFields {
 
 						break;
 
-					case 'p':
+						case 'p':
 
-						$input_html = '<p>' . do_shortcode( stripslashes( $field['content'] ) ) . '</p>';
+							$input_html = '<p>' . \MEC_kses::page( do_shortcode( stripslashes( $field['content'] ?? '' ) ) ) . '</p>';
 
-						break;
+							break;
 				}
 
 				// Field HTML is generated internally by MEC form renderer and may include

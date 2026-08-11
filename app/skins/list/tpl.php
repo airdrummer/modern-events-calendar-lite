@@ -43,7 +43,7 @@ jQuery(document).ready(function()
             end_date: "'.esc_js($this->end_date).'",
             offset: "'.esc_js($this->next_offset).'",
             limit: "'.esc_js($this->limit).'",
-            pagination: "'.$this->pagination.'",
+            pagination: "'.esc_js($this->pagination).'",
             current_month_divider: "'.esc_js($current_month_divider).'",
             toggle_month_divider: "'.esc_js($this->toggle_month_divider).'",
             style: "'.(isset($this->skin_options['style']) ? esc_js($this->skin_options['style']) : NULL).'",

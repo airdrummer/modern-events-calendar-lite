@@ -38,7 +38,7 @@ jQuery(document).ready(function()
             start_date: "'.esc_js($this->start_date).'",
             end_date: "'.esc_js($this->end_date).'",
             offset: "'.esc_js($this->next_offset).'",
-            pagination: "'.$this->pagination.'",
+            pagination: "'.esc_js($this->pagination).'",
             atts: "'.http_build_query(array('atts' => $this->atts), '', '&').'",
             ajax_url: "'.admin_url('admin-ajax.php', NULL).'",
             sed_method: "'.esc_js($sed_method).'",

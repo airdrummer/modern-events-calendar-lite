@@ -572,7 +572,7 @@ class MEC_feature_mec extends MEC_base
         add_submenu_page('mec-intro', esc_html__('MEC - Settings', 'modern-events-calendar-lite'), esc_html__('Settings', 'modern-events-calendar-lite'), apply_filters('mec_menu_cap', $capability, 'settings'), 'MEC-settings', [$this, 'page']);
 
         add_submenu_page('mec-intro', esc_html__('MEC - Addons', 'modern-events-calendar-lite'), esc_html__('Addons', 'modern-events-calendar-lite'), apply_filters('mec_menu_cap', 'manage_options', 'addons'), 'MEC-addons', [$this, 'addons']);
-        add_submenu_page('mec-intro', esc_html__('MEC - Wizard', 'modern-events-calendar-lite'), esc_html__('Wizard', 'modern-events-calendar-lite'), apply_filters('mec_menu_cap', 'manage_options', 'wizard'), 'MEC-wizard', [$this, 'setup_wizard']);
+        add_submenu_page('mec-intro', esc_html__('MEC - Wizard', 'modern-events-calendar-lite'), esc_html__('Wizard', 'modern-events-calendar-lite'), apply_filters('mec_menu_cap', 'edit_pages', 'wizard'), 'MEC-wizard', [$this, 'setup_wizard']);
 
         if (!$this->getPRO()) add_submenu_page('mec-intro', esc_html__('MEC - Go Pro', 'modern-events-calendar-lite'), esc_html__('Go Pro', 'modern-events-calendar-lite'), apply_filters('mec_menu_cap', 'manage_options', 'go_pro'), 'MEC-go-pro', [$this, 'go_pro']);
         do_action('after_mec_submenu_action');

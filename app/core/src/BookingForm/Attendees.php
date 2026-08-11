@@ -449,7 +449,7 @@ class Attendees {
                 <ul class="mec-booking-registrtaion-fields">
                     <li>
                         <label for="mec_book_form_username"><?php esc_html_e('Username', 'modern-events-calendar-lite'); ?> <span class="wbmec-mandatory">*</span></label>
-                        <input type="text" name="book[username]" id="mec_book_form_username" onchange="console.log('Username changed to:', this.value); console.log('Form data:', new FormData(this.form));">
+                        <input type="text" name="book[username]" id="mec_book_form_username">
                     </li>
                     <li>
                         <label for="mec_book_form_password"><?php esc_html_e('Password', 'modern-events-calendar-lite'); ?> <span class="wbmec-mandatory">*</span></label>
@@ -457,23 +457,6 @@ class Attendees {
                     </li>
                 </ul>
             </div>
-            <script>
-            // Debug form submission
-            jQuery(document).ready(function($) {
-                $('#mec_book_form<?php echo esc_attr($uniqueid); ?>').on('submit', function() {
-                    var username = $('#mec_book_form_username').val();
-                    console.log('Form submitting with username:', username);
-                    console.log('Full form data:', $(this).serialize());
-                    
-                    // Also log to PHP error log via AJAX
-                    $.post('<?php echo admin_url('admin-ajax.php'); ?>', {
-                        action: 'mec_debug_username',
-                        username: username,
-                        form_data: $(this).serialize()
-                    });
-                });
-            });
-            </script>
             <?php endif; ?>
 
             <div class="clearfix"></div>

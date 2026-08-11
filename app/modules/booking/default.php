@@ -60,6 +60,11 @@ $book = $this->getBook();
 // User Booking Limits
 list($user_ticket_limit, $user_ticket_unlimited) = $book->get_user_booking_limit($event->data->ID);
 
+// Safe JS string literals for invoice / wallet append blocks (avoid \\\" SyntaxError).
+$mec_js_invoice_label = wp_json_encode(__('Download Invoice', 'modern-events-calendar-lite'));
+$mec_js_wallet_label  = wp_json_encode(__('Add to Apple Wallet', 'mec-invoice'));
+$mec_js_booking_sel   = wp_json_encode('#mec_booking' . $uniqueid);
+
 // Generate JavaScript code of Booking Module
 $javascript = '<script>
 var mec_tickets_availability_ajax'.esc_js($uniqueid).' = false;
@@ -1382,10 +1387,19 @@ function mec_book_form_submit'.esc_js($uniqueid).'()
 
                 jQuery("#mec_booking'.esc_js($uniqueid).'").html(data.output);
 
-                // Show Invoice Link
+                // Show Invoice Link and Apple Wallet Pass Link
                 if(typeof data.data.invoice_link != "undefined" && data.data.invoice_link != "")
                 {
-                    jQuery("#mec_booking'.esc_js($uniqueid).'").append("<a class=\"mec-invoice-download\" href=\""+data.data.invoice_link+"\">'.esc_js(__('Download Invoice', 'modern-events-calendar-lite')).'</a>");
+                    var walletLink = (typeof data.data.walletpass_link !== "undefined" && data.data.walletpass_link != "") ? data.data.walletpass_link : "";
+                    if(walletLink) {
+                        jQuery('.$mec_js_booking_sel.').append((function(){var invoiceLink=data.data.invoice_link||"";var html="<div class=\"mec-booking-download-links mec-booking-download-links--dual\"><a class=\"mec-invoice-download\" href=\""+invoiceLink+"\">"+'.$mec_js_invoice_label.'+"</a><a class=\"mec-apple-wallet-add\" href=\""+walletLink+"\">"+'.$mec_js_wallet_label.'+"</a></div>";return html;})());
+                    } else {
+                        jQuery('.$mec_js_booking_sel.').append((function(){var invoiceLink=data.data.invoice_link||"";return "<a class=\"mec-invoice-download\" href=\""+invoiceLink+"\">"+'.$mec_js_invoice_label.'+"</a>";})());
+                    }
+                }
+                else if(typeof data.data.walletpass_link != "undefined" && data.data.walletpass_link != "")
+                {
+                    jQuery('.$mec_js_booking_sel.').append((function(){var walletLink=data.data.walletpass_link||"";return "<a class=\"mec-apple-wallet-add\" href=\""+walletLink+"\">"+'.$mec_js_wallet_label.'+"</a>";})());
                 }
 
                 // Redirect to thank you page
@@ -1545,10 +1559,19 @@ function mec_book_free'.esc_js($uniqueid).'()
             {
                 jQuery("#mec_booking'.esc_js($uniqueid).'").html(data.output);
 
-                // Show Invoice Link
+                // Show Invoice Link and Apple Wallet Pass Link
                 if(typeof data.data.invoice_link != "undefined" && data.data.invoice_link != "")
                 {
-                    jQuery("#mec_booking'.esc_js($uniqueid).'").append("<a class=\"mec-invoice-download\" href=\""+data.data.invoice_link+"\">'.esc_js(__('Download Invoice', 'modern-events-calendar-lite')).'</a>");
+                    var walletLink = (typeof data.data.walletpass_link !== "undefined" && data.data.walletpass_link != "") ? data.data.walletpass_link : "";
+                    if(walletLink) {
+                        jQuery('.$mec_js_booking_sel.').append((function(){var invoiceLink=data.data.invoice_link||"";var html="<div class=\"mec-booking-download-links mec-booking-download-links--dual\"><a class=\"mec-invoice-download\" href=\""+invoiceLink+"\">"+'.$mec_js_invoice_label.'+"</a><a class=\"mec-apple-wallet-add\" href=\""+walletLink+"\">"+'.$mec_js_wallet_label.'+"</a></div>";return html;})());
+                    } else {
+                        jQuery('.$mec_js_booking_sel.').append((function(){var invoiceLink=data.data.invoice_link||"";return "<a class=\"mec-invoice-download\" href=\""+invoiceLink+"\">"+'.$mec_js_invoice_label.'+"</a>";})());
+                    }
+                }
+                else if(typeof data.data.walletpass_link != "undefined" && data.data.walletpass_link != "")
+                {
+                    jQuery('.$mec_js_booking_sel.').append((function(){var walletLink=data.data.walletpass_link||"";return "<a class=\"mec-apple-wallet-add\" href=\""+walletLink+"\">"+'.$mec_js_wallet_label.'+"</a>";})());
                 }
 
                 // Redirect to thank you page

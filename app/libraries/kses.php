@@ -85,14 +85,24 @@ class MEC_kses extends MEC_base
     {
         if(is_null($html)) return '';
 
+        $raw_blocks = array();
+        $html = preg_replace_callback('#<(script|style)\b[^>]*>.*?</\1>#is', function($m) use (&$raw_blocks) {
+            $key = '@@MEC_RAW_'.count($raw_blocks).'@@';
+            $raw_blocks[$key] = $m[0];
+            return $key;
+        }, $html);
+
         if(is_null(self::$allowed_html_full))
         {
             $allowed = wp_kses_allowed_html('post');
             self::$allowed_html_full = apply_filters('mec_kses_tags', $allowed, 'full');
         }
 
-        if(defined('MEC_NO_JS_CSS_IN_HTML') && MEC_NO_JS_CSS_IN_HTML) return wp_kses($html, self::$allowed_html_full);
-        else return $html;
+        $html = wp_kses($html, self::$allowed_html_full);
+
+        if(count($raw_blocks)) $html = strtr($html, $raw_blocks);
+
+        return $html;
     }
 
     public static function page($html)

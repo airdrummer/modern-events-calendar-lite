@@ -86,7 +86,7 @@ else $set_dark = '';
 <div class="mec-timetable-t2-wrap <?php echo esc_attr($set_dark); ?>">
     <?php foreach($this->events as $date=>$events): ?>
     <div class="mec-timetable-t2-col mec-timetable-col-<?php echo esc_attr($this->number_of_days); ?>">
-        <div class="mec-ttt2-title"> <?php echo esc_html($this->main->date_i18n('l', strtotime($date))); ?> </div>
+        <div class="mec-ttt2-title"> <?php echo esc_html($this->main->date_i18n('D, M j', strtotime($date))); ?> </div>
         <?php foreach($events as $event): ?>
         <?php
             $location_id = $this->main->get_master_location_id($event);

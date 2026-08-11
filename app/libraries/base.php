@@ -118,6 +118,16 @@ abstract class MEC_base extends MEC
     {
         return MEC::getInstance('app.libraries.book');
     }
+
+    /**
+     * Returns MEC_capacity instance
+     * @final
+     * @return MEC_capacity
+     */
+    final public function getCapacity()
+    {
+        return MEC::getInstance('app.libraries.capacity');
+    }
     
     /**
      * Returns MEC_notifications instance

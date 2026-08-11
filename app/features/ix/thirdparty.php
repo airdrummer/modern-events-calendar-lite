@@ -87,6 +87,18 @@ $third_parties = $this->main->get_integrated_plugins_for_import();
                                             <?php esc_html_e('Import Author', 'modern-events-calendar-lite'); ?>
                                         </label>
                                     </div>
+                                    <div class="mec-form-row" style="padding-bottom: 5px;">
+                                        <label>
+                                            <input type="checkbox" name="ix[import_tickets]" value="1" />
+                                            <?php esc_html_e('Import Tickets', 'modern-events-calendar-lite'); ?>
+                                        </label>
+                                    </div>
+                                    <div class="mec-form-row" style="padding-bottom: 5px;">
+                                        <label>
+                                            <input type="checkbox" name="ix[import_bookings]" value="1" />
+                                            <?php esc_html_e('Import Attendees and Bookings', 'modern-events-calendar-lite'); ?>
+                                        </label>
+                                    </div>
                                     <?php endif; ?>
 
                                     <?php if($this->ix['third-party'] != 'bookly'): ?>

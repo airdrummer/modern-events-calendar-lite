@@ -82,10 +82,14 @@ class MEC_user extends MEC_base
         $book_post = isset($_POST['book']) && is_array($_POST['book']) ? wp_unslash($_POST['book']) : [];
         $waiting_post = isset($_POST['waiting']) && is_array($_POST['waiting']) ? wp_unslash($_POST['waiting']) : [];
         $allow_posted_credentials = $this->has_valid_registration_request();
-        $posted_book_username = $allow_posted_credentials && isset($book_post['username']) ? $this->sanitize_username($book_post['username']) : '';
         $posted_username = $allow_posted_credentials && isset($_POST['username']) ? $this->sanitize_username(wp_unslash($_POST['username'])) : '';
-        $posted_book_password = $allow_posted_credentials && isset($book_post['password']) ? (string) $book_post['password'] : '';
         $waiting_ticket = isset($waiting_post['tickets'][1]) && is_array($waiting_post['tickets'][1]) ? $waiting_post['tickets'][1] : [];
+        $source = $args['source'] ?? 'booking';
+        $credential_source = $source === 'waiting' ? $waiting_ticket : $book_post;
+        $userpass_setting = $source === 'waiting' ? 'waiting_userpass' : 'booking_userpass';
+        $userpass_mode = isset($this->settings[$userpass_setting]) ? $this->settings[$userpass_setting] : 'auto';
+        $posted_form_username = $allow_posted_credentials && isset($credential_source['username']) ? $this->sanitize_username($credential_source['username']) : '';
+        $posted_form_password = $allow_posted_credentials && isset($credential_source['password']) ? (string) $credential_source['password'] : '';
 
         // BuddyBoss specific registration with enhanced username handling
         if ($buddyboss_active) {
@@ -120,11 +124,23 @@ class MEC_user extends MEC_base
                 session_start();
             }
 
-            // Start with name as default for auto mode, email as fallback
+            // Start with manual username or name, depending on the configured mode.
             $username = '';
-            
-            // PRIORITY 1: Use name field when in auto mode
-            if (!empty($name) && trim($name) !== $email) {
+
+            if ($userpass_mode === 'manual' && isset($args['username']) && trim($args['username'])) {
+                $username = $this->sanitize_username($args['username']);
+            }
+
+            // PRIORITY 1: Posted username in manual mode
+            if ($userpass_mode === 'manual' && $posted_form_username !== '') {
+                if ($posted_form_username !== $email) {
+                    $username = $posted_form_username;
+                    $_SESSION['mec_form_username_' . $email] = $username;
+                }
+            }
+
+            // PRIORITY 2: Use name field when in auto mode
+            if (empty($username) && !empty($name) && trim($name) !== $email) {
                 // Clean the name: replace spaces with dashes and remove special characters
                 $clean_name = trim($name);
                 $clean_name = preg_replace('/\s+/', '-', $clean_name); // Replace spaces with dashes
@@ -140,16 +156,16 @@ class MEC_user extends MEC_base
                 }
             }
             
-            // PRIORITY 2: $_POST['book']['username'] (manual mode)
-            if (empty($username) && $posted_book_username !== '') {
-                if ($posted_book_username !== $email) {
-                    $username = $posted_book_username;
+            // PRIORITY 3: Posted form username
+            if (empty($username) && $posted_form_username !== '') {
+                if ($posted_form_username !== $email) {
+                    $username = $posted_form_username;
                     // Store in session for later use
                     $_SESSION['mec_form_username_' . $email] = $username;
                 }
             }
 
-            // PRIORITY 3: $_POST['username'] 
+            // PRIORITY 4: $_POST['username'] 
             if (empty($username) && $posted_username !== '') {
                 if ($posted_username !== $email) {
                     $username = $posted_username;
@@ -158,7 +174,7 @@ class MEC_user extends MEC_base
                 }
             }
 
-            // PRIORITY 4: Check session for previously stored username
+            // PRIORITY 5: Check session for previously stored username
             if (empty($username) && isset($_SESSION['mec_form_username_' . $email]) && !empty($_SESSION['mec_form_username_' . $email])) {
                 $session_username = function_exists('sanitize_user') ? sanitize_user($_SESSION['mec_form_username_' . $email]) : $_SESSION['mec_form_username_' . $email];
                 if (!empty($session_username) && $session_username !== $email) {
@@ -166,7 +182,7 @@ class MEC_user extends MEC_base
                 }
             }
             
-            // PRIORITY 5: Fallback to email if no valid username found
+            // PRIORITY 6: Fallback to email if no valid username found
             if (empty($username)) {
                 $username = function_exists('sanitize_user') ? sanitize_user($email) : $email;
             }
@@ -186,8 +202,10 @@ class MEC_user extends MEC_base
 
             // Generate password from form or auto-generate
             $password = wp_generate_password(12); // Default password
-            if ($this->is_strong_password($posted_book_password)) {
-                $password = $posted_book_password;
+            if ($userpass_mode === 'manual' && isset($args['password']) && trim($args['password'])) {
+                $password = $args['password'];
+            } elseif ($userpass_mode === 'manual' && trim($posted_form_password)) {
+                $password = $posted_form_password;
             }
 
             // Register User
@@ -240,23 +258,21 @@ class MEC_user extends MEC_base
                     $user_id = $new_id;
                 }
             } else {
-                // 🔥 Extract username/password from $_POST and inject into $args if empty
+                // Populate credentials from the active registration form when they are not passed in args.
                 if (!isset($args['username']) || !trim($args['username'])) {
-                    $args['username'] = $allow_posted_credentials ? $this->sanitize_username($waiting_ticket['username'] ?? '') : '';
+                    $args['username'] = $posted_form_username;
                 }
 
                 if (!isset($args['password']) || !trim($args['password'])) {
-                    $args['password'] = ($allow_posted_credentials && $this->is_strong_password($waiting_ticket['password'] ?? '')) ? $waiting_ticket['password'] : '';
+                    $args['password'] = trim($posted_form_password) ? $posted_form_password : '';
                 }
 
                 $username = $email;
                 $password = wp_generate_password(12, true, true);
                 $auto = true;
 
-                $userpass_mode = isset($this->settings['waiting_userpass']) ? $this->settings['waiting_userpass'] : 'auto';
-
                 if ($userpass_mode === 'manual') {
-                    if (isset($args['username']) and trim($args['username'])) $username = $args['username'];
+                    if (isset($args['username']) and trim($args['username'])) $username = $this->sanitize_username($args['username']);
                     if (isset($args['password']) and trim($args['password'])) {
                         $password = $args['password'];
                         $auto = false;
@@ -296,7 +312,6 @@ class MEC_user extends MEC_base
                 if ($event_id) $this->save_mapped_data($event_id, $user_id, $reg);
 
                 // Set the User Role
-                $source = $args['source'] ?? 'booking';
                 if ($source === 'waiting') {
                     $role = 'subscriber';
                 } else {

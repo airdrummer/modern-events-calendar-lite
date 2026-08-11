@@ -67,14 +67,15 @@ class EventBanner extends WidgetBase {
                 if(trim($color) === '') $color = '#333333';
             }
 
-            if($featured_image) $image = (string) get_the_post_thumbnail_url($event->ID, 'full');
+            if($featured_image) $image = $single->get_featured_image_url($event, 'full');
+            $image = $single->get_banner_image_url($image);
 
             $mode = 'color';
             $bg = 'background: '.$color;
 
             if(trim($image))
             {
-                $bg = 'background: url(\''.$image.'\') no-repeat center; background-size: cover';
+                $bg = 'background: url('.$image.') no-repeat center; background-size: cover';
                 $mode = trim($color) ? 'color-image' : 'image';
             }
 
@@ -86,7 +87,7 @@ class EventBanner extends WidgetBase {
             // Title
             $content .= '<div class="mec-event-banner-title">';
             $content .= MEC_kses::element($single->main->display_cancellation_reason($event, $single->display_cancellation_reason));
-            $content .= '<h1 class="mec-single-title">'.get_the_title().'</h1>';
+            $content .= '<h1 class="mec-single-title">'.esc_html( get_the_title( $event_id ) ).'</h1>';
             $content .= '</div>';
 
             // Date & Time
@@ -102,10 +103,10 @@ class EventBanner extends WidgetBase {
                 $content .= '<div class="mec-event-banner-location">'.ob_get_clean().'</div>';
             }
 
-            echo '<div class="mec-event-banner mec-event-banner-mode-'.esc_attr($mode).'" style="'.$bg.';"> <div class="mec-event-banner-inner">'
+            echo '<div class="mec-event-banner mec-event-banner-mode-'.esc_attr($mode).'" style="'.esc_attr($bg).'"> <div class="mec-event-banner-inner">'
                 .$content.
                 '</div>'.
-                ($mode === 'color-image' ? '<div class="mec-event-banner-color" style="background: '.$color.'; opacity: 0.3;"></div>' : '').
+                ($mode === 'color-image' ? '<div class="mec-event-banner-color" style="'.esc_attr('background: '.$color.'; opacity: 0.3;').'"></div>' : '').
                 '</div>';
 
 			$html = ob_get_clean();

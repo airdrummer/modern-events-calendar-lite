@@ -384,7 +384,7 @@ class FormFields extends Singleton {
             <span class="mec_' . esc_attr( $prefix ) . '_field_remove mec_field_remove">' . esc_html__( 'Remove', 'modern-events-calendar-lite') . '</span>
             <div>
                 <input type="hidden" name="mec[' . esc_attr( $prefix ) . '_fields][' . esc_attr( $key ) . '][type]" value="p" />
-                <textarea name="mec[' . esc_attr( $prefix ) . '_fields][' . esc_attr( $key ) . '][content]">' . ( isset( $values['content'] ) ? htmlentities( stripslashes( $values['content'] ) ) : '' ) . '</textarea>
+                <textarea name="mec[' . esc_attr( $prefix ) . '_fields][' . esc_attr( $key ) . '][content]">' . ( isset( $values['content'] ) ? esc_textarea( stripslashes( $values['content'] ) ) : '' ) . '</textarea>
                 <p class="description">' . esc_html__( 'HTML and shortcode are allowed.' ) . '</p>
             </div>
         </li>';

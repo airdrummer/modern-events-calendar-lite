@@ -40,6 +40,7 @@ $with_css = $is_load_more ? false : true;
 
             $rcount = 1;
             $rendered_events = array(); // Track rendered events to prevent duplicates
+            $map_events = array();
             if(!empty($this->events))
             {
                 foreach($this->events as $date => $events)
@@ -63,7 +64,9 @@ $with_css = $is_load_more ? false : true;
                             continue;
                         }
                         $rendered_events[] = $event_unique_key;
-                        
+
+                        $map_events[] = $event;
+
                         global $post;
                         $post = $event->data->post;
 
@@ -108,14 +111,7 @@ $with_css = $is_load_more ? false : true;
 	</div>
 </div>
 <?php
-$map_eventss = [];
-if(isset($map_events) && !empty($map_events))
-{
-    foreach($map_events as $key => $value)
-    {
-        foreach($value as $keyy => $valuee) $map_eventss[] = $valuee;
-    }
-}
+$map_eventss = ! empty( $map_events ) ? $map_events : array();
 
 if(isset($this->map_on_top) and $this->map_on_top):
 if(isset($map_eventss) and !empty($map_eventss))

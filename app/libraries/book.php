@@ -80,8 +80,9 @@ class MEC_book extends MEC_base
             $date_variations_amount = 0;
             $date_fee_amount = 0;
 
-            $timestamp_ex = explode(':', $timestamp);
-            $timestamp = $timestamp_ex[0];
+            $timestamp_ex = explode(':', (string) $timestamp);
+            $timestamp = $timestamp_ex[0] ?? '';
+            $timestamp = is_numeric($timestamp) ? (int) $timestamp : (int) strtotime($timestamp);
 
             foreach ($tickets as $ticket_id => $count)
             {
@@ -817,10 +818,18 @@ class MEC_book extends MEC_base
      */
     public function get_tickets_availability($event_id, $timestamp, $mode = 'availability')
     {
-        $ex = explode(':', $timestamp);
-        $timestamp = $ex[0];
+        $event_id = (int) $event_id;
+
+        $ex = explode(':', (string) $timestamp);
+        $timestamp = $ex[0] ?? '';
 
         if (!is_numeric($timestamp)) $timestamp = strtotime($timestamp);
+        $timestamp = (int) $timestamp;
+
+        if ($timestamp <= 0)
+        {
+            return $mode == 'reservation' ? 0 : [];
+        }
 
         $availability = [];
         $tickets = get_post_meta($event_id, 'mec_tickets', true);
@@ -850,7 +859,7 @@ class MEC_book extends MEC_base
         // Ticket Selling Stop
         $event_date = date('Y-m-d h:i a', $timestamp);
 
-        if (!$book_all_occurrences && trim($timestamp)) $date_query = " AND `timestamp`=" . $timestamp;
+        if (!$book_all_occurrences && trim($timestamp)) $date_query = " AND `timestamp`=" . (int) $timestamp;
         else $date_query = "";
 
         // Database
@@ -862,6 +871,9 @@ class MEC_book extends MEC_base
         $booked = 0;
         foreach ($tickets as $ticket_id => $ticket)
         {
+            if (!is_numeric($ticket_id)) continue;
+            $ticket_id = (int) $ticket_id;
+
             $limit = isset($ticket['limit']) && trim($ticket['limit']) != '' ? $ticket['limit'] : -1;
 
             $ticket_seats = (isset($ticket['seats']) and is_numeric($ticket['seats'])) ? (int) $ticket['seats'] : 1;

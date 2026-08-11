@@ -464,7 +464,13 @@ class MEC_render extends MEC_base
         }
 
         if ($this->settings['default_skin_archive'] == 'monthly_view') $content = $this->vmonth(array_merge(['sk-options' => ['monthly_view' => ['style' => $monthly_skin]]], $atts));
-        else if ($this->settings['default_skin_archive'] == 'full_calendar') $content = $this->vdefaultfull($atts);
+        else if ($this->settings['default_skin_archive'] == 'full_calendar')
+        {
+            // Liquid (and other addon styles) need the real full_calendar skin.
+            // default_full_calendar is a classic-only archive wrapper and ignores full_calendar_archive_skin=liquid.
+            $full_calendar_style = (isset($this->settings['full_calendar_archive_skin']) and trim((string) $this->settings['full_calendar_archive_skin']) !== '') ? $this->settings['full_calendar_archive_skin'] : 'classic';
+            $content = (false !== strpos($full_calendar_style, 'liquid')) ? $this->vfull($atts) : $this->vdefaultfull($atts);
+        }
         else if ($this->settings['default_skin_archive'] == 'yearly_view') $content = $this->vyear($atts);
         else if ($this->settings['default_skin_archive'] == 'weekly_view') $content = $this->vweek($atts);
         else if ($this->settings['default_skin_archive'] == 'daily_view') $content = $this->vday($atts);

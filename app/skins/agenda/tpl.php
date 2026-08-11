@@ -38,7 +38,7 @@ jQuery(document).ready(function()
             end_date: "'.esc_js($this->end_date).'",
             offset: "'.esc_js($this->next_offset).'",
             limit: "'.esc_js($this->limit).'",
-            pagination: "'.$this->pagination.'",
+            pagination: "'.esc_js($this->pagination).'",
             current_month_divider: "'.esc_js($current_month_divider).'",
             atts: "'.http_build_query(array('atts' => $this->atts), '', '&').'",
             ajax_url: "'.esc_js(admin_url('admin-ajax.php', NULL)).'",
