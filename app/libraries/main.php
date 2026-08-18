@@ -4714,8 +4714,8 @@ class MEC_main extends MEC_base
         $event_content = str_replace("\n", "\\n", $event_content);
         $event_content = preg_replace('/(<script[^>]*>.+?<\/script>|<style[^>]*>.+?<\/style>)/s', '', $event_content);
 
-        $ical .= "CREATED:" . date('Ymd', $stamp) . $crlf;
-        $ical .= "LAST-MODIFIED:" . date('Ymd', $modified) . $crlf;
+        $ical .= "CREATED:" . gmdate('Ymd\\THis\\Z', $stamp) . $crlf;
+        $ical .= "LAST-MODIFIED:" . gmdate('Ymd\\THis\\Z', $modified) . $crlf;
         $ical .= "PRIORITY:5" . $crlf;
         $ical .= "SEQUENCE:" . $sequence . $crlf;
         $ical .= "TRANSP:OPAQUE" . $crlf;
@@ -4811,8 +4811,8 @@ class MEC_main extends MEC_base
         $event_content = str_replace("\n", "\\n", $event_content);
         $event_content = preg_replace('/(<script[^>]*>.+?<\/script>|<style[^>]*>.+?<\/style>)/s', '', $event_content);
 
-        $ical .= "CREATED:" . date('Ymd', $stamp) . $crlf;
-        $ical .= "LAST-MODIFIED:" . date('Ymd', $modified) . $crlf;
+        $ical .= "CREATED:" . gmdate('Ymd\\THis\\Z', $stamp) . $crlf;
+        $ical .= "LAST-MODIFIED:" . gmdate('Ymd\\THis\\Z', $modified) . $crlf;
         $ical .= "PRIORITY:5" . $crlf;
         $ical .= "SEQUENCE:" . $sequence . $crlf;
         $ical .= "TRANSP:OPAQUE" . $crlf;
@@ -4904,8 +4904,8 @@ class MEC_main extends MEC_base
         $ical .= "DTSTART:" . gmdate($time_format, ($start_time - $gmt_offset_seconds)) . $crlf;
         $ical .= "DTEND:" . gmdate($time_format, ($end_time - $gmt_offset_seconds)) . $crlf;
         $ical .= "DTSTAMP:" . gmdate($time_format, ($stamp - $gmt_offset_seconds)) . $crlf;
-        $ical .= "CREATED:" . date('Ymd', $stamp) . $crlf;
-        $ical .= "LAST-MODIFIED:" . date('Ymd', $modified) . $crlf;
+        $ical .= "CREATED:" . gmdate('Ymd\\THis\\Z', $stamp) . $crlf;
+        $ical .= "LAST-MODIFIED:" . gmdate('Ymd\\THis\\Z', $modified) . $crlf;
         $ical .= "PRIORITY:5" . $crlf;
         $ical .= "SEQUENCE:" . $sequence . $crlf;
         $ical .= "TRANSP:OPAQUE" . $crlf;
