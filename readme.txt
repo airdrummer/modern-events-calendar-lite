@@ -4,7 +4,7 @@ Donate link: https://webnus.net
 Tags: Event, Events, Calendar, Booking, Schedule, Organizer, Venue
 Requires at least: 4.0.0
 Tested up to: 7.1
-Stable tag: 7.36.1
+Stable tag: 7.36.1.1
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -472,6 +472,11 @@ You can see [plugin documentation](https://webnus.net/dox/modern-events-calendar
 43. WordPress Event Calendar - Daily view(Fluent View Layouts Addon)
 
 == Changelog ==
+
+v 7.36.1.1 - 1sept26
+- fixed ical CREATED/LAST-MODIFIED format
+- added missing timezone display, reformat
+- fixed countdown
 
 = 7.36.1 - 1 September 2026
 -Improved: The offline activation experience.

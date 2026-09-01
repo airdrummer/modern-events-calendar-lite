@@ -1,3 +1,8 @@
+v 7.36.1.1 - 1sept26
+- fixed ical CREATED/LAST-MODIFIED format
+- added missing timezone display, reformat
+- fixed countdown
+
 - 7.36.1 - 1 September 2026
 -Improved: The offline activation experience.
 v 7.36.0 - 1 September 2026
