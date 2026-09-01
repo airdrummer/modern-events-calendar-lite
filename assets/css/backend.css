@@ -15183,9 +15183,10 @@ body.post-type-mec_invoice #post-body-content {
   color: #40d47e;
 }
 
-/* Copy: quiet secondary action, inline with the host code. A slim outline
-   pill so it doesn't compete with the primary CTA. */
-.w-box.mec-activation .box-mec-offline-activation .mec-offline-copy-host {
+/* Copy + Contact support: quiet secondary actions, inline with the host
+   code. Slim outline pills so they don't compete with the primary CTA. */
+.w-box.mec-activation .box-mec-offline-activation .mec-offline-copy-host,
+.w-box.mec-activation .box-mec-offline-activation .mec-offline-support-btn {
   display: inline-block;
   border: 1px solid #d6dbe0;
   border-radius: 33px;
@@ -15202,60 +15203,36 @@ body.post-type-mec_invoice #post-body-content {
   transition: border-color .2s ease, color .2s ease;
 }
 
-.w-box.mec-activation .box-mec-offline-activation .mec-offline-copy-host:hover {
+.w-box.mec-activation .box-mec-offline-activation .mec-offline-copy-host:hover,
+.w-box.mec-activation .box-mec-offline-activation .mec-offline-support-btn:hover {
   border-color: #9aa5ae;
   color: #1d2327;
 }
 
-.w-box.mec-activation .box-mec-offline-activation .mec-offline-copy-host.mec-copied {
+.w-box.mec-activation .box-mec-offline-activation .mec-offline-copy-host.mec-copy-done {
   border-color: #64e385;
   color: #1a7f37;
 }
 
-/* Contact support: same green pill as this box's primary submit button. */
-.w-box.mec-activation .box-mec-offline-activation .mec-offline-support-btn {
-  display: inline-block;
-  border: none;
-  border-radius: 33px;
-  background: #64e385;
-  color: #fff;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 1px;
-  line-height: 1;
-  padding: 10px 22px;
-  box-shadow: none;
-  text-decoration: none;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: background .28s ease;
-}
-
-.w-box.mec-activation .box-mec-offline-activation .mec-offline-support-btn:hover {
-  background: #45ce68;
-  color: #fff;
-}
-
-.w-box.mec-activation .mec-offline-support-link {
-  margin: 0 0 10px;
-}
-
 .w-box.mec-activation .box-mec-avtivation>.mec-notice--success {
   margin: 0 0 14px;
+  width: 70%;
 }
 
-.mec-admin-dark-mode .w-box.mec-activation .box-mec-offline-activation .mec-offline-copy-host {
+.mec-admin-dark-mode .w-box.mec-activation .box-mec-offline-activation .mec-offline-copy-host,
+.mec-admin-dark-mode .w-box.mec-activation .box-mec-offline-activation .mec-offline-support-btn {
   border-color: #3c434a;
   background: transparent;
   color: #aeb7bf;
 }
 
-.mec-admin-dark-mode .w-box.mec-activation .box-mec-offline-activation .mec-offline-copy-host:hover {
+.mec-admin-dark-mode .w-box.mec-activation .box-mec-offline-activation .mec-offline-copy-host:hover,
+.mec-admin-dark-mode .w-box.mec-activation .box-mec-offline-activation .mec-offline-support-btn:hover {
   border-color: #6b747c;
   color: #fff;
 }
 
-.mec-admin-dark-mode .w-box.mec-activation .box-mec-offline-activation .mec-offline-copy-host.mec-copied {
+.mec-admin-dark-mode .w-box.mec-activation .box-mec-offline-activation .mec-offline-copy-host.mec-copy-done {
   border-color: #64e385;
   color: #64e385;
 }

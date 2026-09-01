@@ -1,4 +1,6 @@
-﻿v 7.36.0 - 1 September 2026
+- 7.36.1 - 1 September 2026
+-Improved: The offline activation experience.
+v 7.36.0 - 1 September 2026
 - Added: A signed license system with offline token activation and phased enforcement of Pro features.
 - Enhanced: Stripe and Stripe Connect payment completion using webhooks.
 - Enhanced: The add/edit event screen with a refreshed field layout, an improved time picker and live calendar validation warnings.

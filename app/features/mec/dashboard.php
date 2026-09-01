@@ -56,9 +56,9 @@ $box_stats = apply_filters('mec_dashboard_box_stats', true);
     <div class="welcome-head w-clearfix">
         <div class="w-row">
             <div class="w-col-sm-9">
-                <h1> <?php echo sprintf(esc_html__('Welcome %s', 'modern-events-calendar-lite'), $current_user->user_firstname); ?> </h1>
+                <h1> <?php echo sprintf(esc_html__('Welcome %s', 'mec'), $current_user->user_firstname); ?> </h1>
                 <div class="w-welcome">
-                    <?php echo sprintf(esc_html__('%s - Most Powerful & Easy to Use Events Management System', 'modern-events-calendar-lite'), '<strong>' . ($this->getPRO() ? esc_html__('Modern Events Calendar', 'modern-events-calendar-lite') : esc_html__('Modern Events Calendar (Lite)', 'modern-events-calendar-lite')) . '</strong>'); ?>
+                    <?php echo sprintf(esc_html__('%s - Most Powerful & Easy to Use Events Management System', 'mec'), '<strong>' . ($this->getPRO() ? esc_html__('Modern Events Calendar', 'mec') : esc_html__('Modern Events Calendar (Lite)', 'mec')) . '</strong>'); ?>
                 </div>
             </div>
             <div class="w-col-sm-3">
@@ -68,7 +68,7 @@ $box_stats = apply_filters('mec_dashboard_box_stats', true);
                 else: $darklogo = plugin_dir_url(__FILE__) . '../../../assets/img/mec-logo-w.png';
                 endif; ?>
                 <img src="<?php echo esc_url($darklogo); ?>" />
-                <span class="w-theme-version"><?php echo esc_html__('Version', 'modern-events-calendar-lite'); ?> <?php echo MEC_VERSION; ?></span>
+                <span class="w-theme-version"><?php echo esc_html__('Version', 'mec'); ?> <?php echo MEC_VERSION; ?></span>
             </div>
         </div>
     </div>
@@ -134,10 +134,10 @@ $box_stats = apply_filters('mec_dashboard_box_stats', true);
                 <div class="w-col-sm-12">
                     <div class="info-msg">
                         <p>
-                            <?php echo sprintf(esc_html__("You're using %s version of Modern Events Calendar. To use advanced booking system, modern skins like Agenda, Timetable, Masonry, Yearly View, Available Spots, etc you should upgrade to the Pro version.", 'modern-events-calendar-lite'), '<strong>' . esc_html__('lite', 'modern-events-calendar-lite') . '</strong>'); ?>
+                            <?php echo sprintf(esc_html__("You're using %s version of Modern Events Calendar. To use advanced booking system, modern skins like Agenda, Timetable, Masonry, Yearly View, Available Spots, etc you should upgrade to the Pro version.", 'mec'), '<strong>' . esc_html__('lite', 'mec') . '</strong>'); ?>
                         </p>
                         <a class="info-msg-link" href="<?php echo esc_url($this->get_pro_link()); ?>" target="_blank">
-                            <?php esc_html_e('GO PREMIUM', 'modern-events-calendar-lite'); ?>
+                            <?php esc_html_e('GO PREMIUM', 'mec'); ?>
                         </a>
                         <div class="info-msg-coupon">
 
@@ -171,16 +171,16 @@ $box_stats = apply_filters('mec_dashboard_box_stats', true);
             <div class="w-col-sm-12">
                 <div class="w-box mec-intro-section">
                     <div class="w-box-content mec-intro-section-welcome">
-                        <h3><?php esc_html_e('Getting started with Modern Events Calendar', 'modern-events-calendar-lite'); ?></h3>
-                        <p><?php esc_html_e('In this short video, you can learn how to make an event and put a calendar on your website. Please watch this 2 minutes video to the end.', 'modern-events-calendar-lite'); ?></p>
+                        <h3><?php esc_html_e('Getting started with Modern Events Calendar', 'mec'); ?></h3>
+                        <p><?php esc_html_e('In this short video, you can learn how to make an event and put a calendar on your website. Please watch this 2 minutes video to the end.', 'mec'); ?></p>
                     </div>
                     <div class="w-box-content mec-intro-section-ifarme">
                         <iframe width="560" height="315" src="https://www.youtube.com/embed/P0c2G1qhusk?si=96nFmtSdPzARY4ed" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                     </div>
                     <div class="w-box-content mec-intro-section-links wp-core-ui">
-                        <a class="mec-intro-section-link-tag button button-primary button-hero" href="<?php esc_html_e(admin_url('post-new.php?post_type=mec-events')); ?>" target="_blank"><?php esc_html_e('Add New Event', 'modern-events-calendar-lite'); ?>
-                            <a class="mec-intro-section-link-tag button button-secondary button-hero" href="<?php esc_html_e(admin_url('admin.php?page=MEC-settings')); ?>" target="_blank"><?php esc_html_e('Settings', 'modern-events-calendar-lite'); ?>
-                                <a class="mec-intro-section-link-tag button button-secondary button-hero" href="https://webnus.net/dox/modern-events-calendar/" target="_blank"><?php esc_html_e('Documentation', 'modern-events-calendar-lite'); ?></a>
+                        <a class="mec-intro-section-link-tag button button-primary button-hero" href="<?php esc_html_e(admin_url('post-new.php?post_type=mec-events')); ?>" target="_blank"><?php esc_html_e('Add New Event', 'mec'); ?>
+                            <a class="mec-intro-section-link-tag button button-secondary button-hero" href="<?php esc_html_e(admin_url('admin.php?page=MEC-settings')); ?>" target="_blank"><?php esc_html_e('Settings', 'mec'); ?>
+                                <a class="mec-intro-section-link-tag button button-secondary button-hero" href="https://webnus.net/dox/modern-events-calendar/" target="_blank"><?php esc_html_e('Documentation', 'mec'); ?></a>
                     </div>
                 </div>
             </div>
@@ -194,13 +194,13 @@ $box_stats = apply_filters('mec_dashboard_box_stats', true);
                 <div class="w-col-sm-12">
                     <div class="w-box mec-activation">
                         <div class="w-box-head">
-                            <?php esc_html_e('License Activation', 'modern-events-calendar-lite'); ?>
+                            <?php esc_html_e('License Activation', 'mec'); ?>
                         </div>
                         <?php if (current_user_can('administrator')): ?>
                             <div class="w-box-content">
                                 <div class="box-addons-activation">
                                     <?php $mec_options = get_option('mec_options'); ?>
-                                    <div class="box-addon-activation-toggle-head"><i class="mec-sl-plus"></i><span><?php esc_html_e('Activate Addons', 'modern-events-calendar-lite'); ?></span></div>
+                                    <div class="box-addon-activation-toggle-head"><i class="mec-sl-plus"></i><span><?php esc_html_e('Activate Addons', 'mec'); ?></span></div>
                                     <div class="box-addon-activation-toggle-content">
                                         <?php do_action('addons_activation'); ?>
                                     </div>
@@ -208,7 +208,7 @@ $box_stats = apply_filters('mec_dashboard_box_stats', true);
                             </div>
                         <?php else: ?>
                             <div class="w-box-content">
-                                <p style="background: #f7f7f7f7;display: inline-block;padding: 17px 35px;border-radius: 3px;/* box-shadow: 0 1px 16px rgba(0,0,0,.034); */"><?php echo esc_html__('You cannot access this section.', 'modern-events-calendar-lite'); ?></p>
+                                <p style="background: #f7f7f7f7;display: inline-block;padding: 17px 35px;border-radius: 3px;/* box-shadow: 0 1px 16px rgba(0,0,0,.034); */"><?php echo esc_html__('You cannot access this section.', 'mec'); ?></p>
                             </div>
                         <?php endif; ?>
                     </div>
@@ -219,20 +219,20 @@ $box_stats = apply_filters('mec_dashboard_box_stats', true);
                 <div class="w-col-sm-12">
                     <div class="w-box mec-activation">
                         <div class="w-box-head">
-                            <?php esc_html_e('License Activation', 'modern-events-calendar-lite'); ?>
+                            <?php esc_html_e('License Activation', 'mec'); ?>
                         </div>
                         <?php
                         if (current_user_can('administrator')):
                         ?>
                             <div class="w-box-content">
-                                <p><?php echo esc_html__('In order to use all plugin features and options, please enter your purchase code.', 'modern-events-calendar-lite'); ?></p>
+                                <p><?php echo esc_html__('In order to use all plugin features and options, please enter your purchase code.', 'mec'); ?></p>
                                 <div class="box-mec-avtivation">
                                     <?php
                                     $mec_options = get_option('mec_options');
                                     $product_license = '';
                                     $license_status = '';
                                     $class_name = 'mec_activate';
-                                    $button_value = esc_html__('submit', 'modern-events-calendar-lite');
+                                    $button_value = esc_html__('submit', 'mec');
 
                                     if (!empty($mec_options) and is_array($mec_options) and isset($mec_options['purchase_code'])) $product_license = $mec_options['purchase_code'];
 
@@ -261,49 +261,50 @@ $box_stats = apply_filters('mec_dashboard_box_stats', true);
                                         $license_status = 'PurchaseSuccess';
                                         $revoke = true;
                                         $class_name = 'mec_revoke';
-                                        $button_value = esc_html__('revoke', 'modern-events-calendar-lite');
+                                        $button_value = esc_html__('revoke', 'mec');
                                     } elseif (!empty($mec_options['purchase_code']) && $mec_license_status == 'active') {
                                         $license_status = 'PurchaseError';
                                         $revoke = true;
                                         $class_name = 'mec_revoke';
-                                        $button_value = esc_html__('revoke', 'modern-events-calendar-lite');
+                                        $button_value = esc_html__('revoke', 'mec');
                                     } elseif (!empty($mec_options['purchase_code']) && $mec_license_status == 'faild') {
                                         $license_status = 'PurchaseError';
                                         $revoke = false;
                                     }
 
-                                    // If the site is running on a limited (offline) token, show the
-                                    // expiry date prominently so the customer activates the real
-                                    // licence before it lapses.
-                                    $mec_token_exp = (class_exists('MEC_license')) ? MEC_license::instance()->token_expiry() : null;
                                     ?>
-                                    <form id="MECActivation" action="#" method="post">
-                                        <?php if ($mec_token_exp !== null): ?>
-                                        <div class="mec-notice mec-notice--warning">
+                                    <?php if ($mec_is_offline_licensed): ?>
+                                        <div class="mec-notice mec-notice--success">
                                             <div class="mec-notice-accent"></div>
                                             <div class="mec-notice-body">
-                                                <div class="mec-notice-title"><?php esc_html_e('Offline activation', 'modern-events-calendar-lite'); ?></div>
+                                                <div class="mec-notice-title"><?php esc_html_e('Offline activation', 'mec'); ?></div>
                                                 <p class="mec-notice-text">
                                                     <?php
-                                                    $exp_format = get_option('date_format') ?: 'Y-m-d';
-                                                    printf(
-                                                        /* translators: %s: expiry date */
-                                                        esc_html__('Your offline activation token expires on %s. Enter your real purchase code below before then to keep Pro features running.', 'modern-events-calendar-lite'),
-                                                        '<strong>' . esc_html(date_i18n($exp_format, $mec_token_exp)) . '</strong>'
-                                                    );
+                                                    $mec_token_exp = (class_exists('MEC_license')) ? MEC_license::instance()->token_expiry() : null;
+                                                    if ($mec_token_exp !== null) {
+                                                        $exp_format = get_option('date_format') ?: 'Y-m-d';
+                                                        printf(
+                                                            /* translators: %s: expiry date */
+                                                            esc_html__('License activated. This offline token is valid until %s. Activate your real purchase code before then to keep Pro running.', 'mec'),
+                                                            '<strong>' . esc_html(date_i18n($exp_format, $mec_token_exp)) . '</strong>'
+                                                        );
+                                                    } else {
+                                                        esc_html_e('License activated. Thank you.', 'mec');
+                                                    }
                                                     ?>
                                                 </p>
                                             </div>
                                         </div>
-                                        <?php endif; ?>
+                                    <?php endif; ?>
+                                    <form id="MECActivation" action="#" method="post">
                                         <div class="LicenseField">
-                                            <input type="password" placeholder="<?php echo $mec_is_offline_licensed ? esc_attr__('Activated via offline token. Enter your purchase code to switch', 'modern-events-calendar-lite') : 'Put your purchase code here'; ?>" name="MECPurchaseCode" value="<?php echo esc_html($product_license); ?>">
+                                            <input type="password" placeholder="<?php echo $mec_is_offline_licensed ? esc_attr__('Activated via offline token. Enter your purchase code to switch', 'mec') : 'Put your purchase code here'; ?>" name="MECPurchaseCode" value="<?php echo esc_html($product_license); ?>">
                                             <input type="submit" class="<?php echo esc_html($class_name); ?>" value="<?php echo esc_html($button_value); ?>">
                                             <div class="MECPurchaseStatus <?php echo esc_html($license_status); ?>"></div>
                                         </div>
                                         <div class="MECLicenseMessage mec-message-hidden">
                                             <?php
-                                            echo esc_html__('Activation failed. Please check your purchase code or license type. Note: Your purchase code should match your licesne type.', 'modern-events-calendar-lite') . '<a style="text-decoration: underline; padding-left: 7px;" href="https://webnus.net/dox/modern-events-calendar/auto-update/" target="_blank">'  . esc_html__('Troubleshooting', 'modern-events-calendar-lite') . '</a>';
+                                            echo esc_html__('Activation failed. Please check your purchase code or license type. Note: Your purchase code should match your licesne type.', 'mec') . '<a style="text-decoration: underline; padding-left: 7px;" href="https://webnus.net/dox/modern-events-calendar/auto-update/" target="_blank">'  . esc_html__('Troubleshooting', 'mec') . '</a>';
                                             ?>
                                         </div>
                                     </form>
@@ -311,7 +312,7 @@ $box_stats = apply_filters('mec_dashboard_box_stats', true);
 
                                 <div class="box-addons-activation">
                                     <?php $mec_options = get_option('mec_options'); ?>
-                                    <div class="box-addon-activation-toggle-head"><i class="mec-sl-plus"></i><span><?php esc_html_e('Activate Addons', 'modern-events-calendar-lite'); ?></span></div>
+                                    <div class="box-addon-activation-toggle-head"><i class="mec-sl-plus"></i><span><?php esc_html_e('Activate Addons', 'mec'); ?></span></div>
                                     <div class="box-addon-activation-toggle-content">
                                         <?php do_action('addons_activation'); ?>
                                     </div>
@@ -329,7 +330,7 @@ $box_stats = apply_filters('mec_dashboard_box_stats', true);
                                 if (!$mec_license_token):
                                 ?>
                                 <div class="box-mec-offline-activation">
-                                    <p><?php esc_html_e('No outbound internet connection on this server, or bought through a reseller? Ask support for an offline activation token and paste it below.', 'modern-events-calendar-lite'); ?></p>
+                                    <p><?php esc_html_e('No outbound internet connection on this server, or bought through a reseller? Ask support for an offline activation token and paste it below.', 'mec'); ?></p>
                                     <?php
                                     // The exact host the token is bound to. Shown because the
                                     // customer's idea of their domain and home_url() disagree
@@ -340,18 +341,16 @@ $box_stats = apply_filters('mec_dashboard_box_stats', true);
                                     ?>
                                     <p class="mec-offline-site-id">
                                         <?php printf(
-                                            esc_html__('Quote this site address when you ask: %s', 'modern-events-calendar-lite'),
+                                            esc_html__('Quote this site address when you ask: %s', 'mec'),
                                             '<code>' . esc_html(MEC_license::instance()->host()) . '</code>'
                                         ); ?>
-                                        <button type="button" class="mec-offline-copy-host" data-host="<?php echo esc_attr(MEC_license::instance()->host()); ?>"><?php esc_html_e('Copy', 'modern-events-calendar-lite'); ?></button>
-                                    </p>
-                                    <p class="mec-offline-support-link">
-                                        <a class="mec-offline-support-btn" href="https://webnus.net/support" target="_blank" rel="noopener noreferrer"><?php esc_html_e('Contact support', 'modern-events-calendar-lite'); ?></a>
+                                        <button type="button" class="mec-offline-copy-host" data-host="<?php echo esc_attr(MEC_license::instance()->host()); ?>"><?php esc_html_e('Copy', 'mec'); ?></button>
+                                        <button type="button" class="mec-offline-support-btn" data-support-url="https://webnus.net/support"><?php esc_html_e('Contact support', 'mec'); ?></button>
                                     </p>
                                     <form id="MECOfflineActivation" action="#" method="post">
                                         <div class="LicenseField">
-                                            <input type="text" name="MECOfflineToken" autocomplete="off" spellcheck="false" placeholder="<?php echo esc_attr__('Paste your offline activation token here', 'modern-events-calendar-lite'); ?>">
-                                            <input type="submit" value="<?php echo esc_attr__('Activate offline', 'modern-events-calendar-lite'); ?>">
+                                            <input type="text" name="MECOfflineToken" autocomplete="off" spellcheck="false" placeholder="<?php echo esc_attr__('Paste your offline activation token here', 'mec'); ?>">
+                                            <input type="submit" value="<?php echo esc_attr__('Activate offline', 'mec'); ?>">
                                         </div>
                                         <div class="MECOfflineMessage" role="status" aria-live="polite"></div>
                                     </form>
@@ -362,18 +361,24 @@ $box_stats = apply_filters('mec_dashboard_box_stats', true);
                                     var copyBtn = document.querySelector('.mec-offline-copy-host');
 
                                     // One-click copy of the host so the support ticket is unambiguous.
+                                    // The state class is "mec-copy-done", NOT "mec-copied": a legacy
+                                    // ".mec-copied" rule in backend.css hides any element with it.
                                     if (copyBtn) {
+                                        var copiedTimer = null;
+                                        var label = copyBtn.textContent;
+
                                         copyBtn.addEventListener('click', function () {
                                             var host = copyBtn.getAttribute('data-host') || '';
-                                            var label = copyBtn.textContent;
 
                                             var done = function () {
-                                                copyBtn.textContent = <?php echo wp_json_encode(esc_html__('Copied!', 'modern-events-calendar-lite')); ?>;
-                                                copyBtn.classList.add('mec-copied');
-                                                window.setTimeout(function () {
+                                                copyBtn.textContent = <?php echo wp_json_encode(esc_html__('Copied!', 'mec')); ?>;
+                                                copyBtn.classList.add('mec-copy-done');
+
+                                                window.clearTimeout(copiedTimer);
+                                                copiedTimer = window.setTimeout(function () {
                                                     copyBtn.textContent = label;
-                                                    copyBtn.classList.remove('mec-copied');
-                                                }, 1500);
+                                                    copyBtn.classList.remove('mec-copy-done');
+                                                }, 2000);
                                             };
 
                                             if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -387,6 +392,13 @@ $box_stats = apply_filters('mec_dashboard_box_stats', true);
                                                 document.body.removeChild(ta);
                                                 done();
                                             }
+                                        });
+                                    }
+
+                                    var supportBtn = document.querySelector('.mec-offline-support-btn');
+                                    if (supportBtn) {
+                                        supportBtn.addEventListener('click', function () {
+                                            window.open(supportBtn.getAttribute('data-support-url'), '_blank', 'noopener,noreferrer');
                                         });
                                     }
 
@@ -418,13 +430,8 @@ $box_stats = apply_filters('mec_dashboard_box_stats', true);
                                             var message = (result && result.data && result.data.message) ? result.data.message : '';
 
                                             if (success) {
-                                                // Keep the server message (it carries the expiry date)
-                                                // across the reload: without this the page refresh
-                                                // wipes it before the customer can read it.
-                                                try { sessionStorage.setItem('mec_offline_activated', message); } catch (e) {}
-
-                                                // Reload immediately so the success card replaces the
-                                                // box (no inline flash message to lose).
+                                                // Reload so the server-rendered success notice
+                                                // replaces the box.
                                                 window.location.reload();
                                                 return;
                                             }
@@ -432,7 +439,7 @@ $box_stats = apply_filters('mec_dashboard_box_stats', true);
                                             out.textContent = message;
                                             out.className = 'MECOfflineMessage mec-offline-error';
                                         })['catch'](function () {
-                                            out.textContent = <?php echo wp_json_encode(esc_html__('Could not reach this site\'s admin. Please reload the page and try again.', 'modern-events-calendar-lite')); ?>;
+                                            out.textContent = <?php echo wp_json_encode(esc_html__('Could not reach this site\'s admin. Please reload the page and try again.', 'mec')); ?>;
                                             out.className = 'MECOfflineMessage mec-offline-error';
                                         }).then(function () {
                                             submit.disabled = false;
@@ -442,48 +449,10 @@ $box_stats = apply_filters('mec_dashboard_box_stats', true);
                                 </script>
                             </div>
                                 <?php endif; // !$mec_license_token ?>
-
-                                <?php
-                                // Success feedback after the reload above: the server message
-                                // (with the token expiry date) was parked in sessionStorage;
-                                // render it as a green notice above the license form, once.
-                                ?>
-                                <script>
-                                (function () {
-                                    var message = '';
-                                    try {
-                                        message = sessionStorage.getItem('mec_offline_activated') || '';
-                                        sessionStorage.removeItem('mec_offline_activated');
-                                    } catch (e) {}
-
-                                    if (!message) return;
-
-                                    function show() {
-                                        var box = document.querySelector('.box-mec-avtivation');
-                                        if (!box) return;
-
-                                        // The green success card carries the expiry date already,
-                                        // so the persistent yellow expiry warning is redundant on
-                                        // this one load. It returns on the next visit.
-                                        var yellow = box.querySelector('.mec-notice--warning');
-                                        if (yellow) yellow.parentNode.removeChild(yellow);
-
-                                        var card = document.createElement('div');
-                                        card.className = 'mec-notice mec-notice--success';
-                                        card.innerHTML = '<div class="mec-notice-accent"></div><div class="mec-notice-body"><div class="mec-notice-title"><?php echo esc_js(esc_html__('Offline activation', 'modern-events-calendar-lite')); ?></div><p class="mec-notice-text"></p></div>';
-                                        card.querySelector('.mec-notice-text').textContent = message;
-
-                                        box.insertBefore(card, box.firstChild);
-                                    }
-
-                                    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', show);
-                                    else show();
-                                })();
-                                </script>
                         <?php
                         else: ?>
                             <div class="w-box-content">
-                                <p style="background: #f7f7f7f7;display: inline-block;padding: 17px 35px;border-radius: 3px;/* box-shadow: 0 1px 16px rgba(0,0,0,.034); */"><?php echo esc_html__('You cannot access this section.', 'modern-events-calendar-lite'); ?></p>
+                                <p style="background: #f7f7f7f7;display: inline-block;padding: 17px 35px;border-radius: 3px;/* box-shadow: 0 1px 16px rgba(0,0,0,.034); */"><?php echo esc_html__('You cannot access this section.', 'mec'); ?></p>
                             </div>
                         <?php
                         endif;
@@ -495,28 +464,28 @@ $box_stats = apply_filters('mec_dashboard_box_stats', true);
                 <div class="w-col-sm-3">
                     <div class="w-box doc">
                         <div class="w-box-child mec-count-child">
-                            <p><?php echo '<p class="mec_dash_count">' . esc_html($user_post_count) . '</p> ' . esc_html__('Events', 'modern-events-calendar-lite'); ?></p>
+                            <p><?php echo '<p class="mec_dash_count">' . esc_html($user_post_count) . '</p> ' . esc_html__('Events', 'mec'); ?></p>
                         </div>
                     </div>
                 </div>
                 <div class="w-col-sm-3">
                     <div class="w-box doc">
                         <div class="w-box-child mec-count-child">
-                            <p><?php echo '<p class="mec_dash_count">' . esc_html($user_post_count_c) . '</p> ' . esc_html__('Shortcodes', 'modern-events-calendar-lite'); ?></p>
+                            <p><?php echo '<p class="mec_dash_count">' . esc_html($user_post_count_c) . '</p> ' . esc_html__('Shortcodes', 'mec'); ?></p>
                         </div>
                     </div>
                 </div>
                 <div class="w-col-sm-3">
                     <div class="w-box doc">
                         <div class="w-box-child mec-count-child">
-                            <p><?php echo '<p class="mec_dash_count">' . esc_html($user_location_count_l) . '</p> ' . esc_html__('Locations', 'modern-events-calendar-lite'); ?></p>
+                            <p><?php echo '<p class="mec_dash_count">' . esc_html($user_location_count_l) . '</p> ' . esc_html__('Locations', 'mec'); ?></p>
                         </div>
                     </div>
                 </div>
                 <div class="w-col-sm-3">
                     <div class="w-box doc">
                         <div class="w-box-child mec-count-child">
-                            <p><?php echo '<p class="mec_dash_count">' . esc_html($user_organizer_count_l) . '</p> ' . esc_html__('Organizers', 'modern-events-calendar-lite'); ?></p>
+                            <p><?php echo '<p class="mec_dash_count">' . esc_html($user_organizer_count_l) . '</p> ' . esc_html__('Organizers', 'mec'); ?></p>
                         </div>
                     </div>
                 </div>
@@ -527,7 +496,7 @@ $box_stats = apply_filters('mec_dashboard_box_stats', true);
                 <div class="w-col-sm-<?php echo ($booking_status ? 6 : 12); ?>">
                     <div class="w-box upcoming-events">
                         <div class="w-box-head">
-                            <?php esc_html_e('Upcoming Events', 'modern-events-calendar-lite'); ?>
+                            <?php esc_html_e('Upcoming Events', 'mec'); ?>
                         </div>
                         <div class="w-box-content">
                             <?php
@@ -551,7 +520,7 @@ $box_stats = apply_filters('mec_dashboard_box_stats', true);
                     <div class="w-col-sm-6">
                         <div class="w-box gateways">
                             <div class="w-box-head">
-                                <?php echo esc_html__('Popular Gateways', 'modern-events-calendar-lite'); ?>
+                                <?php echo esc_html__('Popular Gateways', 'mec'); ?>
                             </div>
                             <div class="w-box-content">
                                 <?php
@@ -609,7 +578,7 @@ $box_stats = apply_filters('mec_dashboard_box_stats', true);
             <div class="w-col-sm-12">
                 <div class="w-box change-log">
                     <div class="w-box-head">
-                        <?php echo esc_html__('Change Log', 'modern-events-calendar-lite'); ?>
+                        <?php echo esc_html__('Change Log', 'mec'); ?>
                     </div>
                     <div class="w-box-content">
                         <pre><?php echo file_get_contents(plugin_dir_path(__FILE__) . '../../../changelog.txt'); ?></pre>
