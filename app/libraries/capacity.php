@@ -459,6 +459,11 @@ class MEC_capacity extends MEC_base
 
             $expires = gmdate('Y-m-d H:i:s', time() + self::HOLD_TTL);
 
+            $session_key = '';
+            if (function_exists('WC') && WC()->session) {
+                $session_key = (string) WC()->session->get_customer_id();
+            }
+
             foreach ($demand['tickets'] as $ticket_id => $qty) {
                 $inserted = $wpdb->insert(
                     $table,
@@ -468,7 +473,7 @@ class MEC_capacity extends MEC_base
                         'ticket_id'       => (string) $ticket_id,
                         'qty'             => absint($qty),
                         'hold_type'       => sanitize_key($hold_type),
-                        'session_key'     => '',
+                        'session_key'     => $session_key,
                         'order_id'        => 0,
                         'transaction_id'  => (string) $transaction_id,
                         'product_id'      => 0,

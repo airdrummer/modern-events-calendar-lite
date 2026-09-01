@@ -325,7 +325,12 @@ class MEC_skins extends MEC_base
      */
     public function output()
     {
-        if (!$this->main->getPRO() and in_array($this->skin, ['agenda', 'yearly_view', 'timetable', 'masonry', 'map', 'available_spot']))
+        // Last-resort guard for paths that instantiate a skin controller
+        // directly instead of going through MEC_render::skin(). The substitution
+        // to a fallback layout happens there, in MEC_render::available_skin(),
+        // because only the dispatcher can choose a different controller — by the
+        // time we are inside output() the object already exists.
+        if (!$this->main->isProPresentationEnabled() and in_array($this->skin, ['agenda', 'yearly_view', 'timetable', 'masonry', 'map', 'available_spot']))
         {
             return '';
         }
@@ -2614,6 +2619,8 @@ class MEC_skins extends MEC_base
             $title = apply_filters('mec_occurrence_event_title', $event->data->title, $event);
             $link_for_title = true;
         }
+
+        if (!$link_for_title && !trim((string) $title)) return '';
 
         // Link Class
         if (is_null($class)) $class = 'mec-color-hover';

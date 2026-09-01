@@ -1,0 +1,63 @@
+body.m-e-calendar_page_MEC-ai{background:#fff}
+.mec-ai-page{max-width:1140px;margin:34px auto 0;color:#343a40}
+.mec-ai-page .w-box{box-sizing:border-box;min-height:0;margin:0;padding:0;border:1px solid #e3e5e7;border-radius:15px;background:#fff;box-shadow:none}
+.mec-ai-layout{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:30px;align-items:start}
+.mec-ai-task-card{padding:30px!important}
+.mec-ai-status-card{padding:25px!important}
+.mec-ai-setup-guide{max-width:808px;margin:0 auto!important;padding:30px!important}
+.mec-ai-card-heading,.mec-ai-section-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:18px}
+.mec-ai-card-heading h2,.mec-ai-section-heading h2{margin:5px 0 0;color:#343a40;font-size:20px;line-height:1.35}
+.mec-ai-step{display:block;color:#38d5ed;font-size:11px;line-height:1.2;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.mec-ai-phase-badge{padding:7px 13px;border:1px solid #b8edf6;border-radius:999px;background:#f1fcfe;color:#1598ad;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.mec-ai-section-heading{margin:30px 0 20px}
+.mec-ai-section-heading>div{flex:1}
+.mec-ai-section-heading p{margin:5px 0 0;color:#6d767d;font-size:13px;line-height:1.5}
+.mec-ai-detail-heading{padding-top:26px;border-top:1px solid #e8eaeb}
+.mec-ai-form-row{padding:0 0 20px!important}
+.mec-ai-form-row .mec-col-3,.mec-ai-prompt-row>label{color:#4e555b;font-weight:600}
+.mec-ai-form-row select{min-width:180px;border-color:#e3e5e7;border-radius:6px;color:#4e555b}
+.mec-ai-required{margin-inline-start:4px;color:#e6584b}
+.mec-ai-prompt-help{margin-top:12px;padding:14px 16px;border:1px solid #cceff5;border-radius:8px;background:#f6fdfe;color:#667279;font-size:12px;line-height:1.5}
+.mec-ai-prompt-help strong{color:#1598ad}
+.mec-ai-prompt-help ul{margin:7px 0 0 18px;list-style:disc}
+.mec-ai-prompt-help li{margin:3px 0}
+.mec-ai-submit-row{display:flex;align-items:center;justify-content:space-between;gap:22px;margin-top:12px;padding:20px 22px;border:1px solid #d8f2f6;border-radius:10px;background:#f8feff}
+.mec-ai-submit-row>div{display:grid;gap:4px}
+.mec-ai-submit-row strong{color:#343a40;font-size:14px}
+.mec-ai-submit-row span{color:#6d767d;font-size:12px;line-height:1.45}
+.mec-ai-page .button{border-radius:999px!important}
+.mec-ai-submit{display:inline-flex!important;align-items:center;justify-content:center;gap:9px;min-height:38px!important;padding:0 19px!important;border:1px solid #38d5ed!important;border-radius:999px!important;background:#38d5ed!important;color:#fff!important;box-shadow:none!important;font-weight:600!important;text-shadow:none!important}
+.mec-ai-submit:hover,.mec-ai-submit:focus{border-color:#18bdd6!important;background:#18bdd6!important;color:#fff!important;box-shadow:none!important}
+.mec-ai-submit.is-loading{opacity:.65}
+.mec-ai-request-notice{display:none;margin-top:14px;padding:11px 13px;border-radius:8px;font-size:13px}
+.mec-ai-request-notice:not(:empty){display:block}
+.mec-ai-request-notice.is-success{background:#edfaff;color:#16859a}
+.mec-ai-request-notice.is-error{background:#fff2f1;color:#c94d41}
+.mec-ai-status-list{display:grid;gap:15px;margin:24px 0;padding:0;list-style:none}
+.mec-ai-status-list li{display:flex;align-items:flex-start;gap:10px}
+.mec-ai-status-list li>span{width:9px;height:9px;flex:0 0 9px;margin-top:5px;border-radius:50%;background:#c7cdd0}
+.mec-ai-status-list li.is-ready>span{background:#38d5ed;box-shadow:0 0 0 4px rgba(56,213,237,.14)}
+.mec-ai-status-list li.is-warning>span{background:#e7aa3c;box-shadow:0 0 0 4px rgba(231,170,60,.14)}
+.mec-ai-status-list strong,.mec-ai-status-list small{display:block}
+.mec-ai-status-list strong{color:#4e555b;font-size:13px}
+.mec-ai-status-list small{margin-top:3px;color:#7a848b;font-size:12px;line-height:1.35}
+.mec-ai-connectors-link{display:flex;justify-content:space-between;align-items:center;padding:11px 14px;border:1px solid #b8edf6;border-radius:999px;background:#fff;color:#1598ad;font-size:13px;font-weight:600;text-decoration:none}
+.mec-ai-connectors-link:hover{border-color:#38d5ed;background:#f6fdfe;color:#117b8d}
+.mec-ai-setup-guide h2{margin:7px 0 9px;color:#343a40;font-size:22px}
+.mec-ai-setup-guide>p{max-width:690px;margin:0;color:#6d767d;line-height:1.6}
+.mec-ai-setup-steps{display:grid;gap:12px;margin:25px 0;padding:0;list-style:none}
+.mec-ai-setup-steps li{display:flex;gap:13px;padding:15px;border:1px solid #e3e5e7;border-radius:9px;background:#fff}
+.mec-ai-setup-steps li>span{display:grid;width:23px;height:23px;flex:0 0 23px;place-items:center;border-radius:50%;background:#38d5ed;color:#fff;font-size:12px;font-weight:700}
+.mec-ai-setup-steps strong,.mec-ai-setup-steps small{display:block}
+.mec-ai-setup-steps strong{color:#4e555b;font-size:13px}
+.mec-ai-setup-steps small{margin-top:3px;color:#788188;font-size:12px;line-height:1.4}
+.mec-ai-setup-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.mec-ai-setup-actions>span{color:#788188;font-size:12px}
+.mec-admin-dark-mode .mec-ai-page .w-box{border-color:#3b4248;background:#252a2e}
+.mec-admin-dark-mode .mec-ai-card-heading h2,.mec-admin-dark-mode .mec-ai-section-heading h2,.mec-admin-dark-mode .mec-ai-setup-guide h2,.mec-admin-dark-mode .mec-ai-submit-row strong{color:#f4f6f7}
+.mec-admin-dark-mode .mec-ai-section-heading p,.mec-admin-dark-mode .mec-ai-submit-row span,.mec-admin-dark-mode .mec-ai-setup-guide>p,.mec-admin-dark-mode .mec-ai-setup-actions>span{color:#b5bec4}
+.mec-admin-dark-mode .mec-ai-detail-heading{border-color:#3b4248}
+.mec-admin-dark-mode .mec-ai-prompt-help,.mec-admin-dark-mode .mec-ai-submit-row,.mec-admin-dark-mode .mec-ai-setup-steps li{border-color:#3b5960;background:#273238}
+.mec-admin-dark-mode .mec-ai-prompt-help{color:#cad5d9}
+@media(max-width:960px){.mec-ai-page{margin:25px 20px 0}.mec-ai-layout{grid-template-columns:1fr}.mec-ai-status-card{order:-1}.mec-ai-status-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.mec-ai-page{margin:20px 10px 0}.mec-ai-task-card,.mec-ai-status-card,.mec-ai-setup-guide{padding:22px!important}.mec-ai-status-list{grid-template-columns:1fr}.mec-ai-submit-row{align-items:stretch;flex-direction:column}.mec-ai-form-row .mec-col-3,.mec-ai-form-row .mec-col-9{float:none;width:100%;min-width:0}.mec-ai-form-row .mec-col-3{margin-bottom:8px}}

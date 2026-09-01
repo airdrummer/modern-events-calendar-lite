@@ -482,7 +482,7 @@ $pages = get_pages();
                             <div id="googlemap_option" class="mec-options-fields">
                                 <h4 class="mec-form-subtitle"><?php esc_html_e('Map', 'modern-events-calendar-lite'); ?></h4>
                                 <?php if(!$this->main->getPRO()): ?>
-                                <div class="info-msg"><?php echo sprintf(esc_html__("%s is required to use this feature.", 'modern-events-calendar-lite'), '<a href="'.esc_url($this->main->get_pro_link()).'" target="_blank">'.esc_html__('Pro version of Modern Events Calendar', 'modern-events-calendar-lite').'</a>'); ?></div>
+                                <div class="info-msg"><?php echo sprintf(esc_html__("%s is required to use this feature.", 'modern-events-calendar-lite'), $this->main->pro_notice_link()); ?></div>
                                 <?php else: ?>
                                 <div class="mec-form-row">
                                     <label>
@@ -657,7 +657,7 @@ $pages = get_pages();
                                 <h4 class="mec-form-subtitle"><?php esc_html_e('QR Code', 'modern-events-calendar-lite'); ?></h4>
 
                                 <?php if(!$this->main->getPRO()): ?>
-                                <div class="info-msg"><?php echo sprintf(esc_html__("%s is required to use this feature.", 'modern-events-calendar-lite'), '<a href="'.esc_url($this->main->get_pro_link()).'" target="_blank">'.esc_html__('Pro version of Modern Events Calendar', 'modern-events-calendar-lite').'</a>'); ?></div>
+                                <div class="info-msg"><?php echo sprintf(esc_html__("%s is required to use this feature.", 'modern-events-calendar-lite'), $this->main->pro_notice_link()); ?></div>
                                 <?php else: ?>
                                 <div class="mec-form-row">
                                     <label>
@@ -674,7 +674,7 @@ $pages = get_pages();
                             <div id="weather_module_option" class="mec-options-fields">
                                 <h4 class="mec-form-subtitle"><?php esc_html_e('Weather', 'modern-events-calendar-lite'); ?></h4>
                                 <?php if(!$this->main->getPRO()): ?>
-                                <div class="info-msg"><?php echo sprintf(esc_html__("%s is required to use this feature.", 'modern-events-calendar-lite'), '<a href="'.esc_url($this->main->get_pro_link()).'" target="_blank">'.esc_html__('Pro version of Modern Events Calendar', 'modern-events-calendar-lite').'</a>'); ?></div>
+                                <div class="info-msg"><?php echo sprintf(esc_html__("%s is required to use this feature.", 'modern-events-calendar-lite'), $this->main->pro_notice_link()); ?></div>
                                 <?php else: ?>
                                 <div class="mec-form-row">
                                     <label>

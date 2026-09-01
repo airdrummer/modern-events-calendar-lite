@@ -226,6 +226,7 @@ if (isset($styling['fes_color']) && $styling['fes_color']) {
 	--mec-fes-main-color-rgba-4: rgba<?php echo '(' . $fes_main_color_r . ', ' . $fes_main_color_g . ', ' . $fes_main_color_b . ', ' . '0.3)'; ?>;
 	--mec-fes-main-color-rgba-5: rgb<?php echo '(' . $fes_main_color_r . ' ' . $fes_main_color_g . ' ' . $fes_main_color_b . ' / ' . '7%)'; ?>;
 	--mec-fes-main-color-rgba-6: rgba<?php echo '(' . $fes_main_color_r . ', ' . $fes_main_color_g . ', ' . $fes_main_color_b . ', ' . '0.2)'; ?>;
+	--mec-fes-main-color-rgba-7: rgba<?php echo '(' . $fes_main_color_r . ', ' . $fes_main_color_g . ', ' . $fes_main_color_b . ', ' . '0.5)'; ?>;
 <?php
 } else {
 	list($fes_main_color_r, $fes_main_color_g, $fes_main_color_b) = sscanf($fes_main_color, "#%02x%02x%02x");
@@ -237,6 +238,7 @@ if (isset($styling['fes_color']) && $styling['fes_color']) {
 	--mec-fes-main-color-rgba-4: rgba<?php echo '(' . $fes_main_color_r . ', ' . $fes_main_color_g . ', ' . $fes_main_color_b . ', ' . '0.3)'; ?>;
 	--mec-fes-main-color-rgba-5: rgb<?php echo '(' . $fes_main_color_r . ' ' . $fes_main_color_g . ' ' . $fes_main_color_b . ' / ' . '7%)'; ?>;
 	--mec-fes-main-color-rgba-6: rgba<?php echo '(' . $fes_main_color_r . ', ' . $fes_main_color_g . ', ' . $fes_main_color_b . ', ' . '0.2)'; ?>;
+	--mec-fes-main-color-rgba-7: rgba<?php echo '(' . $fes_main_color_r . ', ' . $fes_main_color_g . ', ' . $fes_main_color_b . ', ' . '0.5)'; ?>;
 <?php
 }
 

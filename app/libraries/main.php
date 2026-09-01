@@ -2046,6 +2046,8 @@ class MEC_main extends MEC_base
         // Get mec options
         $mec = isset($_REQUEST['mec']) ? $this->sanitize_deep_array($_REQUEST['mec']) : [];
 
+        if (isset($raw_mec['styles']['CSS']) && is_string($raw_mec['styles']['CSS'])) $mec['styles']['CSS'] = sanitize_textarea_field($raw_mec['styles']['CSS']);
+
         if (isset($mec['colors']) and is_array($mec['colors']))
         {
             $colors = [];
@@ -2248,6 +2250,12 @@ class MEC_main extends MEC_base
             if (isset($raw_notification['content']))
             {
                 $notifications[$notif_key]['content'] = wp_kses_post(wp_unslash($raw_notification['content']));
+            }
+
+            // Zoom addon custom message (mec-zoom-integration) — same treatment as content
+            if (isset($raw_notification['zoom_content']))
+            {
+                $notifications[$notif_key]['zoom_content'] = wp_kses_post(wp_unslash($raw_notification['zoom_content']));
             }
         }
 
@@ -4714,8 +4722,8 @@ class MEC_main extends MEC_base
         $event_content = str_replace("\n", "\\n", $event_content);
         $event_content = preg_replace('/(<script[^>]*>.+?<\/script>|<style[^>]*>.+?<\/style>)/s', '', $event_content);
 
-        $ical .= "CREATED:" . gmdate('Ymd\\THis\\Z', $stamp) . $crlf;
-        $ical .= "LAST-MODIFIED:" . gmdate('Ymd\\THis\\Z', $modified) . $crlf;
+        $ical .= "CREATED:" . date('Ymd', $stamp) . $crlf;
+        $ical .= "LAST-MODIFIED:" . date('Ymd', $modified) . $crlf;
         $ical .= "PRIORITY:5" . $crlf;
         $ical .= "SEQUENCE:" . $sequence . $crlf;
         $ical .= "TRANSP:OPAQUE" . $crlf;
@@ -4811,8 +4819,8 @@ class MEC_main extends MEC_base
         $event_content = str_replace("\n", "\\n", $event_content);
         $event_content = preg_replace('/(<script[^>]*>.+?<\/script>|<style[^>]*>.+?<\/style>)/s', '', $event_content);
 
-        $ical .= "CREATED:" . gmdate('Ymd\\THis\\Z', $stamp) . $crlf;
-        $ical .= "LAST-MODIFIED:" . gmdate('Ymd\\THis\\Z', $modified) . $crlf;
+        $ical .= "CREATED:" . date('Ymd', $stamp) . $crlf;
+        $ical .= "LAST-MODIFIED:" . date('Ymd', $modified) . $crlf;
         $ical .= "PRIORITY:5" . $crlf;
         $ical .= "SEQUENCE:" . $sequence . $crlf;
         $ical .= "TRANSP:OPAQUE" . $crlf;
@@ -4904,8 +4912,8 @@ class MEC_main extends MEC_base
         $ical .= "DTSTART:" . gmdate($time_format, ($start_time - $gmt_offset_seconds)) . $crlf;
         $ical .= "DTEND:" . gmdate($time_format, ($end_time - $gmt_offset_seconds)) . $crlf;
         $ical .= "DTSTAMP:" . gmdate($time_format, ($stamp - $gmt_offset_seconds)) . $crlf;
-        $ical .= "CREATED:" . gmdate('Ymd\\THis\\Z', $stamp) . $crlf;
-        $ical .= "LAST-MODIFIED:" . gmdate('Ymd\\THis\\Z', $modified) . $crlf;
+        $ical .= "CREATED:" . date('Ymd', $stamp) . $crlf;
+        $ical .= "LAST-MODIFIED:" . date('Ymd', $modified) . $crlf;
         $ical .= "PRIORITY:5" . $crlf;
         $ical .= "SEQUENCE:" . $sequence . $crlf;
         $ical .= "TRANSP:OPAQUE" . $crlf;
@@ -5265,7 +5273,7 @@ class MEC_main extends MEC_base
     public function field_text($key, $values = [], $prefix = 'reg')
     {
         return '<li id="mec_' . esc_attr($prefix) . '_fields_' . esc_attr($key) . '">
-            <span class="mec_' . esc_attr($prefix) . '_field_sort">' . esc_html__('Sort', 'modern-events-calendar-lite') . '</span>
+            <span class="' . (in_array($prefix, ['reg', 'bfixed']) ? 'button mec_' . esc_attr($prefix) . '_field_sort ui-sortable-handle' : 'mec_' . esc_attr($prefix) . '_field_sort') . '">' . esc_html__('Sort', 'modern-events-calendar-lite') . '</span>
             <span class="mec_' . esc_attr($prefix) . '_field_type">' . esc_html__('Text', 'modern-events-calendar-lite') . '</span>
             ' . ($prefix == 'event' ? '<span class="mec_' . esc_attr($prefix) . '_notification_placeholder">%%event_field_' . esc_html($key) . '%%</span>' : ($prefix == 'bfixed' ? '<span class="mec_' . esc_attr($prefix) . '_notification_placeholder">%%booking_field_' . esc_html($key) . '%%</span>' : '')) . '
             ' . $this->field_icon_feature($key, $values, $prefix) . '
@@ -5276,7 +5284,7 @@ class MEC_main extends MEC_base
                     <input type="checkbox" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][mandatory]" value="1" ' . ((isset($values['mandatory']) and $values['mandatory']) ? 'checked="checked"' : '') . ' />' . esc_html__('Required Field', 'modern-events-calendar-lite') . '
                 </label>
             </p>
-            <span onclick="mec_' . esc_attr($prefix) . '_fields_remove(' . esc_attr($key) . ');" class="mec_' . esc_attr($prefix) . '_field_remove">' . esc_html__('Remove', 'modern-events-calendar-lite') . '</span>
+            <span onclick="mec_' . esc_attr($prefix) . '_fields_remove(' . esc_attr($key) . ');" class="' . (in_array($prefix, ['reg', 'bfixed']) ? 'button mec-dash-remove-btn mec_' . esc_attr($prefix) . '_field_remove' : 'mec_' . esc_attr($prefix) . '_field_remove') . '">' . esc_html__('Remove', 'modern-events-calendar-lite') . '</span>
             <div>
                 <label>' . esc_html__('Label', 'modern-events-calendar-lite') . '</label>
                 <input type="hidden" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][type]" value="text" />
@@ -5303,7 +5311,7 @@ class MEC_main extends MEC_base
     public function field_name($key, $values = [], $prefix = 'reg')
     {
         return '<li id="mec_' . esc_attr($prefix) . '_fields_' . esc_attr($key) . '">
-             <span class="mec_' . esc_attr($prefix) . '_field_sort">' . esc_html__('Sort', 'modern-events-calendar-lite') . '</span>
+             <span class="' . (in_array($prefix, ['reg', 'bfixed']) ? 'button mec_' . esc_attr($prefix) . '_field_sort ui-sortable-handle' : 'mec_' . esc_attr($prefix) . '_field_sort') . '">' . esc_html__('Sort', 'modern-events-calendar-lite') . '</span>
              <span class="mec_' . esc_attr($prefix) . '_field_type">' . esc_html__('MEC Name', 'modern-events-calendar-lite') . '</span>
              ' . ($prefix == 'event' ? '<span class="mec_' . esc_attr($prefix) . '_notification_placeholder">%%event_field_' . esc_html($key) . '%%</span>' : ($prefix == 'bfixed' ? '<span class="mec_' . esc_attr($prefix) . '_notification_placeholder">%%booking_field_' . esc_html($key) . '%%</span>' : '')) . '
              ' . $this->field_icon_feature($key, $values, $prefix) . '
@@ -5337,7 +5345,7 @@ class MEC_main extends MEC_base
     public function field_mec_email($key, $values = [], $prefix = 'reg')
     {
         return '<li id="mec_' . esc_attr($prefix) . '_fields_' . esc_attr($key) . '">
-             <span class="mec_' . esc_attr($prefix) . '_field_sort">' . esc_html__('Sort', 'modern-events-calendar-lite') . '</span>
+             <span class="' . (in_array($prefix, ['reg', 'bfixed']) ? 'button mec_' . esc_attr($prefix) . '_field_sort ui-sortable-handle' : 'mec_' . esc_attr($prefix) . '_field_sort') . '">' . esc_html__('Sort', 'modern-events-calendar-lite') . '</span>
              <span class="mec_' . esc_attr($prefix) . '_field_type">' . esc_html__('MEC Email', 'modern-events-calendar-lite') . '</span>
              ' . ($prefix == 'event' ? '<span class="mec_' . esc_attr($prefix) . '_notification_placeholder">%%event_field_' . esc_html($key) . '%%</span>' : ($prefix == 'bfixed' ? '<span class="mec_' . esc_attr($prefix) . '_notification_placeholder">%%booking_field_' . esc_html($key) . '%%</span>' : '')) . '
              ' . $this->field_icon_feature($key, $values, $prefix) . '
@@ -5372,7 +5380,7 @@ class MEC_main extends MEC_base
     public function field_email($key, $values = [], $prefix = 'reg')
     {
         return '<li id="mec_' . esc_attr($prefix) . '_fields_' . esc_attr($key) . '">
-            <span class="mec_' . esc_attr($prefix) . '_field_sort">' . esc_html__('Sort', 'modern-events-calendar-lite') . '</span>
+            <span class="' . (in_array($prefix, ['reg', 'bfixed']) ? 'button mec_' . esc_attr($prefix) . '_field_sort ui-sortable-handle' : 'mec_' . esc_attr($prefix) . '_field_sort') . '">' . esc_html__('Sort', 'modern-events-calendar-lite') . '</span>
             <span class="mec_' . esc_attr($prefix) . '_field_type">' . esc_html__('Email', 'modern-events-calendar-lite') . '</span>
             ' . ($prefix == 'event' ? '<span class="mec_' . esc_attr($prefix) . '_notification_placeholder">%%event_field_' . esc_html($key) . '%%</span>' : ($prefix == 'bfixed' ? '<span class="mec_' . esc_attr($prefix) . '_notification_placeholder">%%booking_field_' . esc_html($key) . '%%</span>' : '')) . '
             ' . $this->field_icon_feature($key, $values, $prefix) . '
@@ -5383,7 +5391,7 @@ class MEC_main extends MEC_base
                     <input type="checkbox" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][mandatory]" value="1" ' . ((isset($values['mandatory']) and $values['mandatory']) ? 'checked="checked"' : '') . ' />' . esc_html__('Required Field', 'modern-events-calendar-lite') . '
                 </label>
             </p>
-            <span onclick="mec_' . esc_attr($prefix) . '_fields_remove(' . esc_attr($key) . ');" class="mec_' . esc_attr($prefix) . '_field_remove">' . esc_html__('Remove', 'modern-events-calendar-lite') . '</span>
+            <span onclick="mec_' . esc_attr($prefix) . '_fields_remove(' . esc_attr($key) . ');" class="' . (in_array($prefix, ['reg', 'bfixed']) ? 'button mec-dash-remove-btn mec_' . esc_attr($prefix) . '_field_remove' : 'mec_' . esc_attr($prefix) . '_field_remove') . '">' . esc_html__('Remove', 'modern-events-calendar-lite') . '</span>
             <div>
                 <label>' . esc_html__('Label', 'modern-events-calendar-lite') . '</label>
                 <input type="hidden" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][type]" value="email" />
@@ -5410,7 +5418,7 @@ class MEC_main extends MEC_base
     public function field_url($key, $values = [], $prefix = 'reg')
     {
         return '<li id="mec_' . esc_attr($prefix) . '_fields_' . esc_attr($key) . '">
-            <span class="mec_' . esc_attr($prefix) . '_field_sort">' . esc_html__('Sort', 'modern-events-calendar-lite') . '</span>
+            <span class="' . (in_array($prefix, ['reg', 'bfixed']) ? 'button mec_' . esc_attr($prefix) . '_field_sort ui-sortable-handle' : 'mec_' . esc_attr($prefix) . '_field_sort') . '">' . esc_html__('Sort', 'modern-events-calendar-lite') . '</span>
             <span class="mec_' . esc_attr($prefix) . '_field_type">' . esc_html__('URL', 'modern-events-calendar-lite') . '</span>
             ' . ($prefix == 'event' ? '<span class="mec_' . esc_attr($prefix) . '_notification_placeholder">%%event_field_' . esc_html($key) . '%%</span>' : ($prefix == 'bfixed' ? '<span class="mec_' . esc_attr($prefix) . '_notification_placeholder">%%booking_field_' . esc_html($key) . '%%</span>' : '')) . '
             ' . $this->field_icon_feature($key, $values, $prefix) . '
@@ -5421,7 +5429,7 @@ class MEC_main extends MEC_base
                     <input type="checkbox" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][mandatory]" value="1" ' . ((isset($values['mandatory']) and $values['mandatory']) ? 'checked="checked"' : '') . ' />' . esc_html__('Required Field', 'modern-events-calendar-lite') . '
                 </label>
             </p>
-            <span onclick="mec_' . esc_attr($prefix) . '_fields_remove(' . esc_attr($key) . ');" class="mec_' . esc_attr($prefix) . '_field_remove">' . esc_html__('Remove', 'modern-events-calendar-lite') . '</span>
+            <span onclick="mec_' . esc_attr($prefix) . '_fields_remove(' . esc_attr($key) . ');" class="' . (in_array($prefix, ['reg', 'bfixed']) ? 'button mec-dash-remove-btn mec_' . esc_attr($prefix) . '_field_remove' : 'mec_' . esc_attr($prefix) . '_field_remove') . '">' . esc_html__('Remove', 'modern-events-calendar-lite') . '</span>
             <div>
                 <label>' . esc_html__('Label', 'modern-events-calendar-lite') . '</label>
                 <input type="hidden" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][type]" value="url" />
@@ -5443,7 +5451,7 @@ class MEC_main extends MEC_base
     public function field_file($key, $values = [], $prefix = 'reg')
     {
         return '<li id="mec_' . esc_attr($prefix) . '_fields_' . esc_attr($key) . '">
-            <span class="mec_' . esc_attr($prefix) . '_field_sort">' . esc_html__('Sort', 'modern-events-calendar-lite') . '</span>
+            <span class="' . (in_array($prefix, ['reg', 'bfixed']) ? 'button mec_' . esc_attr($prefix) . '_field_sort ui-sortable-handle' : 'mec_' . esc_attr($prefix) . '_field_sort') . '">' . esc_html__('Sort', 'modern-events-calendar-lite') . '</span>
             <span class="mec_' . esc_attr($prefix) . '_field_type">' . esc_html__('File', 'modern-events-calendar-lite') . '</span>
             ' . ($prefix == 'event' ? '<span class="mec_' . esc_attr($prefix) . '_notification_placeholder">%%event_field_' . esc_html($key) . '%%</span>' : ($prefix == 'bfixed' ? '<span class="mec_' . esc_attr($prefix) . '_notification_placeholder">%%booking_field_' . esc_html($key) . '%%</span>' : '')) . '
             ' . $this->field_icon_feature($key, $values, $prefix) . '
@@ -5454,7 +5462,7 @@ class MEC_main extends MEC_base
                     <input type="checkbox" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][mandatory]" value="1" ' . ((isset($values['mandatory']) and $values['mandatory']) ? 'checked="checked"' : '') . ' />' . esc_html__('Required Field', 'modern-events-calendar-lite') . '
                 </label>
             </p>
-            <span onclick="mec_' . esc_attr($prefix) . '_fields_remove(' . esc_attr($key) . ');" class="mec_' . esc_attr($prefix) . '_field_remove">' . esc_html__('Remove', 'modern-events-calendar-lite') . '</span>
+            <span onclick="mec_' . esc_attr($prefix) . '_fields_remove(' . esc_attr($key) . ');" class="' . (in_array($prefix, ['reg', 'bfixed']) ? 'button mec-dash-remove-btn mec_' . esc_attr($prefix) . '_field_remove' : 'mec_' . esc_attr($prefix) . '_field_remove') . '">' . esc_html__('Remove', 'modern-events-calendar-lite') . '</span>
             <div>
                 <label>' . esc_html__('Label', 'modern-events-calendar-lite') . '</label>
                 <input type="hidden" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][type]" value="file" />
@@ -5474,7 +5482,7 @@ class MEC_main extends MEC_base
     public function field_date($key, $values = [], $prefix = 'reg')
     {
         return '<li id="mec_' . esc_attr($prefix) . '_fields_' . esc_attr($key) . '">
-            <span class="mec_' . esc_attr($prefix) . '_field_sort">' . esc_html__('Sort', 'modern-events-calendar-lite') . '</span>
+            <span class="' . (in_array($prefix, ['reg', 'bfixed']) ? 'button mec_' . esc_attr($prefix) . '_field_sort ui-sortable-handle' : 'mec_' . esc_attr($prefix) . '_field_sort') . '">' . esc_html__('Sort', 'modern-events-calendar-lite') . '</span>
             <span class="mec_' . esc_attr($prefix) . '_field_type">' . esc_html__('Date', 'modern-events-calendar-lite') . '</span>
             ' . ($prefix == 'event' ? '<span class="mec_' . esc_attr($prefix) . '_notification_placeholder">%%event_field_' . esc_html($key) . '%%</span>' : ($prefix == 'bfixed' ? '<span class="mec_' . esc_attr($prefix) . '_notification_placeholder">%%booking_field_' . esc_html($key) . '%%</span>' : '')) . '
             ' . $this->field_icon_feature($key, $values, $prefix) . '
@@ -5485,7 +5493,7 @@ class MEC_main extends MEC_base
                     <input type="checkbox" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][mandatory]" value="1" ' . ((isset($values['mandatory']) and $values['mandatory']) ? 'checked="checked"' : '') . ' />' . esc_html__('Required Field', 'modern-events-calendar-lite') . '
                 </label>
             </p>
-            <span onclick="mec_' . esc_attr($prefix) . '_fields_remove(' . esc_attr($key) . ');" class="mec_' . esc_attr($prefix) . '_field_remove">' . esc_html__('Remove', 'modern-events-calendar-lite') . '</span>
+            <span onclick="mec_' . esc_attr($prefix) . '_fields_remove(' . esc_attr($key) . ');" class="' . (in_array($prefix, ['reg', 'bfixed']) ? 'button mec-dash-remove-btn mec_' . esc_attr($prefix) . '_field_remove' : 'mec_' . esc_attr($prefix) . '_field_remove') . '">' . esc_html__('Remove', 'modern-events-calendar-lite') . '</span>
             <div>
                 <label>' . esc_html__('Label', 'modern-events-calendar-lite') . '</label>
                 <input type="hidden" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][type]" value="date" />
@@ -5512,7 +5520,7 @@ class MEC_main extends MEC_base
     public function field_tel($key, $values = [], $prefix = 'reg')
     {
         return '<li id="mec_' . esc_attr($prefix) . '_fields_' . esc_attr($key) . '">
-            <span class="mec_' . esc_attr($prefix) . '_field_sort">' . esc_html__('Sort', 'modern-events-calendar-lite') . '</span>
+            <span class="' . (in_array($prefix, ['reg', 'bfixed']) ? 'button mec_' . esc_attr($prefix) . '_field_sort ui-sortable-handle' : 'mec_' . esc_attr($prefix) . '_field_sort') . '">' . esc_html__('Sort', 'modern-events-calendar-lite') . '</span>
             <span class="mec_' . esc_attr($prefix) . '_field_type">' . esc_html__('Tel', 'modern-events-calendar-lite') . '</span>
             ' . ($prefix == 'event' ? '<span class="mec_' . esc_attr($prefix) . '_notification_placeholder">%%event_field_' . esc_html($key) . '%%</span>' : ($prefix == 'bfixed' ? '<span class="mec_' . esc_attr($prefix) . '_notification_placeholder">%%booking_field_' . esc_html($key) . '%%</span>' : '')) . '
             ' . $this->field_icon_feature($key, $values, $prefix) . '
@@ -5523,7 +5531,7 @@ class MEC_main extends MEC_base
                     <input type="checkbox" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][mandatory]" value="1" ' . ((isset($values['mandatory']) and $values['mandatory']) ? 'checked="checked"' : '') . ' />' . esc_html__('Required Field', 'modern-events-calendar-lite') . '
                 </label>
             </p>
-            <span onclick="mec_' . esc_attr($prefix) . '_fields_remove(' . esc_attr($key) . ');" class="mec_' . esc_attr($prefix) . '_field_remove">' . esc_html__('Remove', 'modern-events-calendar-lite') . '</span>
+            <span onclick="mec_' . esc_attr($prefix) . '_fields_remove(' . esc_attr($key) . ');" class="' . (in_array($prefix, ['reg', 'bfixed']) ? 'button mec-dash-remove-btn mec_' . esc_attr($prefix) . '_field_remove' : 'mec_' . esc_attr($prefix) . '_field_remove') . '">' . esc_html__('Remove', 'modern-events-calendar-lite') . '</span>
             <div>
                 <label>' . esc_html__('Label', 'modern-events-calendar-lite') . '</label>
                 <input type="hidden" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][type]" value="tel" />
@@ -5550,7 +5558,7 @@ class MEC_main extends MEC_base
     public function field_textarea($key, $values = [], $prefix = 'reg')
     {
         return '<li id="mec_' . esc_attr($prefix) . '_fields_' . esc_attr($key) . '">
-            <span class="mec_' . esc_attr($prefix) . '_field_sort">' . esc_html__('Sort', 'modern-events-calendar-lite') . '</span>
+            <span class="' . (in_array($prefix, ['reg', 'bfixed']) ? 'button mec_' . esc_attr($prefix) . '_field_sort ui-sortable-handle' : 'mec_' . esc_attr($prefix) . '_field_sort') . '">' . esc_html__('Sort', 'modern-events-calendar-lite') . '</span>
             <span class="mec_' . esc_attr($prefix) . '_field_type">' . esc_html__('Textarea', 'modern-events-calendar-lite') . '</span>
             ' . ($prefix == 'event' ? '<span class="mec_' . esc_attr($prefix) . '_notification_placeholder">%%event_field_' . esc_html($key) . '%%</span>' : ($prefix == 'bfixed' ? '<span class="mec_' . esc_attr($prefix) . '_notification_placeholder">%%booking_field_' . esc_html($key) . '%%</span>' : '')) . '
             ' . $this->field_icon_feature($key, $values, $prefix) . '
@@ -5568,7 +5576,7 @@ class MEC_main extends MEC_base
                     ' . esc_html__('HTML Editor', 'modern-events-calendar-lite') . '
                 </label>' : '') . '
             </p>
-            <span onclick="mec_' . esc_attr($prefix) . '_fields_remove(' . esc_attr($key) . ');" class="mec_' . esc_attr($prefix) . '_field_remove">' . esc_html__('Remove', 'modern-events-calendar-lite') . '</span>
+            <span onclick="mec_' . esc_attr($prefix) . '_fields_remove(' . esc_attr($key) . ');" class="' . (in_array($prefix, ['reg', 'bfixed']) ? 'button mec-dash-remove-btn mec_' . esc_attr($prefix) . '_field_remove' : 'mec_' . esc_attr($prefix) . '_field_remove') . '">' . esc_html__('Remove', 'modern-events-calendar-lite') . '</span>
             <div>
                 <label>' . esc_html__('Label', 'modern-events-calendar-lite') . '</label>
                 <input type="hidden" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][type]" value="textarea" />
@@ -5595,9 +5603,9 @@ class MEC_main extends MEC_base
     public function field_p($key, $values = [], $prefix = 'reg')
     {
         return '<li id="mec_' . esc_attr($prefix) . '_fields_' . esc_attr($key) . '">
-            <span class="mec_' . esc_attr($prefix) . '_field_sort">' . esc_html__('Sort', 'modern-events-calendar-lite') . '</span>
+            <span class="' . (in_array($prefix, ['reg', 'bfixed']) ? 'button mec_' . esc_attr($prefix) . '_field_sort ui-sortable-handle' : 'mec_' . esc_attr($prefix) . '_field_sort') . '">' . esc_html__('Sort', 'modern-events-calendar-lite') . '</span>
             <span class="mec_' . esc_attr($prefix) . '_field_type">' . esc_html__('Paragraph', 'modern-events-calendar-lite') . '</span>
-            <span onclick="mec_' . esc_attr($prefix) . '_fields_remove(' . esc_attr($key) . ');" class="mec_' . esc_attr($prefix) . '_field_remove">' . esc_html__('Remove', 'modern-events-calendar-lite') . '</span>
+            <span onclick="mec_' . esc_attr($prefix) . '_fields_remove(' . esc_attr($key) . ');" class="' . (in_array($prefix, ['reg', 'bfixed']) ? 'button mec-dash-remove-btn mec_' . esc_attr($prefix) . '_field_remove' : 'mec_' . esc_attr($prefix) . '_field_remove') . '">' . esc_html__('Remove', 'modern-events-calendar-lite') . '</span>
             ' . $this->get_form_field_description($key, $values, $prefix, 'p') . '
             <div>
                 <input type="hidden" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][type]" value="p" />
@@ -5619,7 +5627,7 @@ class MEC_main extends MEC_base
     {
         $i = 0;
         $field = '<li id="mec_' . esc_attr($prefix) . '_fields_' . esc_attr($key) . '">
-            <span class="mec_' . esc_attr($prefix) . '_field_sort">' . esc_html__('Sort', 'modern-events-calendar-lite') . '</span>
+            <span class="' . (in_array($prefix, ['reg', 'bfixed']) ? 'button mec_' . esc_attr($prefix) . '_field_sort ui-sortable-handle' : 'mec_' . esc_attr($prefix) . '_field_sort') . '">' . esc_html__('Sort', 'modern-events-calendar-lite') . '</span>
             <span class="mec_' . esc_attr($prefix) . '_field_type">' . esc_html__('Checkboxes', 'modern-events-calendar-lite') . '</span>
             ' . ($prefix == 'event' ? '<span class="mec_' . esc_attr($prefix) . '_notification_placeholder">%%event_field_' . esc_html($key) . '%%</span>' : ($prefix == 'bfixed' ? '<span class="mec_' . esc_attr($prefix) . '_notification_placeholder">%%booking_field_' . esc_html($key) . '%%</span>' : '')) . '
             ' . $this->field_icon_feature($key, $values, $prefix) . '
@@ -5630,7 +5638,7 @@ class MEC_main extends MEC_base
                     <input type="checkbox" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][mandatory]" value="1" ' . ((isset($values['mandatory']) and $values['mandatory']) ? 'checked="checked"' : '') . ' />' . esc_html__('Required Field', 'modern-events-calendar-lite') . '
                 </label>
             </p>
-            <span onclick="mec_' . esc_attr($prefix) . '_fields_remove(' . esc_attr($key) . ');" class="mec_' . esc_attr($prefix) . '_field_remove">' . esc_html__('Remove', 'modern-events-calendar-lite') . '</span>
+            <span onclick="mec_' . esc_attr($prefix) . '_fields_remove(' . esc_attr($key) . ');" class="' . (in_array($prefix, ['reg', 'bfixed']) ? 'button mec-dash-remove-btn mec_' . esc_attr($prefix) . '_field_remove' : 'mec_' . esc_attr($prefix) . '_field_remove') . '">' . esc_html__('Remove', 'modern-events-calendar-lite') . '</span>
             <div>
                 <label>' . esc_html__('Label', 'modern-events-calendar-lite') . '</label>
                 <input type="hidden" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][type]" value="checkbox" />
@@ -5669,7 +5677,7 @@ class MEC_main extends MEC_base
     {
         $i = 0;
         $field = '<li id="mec_' . esc_attr($prefix) . '_fields_' . esc_attr($key) . '">
-            <span class="mec_' . esc_attr($prefix) . '_field_sort">' . esc_html__('Sort', 'modern-events-calendar-lite') . '</span>
+            <span class="' . (in_array($prefix, ['reg', 'bfixed']) ? 'button mec_' . esc_attr($prefix) . '_field_sort ui-sortable-handle' : 'mec_' . esc_attr($prefix) . '_field_sort') . '">' . esc_html__('Sort', 'modern-events-calendar-lite') . '</span>
             <span class="mec_' . esc_attr($prefix) . '_field_type">' . esc_html__('Radio Buttons', 'modern-events-calendar-lite') . '</span>
             ' . ($prefix == 'event' ? '<span class="mec_' . esc_attr($prefix) . '_notification_placeholder">%%event_field_' . esc_html($key) . '%%</span>' : ($prefix == 'bfixed' ? '<span class="mec_' . esc_attr($prefix) . '_notification_placeholder">%%booking_field_' . esc_html($key) . '%%</span>' : '')) . '
             ' . $this->field_icon_feature($key, $values, $prefix) . '
@@ -5680,7 +5688,7 @@ class MEC_main extends MEC_base
                     <input type="checkbox" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][mandatory]" value="1" ' . ((isset($values['mandatory']) and $values['mandatory']) ? 'checked="checked"' : '') . ' />' . esc_html__('Required Field', 'modern-events-calendar-lite') . '
                 </label>
             </p>
-            <span onclick="mec_' . esc_attr($prefix) . '_fields_remove(' . esc_attr($key) . ');" class="mec_' . esc_attr($prefix) . '_field_remove">' . esc_html__('Remove', 'modern-events-calendar-lite') . '</span>
+            <span onclick="mec_' . esc_attr($prefix) . '_fields_remove(' . esc_attr($key) . ');" class="' . (in_array($prefix, ['reg', 'bfixed']) ? 'button mec-dash-remove-btn mec_' . esc_attr($prefix) . '_field_remove' : 'mec_' . esc_attr($prefix) . '_field_remove') . '">' . esc_html__('Remove', 'modern-events-calendar-lite') . '</span>
             <div>
                 <label>' . esc_html__('Label', 'modern-events-calendar-lite') . '</label>
                 <input type="hidden" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][type]" value="radio" />
@@ -5719,7 +5727,7 @@ class MEC_main extends MEC_base
     {
         $i = 0;
         $field = '<li id="mec_' . esc_attr($prefix) . '_fields_' . esc_attr($key) . '">
-            <span class="mec_' . esc_attr($prefix) . '_field_sort">' . esc_html__('Sort', 'modern-events-calendar-lite') . '</span>
+            <span class="' . (in_array($prefix, ['reg', 'bfixed']) ? 'button mec_' . esc_attr($prefix) . '_field_sort ui-sortable-handle' : 'mec_' . esc_attr($prefix) . '_field_sort') . '">' . esc_html__('Sort', 'modern-events-calendar-lite') . '</span>
             <span class="mec_' . esc_attr($prefix) . '_field_type">' . esc_html__('Dropdown', 'modern-events-calendar-lite') . '</span>
             ' . ($prefix == 'event' ? '<span class="mec_' . esc_attr($prefix) . '_notification_placeholder">%%event_field_' . esc_html($key) . '%%</span>' : ($prefix == 'bfixed' ? '<span class="mec_' . esc_attr($prefix) . '_notification_placeholder">%%booking_field_' . esc_html($key) . '%%</span>' : '')) . '
             ' . $this->field_icon_feature($key, $values, $prefix) . '
@@ -5737,7 +5745,7 @@ class MEC_main extends MEC_base
                     ' . esc_html__('Consider the first item as a placeholder', 'modern-events-calendar-lite') . '
                 </label>
             </p>
-            <span onclick="mec_' . esc_attr($prefix) . '_fields_remove(' . esc_attr($key) . ');" class="mec_' . esc_attr($prefix) . '_field_remove">' . esc_html__('Remove', 'modern-events-calendar-lite') . '</span>
+            <span onclick="mec_' . esc_attr($prefix) . '_fields_remove(' . esc_attr($key) . ');" class="' . (in_array($prefix, ['reg', 'bfixed']) ? 'button mec-dash-remove-btn mec_' . esc_attr($prefix) . '_field_remove' : 'mec_' . esc_attr($prefix) . '_field_remove') . '">' . esc_html__('Remove', 'modern-events-calendar-lite') . '</span>
             <div>
                 <label>' . esc_html__('Label', 'modern-events-calendar-lite') . '</label>
                 <input type="hidden" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][type]" value="select" />
@@ -5779,7 +5787,7 @@ class MEC_main extends MEC_base
 
         $i = 0;
         $field = '<li id="mec_' . esc_attr($prefix) . '_fields_' . esc_attr($key) . '">
-            <span class="mec_' . esc_attr($prefix) . '_field_sort">' . esc_html__('Sort', 'modern-events-calendar-lite') . '</span>
+            <span class="' . (in_array($prefix, ['reg', 'bfixed']) ? 'button mec_' . esc_attr($prefix) . '_field_sort ui-sortable-handle' : 'mec_' . esc_attr($prefix) . '_field_sort') . '">' . esc_html__('Sort', 'modern-events-calendar-lite') . '</span>
             <span class="mec_' . esc_attr($prefix) . '_field_type">' . esc_html__('Agreement', 'modern-events-calendar-lite') . '</span>
             ' . ($prefix == 'event' ? '<span class="mec_' . esc_attr($prefix) . '_notification_placeholder">%%event_field_' . esc_html($key) . '%%</span>' : ($prefix == 'bfixed' ? '<span class="mec_' . esc_attr($prefix) . '_notification_placeholder">%%booking_field_' . esc_html($key) . '%%</span>' : '')) . '
             ' . $this->field_icon_feature($key, $values, $prefix) . '
@@ -5790,7 +5798,7 @@ class MEC_main extends MEC_base
                     <input type="checkbox" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][mandatory]" value="1" ' . ((!isset($values['mandatory']) or (isset($values['mandatory']) and $values['mandatory'])) ? 'checked="checked"' : '') . ' />' . esc_html__('Required Field', 'modern-events-calendar-lite') . '
                 </label>
             </p>
-            <span onclick="mec_' . esc_attr($prefix) . '_fields_remove(' . esc_attr($key) . ');" class="mec_' . esc_attr($prefix) . '_field_remove">' . esc_html__('Remove', 'modern-events-calendar-lite') . '</span>
+            <span onclick="mec_' . esc_attr($prefix) . '_fields_remove(' . esc_attr($key) . ');" class="' . (in_array($prefix, ['reg', 'bfixed']) ? 'button mec-dash-remove-btn mec_' . esc_attr($prefix) . '_field_remove' : 'mec_' . esc_attr($prefix) . '_field_remove') . '">' . esc_html__('Remove', 'modern-events-calendar-lite') . '</span>
             <div>
                 <label>' . esc_html__('Label', 'modern-events-calendar-lite') . '</label>
                 <input type="hidden" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($key) . '][type]" value="agreement" />
@@ -5831,7 +5839,7 @@ class MEC_main extends MEC_base
     {
         return '<li id="mec_' . esc_attr($prefix) . '_fields_option_' . esc_attr($field_key) . '_' . esc_attr($key) . '">
             <span class="mec_' . esc_attr($prefix) . '_field_option_sort">' . esc_html__('Sort', 'modern-events-calendar-lite') . '</span>
-            <span onclick="mec_' . esc_attr($prefix) . '_fields_option_remove(' . esc_attr($field_key) . ',' . esc_attr($key) . ');" class="mec_' . esc_attr($prefix) . '_field_remove">' . esc_html__('Remove', 'modern-events-calendar-lite') . '</span>
+            <span onclick="mec_' . esc_attr($prefix) . '_fields_option_remove(' . esc_attr($field_key) . ',' . esc_attr($key) . ');" class="' . (in_array($prefix, ['reg', 'bfixed']) ? 'button mec-dash-remove-btn mec_' . esc_attr($prefix) . '_field_remove' : 'mec_' . esc_attr($prefix) . '_field_remove') . '">' . esc_html__('Remove', 'modern-events-calendar-lite') . '</span>
             <input type="text" name="mec[' . esc_attr($prefix) . '_fields][' . esc_attr($field_key) . '][options][' . esc_attr($key) . '][label]" placeholder="' . esc_attr__('Insert a label for this option', 'modern-events-calendar-lite') . '" value="' . ((isset($values['options']) and isset($values['options'][$key])) ? esc_attr(stripslashes($values['options'][$key]['label'])) : '') . '" />
         </li>';
     }
@@ -9834,6 +9842,33 @@ class MEC_main extends MEC_base
     }
 
     /**
+     * The linked subject of a "... is required to use this feature" notice.
+     *
+     * On Lite that is the product, and the link goes to the store. On the Pro
+     * package it is the LICENCE, and the link goes to the activation screen —
+     * because the person reading it has already bought Pro, and telling them to
+     * buy it again reads as though their purchase never registered. That is a
+     * support ticket, and an entirely self-inflicted one.
+     *
+     * Returning only the anchor rather than the whole sentence is deliberate:
+     * the twenty-one surrounding sentences stay exactly as they are, so no
+     * existing translation is invalidated by this change.
+     *
+     * @return string
+     */
+    public function pro_notice_link()
+    {
+        if (!$this->isProBuild())
+        {
+            return '<a href="' . esc_url($this->get_pro_link()) . '" target="_blank">'
+                . esc_html__('Pro version of Modern Events Calendar', 'modern-events-calendar-lite') . '</a>';
+        }
+
+        return '<a href="' . esc_url(admin_url('admin.php?page=mec-intro')) . '">'
+            . esc_html__('Activating your Modern Events Calendar Pro license', 'modern-events-calendar-lite') . '</a>';
+    }
+
+    /**
      * Get Label for booking confirmation
      * @param int $confirmed
      * @return string
@@ -10216,6 +10251,9 @@ class MEC_main extends MEC_base
 
     public static function get_upcoming_events($limit = 12)
     {
+        $limit = (int) $limit;
+        if ($limit < 1) $limit = 12;
+
         MEC::import('app.skins.list');
 
         // Get list skin
@@ -10226,7 +10264,7 @@ class MEC_main extends MEC_base
             'show_past_events' => 1,
             'start_date_type' => 'today',
             'sk-options' => [
-                'list' => ['limit' => 20],
+                'list' => ['limit' => $limit],
             ],
         ];
 
@@ -10971,6 +11009,68 @@ class MEC_main extends MEC_base
         $hour_key = $args['hour_key'] ?? 'hour';
         $minutes_key = $args['minutes_key'] ?? 'minutes';
         $ampm_key = $args['ampm_key'] ?? 'ampm';
+
+        // Combobox time mode (audit R3). A typeable text field; JS filters a
+        // dropdown of every 5-minute slot (288 options) as the user types.
+        // The hidden [hour][minutes][ampm] fields hold the submitted value, so
+        // save logic is unchanged. The combobox looks up its hidden fields LOCALLY
+        // (by role class within the wrapper), so cloned rows (tickets) keep working.
+        if (!empty($args['typeable']))
+        {
+            // Ensure an id_key (e.g. tickets pass none) for external readers + the
+            // start/end duration auto-advance.
+            if (!trim($id_key))
+            {
+                static $mec_tp_uid = 0;
+                $id_key = 'mec_tpu_' . ($mec_tp_uid++) . '_';
+            }
+            $hour_id = 'mec_' . $id_key . 'hour';
+            $min_id = 'mec_' . $id_key . 'minutes';
+            $ampm_id = 'mec_' . $id_key . 'ampm';
+            $time_id = 'mec_' . $id_key . 'time';
+            $is_24 = ($method == 24);
+
+            if ($is_24)
+            {
+                $h24 = $time_hour;
+                if ($time_ampm == 'PM' and $time_hour != 12) $h24 += 12;
+                if ($time_ampm == 'AM' and $time_hour == 12) $h24 += 12;
+                $submit_hour = $h24;
+                $submit_ampm = null;
+            }
+            else
+            {
+                $include_h0 = isset($args['include_h0']) ? (bool) $args['include_h0'] : false;
+                if (!$include_h0 and $time_ampm == 'AM' and $time_hour == '0') $time_hour = 12;
+                $h24 = $time_hour % 12;
+                if ($time_ampm == 'PM') $h24 += 12;
+                $submit_hour = $time_hour;
+                $submit_ampm = $time_ampm;
+            }
+
+            // Initial display label (12h or 24h).
+            if ($is_24) $current_label = sprintf('%02d:%02d', $h24, $time_minutes);
+            else
+            {
+                $h12cur = $h24 % 12; if ($h12cur === 0) $h12cur = 12;
+                $current_label = sprintf('%02d:%02d %s', $h12cur, $time_minutes, ($h24 < 12 ? 'AM' : 'PM'));
+            }
+            ?>
+            <span class="mec-time-combo-wrap">
+                <input type="text" class="mec-time-combo" id="<?php echo esc_attr($time_id); ?>"
+                       value="<?php echo esc_attr($current_label); ?>"
+                       data-format="<?php echo $is_24 ? 24 : 12; ?>"
+                       autocomplete="off" />
+                <span class="mec-time-clear" role="button" tabindex="-1" aria-label="<?php esc_attr_e('Clear', 'modern-events-calendar-lite'); ?>">×</span>
+                <input type="hidden" class="mec-time-hour" name="<?php echo esc_attr($name); ?>[<?php echo esc_attr($hour_key); ?>]" id="<?php echo esc_attr($hour_id); ?>" value="<?php echo esc_attr($submit_hour); ?>" />
+                <input type="hidden" class="mec-time-minutes" name="<?php echo esc_attr($name); ?>[<?php echo esc_attr($minutes_key); ?>]" id="<?php echo esc_attr($min_id); ?>" value="<?php echo esc_attr($time_minutes); ?>" />
+                <?php if ($submit_ampm !== null): ?>
+                <input type="hidden" class="mec-time-ampm" name="<?php echo esc_attr($name); ?>[<?php echo esc_attr($ampm_key); ?>]" id="<?php echo esc_attr($ampm_id); ?>" value="<?php echo esc_attr($submit_ampm); ?>" />
+                <?php endif; ?>
+            </span>
+            <?php
+            return;
+        }
 
         if ($method == 24)
         {

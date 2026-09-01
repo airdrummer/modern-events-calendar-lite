@@ -1858,6 +1858,14 @@ class MEC_feature_fes extends MEC_base
 
         // MEC Fields
         $fields = (isset($mec['fields']) and is_array($mec['fields'])) ? $mec['fields'] : [];
+        $event_fields = $this->main->get_event_fields();
+        foreach ($event_fields as $field_id => $event_field)
+        {
+            if (($event_field['type'] ?? '') !== 'textarea' || empty($event_field['editor']) || !isset($raw_mec['fields'][$field_id]) || !is_string($raw_mec['fields'][$field_id])) continue;
+
+            $fields[$field_id] = MEC_kses::page($raw_mec['fields'][$field_id]);
+        }
+
         update_post_meta($post_id, 'mec_fields', $fields);
 
         // Save fields one by one
@@ -1869,7 +1877,8 @@ class MEC_feature_fes extends MEC_base
                 $values = implode(',', $values);
             }
 
-            update_post_meta($post_id, 'mec_fields_' . $field_id, sanitize_text_field($values));
+            $is_html_editor = (($event_fields[$field_id]['type'] ?? '') === 'textarea' && !empty($event_fields[$field_id]['editor']));
+            update_post_meta($post_id, 'mec_fields_' . $field_id, $is_html_editor ? MEC_kses::page($values) : sanitize_text_field($values));
         }
 
         // Downloadable File
@@ -1982,34 +1991,28 @@ class MEC_feature_fes extends MEC_base
             else if ($user_exists) $user_id = $user_exists;
             else
             {
-                $registered = register_new_user($guest_email, $guest_email);
+                $guest_name = get_post_meta($post->ID, 'fes_guest_name', true);
+                $name = explode(' ', trim($guest_name), 2);
+                $registered = wp_insert_user([
+                    'user_login' => 'mec-fes-' . wp_generate_uuid4(),
+                    'user_email' => $guest_email,
+                    'user_pass' => wp_generate_password(),
+                    'first_name' => $name[0] ?? '',
+                    'last_name' => $name[1] ?? '',
+                    'role' => 'author',
+                ]);
                 if (!is_wp_error($registered))
                 {
                     $user_id = $registered;
-
-                    $guest_name = get_post_meta($post->ID, 'fes_guest_name', true);
-                    $ex = explode(' ', $guest_name);
-
-                    $first_name = $ex[0];
-                    unset($ex[0]);
-
-                    $last_name = implode(' ', $ex);
-
-                    wp_update_user([
-                        'ID' => $user_id,
-                        'first_name' => $first_name,
-                        'last_name' => $last_name,
-                    ]);
-
-                    $user = new WP_User($user_id);
-                    $user->set_role('author');
+                    wp_send_new_user_notifications($user_id, 'user');
                 }
             }
 
             if ($user_id)
             {
                 $db = $this->getDB();
-                $db->q("UPDATE `#__posts` SET `post_author`='$user_id' WHERE `ID`='" . $post->ID . "'");
+                $db->q("UPDATE `#__posts` SET `post_author`='" . (int) $user_id . "' WHERE `ID`='" . (int) $post->ID . "'");
+                clean_post_cache($post->ID);
             }
         }
     }

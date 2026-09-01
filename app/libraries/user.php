@@ -210,7 +210,7 @@ class MEC_user extends MEC_base
 
             // Register User
             $user_id = wp_create_user($username, $password, $email);
-            if (is_wp_error($user_id)) return false;
+            if (is_wp_error($user_id)) return $this->register($attendee, array_merge($args, ['register_in_mec' => true]));
 
             // Update First Name, Last Name, and Nickname
             $update_data = array('ID' => $user_id);
@@ -287,10 +287,10 @@ class MEC_user extends MEC_base
                 }
 
                 $user_id = $this->main->register_user($username, $email, $password, $auto);
-                if (is_wp_error($user_id)) {
+                if (is_wp_error($user_id) || !is_scalar($user_id) || !is_numeric($user_id) || ((int) $user_id) <= 0) {
                     $existing_user_id = $this->main->email_exists($email);
                     if ($existing_user_id !== false) $user_id = $existing_user_id;
-                    else return false;
+                    else return $this->register($attendee, array_merge($args, ['register_in_mec' => true]));
                 }
 
                 if (!is_scalar($user_id) or !is_numeric($user_id) or ((int) $user_id) <= 0) return false;
@@ -373,9 +373,11 @@ class MEC_user extends MEC_base
 
     public function assign($booking_id, $user_id)
     {
-        // Registration is disabled
-        if (isset($this->settings['booking_registration']) and !$this->settings['booking_registration'] and !get_user_by('ID', $user_id)) update_post_meta($booking_id, 'mec_user_id', $user_id);
-        else update_post_meta($booking_id, 'mec_user_id', 'wp');
+        $user_id = (int) $user_id;
+        if (!$user_id) return;
+
+        if (get_user_by('ID', $user_id)) update_post_meta($booking_id, 'mec_user_id', 'wp');
+        elseif ($this->mec($user_id)) update_post_meta($booking_id, 'mec_user_id', $user_id);
     }
 
     public function get($id)
@@ -437,9 +439,31 @@ class MEC_user extends MEC_base
     public function booking($id)
     {
         $mec_user_id = get_post_meta($id, 'mec_user_id', true);
-        if (trim($mec_user_id) and is_numeric($mec_user_id)) return $this->mec($mec_user_id);
+        if (trim($mec_user_id) and is_numeric($mec_user_id))
+        {
+            $user = $this->mec($mec_user_id);
+            if ($user) return $user;
+        }
 
-        return $this->wp(get_post($id)->post_author);
+        $post = get_post($id);
+        $user = $post ? $this->get($post->post_author) : $this->empty();
+        if (!empty($user->user_email)) return $user;
+
+        $attendees = get_post_meta($id, 'mec_attendees', true);
+        $attendee = is_array($attendees) ? reset($attendees) : get_post_meta($id, 'mec_attendee', true);
+        $email = is_array($attendee) ? ($attendee['email'] ?? '') : '';
+        if (!is_email($email)) return $this->empty();
+
+        $name = trim($attendee['name'] ?? '');
+        $name_parts = explode(' ', $name, 2);
+        $user = $this->empty();
+        $user->first_name = $name_parts[0] ?? '';
+        $user->last_name = $name_parts[1] ?? '';
+        $user->display_name = $name;
+        $user->email = $user->user_email = $email;
+        $user->data = $user;
+
+        return $user;
     }
 
     public function by_email($email)

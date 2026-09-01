@@ -81,7 +81,12 @@ class MEC_render extends MEC_base
             $atts['instance_id'] = function_exists('wp_unique_id') ? wp_unique_id('mec') : uniqid('mec', false);
         }
 
-        $skin = $atts['skin'] ?? $this->get_default_layout();
+        // Resolve before BOTH uses. This method renders through skin() and then
+        // re-instantiates the controller from $skin itself, so resolving inside
+        // skin() alone would leave the Pro controller being constructed here.
+        $skin = $this->available_skin($atts['skin'] ?? $this->get_default_layout());
+        if ($skin === '') return '';
+
         $json = $this->skin($skin, $atts);
 
         $path = MEC::import('app.skins.' . $skin, true, true);
@@ -595,10 +600,8 @@ class MEC_render extends MEC_base
     public function skin($skin, $atts = [])
     {
         // Pro is Required for Some Skins
-        if (!$this->main->getPRO() and in_array($skin, ['agenda', 'yearly_view', 'timetable', 'masonry', 'map', 'available_spot']))
-        {
-            return '';
-        }
+        $skin = $this->available_skin($skin);
+        if ($skin === '') return '';
 
         if (empty($atts['instance_id'])) {
             $atts['instance_id'] = function_exists('wp_unique_id') ? wp_unique_id('mec') : uniqid('mec', false);
@@ -679,7 +682,49 @@ class MEC_render extends MEC_base
         }
 
         // Return the output
-        return $SKO->output();
+        return $SKO->output() . $this->render_beacon($skin, $atts, isset($events) && is_array($events) ? count($events) : 0);
+    }
+
+    /**
+     * Inline beacon appended to every calendar's HTML (event 2,
+     * mec_calendar_view_rendered). The script self-deduplicates per browser
+     * session (one beacon per skin per calendar), computes device type and the
+     * canonical calendar URL client-side, and relays through the same
+     * admin-ajax endpoint the site admin's consent already covers.
+     *
+     * @param string $skin
+     * @param array  $atts
+     * @param int    $events_count
+     * @return string
+     */
+    protected function render_beacon($skin, $atts, $events_count)
+    {
+        $calendar_id = isset($atts['id']) ? (int) $atts['id'] : 0;
+        $hash = substr(md5($calendar_id . '|' . $skin), 0, 12);
+
+        $count = (int) $events_count;
+        if ($count <= 0) $bucket = '0';
+        elseif ($count <= 4) $bucket = '1_4';
+        elseif ($count <= 20) $bucket = '5_20';
+        elseif ($count <= 100) $bucket = '21_100';
+        else $bucket = '101_plus';
+
+        return '<script data-mec-view-beacon="1"'
+            . ' data-view="' . esc_attr($skin) . '"'
+            . ' data-skin="' . esc_attr($skin) . '"'
+            . ' data-sh="' . esc_attr($hash) . '"'
+            . ' data-count="' . esc_attr($bucket) . '">'
+            . '(function(){'
+            . 'if(!window.mecRelayBeacon||!document.currentScript)return;'
+            . 'var s=document.currentScript;'
+            . 'window.mecRelayBeacon("mec_calendar_view_rendered",{'
+            . 'calendar_url:location.origin+location.pathname,'
+            . 'view_type:s.dataset.view,'
+            . 'skin:s.dataset.skin,'
+            . 'shortcode_id_hash:s.dataset.sh,'
+            . 'events_shown_bucket:s.dataset.count'
+            . '},"mec_vr_"+s.dataset.skin+"_"+s.dataset.sh);'
+            . '})();</script>';
     }
 
     /**
@@ -690,6 +735,56 @@ class MEC_render extends MEC_base
     public function get_default_layout()
     {
         return apply_filters('mec_default_layout', 'list');
+    }
+
+    /**
+     * Skins that require Pro.
+     *
+     * The other skins marketed as Pro (cover, countdown, carousel, slider,
+     * timeline, tile) are deliberately NOT here: Lite renders them today, so
+     * gating them would make an unlicensed Pro install strictly worse than Lite
+     * and would break parity at the final phase.
+     *
+     * @return string[]
+     */
+    public function pro_skins()
+    {
+        return ['agenda', 'yearly_view', 'timetable', 'masonry', 'map', 'available_spot'];
+    }
+
+    /**
+     * Which skin should actually render?
+     *
+     * Returns the requested skin when it is available, a fallback layout when a
+     * Pro skin is unavailable on the Pro package, or '' when there is nothing
+     * to render.
+     *
+     * The fallback exists because the alternative is a blank page. Lite has
+     * always returned '' here, which is tolerable when the site was built as a
+     * Lite site — but during the enforcement ramp it would mean a paying
+     * customer's home page silently goes blank on the day their licence lapses.
+     * That is not an acceptable way to ask someone to renew, so on the Pro
+     * package we degrade to the default layout instead.
+     *
+     * @param string $skin
+     * @return string
+     */
+    public function available_skin($skin)
+    {
+        if ($this->main->isProPresentationEnabled()) return $skin;
+
+        $pro_skins = $this->pro_skins();
+        if (!in_array($skin, $pro_skins)) return $skin;
+
+        // Lite: unchanged behaviour.
+        if (!$this->main->isProBuild()) return '';
+
+        $fallback = $this->get_default_layout();
+
+        // mec_default_layout is filterable, so it can itself name a Pro skin.
+        if (in_array($fallback, $pro_skins)) $fallback = 'list';
+
+        return $fallback;
     }
 
     /**

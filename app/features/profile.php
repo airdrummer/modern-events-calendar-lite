@@ -79,6 +79,13 @@ class MEC_feature_profile extends MEC_base
         }
 
         // Needs Pro
+        //
+        // Deliberately NOT switched to pro_notice_link(). This is the
+        // [MEC_profile] shortcode, so the message renders on the public site.
+        // Licence messaging must never reach the front end (see the plan, §3),
+        // and pointing a visitor at wp-admin would be worse still. Lite shows
+        // exactly this sentence, so leaving it alone is also what keeps the
+        // final phase at Lite parity.
         if(!$this->getPRO())
         {
             // Show message

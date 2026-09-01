@@ -20,7 +20,7 @@ $ix = $this->main->get_ix_options();
     <div class="mec-container">
         <div class="sync-content w-clearfix extra">
             <?php if(!$this->main->getPRO()): ?>
-            <div class="info-msg"><?php echo sprintf(esc_html__("%s is required to use synchronization feature.", 'modern-events-calendar-lite'), '<a href="'.esc_url($this->main->get_pro_link()).'" target="_blank">'.esc_html__('Pro version of Modern Events Calendar', 'modern-events-calendar-lite').'</a>'); ?></div>
+            <div class="info-msg"><?php echo sprintf(esc_html__("%s is required to use synchronization feature.", 'modern-events-calendar-lite'), $this->main->pro_notice_link()); ?></div>
             <?php else: ?>
             <form id="mec_ix_sync_form" action="<?php echo esc_url($this->main->get_full_url()); ?>" method="POST">
                 <div class="mec-form-row mec-syn-schedule">

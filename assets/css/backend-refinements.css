@@ -1,0 +1,2447 @@
+/* =========================================================================
+   MEC BACKEND REFINEMENT LAYER  —  v1
+   -------------------------------------------------------------------------
+   Conservative polish overlay. Loaded AFTER backend.min.css.
+   Preserves MEC identity (colors, shapes, sizes). Fixes real problems only:
+   missing focus states, low-contrast help text, mismatched borders,
+   slow tooltip, harsh switch glow, floating-tab notch.
+
+   `!important` is used deliberately — this is a patch layer that must win
+   over the tangled base file (specificity wars across ~14k lines).
+
+   To disable: comment out the wp_enqueue_style call in app/libraries/factory.php
+   To remove: delete this file + that one line.
+   ========================================================================= */
+
+/* ----------------------------------------------------------------------
+   01. TEXT INPUTS  (+visible border +focus ring +lighter inset)
+       was: borderless, no focus state. Now matches select + accessible.
+   ---------------------------------------------------------------------- */
+.mec-form-row input[type="text"],
+.mec-form-row input[type="email"],
+.mec-form-row input[type="number"],
+.mec-form-row input[type="password"],
+.mec-form-row input[type="tel"],
+.mec-form-row input[type="url"],
+.mec-form-row input[type="date"],
+.mec-form-row input[type="time"],
+.mec-form-row input[type="search"],
+.mec-form-row textarea,
+.mec-occurrences-wrapper input[type="text"],
+.mec-occurrences-wrapper input[type="email"],
+.mec-occurrences-wrapper input[type="number"],
+.mec-occurrences-wrapper input[type="tel"],
+.mec-occurrences-wrapper input[type="url"],
+.mec-occurrences-wrapper input[type="date"],
+.mec-occurrences-wrapper textarea,
+.mec-attendees-wrapper input[type="text"] {
+    border: 1px solid #e6e9eb !important;
+    box-shadow: inset 0 1px 2px rgb(0 0 0 / 4%) !important;
+    transition: border-color .16s ease, box-shadow .16s ease !important;
+}
+
+/* keep the WP color-picker & select2 search field untouched */
+.mec-form-row .wp-picker-container input[type="text"].wp-color-picker,
+.select2-container--default .select2-selection--multiple input[type="search"],
+.select2-search__field {
+    border: none;
+    box-shadow: none;
+}
+
+/* focus ring on all MEC text inputs */
+.mec-form-row input[type="text"]:focus,
+.mec-form-row input[type="email"]:focus,
+.mec-form-row input[type="number"]:focus,
+.mec-form-row input[type="password"]:focus,
+.mec-form-row input[type="tel"]:focus,
+.mec-form-row input[type="url"]:focus,
+.mec-form-row input[type="date"]:focus,
+.mec-form-row input[type="time"]:focus,
+.mec-form-row input[type="search"]:focus,
+.mec-form-row textarea:focus,
+.mec-occurrences-wrapper input:focus,
+.mec-attendees-wrapper input[type="text"]:focus {
+    outline: none !important;
+    border-color: #07bbe9 !important;
+    box-shadow: 0 0 0 3px rgb(7 187 233 / 15%), inset 0 1px 2px rgb(0 0 0 / 4%) !important;
+}
+
+/* ----------------------------------------------------------------------
+   02. SELECT  (+matching focus ring)
+   ---------------------------------------------------------------------- */
+.mec-form-row select,
+.post-type-mec-events .mec-form-row select,
+.post-type-mec_calendars .mec-form-row select,
+.wns-be-main .mec-form-row select,
+.mec-calendar-metabox .wn-mec-select {
+    transition: border-color .16s ease, box-shadow .16s ease, background-color .16s ease !important;
+}
+
+.mec-form-row select:focus,
+.post-type-mec-events .mec-form-row select:focus,
+.post-type-mec_calendars .mec-form-row select:focus,
+.wns-be-main .mec-form-row select:focus,
+.mec-calendar-metabox .wn-mec-select:focus {
+    outline: none !important;
+    border-color: #07bbe9 !important;
+    box-shadow: 0 0 0 3px rgb(7 187 233 / 15%) !important;
+}
+
+/* ----------------------------------------------------------------------
+   03. CHECKBOX  (+border so it reads as a control when unchecked +focus)
+   ---------------------------------------------------------------------- */
+.mec-form-row input[type="checkbox"] {
+    border: 1px solid #d1d5da !important;
+    border-radius: 4px !important;
+    box-shadow: inset 0 1px 2px rgb(0 0 0 / 4%) !important;
+    transition: background-color .16s ease, border-color .16s ease, box-shadow .16s ease !important;
+}
+
+.mec-form-row input[type="checkbox"]:hover {
+    border-color: #9ba3ac !important;
+}
+
+.mec-form-row input[type="checkbox"]:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgb(7 187 233 / 18%) !important;
+}
+
+/* ----------------------------------------------------------------------
+   04. RADIO  (cyan #38d5ed -> brand #07bbe9; +hover +focus)
+   ---------------------------------------------------------------------- */
+.mec-form-row input[type="radio"] {
+    transition: border-color .16s ease, box-shadow .16s ease !important;
+    border-color: #d1d5da !important;
+}
+
+.mec-form-row input[type="radio"]:hover {
+    border-color: #9ba3ac !important;
+}
+
+.mec-form-row input[type="radio"]:checked {
+    border-color: #07bbe9 !important;
+}
+
+.mec-form-row input[type="radio"]:checked:before,
+.w-box.mec-activation input[type="radio"].checked+label span:after {
+    background: #07bbe9 !important;
+}
+
+.mec-form-row input[type="radio"]:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgb(7 187 233 / 18%) !important;
+}
+
+/* ----------------------------------------------------------------------
+   05. SWITCH  (soften the heavy inset green glow +smoother/faster +focus)
+   ---------------------------------------------------------------------- */
+.mec-switcher input+label {
+    transition: background .24s cubic-bezier(.4, 0, .2, 1) !important;
+}
+
+.mec-switcher input+label:after {
+    transition: margin .24s cubic-bezier(.4, 0, .2, 1) !important;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 12%) !important;
+}
+
+/* remove the harsh inner green glow */
+.wns-be-group-tab .mec-switcher input[value="1"]+label,
+.wns-be-group-tab .mec-switcher input[value="1"]+label:before,
+.meta-box-sortables .mec-switcher input:checked+label:before {
+    box-shadow: none !important;
+    background: #64e385 !important;
+    border-color: #64e385 !important;
+}
+
+.mec-switcher input:focus-visible+label {
+    box-shadow: 0 0 0 3px rgb(7 187 233 / 18%) !important;
+}
+
+/* ----------------------------------------------------------------------
+   06. BUTTONS
+       blue: +radius 6px +focus +faster transition (keep #008aff / #41c9de)
+       green save pill: keep color, soften the hard green halo ring
+   ---------------------------------------------------------------------- */
+/* primary blue button (contexts without #wpwrap override) */
+#wpwrap .mec-button-primary {
+    border-radius: 6px !important;
+    transition: background-color .18s ease, box-shadow .18s ease, transform .1s ease !important;
+}
+
+#wpwrap .mec-button-primary:focus-visible {
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgb(0 138 255 / 30%) !important;
+}
+
+/* green save pill (mec-button-primary in settings + dpr-save-btn) */
+#wpwrap .mec-button-primary,
+.wns-be-container .dpr-btn.dpr-save-btn {
+    box-shadow: 0 0 0 3px rgb(100 227 133 / 28%) !important;
+    transition: background-color .18s ease, box-shadow .18s ease, transform .1s ease !important;
+}
+
+.wns-be-container .dpr-btn.dpr-save-btn:hover,
+#wpwrap .mec-button-primary:hover {
+    box-shadow: 0 0 0 5px rgb(100 227 133 / 22%) !important;
+}
+
+.wns-be-container .dpr-btn.dpr-save-btn:focus-visible {
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgb(7 187 233 / 30%) !important;
+}
+
+/* ----------------------------------------------------------------------
+   07. HELP TEXT  (12px #8d959a -> 13px #6b7480 — passes WCAG AA)
+       label line-height intentionally left untouched (preserves row alignment)
+   ---------------------------------------------------------------------- */
+.wns-be-container .wns-be-group-tab p,
+.mec-form-row .description {
+    font-size: 13px !important;
+    color: #6b7480 !important;
+}
+
+/* ----------------------------------------------------------------------
+   08. NAV TABS  (replace floating border + arrow notch with a clean
+       bottom accent bar; keep the light cyan active background)
+   ---------------------------------------------------------------------- */
+#mec-wrap .nav-tab-wrapper .nav-tab-active,
+#mec-wrap .nav-tab-wrapper .nav-tab-active:focus,
+#mec-wrap .nav-tab-wrapper .nav-tab-active:focus:active,
+#mec-wrap .nav-tab-wrapper .nav-tab-active:hover {
+    background: #ecf9fd !important;
+    border: 1px solid transparent !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    color: #0a7a9c !important;
+    font-weight: 600 !important;
+    box-shadow: inset 0 -2px 0 #07bbe9 !important;
+}
+
+/* kill the arrow-notch pseudo elements on the active tab */
+#mec-wrap .nav-tab-wrapper .nav-tab-active:before,
+#mec-wrap .nav-tab-wrapper .nav-tab-active:after {
+    content: none !important;
+    display: none !important;
+}
+
+/* hover feedback for inactive tabs */
+#mec-wrap .nav-tab-wrapper .nav-tab:not(.nav-tab-active):hover {
+    background: #f7f8f9 !important;
+}
+
+/* ----------------------------------------------------------------------
+   09. SECTION HEADING  (keep cyan bar; resize 16->18, center, round)
+   ---------------------------------------------------------------------- */
+.wns-be-container .wns-be-group-tab h2:before,
+.wns-be-container .wns-be-group-tab h4:before {
+    width: 4px !important;
+    height: 18px !important;
+    top: 20px !important;
+    border-radius: 2px !important;
+    background-color: #07bbe9 !important;
+}
+
+/* ----------------------------------------------------------------------
+   10. TOOLTIP  (0.5s delay -> instant + keyboard focus, was hover-only)
+   ---------------------------------------------------------------------- */
+.mec-tooltip .box {
+    transition-delay: 0s !important;
+    box-shadow: 0 4px 16px -4px rgb(0 0 0 / 30%) !important;
+    font-weight: 400 !important;
+}
+
+.mec-tooltip:focus-within .box,
+.mec-tooltip:hover .box {
+    visibility: visible !important;
+    opacity: 1 !important;
+    transition-delay: 0s !important;
+}
+
+/* ----------------------------------------------------------------------
+   10. CYAN DEDUP (#40d9f1 admin accents -> brand #07bbe9)
+       Cannot blind-replace #40d9f1 because it is ALSO a frontend skin
+       swatch (.mec-colorskin-1). So we override only the visible ADMIN
+       accents here, leaving the skin picker intact.
+   ---------------------------------------------------------------------- */
+.mec-custom-nice-select ul.list li.option.selected .wn-mec-text:after {
+    border-color: #07bbe9 !important;
+    box-shadow: 0 3px 16px -3px #07bbe9 !important;
+}
+
+#webnus-dashboard .mec-tooltip .box p a,
+.mec-tooltip .box p a {
+    color: #07bbe9 !important;
+}
+
+.mec-tooltip .dashicons-before:before {
+    color: #07bbe9 !important;
+}
+
+/* ----------------------------------------------------------------------
+   12. BUTTON UNIFICATION (.w-button a -> brand system)
+       Dashboard/Addons/Support CTAs used a parallel system: blue, sharp
+       corners (radius:0), uppercase 12px, and a heavy dark-gradient hover.
+       Brought into the unified brand system: cyan, 6px radius, 14px,
+       normal case, simple darken on hover, +focus ring.
+   ---------------------------------------------------------------------- */
+#webnus-dashboard .w-button a {
+    background: #07bbe9 !important;
+    color: #fff !important;
+    border-radius: 6px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+    padding: 10px 22px !important;
+    transition: background-color .18s ease, box-shadow .18s ease, transform .1s ease !important;
+}
+
+#webnus-dashboard .w-button a:hover,
+#webnus-dashboard .w-box .w-button a:hover,
+#webnus-dashboard .w-box.support-page.videobox .w-button a:hover,
+#webnus-dashboard .w-box.addons-page.videobox .w-button a:hover {
+    background: #0698c0 !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    color: #fff !important;
+}
+
+#webnus-dashboard .w-button a:focus-visible {
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgb(7 187 233 / 30%) !important;
+}
+
+/* ----------------------------------------------------------------------
+   DARK MODE — keep the refinements consistent in dark mode
+   (borders/focus rings still read well; soften the green halo there too)
+   ---------------------------------------------------------------------- */
+.mec-admin-dark-mode .mec-form-row input[type="text"],
+.mec-admin-dark-mode .mec-form-row input[type="email"],
+.mec-admin-dark-mode .mec-form-row input[type="number"],
+.mec-admin-dark-mode .mec-form-row input[type="password"],
+.mec-admin-dark-mode .mec-form-row input[type="tel"],
+.mec-admin-dark-mode .mec-form-row input[type="url"],
+.mec-admin-dark-mode .mec-form-row input[type="date"],
+.mec-admin-dark-mode .mec-form-row textarea,
+.mec-admin-dark-mode .mec-form-row select {
+    border: 1px solid #353535 !important;
+}
+
+.mec-admin-dark-mode .mec-form-row input[type="text"]:focus,
+.mec-admin-dark-mode .mec-form-row input[type="email"]:focus,
+.mec-admin-dark-mode .mec-form-row select:focus,
+.mec-admin-dark-mode .mec-form-row textarea:focus {
+    border-color: #07bbe9 !important;
+    box-shadow: 0 0 0 3px rgb(7 187 233 / 25%) !important;
+}
+
+.mec-admin-dark-mode #wpwrap .mec-button-primary,
+.mec-admin-dark-mode .wns-be-container .dpr-btn.dpr-save-btn {
+    box-shadow: 0 0 0 3px rgb(100 227 133 / 18%) !important;
+}
+
+/* =========================================================================
+   13. UNIFIED FIELD COMPONENTS  —  mec-field / mec-panel / mec-repeater
+   -------------------------------------------------------------------------
+   Canonical structure for the Add/Edit Event & Booking metabox panels.
+   Replaces the 6 ad-hoc row patterns (mec-form-row + scattered col-N,
+   placeholder-only fields, label-less inputs, 5 toggle variants).
+
+   OPT-IN: only panels that adopt these classes are affected. Legacy
+   .mec-form-row markup keeps working untouched (sections 01-12 still apply).
+
+   Reference: ux-audit/backend-ux-audit/field-structure-unification.html
+   Decisions locked: BEM classes, label-left default, NATIVE checkboxes
+   (no .mec-switch), basvanced retained but standardized.
+   ========================================================================= */
+
+/* 13.0 — Standard control width scale (reusable tokens).
+   Apply to any input/select that must not stretch on wide screens:
+
+     --mec-input-w: 410px   the standard single-line control width
+                            (matches .mec-field__control>input max-width)
+     --mec-input-w--sm: 260px  date pickers & short controls
+
+   Usage (CSS):  max-width: var(--mec-input-w);
+   Usage (rows): <div class="mec-field" style="--mec-input-w: 300px"> ... */
+:root {
+    --mec-input-w: 410px;
+    --mec-input-w--sm: 260px;
+    --mec-input-w--wide: 860px;
+}
+
+/* 13.1 — single hide utility
+   Replaces mec-util-hidden / w-hidden / inline style="display:none".
+   One class, one meaning. Legacy classes are NOT removed (back-compat). */
+.mec-is-hidden {
+    display: none !important;
+}
+
+/* 13.2 — field row
+   Default = label-left (inline). Width via --mec-label-w (override per panel
+   or per-field). .mec-field--block = stacked (label above, full width).
+
+   IMPORTANT — co-applied with .mec-form-row:
+   Migrated rows carry BOTH classes: <div class="mec-form-row mec-field">.
+   .mec-form-row is RETAINED because every input/select/checkbox style in
+   backend.css + refinement 01-04 is scoped to ".mec-form-row input". Removing
+   it (as an earlier attempt did) left inputs unstyled. .mec-field only adds
+   the flex label/control layout; it neutralises .mec-form-row's float-clearfix
+   padding/pseudos so the two don't fight. Input base styling is NOT duplicated
+   here — it flows from .mec-form-row automatically. */
+.mec-field {
+    --mec-label-w: 170px;
+    --mec-field-gap: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: var(--mec-field-gap);
+    margin: 0 0 30px;
+    padding: 0 !important;
+    /* neutralise .mec-form-row's 5px 5px 35px */
+}
+
+.mec-field::before,
+.mec-field::after {
+    /* neutralise .mec-form-row float clearfix */
+    content: none;
+    display: none;
+}
+
+.mec-field__label {
+    flex: 0 0 var(--mec-label-w);
+    max-width: var(--mec-label-w);
+    /* baseline-align label with text input */
+    font-weight: 600;
+    color: #2f353c;
+    line-height: 1.5;
+}
+
+.mec-field__label label,
+.mec-field__label>span {
+    /* > span for choice groups without a real label */
+    display: block;
+    font-weight: 600;
+}
+
+.mec-field__control {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.mec-field__control>input[type="text"],
+.mec-field__control>input[type="email"],
+.mec-field__control>input[type="number"],
+.mec-field__control>input[type="password"],
+.mec-field__control>input[type="tel"],
+.mec-field__control>input[type="url"],
+.mec-field__control>input[type="date"],
+.mec-field__control>input[type="time"],
+.mec-field__control>input[type="search"],
+.mec-field__control>select,
+.mec-field__control>textarea,
+.mec-field__control>.select2-container {
+    flex: 1 1 220px;
+    min-width: 120px;
+    max-width: var(--mec-input-w);
+    box-sizing: border-box;
+}
+
+.mec-field__control>textarea {
+    flex: 1 0 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.mec-field__control>.mec-tooltip {
+    flex: 0 0 auto;
+}
+
+.mec-field__help {
+    flex: 1 0 100%;
+    margin: 0;
+    color: #6b7480;
+    font-size: 12.5px;
+    line-height: 1.55;
+}
+
+/* warning variant — replaces the old inline style="color:red" descriptions */
+.mec-field__help--warn {
+    color: #c0392b;
+}
+
+.mec-required {
+    color: #e23d5a;
+    margin-inline-start: 2px;
+}
+
+/* stacked modifier (textarea, long text, preview blocks) */
+.mec-field--block {
+    flex-direction: column;
+}
+
+.mec-field--block .mec-field__label {
+    flex: 0 0 auto;
+    max-width: none;
+    padding-top: 0;
+    margin-bottom: 5px;
+}
+
+.mec-field--block .mec-field__control>input,
+.mec-field--block .mec-field__control>textarea,
+.mec-field--block .mec-field__control>select {
+    max-width: 100%;
+}
+
+/* toggle field — label column + native checkbox (decision D-3: keep native checkbox).
+   <div class="mec-field mec-field--toggle"> label + control > span.mec-checkbox */
+.mec-field--toggle .mec-field__control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.mec-checkbox {
+    display: inline-flex;
+    align-items: center;
+}
+
+.mec-checkbox input[type="checkbox"] {
+    margin: 0;
+}
+
+/* compact inline checkbox — standalone on/off, no separate label column.
+   <div class="mec-field mec-field--check">
+     <label class="mec-check"><input type="checkbox"><span>text</span></label>
+     <p class="mec-field__help">optional help</p>
+   </div> */
+.mec-field--check {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+}
+
+/* check row carrying a sibling tooltip (e.g. Descending Order, Include
+   Local Time): keep the help icon on the label's own line, right after
+   the checkbox text — not dropped underneath it. */
+.mec-field--check:has(> .mec-tooltip) {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    column-gap: 8px;
+    row-gap: 5px;
+}
+
+.mec-field--check:has(> .mec-tooltip)>.mec-tooltip {
+    flex: 0 0 auto;
+}
+
+.mec-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    color: #2f353c;
+    line-height: 1.5;
+}
+
+.mec-check input[type="checkbox"] {
+    flex: 0 0 auto;
+    margin: 0;
+}
+
+/* choice group — multiple checkboxes/radios under one label */
+.mec-field--choices .mec-field__control {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 20px;
+    align-items: center;
+}
+
+.mec-choice {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+    color: #2f353c;
+}
+
+.mec-choice input {
+    margin: 0;
+}
+
+/* 13.3 — control layout (NO base-style duplication)
+   Input/select/checkbox/radio base styling (height, padding, border-radius,
+   background, border, focus, checkbox/radio states, dark mode) is scoped to
+   ".mec-form-row input" in backend.css + refinement 01-04. Because every
+   .mec-field row ALSO carries .mec-form-row, all of that applies automatically.
+   Only the flex-layout margin reset lives here (backend.css:1444 sets
+   margin:0 1% 0 0 on .mec-form-row inputs, which is wrong inside a flex row). */
+.mec-field__control>input,
+.mec-field__control>select,
+.mec-field__control>textarea {
+    margin: 0;
+}
+
+/* 13.4 — panel container
+   Coexists with mec-event-tab-content / mec-booking-tab-content (those stay for
+   JS tab logic). Normalises the panel head/body split. */
+.mec-panel__head {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin: 0 0 16px;
+    flex-wrap: wrap;
+}
+
+.mec-panel__title {
+    flex: 1 0 100%;
+    margin: 0;
+    text-transform: capitalize;
+    border-bottom: 1px solid #e5e5e5;
+    padding-bottom: 6px;
+    margin: 20px 0 16px;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+/* full-width so the h4 underline spans edge to edge */
+.mec-panel__body>.mec-field:last-child {
+    margin-bottom: 0;
+}
+
+/* 13.5 — repeater
+   Replaces the divergent mec-box/X_row.mec-form-row + span-handle patterns. */
+.mec-repeater__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 0 0 14px;
+}
+
+.mec-repeater__title {
+    margin: 0;
+}
+
+.mec-repeater__list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.mec-repeater__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    border: 1px solid #e6e9eb;
+    border-radius: 8px;
+    padding: 12px;
+    background: #fff;
+}
+
+.mec-repeater__handle {
+    cursor: grab;
+    color: #9ba3ac;
+    padding: 4px 2px;
+    flex: 0 0 auto;
+    line-height: 1;
+}
+
+.mec-repeater__handle:active {
+    cursor: grabbing;
+}
+
+.mec-repeater__body {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.mec-repeater__body>.mec-field:last-child {
+    margin-bottom: 0;
+}
+
+.mec-repeater__remove {
+    flex: 0 0 auto;
+}
+
+.mec-repeater__item--collapsed .mec-repeater__body {
+    display: none;
+}
+
+/* 13.6 — responsive: stack labels under ~700px (matches the existing mec-col-3 breakpoint intent) */
+@media (max-width: 760px) {
+    .mec-field {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .mec-field__label {
+        flex: 0 0 auto;
+        max-width: none;
+        padding-top: 0;
+        margin-bottom: 5px;
+    }
+
+    .mec-field--toggle .mec-field__control,
+    .mec-field--check {
+        align-items: flex-start;
+    }
+}
+
+/* 13.7 — dark mode parity for the new structural elements only.
+   Input dark-mode borders/focus already come from ".mec-admin-dark-mode
+   .mec-form-row input" in the dark-mode block above (rows carry .mec-form-row). */
+.mec-admin-dark-mode .mec-repeater__item {
+    border-color: #353535;
+    background: #1d1d1d;
+}
+
+/* 13.8 — Hourly Schedule day "Remove" button: trash icon.
+   backend.css ~14407 gives the schedule-row remove button a trash icon
+   (font-size:0 + :before SVG), scoped to ".mec-form-row.mec-box
+   .mec-remove-hourly-schedule-button". The day-level remove button
+   (.mec-hourly-schedule-remove-day-button) is outside .mec-box, so it keeps
+   its text label. Mirror the same icon treatment here so both match.
+   "Remove" text stays in the DOM (font-size:0 hides it; screen readers announce it). */
+#mec-hourly-schedule .mec-hourly-schedule-remove-day-button {
+    font-size: 0;
+    position: relative;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    cursor: pointer;
+    border-color: #e6c1c4;
+}
+
+#mec-hourly-schedule .mec-hourly-schedule-remove-day-button:before {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 14px;
+    height: 14px;
+    margin: 0;
+    transform: translate(-50%, -50%);
+    display: block;
+    content: "";
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23c4474a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3 6 5 6 21 6'/%3E%3Cpath d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'/%3E%3Cline x1='10' y1='11' x2='10' y2='17'/%3E%3Cline x1='14' y1='11' x2='14' y2='17'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+#mec-hourly-schedule .mec-hourly-schedule-remove-day-button:hover {
+    border-color: #d4a8ab;
+}
+
+#mec-hourly-schedule .mec-hourly-schedule-remove-day-button:hover:before {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23a32023' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3 6 5 6 21 6'/%3E%3Cpath d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'/%3E%3Cline x1='10' y1='11' x2='10' y2='17'/%3E%3Cline x1='14' y1='11' x2='14' y2='17'/%3E%3C/svg%3E");
+}
+
+/* 14 — Booking repeaters (Tickets, Variations, Fees): fill rows + tooltip icon right.
+   Covers DIRECT field rows of a ticket, a variation, and a fee box, across all booking panels. */
+.mec-add-booking-tabs-right .mec_ticket_row>.mec-form-row,
+.mec-add-booking-tabs-right .mec_ticket_variation_row>.mec-form-row,
+.mec-add-booking-tabs-right #mec_fees_list .mec-box>.mec-form-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.mec-add-booking-tabs-right .mec_ticket_row>.mec-form-row::after,
+.mec-add-booking-tabs-right .mec_ticket_variation_row>.mec-form-row::after,
+.mec-add-booking-tabs-right #mec_fees_list .mec-box>.mec-form-row::after {
+    content: none;
+}
+
+.mec-add-booking-tabs-right .mec_ticket_row>.mec-form-row>[class*="mec-col-"],
+.mec-add-booking-tabs-right .mec_ticket_variation_row>.mec-form-row>[class*="mec-col-"],
+.mec-add-booking-tabs-right #mec_fees_list .mec-box>.mec-form-row>[class*="mec-col-"] {
+    flex: 1 1 0;
+    min-width: 120px;
+    width: auto;
+    max-width: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* input fills its col-wrapper, tooltip/label sits to the right */
+.mec-add-booking-tabs-right .mec_ticket_row>.mec-form-row>[class*="mec-col-"]>input,
+.mec-add-booking-tabs-right .mec_ticket_row>.mec-form-row>[class*="mec-col-"]>textarea,
+.mec-add-booking-tabs-right .mec_ticket_row>.mec-form-row>[class*="mec-col-"]>select,
+.mec-add-booking-tabs-right .mec_ticket_variation_row>.mec-form-row>[class*="mec-col-"]>input,
+.mec-add-booking-tabs-right .mec_ticket_variation_row>.mec-form-row>[class*="mec-col-"]>textarea,
+.mec-add-booking-tabs-right .mec_ticket_variation_row>.mec-form-row>[class*="mec-col-"]>select,
+.mec-add-booking-tabs-right #mec_fees_list .mec-box>.mec-form-row>[class*="mec-col-"]>input,
+.mec-add-booking-tabs-right #mec_fees_list .mec-box>.mec-form-row>[class*="mec-col-"]>textarea,
+.mec-add-booking-tabs-right #mec_fees_list .mec-box>.mec-form-row>[class*="mec-col-"]>select {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.mec-add-booking-tabs-right .mec_ticket_row>.mec-form-row>[class*="mec-col-"]>.mec-tooltip,
+.mec-add-booking-tabs-right .mec_ticket_row>.mec-form-row>[class*="mec-col-"]>.mec-label,
+.mec-add-booking-tabs-right .mec_ticket_variation_row>.mec-form-row>[class*="mec-col-"]>.mec-tooltip,
+.mec-add-booking-tabs-right .mec_ticket_variation_row>.mec-form-row>[class*="mec-col-"]>.mec-label,
+.mec-add-booking-tabs-right #mec_fees_list .mec-box>.mec-form-row>[class*="mec-col-"]>.mec-tooltip,
+.mec-add-booking-tabs-right #mec_fees_list .mec-box>.mec-form-row>[class*="mec-col-"]>.mec-label {
+    flex: 0 0 auto;
+}
+
+/* inputs/textareas that ARE the direct child (name mec-col-12, description, variation/fee title mec-col-8) */
+.mec-add-booking-tabs-right .mec_ticket_row>.mec-form-row>input,
+.mec-add-booking-tabs-right .mec_ticket_row>.mec-form-row>textarea,
+.mec-add-booking-tabs-right .mec_ticket_variation_row>.mec-form-row>input,
+.mec-add-booking-tabs-right .mec_ticket_variation_row>.mec-form-row>textarea,
+.mec-add-booking-tabs-right #mec_fees_list .mec-box>.mec-form-row>input,
+.mec-add-booking-tabs-right #mec_fees_list .mec-box>.mec-form-row>textarea {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.mec-add-booking-tabs-right .mec_ticket_row>.mec-form-row>.mec-tooltip,
+.mec-add-booking-tabs-right .mec_ticket_variation_row>.mec-form-row>.mec-tooltip,
+.mec-add-booking-tabs-right #mec_fees_list .mec-box>.mec-form-row>.mec-tooltip {
+    flex: 0 0 auto;
+}
+
+/* 14.2 — Booking repeaters: "Add" buttons aligned consistently (right), section title full-width. */
+.mec-add-booking-tabs-right .mec-form-row:has(> .mec_add_price_date_button),
+.mec-add-booking-tabs-right .mec-form-row:has(> .mec_add_variation_per_ticket_button),
+.mec-add-booking-tabs-right .mec-form-row:has(> .mec_add_fee_button),
+.mec-add-booking-tabs-right .mec-form-row:has(> .mec_add_ticket_variation_button) {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.mec-add-booking-tabs-right .mec-form-row>h4,
+.mec-add-booking-tabs-right .mec-form-row>h5 {
+    margin: 0;
+    flex: 1 1 auto;
+    width: 100%;
+}
+
+.mec-add-booking-tabs-right .mec_add_price_date_button,
+.mec-add-booking-tabs-right .mec_add_variation_per_ticket_button,
+.mec-add-booking-tabs-right .mec_add_fee_button,
+.mec-add-booking-tabs-right .mec_add_ticket_variation_button {
+    margin-left: auto;
+    flex: 0 0 auto;
+}
+
+/* 15 — Organizer Payment credential forms: label-left fill, so inputs are full-width
+   like the rest of the editor. Each gateway op_form() renders
+   <label class="mec-col-3"> + <div class="mec-col-9">input (+ show/hide)</div>.
+   Scoped to #mec_meta_box_op_form (per-event) so global gateway settings stay untouched. */
+#mec_meta_box_op_form .mec-gateway-options-form .mec-form-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+#mec_meta_box_op_form .mec-gateway-options-form .mec-form-row::after {
+    content: none;
+}
+
+#mec_meta_box_op_form .mec-gateway-options-form .mec-form-row>label[class*="mec-col-"] {
+    flex: 0 0 170px;
+    max-width: 170px;
+    width: auto;
+}
+
+#mec_meta_box_op_form .mec-gateway-options-form .mec-form-row>div[class*="mec-col-"] {
+    flex: 1 1 0;
+    min-width: 0;
+    width: auto;
+    max-width: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#mec_meta_box_op_form .mec-gateway-options-form .mec-form-row input,
+#mec_meta_box_op_form .mec-gateway-options-form .mec-form-row textarea,
+#mec_meta_box_op_form .mec-gateway-options-form .mec-form-row select {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto;
+}
+
+#mec_meta_box_op_form .mec-gateway-options-form .mec-show-hide-password {
+    flex: 0 0 auto;
+}
+
+/* 16.0 — ".mec-form-row .button:not(...)" in backend.css (~7501) sets
+   display:inline-block at very high specificity (its :not() args include
+   ".wp-core-ui .quicktags-toolbar input.button.button-small"), which beats
+   ".button.mec-util-hidden". So the "Choose image" buttons could never be
+   hidden by the mec-util-hidden class. ID selectors out-rank it. */
+#mec_location_thumbnail_button.mec-util-hidden,
+#mec_organizer_thumbnail_button.mec-util-hidden,
+#mec_banner_thumbnail_button.mec-util-hidden {
+    display: none;
+}
+
+/* 16 — Location/Organizer thumbnail "Remove image" button: trash icon.
+   Mirrors 13.8 (hourly-schedule day remove) so image removal matches the
+   other trash buttons. Text stays in the DOM (font-size:0 hides it;
+   screen readers still announce it). */
+.mec-thumbnail-row .mec_location_remove_image_button,
+.mec-thumbnail-row .mec_organizer_remove_image_button,
+#mec_event_banner_thumbnail_options .mec_remove_image_button {
+    font-size: 0;
+    position: relative;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    cursor: pointer;
+    border-color: #e6c1c4;
+}
+
+.mec-thumbnail-row .mec_location_remove_image_button:before,
+.mec-thumbnail-row .mec_organizer_remove_image_button:before,
+#mec_event_banner_thumbnail_options .mec_remove_image_button:before {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 14px;
+    height: 14px;
+    margin: 0;
+    transform: translate(-50%, -50%);
+    display: block;
+    content: "";
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23c4474a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3 6 5 6 21 6'/%3E%3Cpath d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'/%3E%3Cline x1='10' y1='11' x2='10' y2='17'/%3E%3Cline x1='14' y1='11' x2='14' y2='17'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+.mec-thumbnail-row .mec_location_remove_image_button:hover,
+.mec-thumbnail-row .mec_organizer_remove_image_button:hover,
+#mec_event_banner_thumbnail_options .mec_remove_image_button:hover {
+    border-color: #d4a8ab;
+}
+
+.mec-thumbnail-row .mec_location_remove_image_button:hover:before,
+.mec-thumbnail-row .mec_organizer_remove_image_button:hover:before,
+#mec_event_banner_thumbnail_options .mec_remove_image_button:hover:before {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23a32023' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3 6 5 6 21 6'/%3E%3Cpath d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'/%3E%3Cline x1='10' y1='11' x2='10' y2='17'/%3E%3Cline x1='14' y1='11' x2='14' y2='17'/%3E%3C/svg%3E");
+}
+
+/* 16.1 — Downloadable File "Remove File" button: trash icon (same pattern
+   as 13.8 / 16). backend.css ~7594 gives it margin-top:12px; keep it inline
+   with the "Choose File" button instead. Text stays in the DOM
+   (font-size:0 hides it; screen readers still announce it). */
+#mec_meta_box_downloadable_file_options #mec_downloadable_file_remove_image_button {
+    font-size: 0;
+    position: relative;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    margin-top: 0;
+    cursor: pointer;
+    border-color: #e6c1c4;
+}
+
+#mec_meta_box_downloadable_file_options #mec_downloadable_file_remove_image_button:before {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 14px;
+    height: 14px;
+    margin: 0;
+    transform: translate(-50%, -50%);
+    display: block;
+    content: "";
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23c4474a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3 6 5 6 21 6'/%3E%3Cpath d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'/%3E%3Cline x1='10' y1='11' x2='10' y2='17'/%3E%3Cline x1='14' y1='11' x2='14' y2='17'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+#mec_meta_box_downloadable_file_options #mec_downloadable_file_remove_image_button:hover {
+    border-color: #d4a8ab;
+}
+
+#mec_meta_box_downloadable_file_options #mec_downloadable_file_remove_image_button:hover:before {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23a32023' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3 6 5 6 21 6'/%3E%3Cpath d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'/%3E%3Cline x1='10' y1='11' x2='10' y2='17'/%3E%3Cline x1='14' y1='11' x2='14' y2='17'/%3E%3C/svg%3E");
+}
+
+/* 17 — Booking form field rows (#mec_reg_form_fields / #mec_bfixed_form_fields):
+   grip + trash icon buttons.
+   The spans now carry the standard classes (button / mec-dash-remove-btn —
+   see main.php field_*), so they pick up the shared admin pill styles
+   (white bg, border) from ".mec-form-row .button:not(...)" /
+   ".mec-form-row .mec-dash-remove-btn". Size them as 40×40 icon buttons
+   like the other repeaters (backend.css ~14346), pin them to the top-right
+   of the card, and swap the simple-line-icons glyphs (which don't render
+   in the admin) for the shared SVG icons. */
+
+#mec_reg_form_fields span.mec_reg_field_sort,
+#mec_bfixed_form_fields span.mec_bfixed_field_sort,
+body.rtl #mec_reg_form_fields span.mec_reg_field_sort,
+body.rtl #mec_bfixed_form_fields span.mec_bfixed_field_sort {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    left: auto;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    margin: 0;
+    font-size: 0;
+    line-height: 1;
+    text-align: center;
+    display: block;
+    cursor: grab;
+    z-index: 2;
+}
+
+#mec_reg_form_fields span.mec_reg_field_sort:active,
+#mec_bfixed_form_fields span.mec_bfixed_field_sort:active {
+    cursor: grabbing;
+}
+
+#mec_reg_form_fields span.mec_reg_field_sort:before,
+#mec_bfixed_form_fields span.mec_bfixed_field_sort:before,
+body.rtl #mec_reg_form_fields span.mec_reg_field_sort:before,
+body.rtl #mec_bfixed_form_fields span.mec_bfixed_field_sort:before {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 14px;
+    height: 14px;
+    margin: 0;
+    transform: translate(-50%, -50%);
+    display: block;
+    font-family: inherit;
+    font-size: 0;
+    content: "";
+    cursor: grab;
+    color: #555;
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cg fill='%23555'%3E%3Ccircle cx='3.5' cy='3.5' r='1.4'/%3E%3Ccircle cx='3.5' cy='7' r='1.4'/%3E%3Ccircle cx='3.5' cy='10.5' r='1.4'/%3E%3Ccircle cx='10.5' cy='3.5' r='1.4'/%3E%3Ccircle cx='10.5' cy='7' r='1.4'/%3E%3Ccircle cx='10.5' cy='10.5' r='1.4'/%3E%3C/g%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+#mec_reg_form_fields span.mec_reg_field_remove,
+#mec_bfixed_form_fields span.mec_bfixed_field_remove,
+body.rtl #mec_reg_form_fields span.mec_reg_field_remove,
+body.rtl #mec_bfixed_form_fields span.mec_bfixed_field_remove {
+    position: absolute;
+    top: 8px;
+    right: 52px;
+    left: auto;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    margin: 0;
+    font-size: 0;
+    line-height: 1;
+    text-align: center;
+    display: block;
+    cursor: pointer;
+    z-index: 2;
+}
+
+#mec_reg_form_fields span.mec_reg_field_remove:before,
+#mec_bfixed_form_fields span.mec_bfixed_field_remove:before,
+body.rtl #mec_reg_form_fields span.mec_reg_field_remove:before,
+body.rtl #mec_bfixed_form_fields span.mec_bfixed_field_remove:before {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 14px;
+    height: 14px;
+    margin: 0;
+    transform: translate(-50%, -50%);
+    display: block;
+    font-family: inherit;
+    font-size: 0;
+    content: "";
+    cursor: pointer;
+    color: #c4474a;
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23c4474a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3 6 5 6 21 6'/%3E%3Cpath d='M19 6v14a2 2 2 0 0 1-2 2H7a2 2 2 0 0 1-2-2V6m3 0V4a2 2 2 0 0 1 2-2h4a2 2 2 0 0 1 2 2v2'/%3E%3Cline x1='10' y1='11' x2='10' y2='17'/%3E%3Cline x1='14' y1='11' x2='14' y2='17'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+/* ======================================================================
+   18 — Shortcode screen (post-new.php?post_type=mec_calendars)
+   The five metaboxes (Display Options, Filter, Search Form, Icons,
+   Shortcode) were migrated to the standard field pattern (T1-T8).
+   backend.css keeps legacy ".mec-calendar-metabox ..." rules (7277+)
+   that assumed label.mec-col-4 floats. This section neutralises the
+   clashes inside the new .mec-field rows only — no markup change.
+   ====================================================================== */
+
+/* 18.1 — Field rows inside the skin containers: same label width as the
+   event editor so both editors feel identical. Slightly narrower than the
+   default 170px because skin labels here are shorter (Style, Limit ...). */
+#mec_meta_box_calendar_skin_options .mec-field,
+.mec-calendar-metabox .mec-create-shortcode-tab-content .mec-field {
+    --mec-label-w: 180px;
+}
+
+/* 18.3 — Old float rules in backend.css target label.mec-col-4/select.mec-col-4
+   inside .mec-calendar-metabox; the migrated rows no longer carry those
+   classes, but the leftover width:32.33% datepicker rule (backend.css:5601)
+   has a broken compound selector and never applied — keep datepickers sane. */
+.mec-calendar-metabox .mec-field__control>input.mec_date_picker {
+    flex: 1 1 200px;
+    max-width: var(--mec-input-w--sm);
+}
+
+/* 18.4 — Filter/Display selects after niceSelect replacement: the injected
+   .wn-mec-select button inherits WP button-ish padding from legacy rules;
+   inside .mec-field__control make it fill like a normal control. */
+.mec-field__control>.wn-mec-select {
+    flex: 1 1 220px;
+    min-width: 140px;
+    max-width: var(--mec-input-w);
+    width: auto;
+}
+
+/* 18.6 — Tooltip icons in check rows now sit inline beside the label text
+   (see the :has() rule in 13.5); just make sure no legacy margin nudges
+   them out of the line. */
+.mec-calendar-metabox .mec-field--check>.mec-tooltip {
+    margin: 0;
+}
+
+/* 18.7 — Check rows inside panels (filter Expired/Ongoing etc.) shouldn't
+   inherit the 20px row gap twice: .mec-field margin already provides it. */
+.mec-create-shortcode-tab-content .mec-panel__head+.mec-field--check {
+    margin-top: 0;
+}
+
+/* 18.8 — Dark mode: skin container + new field rows on the shortcode screen.
+   Input dark styling already flows from ".mec-admin-dark-mode .mec-form-row
+   input" (rows keep .mec-form-row). Panel head/body have no chrome of their
+   own here (the WP metabox provides it), so only the help text + panel
+   title need adjusting. */
+.mec-admin-dark-mode .mec-calendar-metabox .mec-panel__title,
+.mec-admin-dark-mode .mec-calendar-metabox .mec-field__label {
+    color: #e2e4e7;
+}
+
+.mec-admin-dark-mode .mec-calendar-metabox .mec-field__help {
+    color: #9aa3ab;
+}
+
+/* 18.9 — RTL: label column on the other side is handled by the flex row
+   automatically, but the mec-check gap and tooltip margins mirror too. */
+body.rtl .mec-calendar-metabox .mec-field {
+    /* flex row flips with dir=rtl; nothing to do — placeholder for clarity */
+}
+
+/* 18.10 — Search Form: backend.css:3396 gives every text/number input inside
+   .mec-search-form-options-container margin-top:10px (old stacked layout).
+   Inside .mec-field__control the follow-up inputs (placeholder / radius)
+   sit next to the select in a flex row — the extra margin misaligns them. */
+.mec-search-form-options-container .mec-field__control>input[type="text"],
+.mec-search-form-options-container .mec-field__control>input[type="number"] {
+    margin-top: 0;
+}
+
+/* 18.11 — Search Form follow-up inputs (placeholder text / radius) are
+   secondary controls next to their select: size to content-ish. */
+.mec-search-form-options-container .mec-field__control>input[type="text"][name*="placeholder"] {
+    flex: 1 1 180px;
+    max-width: 280px;
+}
+
+/* value deliberately not tokenized: it's a secondary control next to a
+   select, narrower than the standard single-line width on purpose */
+
+.mec-search-form-options-container .mec-field__control>input[type="number"] {
+    flex: 0 1 120px;
+    min-width: 90px;
+}
+
+/* 18.12 — Conditional date-picker wrappers (…_start_date_container,
+   …_end_date_container, maximum-date boxes). They are plain divs inside
+   .mec-field__control (kept for the show/hide JS), so the input fills the
+   block and the tooltip icon drops to the next line. Turn the wrapper into
+   a flex row: input first, help icon beside it. */
+.mec-calendar-metabox .mec-field__control>div:has(>input.mec_date_picker) {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1 1 220px;
+    min-width: 0;
+    max-width: 330px;
+}
+
+/* value deliberately not tokenized: wrapper = input + tooltip icon, so the
+   input inside ends up ~ --mec-input-w--sm anyway */
+
+.mec-calendar-metabox .mec-field__control>div:has(>input.mec_date_picker)>input {
+    flex: 1 1 auto;
+    min-width: 140px;
+    width: auto;
+}
+
+.mec-calendar-metabox .mec-field__control>div:has(>input.mec_date_picker)>.mec-tooltip {
+    flex: 0 0 auto;
+}
+
+/* 18.12a — Guard for the flex rule above: it out-specified the base
+   `.mec-util-hidden{display:none}` (backend.css:95), so conditional date
+   containers (…_start_date_container / …_end_date_container) were VISIBLE on
+   page load even when the type select was not "On a certain date". One extra
+   class restores the hidden state; the inline .show()/.hide() calls from the
+   selects' onchange still win (inline > author rules). No !important on
+   purpose — it would break the JS toggling. */
+.mec-calendar-metabox .mec-field__control>div:has(>input.mec_date_picker).mec-util-hidden {
+    display: none;
+}
+
+/* 18.12b — Same root cause as 18.12a, at ROW level: the base `.mec-field
+   {display:flex}` rule (section 13) loads after backend.css and out-specified
+   `.mec-util-hidden{display:none}` (backend.css:95) and `.mec-fluent-hidden`
+   (backend.css:12683). Result: every conditionally hidden field ROW (Geolocation
+   under Show Map on top, geolocation focus, sed-method, month divider, carousel
+   archive link / head text, timetable style-dependent rows, fluent/liquid style
+   rows, …) was VISIBLE on page load, and since the inline handlers use .toggle(),
+   the whole show/hide logic felt INVERTED (checking the box hid the field).
+   Two-class selector restores the hidden state for all such rows at once;
+   inline .show()/.hide()/.toggle() from the onchange handlers still wins. */
+.mec-field.mec-util-hidden,
+.mec-field.mec-fluent-hidden {
+    display: none;
+}
+
+/* 18.13 — Search Form metabox (mec_calendar_search_form): stacked layout —
+   every .mec-field__label sits ABOVE its .mec-field__control (mirrors the
+   .mec-field--block rules in 13.2, applied per-section so the rest of the
+   shortcode screen keeps the label-left layout). Scoped by metabox id, so
+   it covers all rows and any future ones without markup edits. */
+#mec_calendar_search_form .mec-field {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+#mec_calendar_search_form .mec-field__label {
+    flex: 0 0 auto;
+    max-width: none;
+    padding-top: 0;
+    margin-bottom: 5px;
+}
+
+/* check rows keep their own compact alignment (they are column already) */
+#mec_calendar_search_form .mec-field--check {
+    align-items: flex-start;
+}
+
+/* =====================================================================
+   19. VISUAL SKIN GALLERY  (Shortcode Add/Edit — Skin picker)
+   -------------------------------------------------------------------------
+   Replaces the bare 19-item skin dropdown with a text card gallery
+   (UX audit — Issue 3). Cards carry the skin name and a one-line
+   "best for" hint. The classic select stays in the DOM (permanently
+   hidden) and remains the single source of truth for saving +
+   mec_skin_toggle().
+   JS wiring: assets/js/backend.js ("Initialize MEC Skin Gallery").
+   ===================================================================== */
+
+/* 19.1 — Row layout: the gallery needs width, so let the control grow */
+.mec-skin-gallery-field .mec-field__control {
+    flex: 1 1 560px;
+}
+
+.mec-skin-gallery {
+    display: block;
+    width: 100%;
+    max-width: var(--mec-input-w--wide);
+}
+
+/* 19.2 — Card grid */
+.mec-skin-gallery__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 10px;
+}
+
+/* 19.3 — Card: a real <button> (keyboard accessible, aria-pressed synced by JS) */
+.mec-skin-card {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 10px 12px;
+    text-align: start;
+    font-family: inherit;
+    background: #fff;
+    border: 1.5px solid #e3e8ec;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+}
+
+.mec-skin-card:hover {
+    border-color: #07bbe9;
+    box-shadow: 0 3px 10px rgb(7 187 233 / 14%);
+    transform: translateY(-1px);
+}
+
+.mec-skin-card:focus-visible {
+    outline: 2px solid #07bbe9;
+    outline-offset: 2px;
+}
+
+/* 19.4 — Selected card: accent ring + check mark before the name */
+.mec-skin-card--selected {
+    border-color: #07bbe9;
+    box-shadow: 0 0 0 3px rgb(7 187 233 / 18%);
+}
+
+.mec-skin-card--selected .mec-skin-card__name::before {
+    content: "\2713\00a0";
+    color: #07bbe9;
+    font-weight: 700;
+}
+
+/* 19.5 — Card internals */
+.mec-skin-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.mec-skin-card__name {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 5px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #2c3338;
+    line-height: 1.4;
+}
+
+.mec-skin-card__desc {
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: #7a868d;
+}
+
+/* 19.6 — Classic dropdown row: permanently hidden (kept in DOM for save + JS) */
+#mec_skin_classic_row {
+    display: none !important;
+}
+
+/* 19.7 — Style gallery (per-skin "Style" select -> image card picker).
+   Built at runtime by backend.js; reuses .mec-skin-card base styles
+   (border, hover, selected ring, focus ring, name) from 19.3–19.5. */
+.mec-has-style-gallery>select,
+.mec-has-style-gallery>.nice-select {
+    display: none !important;
+}
+
+.mec-has-style-gallery .mec-style-gallery {
+    flex: 1 1 100%;
+}
+
+.mec-style-gallery {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    width: 100%;
+    max-width: 860px;
+    margin-top: 8px;
+}
+
+/* single-card galleries (skins with only one style) — don't stretch one card
+   across the full 3-col track */
+.mec-style-gallery.single .mec-style-card {
+    max-width: 220px;
+}
+
+.mec-style-gallery .mec-skin-card__thumb {
+    display: block;
+    background: #f7fafb;
+    border: 1px solid #edf1f4;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.mec-style-gallery .mec-skin-card__thumb img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.mec-style-gallery .mec-skin-card__body {
+    padding-top: 8px;
+}
+
+/* =====================================================================
+   20. INLINE VALIDATION WARNINGS  (Shortcode Add/Edit)
+   -------------------------------------------------------------------------
+   Non-blocking inline warnings for invalid dates / reversed date ranges
+   (UX audit — Issue 4). Injected under the field's control by backend.js
+   (mecValidateSkinDateFields) with role="alert" for screen readers (WCAG
+   3.3.1). Amber = advisory, never blocks saving.
+   ===================================================================== */
+
+.mec-field-warning {
+    /* .mec-field__control is a wrapped flex row -> take the full next line */
+    flex: 0 0 100%;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    margin-top: 6px;
+    padding: 6px 10px;
+    font-size: 12px;
+    line-height: 1.6;
+    color: #92400e;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-left: 3px solid #d97706;
+    border-radius: 6px;
+}
+
+.mec-field-warning::before {
+    content: "\26A0";
+    flex: 0 0 auto;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* RTL: flip the accent border side */
+body.rtl .mec-field-warning {
+    border-left: 1px solid #fde68a;
+    border-right: 3px solid #d97706;
+}
+
+/* =====================================================================
+   21. LIVE DATE-FORMAT SAMPLES  (Shortcode Add/Edit)
+   -------------------------------------------------------------------------
+   Renders PHP date tokens (e.g. "M d Y") as a real example right under
+   each date-format field (UX audit — Issue 7), removing the need to open
+   the 42 external "Read More" doc links to understand the tokens.
+   Built/updated by backend.js (mecUpdateDateFormatSample).
+   ===================================================================== */
+
+.mec-date-format-sample {
+    /* .mec-field__control is a wrapped flex row -> take the full next line */
+    flex: 0 0 100%;
+    margin-top: 2px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #0a6d84;
+}
+
+.mec-date-format-sample::before {
+    content: "Example:\00a0";
+    color: #07bbe9;
+    font-weight: 700;
+}
+
+/* =====================================================================
+   22. SHORTCODE BOX — accessible copy + usage note  (Shortcode screen)
+   -------------------------------------------------------------------------
+   The [MEC id="N"] token is now a real <button> (keyboard accessible,
+   WCAG 2.1.1 — was a <div onclick>), paired with a one-line "How to use"
+   hint (UX audit — Issue 11) so users know where to paste it.
+   Markup: app/features/mec/meta_boxes/shortcode.php
+   ===================================================================== */
+
+.mec-shortcode-box {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.mec-shortcode-box__row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.mec-shortcode-token {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 13px;
+    line-height: 1.4;
+    color: #2c3338;
+    background: #f6f7f7;
+    border: 1px solid #8c8f94;
+    border-radius: 3px;
+    padding: 7px 12px;
+    cursor: copy;
+    transition: background .15s ease, border-color .15s ease;
+}
+
+.mec-shortcode-token:hover {
+    background: #f0f0f1;
+    border-color: #646970;
+}
+
+.mec-shortcode-token:active {
+    background: #e6e7e8;
+}
+
+.mec-shortcode-token:focus-visible {
+    outline: 2px solid #07bbe9;
+    outline-offset: 2px;
+}
+
+/* "Copied!" badge — reuses the legacy .mec-copied[-done] classes from
+   backend.js; scope-reset the old absolute positioning under the new box */
+.mec-shortcode-box .mec-copied {
+    position: static;
+    width: auto;
+    font-size: 12px;
+    font-weight: 600;
+    color: #1a7f37;
+    opacity: 0;
+    transition: opacity .25s ease;
+}
+
+.mec-shortcode-box .mec-copied.mec-copied-done {
+    opacity: 1;
+    left: auto;
+    z-index: auto;
+}
+
+.mec-shortcode-howto {
+    font-size: 12px;
+    line-height: 1.7;
+    color: #5f6c73;
+    margin: 0;
+}
+
+.mec-shortcode-howto strong {
+    color: #2c3338;
+}
+
+/* 19 — Date & Time fields: standard control width.
+   backend.css ~14605 gives #mec_start_date / #mec_end_date
+   "width:100% !important; max-width:none", so on wide monitors they stretch
+   across the whole panel. Pin them to the standard control width token
+   (13.0). Same !important + same specificity wins by source order. */
+#mec_metabox_details #mec_start_date,
+#mec_metabox_details #mec_end_date {
+    width: 100% !important;
+    max-width: var(--mec-input-w) !important;
+}
+
+/* Date pickers generally (repeat "start date", availability dates, etc.):
+   a date never needs more than the small token. */
+#mec_metabox_details input.mec_date_picker,
+#mec_metabox_details .mec-date-picker-start,
+#mec_metabox_details .mec-date-picker-end {
+    max-width: var(--mec-input-w--sm) !important;
+}
+
+/* 20 — Ticket rows (mec_ticket_row): migrated to the standard mec-field
+   pattern. The rows live inside a padded card, so the label column is
+   slightly narrower than the top-level 170px default. Compact controls
+   (limit / seats / stop-selling number) stay inline-sized rather than
+   stretching to the full control width. */
+#mec-tickets .mec_ticket_row .mec-field,
+#mec_tickets .mec_ticket_row .mec-field {
+    --mec-label-w: 130px;
+    margin: 0 0 14px;
+}
+
+#mec-tickets .mec_ticket_row .mec-field__control>input.mec-available-tickets,
+#mec-tickets .mec_ticket_row .mec-field__control>input.mec-ticket-number-of-seats,
+#mec-tickets .mec_ticket_row .mec-field__control>input.mec-stop-selling-tickets,
+#mec_tickets .mec_ticket_row .mec-field__control>input.mec-available-tickets,
+#mec_tickets .mec_ticket_row .mec-field__control>input.mec-ticket-number-of-seats,
+#mec_tickets .mec_ticket_row .mec-field__control>input.mec-stop-selling-tickets {
+    flex: 0 1 130px;
+    min-width: 80px;
+    max-width: var(--mec-input-w--sm);
+}
+
+/* Price row: number + label side by side, sharing the control area. */
+#mec-tickets .mec_ticket_row .mec-field__control>input[type="number"],
+#mec_tickets .mec_ticket_row .mec-field__control>input[type="number"] {
+    flex: 1 1 140px;
+    max-width: 180px;
+}
+
+/* Textarea rows (Description / Private Description) keep full width. */
+#mec-tickets .mec_ticket_row .mec-field__control>textarea,
+#mec_tickets .mec_ticket_row .mec-field__control>textarea {
+    min-height: 60px;
+}
+
+/* Ticket Start/End Time rows: two stacked mec-field rows (Start above,
+    End below) matching the other fields' rhythm. Neutralise the legacy
+    ".mec-ticket-start-time { margin-bottom: 20px }" which now lands on
+    the control column, and let the timepicker inputs size naturally. */
+#mec-tickets .mec_ticket_row .mec-ticket-start-time,
+#mec-tickets .mec_ticket_row .mec-ticket-end-time,
+#mec_tickets .mec_ticket_row .mec-ticket-start-time,
+#mec_tickets .mec_ticket_row .mec-ticket-end-time {
+    margin-bottom: 0;
+}
+
+/* =====================================================================
+   23. SUPPORT PAGE REDESIGN  (admin.php?page=MEC-support)
+   -------------------------------------------------------------------------
+   Full rebuild of the Support screen on the MEC card system:
+   quick-link cards, doc search, topic/video cards, FAQ + system info
+   and a contact band. Scoped under .mec-support-page; light + dark mode.
+   Markup: app/features/mec/support-page.php
+   ===================================================================== */
+
+/* 23.1 — Layout grids -------------------------------------------------- */
+
+/* Support page: white canvas (WP default admin bg is #f0f0f1). Dark mode
+   keeps its own body-level rule in backend.css. */
+body.m-e-calendar_page_MEC-support:not(.mec-admin-dark-mode),
+body.m-e-calendar_page_MEC-support:not(.mec-admin-dark-mode) #wpwrap {
+    background: #fff;
+}
+
+/* 23.1a — Security notice box: same chrome as the cards ------------------ */
+
+#webnus-dashboard.mec-support-page .info-msg.support-box {
+    border: 1px solid #e3e5e7;
+    border-radius: 15px;
+    padding: 24px 28px;
+    margin: 0;
+    text-align: start;
+    background: #fff;
+    color: #55595d;
+}
+
+#webnus-dashboard.mec-support-page .info-msg.support-box p {
+    width: auto;
+    max-width: none;
+    margin: 0 0 6px;
+    font-size: 13.5px;
+    line-height: 1.75;
+}
+
+#webnus-dashboard.mec-support-page .info-msg.support-box p:last-child {
+    margin-bottom: 0;
+}
+
+#webnus-dashboard.mec-support-page .info-msg.support-box strong {
+    color: #2c3338;
+    font-size: 15px;
+    letter-spacing: .2px;
+}
+
+#webnus-dashboard.mec-support-page .info-msg.support-box small {
+    display: block;
+    margin-top: 2px;
+    font-size: 12.5px;
+    color: #7a868d;
+}
+
+#webnus-dashboard.mec-support-page .mec-support-grid {
+    display: grid;
+    gap: 20px;
+    margin: 0 0 30px;
+}
+
+#webnus-dashboard.mec-support-page .mec-support-grid--4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+/* Addons grid: 3 cards per row instead of 4 (denser descriptions). */
+#webnus-dashboard.mec-support-page .mec-support-grid--4#mec-addons-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+#webnus-dashboard.mec-support-page .mec-support-grid--3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+#webnus-dashboard.mec-support-page .mec-support-grid--2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+}
+
+@media (max-width: 1400px) {
+    #webnus-dashboard.mec-support-page .mec-support-grid--4,
+    #webnus-dashboard.mec-support-page .mec-support-grid--3 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 900px) {
+    #webnus-dashboard.mec-support-page .mec-support-grid--4,
+    #webnus-dashboard.mec-support-page .mec-support-grid--3,
+    #webnus-dashboard.mec-support-page .mec-support-grid--2 {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* 23.2 — Base card ----------------------------------------------------- */
+
+#webnus-dashboard.mec-support-page .mec-support-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 24px 22px;
+    background: #fff;
+    border: 1px solid #e3e5e7;
+    border-radius: 15px;
+    text-decoration: none;
+    transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+}
+
+/* clickable variants lift on hover; container cards (--flat, --topic) don't */
+#webnus-dashboard.mec-support-page a.mec-support-card:hover,
+#webnus-dashboard.mec-support-page .mec-addons-card:hover {
+    border-color: #008aff;
+    box-shadow: 0 10px 26px -14px rgba(0, 138, 255, .45);
+    transform: translateY(-2px);
+}
+
+#webnus-dashboard.mec-support-page .mec-support-card__title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #2c3338;
+    line-height: 1.4;
+}
+
+#webnus-dashboard.mec-support-page .mec-support-card__desc {
+    font-size: 12.5px;
+    line-height: 1.65;
+    color: #7a868d;
+}
+
+#webnus-dashboard.mec-support-page .mec-support-card__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 13px;
+    font-size: 20px;
+    color: #008aff;
+    background: rgba(0, 138, 255, .09);
+    flex: 0 0 auto;
+}
+
+#webnus-dashboard.mec-support-page .mec-support-card__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: auto;
+    padding-top: 6px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #008aff;
+}
+
+/* 23.3 — Topic cards (icon + title head, link list) --------------------- */
+
+#webnus-dashboard.mec-support-page .mec-support-card__head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 6px;
+}
+
+#webnus-dashboard.mec-support-page .mec-support-card__list {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+#webnus-dashboard.mec-support-page .mec-support-card__list li,
+#webnus-dashboard.mec-support-page .mec-support-card__list li a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+#webnus-dashboard.mec-support-page .mec-support-card__list li a {
+    padding: 8px 0;
+    color: #3a4b52;
+    border-bottom: 1px dashed #edf1f4;
+    transition: color .12s ease;
+}
+
+#webnus-dashboard.mec-support-page .mec-support-card__list li:last-child a {
+    border-bottom: none;
+}
+
+#webnus-dashboard.mec-support-page .mec-support-card__list li a:hover {
+    color: #008aff;
+}
+
+#webnus-dashboard.mec-support-page .mec-support-card__list li a i {
+    color: #00cae6;
+    font-size: 13px;
+    flex: 0 0 auto;
+}
+
+/* checklist variant (video cards) — icon only, muted green */
+#webnus-dashboard.mec-support-page .mec-support-card__list--compact li {
+    color: #7a868d;
+    font-size: 12.5px;
+    padding: 3px 0;
+}
+
+#webnus-dashboard.mec-support-page .mec-support-card__list--compact li i {
+    color: #22b573;
+    font-size: 12px;
+}
+
+/* 23.4 — Video cards ---------------------------------------------------- */
+
+#webnus-dashboard.mec-support-page .mec-support-card--video {
+    gap: 10px;
+}
+
+#webnus-dashboard.mec-support-page .mec-support-video__thumb {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 110px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #008aff 0%, #00cae6 100%);
+    color: #fff;
+    font-size: 30px;
+    text-decoration: none;
+    margin-bottom: 4px;
+    transition: box-shadow .15s ease;
+}
+
+#webnus-dashboard.mec-support-page .mec-support-video__thumb i {
+    width: 54px;
+    height: 54px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .18);
+    border: 2px solid rgba(255, 255, 255, .65);
+    padding-inline-start: 4px;
+    transition: background .15s ease, transform .15s ease;
+}
+
+#webnus-dashboard.mec-support-page .mec-support-video__thumb:hover i {
+    background: rgba(255, 255, 255, .32);
+    transform: scale(1.06);
+}
+
+/* 23.5 — Search bar ----------------------------------------------------- */
+
+#webnus-dashboard.mec-support-page .mec-support-search {
+    margin: 0 0 34px;
+}
+
+#webnus-dashboard.mec-support-page .mec-support-search form {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff;
+    border: 1px solid #e3e5e7;
+    border-radius: 12px;
+    padding: 8px;
+    padding-inline-start: 42px;
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+#webnus-dashboard.mec-support-page .mec-support-search form:focus-within {
+    border-color: #008aff;
+    box-shadow: 0 0 0 3px rgba(0, 138, 255, .12);
+}
+
+#webnus-dashboard.mec-support-page .mec-support-search>i,
+#webnus-dashboard.mec-support-page .mec-support-search form>i {
+    position: absolute;
+    inset-inline-start: 16px;
+    color: #9aa4aa;
+    font-size: 16px;
+}
+
+#webnus-dashboard.mec-support-page .mec-support-search input[type="search"] {
+    flex: 1 1 auto;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    padding: 6px 4px;
+    font-size: 13.5px;
+    min-width: 0;
+}
+
+#webnus-dashboard.mec-support-page .mec-support-search input[type="search"]:focus {
+    outline: none;
+}
+
+/* 23.6 — Buttons -------------------------------------------------------- */
+
+#webnus-dashboard.mec-support-page .mec-support-btn,
+#webnus-dashboard .mec-support-contact .mec-support-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    border-radius: 9px;
+    padding: 10px 22px;
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: .3px;
+    color: #fff;
+    background: #008aff;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background .15s ease, box-shadow .15s ease;
+    flex: 0 0 auto;
+}
+
+#webnus-dashboard .mec-support-btn:hover,
+#webnus-dashboard .mec-support-contact .mec-support-btn:hover {
+    background: #0072d6;
+    color: #fff;
+    box-shadow: 0 8px 20px -10px rgba(0, 138, 255, .7);
+}
+
+#webnus-dashboard .mec-support-btn--lg {
+    padding: 14px 28px;
+    font-size: 13.5px;
+    border-radius: 11px;
+}
+
+/* 23.7 — Section titles -------------------------------------------------- */
+
+#webnus-dashboard.mec-support-page .mec-support-section-title {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 0 0 16px;
+    padding: 0;
+    font-size: 19px;
+    font-weight: 600;
+    color: #2c3338;
+    line-height: 1.3;
+}
+
+#webnus-dashboard.mec-support-page .mec-support-section-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #008aff;
+    text-decoration: none;
+}
+
+#webnus-dashboard.mec-support-page .mec-support-section-link:hover {
+    color: #0072d6;
+}
+
+/* 23.8 — FAQ + System info container cards ------------------------------- */
+
+#webnus-dashboard.mec-support-page .mec-support-card--flat {
+    gap: 14px;
+    padding: 26px 28px;
+}
+
+#webnus-dashboard.mec-support-page .mec-support-card__heading {
+    margin: 0 0 6px;
+    padding: 0;
+    font-size: 17px;
+    font-weight: 600;
+    color: #2c3338;
+    line-height: 1.3;
+}
+
+#webnus-dashboard.mec-support-page .mec-support-debuglog {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px dashed #e3e5e7;
+}
+
+#webnus-dashboard.mec-support-page .mec-support-debuglog h4 {
+    margin: 0 0 8px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+#webnus-dashboard.mec-support-page .mec-support-debuglog p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+/* 23.9 — Contact band ----------------------------------------------------- */
+
+#webnus-dashboard.mec-support-page .mec-support-contact {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin: 6px 0 30px;
+    padding: 26px 28px;
+    border-radius: 15px;
+    background: linear-gradient(120deg, rgba(0, 138, 255, .07) 0%, rgba(0, 202, 230, .10) 100%);
+    border: 1px solid rgba(0, 138, 255, .18);
+}
+
+#webnus-dashboard.mec-support-page .mec-support-contact h3 {
+    margin: 0 0 4px;
+    padding: 0;
+    font-size: 17px;
+    font-weight: 600;
+    color: #2c3338;
+}
+
+#webnus-dashboard.mec-support-page .mec-support-contact p {
+    margin: 0;
+    max-width: 640px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: #5f6c73;
+}
+
+/* 23.11 — RTL --------------------------------------------------------------- */
+
+body.rtl .mec-support-card__cta i,
+body.rtl .mec-support-section-link i,
+body.rtl .mec-support-card__list li a i {
+    transform: scaleX(-1);
+}
+
+body.rtl .mec-support-video__thumb i {
+    padding-inline-start: 0;
+    padding-inline-end: 4px;
+}
+
+/* 23.12 — Dark mode ---------------------------------------------------------- */
+
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page .mec-support-card,
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page .mec-support-search form {
+    background: #1f1f1f;
+    border-color: #353535;
+}
+
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page .mec-support-card__title,
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page .mec-support-card__heading,
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page .mec-support-section-title,
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page .mec-support-contact h3 {
+    color: #fff;
+}
+
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page .mec-support-card__desc,
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page .mec-support-card__list--compact li,
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page .mec-support-contact p {
+    color: #9aa4aa;
+}
+
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page .mec-support-card__icon {
+    background: rgba(0, 138, 255, .16);
+}
+
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page .mec-support-card__list li a {
+    color: #c3c7c9;
+    border-bottom-color: #333;
+}
+
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page .mec-support-card__list li a:hover,
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page .mec-support-card__cta:hover,
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page .mec-support-section-link:hover {
+    color: #40c9ff;
+}
+
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page .mec-support-card__cta,
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page .mec-support-section-link {
+    color: #40c9ff;
+}
+
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page .mec-support-search input[type="search"] {
+    color: #fff;
+}
+
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page .mec-support-search input[type="search"]::placeholder {
+    color: #6f7a80;
+}
+
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page .mec-support-search form>i {
+    color: #6f7a80;
+}
+
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page .mec-support-contact {
+    background: linear-gradient(120deg, rgba(0, 138, 255, .12) 0%, rgba(0, 202, 230, .08) 100%);
+    border-color: rgba(64, 201, 255, .25);
+}
+
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page .mec-support-debuglog {
+    border-top-color: #353535;
+}
+
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page .mec-support-debuglog .info-msg,
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page .mec-support-card--flat .info-msg {
+    background: #282828;
+    color: #c3c7c9;
+}
+
+/* 23.14 — FAQ accordion refresh ---------------------------------------- */
+
+/* Softer trigger rows: flat pill background, clearer type scale, smoother
+   chevron rotation and hover/focus feedback. Overrides the legacy
+   #webnus-dashboard .mec-faq-accordion-trigger a rules by specificity
+   (1,3,0 vs 1,1,0) and source order. */
+
+#webnus-dashboard.mec-support-page .mec-faq-accordion-trigger {
+    margin-bottom: 8px;
+}
+
+#webnus-dashboard.mec-support-page .mec-faq-accordion-trigger a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 44px 14px 18px;
+    background: #f7f8f9;
+    border: 1px solid #eef0f2;
+    border-radius: 10px;
+    color: #2c3338;
+    font-size: 13.5px;
+    font-weight: 600;
+    line-height: 1.55;
+    transition: background .15s ease, border-color .15s ease;
+}
+
+#webnus-dashboard.mec-support-page .mec-faq-accordion-trigger a:hover {
+    background: #f0f4f7;
+    border-color: #dfe6eb;
+    color: #008aff;
+}
+
+#webnus-dashboard.mec-support-page .mec-faq-accordion-trigger a:focus-visible {
+    outline: 2px solid #07bbe9;
+    outline-offset: 2px;
+}
+
+/* chevron — rotates instead of swapping glyphs */
+#webnus-dashboard.mec-support-page .mec-faq-accordion-trigger a:after {
+    content: "\e604";
+    position: absolute;
+    inset-inline-end: 16px;
+    top: 50%;
+    font-size: 12px;
+    font-weight: 700;
+    color: #9aa4aa;
+    transform: translateY(-50%) rotate(0deg);
+    transition: transform .2s ease, color .15s ease;
+    pointer-events: none;
+}
+
+#webnus-dashboard.mec-support-page .mec-faq-accordion-trigger a.active:after {
+    content: "\e604";
+    transform: translateY(-50%) rotate(180deg);
+    color: #008aff;
+}
+
+/* open answer */
+#webnus-dashboard.mec-support-page .mec-faq-accordion-content {
+    padding: 4px 6px 20px 12px;
+    margin-top: 2px;
+    font-size: 13px;
+    line-height: 1.8;
+    color: #5f6c73;
+}
+
+#webnus-dashboard.mec-support-page .mec-faq-accordion-content a {
+    color: #008aff;
+    font-weight: 500;
+}
+
+#webnus-dashboard.mec-support-page .mec-faq-accordion-content a:hover {
+    color: #0072d6;
+}
+
+/* RTL chevron flip */
+body.rtl #webnus-dashboard.mec-support-page .mec-faq-accordion-trigger a:after {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+body.rtl #webnus-dashboard.mec-support-page .mec-faq-accordion-trigger a.active:after {
+    transform: translateY(-50%) rotate(0deg);
+}
+
+/* Dark mode */
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page .mec-faq-accordion-trigger a {
+    background: #282828;
+    border-color: #353535;
+    color: #e2e6e8;
+}
+
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page .mec-faq-accordion-trigger a:hover {
+    background: #2e2e2e;
+    border-color: #454545;
+    color: #40c9ff;
+}
+
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page .mec-faq-accordion-trigger a:after {
+    color: #6f7a80;
+}
+
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page .mec-faq-accordion-trigger a.active:after {
+    color: #40c9ff;
+}
+
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page .mec-faq-accordion-content {
+    color: #9aa4aa;
+}
+
+/* Dark mode — security notice box chrome (from 23.1a) */
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page .info-msg.support-box {
+    background: #1f1f1f;
+    border-color: #353535;
+    color: #c3c7c9;
+}
+
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page .info-msg.support-box strong {
+    color: #fff;
+}
+
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page .info-msg.support-box small {
+    color: #9aa4aa;
+}
+
+/* 23.13 — System information list (inside the new flat card) -------------- */
+
+#webnus-dashboard.mec-support-page ul.system-information {
+    margin: 0;
+}
+
+#webnus-dashboard.mec-support-page ul.system-information li {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 9px 0;
+    border-bottom: 1px dashed #edf1f4;
+    font-size: 13px;
+}
+
+#webnus-dashboard.mec-support-page ul.system-information li:last-child {
+    border-bottom: none;
+}
+
+#webnus-dashboard.mec-support-page ul.system-information li .mec-si-label {
+    width: auto;
+    flex: 0 0 165px;
+    min-width: 0;
+    font-weight: 600;
+    color: #5f6c73;
+}
+
+#webnus-dashboard.mec-support-page ul.system-information li .mec-si-value {
+    color: #2c3338;
+    word-break: break-all;
+}
+
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page ul.system-information li {
+    border-bottom-color: #333;
+}
+
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page ul.system-information li .mec-si-label {
+    color: #9aa4aa;
+}
+
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page ul.system-information li .mec-si-value {
+    color: #e2e6e8;
+}
+
+/* =====================================================================
+   24. ADDONS PAGE REDESIGN  (admin.php?page=MEC-addons)
+   -------------------------------------------------------------------------
+   Rebuilds the Addons screen on the shared card system (section 23 —
+   the page container also carries .mec-support-page so all card/grid/
+   search/button/dark-mode rules apply). Only addon-specific pieces live
+   here: image icon tiles, version/requirement badges, action row, buy
+   button, filter counter, empty & error states.
+   Markup: app/features/mec/addons.php
+   ===================================================================== */
+
+/* 24.1 — Card layout: description gets the slack, actions pinned bottom */
+
+#webnus-dashboard.mec-support-page .mec-addons-card {
+    gap: 10px;
+}
+
+/* 24.2 — Image icon tile (support icons are font glyphs; addons use SVG) */
+
+#webnus-dashboard.mec-support-page .mec-addons-card__icon img {
+    display: block;
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+}
+
+/* 24.3 — Badges ---------------------------------------------------------- */
+
+#webnus-dashboard.mec-support-page .mec-addons-card__badges {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+#webnus-dashboard.mec-support-page .mec-addons-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .2px;
+    line-height: 1.4;
+}
+
+#webnus-dashboard.mec-support-page .mec-addons-badge--pro {
+    color: #fff;
+    background: #ff7d5f;
+}
+
+#webnus-dashboard.mec-support-page .mec-addons-badge--lite {
+    color: #fff;
+    background: #4cbf67;
+}
+
+#webnus-dashboard.mec-support-page .mec-addons-badge--soon {
+    color: #fff;
+    background: #b092e6;
+}
+
+/* 24.4 — Action row ------------------------------------------------------- */
+
+#webnus-dashboard.mec-support-page .mec-addons-card__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 8px;
+}
+
+#webnus-dashboard.mec-support-page .mec-addons-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    border: 1px solid #e3e5e7;
+    color: #5f6c73;
+    font-size: 15px;
+    text-decoration: none;
+    transition: color .12s ease, border-color .12s ease, background .12s ease;
+    flex: 0 0 auto;
+}
+
+#webnus-dashboard.mec-support-page .mec-addons-action:hover {
+    color: #008aff;
+    border-color: #008aff;
+    background: rgba(0, 138, 255, .06);
+}
+
+#webnus-dashboard.mec-support-page .mec-addons-card__buy {
+    margin-inline-start: auto;
+    padding: 9px 16px;
+    font-size: 12px;
+}
+
+/* 24.5 — Filter bar & counter chip ------------------------------------------------ */
+
+#webnus-dashboard.mec-support-page .mec-support-search.mec-addons-filter {
+    margin-top: 30px;
+}
+
+#webnus-dashboard.mec-support-page .mec-addons-filter__count {
+    flex: 0 0 auto;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: #f0f2f4;
+    color: #5f6c73;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* 24.6 — Empty & error states ------------------------------------------------- */
+
+#webnus-dashboard.mec-support-page .mec-addons-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 50px 20px;
+    border: 1px dashed #d7dcdf;
+    border-radius: 15px;
+    color: #7a868d;
+    font-size: 13.5px;
+}
+
+#webnus-dashboard.mec-support-page .mec-addons-empty i {
+    font-size: 30px;
+    color: #b7c0c5;
+}
+
+#webnus-dashboard.mec-support-page .mec-addons-empty p {
+    margin: 0;
+}
+
+#webnus-dashboard.mec-support-page .mec-addons-error {
+    padding: 24px 28px;
+    border-radius: 15px;
+    background: #fff7f5;
+    border: 1px solid #ffd9d0;
+    color: #a04b38;
+}
+
+#webnus-dashboard.mec-support-page .mec-addons-error p {
+    margin: 0;
+    font-size: 13.5px;
+    line-height: 1.7;
+}
+
+/* 24.7 — Dark mode ------------------------------------------------------------ */
+
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page .mec-addons-action {
+    border-color: #353535;
+    color: #9aa4aa;
+}
+
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page .mec-addons-action:hover {
+    color: #40c9ff;
+    border-color: #40c9ff;
+    background: rgba(64, 201, 255, .08);
+}
+
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page .mec-addons-filter__count {
+    background: #282828;
+    color: #9aa4aa;
+}
+
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page .mec-addons-empty {
+    border-color: #353535;
+    color: #9aa4aa;
+}
+
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page .mec-addons-empty i {
+    color: #5c676d;
+}
+
+.mec-admin-dark-mode #webnus-dashboard.mec-support-page .mec-addons-error {
+    background: #2a1f1d;
+    border-color: #5c352c;
+    color: #e2b3a6;
+}

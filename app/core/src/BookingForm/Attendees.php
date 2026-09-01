@@ -384,7 +384,7 @@ class Attendees {
                                     <div class="mec-ticket-icon-wrapper"><?php echo \MEC\Base::get_main()->svg('form/ticket-icon'); ?></div>
                                     <div class="mec-ticket-name-description-wrapper">
                                         <h4>
-                                            <?php if($attendee_counter == 1): ?><span class="mec-ticket-attendee-counter"><?php printf(__('Attendee #%s details — ', 'modern-events-calendar-lite'), $i); ?></span><?php endif; ?>
+                                            <?php if($attendee_counter == 1): ?><span class="mec-ticket-attendee-counter"><?php printf(__('Attendee #%s details: ', 'modern-events-calendar-lite'), $i); ?></span><?php endif; ?>
                                             <span class="mec-ticket-name"><?php echo esc_html__($ticket['name'], 'modern-events-calendar-lite'); ?></span>
                                         </h4>
                                         <?php

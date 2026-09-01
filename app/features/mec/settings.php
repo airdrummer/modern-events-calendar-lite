@@ -552,6 +552,8 @@ $shortcodes = get_posts(array(
                                 </div>
                             </div>
 
+                            <?php do_action('mec_settings_general_advanced', $settings); ?>
+
                         </div>
 
                         <div id="archive_options" class="mec-options-fields">

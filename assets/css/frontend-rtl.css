@@ -25842,27 +25842,84 @@ span.button {
 .mec-fes-form .button.mec_field_sort {
   font-size: 0 !important;
   position: relative;
-  width: 38px;
+  width: 34px;
+  height: 30px;
+  padding: 0;
   text-align: center;
-  cursor: move;
+  cursor: grab;
   transition: all 0.3s;
+}
+
+.mec-fes-form .button.mec_field_sort:active {
+  cursor: grabbing;
 }
 
 .mec-fes-form .button.mec_field_sort:before {
   position: absolute;
-  top: 0;
-  right: calc(50% - 10px);
-  width: 20px;
-  height: 20px;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  transform: translate(-50%, -50%);
   display: block;
-  font-family: simple-line-icons;
-  content: "\e023";
-  font-size: 15px;
-  color: #07bbe9;
+  content: "";
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cg fill='%23555'%3E%3Ccircle cx='3.5' cy='3.5' r='1.4'/%3E%3Ccircle cx='3.5' cy='7' r='1.4'/%3E%3Ccircle cx='3.5' cy='10.5' r='1.4'/%3E%3Ccircle cx='10.5' cy='3.5' r='1.4'/%3E%3Ccircle cx='10.5' cy='7' r='1.4'/%3E%3Ccircle cx='10.5' cy='10.5' r='1.4'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
 }
 
 .mec-fes-form .button.mec_field_sort:hover:before {
-  color: #ffffff;
+  filter: brightness(0.3);
+}
+
+/* Row "Remove" buttons: trash icon to match the sort grip (audit #9 follow-up).
+   Scoped to repeater rows only; "Remove" text stays in the DOM (font-size:0
+   hides it visually but screen readers still announce it). */
+#mec_tickets .mec_ticket_row .mec_ticket_remove_button,
+#mec_tickets .mec_ticket_row .mec_ticket_price_remove_button,
+#mec_fees_list .mec-form-row .mec-dash-remove-btn,
+[id^="mec_ticket_variations_list"] .mec_remove_ticket_variation_button,
+#mec-hourly-schedule .mec-form-row.mec-box .mec-remove-hourly-schedule-button,
+#mec-faq .mec_faq_row .mec-faq-remove {
+  font-size: 0;
+  position: relative;
+  width: 34px;
+  height: 30px;
+  padding: 0;
+  cursor: pointer;
+  border-color: #e6c1c4;
+}
+
+#mec_tickets .mec_ticket_row .mec_ticket_remove_button:before,
+#mec_tickets .mec_ticket_row .mec_ticket_price_remove_button:before,
+#mec_fees_list .mec-form-row .mec-dash-remove-btn:before,
+[id^="mec_ticket_variations_list"] .mec_remove_ticket_variation_button:before,
+#mec-hourly-schedule .mec-form-row.mec-box .mec-remove-hourly-schedule-button:before,
+#mec-faq .mec_faq_row .mec-faq-remove:before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  transform: translate(-50%, -50%);
+  display: block;
+  content: "";
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23c4474a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3 6 5 6 21 6'/%3E%3Cpath d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'/%3E%3Cline x1='10' y1='11' x2='10' y2='17'/%3E%3Cline x1='14' y1='11' x2='14' y2='17'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+#mec_tickets .mec_ticket_row .mec_ticket_remove_button:hover:before,
+#mec_tickets .mec_ticket_row .mec_ticket_price_remove_button:hover:before,
+#mec_fees_list .mec-form-row .mec-dash-remove-btn:hover:before,
+[id^="mec_ticket_variations_list"] .mec_remove_ticket_variation_button:hover:before,
+#mec-hourly-schedule .mec-form-row.mec-box .mec-remove-hourly-schedule-button:hover:before,
+#mec-faq .mec_faq_row .mec-faq-remove:hover:before {
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23a32023' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3 6 5 6 21 6'/%3E%3Cpath d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'/%3E%3Cline x1='10' y1='11' x2='10' y2='17'/%3E%3Cline x1='14' y1='11' x2='14' y2='17'/%3E%3C/svg%3E");
 }
 
 .mec-fes-form .mec-event-appointment-type-wrap {
@@ -25961,4 +26018,439 @@ body.rtl .mec-wrap {
 
 .mec-booking-condition-message {
   margin: 0;
+}
+
+/* =========================================================================
+   FES: unified field rows (mec-field) — front-end port.
+   The location / organizer / banner / downloadable-file / tickets sections
+   were migrated to the editor's mec-field pattern (label column + control
+   column + help line). This block ports that layout to the front-end
+   submission form so those sections keep the label-left layout instead of
+   stacking as unstyled blocks. Scoped under .mec-fes-form only.
+   ========================================================================= */
+
+.mec-fes-form .mec-field {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin: 0 0 15px;
+}
+
+.mec-fes-form .mec-field::before,
+.mec-fes-form .mec-field::after {
+  content: none;
+  display: none;
+}
+
+.mec-fes-form .mec-field__label {
+  flex: 0 0 170px;
+  max-width: 170px;
+}
+
+.mec-fes-form .mec-field__label label,
+.mec-fes-form .mec-field__label>span {
+  display: block;
+  margin: 0;
+  line-height: 36px;
+}
+
+.mec-fes-form .mec-field__control {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mec-fes-form .mec-field__control>input[type="text"],
+.mec-fes-form .mec-field__control>input[type="url"],
+.mec-fes-form .mec-field__control>input[type="email"],
+.mec-fes-form .mec-field__control>input[type="tel"],
+.mec-fes-form .mec-field__control>input[type="password"],
+.mec-fes-form .mec-field__control>input[type="search"] {
+  display: inline-block;
+  flex: 1 1 220px;
+  min-width: 120px;
+  max-width: 410px;
+  width: auto;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.mec-fes-form .mec-field__control>select {
+  flex: 1 1 180px;
+  max-width: 410px;
+  width: auto;
+  margin: 0;
+}
+
+.mec-fes-form .mec-field__control>input[type="number"] {
+  flex: 0 1 140px;
+  min-width: 90px;
+  margin: 0;
+}
+
+.mec-fes-form .mec-field__control>textarea {
+  display: block;
+  flex: 1 0 100%;
+  min-width: 0;
+  min-height: 60px;
+  line-height: 1.6;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.mec-fes-form .mec-field__control>.mec-tooltip {
+  flex: 0 0 auto;
+  margin: 0;
+}
+
+.mec-fes-form .mec-field__help {
+  flex: 1 0 100%;
+  margin: 4px 0 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: #798f96;
+}
+
+/* Ticket cards use a narrower label column (matches the admin editor). */
+.mec-fes-form .mec_ticket_row .mec-field__label {
+  flex: 0 0 130px;
+  max-width: 130px;
+}
+
+.mec-fes-form .mec_ticket_row .mec-field__control>input.mec-available-tickets,
+.mec-fes-form .mec_ticket_row .mec-field__control>input.mec-ticket-number-of-seats,
+.mec-fes-form .mec_ticket_row .mec-field__control>input.mec-stop-selling-tickets {
+  flex: 0 1 130px;
+  min-width: 80px;
+}
+
+.mec-fes-form .mec_ticket_row .mec-field__control>input[type="number"] {
+  flex: 1 1 140px;
+  max-width: 180px;
+}
+
+.mec-fes-form .mec_ticket_row .mec-field__control>textarea {
+  min-height: 60px;
+}
+
+/* =========================================================================
+   FES front-end parity fixes (part 2) — markup migrated to the admin
+   patterns needs its front-end counterparts: the Basic/Advanced toggle,
+   hidden utility, section headers, checkbox rows, control children and
+   the additional-locations list (mirrors the organizer list styling).
+   ========================================================================= */
+
+/* Hidden utility + advanced sections: hidden until the Basic/Advanced
+   toggle reveals them (the toggle now renders on FES as well). */
+.mec-fes-form .w-hidden {
+  display: none !important;
+}
+
+/* Basic / Advanced toggle pills */
+.mec-fes-form .mec-backend-tab-wrap {
+  margin: 0 0 15px;
+}
+
+.mec-fes-form .mec-backend-tab {
+  display: inline-flex;
+  border: 1px solid #cfeff5;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.mec-fes-form .mec-backend-tab-item {
+  padding: 7px 18px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--mec-fes-text-muted);
+  cursor: pointer;
+  background: #fff;
+  transition: background .15s ease, color .15s ease;
+}
+
+.mec-fes-form .mec-backend-tab-item.mec-b-active-tab {
+  background: var(--mec-fes-main-color, #40d9f1);
+  color: #fff;
+}
+
+/* Section headers */
+.mec-fes-form .mec-panel__head {
+  margin: 0 0 15px;
+}
+
+.mec-fes-form .mec-panel__title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #262e33;
+}
+
+/* Checkbox rows align with sibling field rows */
+.mec-fes-form .mec-field--check {
+  flex-direction: column;
+  margin: 0 0 10px;
+}
+
+.mec-fes-form .mec-field--check .mec-field__label {
+  flex: 0 0 auto;
+  max-width: none;
+}
+
+.mec-fes-form label.mec-check,
+.mec-fes-form label.label-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 400;
+  color: #262e33;
+  cursor: pointer;
+  margin: 0;
+  line-height: 20px;
+}
+
+.mec-fes-form label.mec-check input,
+.mec-fes-form label.label-checkbox input {
+  margin: 0;
+}
+
+/* Control children the base port does not cover */
+.mec-fes-form .mec-field__control>.button {
+  flex: 0 0 auto;
+}
+
+.mec-fes-form .mec-field__control>input[type="file"] {
+  flex: 1 1 220px;
+  max-width: 100%;
+  font-size: 12px;
+}
+
+.mec-fes-form .mec-field__control>input[type="color"] {
+  flex: 0 0 auto;
+  width: 48px;
+  height: 36px;
+  padding: 2px;
+}
+
+.mec-fes-form .mec-field__control .select2-container {
+  flex: 1 1 220px;
+  min-width: 160px;
+  max-width: 410px;
+}
+
+.mec-fes-form .mec-field__control span.mec-label {
+  flex: 0 0 auto;
+  color: #798f96;
+  font-size: 13px;
+  margin: 0;
+}
+
+/* Ticket ID badge */
+.mec-fes-form .mec-ticket-id {
+  font-size: 13px;
+  font-weight: 700;
+  color: #798f96;
+  margin: 0 0 8px;
+}
+
+/* Additional-locations list: mirrors the additional-organizers list */
+ul#mec_loc_form_row {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+ul#mec_loc_form_row li {
+  list-style: none;
+  background: #f8feff;
+  margin: 6px -20px;
+  padding: 15px 25px 10px;
+  width: auto;
+  font-size: 13px;
+  border-top: 1px solid #e8fafd;
+  border-bottom: 1px solid #e8fafd;
+  position: relative;
+}
+
+ul#mec_loc_form_row li .mec-additional-location-remove {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  margin: 0;
+  padding: 6px 8px !important;
+  font-size: 11px;
+  line-height: 12px !important;
+  min-height: 10px;
+  height: auto;
+  display: block;
+  cursor: pointer;
+  color: #ea6485;
+  border-color: #ffd2dd;
+  letter-spacing: 0.4px;
+}
+
+ul#mec_loc_form_row li .mec-additional-location-remove:hover {
+  background: #ea6485;
+  color: #fff;
+  border-color: #ea6485;
+}
+
+.mec-fes-form #mec_loc_form_row .mec-additional-location-sort {
+  font-size: 0;
+  display: inline-block;
+  width: 20px;
+  cursor: move;
+}
+
+.mec-fes-form #mec_loc_form_row .mec-additional-location-sort:before {
+  font-family: simple-line-icons;
+  content: "\e023";
+  font-size: 18px;
+  color: #888;
+}
+
+/* Password visibility toggle (organizer payments) */
+.mec-fes-form .mec-show-hide-password {
+  cursor: pointer;
+  color: #798f96;
+  font-size: 12.5px;
+  user-select: none;
+}
+
+/* =========================================================================
+   FES front-end parity (part 3) — shared repeater cards.
+   On the admin, .mec-box rows (FAQ / tickets / fees / variations / hourly)
+   get card chrome and their sort + remove buttons cluster top-right via
+   the generic float. This mirrors that arrangement on the front-end form
+   so both editors lay out identically.
+   ========================================================================= */
+
+.mec-fes-form .mec-box {
+  position: relative;
+  background: #fff;
+  border: 1px solid #e6e9eb;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 10px 0 15px;
+  box-shadow: 0 1px 4px -1px rgb(0 0 0 / 1%);
+}
+
+/* Sort/remove buttons: floated right exactly like the admin generic rule.
+   Because the field rows are flex (independent formatting contexts), they
+   sit BESIDE the floated buttons — same line, never underneath — matching
+   the admin card arrangement (sort rightmost, remove to its left). */
+.mec-fes-form .mec-box .button.mec_field_sort,
+.mec-fes-form .mec-box .button.mec_ticket_remove_button,
+.mec-fes-form .mec-box .button.mec_ticket_price_remove_button,
+.mec-fes-form .mec-box .button.mec-dash-remove-btn,
+.mec-fes-form .mec-box .button.mec-faq-remove,
+.mec-fes-form .mec-box .button.mec_remove_ticket_variation_button,
+.mec-fes-form .mec-box .button.mec-remove-hourly-schedule-button {
+  float: left;
+  margin: 0 6px 0 0;
+}
+
+.mec-fes-form .mec_faq_row .mec-faq-data {
+  min-width: 0;
+}
+
+/* =========================================================================
+   FES typography standard.
+   Two text colors and a fixed scale; every text element follows:
+
+     --mec-fes-text        #262e33  primary: field labels, checkbox labels,
+                                      section titles, inline values
+     --mec-fes-text-muted  #798f96  secondary: help lines, descriptions,
+                                      inline hints, ID badges
+
+   Scale: 16px/700 panel titles | 15px/600 subtitles | 13px/600 field
+   labels | 13px/400 checkbox labels | 12.5px/400 help | 12px placeholders.
+   ========================================================================= */
+
+.mec-fes-form {
+  --mec-fes-text: #1a2229;
+  --mec-fes-text-muted: #5c6670;
+  color: var(--mec-fes-text);
+}
+
+/* Field labels (primary text) */
+.mec-fes-form label,
+.mec-fes-form span.mec-label {
+  color: var(--mec-fes-text);
+  font-weight: 600;
+}
+
+/* Inline checkbox labels sit next to their input: same color, lighter weight */
+.mec-fes-form label.mec-check,
+.mec-fes-form label.label-checkbox,
+.mec-fes-form input+label {
+  font-weight: 400;
+  color: var(--mec-fes-text);
+}
+
+/* Section titles and subtitles */
+.mec-fes-form .mec-panel__title,
+.mec-fes-form h5.mec-title,
+.mec-fes-form .mec-form-subtitle {
+  color: var(--mec-fes-text);
+}
+
+/* Help and muted text (one gray for all of it) */
+.mec-fes-form .mec-field__help,
+.mec-fes-form .mec-field__control span.mec-label,
+.mec-fes-form .mec-interval-unit,
+.mec-fes-form .mec-ticket-id,
+.mec-fes-form .mec-show-hide-password {
+  color: var(--mec-fes-text-muted);
+  font-weight: 400;
+}
+
+.mec-fes-form .description {
+  color: var(--mec-fes-text-muted) !important;
+  font-weight: 400;
+}
+
+/* Placeholders: one muted tone across every input */
+.mec-fes-form input::placeholder,
+.mec-fes-form textarea::placeholder {
+  color: #8494a0;
+  opacity: 1;
+}
+
+/* Hourly schedule "remove day" button: trash icon instead of the text
+   label — same treatment as the other repeater remove buttons (admin 13.8). */
+.mec-fes-form .mec-hourly-schedule-days .mec-hourly-schedule-remove-day-button {
+  font-size: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 34px;
+  height: 30px;
+  padding: 0;
+  cursor: pointer;
+  border-color: #e6c1c4;
+}
+
+.mec-fes-form .mec-hourly-schedule-days .mec-hourly-schedule-remove-day-button:before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  transform: translate(-50%, -50%);
+  display: block;
+  content: "";
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23c4474a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3 6 5 6 21 6'/%3E%3Cpath d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'/%3E%3Cline x1='10' y1='11' x2='10' y2='17'/%3E%3Cline x1='14' y1='11' x2='14' y2='17'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.mec-fes-form .mec-hourly-schedule-days .mec-hourly-schedule-remove-day-button:hover:before {
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23a32023' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3 6 5 6 21 6'/%3E%3Cpath d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'/%3E%3Cline x1='10' y1='11' x2='10' y2='17'/%3E%3Cline x1='14' y1='11' x2='14' y2='17'/%3E%3C/svg%3E");
 }

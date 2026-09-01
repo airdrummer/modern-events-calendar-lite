@@ -100,6 +100,343 @@ jQuery(document).ready(function ($) {
 
   mec_skin_toggle();
 
+  // Initialize MEC Skin Gallery (visual skin picker; the classic dropdown stays as fallback)
+  if ($("#mec_skin_gallery").length) {
+    var syncSkinGallery = function () {
+      var skin = $("#mec_skin").val();
+
+      $(".mec-skin-card")
+        .removeClass("mec-skin-card--selected")
+        .attr("aria-pressed", "false");
+      $('.mec-skin-card[data-skin="' + skin + '"]')
+        .addClass("mec-skin-card--selected")
+        .attr("aria-pressed", "true");
+    };
+
+    // Pick a skin from the gallery -> drive the original select (triggers mec_skin_toggle)
+    $(document).on("click", "#mec_skin_gallery .mec-skin-card", function () {
+      var skin = $(this).data("skin");
+      if (!skin || $("#mec_skin").val() === skin) return;
+
+      $("#mec_skin").val(skin);
+      if ($("#mec_skin").hasClass("wn-mec-select")) $("#mec_skin").niceSelect("update");
+      $("#mec_skin").trigger("change");
+    });
+
+    // Keep the gallery in sync when the skin changes from anywhere (classic dropdown, etc.)
+    $("#mec_skin").on("change", syncSkinGallery);
+
+    syncSkinGallery();
+  }
+
+  // Initialize MEC Style Galleries (per-skin "Style" select -> image card picker)
+  // Only selects with 2+ options are converted; the sub-select
+  // #mec_skin_full_calendar_monthly_style stays a dropdown (dependent secondary field).
+  if (typeof mec_admin_localize !== "undefined" && mec_admin_localize.skins_assets_url) {
+    var mecStyleFolders = {
+      list: "list",
+      grid: "grid",
+      agenda: "agenda",
+      full_calendar: "full-calendar",
+      yearly_view: "yearly",
+      monthly_view: "monthly",
+      daily_view: "daily",
+      map: "map",
+      weekly_view: "weekly",
+      timetable: "time-table",
+      cover: "cover",
+      countdown: "countdown",
+      available_spot: "available-spot",
+      carousel: "carousel",
+      slider: "slider",
+      masonry: "masonry",
+      timeline: "timeline",
+    };
+
+    // Option value -> image file name (naming differs per skin in assets/img/skins/)
+    var mecStyleImage = function (skin, style) {
+      var folder = mecStyleFolders[skin] || skin;
+      if (skin === "countdown") return folder + "-type-" + style.replace("style", "") + ".png";
+      if (skin === "carousel") return folder + "-type-" + style.replace("type", "") + ".png";
+      if (skin === "slider") return folder + "-type-" + style.replace("t", "") + ".png";
+      if (skin === "map") return folder + "-" + style + ".jpg";
+      // full_calendar has no per-style image — use the monthly view preview
+      // (the default tab look) from its own folder
+      if (skin === "full_calendar") return "full-calendar-monthly.png";
+      return folder + "-" + style + ".png";
+    };
+
+    $('select.wn-mec-select[id^="mec_skin_"][id$="_style"]')
+      .not("#mec_skin_full_calendar_monthly_style")
+      .each(function () {
+        var $select = $(this);
+
+        var selectId = $select.attr("id");
+        var skin = selectId
+          .replace(/^mec_skin_/, "")
+          .replace(/_style$/, "");
+        var current = $select.val();
+
+        var cards = "";
+        $select.find("option").each(function () {
+          var value = $(this).attr("value");
+          var label = $(this).text();
+          var img =
+            mec_admin_localize.skins_assets_url +
+            mecStyleFolders[skin] +
+            "/" +
+            mecStyleImage(skin, value);
+          cards +=
+            '<button type="button" class="mec-skin-card mec-style-card" data-style="' +
+            value +
+            '" aria-pressed="false">' +
+            '<span class="mec-skin-card__thumb"><img src="' +
+            img +
+            '" alt="' + label + '" loading="lazy" onerror="this.parentNode.style.display=\'none\'" /></span>' +
+            '<span class="mec-skin-card__body"><span class="mec-skin-card__name">' +
+            label +
+            "</span></span></button>";
+        });
+
+        var $gallery = $(
+          '<div class="mec-style-gallery' +
+            ($select.find("option").length < 2 ? " single" : "") +
+            '" role="group" aria-label="Style">' +
+            cards +
+            "</div>"
+        );
+        $gallery.insertAfter($select);
+
+        // Hide the original select + any nice-select dropdown built for it
+        // (niceSelect initializes later, so hide via a class on the control + CSS)
+        $select.addClass("mec-util-hidden");
+        $select.closest(".mec-field__control").addClass("mec-has-style-gallery");
+
+        var syncStyleGallery = function () {
+          var value = $select.val();
+          $gallery
+            .find(".mec-style-card")
+            .removeClass("mec-skin-card--selected")
+            .attr("aria-pressed", "false");
+          $gallery
+            .find('.mec-style-card[data-style="' + value + '"]')
+            .addClass("mec-skin-card--selected")
+            .attr("aria-pressed", "true");
+        };
+
+        // Pick a style -> drive the original select (fires its inline onchange)
+        $gallery.on("click", ".mec-style-card", function () {
+          var value = $(this).data("style");
+          if ($select.val() === value) return;
+
+          $select.val(value);
+          if ($select.hasClass("wn-mec-select")) $select.niceSelect("update");
+          $select.trigger("change");
+        });
+
+        // Keep in sync when the select changes from anywhere (mec_skin_toggle, etc.)
+        $select.on("change", syncStyleGallery);
+
+        syncStyleGallery();
+      });
+  }
+
+  // Inline validation warnings (UX audit — Issue 4): non-blocking hints for
+  // invalid dates and reversed date ranges in the active skin's options.
+  // Soft checks only — values that don't look like ISO dates are skipped, so
+  // sites using a custom datepicker format never get false warnings.
+  function mecValidateSkinDateFields() {
+    var $container = $(".mec-skin-options-container").filter(":visible").first();
+    if (!$container.length) return;
+
+    var $start = $container.find('input[name$="[start_date]"]');
+    var $end = $container.find('input[name$="[maximum_date_range]"]');
+    if (!$start.length && !$end.length) return;
+
+    // Set or remove a warning message under the field's control (role=alert for screen readers)
+    function warn($input, message) {
+      if (!$input.length) return;
+
+      var $row = $input.closest(".mec-field");
+      var $existing = $row.find(".mec-field-warning");
+
+      if (!message) {
+        $existing.remove();
+        return;
+      }
+
+      if (!$existing.length) {
+        $existing = $('<p class="mec-field-warning" role="alert"></p>');
+        $row.find(".mec-field__control").first().append($existing);
+      }
+      $existing.text(message);
+    }
+
+    var dateRe = /^\d{4}-\d{1,2}-\d{1,2}$/;
+    var sRaw = $.trim($start.val() || "");
+    var eRaw = $.trim($end.val() || "");
+    var sDate = sRaw && dateRe.test(sRaw) ? new Date(sRaw) : null;
+    var eDate = eRaw && dateRe.test(eRaw) ? new Date(eRaw) : null;
+
+    var sWarn = "";
+    var eWarn = "";
+
+    if (sDate && isNaN(sDate.getTime())) sWarn = "This is not a valid date (expected format: YYYY-MM-DD).";
+    if (eDate && isNaN(eDate.getTime())) eWarn = "This is not a valid date (expected format: YYYY-MM-DD).";
+
+    if (!sWarn && !eWarn && sDate && eDate && sDate.getTime() > eDate.getTime()) {
+      eWarn = "The start date is after the maximum date. Events will be listed in reverse order.";
+    }
+
+    warn($start, sWarn);
+    warn($end, eWarn);
+  }
+
+  $(document).on(
+    "change blur",
+    '.mec-skin-options-container input[name$="[start_date]"], .mec-skin-options-container input[name$="[maximum_date_range]"]',
+    mecValidateSkinDateFields
+  );
+
+  // Re-validate when the active skin changes (mec_skin_toggle shows/hides containers)
+  $("#mec_skin").on("change", function () {
+    setTimeout(mecValidateSkinDateFields, 50);
+    setTimeout(mecValidateSingleEventSkins, 50);
+  });
+
+  mecValidateSkinDateFields();
+
+  // Required-event check for single-event skins (round-2 proposal):
+  // cover / countdown / available_spot render ONE event — if none is
+  // selectable, the front end stays empty. Same inline-warning pattern as above.
+  function mecValidateSingleEventSkins() {
+    var skin = $("#mec_skin").val();
+    var singleEventSkins = ["cover", "countdown", "available_spot"];
+
+    $(".mec-single-event-warning").remove();
+
+    if (!skin || singleEventSkins.indexOf(skin) === -1) return;
+
+    var $select = $("#mec_skin_" + skin + "_event_id");
+    if (!$select.length) return;
+
+    var value = $select.val();
+    var optionCount = $select.find("option").length;
+    var message = "";
+
+    if (optionCount === 0 || value === null || value === "") {
+      message = "This skin shows a single event, but no event is selected.. Create an event first, or the front end stays empty.";
+    } else if (value === "-1" && optionCount < 2) {
+      // Auto mode ("Next Upcoming Event") but no upcoming events exist
+      message = '"Next Upcoming Event" is selected but no upcoming events were found. The front end stays empty until an event is scheduled.';
+    }
+
+    if (!message) return;
+
+    $select
+      .closest(".mec-field")
+      .find(".mec-field__control")
+      .first()
+      .append(
+        $('<p class="mec-field-warning mec-single-event-warning" role="alert"></p>').text(message)
+      );
+  }
+
+  $(document).on(
+    "change",
+    "#mec_skin_cover_event_id, #mec_skin_countdown_event_id, #mec_skin_available_spot_event_id",
+    mecValidateSingleEventSkins
+  );
+
+  mecValidateSingleEventSkins();
+
+  // Live date-format samples (UX audit — Issue 7): render PHP date tokens
+  // (e.g. "M d Y") as a real example next to each field, replacing the need
+  // to open external documentation to understand the tokens.
+  function mecRenderPhpDateFormat(format, date) {
+    var daysShort = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    var daysLong = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    var monthsShort = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    var monthsLong = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+    var day = date.getDate();
+    var month = date.getMonth();
+    var year = date.getFullYear();
+    var hours24 = date.getHours();
+    var hours12 = hours24 % 12 ? hours24 % 12 : 12;
+    var suffix = day % 10 === 1 && day !== 11 ? "st" : day % 10 === 2 && day !== 12 ? "nd" : day % 10 === 3 && day !== 13 ? "rd" : "th";
+
+    var pad = function (n) {
+      return (n < 10 ? "0" : "") + n;
+    };
+
+    var tokens = {
+      d: pad(day),
+      D: daysShort[date.getDay()],
+      j: day,
+      l: daysLong[date.getDay()],
+      N: date.getDay() === 0 ? 7 : date.getDay(),
+      S: suffix,
+      w: date.getDay(),
+      F: monthsLong[month],
+      M: monthsShort[month],
+      m: pad(month + 1),
+      n: month + 1,
+      Y: year,
+      y: pad(year % 100),
+      a: hours24 < 12 ? "am" : "pm",
+      A: hours24 < 12 ? "AM" : "PM",
+      g: hours12,
+      G: hours24,
+      h: pad(hours12),
+      H: pad(hours24),
+      i: pad(date.getMinutes()),
+      s: pad(date.getSeconds()),
+    };
+
+    var result = "";
+    for (var i = 0; i < format.length; i++) {
+      var char = format.charAt(i);
+
+      // Backslash escapes the next character (PHP date() behavior)
+      if (char === "\\" && i + 1 < format.length) {
+        result += format.charAt(++i);
+        continue;
+      }
+
+      result += Object.prototype.hasOwnProperty.call(tokens, char) ? tokens[char] : char;
+    }
+    return result;
+  }
+
+  function mecUpdateDateFormatSample($input) {
+    var value = $.trim($input.val() || "");
+    var $sample = $input.next(".mec-date-format-sample");
+
+    if (!value) {
+      $sample.remove();
+      return;
+    }
+
+    if (!$sample.length) {
+      $sample = $('<span class="mec-date-format-sample"></span>').insertAfter($input);
+    }
+
+    $sample.text(mecRenderPhpDateFormat(value, new Date()));
+  }
+
+  $(document).on(
+    "input change",
+    '.mec-calendar-metabox input[name*="date_format"]',
+    function () {
+      mecUpdateDateFormatSample($(this));
+    }
+  );
+
+  $('.mec-calendar-metabox input[name*="date_format"]').each(function () {
+    mecUpdateDateFormatSample($(this));
+  });
+
   $(".mec-switcher").on(
     "click",
     'label[for*="mec[settings]"]',
@@ -393,6 +730,9 @@ jQuery(document).ready(function ($) {
                 .removeClass("mec_activate")
                 .addClass("mec_revoke")
                 .val(res.button_text);
+              // Reload so the whole dashboard reflects the new licensed state
+              // (offline box hidden, expiry banner, notice cleared, etc.).
+              setTimeout(function () { window.location.reload(); }, 800);
             }
 
             if (res.message == "revoked") {
@@ -406,6 +746,8 @@ jQuery(document).ready(function ($) {
               $(
                 "#MECActivation input[type=password][name=MECPurchaseCode]"
               ).val("");
+              // Reload so the dashboard reflects the unlicensed state.
+              setTimeout(function () { window.location.reload(); }, 800);
             }
           } else {
             $("#MECActivation input[type=submit]").text(res.button_text);
@@ -563,37 +905,20 @@ jQuery(document).ready(function ($) {
 
   // MEC fast copy by one click
   $("#MECCopyCode").on("click", function () {
-    $(this).parent().find(".mec-copied").addClass("mec-copied-done");
-    $(this).on("mouseleave", function () {
-      $(this).parent().find(".mec-copied").removeClass("mec-copied-done");
-    });
+    var $copied = $(this).parent().find(".mec-copied");
+    $copied.addClass("mec-copied-done");
+
+    // Keep the "Copied!" feedback visible for a fixed 2s,
+    // regardless of where the pointer goes afterwards.
+    clearTimeout($(this).data("copiedTimer"));
+    $(this).data("copiedTimer", setTimeout(function () {
+      $copied.removeClass("mec-copied-done");
+    }, 2000));
   });
 
-  // Basic / Advanced Toggle
-  $(".mec-basvanced-toggle").each(function () {
-    const wrapper = $(this).data("for");
-    const method = $(this).data("method");
-
-    $(this)
-      .find($(".mec-backend-tab-item"))
-      .on("click", function () {
-        // Already Active
-        if ($(this).hasClass("mec-b-active-tab")) return;
-
-        $(this)
-          .parent()
-          .find($(".mec-b-active-tab"))
-          .removeClass("mec-b-active-tab");
-        $(this).addClass("mec-b-active-tab");
-
-        if (method === "addition") {
-          $(wrapper).find($(".mec-basvanced-advanced")).toggleClass("w-hidden");
-        } else {
-          $(wrapper).find($(".mec-basvanced-basic")).toggleClass("w-hidden");
-          $(wrapper).find($(".mec-basvanced-advanced")).toggleClass("w-hidden");
-        }
-      });
-  });
+  // Basic / Advanced Toggle: moved to events.js as a delegated handler so the
+  // same code drives the toggle on the FES front-end form (this file is not
+  // loaded there).
 
   // General Image picker
   $(".mec-image-picker-wrapper").each(function () {
@@ -1227,8 +1552,20 @@ jQuery(document).ready(function () {
 
 // MEC fast copy by one click
 function mec_copy_code() {
+  var el = document.getElementById("MECCopyCode");
+  if (!el) return;
+
+  var text = (el.textContent || "").trim();
+
+  // Preferred: async Clipboard API — reliable for <button> content (Safari/Firefox included)
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text);
+    return;
+  }
+
+  // Fallback: legacy Range + execCommand (old browsers)
   var range = document.createRange();
-  range.selectNode(document.getElementById("MECCopyCode"));
+  range.selectNode(el);
   window.getSelection().removeAllRanges(); // clear current selection
   window.getSelection().addRange(range); // to select text
   document.execCommand("copy");

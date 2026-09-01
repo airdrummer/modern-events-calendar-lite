@@ -58,7 +58,7 @@ $third_parties = $this->main->get_integrated_plugins_for_import();
                 </div>
             </form>
             <?php else: ?>
-            <div class="info-msg"><?php echo sprintf(esc_html__("%s is required to use this feature.", 'modern-events-calendar-lite'), '<a href="'.esc_url($this->main->get_pro_link()).'" target="_blank">'.esc_html__('Pro version of Modern Events Calendar', 'modern-events-calendar-lite').'</a>'); ?></div>
+            <div class="info-msg"><?php echo sprintf(esc_html__("%s is required to use this feature.", 'modern-events-calendar-lite'), $this->main->pro_notice_link()); ?></div>
             <?php endif; ?>
 
             <?php if($this->action == 'import-start-ics'): ?>
@@ -89,7 +89,7 @@ $third_parties = $this->main->get_integrated_plugins_for_import();
                 </div>
             </form>
             <?php else: ?>
-            <div class="info-msg"><?php echo sprintf(esc_html__("%s is required to use this feature.", 'modern-events-calendar-lite'), '<a href="'.esc_url($this->main->get_pro_link()).'" target="_blank">'.esc_html__('Pro version of Modern Events Calendar', 'modern-events-calendar-lite').'</a>'); ?></div>
+            <div class="info-msg"><?php echo sprintf(esc_html__("%s is required to use this feature.", 'modern-events-calendar-lite'), $this->main->pro_notice_link()); ?></div>
             <?php endif; ?>
 
             <?php if($this->action == 'import-start-bookings'): ?>

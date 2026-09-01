@@ -2263,27 +2263,53 @@ class Transaction
         $ticket_product_id = $ticket_detail['product_id'] ?? 0;
         $attendee_key = $ticket_detail['attendee_key'] ?? '';
 
-        $ticket_price = $ticket_detail['ticket_price'] ?? 0;
-        $ticket_sale_price = $ticket_detail['ticket_sale_price'] ?? $ticket_price;
         $variations_amount = $ticket_detail['variations_amount'] ?? 0;
         $discounts_amount = $ticket_detail['discounts_amount'] ?? 0;
         $fees_per_ticket_amount = $ticket_detail['fees_per_ticket_amount'] ?? 0;
 
-        $main = \MEC\Base::get_main();
-        $all_gateways_options = $main->get_gateways_options();
-        $woocommerce_gateway_options = $all_gateways_options[1995] ?? [];
-        $use_mec_taxes = false;
-
-        if (isset($woocommerce_gateway_options['use_mec_taxes']) && 'on' == $woocommerce_gateway_options['use_mec_taxes']) {
-            $use_mec_taxes = true;
+        // Prefer line totals (count × unit + variations − discount), not unit ticket_price alone.
+        if (isset($ticket_detail['tickets_and_variations_amount_with_discount'])) {
+            $ticket_price = (float) $ticket_detail['tickets_and_variations_amount_with_discount'] + (float) $discounts_amount;
+            $ticket_sale_price = (float) $ticket_detail['tickets_and_variations_amount_with_discount'];
+        } elseif (isset($ticket_detail['tickets_amount'])) {
+            $ticket_price = (float) $ticket_detail['tickets_amount'] + (float) $variations_amount;
+            $ticket_sale_price = $ticket_price - (float) $discounts_amount;
+        } else {
+            $ticket_price = (float) ($ticket_detail['ticket_price'] ?? 0);
+            $ticket_sale_price = (float) ($ticket_detail['ticket_sale_price'] ?? $ticket_price);
+            $ticket_price += (float) $variations_amount;
+            $ticket_sale_price += (float) $variations_amount - (float) $discounts_amount;
         }
 
-        if ($use_mec_taxes) {
+        // Only bake MEC per-ticket fees when Cart Tax Handling is MEC Taxes/Fees
+        // AND tax is excluded (added on top). Inclusive prices already contain tax —
+        // adding percent fees again causes double tax (e.g. 150 → 168 → partial 84).
+        $use_mec_taxes = false;
+        $tax_inclusion = 'excluded';
+
+        if (class_exists('\MEC_Woocommerce\Core\Helpers\Tax')) {
+            $use_mec_taxes = \MEC_Woocommerce\Core\Helpers\Tax::use_mec_taxes();
+            $tax_inclusion = \MEC_Woocommerce\Core\Helpers\Tax::mec_tax_inclusion();
+        } else {
+            $main = \MEC\Base::get_main();
+            $all_gateways_options = $main->get_gateways_options();
+            $woocommerce_gateway_options = $all_gateways_options[1995] ?? [];
+            if (isset($woocommerce_gateway_options['use_mec_taxes']) && 'on' == $woocommerce_gateway_options['use_mec_taxes']) {
+                $use_mec_taxes = true;
+            }
+            $settings_inclusion = \MEC\Settings\Settings::getInstance()->get_settings('tax_inclusion');
+            if ($settings_inclusion !== null && trim((string) $settings_inclusion) === 'included') {
+                $tax_inclusion = 'included';
+            }
+        }
+
+        if ($use_mec_taxes && $tax_inclusion !== 'included') {
             $event_id = $this->get_event_id();
             $mec_fees = $this->bookClass->get_fees($event_id);
 
             $tickets_count = $ticket_detail['count'] ?? 1;
-            $tickets_and_variations_amount_with_discount = $ticket_detail['tickets_and_variations_amount_with_discount'] ?? 0;
+            $tickets_and_variations_amount_with_discount = $ticket_detail['tickets_and_variations_amount_with_discount']
+                ?? max(0, $ticket_sale_price);
 
             $calculated_fees_per_ticket = 0;
             $per_ticket_fee_types = ['percent', 'amount'];
@@ -2310,9 +2336,6 @@ class Transaction
             $ticket_price += $fees_per_ticket_amount;
             $ticket_sale_price += $fees_per_ticket_amount;
         }
-
-        $ticket_price += $variations_amount;
-        $ticket_sale_price += $variations_amount - $discounts_amount;
 
         $ticket_sale_price = $this->get_partial_payment_amount($ticket_sale_price);
 

@@ -95,6 +95,7 @@ $step = 1;
                                 'time_ampm' => $start_time_ampm,
                                 'name' => 'mec[date][start]',
                                 'id_key' => 'start_',
+                                'typeable' => true,
                             )); ?>
                         </div>
                         </div>
@@ -112,6 +113,7 @@ $step = 1;
                                     'time_ampm' => $end_time_ampm,
                                     'name' => 'mec[date][end]',
                                     'id_key' => 'end_',
+                                    'typeable' => true,
                                 )); ?>
                             </div>
                         </div>

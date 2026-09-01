@@ -65,7 +65,7 @@ class MEC_feature_appointments extends MEC_base
         $adjusted = isset($config['adjusted_availability']) && is_array($config['adjusted_availability']) ? $config['adjusted_availability'] : [];
         $availability_repeat_type = $config['availability_repeat_type'] ?? 'weekly';
         ?>
-        <div class="mec-event-appointment-type-wrap">&mdash;
+        <div class="mec-event-appointment-type-wrap">
             <label for="mec_entity_type_select" class="screen-reader-text"><?php esc_html_e('Event Type', 'modern-events-calendar-lite'); ?></label>
             <select id="mec_entity_type_select" name="mec[entity_type]">
                 <option value="event" <?php selected($entity_type, 'event'); ?>><?php esc_html_e('Event', 'modern-events-calendar-lite'); ?></option>
@@ -75,39 +75,65 @@ class MEC_feature_appointments extends MEC_base
         <div class="mec-appointment-form-wrap">
             <input type="hidden" name="mec[appointments][saved]" value="1">
             <h4><?php esc_html_e('Appointment duration', 'modern-events-calendar-lite'); ?></h4>
-            <div class="mec-form-row">
-                <select id="mec_appointments_duration" name="mec[appointments][duration]">
-                    <option value="10" <?php echo $duration == '10' ? 'selected' : ''; ?>><?php esc_html_e('10 minutes', 'modern-events-calendar-lite'); ?></option>
-                    <option value="15" <?php echo $duration == '15' ? 'selected' : ''; ?>><?php esc_html_e('15 minutes', 'modern-events-calendar-lite'); ?></option>
-                    <option value="20" <?php echo $duration == '20' ? 'selected' : ''; ?>><?php esc_html_e('20 minutes', 'modern-events-calendar-lite'); ?></option>
-                    <option value="30" <?php echo $duration == '30' ? 'selected' : ''; ?>><?php esc_html_e('30 minutes', 'modern-events-calendar-lite'); ?></option>
-                    <option value="45" <?php echo $duration == '45' ? 'selected' : ''; ?>><?php esc_html_e('45 minutes', 'modern-events-calendar-lite'); ?></option>
-                    <option value="60" <?php echo $duration == '60' ? 'selected' : ''; ?>><?php esc_html_e('1 hour', 'modern-events-calendar-lite'); ?></option>
-                    <option value="90" <?php echo $duration == '90' ? 'selected' : ''; ?>><?php esc_html_e('1.5 hours', 'modern-events-calendar-lite'); ?></option>
-                    <option value="120" <?php echo $duration == '120' ? 'selected' : ''; ?>><?php esc_html_e('2 hours', 'modern-events-calendar-lite'); ?></option>
-                    <option value="240" <?php echo $duration == '240' ? 'selected' : ''; ?>><?php esc_html_e('4 hours', 'modern-events-calendar-lite'); ?></option>
-                </select>
-                <p class="description"><?php esc_html_e('How long should each appointment last?', 'modern-events-calendar-lite'); ?></p>
+            <div class="mec-form-row mec-field">
+                <div class="mec-field__label">
+                    <label for="mec_appointments_duration"><?php esc_html_e('Duration', 'modern-events-calendar-lite'); ?></label>
+                </div>
+                <div class="mec-field__control">
+                    <select id="mec_appointments_duration" name="mec[appointments][duration]">
+                        <option value="10" <?php echo $duration == '10' ? 'selected' : ''; ?>><?php esc_html_e('10 minutes', 'modern-events-calendar-lite'); ?></option>
+                        <option value="15" <?php echo $duration == '15' ? 'selected' : ''; ?>><?php esc_html_e('15 minutes', 'modern-events-calendar-lite'); ?></option>
+                        <option value="20" <?php echo $duration == '20' ? 'selected' : ''; ?>><?php esc_html_e('20 minutes', 'modern-events-calendar-lite'); ?></option>
+                        <option value="30" <?php echo $duration == '30' ? 'selected' : ''; ?>><?php esc_html_e('30 minutes', 'modern-events-calendar-lite'); ?></option>
+                        <option value="45" <?php echo $duration == '45' ? 'selected' : ''; ?>><?php esc_html_e('45 minutes', 'modern-events-calendar-lite'); ?></option>
+                        <option value="60" <?php echo $duration == '60' ? 'selected' : ''; ?>><?php esc_html_e('1 hour', 'modern-events-calendar-lite'); ?></option>
+                        <option value="90" <?php echo $duration == '90' ? 'selected' : ''; ?>><?php esc_html_e('1.5 hours', 'modern-events-calendar-lite'); ?></option>
+                        <option value="120" <?php echo $duration == '120' ? 'selected' : ''; ?>><?php esc_html_e('2 hours', 'modern-events-calendar-lite'); ?></option>
+                        <option value="240" <?php echo $duration == '240' ? 'selected' : ''; ?>><?php esc_html_e('4 hours', 'modern-events-calendar-lite'); ?></option>
+                    </select>
+                    <p class="mec-field__help"><?php esc_html_e('How long should each appointment last?', 'modern-events-calendar-lite'); ?></p>
+                </div>
             </div>
-            <div class="mec-form-row">
-                <input type="number" id="mec_appointments_buffer" name="mec[appointments][buffer]" min="0" max="240" step="1" value="<?php echo esc_attr($buffer); ?>">
-                <p class="description"><?php esc_html_e('Buffer time between appointments (minutes)', 'modern-events-calendar-lite'); ?></p>
+            <div class="mec-form-row mec-field">
+                <div class="mec-field__label">
+                    <label for="mec_appointments_buffer"><?php esc_html_e('Buffer Time', 'modern-events-calendar-lite'); ?></label>
+                </div>
+                <div class="mec-field__control">
+                    <input type="number" id="mec_appointments_buffer" name="mec[appointments][buffer]" min="0" max="240" step="1" value="<?php echo esc_attr($buffer); ?>" />
+                    <span class="mec-interval-unit"><?php esc_html_e('minutes', 'modern-events-calendar-lite'); ?></span>
+                    <p class="mec-field__help"><?php esc_html_e('Buffer time between appointments (minutes)', 'modern-events-calendar-lite'); ?></p>
+                </div>
             </div>
-            <div class="mec-form-row">
-                <input type="number" id="mec_appointments_max_per_day" name="mec[appointments][max_bookings_per_day]" min="0" step="1" value="<?php echo esc_attr($max_bookings_per_day); ?>">
-                <p class="description"><?php esc_html_e('Maximum bookings per day', 'modern-events-calendar-lite'); ?></p>
+            <div class="mec-form-row mec-field">
+                <div class="mec-field__label">
+                    <label for="mec_appointments_max_per_day"><?php esc_html_e('Max Per Day', 'modern-events-calendar-lite'); ?></label>
+                </div>
+                <div class="mec-field__control">
+                    <input type="number" id="mec_appointments_max_per_day" name="mec[appointments][max_bookings_per_day]" min="0" step="1" value="<?php echo esc_attr($max_bookings_per_day); ?>" />
+                    <p class="mec-field__help"><?php esc_html_e('Maximum bookings per day', 'modern-events-calendar-lite'); ?></p>
+                </div>
             </div>
             <h4><?php esc_html_e('Availability', 'modern-events-calendar-lite'); ?></h4>
-            <div class="mec-form-row">
-                <select id="mec_appointments_availability_repeat_type" name="mec[appointments][availability_repeat_type]">
-                    <option value="weekly" <?php echo ($availability_repeat_type == 'weekly' ? 'selected' : ''); ?>><?php esc_html_e('Repeat Weekly', 'modern-events-calendar-lite'); ?></option>
-                    <option value="no_repeat" <?php echo ($availability_repeat_type == 'no_repeat' ? 'selected' : ''); ?>><?php esc_html_e('Does Not Repeat', 'modern-events-calendar-lite'); ?></option>
-                </select>
-                <p class="description"><?php esc_html_e("Set when you're available for appointments.", 'modern-events-calendar-lite'); ?></p>
+            <div class="mec-form-row mec-field">
+                <div class="mec-field__label">
+                    <label for="mec_appointments_availability_repeat_type"><?php esc_html_e('Repeat', 'modern-events-calendar-lite'); ?></label>
+                </div>
+                <div class="mec-field__control">
+                    <select id="mec_appointments_availability_repeat_type" name="mec[appointments][availability_repeat_type]">
+                        <option value="weekly" <?php echo ($availability_repeat_type == 'weekly' ? 'selected' : ''); ?>><?php esc_html_e('Repeat Weekly', 'modern-events-calendar-lite'); ?></option>
+                        <option value="no_repeat" <?php echo ($availability_repeat_type == 'no_repeat' ? 'selected' : ''); ?>><?php esc_html_e('Does Not Repeat', 'modern-events-calendar-lite'); ?></option>
+                    </select>
+                    <p class="mec-field__help"><?php esc_html_e("Set when you're available for appointments.", 'modern-events-calendar-lite'); ?></p>
+                </div>
             </div>
-            <div class="mec-form-row lsd-apt-start-date-wrapper <?php echo ($availability_repeat_type === 'no_repeat' ? 'mec-util-hidden' : ''); ?>">
-                <input type="text" id="mec_appointments_start_date" class="mec-apt-date-picker" name="mec[appointments][start_date]" value="<?php echo esc_attr($start_date); ?>">
-                <p class="description"><?php esc_html_e('Start date', 'modern-events-calendar-lite'); ?></p>
+            <div class="mec-form-row mec-field lsd-apt-start-date-wrapper <?php echo ($availability_repeat_type === 'no_repeat' ? 'mec-util-hidden' : ''); ?>">
+                <div class="mec-field__label">
+                    <label for="mec_appointments_start_date"><?php esc_html_e('Start Date', 'modern-events-calendar-lite'); ?></label>
+                </div>
+                <div class="mec-field__control">
+                    <input type="text" id="mec_appointments_start_date" class="mec-apt-date-picker" name="mec[appointments][start_date]" value="<?php echo esc_attr($start_date); ?>" />
+                    <p class="mec-field__help"><?php esc_html_e('Start date', 'modern-events-calendar-lite'); ?></p>
+                </div>
             </div>
             <div class="lsd-apt-days-wrapper <?php echo ($availability_repeat_type === 'no_repeat' ? 'mec-util-hidden' : ''); ?>">
                 <?php foreach($days as $key => $day): ?>
@@ -125,6 +151,7 @@ class MEC_feature_appointments extends MEC_base
                                     <div class="lsd-apt-day-timeslot-wrapper">
                                         <div>
                                             <?php $this->main->timepicker([
+                                            'typeable' => true,
                                                 'method' => $this->settings['time_format'] ?? 12,
                                                 'time_hour' => $availability['start']['hour'] ?? 8,
                                                 'time_minutes' => $availability['start']['minutes'] ?? 0,
@@ -134,6 +161,7 @@ class MEC_feature_appointments extends MEC_base
                                             ]); ?>
                                             <span class="lsd-apt-to"> - </span>
                                             <?php $this->main->timepicker([
+                                            'typeable' => true,
                                                 'method' => $this->settings['time_format'] ?? 12,
                                                 'time_hour' => $availability['end']['hour'] ?? 6,
                                                 'time_minutes' => $availability['end']['minutes'] ?? 0,
@@ -151,6 +179,7 @@ class MEC_feature_appointments extends MEC_base
                                     <div class="lsd-apt-day-timeslot-wrapper">
                                         <div>
                                             <?php $this->main->timepicker([
+                                            'typeable' => true,
                                                 'method' => $this->settings['time_format'] ?? 12,
                                                 'time_hour' => 8,
                                                 'time_minutes' => 0,
@@ -160,6 +189,7 @@ class MEC_feature_appointments extends MEC_base
                                             ]); ?>
                                             <span class="lsd-apt-to"> - </span>
                                             <?php $this->main->timepicker([
+                                            'typeable' => true,
                                                 'method' => $this->settings['time_format'] ?? 12,
                                                 'time_hour' => 6,
                                                 'time_minutes' => 0,
@@ -188,6 +218,7 @@ class MEC_feature_appointments extends MEC_base
                                 <div class="lsd-apt-day-timeslot-wrapper">
                                     <div>
                                         <?php $this->main->timepicker([
+                                            'typeable' => true,
                                             'method' => $this->settings['time_format'] ?? 12,
                                             'time_hour' => 8,
                                             'time_minutes' => 0,
@@ -197,6 +228,7 @@ class MEC_feature_appointments extends MEC_base
                                         ]); ?>
                                         <span class="lsd-apt-to"> - </span>
                                         <?php $this->main->timepicker([
+                                            'typeable' => true,
                                             'method' => $this->settings['time_format'] ?? 12,
                                             'time_hour' => 6,
                                             'time_minutes' => 0,
@@ -229,6 +261,7 @@ class MEC_feature_appointments extends MEC_base
                                 <div class="lsd-apt-day-timeslot-wrapper">
                                     <div>
                                         <?php $this->main->timepicker([
+                                            'typeable' => true,
                                             'method' => $this->settings['time_format'] ?? 12,
                                             'time_hour' => $p['start']['hour'] ?? 8,
                                             'time_minutes' => $p['start']['minutes'] ?? 0,
@@ -238,6 +271,7 @@ class MEC_feature_appointments extends MEC_base
                                         ]); ?>
                                         <span class="lsd-apt-to"> - </span>
                                         <?php $this->main->timepicker([
+                                            'typeable' => true,
                                             'method' => $this->settings['time_format'] ?? 12,
                                             'time_hour' => $p['end']['hour'] ?? 6,
                                             'time_minutes' => $p['end']['minutes'] ?? 0,
@@ -276,6 +310,7 @@ class MEC_feature_appointments extends MEC_base
                                 <div class="lsd-apt-day-timeslot-wrapper">
                                     <div>
                                         <?php $this->main->timepicker([
+                                            'typeable' => true,
                                             'method' => $this->settings['time_format'] ?? 12,
                                             'time_hour' => 8,
                                             'time_minutes' => 0,
@@ -285,6 +320,7 @@ class MEC_feature_appointments extends MEC_base
                                         ]); ?>
                                         <span class="lsd-apt-to"> - </span>
                                         <?php $this->main->timepicker([
+                                            'typeable' => true,
                                             'method' => $this->settings['time_format'] ?? 12,
                                             'time_hour' => 6,
                                             'time_minutes' => 0,
@@ -313,6 +349,7 @@ class MEC_feature_appointments extends MEC_base
                     <div class="lsd-apt-day-timeslot-wrapper">
                         <div>
                             <?php $this->main->timepicker([
+                                            'typeable' => true,
                                 'method' => $this->settings['time_format'] ?? 12,
                                 'time_hour' => 8,
                                 'time_minutes' => 0,
@@ -322,6 +359,7 @@ class MEC_feature_appointments extends MEC_base
                             ]); ?>
                             <span class="lsd-apt-to"> - </span>
                             <?php $this->main->timepicker([
+                                            'typeable' => true,
                                 'method' => $this->settings['time_format'] ?? 12,
                                 'time_hour' => 6,
                                 'time_minutes' => 0,

@@ -153,14 +153,125 @@ abstract class MEC_base extends MEC
     }
 
     /**
-     * Returns PRO instance
+     * Is this the Pro *package*?
+     *
+     * Answers "which files shipped", never "is this site licensed". Anything a
+     * site needs in order to RECOVER — the activation form, its AJAX handlers,
+     * the update checker — must key on this rather than on getPRO(), otherwise
+     * an unlicensed Pro install has no route back and is unrecoverable without
+     * FTP.
+     *
+     * Lite does not ship the licence core, so this is false there. It must
+     * never fatal when the class is absent, because this file is byte-identical
+     * between the two packages.
+     *
      * @final
      * @author Webnus <info@webnus.net>
-     * @return MEC_pro instance
+     * @return bool
+     */
+    final public function isProBuild()
+    {
+        return class_exists('MEC_license');
+    }
+
+    /**
+     * May Pro features run on this site?
+     *
+     * Boolean by contract. Every one of the ~130 call sites treats the result
+     * as truthy/falsy, so this must NOT be widened to return a phase. Code that
+     * needs the intermediate stages asks MEC_license::instance()->phase().
+     *
+     * False here means exact Lite parity, which is the final phase of the ramp
+     * and also what Lite itself returns.
+     *
+     * @final
+     * @author Webnus <info@webnus.net>
+     * @return bool
      */
     final public function getPRO()
     {
-        return MEC::getInstance('app.libraries.pro');
+        if (!class_exists('MEC_license')) return false;
+
+        return MEC_license::instance()->phase() < MEC_license::PHASE_LITE;
+    }
+
+    /**
+     * Current enforcement phase, 0-4. Always 0 on a licensed site, and always
+     * PHASE_LITE where the licence core is absent (Lite).
+     *
+     * @final
+     * @author Webnus <info@webnus.net>
+     * @return int
+     */
+    final public function getLicensePhase()
+    {
+        if (!class_exists('MEC_license')) return 4;
+
+        return MEC_license::instance()->phase();
+    }
+
+    /**
+     * May NEW Pro configuration be created? (phase 1)
+     *
+     * False means: no new coupons, no new ticket variations, no enabling a Pro
+     * feature on an event that does not already have it. Everything already
+     * configured keeps working, keeps rendering and keeps being editable — this
+     * gate is about adding, never about what exists.
+     *
+     * Read it at the point of WRITING, not the point of reading, so that
+     * existing content is never re-evaluated against it.
+     *
+     * @final
+     * @author Webnus <info@webnus.net>
+     * @return bool
+     */
+    final public function isProCreationEnabled()
+    {
+        // Note: && not `and`. `return $a and $b;` returns $a.
+        return $this->getPRO() && $this->getLicensePhase() < 1;
+    }
+
+    /**
+     * May the Pro presentation layer run? (phase 2)
+     *
+     * Covers Pro-only skins, advanced search, automated/scheduled notifications
+     * and Pro addons. Everything here is display or convenience: switching it
+     * off changes what a visitor sees, never what is stored, and never what is
+     * charged. Booking is deliberately NOT in this tier — see
+     * isBookingUnitEnabled().
+     *
+     * @final
+     * @author Webnus <info@webnus.net>
+     * @return bool
+     */
+    final public function isProPresentationEnabled()
+    {
+        // Note: && not `and`. `return $a and $b;` returns $a.
+        return $this->getPRO() && $this->getLicensePhase() < 2;
+    }
+
+    /**
+     * May the booking unit run?
+     *
+     * Booking, payment gateways, coupons and organizer payments switch off
+     * TOGETHER or not at all. They must never be gated independently:
+     *
+     *  - dropping coupons alone silently changes what customers are charged;
+     *  - dropping op.php alone lets MEC_feature_op::op() stop overwriting the
+     *    gateway credentials, so organizers' money is paid to the site owner
+     *    instead. That is misdirected money, not a disabled feature.
+     *
+     * Existing bookings, transactions and attendee lists stay readable and
+     * exportable regardless — this gate only stops NEW bookings.
+     *
+     * @final
+     * @author Webnus <info@webnus.net>
+     * @return bool
+     */
+    final public function isBookingUnitEnabled()
+    {
+        // Note: && not `and`. `return $a and $b;` returns $a.
+        return $this->getPRO() && $this->getLicensePhase() < 3;
     }
 
     /**

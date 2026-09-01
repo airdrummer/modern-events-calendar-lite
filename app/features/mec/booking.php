@@ -107,7 +107,7 @@ if(isset($_POST['mec']['settings']['booking_registration'])) {
                             <h4 class="mec-form-subtitle"><?php esc_html_e('Booking', 'modern-events-calendar-lite'); ?></h4>
 
                             <?php if(!$this->main->getPRO()): ?>
-                            <div class="info-msg"><?php echo sprintf(esc_html__("%s is required to use this feature.", 'modern-events-calendar-lite'), '<a href="'.esc_url($this->main->get_pro_link()).'" target="_blank">'.esc_html__('Pro version of Modern Events Calendar', 'modern-events-calendar-lite').'</a>'); ?></div>
+                            <div class="info-msg"><?php echo sprintf(esc_html__("%s is required to use this feature.", 'modern-events-calendar-lite'), $this->main->pro_notice_link()); ?></div>
                             <?php else: ?>
                             <div class="mec-form-row">
                                 <label>
@@ -592,7 +592,7 @@ if(isset($_POST['mec']['settings']['booking_registration'])) {
                                     <h5 class="mec-form-subtitle"><?php esc_html_e('Booking Shortcode', 'modern-events-calendar-lite'); ?></h5>
 
                                     <?php if(!$this->main->getPRO()): ?>
-                                    <div class="info-msg"><?php echo sprintf(esc_html__("%s is required to use this feature.", 'modern-events-calendar-lite'), '<a href="'.esc_url($this->main->get_pro_link()).'" target="_blank">'.esc_html__('Pro version of Modern Events Calendar', 'modern-events-calendar-lite').'</a>'); ?></div>
+                                    <div class="info-msg"><?php echo sprintf(esc_html__("%s is required to use this feature.", 'modern-events-calendar-lite'), $this->main->pro_notice_link()); ?></div>
                                     <?php else: ?>
                                     <div class="mec-form-row">
                                         <div class="mec-col-12">
@@ -684,7 +684,7 @@ if(isset($_POST['mec']['settings']['booking_registration'])) {
                                     <h5 class="mec-form-subtitle"><?php esc_html_e('Webhooks', 'modern-events-calendar-lite'); ?></h5>
 
                                     <?php if(!$this->main->getPRO()): ?>
-                                        <div class="info-msg"><?php echo sprintf(esc_html__("%s is required to use this feature.", 'modern-events-calendar-lite'), '<a href="'.esc_url($this->main->get_pro_link()).'" target="_blank">'.esc_html__('Pro version of Modern Events Calendar', 'modern-events-calendar-lite').'</a>'); ?></div>
+                                        <div class="info-msg"><?php echo sprintf(esc_html__("%s is required to use this feature.", 'modern-events-calendar-lite'), $this->main->pro_notice_link()); ?></div>
                                     <?php else: ?>
                                         <div class="mec-form-row">
                                             <label>
@@ -881,7 +881,7 @@ if(isset($_POST['mec']['settings']['booking_registration'])) {
                             <h4 class="mec-form-subtitle"><?php esc_html_e('Coupons', 'modern-events-calendar-lite'); ?></h4>
 
                             <?php if(!$this->main->getPRO()): ?>
-                            <div class="info-msg"><?php echo sprintf(esc_html__("%s is required to use this feature.", 'modern-events-calendar-lite'), '<a href="'.esc_url($this->main->get_pro_link()).'" target="_blank">'.esc_html__('Pro version of Modern Events Calendar', 'modern-events-calendar-lite').'</a>'); ?></div>
+                            <div class="info-msg"><?php echo sprintf(esc_html__("%s is required to use this feature.", 'modern-events-calendar-lite'), $this->main->pro_notice_link()); ?></div>
                             <?php else: ?>
                             <div class="mec-form-row">
                                 <label>
@@ -899,7 +899,7 @@ if(isset($_POST['mec']['settings']['booking_registration'])) {
                             <h4 class="mec-form-subtitle"><?php esc_html_e('Taxes / Fees', 'modern-events-calendar-lite'); ?></h4>
 
                             <?php if(!$this->main->getPRO()): ?>
-                            <div class="info-msg"><?php echo sprintf(esc_html__("%s is required to use this feature.", 'modern-events-calendar-lite'), '<a href="'.esc_url($this->main->get_pro_link()).'" target="_blank">'.esc_html__('Pro version of Modern Events Calendar', 'modern-events-calendar-lite').'</a>'); ?></div>
+                            <div class="info-msg"><?php echo sprintf(esc_html__("%s is required to use this feature.", 'modern-events-calendar-lite'), $this->main->pro_notice_link()); ?></div>
                             <?php else: ?>
                             <div class="mec-form-row">
                                 <label>
@@ -915,9 +915,9 @@ if(isset($_POST['mec']['settings']['booking_registration'])) {
                                     <?php $i = 0; foreach($fees as $key=>$fee): if(!is_numeric($key)) continue; $fee_key = (int) $key; $i = max($i, $fee_key); ?>
                                     <div class="mec-box mec-form-row" id="mec_fee_row<?php echo esc_attr($fee_key); ?>">
                                         <div class="mec-form-row">
-                                            <span class="mec_field_sort button"><?php esc_html_e('Sort', 'modern-events-calendar-lite'); ?></span>
-                                            <button class="button mec-dash-remove-btn" type="button" id="mec_remove_fee_button<?php echo esc_attr($fee_key); ?>" onclick="mec_remove_fee(<?php echo esc_attr($fee_key); ?>);"><?php esc_html_e('Remove', 'modern-events-calendar-lite'); ?></button>
                                             <input class="mec-col-8" type="text" name="mec[settings][fees][<?php echo esc_attr($fee_key); ?>][title]" placeholder="<?php esc_attr_e('Fee Title', 'modern-events-calendar-lite'); ?>" value="<?php echo (isset($fee['title']) ? esc_attr($fee['title']) : ''); ?>" />
+                                            <span class="mec_field_sort button" title="<?php esc_attr_e('Drag to reorder', 'modern-events-calendar-lite'); ?>" aria-label="<?php esc_attr_e('Drag to reorder', 'modern-events-calendar-lite'); ?>"></span>
+                                            <button class="button mec-dash-remove-btn" type="button" id="mec_remove_fee_button<?php echo esc_attr($fee_key); ?>" onclick="mec_remove_fee(<?php echo esc_attr($fee_key); ?>);"><?php esc_html_e('Remove', 'modern-events-calendar-lite'); ?></button>
                                         </div>
                                         <div class="mec-form-row">
                                             <span class="mec-col-4">
@@ -946,9 +946,9 @@ if(isset($_POST['mec']['settings']['booking_registration'])) {
                                 <div class="mec-util-hidden" id="mec_new_fee_raw">
                                     <div class="mec-box mec-form-row" id="mec_fee_row:i:">
                                         <div class="mec-form-row">
-                                            <span class="mec_field_sort button"><?php esc_html_e('Sort', 'modern-events-calendar-lite'); ?></span>
-                                            <button class="button mec-dash-remove-btn" type="button" id="mec_remove_fee_button:i:" onclick="mec_remove_fee(:i:);"><?php esc_html_e('Remove', 'modern-events-calendar-lite'); ?></button>
                                             <input class="mec-col-8" type="text" name="mec[settings][fees][:i:][title]" placeholder="<?php esc_attr_e('Fee Title', 'modern-events-calendar-lite'); ?>" />
+                                            <span class="mec_field_sort button" title="<?php esc_attr_e('Drag to reorder', 'modern-events-calendar-lite'); ?>" aria-label="<?php esc_attr_e('Drag to reorder', 'modern-events-calendar-lite'); ?>"></span>
+                                            <button class="button mec-dash-remove-btn" type="button" id="mec_remove_fee_button:i:" onclick="mec_remove_fee(:i:);"><?php esc_html_e('Remove', 'modern-events-calendar-lite'); ?></button>
                                         </div>
                                         <div class="mec-form-row">
                                             <span class="mec-col-4">
@@ -1008,7 +1008,7 @@ if(isset($_POST['mec']['settings']['booking_registration'])) {
                             <h4 class="mec-form-subtitle"><?php esc_html_e('Ticket Variations & Options', 'modern-events-calendar-lite'); ?></h4>
 
                             <?php if(!$this->main->getPRO()): ?>
-                                <div class="info-msg"><?php echo sprintf(esc_html__("%s is required to use this feature.", 'modern-events-calendar-lite'), '<a href="'.esc_url($this->main->get_pro_link()).'" target="_blank">'.esc_html__('Pro version of Modern Events Calendar', 'modern-events-calendar-lite').'</a>'); ?></div>
+                                <div class="info-msg"><?php echo sprintf(esc_html__("%s is required to use this feature.", 'modern-events-calendar-lite'), $this->main->pro_notice_link()); ?></div>
                             <?php else: ?>
                                 <div class="mec-form-row">
                                     <label>

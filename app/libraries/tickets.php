@@ -164,13 +164,18 @@ class MEC_tickets extends MEC_base
                     $i = max($i, $key);
                     ?>
                     <div class="mec-box mec_ticket_row mec-form-row" id="mec_ticket_row<?php echo esc_attr($key); ?>">
-                        <span class="mec_field_sort button"><?php esc_html_e('Sort', 'modern-events-calendar-lite'); ?></span>
+                        <span class="mec_field_sort button" title="<?php esc_attr_e('Drag to reorder', 'modern-events-calendar-lite'); ?>" aria-label="<?php esc_attr_e('Drag to reorder', 'modern-events-calendar-lite'); ?>"></span>
                         <button class="button remove mec_ticket_remove_button mec-dash-remove-btn" type="button" onclick="mec_ticket_remove(<?php echo esc_attr($key); ?>);"><?php esc_html_e("Remove", 'modern-events-calendar-lite'); ?></button>
                         <div class="mec-ticket-id mec-label" title="<?php esc_attr_e('Ticket ID', 'modern-events-calendar-lite'); ?>"><span class="mec-ticket-id-title"><?php esc_attr_e('ID', 'modern-events-calendar-lite'); ?>: </span><?php echo esc_attr($key); ?></div>
-                        <div class="mec-form-row <?php echo $basic_class; ?>">
-                            <input type="text" class="mec-col-12" name="<?php echo $name_prefix; ?>[<?php echo esc_attr($key); ?>][name]"
-                                   placeholder="<?php esc_attr_e('Ticket Name', 'modern-events-calendar-lite'); ?>"
-                                   value="<?php echo(isset($ticket['name']) ? esc_attr($ticket['name']) : ''); ?>"/>
+                        <div class="mec-form-row mec-field <?php echo $basic_class; ?>">
+                            <div class="mec-field__label">
+                                <label for="mec_ticket_name_<?php echo esc_attr($key); ?>"><?php esc_html_e('Ticket Name', 'modern-events-calendar-lite'); ?></label>
+                            </div>
+                            <div class="mec-field__control">
+                                <input type="text" id="mec_ticket_name_<?php echo esc_attr($key); ?>" name="<?php echo $name_prefix; ?>[<?php echo esc_attr($key); ?>][name]"
+                                       placeholder="<?php esc_attr_e('eg. Standard', 'modern-events-calendar-lite'); ?>"
+                                       value="<?php echo(isset($ticket['name']) ? esc_attr($ticket['name']) : ''); ?>"/>
+                            </div>
                         </div>
 
                         <div class="<?php echo $advanced_class; ?> w-hidden">
@@ -178,9 +183,11 @@ class MEC_tickets extends MEC_base
                         </div>
 
                         <?php if($ticket_times_status): ?>
-                            <div class="mec-form-row wn-ticket-time <?php echo $advanced_class; ?>">
-                                <div class="mec-ticket-start-time mec-col-12">
-                                    <span class="mec-ticket-time mec-label"><?php esc_html_e('Start Time', 'modern-events-calendar-lite'); ?></span>
+                            <div class="mec-form-row mec-field wn-ticket-time <?php echo $advanced_class; ?>">
+                                <div class="mec-field__label">
+                                    <label><?php esc_html_e('Start Time', 'modern-events-calendar-lite'); ?></label>
+                                </div>
+                                <div class="mec-field__control mec-ticket-start-time">
                                     <?php $main->timepicker(array(
                                         'method' => ($settings['time_format'] ?? 12),
                                         'time_hour' => ($ticket['ticket_start_time_hour'] ?? 8),
@@ -189,11 +196,16 @@ class MEC_tickets extends MEC_base
                                         'name' => $name_prefix.'['.esc_attr($key).']',
                                         'hour_key' => 'ticket_start_time_hour',
                                         'minutes_key' => 'ticket_start_time_minute',
-                                        'ampm_key' => 'ticket_start_time_ampm'
+                                        'ampm_key' => 'ticket_start_time_ampm',
+                                        'typeable' => true,
                                     )); ?>
                                 </div>
-                                <div class="mec-ticket-end-time mec-ticket-start-time mec-col-12">
-                                    <span class="mec-ticket-time mec-label"><?php esc_html_e('End Time', 'modern-events-calendar-lite'); ?></span>
+                            </div>
+                            <div class="mec-form-row mec-field wn-ticket-time <?php echo $advanced_class; ?>">
+                                <div class="mec-field__label">
+                                    <label><?php esc_html_e('End Time', 'modern-events-calendar-lite'); ?></label>
+                                </div>
+                                <div class="mec-field__control mec-ticket-end-time">
                                     <?php $main->timepicker(array(
                                         'method' => ($settings['time_format'] ?? 12),
                                         'time_hour' => ($ticket['ticket_end_time_hour'] ?? 6),
@@ -203,67 +215,70 @@ class MEC_tickets extends MEC_base
                                         'hour_key' => 'ticket_end_time_hour',
                                         'minutes_key' => 'ticket_end_time_minute',
                                         'ampm_key' => 'ticket_end_time_ampm',
+                                        'typeable' => true,
                                     )); ?>
                                 </div>
                             </div>
                         <?php endif; ?>
 
-                        <div class="mec-form-row <?php echo $basic_class; ?>">
-                                <textarea type="text" class="mec-col-11"
-                                          name="<?php echo $name_prefix; ?>[<?php echo esc_attr($key); ?>][description]"
-                                          placeholder="<?php esc_attr_e('Description', 'modern-events-calendar-lite'); ?>"><?php echo(isset($ticket['description']) ? esc_textarea($ticket['description']) : ''); ?></textarea>
+                        <div class="mec-form-row mec-field <?php echo $basic_class; ?>">
+                            <div class="mec-field__label">
+                                <label for="mec_ticket_description_<?php echo esc_attr($key); ?>"><?php esc_html_e('Description', 'modern-events-calendar-lite'); ?></label>
+                            </div>
+                            <div class="mec-field__control">
+                                <textarea id="mec_ticket_description_<?php echo esc_attr($key); ?>" name="<?php echo $name_prefix; ?>[<?php echo esc_attr($key); ?>][description]"
+                                          placeholder="<?php esc_attr_e('Displayed under the ticket name in the booking module.', 'modern-events-calendar-lite'); ?>"><?php echo(isset($ticket['description']) ? esc_textarea($ticket['description']) : ''); ?></textarea>
+                            </div>
                         </div>
                         <?php if($private_description_status): ?>
-                            <div class="mec-form-row <?php echo $advanced_class; ?>">
-                                <textarea type="text" class="mec-col-11"
-                                          name="<?php echo $name_prefix; ?>[<?php echo esc_attr($key); ?>][private_description]"
-                                          placeholder="<?php esc_attr_e('Private Description', 'modern-events-calendar-lite'); ?>"><?php echo(isset($ticket['private_description']) ? esc_textarea($ticket['private_description']) : ''); ?></textarea>
+                            <div class="mec-form-row mec-field <?php echo $advanced_class; ?>">
+                                <div class="mec-field__label">
+                                    <label for="mec_ticket_private_description_<?php echo esc_attr($key); ?>"><?php esc_html_e('Private Description', 'modern-events-calendar-lite'); ?></label>
+                                </div>
+                                <div class="mec-field__control">
+                                    <textarea id="mec_ticket_private_description_<?php echo esc_attr($key); ?>" name="<?php echo $name_prefix; ?>[<?php echo esc_attr($key); ?>][private_description]"
+                                              placeholder="<?php esc_attr_e('Only sent in email notifications via %%ticket_private_description%%.', 'modern-events-calendar-lite'); ?>"><?php echo(isset($ticket['private_description']) ? esc_textarea($ticket['private_description']) : ''); ?></textarea>
+                                    <span class="mec-tooltip">
+                                        <div class="box top">
+                                            <h5 class="title"><?php esc_html_e('Private Description', 'modern-events-calendar-lite'); ?></h5>
+                                            <div class="content"><p><?php esc_attr_e("The value can be displayed on the email notifications by placing the %%ticket_private_description%% placeholder into the email content.", 'modern-events-calendar-lite'); ?></p></div>
+                                        </div>
+                                        <i title="" class="dashicons-before dashicons-editor-help"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+                        <div class="mec-form-row mec-field <?php echo $basic_class; ?>">
+                            <div class="mec-field__label">
+                                <label for="mec_ticket_price_<?php echo esc_attr($key); ?>"><?php esc_html_e('Price', 'modern-events-calendar-lite'); ?></label>
+                            </div>
+                            <div class="mec-field__control">
+                                <input type="number" min="0" step="0.01" id="mec_ticket_price_<?php echo esc_attr($key); ?>" name="<?php echo $name_prefix; ?>[<?php echo esc_attr($key); ?>][price]"
+                                       placeholder="<?php esc_attr_e('eg. 16', 'modern-events-calendar-lite'); ?>"
+                                       value="<?php echo ((isset($ticket['price']) and trim($ticket['price'])) ? esc_attr($ticket['price']) : 0); ?>"/>
+                                <input type="text" id="mec_ticket_price_label_<?php echo esc_attr($key); ?>" name="<?php echo $name_prefix; ?>[<?php echo esc_attr($key); ?>][price_label]"
+                                       placeholder="<?php esc_attr_e('Price Label (eg. $16)', 'modern-events-calendar-lite'); ?>"
+                                       value="<?php echo(isset($ticket['price_label']) ? esc_attr($ticket['price_label']) : ''); ?>"/>
                                 <span class="mec-tooltip">
                                     <div class="box top">
-                                        <h5 class="title"><?php esc_html_e('Private Description', 'modern-events-calendar-lite'); ?></h5>
-                                        <div class="content"><p><?php esc_attr_e("The value can be displayed on the email notifications by placing the %%ticket_private_description%% placeholder into the email content.", 'modern-events-calendar-lite'); ?></p></div>
+                                        <h5 class="title"><?php esc_html_e('Price / Price Label', 'modern-events-calendar-lite'); ?></h5>
+                                        <div class="content"><p><?php esc_attr_e('Only numbers are allowed for price; enter only the price without any symbols or characters. Enter 0 for free tickets. The label is how the price is displayed in the booking module, e.g. $16.', 'modern-events-calendar-lite'); ?>
+                                                <a href="https://webnus.net/dox/modern-events-calendar/add-a-booking-system/"
+                                                   target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
                                     </div>
                                     <i title="" class="dashicons-before dashicons-editor-help"></i>
                                 </span>
                             </div>
-                        <?php endif; ?>
-                        <div class="mec-form-row <?php echo $basic_class; ?>">
-                                <span class="mec-col-4">
-                                    <input type="number" min="0" step="0.01" name="<?php echo $name_prefix; ?>[<?php echo esc_attr($key); ?>][price]"
-                                           placeholder="<?php esc_attr_e('Price', 'modern-events-calendar-lite'); ?>"
-                                           value="<?php echo ((isset($ticket['price']) and trim($ticket['price'])) ? esc_attr($ticket['price']) : 0); ?>"/>
-                                    <span class="mec-tooltip">
-                                        <div class="box top">
-                                            <h5 class="title"><?php esc_html_e('Price', 'modern-events-calendar-lite'); ?></h5>
-                                            <div class="content"><p><?php esc_attr_e('Only numbers are allowed; Enter only the price without any symbols or characters. Enter 0 for free tickets.', 'modern-events-calendar-lite'); ?>
-                                                    <a href="https://webnus.net/dox/modern-events-calendar/add-a-booking-system/"
-                                                       target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
-                                        </div>
-                                        <i title="" class="dashicons-before dashicons-editor-help"></i>
-                                    </span>
-                                </span>
-                            <span class="mec-col-8">
-                                    <input type="text" name="<?php echo $name_prefix; ?>[<?php echo esc_attr($key); ?>][price_label]"
-                                           placeholder="<?php esc_attr_e('Price Label', 'modern-events-calendar-lite'); ?>"
-                                           value="<?php echo(isset($ticket['price_label']) ? esc_attr($ticket['price_label']) : ''); ?>"
-                                           class="mec-col-12"/>
-                                    <span class="mec-tooltip">
-                                        <div class="box top">
-                                            <h5 class="title"><?php esc_html_e('Price Label', 'modern-events-calendar-lite'); ?></h5>
-                                            <div class="content"><p><?php esc_attr_e('How shoould the price  be displayed in the booking module? Here you can insert the price with a currency symbol. e.g. $16', 'modern-events-calendar-lite'); ?>
-                                                    <a href="https://webnus.net/dox/modern-events-calendar/add-a-booking-system/"
-                                                       target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
-                                        </div>
-                                        <i title="" class="dashicons-before dashicons-editor-help"></i>
-                                    </span>
-                                </span>
                         </div>
-                        <div class="mec-form-row <?php echo $basic_class; ?>">
-                            <div class="mec-col-10">
-                                <input class="mec-col-4 mec-available-tickets" type="text" name="<?php echo $name_prefix; ?>[<?php echo esc_attr($key); ?>][limit]"
+                        <div class="mec-form-row mec-field <?php echo $basic_class; ?>">
+                            <div class="mec-field__label">
+                                <label for="mec_tickets_limit_<?php echo esc_attr($key); ?>"><?php echo esc_html($available_tickets_placeholder); ?></label>
+                            </div>
+                            <div class="mec-field__control">
+                                <input class="mec-available-tickets" type="text" id="mec_tickets_limit_<?php echo esc_attr($key); ?>" name="<?php echo $name_prefix; ?>[<?php echo esc_attr($key); ?>][limit]"
                                        placeholder="<?php echo esc_attr($available_tickets_placeholder); ?>"
                                        value="<?php echo (isset($ticket['limit']) ? esc_attr($ticket['limit']) : '100'); ?>"/>
-                                <label class="mec-col-3 label-checkbox" for="mec_tickets_unlimited_<?php echo esc_attr($key); ?>"
+                                <label class="label-checkbox" for="mec_tickets_unlimited_<?php echo esc_attr($key); ?>"
                                        id="mec_bookings_limit_unlimited_label<?php echo esc_attr($key); ?>">
                                     <input type="hidden" name="<?php echo $name_prefix; ?>[<?php echo esc_attr($key); ?>][unlimited]" value="0"/>
                                     <input id="mec_tickets_unlimited_<?php echo esc_attr($key); ?>" type="checkbox" value="1"
@@ -277,7 +292,7 @@ class MEC_tickets extends MEC_base
                                     <?php esc_html_e('Unlimited', 'modern-events-calendar-lite'); ?>
                                 </label>
                                 <?php if($family_ticket_status): ?>
-                                    <input class="mec-col-4 mec-ticket-number-of-seats" type="number" name="<?php echo $name_prefix; ?>[<?php echo esc_attr($key); ?>][seats]"
+                                    <input class="mec-ticket-number-of-seats" type="number" name="<?php echo $name_prefix; ?>[<?php echo esc_attr($key); ?>][seats]"
                                            placeholder="<?php esc_attr_e('Number of Seats', 'modern-events-calendar-lite'); ?>"
                                            value="<?php echo (isset($ticket['seats']) ? (int) esc_attr($ticket['seats']) : '1'); ?>" min="0" step="1"/>
                                     <span class="mec-tooltip">
@@ -295,65 +310,58 @@ class MEC_tickets extends MEC_base
                             </div>
                         </div>
                         <?php if(apply_filters('mec_fes_ticket_field_visibility', true, 'minimum_ticket')): ?>
-                        <div class="mec-form-row <?php echo $advanced_class; ?>">
-                            <div class="mec-col-4">
-                                <input type="number" min="0" step="1" id="mec_minimum_ticket_<?php echo esc_attr($key); ?>" name="<?php echo $name_prefix; ?>[<?php echo esc_attr($key); ?>][minimum_ticket]" value="<?php echo (isset($ticket['minimum_ticket']) ? esc_attr($ticket['minimum_ticket']) : '0'); ?>" placeholder="<?php esc_html_e('Minimum Ticket e.g. 3', 'modern-events-calendar-lite'); ?>">
-                                <span class="mec-tooltip">
-                                        <div class="box top">
-                                            <h5 class="title"><?php esc_html_e('Minimum Ticket', 'modern-events-calendar-lite'); ?></h5>
-                                            <div class="content">
-                                                <p><?php esc_attr_e('The minimum number of tickets a user needs to book.', 'modern-events-calendar-lite'); ?></p>
-                                            </div>
-                                        </div>
-                                        <i title="" class="dashicons-before dashicons-editor-help"></i>
-                                    </span>
+                        <div class="mec-form-row mec-field <?php echo $advanced_class; ?>">
+                            <div class="mec-field__label">
+                                <label for="mec_minimum_ticket_<?php echo esc_attr($key); ?>"><?php esc_html_e('Minimum Ticket', 'modern-events-calendar-lite'); ?></label>
                             </div>
+                            <div class="mec-field__control">
+                                <input type="number" min="0" step="1" id="mec_minimum_ticket_<?php echo esc_attr($key); ?>" name="<?php echo $name_prefix; ?>[<?php echo esc_attr($key); ?>][minimum_ticket]" value="<?php echo (isset($ticket['minimum_ticket']) ? esc_attr($ticket['minimum_ticket']) : '0'); ?>">
+                                <span class="mec-tooltip">
+                                    <div class="box top">
+                                        <h5 class="title"><?php esc_html_e('Minimum Ticket', 'modern-events-calendar-lite'); ?></h5>
+                                        <div class="content"><p><?php esc_attr_e('The minimum number of tickets a user needs to book.', 'modern-events-calendar-lite'); ?></p></div>
+                                    </div>
+                                    <i title="" class="dashicons-before dashicons-editor-help"></i>
+                                </span>
+                            </div>
+                        </div>
                         <?php endif; ?>
                         <?php if(apply_filters('mec_fes_ticket_field_visibility', true, 'maximum_ticket')): ?>
-                            <div class="mec-col-4">
-                                <input type="number" min="0" step="1" id="mec_maximum_ticket_<?php echo esc_attr($key); ?>" name="<?php echo $name_prefix; ?>[<?php echo esc_attr($key); ?>][maximum_ticket]" value="<?php echo (isset($ticket['maximum_ticket']) ? esc_attr($ticket['maximum_ticket']) : ''); ?>" placeholder="<?php esc_html_e('Maximum Ticket e.g. 1', 'modern-events-calendar-lite'); ?>">
+                        <div class="mec-form-row mec-field <?php echo $advanced_class; ?>">
+                            <div class="mec-field__label">
+                                <label for="mec_maximum_ticket_<?php echo esc_attr($key); ?>"><?php esc_html_e('Maximum Ticket', 'modern-events-calendar-lite'); ?></label>
+                            </div>
+                            <div class="mec-field__control">
+                                <input type="number" min="0" step="1" id="mec_maximum_ticket_<?php echo esc_attr($key); ?>" name="<?php echo $name_prefix; ?>[<?php echo esc_attr($key); ?>][maximum_ticket]" value="<?php echo (isset($ticket['maximum_ticket']) ? esc_attr($ticket['maximum_ticket']) : ''); ?>">
                                 <span class="mec-tooltip">
-                                        <div class="box top">
-                                            <h5 class="title"><?php esc_html_e('Maximum Ticket', 'modern-events-calendar-lite'); ?></h5>
-                                            <div class="content">
-                                                <p><?php esc_attr_e('The maximum number of tickets a user can book.', 'modern-events-calendar-lite'); ?></p>
-                                            </div>
-                                        </div>
-                                        <i title="" class="dashicons-before dashicons-editor-help"></i>
-                                    </span>
+                                    <div class="box top">
+                                        <h5 class="title"><?php esc_html_e('Maximum Ticket', 'modern-events-calendar-lite'); ?></h5>
+                                        <div class="content"><p><?php esc_attr_e('The maximum number of tickets a user can book.', 'modern-events-calendar-lite'); ?></p></div>
+                                    </div>
+                                    <i title="" class="dashicons-before dashicons-editor-help"></i>
+                                </span>
                             </div>
                         </div>
                         <?php endif; ?>
                         <?php if(apply_filters('mec_fes_ticket_field_visibility', true, 'stop_selling')): ?>
-                        <div class="mec-form-row <?php echo $advanced_class; ?>">
-                            <div class="mec-col-12">
-                                <label for="mec_stop_selling_value_<?php echo esc_attr($key); ?>"><?php esc_html_e('Stop selling ticket', 'modern-events-calendar-lite'); ?></label>
+                        <div class="mec-form-row mec-field <?php echo $advanced_class; ?>">
+                            <div class="mec-field__label">
+                                <label for="mec_stop_selling_value_<?php echo esc_attr($key); ?>"><?php esc_html_e('Stop Selling', 'modern-events-calendar-lite'); ?></label>
                             </div>
-                            <div class="mec-col-4">
-                                <input type="number" class="mec-stop-selling-tickets" id="mec_stop_selling_value_<?php echo esc_attr($key); ?>" name="<?php echo $name_prefix; ?>[<?php echo esc_attr($key); ?>][stop_selling_value]" value="<?php echo((isset($ticket['stop_selling_value']) and trim($ticket['stop_selling_value'])) ? esc_attr($ticket['stop_selling_value']) : '0'); ?>" placeholder="<?php esc_html_e('e.g. 0', 'modern-events-calendar-lite'); ?>">
-                                <span class="mec-tooltip">
-                                    <div class="box top">
-                                        <h5 class="title"><?php esc_html_e('Stop Selling Value', 'modern-events-calendar-lite'); ?></h5>
-                                        <div class="content"><p><?php esc_attr_e('The number of days or hours before the event starts to stop selling this ticket. Set 0 to sell until the event starts.', 'modern-events-calendar-lite'); ?></p></div>
-                                    </div>
-                                    <i title="" class="dashicons-before dashicons-editor-help"></i>
-                                </span>
-                            </div>
-                            <div class="mec-col-4">
+                            <div class="mec-field__control">
+                                <input type="number" class="mec-stop-selling-tickets" id="mec_stop_selling_value_<?php echo esc_attr($key); ?>" name="<?php echo $name_prefix; ?>[<?php echo esc_attr($key); ?>][stop_selling_value]" value="<?php echo((isset($ticket['stop_selling_value']) and trim($ticket['stop_selling_value'])) ? esc_attr($ticket['stop_selling_value']) : '0'); ?>">
                                 <select id="mec_stop_selling_type_<?php echo esc_attr($key); ?>" name="<?php echo $name_prefix; ?>[<?php echo esc_attr($key); ?>][stop_selling_type]">
                                     <option value="day" <?php echo(isset($ticket['stop_selling_type']) and trim($ticket['stop_selling_type']) == 'day') ? 'selected="selected"' : ''; ?>><?php esc_html_e("Day", "mec"); ?></option>
                                     <option value="hour" <?php echo(isset($ticket['stop_selling_type']) and trim($ticket['stop_selling_type']) == 'hour') ? 'selected="selected"' : ''; ?>><?php esc_html_e("Hour", "mec"); ?></option>
                                 </select>
+                                <span class="mec-label"><?php esc_html_e('before event start.', 'modern-events-calendar-lite'); ?></span>
                                 <span class="mec-tooltip">
                                     <div class="box top">
-                                        <h5 class="title"><?php esc_html_e('Stop Selling Period', 'modern-events-calendar-lite'); ?></h5>
-                                        <div class="content"><p><?php esc_attr_e('Choose between Day and Hour for the stop selling cutoff time.', 'modern-events-calendar-lite'); ?></p></div>
+                                        <h5 class="title"><?php esc_html_e('Stop Selling', 'modern-events-calendar-lite'); ?></h5>
+                                        <div class="content"><p><?php esc_attr_e('The number of days or hours before the event starts to stop selling this ticket. Set 0 to sell until the event starts.', 'modern-events-calendar-lite'); ?></p></div>
                                     </div>
                                     <i title="" class="dashicons-before dashicons-editor-help"></i>
                                 </span>
-                            </div>
-                            <div class="mec-col-4">
-                                <span class="mec-label"><?php esc_html_e('before event start.', 'modern-events-calendar-lite'); ?></span>
                             </div>
                         </div>
                         <?php endif; ?>
@@ -493,13 +501,21 @@ class MEC_tickets extends MEC_base
                                 if(trim($availability_end) && !trim($availability_start)) $availability_end = '';
                             ?>
                         <div id="mec_ticket_availability_dates_container" class="<?php echo $advanced_class; ?>">
-                            <div class="mec-form-row">
-                                <h5><?php esc_html_e('Availability Date', 'modern-events-calendar-lite'); ?></h5>
-                                <p class="description"><?php esc_html_e('If you leave the following fields empty then the ticket will be available at any time.'); ?></p><br />
-                                <p class="description" style="color:red"><?php esc_html_e('Please note that this is just a timeframe, and if your events or occurrences fall within this period, the ticket will be displayed.'); ?></p>
-                                <div>
-                                    <input title="<?php esc_attr_e('Availability Start', 'modern-events-calendar-lite'); ?>" placeholder="<?php esc_attr_e('Availability Start', 'modern-events-calendar-lite'); ?>" name="<?php echo $name_prefix; ?>[<?php echo esc_attr($key); ?>][availability_start]" value="<?php echo $availability_start; ?>" type="text" class="mec-date-picker-start">
-                                    <input title="<?php esc_attr_e('Availability End', 'modern-events-calendar-lite'); ?>" placeholder="<?php esc_attr_e('Availability End', 'modern-events-calendar-lite'); ?>" name="<?php echo $name_prefix; ?>[<?php echo esc_attr($key); ?>][availability_end]" value="<?php echo $availability_end; ?>" type="text" class="mec-date-picker-end">
+                            <div class="mec-form-row mec-field">
+                                <div class="mec-field__label">
+                                    <label><?php esc_html_e('Availability Date', 'modern-events-calendar-lite'); ?></label>
+                                </div>
+                                <div class="mec-field__control">
+                                    <input name="<?php echo $name_prefix; ?>[<?php echo esc_attr($key); ?>][availability_start]" value="<?php echo $availability_start; ?>" type="text" class="mec-date-picker-start" placeholder="<?php esc_attr_e('Availability Start', 'modern-events-calendar-lite'); ?>">
+                                    <input name="<?php echo $name_prefix; ?>[<?php echo esc_attr($key); ?>][availability_end]" value="<?php echo $availability_end; ?>" type="text" class="mec-date-picker-end" placeholder="<?php esc_attr_e('Availability End', 'modern-events-calendar-lite'); ?>">
+                                    <span class="mec-tooltip">
+                                        <div class="box top">
+                                            <h5 class="title"><?php esc_html_e('Availability Date', 'modern-events-calendar-lite'); ?></h5>
+                                            <div class="content"><p><?php esc_attr_e('If you leave the following fields empty then the ticket will be available at any time. Please note that this is just a timeframe, and if your events or occurrences fall within this period, the ticket will be displayed.', 'modern-events-calendar-lite'); ?></p></div>
+                                        </div>
+                                        <i title="" class="dashicons-before dashicons-editor-help"></i>
+                                    </span>
+                                    <p class="mec-field__help"><?php esc_html_e('Leave empty for the ticket to be available at any time. Events or occurrences must fall within this period for the ticket to show.', 'modern-events-calendar-lite'); ?></p>
                                 </div>
                             </div>
                         </div>
@@ -515,20 +531,27 @@ class MEC_tickets extends MEC_base
         <input type="hidden" id="mec_new_ticket_key" value="<?php echo ($i + 1); ?>"/>
         <div class="mec-util-hidden" id="mec_new_ticket_raw">
             <div class="mec-box mec_ticket_row mec-form-row" id="mec_ticket_row:i:">
-                <span class="mec_field_sort button"><?php esc_html_e('Sort', 'modern-events-calendar-lite'); ?></span>
+                <span class="mec_field_sort button" title="<?php esc_attr_e('Drag to reorder', 'modern-events-calendar-lite'); ?>" aria-label="<?php esc_attr_e('Drag to reorder', 'modern-events-calendar-lite'); ?>"></span>
                 <button class="button remove mec_ticket_remove_button mec-dash-remove-btn" type="button" onclick="mec_ticket_remove(:i:);"><?php esc_html_e("Remove", 'modern-events-calendar-lite'); ?></button>
                 <div class="mec-ticket-id" title="<?php esc_attr_e('Ticket ID', 'modern-events-calendar-lite'); ?>"><span class="mec-ticket-id-title"><?php esc_attr_e('ID', 'modern-events-calendar-lite'); ?>: </span>:i:</div>
-                <div class="mec-form-row <?php echo $basic_class; ?>">
-                    <input class="mec-col-12" type="text" name="<?php echo $name_prefix; ?>[:i:][name]"
-                           placeholder="<?php esc_attr_e('Ticket Name', 'modern-events-calendar-lite'); ?>"/>
+                <div class="mec-form-row mec-field <?php echo $basic_class; ?>">
+                    <div class="mec-field__label">
+                        <label for="mec_ticket_name_:i:"><?php esc_html_e('Ticket Name', 'modern-events-calendar-lite'); ?></label>
+                    </div>
+                    <div class="mec-field__control">
+                        <input type="text" id="mec_ticket_name_:i:" name="<?php echo $name_prefix; ?>[:i:][name]"
+                               placeholder="<?php esc_attr_e('eg. Standard', 'modern-events-calendar-lite'); ?>"/>
+                    </div>
                 </div>
                 <div class="<?php echo $advanced_class; ?>">
                     <?php do_action('mec_ticket_properties', ':i:', [], $object_id); ?>
                 </div>
                 <?php if($ticket_times_status): ?>
-                    <div class="mec-form-row wn-ticket-time <?php echo $advanced_class; ?>">
-                        <div class="mec-ticket-start-time mec-col-12">
-                            <span class="mec-ticket-time mec-label"><?php esc_html_e('Start Time', 'modern-events-calendar-lite'); ?></span>
+                    <div class="mec-form-row mec-field wn-ticket-time <?php echo $advanced_class; ?>">
+                        <div class="mec-field__label">
+                            <label><?php esc_html_e('Start Time', 'modern-events-calendar-lite'); ?></label>
+                        </div>
+                        <div class="mec-field__control mec-ticket-start-time">
                             <?php $main->timepicker(array(
                                 'method' => ($settings['time_format'] ?? 12),
                                 'time_hour' => 8,
@@ -538,10 +561,15 @@ class MEC_tickets extends MEC_base
                                 'hour_key' => 'ticket_start_time_hour',
                                 'minutes_key' => 'ticket_start_time_minute',
                                 'ampm_key' => 'ticket_start_time_ampm',
+                                'typeable' => true,
                             )); ?>
                         </div>
-                        <div class="mec-ticket-end-time mec-ticket-start-time mec-col-12">
-                            <span class="mec-ticket-time mec-label"><?php esc_html_e('End Time', 'modern-events-calendar-lite'); ?></span>
+                    </div>
+                    <div class="mec-form-row mec-field wn-ticket-time <?php echo $advanced_class; ?>">
+                        <div class="mec-field__label">
+                            <label><?php esc_html_e('End Time', 'modern-events-calendar-lite'); ?></label>
+                        </div>
+                        <div class="mec-field__control mec-ticket-end-time">
                             <?php $main->timepicker(array(
                                 'method' => ($settings['time_format'] ?? 12),
                                 'time_hour' => 6,
@@ -551,58 +579,64 @@ class MEC_tickets extends MEC_base
                                 'hour_key' => 'ticket_end_time_hour',
                                 'minutes_key' => 'ticket_end_time_minute',
                                 'ampm_key' => 'ticket_end_time_ampm',
+                                'typeable' => true,
                             )); ?>
                         </div>
                     </div>
                 <?php endif; ?>
-                <div class="mec-form-row <?php echo $basic_class; ?>">
-                        <textarea class="mec-col-11" type="text" name="<?php echo $name_prefix; ?>[:i:][description]"
-                                  placeholder="<?php esc_attr_e('Description', 'modern-events-calendar-lite'); ?>"></textarea>
+                <div class="mec-form-row mec-field <?php echo $basic_class; ?>">
+                    <div class="mec-field__label">
+                        <label for="mec_ticket_description_:i:"><?php esc_html_e('Description', 'modern-events-calendar-lite'); ?></label>
+                    </div>
+                    <div class="mec-field__control">
+                        <textarea id="mec_ticket_description_:i:" name="<?php echo $name_prefix; ?>[:i:][description]"
+                                  placeholder="<?php esc_attr_e('Displayed under the ticket name in the booking module.', 'modern-events-calendar-lite'); ?>"></textarea>
+                    </div>
                 </div>
                 <?php if($private_description_status): ?>
-                    <div class="mec-form-row <?php echo $advanced_class; ?>">
-                        <textarea type="text" class="mec-col-11" name="<?php echo $name_prefix; ?>[:i:][private_description]"
-                                  placeholder="<?php esc_attr_e('Private Description', 'modern-events-calendar-lite'); ?>"></textarea>
+                    <div class="mec-form-row mec-field <?php echo $advanced_class; ?>">
+                        <div class="mec-field__label">
+                            <label for="mec_ticket_private_description_:i:"><?php esc_html_e('Private Description', 'modern-events-calendar-lite'); ?></label>
+                        </div>
+                        <div class="mec-field__control">
+                            <textarea id="mec_ticket_private_description_:i:" name="<?php echo $name_prefix; ?>[:i:][private_description]"
+                                      placeholder="<?php esc_attr_e('Only sent in email notifications via %%ticket_private_description%%.', 'modern-events-calendar-lite'); ?>"></textarea>
+                            <span class="mec-tooltip">
+                                <div class="box top">
+                                    <h5 class="title"><?php esc_html_e('Private Description', 'modern-events-calendar-lite'); ?></h5>
+                                    <div class="content"><p><?php esc_attr_e("The value can be displayed on the email notifications by placing the %%ticket_private_description%% placeholder into the email content.", 'modern-events-calendar-lite'); ?></p></div>
+                                </div>
+                                <i title="" class="dashicons-before dashicons-editor-help"></i>
+                            </span>
+                        </div>
+                    </div>
+                <?php endif; ?>
+                <div class="mec-form-row mec-field <?php echo $basic_class; ?>">
+                    <div class="mec-field__label">
+                        <label for="mec_ticket_price_:i:"><?php esc_html_e('Price', 'modern-events-calendar-lite'); ?></label>
+                    </div>
+                    <div class="mec-field__control">
+                        <input type="number" min="0" step="0.01" id="mec_ticket_price_:i:" name="<?php echo $name_prefix; ?>[:i:][price]" placeholder="<?php esc_attr_e('eg. 16', 'modern-events-calendar-lite'); ?>" value="0">
+                        <input type="text" id="mec_ticket_price_label_:i:" name="<?php echo $name_prefix; ?>[:i:][price_label]" placeholder="<?php esc_attr_e('Price Label (eg. $16)', 'modern-events-calendar-lite'); ?>">
                         <span class="mec-tooltip">
                             <div class="box top">
-                                <h5 class="title"><?php esc_html_e('Private Description', 'modern-events-calendar-lite'); ?></h5>
-                                <div class="content"><p><?php esc_attr_e("The value can be displayed on the email notifications by placing the %%ticket_private_description%% placeholder into the email content.", 'modern-events-calendar-lite'); ?></p></div>
+                                <h5 class="title"><?php esc_html_e('Price / Price Label', 'modern-events-calendar-lite'); ?></h5>
+                                <div class="content"><p><?php esc_attr_e('Only numbers are allowed for price; enter only the price without any symbols or characters. Enter 0 for free tickets. The label is how the price is displayed in the booking module, e.g. $16.', 'modern-events-calendar-lite'); ?>
+                                    <a href="https://webnus.net/dox/modern-events-calendar/add-a-booking-system/"
+                                       target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
                             </div>
                             <i title="" class="dashicons-before dashicons-editor-help"></i>
                         </span>
                     </div>
-                <?php endif; ?>
-                <div class="mec-form-row <?php echo $basic_class; ?>">
-						<span class="mec-col-4">
-							<input type="number" min="0" step="0.01" name="<?php echo $name_prefix; ?>[:i:][price]" placeholder="<?php esc_attr_e('Price', 'modern-events-calendar-lite'); ?>" value="0">
-							<span class="mec-tooltip">
-								<div class="box top">
-									<h5 class="title"><?php esc_html_e('Price', 'modern-events-calendar-lite'); ?></h5>
-									<div class="content"><p><?php esc_attr_e('Only numbers are allowed; Enter only the price without any symbols or characters. Enter 0 for free tickets.', 'modern-events-calendar-lite'); ?>
-                                            <a href="https://webnus.net/dox/modern-events-calendar/add-a-booking-system/"
-                                               target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
-								</div>
-								<i title="" class="dashicons-before dashicons-editor-help"></i>
-							</span>
-						</span>
-                    <span class="mec-col-8">
-							<input type="text" name="<?php echo $name_prefix; ?>[:i:][price_label]" placeholder="<?php esc_attr_e('Price Label', 'modern-events-calendar-lite'); ?>" class="mec-col-12">
-							<span class="mec-tooltip">
-								<div class="box top">
-									<h5 class="title"><?php esc_html_e('Price Label', 'modern-events-calendar-lite'); ?></h5>
-									<div class="content"><p><?php esc_attr_e('How should the price  be displayed in the booking module? Here you can insert the price with a currency symbol. e.g. $16', 'modern-events-calendar-lite'); ?>
-                                            <a href="https://webnus.net/dox/modern-events-calendar/add-a-booking-system/"
-                                               target="_blank"><?php esc_html_e('Read More', 'modern-events-calendar-lite'); ?></a></p></div>
-								</div>
-								<i title="" class="dashicons-before dashicons-editor-help"></i>
-							</span>
-						</span>
                 </div>
-                <div class="mec-form-row <?php echo $basic_class; ?>">
-                    <div class="mec-col-10">
-                        <input class="mec-col-4 mec-available-tickets" type="text" name="<?php echo $name_prefix; ?>[:i:][limit]"
+                <div class="mec-form-row mec-field <?php echo $basic_class; ?>">
+                    <div class="mec-field__label">
+                        <label for="mec_tickets_limit_:i:"><?php echo esc_html($available_tickets_placeholder); ?></label>
+                    </div>
+                    <div class="mec-field__control">
+                        <input class="mec-available-tickets" type="text" id="mec_tickets_limit_:i:" name="<?php echo $name_prefix; ?>[:i:][limit]"
                                placeholder="<?php echo esc_attr($available_tickets_placeholder); ?>"/>
-                        <label class="mec-col-3 label-checkbox" for="mec_tickets_unlimited_:i:"
+                        <label class="label-checkbox" for="mec_tickets_unlimited_:i:"
                                id="mec_bookings_limit_unlimited_label">
                             <input type="hidden" name="<?php echo $name_prefix; ?>[:i:][unlimited]" value="0"/>
                             <input id="mec_tickets_unlimited_:i:" type="checkbox" value="1"
@@ -610,7 +644,7 @@ class MEC_tickets extends MEC_base
                             <?php esc_html_e('Unlimited', 'modern-events-calendar-lite'); ?>
                         </label>
                         <?php if($family_ticket_status): ?>
-                            <input class="mec-col-4 mec-ticket-number-of-seats" type="number" name="<?php echo $name_prefix; ?>[:i:][seats]"
+                            <input class="mec-ticket-number-of-seats" type="number" name="<?php echo $name_prefix; ?>[:i:][seats]"
                                    placeholder="<?php esc_attr_e('Number of Seats', 'modern-events-calendar-lite'); ?>"
                                    value="1" min="0" step="1"/>
                             <span class="mec-tooltip">
@@ -628,65 +662,58 @@ class MEC_tickets extends MEC_base
                     </div>
                 </div>
                 <?php if(apply_filters('mec_fes_ticket_field_visibility', true, 'minimum_ticket')): ?>
-                <div class="mec-form-row <?php echo $advanced_class; ?>">
-                    <div class="mec-col-4">
-                        <input type="number" min="0" step="1" id="mec_minimum_ticket_:i:" name="<?php echo $name_prefix; ?>[:i:][minimum_ticket]" value="1" placeholder="<?php esc_html_e('Minimum Ticket e.g. 3', 'modern-events-calendar-lite'); ?>">
-                        <span class="mec-tooltip">
-                                <div class="box top">
-                                    <h5 class="title"><?php esc_html_e('Minimum Ticket', 'modern-events-calendar-lite'); ?></h5>
-                                    <div class="content">
-                                        <p><?php esc_attr_e('The minimum number of tickets  a user needs to book.', 'modern-events-calendar-lite'); ?></p>
-                                    </div>
-                                </div>
-                                <i title="" class="dashicons-before dashicons-editor-help"></i>
-                            </span>
+                <div class="mec-form-row mec-field <?php echo $advanced_class; ?>">
+                    <div class="mec-field__label">
+                        <label for="mec_minimum_ticket_:i:"><?php esc_html_e('Minimum Ticket', 'modern-events-calendar-lite'); ?></label>
                     </div>
+                    <div class="mec-field__control">
+                        <input type="number" min="0" step="1" id="mec_minimum_ticket_:i:" name="<?php echo $name_prefix; ?>[:i:][minimum_ticket]" value="1">
+                        <span class="mec-tooltip">
+                            <div class="box top">
+                                <h5 class="title"><?php esc_html_e('Minimum Ticket', 'modern-events-calendar-lite'); ?></h5>
+                                <div class="content"><p><?php esc_attr_e('The minimum number of tickets a user needs to book.', 'modern-events-calendar-lite'); ?></p></div>
+                            </div>
+                            <i title="" class="dashicons-before dashicons-editor-help"></i>
+                        </span>
+                    </div>
+                </div>
                 <?php endif; ?>
                 <?php if(apply_filters('mec_fes_ticket_field_visibility', true, 'maximum_ticket')): ?>
-                    <div class="mec-col-4">
-                        <input type="number" min="0" step="1" id="mec_maximum_ticket_:i:" name="<?php echo $name_prefix; ?>[:i:][maximum_ticket]" value="" placeholder="<?php esc_html_e('Maximum Ticket e.g. 1', 'modern-events-calendar-lite'); ?>">
+                <div class="mec-form-row mec-field <?php echo $advanced_class; ?>">
+                    <div class="mec-field__label">
+                        <label for="mec_maximum_ticket_:i:"><?php esc_html_e('Maximum Ticket', 'modern-events-calendar-lite'); ?></label>
+                    </div>
+                    <div class="mec-field__control">
+                        <input type="number" min="0" step="1" id="mec_maximum_ticket_:i:" name="<?php echo $name_prefix; ?>[:i:][maximum_ticket]" value="">
                         <span class="mec-tooltip">
-                                <div class="box top">
-                                    <h5 class="title"><?php esc_html_e('Maximum Ticket', 'modern-events-calendar-lite'); ?></h5>
-                                    <div class="content">
-                                        <p><?php esc_attr_e('The maximum number of tickets a user can book.', 'modern-events-calendar-lite'); ?></p>
-                                    </div>
-                                </div>
-                                <i title="" class="dashicons-before dashicons-editor-help"></i>
-                            </span>
+                            <div class="box top">
+                                <h5 class="title"><?php esc_html_e('Maximum Ticket', 'modern-events-calendar-lite'); ?></h5>
+                                <div class="content"><p><?php esc_attr_e('The maximum number of tickets a user can book.', 'modern-events-calendar-lite'); ?></p></div>
+                            </div>
+                            <i title="" class="dashicons-before dashicons-editor-help"></i>
+                        </span>
                     </div>
                 </div>
                 <?php endif; ?>
                 <?php if(apply_filters('mec_fes_ticket_field_visibility', true, 'stop_selling')): ?>
-                <div class="mec-form-row <?php echo $advanced_class; ?>">
-                    <div class="mec-col-12">
-                        <label for="mec_stop_selling_value_:i:"><?php esc_html_e('Stop selling ticket', 'modern-events-calendar-lite'); ?></label>
+                <div class="mec-form-row mec-field <?php echo $advanced_class; ?>">
+                    <div class="mec-field__label">
+                        <label for="mec_stop_selling_value_:i:"><?php esc_html_e('Stop Selling', 'modern-events-calendar-lite'); ?></label>
                     </div>
-                    <div class="mec-col-4">
-                        <input type="number" class="mec-stop-selling-tickets" id="mec_stop_selling_value_:i:" name="<?php echo $name_prefix; ?>[:i:][stop_selling_value]" value="0" placeholder="<?php esc_html_e('e.g. 0', 'modern-events-calendar-lite'); ?>">
-                        <span class="mec-tooltip">
-                            <div class="box top">
-                                <h5 class="title"><?php esc_html_e('Stop Selling Value', 'modern-events-calendar-lite'); ?></h5>
-                                <div class="content"><p><?php esc_attr_e('The number of days or hours before the event starts to stop selling this ticket. Set 0 to sell until the event starts.', 'modern-events-calendar-lite'); ?></p></div>
-                            </div>
-                            <i title="" class="dashicons-before dashicons-editor-help"></i>
-                        </span>
-                    </div>
-                    <div class="mec-col-4">
+                    <div class="mec-field__control">
+                        <input type="number" class="mec-stop-selling-tickets" id="mec_stop_selling_value_:i:" name="<?php echo $name_prefix; ?>[:i:][stop_selling_value]" value="0">
                         <select id="mec_stop_selling_type_:i:" name="<?php echo $name_prefix; ?>[:i:][stop_selling_type]">
                             <option value="day"><?php esc_html_e("Day", "mec"); ?></option>
                             <option value="hour"><?php esc_html_e("Hour", "mec"); ?></option>
                         </select>
+                        <span class="mec-label"><?php esc_html_e('before event start.', 'modern-events-calendar-lite'); ?></span>
                         <span class="mec-tooltip">
                             <div class="box top">
-                                <h5 class="title"><?php esc_html_e('Stop Selling Period', 'modern-events-calendar-lite'); ?></h5>
-                                <div class="content"><p><?php esc_attr_e('Choose between Day and Hour for the stop selling cutoff time.', 'modern-events-calendar-lite'); ?></p></div>
+                                <h5 class="title"><?php esc_html_e('Stop Selling', 'modern-events-calendar-lite'); ?></h5>
+                                <div class="content"><p><?php esc_attr_e('The number of days or hours before the event starts to stop selling this ticket. Set 0 to sell until the event starts.', 'modern-events-calendar-lite'); ?></p></div>
                             </div>
                             <i title="" class="dashicons-before dashicons-editor-help"></i>
                         </span>
-                    </div>
-                    <div class="mec-col-4">
-                        <span class="mec-label"><?php esc_html_e('before event start.', 'modern-events-calendar-lite'); ?></span>
                     </div>
                 </div>
                 <?php endif; ?>
@@ -765,18 +792,25 @@ class MEC_tickets extends MEC_base
 
                 <?php if($availability_dates_status): ?>
                     <div id="mec_ticket_availability_dates_container" class="<?php echo $advanced_class; ?>">
-                        <div class="mec-form-row">
-                            <h5><?php esc_html_e('Availability Date', 'modern-events-calendar-lite'); ?></h5>
-                            <p class="description"><?php esc_html_e('If you leave the following fields empty then the ticket will be available at any time.'); ?></p><br />
-                            <p class="description" style="color:red"><?php esc_html_e('Please note that this is just a timeframe, and if your events or occurrences fall within this period, the ticket will be displayed.'); ?></p>
-                            <div>
-                                <input title="<?php esc_attr_e('Availability Start', 'modern-events-calendar-lite'); ?>" placeholder="<?php esc_attr_e('Availability Start', 'modern-events-calendar-lite'); ?>" name="<?php echo $name_prefix; ?>[:i:][availability_start]" value="" type="text" class="mec-date-picker-start">
-                                <input title="<?php esc_attr_e('Availability End', 'modern-events-calendar-lite'); ?>" placeholder="<?php esc_attr_e('Availability End', 'modern-events-calendar-lite'); ?>" name="<?php echo $name_prefix; ?>[:i:][availability_end]" value="" type="text" class="mec-date-picker-end">
+                            <div class="mec-form-row mec-field">
+                                <div class="mec-field__label">
+                                    <label><?php esc_html_e('Availability Date', 'modern-events-calendar-lite'); ?></label>
+                                </div>
+                                <div class="mec-field__control">
+                                    <input name="<?php echo $name_prefix; ?>[:i:][availability_start]" value="" type="text" class="mec-date-picker-start" placeholder="<?php esc_attr_e('Availability Start', 'modern-events-calendar-lite'); ?>">
+                                    <input name="<?php echo $name_prefix; ?>[:i:][availability_end]" value="" type="text" class="mec-date-picker-end" placeholder="<?php esc_attr_e('Availability End', 'modern-events-calendar-lite'); ?>">
+                                    <span class="mec-tooltip">
+                                        <div class="box top">
+                                            <h5 class="title"><?php esc_html_e('Availability Date', 'modern-events-calendar-lite'); ?></h5>
+                                            <div class="content"><p><?php esc_attr_e('If you leave the following fields empty then the ticket will be available at any time. Please note that this is just a timeframe, and if your events or occurrences fall within this period, the ticket will be displayed.', 'modern-events-calendar-lite'); ?></p></div>
+                                        </div>
+                                        <i title="" class="dashicons-before dashicons-editor-help"></i>
+                                    </span>
+                                    <p class="mec-field__help"><?php esc_html_e('Leave empty for the ticket to be available at any time. Events or occurrences must fall within this period for the ticket to show.', 'modern-events-calendar-lite'); ?></p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                <?php endif; ?>
-                <?php do_action('mec_ticket_extra_options', ':i:', [], $args); ?>
+                <?php endif; ?>                <?php do_action('mec_ticket_extra_options', ':i:', [], $args); ?>
             </div>
         </div>
         <?php

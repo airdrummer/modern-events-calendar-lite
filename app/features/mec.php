@@ -83,6 +83,8 @@ class MEC_feature_mec extends MEC_base
         $this->factory->action('manage_mec_calendars_posts_custom_column', [$this, 'filter_columns_content'], 10, 2);
 
         $this->factory->action('save_post', [$this, 'save_calendar']);
+        $this->factory->action('admin_notices', [$this, 'calendar_validation_notices']);
+        $this->factory->filter('enter_title_here', [$this, 'enter_title_here'], 10, 2);
 
         // BuddyPress Integration
         $this->factory->action('mec_booking_confirmed', [$this->main, 'bp_add_activity']);
@@ -219,21 +221,25 @@ class MEC_feature_mec extends MEC_base
 
         // Constant Contact Authorize
         $this->factory->action('admin_init', [$this, 'constantcontact_authorize']);
+
     }
 
     /* Activate License */
     public function activate_license()
     {
-        if ($this->getPRO())
+        // Package, not licence. Gating this on getPRO() would mean an
+        // unlicensed site could never enter its licence — a deadlock that is
+        // unrecoverable without FTP once the ramp reaches its final phase.
+        if ($this->isProBuild())
         {
             // Current User is not Permitted
             if (!current_user_can('manage_options')) $this->main->response(['success' => 0, 'code' => 'ADMIN_ONLY']);
 
-            if (!wp_verify_nonce(sanitize_text_field($_REQUEST['nonce']), 'mec_settings_nonce')) exit();
+            if (!wp_verify_nonce(sanitize_text_field($_REQUEST['nonce'] ?? ''), 'mec_settings_nonce')) exit();
 
             $options = get_option('mec_options');
-            $options['product_name'] = sanitize_text_field($_REQUEST['content']['LicenseTypeJson']);
-            $options['purchase_code'] = sanitize_text_field($_REQUEST['content']['PurchaseCodeJson']);
+            $options['product_name'] = sanitize_text_field($_REQUEST['content']['LicenseTypeJson'] ?? '');
+            $options['purchase_code'] = sanitize_text_field($_REQUEST['content']['PurchaseCodeJson'] ?? '');
             $payload = [];
 
             $verify = $this->plugin_activation_request($options);
@@ -245,6 +251,22 @@ class MEC_feature_mec extends MEC_base
                 $payload['button_text'] = esc_html__('revoke', 'modern-events-calendar-lite');
                 update_option('mec_license_status', 'active');
                 $options['product_id'] = $verify->item_id;
+
+                // The legacy endpoint above only unlocks auto-updates. The
+                // runtime licence is the signed token, and without one this
+                // site would still ramp down despite having just activated, so
+                // claim a token in the same request.
+                //
+                // A failure here is deliberately not reported as an activation
+                // failure: the purchase code is valid and is being stored, and
+                // the licence notice explains the rest. Saying "activation
+                // failed" would send the customer to re-enter a code that was
+                // never the problem.
+                if (class_exists('MEC_license'))
+                {
+                    $license = MEC_license::instance();
+                    $license->record_claim($license->claim($options['purchase_code']));
+                }
             }
             else
             {
@@ -263,13 +285,36 @@ class MEC_feature_mec extends MEC_base
 
     public function revoke_license()
     {
-        if ($this->getPRO())
+        // Package, not licence — see activate_license().
+        if ($this->isProBuild())
         {
+            // Current User is not Permitted
+            if (!current_user_can('manage_options')) $this->main->response(['success' => 0, 'code' => 'ADMIN_ONLY']);
+
+            if (!wp_verify_nonce(sanitize_text_field($_REQUEST['nonce'] ?? ''), 'mec_settings_nonce')) exit();
+
             $options = get_option('mec_options');
+
+            // Capture the code BEFORE clearing it — revoke() needs it to
+            // deactivate the EDD activation for this site.
+            $purchase_code = $options['purchase_code'] ?? '';
+
             $options['product_name'] = '';
             $options['purchase_code'] = '';
             $options['product_id'] = '';
             update_option('mec_options', $options);
+
+            // The licence is no longer active, so the status must not be left behind
+            delete_option('mec_license_status');
+
+            // Revoke on the store side (deactivate EDD + bump serial) AND drop
+            // the local token. This frees the customer's activation slot so they
+            // can reuse the code on another site, and prevents replay of the
+            // token we held.
+            if (class_exists('MEC_license'))
+            {
+                MEC_license::instance()->revoke($purchase_code);
+            }
 
             $payload = json_encode(['message' => 'revoked', 'status' => true, 'button_text' => esc_html__('submit', 'modern-events-calendar-lite')]);
             echo MEC_kses::element($payload);
@@ -570,11 +615,16 @@ class MEC_feature_mec extends MEC_base
 
         $capability = (current_user_can('administrator') ? 'manage_options' : 'mec_settings');
         add_submenu_page('mec-intro', esc_html__('MEC - Settings', 'modern-events-calendar-lite'), esc_html__('Settings', 'modern-events-calendar-lite'), apply_filters('mec_menu_cap', $capability, 'settings'), 'MEC-settings', [$this, 'page']);
+        do_action('mec_after_settings_submenu', $capability);
 
         add_submenu_page('mec-intro', esc_html__('MEC - Addons', 'modern-events-calendar-lite'), esc_html__('Addons', 'modern-events-calendar-lite'), apply_filters('mec_menu_cap', 'manage_options', 'addons'), 'MEC-addons', [$this, 'addons']);
         add_submenu_page('mec-intro', esc_html__('MEC - Wizard', 'modern-events-calendar-lite'), esc_html__('Wizard', 'modern-events-calendar-lite'), apply_filters('mec_menu_cap', 'edit_pages', 'wizard'), 'MEC-wizard', [$this, 'setup_wizard']);
 
-        if (!$this->getPRO()) add_submenu_page('mec-intro', esc_html__('MEC - Go Pro', 'modern-events-calendar-lite'), esc_html__('Go Pro', 'modern-events-calendar-lite'), apply_filters('mec_menu_cap', 'manage_options', 'go_pro'), 'MEC-go-pro', [$this, 'go_pro']);
+        // Package, not licence. Someone running the Pro package already bought
+        // it; telling them to "Go Pro" because their licence is not activated
+        // is wrong, and it points them at the store instead of at the
+        // activation screen that would actually fix their site.
+        if (!$this->isProBuild()) add_submenu_page('mec-intro', esc_html__('MEC - Go Pro', 'modern-events-calendar-lite'), esc_html__('Go Pro', 'modern-events-calendar-lite'), apply_filters('mec_menu_cap', 'manage_options', 'go_pro'), 'MEC-go-pro', [$this, 'go_pro']);
         do_action('after_mec_submenu_action');
     }
 
@@ -874,6 +924,71 @@ class MEC_feature_mec extends MEC_base
         if ($start_date_type === 'date' and $end_date_type === 'date' and isset($mec['sk-options'][$skin]) and isset($mec['sk-options'][$skin]['start_date']) and isset($mec['sk-options'][$skin]['maximum_date_range']) and trim($mec['sk-options'][$skin]['start_date']) and trim($mec['sk-options'][$skin]['maximum_date_range']) and strtotime($mec['sk-options'][$skin]['start_date']) > strtotime($mec['sk-options'][$skin]['maximum_date_range'])) $mec['sk-options'][$skin]['order_method'] = 'DESC';
 
         foreach ($mec as $key => $value) update_post_meta($post_id, $key, $value);
+
+        // Non-blocking validation warnings (UX audit — Issue 4)
+        $warnings = [];
+
+        $skin_options = (isset($mec['sk-options'][$skin]) and is_array($mec['sk-options'][$skin])) ? $mec['sk-options'][$skin] : [];
+        $start_date = (isset($skin_options['start_date']) and trim($skin_options['start_date']) != '') ? trim($skin_options['start_date']) : '';
+        $maximum_date_range = (isset($skin_options['maximum_date_range']) and trim($skin_options['maximum_date_range']) != '') ? trim($skin_options['maximum_date_range']) : '';
+
+        if ($start_date_type === 'date' and $start_date != '' and strtotime($start_date) === false) $warnings[] = sprintf(esc_html__('The start date "%s" is not a valid date. The calendar may render empty or incorrectly on the front end.', 'modern-events-calendar-lite'), $start_date);
+        if ($end_date_type === 'date' and $maximum_date_range != '' and strtotime($maximum_date_range) === false) $warnings[] = sprintf(esc_html__('The maximum date "%s" is not a valid date. The calendar may render empty or incorrectly on the front end.', 'modern-events-calendar-lite'), $maximum_date_range);
+        if ($start_date != '' and $maximum_date_range != '' and strtotime($start_date) and strtotime($maximum_date_range) and strtotime($start_date) > strtotime($maximum_date_range)) $warnings[] = sprintf(esc_html__('The start date (%1$s) is after the maximum date (%2$s). Events will be listed in reverse order. Swap the dates if this is unintentional.', 'modern-events-calendar-lite'), $start_date, $maximum_date_range);
+
+        // Single-event skins need a valid event to render (round-2 proposal — required-event check)
+        if (in_array($skin, ['cover', 'countdown', 'available_spot']))
+        {
+            $event_id = (isset($skin_options['event_id']) and trim($skin_options['event_id']) != '') ? trim($skin_options['event_id']) : '';
+
+            if ($event_id === '' or (int) $event_id === 0) $warnings[] = esc_html__('This skin displays a single event, but no event is chosen. The front end will stay empty until you pick one. If no events exist yet, create an event first.', 'modern-events-calendar-lite');
+            elseif ((int) $event_id === -1)
+            {
+                // "Next Upcoming Event" auto mode: needs at least one upcoming event
+                $upcoming_ids = $this->main->get_upcoming_event_ids();
+                if (!is_array($upcoming_ids) or !count($upcoming_ids)) $warnings[] = esc_html__('"Next Upcoming Event" is selected, but no upcoming events were found. The front end will stay empty until an event is scheduled.', 'modern-events-calendar-lite');
+            }
+            elseif (get_post_status((int) $event_id) !== 'publish') $warnings[] = sprintf(esc_html__('The selected event (ID %s) is not published anymore. Pick another event to keep the calendar working.', 'modern-events-calendar-lite'), $event_id);
+        }
+
+        if (count($warnings)) set_transient('mec_cal_validation_' . $post_id, $warnings, 120);
+        else delete_transient('mec_cal_validation_' . $post_id);
+    }
+
+    /**
+     * Show non-blocking validation warnings after saving a calendar/shortcode
+     * @author Webnus <info@webnus.net>
+     */
+    public function calendar_validation_notices()
+    {
+        $screen = function_exists('get_current_screen') ? get_current_screen() : null;
+        if (!$screen or !in_array($screen->base, ['post', 'post_new']) or $screen->post_type !== 'mec_calendars') return;
+
+        $post_id = get_the_ID();
+        if (!$post_id) return;
+
+        $warnings = get_transient('mec_cal_validation_' . $post_id);
+        if (!$warnings or !is_array($warnings) or !count($warnings)) return;
+
+        delete_transient('mec_cal_validation_' . $post_id);
+
+        echo '<div class="notice notice-warning is-dismissible"><p><strong>' . esc_html__('MEC Shortcode: please review', 'modern-events-calendar-lite') . '</strong></p><ul style="list-style:disc;padding-inline-start:20px;margin-top:4px">';
+        foreach ($warnings as $warning) echo '<li>' . esc_html($warning) . '</li>';
+        echo '</ul></div>';
+    }
+
+    /**
+     * Annotate the title placeholder of the calendar/shortcode post type
+     * (UX audit — Issue 14): the WP title is only an internal name, visitors never see it.
+     * @param string $text
+     * @param WP_Post $post
+     * @return string
+     * @author Webnus <info@webnus.net>
+     */
+    public function enter_title_here($text, $post)
+    {
+        if ($post and isset($post->post_type) and $post->post_type === 'mec_calendars') return esc_html__('Internal name (not shown to visitors)', 'modern-events-calendar-lite');
+        return $text;
     }
 
     /**
@@ -1232,25 +1347,21 @@ class MEC_feature_mec extends MEC_base
      */
     public function sed_method_field($skin, $value = 0, $image_popup = 0)
     {
-        $image_popup_html = '<div class="mec-form-row mec-image-popup-wrap mec-switcher">
-            <div class="mec-col-4">
-                <label for="mec_skin_' . esc_attr($skin) . '_image_popup">' . esc_html__('Display content\'s images as Popup', 'modern-events-calendar-lite') . '</label>
-            </div>
-            <div class="mec-col-4">
+        $image_popup_html = '<div class="mec-form-row mec-field mec-field--check mec-image-popup-wrap">
+            <label class="mec-check" for="mec_skin_' . esc_attr($skin) . '_image_popup">
                 <input type="hidden" name="mec[sk-options][' . esc_attr($skin) . '][image_popup]" value="0" />
                 <input type="checkbox" name="mec[sk-options][' . esc_attr($skin) . '][image_popup]" id="mec_skin_' . esc_attr($skin) . '_image_popup" value="1" ';
 
         if ($image_popup == 1 or $image_popup == 'on') $image_popup_html .= ' checked="checked"';
 
-        $image_popup_html .= '/><label for="mec_skin_' . esc_attr($skin) . '_image_popup"></label>
-            </div>
+        $image_popup_html .= '/><span>' . esc_html__('Display content\'s images as Popup', 'modern-events-calendar-lite') . '</span></label>
         </div>';
 
-        return '<div class="mec-form-row mec-sed-method-wrap">
-            <div class="mec-col-4">
+        return '<div class="mec-form-row mec-field mec-sed-method-wrap">
+            <div class="mec-field__label">
                 <label for="mec_skin_' . esc_attr($skin) . '_sed_method">' . esc_html__('Single Event Display Method', 'modern-events-calendar-lite') . '</label>
             </div>
-            <div class="mec-col-8">
+            <div class="mec-field__control">
                 <input type="hidden" name="mec[sk-options][' . esc_attr($skin) . '][sed_method]" value="' . esc_attr($value) . '" id="mec_skin_' . esc_attr($skin) . '_sed_method_field" />
                 <ul class="mec-sed-methods" data-for="#mec_skin_' . esc_attr($skin) . '_sed_method_field">
                     <li data-method="0" class="' . (!$value ? 'active' : '') . '"><a href="#mec_skin_' . esc_attr($skin) . '_sed_method_field">' . esc_html__('Current Window', 'modern-events-calendar-lite') . '</a></li>
@@ -1264,21 +1375,12 @@ class MEC_feature_mec extends MEC_base
 
     public function order_method_field($skin, $value = 'ASC', $key = 'order_method')
     {
-        return '<div class="mec-form-row mec-switcher">
-            <div class="mec-col-4">
-                <label for="mec_skin_' . esc_attr($skin) . '_' . esc_attr($key) . '">' . esc_html__('Descending Order', 'modern-events-calendar-lite') . '</label>
-            </div>
-            <div class="mec-col-4">
+        return '<div class="mec-form-row mec-field mec-field--check">
+            <label class="mec-check" for="mec_skin_' . esc_attr($skin) . '_' . esc_attr($key) . '">
                 <input type="hidden" name="mec[sk-options][' . esc_attr($skin) . '][' . esc_attr($key) . ']" value="ASC" />
-                <input type="checkbox" name="mec[sk-options][' . esc_attr($skin) . '][' . esc_attr($key) . ']" id="mec_skin_' . esc_attr($skin) . '_' . esc_attr($key) . '" value="DESC" ' . ($value == 'DESC' ? 'checked="checked"' : '') . ' /><label for="mec_skin_' . esc_attr($skin) . '_' . esc_attr($key) . '"></label>
-                <span class="mec-tooltip">
-                    <div class="box right">
-                        <h5 class="title">' . esc_html__('Descending Order', 'modern-events-calendar-lite') . '</h5>
-                        <div class="content"><p>' . esc_html__('Enable this option to sort events in descending order.', 'modern-events-calendar-lite') . '</p></div>
-                    </div>
-                    <i title="" class="dashicons-before dashicons-editor-help"></i>
-                </span>
-            </div>
+                <input type="checkbox" name="mec[sk-options][' . esc_attr($skin) . '][' . esc_attr($key) . ']" id="mec_skin_' . esc_attr($skin) . '_' . esc_attr($key) . '" value="DESC" ' . ($value == 'DESC' ? 'checked="checked"' : '') . ' /><span>' . esc_html__('Descending Order', 'modern-events-calendar-lite') . '</span>
+            </label>
+            <p class="mec-field__help">' . esc_html__('Enable this option to sort events in descending order.', 'modern-events-calendar-lite') . '</p>
         </div>';
     }
 
@@ -1308,6 +1410,7 @@ class MEC_feature_mec extends MEC_base
 
         $classes = [
             'mec-form-row',
+            'mec-field',
             'mec-image-size-field',
             'mec-image-size-field-' . sanitize_html_class($skin),
         ];
@@ -1324,15 +1427,15 @@ class MEC_feature_mec extends MEC_base
         }
 
         $html = '<div class="' . esc_attr(implode(' ', $classes)) . '"' . $data_attributes . '>
-            <label class="mec-col-4" for="mec_skin_' . esc_attr($skin) . '_image_size">' . esc_html__('Image Size', 'modern-events-calendar-lite') . '</label>
-            <select class="mec-col-4 wn-mec-select" name="mec[sk-options][' . esc_attr($skin) . '][image_size]" id="mec_skin_' . esc_attr($skin) . '_image_size">';
+            <div class="mec-field__label"><label for="mec_skin_' . esc_attr($skin) . '_image_size">' . esc_html__('Image Size', 'modern-events-calendar-lite') . '</label></div>
+            <div class="mec-field__control"><select class="wn-mec-select" name="mec[sk-options][' . esc_attr($skin) . '][image_size]" id="mec_skin_' . esc_attr($skin) . '_image_size">';
 
         foreach ($sizes as $key => $label) {
             $selected = ($value === $key) ? 'selected="selected"' : '';
             $html .= '<option value="' . esc_attr($key) . '" ' . $selected . '>' . $label . '</option>';
         }
 
-        $html .= '</select></div>';
+        $html .= '</select></div></div>';
 
         return $html;
     }
@@ -1342,61 +1445,34 @@ class MEC_feature_mec extends MEC_base
         $booking_status = (!isset($this->settings['booking_status']) or (isset($this->settings['booking_status']) and !$this->settings['booking_status'])) ? false : true;
         if (!$booking_status) return '';
 
-        return '<div class="mec-form-row mec-booking-button-wrap mec-switcher mec-not-list-liquid mec-not-grid-liquid mec-not-daily_view-liquid mec-not-full_calendar-liquid">
-            <div class="mec-col-4">
-                <label for="mec_skin_' . esc_attr($skin) . '_booking_button">' . esc_html__('Booking Button / Icon', 'modern-events-calendar-lite') . '</label>
-            </div>
-            <div class="mec-col-4">
+        return '<div class="mec-form-row mec-field mec-field--check mec-booking-button-wrap mec-not-list-liquid mec-not-grid-liquid mec-not-daily_view-liquid mec-not-full_calendar-liquid">
+            <label class="mec-check" for="mec_skin_' . esc_attr($skin) . '_booking_button">
                 <input type="hidden" name="mec[sk-options][' . esc_attr($skin) . '][booking_button]" value="0" />
-                <input type="checkbox" name="mec[sk-options][' . esc_attr($skin) . '][booking_button]" id="mec_skin_' . esc_attr($skin) . '_booking_button" value="1" ' . ($value == '1' ? 'checked="checked"' : '') . ' /><label for="mec_skin_' . esc_attr($skin) . '_booking_button"></label>
-                <span class="mec-tooltip">
-                    <div class="box right">
-                        <h5 class="title">' . esc_html__('Booking Button / Icon', 'modern-events-calendar-lite') . '</h5>
-                        <div class="content"><p>' . esc_html__('Enable this option to display booking button / icon in this shortcode.', 'modern-events-calendar-lite') . '</p></div>
-                    </div>
-                    <i title="" class="dashicons-before dashicons-editor-help"></i>
-                </span>
-            </div>
+                <input type="checkbox" name="mec[sk-options][' . esc_attr($skin) . '][booking_button]" id="mec_skin_' . esc_attr($skin) . '_booking_button" value="1" ' . ($value == '1' ? 'checked="checked"' : '') . ' /><span>' . esc_html__('Booking Button / Icon', 'modern-events-calendar-lite') . '</span>
+            </label>
+            <p class="mec-field__help">' . esc_html__('Enable this option to display booking button / icon in this shortcode.', 'modern-events-calendar-lite') . '</p>
         </div>';
     }
 
     public function display_organizer_field($skin, $value = 0)
     {
-        return '<div class="mec-form-row mec-display-organizer-wrap mec-switcher mec-not-grid-liquid mec-not-daily_view-liquid">
-            <div class="mec-col-4">
-                <label for="mec_skin_' . esc_attr($skin) . '_display_organizer">' . esc_html__('Display Organizers', 'modern-events-calendar-lite') . '</label>
-            </div>
-            <div class="mec-col-4">
+        return '<div class="mec-form-row mec-field mec-field--check mec-display-organizer-wrap mec-not-grid-liquid mec-not-daily_view-liquid">
+            <label class="mec-check" for="mec_skin_' . esc_attr($skin) . '_display_organizer">
                 <input type="hidden" name="mec[sk-options][' . esc_attr($skin) . '][display_organizer]" value="0" />
-                <input type="checkbox" name="mec[sk-options][' . esc_attr($skin) . '][display_organizer]" id="mec_skin_' . esc_attr($skin) . '_display_organizer" value="1" ' . ($value == '1' ? 'checked="checked"' : '') . ' /><label for="mec_skin_' . esc_attr($skin) . '_display_organizer"></label>
-                <span class="mec-tooltip">
-                    <div class="box right">
-                        <h5 class="title">' . esc_html__('Display Organizers', 'modern-events-calendar-lite') . '</h5>
-                        <div class="content"><p>' . esc_html__('Enable this option to display events organizers in this shortcode.', 'modern-events-calendar-lite') . '</p></div>
-                    </div>
-                    <i title="" class="dashicons-before dashicons-editor-help"></i>
-                </span>
-            </div>
+                <input type="checkbox" name="mec[sk-options][' . esc_attr($skin) . '][display_organizer]" id="mec_skin_' . esc_attr($skin) . '_display_organizer" value="1" ' . ($value == '1' ? 'checked="checked"' : '') . ' /><span>' . esc_html__('Display Organizers', 'modern-events-calendar-lite') . '</span>
+            </label>
+            <p class="mec-field__help">' . esc_html__('Enable this option to display events organizers in this shortcode.', 'modern-events-calendar-lite') . '</p>
         </div>';
     }
 
     public function display_custom_data_field($skin, $value = 0)
     {
-        return '<div class="mec-form-row mec-display-organizer-wrap mec-switcher mec-not-list-liquid mec-not-grid-liquid mec-not-daily_view-liquid mec-not-full_calendar-liquid">
-            <div class="mec-col-4">
-                <label for="mec_skin_' . esc_attr($skin) . '_custom_data">' . esc_html__('Display Custom Fields', 'modern-events-calendar-lite') . '</label>
-            </div>
-            <div class="mec-col-4">
+        return '<div class="mec-form-row mec-field mec-field--check mec-display-organizer-wrap mec-not-list-liquid mec-not-grid-liquid mec-not-daily_view-liquid mec-not-full_calendar-liquid">
+            <label class="mec-check" for="mec_skin_' . esc_attr($skin) . '_custom_data">
                 <input type="hidden" name="mec[sk-options][' . esc_attr($skin) . '][custom_data]" value="0" />
-                <input type="checkbox" name="mec[sk-options][' . esc_attr($skin) . '][custom_data]" id="mec_skin_' . esc_attr($skin) . '_custom_data" value="1" ' . ($value == '1' ? 'checked="checked"' : '') . ' /><label for="mec_skin_' . esc_attr($skin) . '_custom_data"></label>
-                <span class="mec-tooltip">
-                    <div class="box right">
-                        <h5 class="title">' . esc_html__('Display Custom Fields', 'modern-events-calendar-lite') . '</h5>
-                        <div class="content"><p>' . esc_html__('Enable this option to display events custom data in this shortcode.', 'modern-events-calendar-lite') . '</p></div>
-                    </div>
-                    <i title="" class="dashicons-before dashicons-editor-help"></i>
-                </span>
-            </div>
+                <input type="checkbox" name="mec[sk-options][' . esc_attr($skin) . '][custom_data]" id="mec_skin_' . esc_attr($skin) . '_custom_data" value="1" ' . ($value == '1' ? 'checked="checked"' : '') . ' /><span>' . esc_html__('Display Custom Fields', 'modern-events-calendar-lite') . '</span>
+            </label>
+            <p class="mec-field__help">' . esc_html__('Enable this option to display events custom data in this shortcode.', 'modern-events-calendar-lite') . '</p>
         </div>';
     }
 
@@ -1407,11 +1483,11 @@ class MEC_feature_mec extends MEC_base
         // Legacy Option
         if (trim($value) === '' and isset($options['load_more_button'])) $value = $options['load_more_button'] ? 'loadmore' : '0';
 
-        return '<div class="mec-form-row mec-event-pagination-container mec-switcher mec-not-' . esc_attr($skin) . '-liquid">
-            <div class="mec-col-4">
+        return '<div class="mec-form-row mec-field mec-event-pagination-container mec-not-' . esc_attr($skin) . '-liquid">
+            <div class="mec-field__label">
                 <label for="mec_skin_' . esc_attr($skin) . '_pagination">' . esc_html__('Pagination Method', 'modern-events-calendar-lite') . '</label>
             </div>
-            <div class="mec-col-4">
+            <div class="mec-field__control">
                 <select name="mec[sk-options][' . esc_attr($skin) . '][pagination]" id="mec_skin_' . esc_attr($skin) . '_pagination">
                     <option value="loadmore" ' . ($value === 'loadmore' ? 'selected' : '') . '>' . esc_html__('Load More Button', 'modern-events-calendar-lite') . '</option>
                     <option value="scroll" ' . ($value === 'scroll' ? 'selected' : '') . '>' . esc_html__('Infinite Scroll', 'modern-events-calendar-lite') . '</option>
@@ -1424,43 +1500,25 @@ class MEC_feature_mec extends MEC_base
 
     public function display_price_field($skin, $value = 0)
     {
-        return ($skin === 'full_calendar' ? '<p class="description mec-not-full_calendar-liquid">' . esc_html__("The price shows in List View and Tile View.", 'modern-events-calendar-lite') . '</p>' : '') . '
-        <div class="mec-form-row mec-event-price-container mec-switcher mec-not-' . esc_attr($skin) . '-liquid">
-            <div class="mec-col-4">
-                <label for="mec_skin_' . esc_attr($skin) . '_display_price">' . esc_html__('Display Event Price', 'modern-events-calendar-lite') . '</label>
-            </div>
-            <div class="mec-col-4">
+        return ($skin === 'full_calendar' ? '<p class="mec-field__help mec-not-full_calendar-liquid">' . esc_html__("The price shows in List View and Tile View.", 'modern-events-calendar-lite') . '</p>' : '') . '
+        <div class="mec-form-row mec-field mec-field--check mec-event-price-container mec-not-' . esc_attr($skin) . '-liquid">
+            <label class="mec-check" for="mec_skin_' . esc_attr($skin) . '_display_price">
                 <input type="hidden" name="mec[sk-options][' . esc_attr($skin) . '][display_price]" value="0" />
                 <input type="checkbox" name="mec[sk-options][' . esc_attr($skin) . '][display_price]" id="mec_skin_' . esc_attr($skin) . '_display_price" value="1" ' . ($value == '1' ? 'checked="checked"' : '') . ' />
-                <label for="mec_skin_' . esc_attr($skin) . '_display_price"></label>
-                <span class="mec-tooltip">
-                    <div class="box right">
-                        <h5 class="title">' . esc_html__('Display Event Price', 'modern-events-calendar-lite') . '</h5>
-                        <div class="content"><p>' . esc_html__('Enable this option to display events price in this shortcode.', 'modern-events-calendar-lite') . '</p></div>
-                    </div>
-                    <i title="" class="dashicons-before dashicons-editor-help"></i>
-                </span>
-            </div>
+                <span>' . esc_html__('Display Event Price', 'modern-events-calendar-lite') . '</span>
+            </label>
+            <p class="mec-field__help">' . esc_html__('Enable this option to display events price in this shortcode.', 'modern-events-calendar-lite') . '</p>
         </div>';
     }
 
     public function display_status_bar_field($skin, $value = 0)
     {
-        return '<div class="mec-form-row mec-switcher mec-status-bar-display-wrapper mec-util-hidden" id="mec_skin_' . esc_attr($skin) . '_display_status_bar_field">
-            <div class="mec-col-4">
-                <label for="mec_skin_' . esc_attr($skin) . '_status_bar">' . esc_html__('Display Status Bar', 'modern-events-calendar-lite') . '</label>
-            </div>
-            <div class="mec-col-4">
+        return '<div class="mec-form-row mec-field mec-field--check mec-status-bar-display-wrapper mec-util-hidden" id="mec_skin_' . esc_attr($skin) . '_display_status_bar_field">
+            <label class="mec-check" for="mec_skin_' . esc_attr($skin) . '_status_bar">
                 <input type="hidden" name="mec[sk-options][' . esc_attr($skin) . '][status_bar]" value="0" />
-                <input type="checkbox" name="mec[sk-options][' . esc_attr($skin) . '][status_bar]" id="mec_skin_' . esc_attr($skin) . '_status_bar" value="1" ' . ($value == '1' ? 'checked="checked"' : '') . ' /><label for="mec_skin_' . esc_attr($skin) . '_status_bar"></label>
-                <span class="mec-tooltip">
-                    <div class="box right">
-                        <h5 class="title">' . esc_html__('Display Organizers', 'modern-events-calendar-lite') . '</h5>
-                        <div class="content"><p>' . esc_html__('Enable this option to display the status bar in this shortcode.', 'modern-events-calendar-lite') . '</p></div>
-                    </div>
-                    <i title="" class="dashicons-before dashicons-editor-help"></i>
-                </span>
-            </div>
+                <input type="checkbox" name="mec[sk-options][' . esc_attr($skin) . '][status_bar]" id="mec_skin_' . esc_attr($skin) . '_status_bar" value="1" ' . ($value == '1' ? 'checked="checked"' : '') . ' /><span>' . esc_html__('Display Status Bar', 'modern-events-calendar-lite') . '</span>
+            </label>
+            <p class="mec-field__help">' . esc_html__('Enable this option to display the status bar in this shortcode.', 'modern-events-calendar-lite') . '</p>
         </div>';
     }
 
@@ -1469,29 +1527,23 @@ class MEC_feature_mec extends MEC_base
         // Module is not enabled
         if (!isset($this->settings['progress_bar_status']) or (isset($this->settings['progress_bar_status']) and !$this->settings['progress_bar_status'])) return '';
 
-        return '<div class="mec-form-row mec-switcher mec-progress-bar-display-wrapper mec-util-hidden" id="mec_skin_' . esc_attr($skin) . '_display_progress_bar_field">
-            <div class="mec-col-4">
-                <label for="mec_skin_' . esc_attr($skin) . '_display_progress_bar">' . esc_html__('Display Progress Bar (Ongoing Events)', 'modern-events-calendar-lite') . '</label>
-            </div>
-            <div class="mec-col-4">
+        return '<div class="mec-form-row mec-field mec-field--check mec-progress-bar-display-wrapper mec-util-hidden" id="mec_skin_' . esc_attr($skin) . '_display_progress_bar_field">
+            <label class="mec-check" for="mec_skin_' . esc_attr($skin) . '_display_progress_bar">
                 <input type="hidden" name="mec[sk-options][' . esc_attr($skin) . '][display_progress_bar]" value="0" />
                 <input type="checkbox" name="mec[sk-options][' . esc_attr($skin) . '][display_progress_bar]" id="mec_skin_' . esc_attr($skin) . '_display_progress_bar" value="1" ' . ($value ? 'checked="checked"' : '') . ' />
-                <label for="mec_skin_' . esc_attr($skin) . '_display_progress_bar"></label>
-            </div>
+                <span>' . esc_html__('Display Progress Bar (Ongoing Events)', 'modern-events-calendar-lite') . '</span>
+            </label>
         </div>';
     }
 
     public function display_detailed_time_field($skin, $value = 0)
     {
-        return '<div class="mec-form-row mec-switcher mec-not-daily_view-liquid">
-            <div class="mec-col-4">
-                <label for="mec_skin_' . esc_attr($skin) . '_detailed_time">' . esc_html__('Detailed Time', 'modern-events-calendar-lite') . '</label>
-                <span>' . esc_html__('For Multiple Day Events', 'modern-events-calendar-lite') . '</span>
-            </div>
-            <div class="mec-col-4">
+        return '<div class="mec-form-row mec-field mec-field--check mec-not-daily_view-liquid">
+            <label class="mec-check" for="mec_skin_' . esc_attr($skin) . '_detailed_time">
                 <input type="hidden" name="mec[sk-options][' . esc_attr($skin) . '][detailed_time]" value="0" />
-                <input type="checkbox" name="mec[sk-options][' . esc_attr($skin) . '][detailed_time]" id="mec_skin_' . esc_attr($skin) . '_detailed_time" value="1" ' . ($value == '1' ? 'checked="checked"' : '') . ' /><label for="mec_skin_' . esc_attr($skin) . '_detailed_time"></label>
-            </div>
+                <input type="checkbox" name="mec[sk-options][' . esc_attr($skin) . '][detailed_time]" id="mec_skin_' . esc_attr($skin) . '_detailed_time" value="1" ' . ($value == '1' ? 'checked="checked"' : '') . ' /><span>' . esc_html__('Detailed Time', 'modern-events-calendar-lite') . '</span>
+            </label>
+            <p class="mec-field__help">' . esc_html__('For Multiple Day Events', 'modern-events-calendar-lite') . '</p>
         </div>';
     }
 
@@ -2241,32 +2293,35 @@ class MEC_feature_mec extends MEC_base
             if (!$label or !$type) continue;
             if (in_array($type, ['p', 'email', 'url', 'tel'])) continue;
             ?>
-            <div class="mec-form-row">
-                <label class="mec-col-12"
-                       for="mec_sf_<?php echo esc_attr($skin); ?>_fields_<?php echo esc_attr($field_id); ?>"><?php echo esc_html__($label); ?></label>
-                <select class="mec-col-12"
+            <div class="mec-form-row mec-field">
+                <div class="mec-field__label">
+                    <label for="mec_sf_<?php echo esc_attr($skin); ?>_fields_<?php echo esc_attr($field_id); ?>"><?php echo esc_html__($label); ?></label>
+                </div>
+                <div class="mec-field__control">
+                    <select
                         name="mec[sf-options][<?php echo esc_attr($skin); ?>][fields][<?php echo esc_attr($field_id); ?>][type]"
                         id="mec_sf_<?php echo esc_attr($skin); ?>_fields_<?php echo esc_attr($field_id); ?>">
-                    <option
-                        value="0" <?php if (isset($field_options[$field_id]) and isset($field_options[$field_id]['type']) and $field_options[$field_id]['type'] == '0') echo 'selected="selected"'; ?>><?php esc_html_e('Disabled', 'modern-events-calendar-lite'); ?></option>
-                    <?php if (in_array($type, ['text', 'textarea'])): ?>
                         <option
-                            value="text_input" <?php if (isset($field_options[$field_id]) and isset($field_options[$field_id]['type']) and $field_options[$field_id]['type'] == 'text_input') echo 'selected="selected"'; ?>><?php esc_html_e('Text Input', 'modern-events-calendar-lite'); ?></option>
-                    <?php elseif ($type === 'date'): ?>
-                        <option
-                            value="date-range-picker" <?php if (isset($field_options[$field_id]) and isset($field_options[$field_id]['type']) and $field_options[$field_id]['type'] == 'date-range-picker') echo 'selected="selected"'; ?>><?php esc_html_e('Date Range Picker', 'modern-events-calendar-lite'); ?></option>
-                    <?php else: ?>
-                        <option
-                            value="dropdown" <?php if (isset($field_options[$field_id]) and isset($field_options[$field_id]['type']) and $field_options[$field_id]['type'] == 'dropdown') echo 'selected="selected"'; ?>><?php esc_html_e('Dropdown', 'modern-events-calendar-lite'); ?></option>
-                    <?php endif; ?>
-                </select>
+                            value="0" <?php if (isset($field_options[$field_id]) and isset($field_options[$field_id]['type']) and $field_options[$field_id]['type'] == '0') echo 'selected="selected"'; ?>><?php esc_html_e('Disabled', 'modern-events-calendar-lite'); ?></option>
+                        <?php if (in_array($type, ['text', 'textarea'])): ?>
+                            <option
+                                value="text_input" <?php if (isset($field_options[$field_id]) and isset($field_options[$field_id]['type']) and $field_options[$field_id]['type'] == 'text_input') echo 'selected="selected"'; ?>><?php esc_html_e('Text Input', 'modern-events-calendar-lite'); ?></option>
+                        <?php elseif ($type === 'date'): ?>
+                            <option
+                                value="date-range-picker" <?php if (isset($field_options[$field_id]) and isset($field_options[$field_id]['type']) and $field_options[$field_id]['type'] == 'date-range-picker') echo 'selected="selected"'; ?>><?php esc_html_e('Date Range Picker', 'modern-events-calendar-lite'); ?></option>
+                        <?php else: ?>
+                            <option
+                                value="dropdown" <?php if (isset($field_options[$field_id]) and isset($field_options[$field_id]['type']) and $field_options[$field_id]['type'] == 'dropdown') echo 'selected="selected"'; ?>><?php esc_html_e('Dropdown', 'modern-events-calendar-lite'); ?></option>
+                        <?php endif; ?>
+                    </select>
+                </div>
             </div>
             <?php
         }
 
         $fields = ob_get_clean();
 
-        if (is_string($fields) and trim($fields)) $fields = '<h4 style="margin-bottom: 0;">' . esc_html__('Event Fields', 'modern-events-calendar-lite') . '</h4><hr style="margin-top: 3px;">' . $fields;
+        if (is_string($fields) and trim($fields)) $fields = '<div class="mec-panel__head"><h4 class="mec-panel__title">' . esc_html__('Event Fields', 'modern-events-calendar-lite') . '</h4></div>' . $fields;
         return $fields;
     }
 

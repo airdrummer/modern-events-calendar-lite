@@ -41,20 +41,24 @@ class MEC_eventFields extends MEC_base
         $event_fields = $this->main->get_event_fields();
         ?>
         <div class="<?php echo esc_attr($class); ?>" id="<?php echo esc_attr($id); ?>">
-            <h4><?php echo esc_html__('Event Data', 'modern-events-calendar-lite'); ?></h4>
+            <div class="mec-panel__head">
+                <h4 class="mec-panel__title"><?php echo esc_html__('Event Data', 'modern-events-calendar-lite'); ?></h4>
+            </div>
 
             <?php foreach($event_fields as $j => $event_field): if(!is_numeric($j)) continue; ?>
-                <div class="mec-form-row">
+                <?php
+                $event_field_name = isset($event_field['label']) ? strtolower(str_replace([' ',',',':','"',"'"], '_', $event_field['label'])) : '';
+                $value = $data[$j] ?? NULL;
+                $field_type = $event_field['type'] ?? '';
+                $is_choices = in_array($field_type, ['radio', 'checkbox'], true);
+                ?>
+                <div class="mec-form-row mec-field<?php echo $is_choices ? ' mec-field--choices' : ''; ?>">
 
-                    <div class="mec-col-4">
-                        <?php
-                        $event_field_name = isset($event_field['label']) ? strtolower(str_replace([' ',',',':','"',"'"], '_', $event_field['label'])) : '';
-                        $value = $data[$j] ?? NULL;
-                        ?>
-                        <?php if(isset($event_field['label'])): ?><label for="<?php echo esc_attr($id_prefix); ?><?php echo esc_attr($j); ?>"><?php esc_html_e(stripslashes($event_field['label']), 'modern-events-calendar-lite'); ?><?php echo (($mandatory_status and isset($event_field['mandatory']) and $event_field['mandatory']) ? '<span class="wbmec-mandatory">*</span>' : ''); ?></label><?php endif; ?>
+                    <div class="mec-field__label">
+                        <?php if(isset($event_field['label'])): ?><label for="<?php echo esc_attr($id_prefix); ?><?php echo esc_attr($j); ?>"><?php esc_html_e(stripslashes($event_field['label']), 'modern-events-calendar-lite'); ?><?php echo (($mandatory_status and isset($event_field['mandatory']) and $event_field['mandatory']) ? '<span class="mec-required">*</span>' : ''); ?></label><?php endif; ?>
                     </div>
 
-                    <div class="mec-col-8">
+                    <div class="mec-field__control">
                         <?php /** Text **/ if($event_field['type'] == 'text'): ?>
                             <input id="<?php echo esc_attr($id_prefix); ?><?php echo esc_attr($j); ?>" type="text" name="<?php echo esc_attr($name_prefix); ?>[fields][<?php echo esc_attr($j); ?>]" value="<?php echo esc_attr($value); ?>" placeholder="<?php esc_attr($event_field_name); ?>" <?php if($mandatory_status and isset($event_field['mandatory']) and $event_field['mandatory']) echo 'required'; ?> />
 
@@ -92,17 +96,17 @@ class MEC_eventFields extends MEC_base
 
                         <?php /** Radio **/ elseif($event_field['type'] == 'radio'): ?>
                             <?php $r = 0; foreach($event_field['options'] as $event_field_option): $r++; ?>
-                                <label class="label-radio" for="<?php echo esc_attr($id_prefix); ?><?php echo esc_attr($j.'_'.strtolower(str_replace(' ', '_', $event_field_option['label']))); ?>">
+                                <label class="mec-choice" for="<?php echo esc_attr($id_prefix); ?><?php echo esc_attr($j.'_'.strtolower(str_replace(' ', '_', $event_field_option['label']))); ?>">
                                     <input type="radio" id="<?php echo esc_attr($id_prefix); ?><?php echo esc_attr($j.'_'.strtolower(str_replace(' ', '_', $event_field_option['label']))); ?>" <?php echo ($event_field_option['label'] == $value ? 'checked="checked"' : ''); ?> name="<?php echo esc_attr($name_prefix); ?>[fields][<?php echo esc_attr($j); ?>]" value="<?php esc_html_e($event_field_option['label'], 'modern-events-calendar-lite'); ?>" <?php if($mandatory_status and $r == 1 and isset($event_field['mandatory']) and $event_field['mandatory']) echo 'required'; ?> />
-                                    <?php esc_html_e(stripslashes($event_field_option['label']), 'modern-events-calendar-lite'); ?>
+                                    <span><?php esc_html_e(stripslashes($event_field_option['label']), 'modern-events-calendar-lite'); ?></span>
                                 </label>
                             <?php endforeach; ?>
 
                         <?php /** Checkbox **/ elseif($event_field['type'] == 'checkbox'): ?>
                             <?php if(isset($event_field['options']) and is_array($event_field['options'])): foreach($event_field['options'] as $event_field_option): ?>
-                                <label class="label-checkbox" for="<?php echo esc_attr($id_prefix); ?><?php echo esc_attr($j.'_'.strtolower(str_replace(' ', '_', $event_field_option['label']))); ?>">
+                                <label class="mec-choice" for="<?php echo esc_attr($id_prefix); ?><?php echo esc_attr($j.'_'.strtolower(str_replace(' ', '_', $event_field_option['label']))); ?>">
                                     <input type="checkbox" id="<?php echo esc_attr($id_prefix); ?><?php echo esc_attr($j.'_'.strtolower(str_replace(' ', '_', $event_field_option['label']))); ?>" <?php echo ((is_array($value) and in_array($event_field_option['label'], $value)) ? 'checked="checked"' : ''); ?> name="<?php echo esc_attr($name_prefix); ?>[fields][<?php echo esc_attr($j); ?>][]" value="<?php esc_html_e($event_field_option['label'], 'modern-events-calendar-lite'); ?>" <?php if($mandatory_status and isset($event_field['mandatory']) and $event_field['mandatory']) echo 'required'; ?> />
-                                    <?php esc_html_e(stripslashes($event_field_option['label']), 'modern-events-calendar-lite'); ?>
+                                    <span><?php esc_html_e(stripslashes($event_field_option['label']), 'modern-events-calendar-lite'); ?></span>
                                 </label>
                             <?php endforeach; endif; ?>
                         <?php endif; ?>

@@ -227,7 +227,9 @@ class MEC_factory extends MEC_base
     {
         if (strpos($file, MEC_DIRNAME) !== false)
         {
-            if (!$this->getPRO())
+            // Package, not licence — an unlicensed Pro install must be sent to
+            // the activation screen, not asked to buy what it already owns.
+            if (!$this->isProBuild())
             {
                 $upgrade = '<a href="' . esc_url($this->main->get_pro_link()) . '" target="_blank"><b>' . _x('Upgrade to Pro Version', 'plugin link', 'modern-events-calendar-lite') . '</b></a>';
                 $links[] = $upgrade;
@@ -248,13 +250,36 @@ class MEC_factory extends MEC_base
         $settings = '<a href="' . esc_url($this->main->add_qs_vars(['page' => 'MEC-settings'], $this->main->URL('admin') . 'admin.php')) . '">' . _x('Settings', 'plugin link', 'modern-events-calendar-lite') . '</a>';
         array_unshift($links, $settings);
 
-        if (!$this->getPRO())
+        // Package, not licence — see load_plugin_links().
+        if (!$this->isProBuild())
         {
             $upgrade = '<a href="' . esc_url($this->main->get_pro_link()) . '" target="_blank"><b>' . _x('Upgrade', 'plugin link', 'modern-events-calendar-lite') . '</b></a>';
             array_unshift($links, $upgrade);
         }
 
         return $links;
+    }
+
+    /**
+     * Cache-busting version for an asset URL: MEC version + the asset file's
+     * modification time, so editing a JS/CSS file immediately invalidates the
+     * browser cache (a plain constant version never changes between edits).
+     * Falls back to the plain version for non-local URLs (fonts, CDNs ...).
+     *
+     * @param string $url
+     * @return string
+     */
+    public function asset_version($url)
+    {
+        $base = $this->main->URL('MEC');
+
+        if (strpos($url, $base) === 0)
+        {
+            $path = MEC_ABSPATH . str_replace($base, '', $url);
+            if (file_exists($path) && $mtime = filemtime($path)) return $this->main->get_version() . '.' . $mtime;
+        }
+
+        return $this->main->get_version();
     }
 
     public function register_styles_and_scripts()
@@ -302,9 +327,15 @@ class MEC_factory extends MEC_base
                     'mec-tooltip-script',
                 ],
             ],
+            'mec-tracking-script' => $this->main->asset('js/tracking.js'),
             'mec-colorbrightness-script' => $this->main->asset('packages/colorbrightness/colorbrightness.min.js'),
             'mec-chartjs-script' => $this->main->asset('js/chartjs.min.js'),
             'mec-date-format-script' => $this->main->asset('js/date.format.min.js'),
+            'mec-ai-task-runner' => [
+                'src' => $this->main->asset('js/mec-ai.js'),
+                'deps' => ['jquery', 'wp-color-picker'],
+                'in_footer' => true,
+            ],
         ];
 
         $scripts['mec-flipcount-script'] = $this->main->asset('js/flipcount.js');
@@ -313,7 +344,7 @@ class MEC_factory extends MEC_base
         {
             $src = is_array($script) ? $script['src'] : $script;
             $deps = is_array($script) && isset($script['deps']) ? $script['deps'] : $js_dependencies;
-            $version = $this->main->get_version();
+            $version = $this->asset_version($src);
             $in_footer = is_array($script) && isset($script['in_footer']) ? $script['in_footer'] : true;
 
             wp_register_script($script_id, $src, $deps, $version, $in_footer);
@@ -341,6 +372,12 @@ class MEC_factory extends MEC_base
             'mec-tooltip-style' => $this->main->asset('packages/tooltip/tooltip.css'),
             'mec-tooltip-shadow-style' => $this->main->asset('packages/tooltip/tooltipster-sideTip-shadow.min.css'),
             'mec-general-calendar-style' => $this->main->asset('css/mec-general-calendar.css'),
+            'mec-ai-task-runner' => [
+                'src' => $this->main->asset('css/mec-ai.css'),
+                'deps' => ['wp-color-picker'],
+            ],
+            'mec-ai-setup-guide' => $this->main->asset('css/mec-ai-setup-guide.css'),
+            'mec-ai-layout-adjustments' => $this->main->asset('css/mec-ai-layout-adjustments.css'),
             'mec-google-fonts' => '//fonts.googleapis.com/css?family=Montserrat:400,700|Roboto:100,300,400,700',
             'mec-custom-google-font' => get_option('mec_gfont'),
         ];
@@ -349,7 +386,7 @@ class MEC_factory extends MEC_base
         {
             $src = is_array($style) ? $style['src'] : $style;
             $deps = is_array($style) && isset($style['deps']) ? $style['deps'] : $css_dependencies;
-            $version = $this->main->get_version();
+            $version = $this->asset_version($src);
 
             wp_register_style($style_id, $src, $deps, $version);
         }
@@ -359,6 +396,7 @@ class MEC_factory extends MEC_base
         wp_localize_script('mec-backend-script', 'mec_admin_localize', [
             'ajax_url' => admin_url('admin-ajax.php'),
             'ajax_nonce' => wp_create_nonce('mec_settings_nonce'),
+            'skins_assets_url' => $this->main->asset('img/skins/'),
             'mce_items' => $this->main->mce_get_shortcode_list(),
             'datepicker_format' => (isset($settings['datepicker_format']) and trim($settings['datepicker_format'])) ? trim($settings['datepicker_format']) : 'yy-mm-dd',
             'booking_conditions' => [
@@ -460,14 +498,61 @@ class MEC_factory extends MEC_base
             // Include MEC backend script file
             wp_enqueue_script('mec-backend-script');
 
+            if (isset($_REQUEST['page']) && sanitize_key(wp_unslash($_REQUEST['page'])) === 'mec-ai')
+            {
+                wp_enqueue_style('mec-ai-task-runner');
+                wp_enqueue_style('mec-ai-setup-guide');
+                wp_enqueue_style('mec-ai-layout-adjustments');
+                wp_enqueue_script('mec-ai-task-runner');
+                wp_localize_script('mec-ai-task-runner', 'mec_ai_task_runner', [
+                    'ajax_url' => admin_url('admin-ajax.php'),
+                    'nonce' => wp_create_nonce('mec_ai_task_nonce'),
+                    'error' => __('The AI request could not be completed. Please review the form and try again.', 'modern-events-calendar-lite'),
+                    'coming_soon' => __('Coming soon', 'modern-events-calendar-lite'),
+                    'coming_soon_copy' => __('This task is visible now and will use the same reviewed AI workflow when it is ready.', 'modern-events-calendar-lite'),
+                    'preview_title' => __('Ready to generate a category preview?', 'modern-events-calendar-lite'),
+                    'preview_copy' => __('MEC will send your brief and existing category context to the WordPress AI provider. No categories are created yet.', 'modern-events-calendar-lite'),
+                    'prompt_required' => __('Please describe the categories you want to create.', 'modern-events-calendar-lite'),
+                    'preview_ready' => __('Your category suggestions are ready to review.', 'modern-events-calendar-lite'),
+                    'include' => __('Include', 'modern-events-calendar-lite'),
+                    'duplicate' => __('Duplicate', 'modern-events-calendar-lite'),
+                    'duplicate_note' => __('Already exists, so it will be skipped.', 'modern-events-calendar-lite'),
+                    'name' => __('Name', 'modern-events-calendar-lite'),
+                    'description' => __('Description', 'modern-events-calendar-lite'),
+                    'icon' => __('Icon', 'modern-events-calendar-lite'),
+                    'color' => __('Color', 'modern-events-calendar-lite'),
+                    'select_category' => __('Select at least one category to create.', 'modern-events-calendar-lite'),
+                    'created' => __('Created', 'modern-events-calendar-lite'),
+                    'skipped' => __('Skipped', 'modern-events-calendar-lite'),
+                    'failed' => __('Failed', 'modern-events-calendar-lite'),
+                ]);
+            }
+
             // Settings
             $settings = $this->main->get_settings();
 
             wp_localize_script('mec-backend-script', 'mec_admin_localize', [
                 'ajax_url' => admin_url('admin-ajax.php'),
                 'ajax_nonce' => wp_create_nonce('mec_settings_nonce'),
+                'skins_assets_url' => $this->main->asset('img/skins/'),
                 'mce_items' => $this->main->mce_get_shortcode_list(),
                 'datepicker_format' => (isset($settings['datepicker_format']) and trim($settings['datepicker_format'])) ? trim($settings['datepicker_format']) : 'yy-mm-dd',
+                'start_date_required' => __('Please enter a start date for the event.', 'modern-events-calendar-lite'),
+                'end_after_start' => __('The end date and time must be on or after the start date and time.', 'modern-events-calendar-lite'),
+                'repeat_preview_off' => __('Repeating is off.', 'modern-events-calendar-lite'),
+                'repeat_preview_next' => __('Next occurrences (from start date)', 'modern-events-calendar-lite'),
+                'repeat_preview_total' => __('This event will occur %d times in total.', 'modern-events-calendar-lite'),
+                'repeat_preview_more' => __('+ %d more', 'modern-events-calendar-lite'),
+                'repeat_preview_need_start' => __('Enter a start date to preview dates.', 'modern-events-calendar-lite'),
+                'repeat_preview_no_weekdays' => __('Select weekdays to preview dates.', 'modern-events-calendar-lite'),
+                'location_duplicate_warn' => __('A location with this name already exists.', 'modern-events-calendar-lite'),
+                'location_use_existing' => __('Use existing', 'modern-events-calendar-lite'),
+                'interval_units' => [
+                    'daily' => __('days', 'modern-events-calendar-lite'),
+                    'weekly' => __('weeks', 'modern-events-calendar-lite'),
+                    'monthly' => __('months', 'modern-events-calendar-lite'),
+                    'yearly' => __('years', 'modern-events-calendar-lite'),
+                ],
                 'booking_conditions' => [
                     'select_field' => __('Select a field', 'modern-events-calendar-lite'),
                     'select_option' => __('Select an option', 'modern-events-calendar-lite'),
@@ -499,6 +584,9 @@ class MEC_factory extends MEC_base
 
         // Include MEC backend CSS
         wp_enqueue_style('mec-backend-style');
+
+        // Refinement layer — conservative polish overlay (loaded after backend.css)
+        wp_enqueue_style('mec-backend-refinements', $this->main->asset('css/backend-refinements.css'), ['mec-backend-style'], $this->asset_version($this->main->asset('css/backend-refinements.css')));
 
         if (isset($styling) and isset($styling['accessibility']) && $styling['accessibility']) wp_enqueue_style('mec-backend-accessibility', $this->main->asset('css/a11y-backend.min.css'), $this->main->get_version());
     }
@@ -542,6 +630,9 @@ class MEC_factory extends MEC_base
             // Include MEC frontend script files
             wp_enqueue_script('mec-tooltip-script');
             wp_enqueue_script('mec-frontend-script');
+
+            // Product analytics relay (calendar render + search/filter usage)
+            wp_enqueue_script('mec-tracking-script');
 
             wp_enqueue_script('mec-events-script');
 
@@ -590,6 +681,12 @@ class MEC_factory extends MEC_base
                 'a11y_search_query' => __(' for "%s"', 'modern-events-calendar-lite'),
                 'a11y_search_address' => __(' near "%s"', 'modern-events-calendar-lite'),
                 'a11y_calendar_dialog' => __('Calendar date picker', 'modern-events-calendar-lite'),
+                'interval_units' => [
+                    'daily' => __('days', 'modern-events-calendar-lite'),
+                    'weekly' => __('weeks', 'modern-events-calendar-lite'),
+                    'monthly' => __('months', 'modern-events-calendar-lite'),
+                    'yearly' => __('years', 'modern-events-calendar-lite'),
+                ],
             ]);
 
             // Localize Some Strings
@@ -796,7 +893,12 @@ class MEC_factory extends MEC_base
         $url = urlencode(get_home_url());
 
         require_once MEC_ABSPATH . 'app/core/puc/plugin-update-checker.php';
-        if (!$this->getPRO())
+
+        // Keyed on the package, never the licence. An unlicensed Pro install
+        // pointed at modern-events-calendar-lite.php would reference a file the
+        // Pro package does not contain — and updates are exactly how such a
+        // site recovers, so they must keep working at every phase.
+        if (!$this->isProBuild())
         {
             $MyUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
                 add_query_arg(['purchase_code' => '', 'url' => '', 'id' => '', 'category' => 'mec'], MEC_API_UPDATE . '/updates/?action=get_metadata&slug=modern-events-calendar-lite'), //Metadata URL.
@@ -815,7 +917,7 @@ class MEC_factory extends MEC_base
             );
         }
 
-        $name = $this->getPRO() ? 'mec' : 'modern-events-calendar-lite';
+        $name = $this->isProBuild() ? 'mec' : 'modern-events-calendar-lite';
         add_filter('puc_request_info_result-' . $name, function ($info)
         {
             if (!$info) return;
@@ -1421,6 +1523,7 @@ class MEC_factory extends MEC_base
             if ((trim($base) and in_array($base, [
                         'toplevel_page_mec-intro',
                         'm-e-calendar_page_MEC-settings',
+                        'm-e-calendar_page_MEC-ai',
                         'm-e-calendar_page_MEC-addons',
                         'm-e-calendar_page_MEC-report',
                         'm-e-calendar_page_MEC-ix',
@@ -1431,6 +1534,7 @@ class MEC_factory extends MEC_base
                     ])) or (trim($page) and in_array($page, [
                         'mec-intro',
                         'MEC-settings',
+                        'MEC-ai',
                         'MEC-addons',
                         'MEC-report',
                         'MEC-ix',
@@ -1477,6 +1581,7 @@ class MEC_factory extends MEC_base
         $is_mec_page = ((trim((string) $base) and in_array($base, [
                     'toplevel_page_mec-intro',
                     'm-e-calendar_page_MEC-settings',
+                    'm-e-calendar_page_MEC-ai',
                     'm-e-calendar_page_MEC-addons',
                     'm-e-calendar_page_MEC-report',
                     'm-e-calendar_page_MEC-ix',
@@ -1486,6 +1591,7 @@ class MEC_factory extends MEC_base
                 ])) or (trim($page) and in_array($page, [
                     'mec-intro',
                     'MEC-settings',
+                    'MEC-ai',
                     'MEC-addons',
                     'MEC-report',
                     'MEC-ix',

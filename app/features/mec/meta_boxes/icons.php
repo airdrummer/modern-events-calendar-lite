@@ -8,13 +8,13 @@ defined('MECEXEC') or die();
 $icons = get_post_meta($post->ID, 'mec_icons', true);
 if(!is_array($icons)) $icons = [];
 ?>
-<div class="mec-calendar-metabox">
-    <div class="mec-form-row">
-        <p class="description"><?php esc_html_e('You can change the default icons using following options.', 'modern-events-calendar-lite'); ?></p>
+<div class="mec-calendar-metabox mec-panel">
+    <div class="mec-panel__body">
+        <p class="mec-field__help"><?php esc_html_e('You can change the default icons using the following options.', 'modern-events-calendar-lite'); ?></p>
+        <?php $this->main->icons()->form(
+            'shortcode',
+            'mec',
+            $icons
+        ); ?>
     </div>
-    <?php $this->main->icons()->form(
-        'shortcode',
-        'mec',
-        $icons
-    ); ?>
 </div>

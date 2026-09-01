@@ -1,10 +1,10 @@
-=== Modern Events Calendar Lite ===
+﻿=== Modern Events Calendar Lite ===
 Contributors: webnus
 Donate link: https://webnus.net
 Tags: Event, Events, Calendar, Booking, Schedule, Organizer, Venue
 Requires at least: 4.0.0
-Tested up to: 7.0.2
-Stable tag: 7.35.1.2
+Tested up to: 7.1
+Stable tag: 7.36.0
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -172,7 +172,7 @@ You can see [plugin documentation](https://webnus.net/dox/modern-events-calendar
 ✔️ Feed support for MEC categories
 ✔️ Expired Events filter in shortcodes
 ✔️ Duplicate event feature
-✔️ Advanced currency options 
+✔️ Advanced currency options
 ✔️ Support comment form in single event page
 ✔️ Insert images for locations and organizers
 ✔️ Event countdown
@@ -194,7 +194,7 @@ You can see [plugin documentation](https://webnus.net/dox/modern-events-calendar
 - Stripe
 - WPBakery
 - SEO plugins compatibility
-- Elementor 
+- Elementor
 - Mailchimp Subscription
 - Campaign Monitor
 - MailerLite
@@ -209,7 +209,7 @@ You can see [plugin documentation](https://webnus.net/dox/modern-events-calendar
 - Google Map
 
 == Developers ==
-- Completely developer friendly 
+- Completely developer friendly
 - Ability to override archive and single pages in a theme
 - Ability to override skin files in a theme
 - Ability to filter plugin options using WordPress filtering system
@@ -473,12 +473,35 @@ You can see [plugin documentation](https://webnus.net/dox/modern-events-calendar
 
 == Changelog ==
 
-v 7.35.1.2 - 18aug26
-- fixed ical CREATED/LAST-MODIFIED format
-
-v 7.35.1.1 - 11aug26
-- added missing timezone display, reformat
-- fixed countdown
+= 7.36.0 - 1 September 2026 =
+- Added: A signed license system with offline token activation and phased enforcement of Pro features.
+- Enhanced: Stripe and Stripe Connect payment completion using webhooks.
+- Enhanced: The add/edit event screen with a refreshed field layout, an improved time picker and live calendar validation warnings.
+- Enhanced: Event publish validation to reliably catch missing start dates and required fields with clear feedback.
+- Redesigned: The Support and Addons admin pages with knowledgebase search and addon filtering.
+- Added: Basic and Advanced tabs to the Frontend Event Submission form.
+- Enhanced: The license activation flow with offline token expiry, a cleaner activation UI, clearer activation prompts for licensed Pro users and an automatic dashboard reload after activation or revocation.
+- Added: A warning listing the Pro features that were not saved when the license is inactive.
+- Enhanced: The Other Locations and Organizers fields to appear only when a main item is selected and to prevent duplicate selections.
+- Restructured: The ticket editor rows into a label and control layout.
+- Extended: The shortcode style gallery to cover more skins.
+- Rewrote: The help texts of the shortcode meta boxes with clearer guidance.
+- Enhanced: Dashboard notifications to show dedicated announcements for Pro builds.
+- Styled: The dashboard marketing notice to match the MEC design and made its dismissal persistent per user.
+- Enhanced: Product usage tracking with new analytics events and a tracking control in settings.
+- Fixed: Double taxation and incorrect charging of payable amounts plus tax in WooCommerce carts for inclusive and exclusive ticket pricing.
+- Fixed: A booking capacity conflict with WooCommerce.
+- Fixed: An issue in automatic user creation and author assignment for Frontend Event Submission events.
+- Fixed: Notification delivery issues when booking user registration fails.
+- Fixed: The Zoom addon content being stripped from event notifications.
+- Fixed: An HTML formatting issue in Frontend Event Submission custom fields.
+- Fixed: An issue with the upcoming events limit parameter.
+- Fixed: A Custom CSS formatting issue in MEC settings.
+- Fixed: An empty image link issue when events have no featured image.
+- Fixed: An empty announcement box appearing on the dashboard when the notification feed is unreachable.
+- Improved: Asset versioning so CSS and JS caches refresh immediately after updates.
+- Improved: The wording of admin and booking messages.
+- Fixed: Some styling issues in the event editor, FES form and RTL stylesheets.
 
 = 7.35.1 - 3 August 2026 =
 - Fixed: Some minor styling issues in frontend.

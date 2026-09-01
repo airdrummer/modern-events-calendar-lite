@@ -63,56 +63,59 @@ class MEC_feature_schema extends MEC_base
         $cancelled_reason = get_post_meta($post->ID, 'mec_cancelled_reason', true);
         $display_cancellation_reason_in_single_page = get_post_meta($post->ID, 'mec_display_cancellation_reason_in_single_page', true);
         ?>
-        <div class="mec-meta-box-fields mec-event-tab-content" id="mec-schema">
-            <h4><?php echo esc_html__('SEO Schema', 'modern-events-calendar-lite'); ?></h4>
-            <p class="description"><?php esc_html_e("Following statuses are for informing search engines (Google, bing, etc) about your events so they can manage your events better. Therefore you can use these statuses to be more Search Engine Friendly.", 'modern-events-calendar-lite'); ?></p>
+        <div class="mec-meta-box-fields mec-event-tab-content mec-panel" id="mec-schema">
+            <div class="mec-panel__head">
+                <h4 class="mec-panel__title"><?php echo esc_html__('SEO Schema', 'modern-events-calendar-lite'); ?></h4>
+            </div>
+            <p class="mec-field__help" style="margin-bottom:18px;"><?php esc_html_e("Following statuses are for informing search engines (Google, bing, etc) about your events so they can manage your events better. Therefore you can use these statuses to be more Search Engine Friendly.", 'modern-events-calendar-lite'); ?></p>
 
-            <div class="mec-form-row">
-                <label>
+            <div class="mec-form-row mec-field mec-field--check">
+                <label class="mec-check">
                     <input class="mec-schema-event-status" type="radio" name="mec[event_status]"
-                           value="EventScheduled" <?php echo($event_status == 'EventScheduled' ? 'checked' : ''); ?>>
-                    <?php esc_html_e('Scheduled', 'modern-events-calendar-lite'); ?>
+                           value="EventScheduled" <?php echo($event_status == 'EventScheduled' ? 'checked="checked"' : ''); ?>>
+                    <span><?php esc_html_e('Scheduled', 'modern-events-calendar-lite'); ?></span>
                 </label>
-                <p class="description"><?php esc_html_e('For active events!', 'modern-events-calendar-lite'); ?></p>
+                <p class="mec-field__help"><?php esc_html_e('For active events!', 'modern-events-calendar-lite'); ?></p>
             </div>
-            <div class="mec-form-row">
-                <label>
+            <div class="mec-form-row mec-field mec-field--check">
+                <label class="mec-check">
                     <input class="mec-schema-event-status" type="radio" name="mec[event_status]"
-                           value="EventRescheduled" <?php echo($event_status == 'EventRescheduled' ? 'checked' : ''); ?>>
-                    <?php esc_html_e('Rescheduled', 'modern-events-calendar-lite'); ?>
+                           value="EventRescheduled" <?php echo($event_status == 'EventRescheduled' ? 'checked="checked"' : ''); ?>>
+                    <span><?php esc_html_e('Rescheduled', 'modern-events-calendar-lite'); ?></span>
                 </label>
-                <p class="description"><?php esc_html_e('For rescheduled events!', 'modern-events-calendar-lite'); ?></p>
+                <p class="mec-field__help"><?php esc_html_e('For rescheduled events!', 'modern-events-calendar-lite'); ?></p>
             </div>
-            <div class="mec-form-row">
-                <label>
+            <div class="mec-form-row mec-field mec-field--check">
+                <label class="mec-check">
                     <input class="mec-schema-event-status" type="radio" name="mec[event_status]"
-                           value="EventPostponed" <?php echo($event_status == 'EventPostponed' ? 'checked' : ''); ?>>
-                    <?php esc_html_e('Postponed', 'modern-events-calendar-lite'); ?>
+                           value="EventPostponed" <?php echo($event_status == 'EventPostponed' ? 'checked="checked"' : ''); ?>>
+                    <span><?php esc_html_e('Postponed', 'modern-events-calendar-lite'); ?></span>
                 </label>
-                <p class="description"><?php esc_html_e('If you postponed an event then you can use this status!', 'modern-events-calendar-lite'); ?></p>
+                <p class="mec-field__help"><?php esc_html_e('If you postponed an event then you can use this status!', 'modern-events-calendar-lite'); ?></p>
             </div>
-            <div class="mec-form-row">
-                <label>
+            <div class="mec-form-row mec-field mec-field--check">
+                <label class="mec-check">
                     <input class="mec-schema-event-status" type="radio" name="mec[event_status]"
-                           value="EventCancelled" <?php echo($event_status == 'EventCancelled' ? 'checked' : ''); ?>>
-                    <?php esc_html_e('Cancelled', 'modern-events-calendar-lite'); ?>
+                           value="EventCancelled" <?php echo($event_status == 'EventCancelled' ? 'checked="checked"' : ''); ?>>
+                    <span><?php esc_html_e('Cancelled', 'modern-events-calendar-lite'); ?></span>
                 </label>
-                <p class="description"><?php esc_html_e('If you cancelled an event then you should select this status!', 'modern-events-calendar-lite'); ?></p>
+                <p class="mec-field__help"><?php esc_html_e('If you cancelled an event then you should select this status!', 'modern-events-calendar-lite'); ?></p>
             </div>
             <div id="mec_cancelled_reason_wrapper"
                  class="event-status-schema" <?php echo($event_status == 'EventCancelled' ? '' : 'style="display: none;"'); ?>>
-                <div class="mec-form-row">
-                    <label class="mec-col-2"
-                           for="mec_cancelled_reason"><?php esc_html_e('Reason for Cancellation', 'modern-events-calendar-lite'); ?></label>
-                    <input class="mec-col-9" type="text" id="mec_cancelled_reason" name="mec[cancelled_reason]"
-                           value="<?php echo esc_attr($cancelled_reason); ?>"
-                           placeholder="<?php esc_html_e('Please write your reasons here', 'modern-events-calendar-lite'); ?>">
+                <div class="mec-form-row mec-field">
+                    <div class="mec-field__label">
+                        <label for="mec_cancelled_reason"><?php esc_html_e('Reason for Cancellation', 'modern-events-calendar-lite'); ?></label>
+                    </div>
+                    <div class="mec-field__control">
+                        <input type="text" id="mec_cancelled_reason" name="mec[cancelled_reason]"
+                               value="<?php echo esc_attr($cancelled_reason); ?>"
+                               placeholder="<?php esc_attr_e('Please write your reasons here', 'modern-events-calendar-lite'); ?>">
+                        <p class="mec-field__help"><?php esc_html_e('This will be displayed in Single Event and Shortcode/Calendar Pages', 'modern-events-calendar-lite'); ?></p>
+                    </div>
                 </div>
-                <div>
-                    <p class="description"><?php esc_html_e('This will be displayed in Single Event and Shortcode/Calendar Pages', 'modern-events-calendar-lite'); ?></p>
-                </div>
-                <div class="mec-form-row">
-                    <label for="mec_display_cancellation_reason_in_single_page">
+                <div class="mec-form-row mec-field mec-field--check">
+                    <label class="mec-check" for="mec_display_cancellation_reason_in_single_page">
                         <input
                             <?php
                             if (isset($display_cancellation_reason_in_single_page) and $display_cancellation_reason_in_single_page)
@@ -122,29 +125,30 @@ class MEC_feature_schema extends MEC_base
                             ?>
                             type="checkbox" name="mec[display_cancellation_reason_in_single_page]"
                             id="mec_display_cancellation_reason_in_single_page" value="1"/>
-                        <?php esc_html_e('Display in single event page', 'modern-events-calendar-lite'); ?>
+                        <span><?php esc_html_e('Display in single event page', 'modern-events-calendar-lite'); ?></span>
                     </label>
                 </div>
             </div>
-            <div class="mec-form-row">
-                <label>
+            <div class="mec-form-row mec-field mec-field--check">
+                <label class="mec-check">
                     <input class="mec-schema-event-status" type="radio" name="mec[event_status]"
-                           value="EventMovedOnline" <?php echo($event_status == 'EventMovedOnline' ? 'checked' : ''); ?>>
-                    <?php esc_html_e('Moved Online', 'modern-events-calendar-lite'); ?>
+                           value="EventMovedOnline" <?php echo($event_status == 'EventMovedOnline' ? 'checked="checked"' : ''); ?>>
+                    <span><?php esc_html_e('Moved Online', 'modern-events-calendar-lite'); ?></span>
                 </label>
-                <p class="description"><?php esc_html_e('For the events that moved online!', 'modern-events-calendar-lite'); ?></p>
+                <p class="mec-field__help"><?php esc_html_e('For the events that moved online!', 'modern-events-calendar-lite'); ?></p>
             </div>
             <div id="mec_moved_online_link_wrapper"
                  class="event-status-schema" <?php echo($event_status == 'EventMovedOnline' ? '' : 'style="display: none;"'); ?>>
-                <div class="mec-form-row">
-                    <label class="mec-col-2"
-                           for="mec_moved_online_link"><?php esc_html_e('Online Link', 'modern-events-calendar-lite'); ?></label>
-                    <input class="mec-col-9" type="url" id="mec_moved_online_link" name="mec[moved_online_link]"
-                           value="<?php echo esc_url($moved_online_link); ?>"
-                           placeholder="https://online-platform.com/event-id">
-                </div>
-                <div>
-                    <p class="description"><?php esc_html_e('Link to join online event. If you leave it empty event link will be used.', 'modern-events-calendar-lite'); ?></p>
+                <div class="mec-form-row mec-field">
+                    <div class="mec-field__label">
+                        <label for="mec_moved_online_link"><?php esc_html_e('Online Link', 'modern-events-calendar-lite'); ?></label>
+                    </div>
+                    <div class="mec-field__control">
+                        <input type="url" id="mec_moved_online_link" name="mec[moved_online_link]"
+                               value="<?php echo esc_url($moved_online_link); ?>"
+                               placeholder="<?php esc_attr_e('https://example.com/online-event', 'modern-events-calendar-lite'); ?>">
+                        <p class="mec-field__help"><?php esc_html_e('Link to join online event. If you leave it empty event link will be used.', 'modern-events-calendar-lite'); ?></p>
+                    </div>
                 </div>
             </div>
         </div>

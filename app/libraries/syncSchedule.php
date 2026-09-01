@@ -17,6 +17,13 @@ class MEC_syncSchedule extends MEC_base
 
     public function sync()
     {
+        // Automated import/export is part of the Pro presentation tier (phase 2).
+        // The cron scripts below carry the same gate, because they are directly
+        // web-reachable and can be wired into system cron without coming
+        // through here. On Lite this changes nothing: the scripts it would
+        // include are not shipped, so the file_exists() checks already fail.
+        if (!$this->isProPresentationEnabled()) return;
+
         $ix = $this->main->get_ix_options();
 
         // To run crons by force

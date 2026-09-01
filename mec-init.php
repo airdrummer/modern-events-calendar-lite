@@ -24,7 +24,13 @@ class MEC
         if(!defined('EP_MEC_EVENTS')) define('EP_MEC_EVENTS', 555);
 
         // Import Base library
-        $this->import('app.libraries.base');
+        //
+        // Deliberately NOT overridable. import() resolves from the active theme
+        // before the plugin, so leaving this at the default would let a file at
+        // themes/<x>/webnus/modern-events-calendar/app/libraries/base.php
+        // replace getPRO() without touching a plugin file — and survive every
+        // update. Template overrides elsewhere are unaffected.
+        $this->import('app.libraries.base', false);
     }
 
     private function __clone()
@@ -60,7 +66,9 @@ class MEC
         $factory = MEC::getInstance('app.libraries.factory');
 
         // Deactivate MEC Lite when Pro is installed
-        if(!$factory->getPRO())
+        // Keyed on the package, not the licence: an unlicensed Pro install is
+        // still the Pro package and must not start behaving like Lite here.
+        if(!$factory->isProBuild())
         {
             if(!function_exists('is_plugin_active')) include_once(ABSPATH . 'wp-admin/includes/plugin.php');
             if(is_plugin_active('modern-events-calendar/mec.php')) deactivate_plugins('modern-events-calendar-lite/modern-events-calendar-lite.php');
@@ -139,7 +147,7 @@ class MEC
      * @param string $class_name
      * @return mixed
      */
-    public static function getInstance($file, $class_name = '')
+    public static function getInstance($file, $class_name = '', $override = true)
     {
         /** Generate class name if not provided **/
         if(is_null($class_name) or (is_string($class_name) and !trim($class_name)))
@@ -150,7 +158,7 @@ class MEC
         }
 
         /** Import the file using import method **/
-        if(!class_exists($class_name)) self::import($file);
+        if(!class_exists($class_name)) self::import($file, $override);
 
         /** Generate the object **/
         if(class_exists($class_name)) return new $class_name();
@@ -225,7 +233,12 @@ class MEC
     {
         // MEC File library
         $file = MEC::getInstance('app.libraries.filesystem', 'MEC_file');
-        if(!$file->getPRO())
+
+        // Which .mo files SHIPPED, so this is a package question. The Pro
+        // package carries languages/mec-*.mo and no modern-events-calendar-lite-*.mo,
+        // so keying this on the licence would silently drop every translation
+        // once the ramp reached its final phase.
+        if(!$file->isProBuild())
         {
             // Get current locale
             $locale = apply_filters('plugin_locale', get_locale(), 'modern-events-calendar-lite');

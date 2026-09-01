@@ -61,30 +61,33 @@ class MEC_feature_notifications extends MEC_base
             'attendee_report' => '24',
         ];
     ?>
-        <div class="mec-meta-box-fields mec-event-tab-content" id="mec-notifications">
+        <div class="mec-meta-box-fields mec-event-tab-content mec-panel" id="mec-notifications">
             <?php foreach($notifications as $key => $notification): if(isset($this->notif_settings[$key]) and isset($this->notif_settings[$key]['status']) and !$this->notif_settings[$key]['status']) continue; ?>
 			<div>
-                <h4><?php echo esc_html($notification['label']); ?></h4>
-                <div class="mec-form-row">
-                    <label>
+                <div class="mec-panel__head">
+                    <h4 class="mec-panel__title"><?php echo esc_html($notification['label']); ?></h4>
+                </div>
+                <div class="mec-form-row mec-field mec-field--check">
+                    <label class="mec-check">
                         <input type="hidden" name="mec[notifications][<?php echo esc_attr($key); ?>][status]" value="0" />
-                        <input onchange="jQuery('#mec_notification_<?php echo esc_attr($key); ?>_container_toggle').toggle();" value="1" type="checkbox" name="mec[notifications][<?php echo esc_attr($key); ?>][status]" <?php if(isset($values[$key]) and isset($values[$key]['status']) and $values[$key]['status']) echo 'checked="checked"'; ?> /> <?php echo esc_html__("Modify", 'modern-events-calendar-lite'); ?>
+                        <input onchange="jQuery('#mec_notification_<?php echo esc_attr($key); ?>_container_toggle').toggle();" value="1" type="checkbox" name="mec[notifications][<?php echo esc_attr($key); ?>][status]" <?php if(isset($values[$key]) and isset($values[$key]['status']) and $values[$key]['status']) echo 'checked="checked"'; ?> />
+                        <span><?php echo esc_html__("Modify", 'modern-events-calendar-lite'); ?></span>
                     </label>
                 </div>
                 <div id="mec_notification_<?php echo esc_attr($key); ?>_container_toggle" class="<?php if(!isset($values[$key]) || !$values[$key]['status']) echo 'mec-util-hidden'; ?>">
-                    <div class="mec-form-row">
-                        <div class="mec-col-2">
+                    <div class="mec-form-row mec-field">
+                        <div class="mec-field__label">
                             <label for="mec_notifications_<?php echo esc_attr($key); ?>_subject"><?php esc_html_e('Email Subject', 'modern-events-calendar-lite'); ?></label>
                         </div>
-                        <div class="mec-col-10">
+                        <div class="mec-field__control">
                             <input id="mec_notifications_<?php echo esc_attr($key); ?>_subject" type="text" name="mec[notifications][<?php echo esc_attr($key); ?>][subject]" value="<?php echo ((isset($values[$key]) and isset($values[$key]['subject']) and trim($values[$key]['subject'])) ? $values[$key]['subject'] : ((isset($this->notif_settings[$key]) and isset($this->notif_settings[$key]['subject']) and trim($this->notif_settings[$key]['subject'])) ? $this->notif_settings[$key]['subject'] : '')); ?>">
                         </div>
                     </div>
-                    <div class="mec-form-row">
-                        <div class="mec-col-2">
+                    <div class="mec-form-row mec-field mec-field--block">
+                        <div class="mec-field__label">
                             <label for="mec_notifications_<?php echo esc_attr($key); ?>_content"><?php esc_html_e('Email Content', 'modern-events-calendar-lite'); ?></label>
                         </div>
-                        <div class="mec-col-10">
+                        <div class="mec-field__control">
                             <?php wp_editor(((isset($values[$key]) and isset($values[$key]['content']) and trim($values[$key]['content'])) ? stripslashes($values[$key]['content']) : ((isset($this->notif_settings[$key]) and isset($this->notif_settings[$key]['content']) and trim($this->notif_settings[$key]['content'])) ? stripslashes($this->notif_settings[$key]['content']) : '')), 'mec_notifications_'.esc_attr($key).'_content', array('textarea_name'=>'mec[notifications]['.$key.'][content]')); ?>
                         </div>
                     </div>
@@ -94,13 +97,13 @@ class MEC_feature_notifications extends MEC_base
                         $global_hours = isset($this->notif_settings[$key]['hours']) ? trim((string) $this->notif_settings[$key]['hours']) : '';
                         $hours_value = $event_hours !== '' ? $event_hours : ($global_hours !== '' ? $global_hours : $hours_defaults[$key]);
                     ?>
-                    <div class="mec-form-row">
-                        <div class="mec-col-2">
+                    <div class="mec-form-row mec-field">
+                        <div class="mec-field__label">
                             <label for="mec_notifications_<?php echo esc_attr($key); ?>_hours"><?php esc_html_e('Hours', 'modern-events-calendar-lite'); ?></label>
                         </div>
-                        <div class="mec-col-10">
+                        <div class="mec-field__control">
                             <input id="mec_notifications_<?php echo esc_attr($key); ?>_hours" type="text" name="mec[notifications][<?php echo esc_attr($key); ?>][hours]" value="<?php echo esc_attr($hours_value); ?>">
-                            <p class="description"><?php esc_html_e('Comma separated positive hours (for example: 72,48,24,1).', 'modern-events-calendar-lite'); ?></p>
+                            <p class="mec-field__help"><?php esc_html_e('Comma separated positive hours (for example: 72,48,24,1).', 'modern-events-calendar-lite'); ?></p>
                         </div>
                     </div>
                     <?php endif; ?>
@@ -111,7 +114,9 @@ class MEC_feature_notifications extends MEC_base
                 </div>
 			</div>
             <?php endforeach; ?>
-            <h4><?php echo esc_html__('Placeholders', 'modern-events-calendar-lite'); ?></h4>
+            <div class="mec-panel__head">
+                <h4 class="mec-panel__title"><?php echo esc_html__('Placeholders', 'modern-events-calendar-lite'); ?></h4>
+            </div>
             <?php $this->display_placeholders(); ?>
 		</div>
     <?php

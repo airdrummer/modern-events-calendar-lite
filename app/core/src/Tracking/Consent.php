@@ -112,7 +112,14 @@ class Consent
         update_option('mec_posthog_consent_time', current_time('mysql'));
 
         // Fire an immediate opt-in event so the person exists in PostHog right away.
-        if ($choice === 'accepted') (new PostHog())->capture('mec_tracking_opted_in');
+        if ($choice === 'accepted')
+        {
+            (new PostHog())->capture('mec_tracking_opted_in');
+
+            // Replay install-lifecycle events (activation) that were queued
+            // before the user answered the popup.
+            (new PostHog())->flush_queue();
+        }
 
         wp_send_json(array('success' => 1, 'choice' => $choice));
     }

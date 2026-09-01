@@ -15,7 +15,8 @@ body.toplevel_page_mec-intro #webnus-dashboard .mec-cmsg-2-notification-box-wrap
 #mec_location_thumbnail_img img,
 #mec_organizer_thumbnail_img img,
 #mec_sponsor_thumbnail_img img,
-#mec_thumbnail_img img {
+#mec_thumbnail_img img,
+#mec_banner_thumbnail_img img {
   max-width: 250px;
 }
 
@@ -242,14 +243,14 @@ body.toplevel_page_mec-intro #webnus-dashboard .mec-cmsg-2-notification-box-wrap
   line-height: 35px;
   color: #555;
   border: 1px solid #ccc;
-  background: #f7f7f7;
+  background: #f7f8f9;
   text-decoration: none;
   transition: 0.24s all ease;
   -webkit-transition: 0.24s all ease;
 }
 
 .wns-be-container .dpr-btn:hover {
-  background: #fcfcfc;
+  background: #ffffff;
   border-color: #999;
   color: #303030;
 }
@@ -267,7 +268,7 @@ body.toplevel_page_mec-intro #webnus-dashboard .mec-cmsg-2-notification-box-wrap
   text-shadow: none;
   margin-right: 5px;
   background: #fff;
-  color: #0ec3f3;
+  color: #07bbe9;
   border: 1px solid #d1e5ec;
   letter-spacing: 0.2px;
   transition: 0.24s all ease;
@@ -376,7 +377,7 @@ body.toplevel_page_mec-intro #webnus-dashboard .mec-cmsg-2-notification-box-wrap
 }
 
 .wns-be-sidebar li .subsection a:hover {
-  background: #fafafa;
+  background: #ffffff;
   color: #242525;
 }
 
@@ -459,7 +460,7 @@ body.toplevel_page_mec-intro #webnus-dashboard .mec-cmsg-2-notification-box-wrap
   border-top: 1px solid #dedede;
   z-index: 999;
   padding: 25px 20px 20px;
-  background: #fafafa !important;
+  background: #ffffff !important;
   height: 44px;
   text-align: right;
   border-radius: 0 0 14px 14px;
@@ -474,7 +475,7 @@ body.toplevel_page_mec-intro #webnus-dashboard .mec-cmsg-2-notification-box-wrap
   border-bottom: 1px solid #e6e9eb;
   padding: 20px;
   text-align: right;
-  box-shadow: inset 0 1px 0 #fcfcfc;
+  box-shadow: inset 0 1px 0 #ffffff;
   height: 79px;
   box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -536,12 +537,12 @@ body.toplevel_page_mec-intro #webnus-dashboard .mec-cmsg-2-notification-box-wrap
 .wns-be-container #mec_styling_form .button-secondary:hover,
 .wns-be-container #mec_styling_form .button.hover,
 .wns-be-container #mec_styling_form .button:hover {
-  background: #f0f9fc;
+  background: #f7f8f9;
   border-color: #d1e5ec;
 }
 
 .wns-be-container #mec_styling_form .wp-color-result:hover {
-  background: #f0f9fc;
+  background: #f7f8f9;
 }
 
 @media (max-width: 1280px) {
@@ -837,6 +838,7 @@ body.post-type-mec-books th.column-author {
   .mec-col-8,
   .mec-col-9 {
     float: left;
+    margin-right: 1%;
   }
 
   .mec-col-12 {
@@ -891,7 +893,6 @@ body.post-type-mec-books th.column-author {
 #mec-occurrences .mec-occurrences-list,
 #mec_bfixed_form_fields,
 #mec_event_form_fields,
-#mec_orgz_form_row,
 #mec_reg_form_fields {
   background: #f7f8f9;
   padding: 20px;
@@ -948,12 +949,12 @@ body.post-type-mec-books th.column-author {
 #mec_event_form_fields span.mec_event_field_type,
 #mec_orgz_form_row span.mec_orgz_item_name,
 #mec_reg_form_fields span.mec_reg_field_type {
-  font-size: 12px;
+  font-size: 15px;
+  line-height: 1.8;
   font-weight: 600;
   color: #07bbe9;
   text-transform: capitalize;
   letter-spacing: 0.3px;
-  padding-left: 20px;
 }
 
 #mec-occurrences .mec-occurrences-list .mec-occurrences-delete-button,
@@ -1048,6 +1049,146 @@ body.post-type-mec-books th.column-author {
   height: 15px;
 }
 
+/* Additional Organizers / Locations lists — modern cards (audit #2/#3).
+   Overrides the shared simple-line-icons :before (which doesn't render on the
+   backend) with self-contained grip + trash SVGs, and turns each <li> into a
+   clean card. Scoped to the two list IDs so the booking-form-field lists keep
+   their existing styling. Selectors use `span.` to match the shared rules'
+   specificity so these later overrides win. */
+#mec_orgz_form_row,
+#mec_loc_form_row {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#mec_orgz_form_row li,
+#mec_loc_form_row li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  background: #f4f8ff;
+  border: 1px solid #c7d7ee;
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin: 0 0 8px 0;
+  min-height: 40px;
+  box-sizing: border-box;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+#mec_orgz_form_row li:hover,
+#mec_loc_form_row li:hover {
+  border-color: #9bb8e0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .05);
+}
+
+#mec_orgz_form_row li.ui-sortable-helper,
+#mec_loc_form_row li.ui-sortable-helper {
+  cursor: grabbing;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .15);
+}
+
+#mec_orgz_form_row span.mec_orgz_item_name,
+#mec_loc_form_row span.mec_loc_item_name {
+  flex: 1 1 auto;
+  padding-left: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1f2937;
+  text-transform: none;
+  letter-spacing: 0;
+  line-height: 1.4;
+}
+
+#mec_orgz_form_row span.mec-additional-organizer-sort,
+#mec_loc_form_row span.mec-additional-location-sort {
+  position: relative;
+  top: auto;
+  left: auto;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  font-size: 0;
+  /* hide the "Sort" label — the grip icon below replaces it */
+}
+
+#mec_orgz_form_row span.mec-additional-organizer-sort:before,
+#mec_loc_form_row span.mec-additional-location-sort:before {
+  position: static;
+  left: auto;
+  top: auto;
+  width: 14px;
+  height: 14px;
+  font-family: inherit;
+  content: "";
+  cursor: grab;
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cg fill='%23555'%3E%3Ccircle cx='3.5' cy='3.5' r='1.4'/%3E%3Ccircle cx='3.5' cy='7' r='1.4'/%3E%3Ccircle cx='3.5' cy='10.5' r='1.4'/%3E%3Ccircle cx='10.5' cy='3.5' r='1.4'/%3E%3Ccircle cx='10.5' cy='7' r='1.4'/%3E%3Ccircle cx='10.5' cy='10.5' r='1.4'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+#mec_orgz_form_row span.mec-additional-organizer-remove,
+#mec_loc_form_row span.mec-additional-location-remove {
+  position: relative;
+  top: auto;
+  right: auto;
+  left: auto;
+  background: transparent;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background-color .15s ease;
+  font-size: 0;
+  /* hide the "Remove" label — the trash icon below replaces it */
+}
+
+#mec_orgz_form_row span.mec-additional-organizer-remove:hover,
+#mec_loc_form_row span.mec-additional-location-remove:hover {
+  background: rgba(220, 38, 38, .12);
+}
+
+#mec_orgz_form_row span.mec-additional-organizer-remove:before,
+#mec_loc_form_row span.mec-additional-location-remove:before {
+  position: static;
+  left: auto;
+  top: auto;
+  right: auto;
+  width: 16px;
+  height: 16px;
+  font-family: inherit;
+  content: "";
+  color: #c4474a;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23c4474a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3 6 5 6 21 6'/%3E%3Cpath d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'/%3E%3Cline x1='10' y1='11' x2='10' y2='17'/%3E%3Cline x1='14' y1='11' x2='14' y2='17'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+/* Dark mode cards. */
+.mec-admin-dark-mode.post-type-mec-events #mec_orgz_form_row li,
+.mec-admin-dark-mode.post-type-mec-events #mec_loc_form_row li {
+  background: rgba(7, 187, 233, .1);
+  border-color: rgba(7, 187, 233, .35);
+}
+
+.mec-admin-dark-mode.post-type-mec-events #mec_orgz_form_row span.mec_orgz_item_name,
+.mec-admin-dark-mode.post-type-mec-events #mec_loc_form_row span.mec_loc_item_name {
+  color: #cdddf3;
+}
+
 #mec_bfixed_form_fields p.mec_bfixed_field_options,
 #mec_event_form_fields p.mec_event_field_options,
 #mec_reg_form_fields p.mec_reg_field_options {
@@ -1070,6 +1211,7 @@ body.post-type-mec-books th.column-author {
   min-height: 34px;
   margin-bottom: 7px;
   margin-top: 7px;
+  width: 100%;
 }
 
 #mec_bfixed_form_fields textarea,
@@ -1125,7 +1267,15 @@ body.post-type-mec-books th.column-author {
   font-family: simple-line-icons;
   font-size: 13px;
   display: inline-block;
-  top: 9px;
+}
+
+#mec_bfixed_form_field_types button.red,
+#mec_bfixed_form_fields button.red,
+#mec_event_form_field_types button.red,
+#mec_event_form_fields button.red,
+#mec_reg_form_field_types button.red,
+#mec_reg_form_fields button.red {
+  color: #ea6485;
 }
 
 #mec_bfixed_form_field_types button.red:hover,
@@ -1186,7 +1336,7 @@ body.post-type-mec-books th.column-author {
 }
 
 .mec-form-row {
-  padding: 5px 5px 35px;
+  padding: 5px 5px 15px;
 }
 
 .wns-be-main .mec-form-row {
@@ -1202,16 +1352,12 @@ body.post-type-mec-books th.column-author {
   padding: 10px;
 }
 
-.post-type-mec-events .mec-form-row {
-  padding: 0 0 20px 0;
-}
-
 .mec-form-row label.mec-col-3 {
   cursor: default;
 }
 
 .wns-be-main .mec-form-row .mec-col-3:not([name*="mec[settings][tickets]"]):not([for*="mec_tickets_unlimited"]) {
-  min-width: 290px;
+  min-width: 280px;
   padding: 1px 0 0;
   margin: 0;
 }
@@ -1294,6 +1440,7 @@ body.post-type-mec-books th.column-author {
 
 .mec-form-row input[type="number"],
 .mec-form-row input[type="text"],
+.mec-form-row input[type="password"],
 .mec-form-row input[type="url"],
 .mec-form-row select,
 .mec-form-row textarea {
@@ -1316,10 +1463,18 @@ body.post-type-mec-books th.column-author {
   max-width: 290px;
 }
 
+/* Notification subject inputs sit next to a toggle — cap at the small
+   control token instead of the legacy 290px (same for textarea below is
+   intentionally 100%: bodies need the room). */
+#mec-notifications .mec-form-row input[type="text"][name*="[subject]"] {
+  max-width: var(--mec-input-w--sm);
+}
+
 #mec_location_new_container .mec-form-row input[type="text"],
 #mec_organizer_new_container .mec-form-row input[type="text"],
 #mec_sponsor_new_container .mec-form-row input[type="text"] {
   min-width: 200px;
+  max-width: var(--mec-input-w);
 }
 
 #mec-notifications .mec-form-row .mec-form-row textarea {
@@ -1397,6 +1552,8 @@ body.post-type-mec-books th.column-author {
   line-height: 19px;
   margin: 0;
   vertical-align: text-top;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 .select2-container--default .select2-selection--multiple input[type="search"] {
@@ -1419,6 +1576,7 @@ body.post-type-mec-books th.column-author {
 .select2-container--default .select2-selection--multiple .select2-selection__rendered li.select2-selection__choice {
   padding: 0 0 0 25px;
   line-height: 17px;
+  max-width: 380px;
 }
 
 .post-type-mec-events .mec-add-event-tabs-wrap .select2-container,
@@ -1505,14 +1663,12 @@ body.post-type-mec-books th.column-author {
 }
 
 .mec-form-row label {
-  vertical-align: top;
   text-align: left;
   margin-top: 0;
   margin-bottom: 0;
   line-height: 40px;
   font-weight: 600;
   padding: 0 !important;
-  display: inline-block;
 }
 
 .mec-form-row input[type="checkbox"]+label {
@@ -1622,7 +1778,6 @@ body.post-type-mec-books th.column-author {
 .mec-form-row .mec-col-4 input[type="text"],
 .mec-form-row .mec-col-4 select,
 .mec-form-row .mec-col-4 textarea {
-  width: 82% !important;
   max-width: 290px;
 }
 
@@ -1649,7 +1804,7 @@ body.post-type-mec-books th.column-author {
 }
 
 .mec-meta-box-fields {
-  margin: 30px 10px;
+  margin: 0;
 }
 
 .mec-meta-box-fields#mec_meta_box_calendar_search_form_options {
@@ -1665,7 +1820,7 @@ body.post-type-mec-books th.column-author {
 }
 
 .mec-meta-box-fields h4.mec-title {
-  margin: 40px 0 16px;
+  margin: 0 0 16px;
 }
 
 .post-type-mec-events h4,
@@ -1674,7 +1829,7 @@ body.post-type-mec-books th.column-author {
   text-transform: capitalize;
   border-bottom: 1px solid #e5e5e5;
   padding-bottom: 6px;
-  margin: 40px 0 16px;
+  margin: 20px 0 16px;
   font-size: 15px;
   font-weight: 600;
 }
@@ -1804,7 +1959,7 @@ body.post-type-mec-books th.column-author {
 }
 
 .meta-box-sortables .mec-switcher input:checked+label:before {
-  box-shadow: 2px 2px 12px -2px #4fdc73 inset;
+  box-shadow: 2px 2px 12px -2px #64e385 inset;
   background: #64e385;
   border-color: #64e385;
 }
@@ -2016,7 +2171,7 @@ td:has(.mec-webnus-icon) a {
 
 .mec-switcher input+label:before {
   right: 1px;
-  background-color: #f1f1f1;
+  background-color: #f7f8f9;
   border-radius: 60px;
   transition: background 0.4s;
 }
@@ -2039,7 +2194,7 @@ td:has(.mec-webnus-icon) a {
 
 .wns-be-group-tab .mec-switcher input[value="1"]+label,
 .wns-be-group-tab .mec-switcher input[value="1"]+label:before {
-  box-shadow: 2px 2px 12px -2px #4fdc73 inset;
+  box-shadow: 2px 2px 12px -2px #64e385 inset;
   position: relative;
   background: #64e385;
   border-color: #64e385;
@@ -2047,7 +2202,7 @@ td:has(.mec-webnus-icon) a {
 
 .wns-be-group-tab .mec-switcher input+label:before {
   right: 1px;
-  background-color: #f1f1f1;
+  background-color: #f7f8f9;
   border-radius: 60px;
   transition: background 0.4s;
 }
@@ -2091,7 +2246,7 @@ td:has(.mec-webnus-icon) a {
 }
 
 #wpwrap .mec-button-primary:hover {
-  background-color: #41c9de;
+  background-color: #07bbe9;
 }
 
 #wpwrap .mec-button-primary.loading {
@@ -2538,7 +2693,7 @@ h5.mec-form-second-title {
 .extra .w-box-head {
   padding: 30px 30px 10px;
   border-bottom: 1px solid #fff;
-  border-radius: 11px 11px 0 0;
+  border-radius: 10px 11px 0 0;
 }
 
 .doc .w-box-head {
@@ -2588,13 +2743,13 @@ h5.mec-form-second-title {
 
 .w-box-content pre {
   text-align: left;
-  background: #f5f6f7;
+  background: #f7f8f9;
   font-size: 13px;
   padding: 20px 25px;
   height: 480px;
   overflow-y: scroll;
   white-space: break-spaces;
-  border-radius: 11px;
+  border-radius: 10px;
   font-family: monospace;
   margin: 0 0 10px;
 }
@@ -2692,7 +2847,7 @@ p.mec_dash_count {
   font-size: 60px;
   font-weight: 100;
   margin: 0;
-  color: #38d5ed;
+  color: #07bbe9;
 }
 
 .w-col-sm-3 .w-box.doc {
@@ -2738,7 +2893,7 @@ p.mec_dash_count {
 
 .w-box.upcoming-events .mec-event-article .mec-event-date {
   font-size: 13px;
-  background-color: #38d5ed;
+  background-color: #07bbe9;
   color: #fff;
   text-align: center;
   border-radius: 6px;
@@ -2844,11 +2999,11 @@ p.mec_dash_count {
 }
 
 .w-box.total-bookings ul li.active {
-  background: #38d5ed;
+  background: #07bbe9;
 }
 
 .w-box.total-bookings ul li:hover {
-  background: #38d5ed;
+  background: #07bbe9;
 }
 
 #webnus-dashboard .w-box.total-bookings ul li a {
@@ -2872,7 +3027,7 @@ p.mec_dash_count {
 .warning-msg {
   margin: 10px 0;
   padding: 10px;
-  border-radius: 11px;
+  border-radius: 10px;
 }
 
 .post-type-mec-events.taxonomy-mec_speaker .warning-msg p {
@@ -2942,13 +3097,40 @@ p.mec_dash_count {
 
 #mec-exceptional-days .mec-certain-day>div,
 #mec_exceptions_in_days_container .mec-certain-day>div {
-  padding: 0 15px;
-  margin: 0 5px 10px 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  border-radius: 999px;
+  padding: 5px 5px 5px 12px;
+  margin: 0 6px 8px 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #b91c1c;
+  line-height: 1.4;
+  box-shadow: none;
+  transition: background-color .15s ease, border-color .15s ease;
 }
 
-.mec-certain-day .mec-in-days-day,
-.mec-certain-day>div .mec-not-in-days-day {
+#mec-exceptional-days .mec-certain-day,
+#mec_exceptions_in_days_container .mec-certain-day {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* Keep the "in days" (custom days) chip text vertically centered — this rule
+   previously also covered not-in-days, now scoped separately (audit #7). */
+.mec-certain-day .mec-in-days-day {
   line-height: 36px;
+}
+
+#mec-exceptional-days .mec-certain-day>div .mec-not-in-days-day,
+#mec_exceptions_in_days_container .mec-certain-day>div .mec-not-in-days-day {
+  line-height: 1.4;
 }
 
 .mec-certain-day>div:hover,
@@ -2959,18 +3141,176 @@ p.mec_dash_count {
   box-shadow: 0 0 7px rgba(0, 0, 0, 0.1);
 }
 
+#mec-exceptional-days .mec-certain-day>div:hover,
+#mec_exceptions_in_days_container .mec-certain-day>div:hover {
+  background: #fee2e2;
+  border-color: #f87171;
+  box-shadow: none;
+}
+
+/* Exceptional-day chip remove button (audit #7): circular × that fills on hover.
+   The × is an SVG background pinned with background-position:center — the same
+   pattern as the .mec-in-days-edit icon button next to it. A text glyph proved
+   unreliable to center across font stacks. The legacy lowercase "x" text stays
+   in the DOM hidden (font-size:0) for screen readers. */
 .mec-not-in-days-remove {
-  border: 1px solid #ff4b64;
-  border-radius: 20px;
-  padding: 0 0 0 1px;
-  color: #ff4b64;
-  width: 11px;
-  height: 12px;
-  text-align: center;
-  line-height: 12px;
+  font-size: 0;
+  width: 20px;
+  height: 20px;
+  border: 0;
+  border-radius: 50%;
+  background-color: #fca5a5;
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23b91c1c' stroke-width='3' stroke-linecap='round'%3E%3Cline x1='6' y1='6' x2='18' y2='18'/%3E%3Cline x1='18' y1='6' x2='6' y2='18'/%3E%3C/svg%3E");
+  background-position: center;
+  background-size: 11px 11px;
+  background-repeat: no-repeat;
+  color: #b91c1c;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color .15s ease;
+}
+
+.mec-not-in-days-remove:hover {
+  background-color: #dc2626;
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round'%3E%3Cline x1='6' y1='6' x2='18' y2='18'/%3E%3Cline x1='18' y1='6' x2='6' y2='18'/%3E%3C/svg%3E");
+}
+
+/* Dark mode: translucent red chips so they read well on a dark surface. */
+.mec-admin-dark-mode.post-type-mec-events #mec-exceptional-days .mec-certain-day>div,
+.mec-admin-dark-mode.post-type-mec-events #mec_exceptions_in_days_container .mec-certain-day>div {
+  background: rgba(220, 38, 38, 0.16);
+  border-color: rgba(248, 113, 113, 0.45);
+  color: #fca5a5;
+}
+
+.mec-admin-dark-mode.post-type-mec-events #mec-exceptional-days .mec-certain-day>div:hover,
+.mec-admin-dark-mode.post-type-mec-events #mec_exceptions_in_days_container .mec-certain-day>div:hover {
+  background: rgba(220, 38, 38, 0.28);
+}
+
+/* Custom Days cards (audit #6): readable date cards with explicit Edit +
+   remove buttons and a fade-out on delete. The encoded hidden input that
+   holds the value is untouched — this is presentation only. Scoped to
+   #mec_in_days so it doesn't bleed into the exceptional-days chips. */
+#mec_in_days .mec-in-days-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: auto;
+  max-width: 100%;
+  background: #f4f8ff;
+  border: 1px solid #c7d7ee;
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin: 0 0 8px 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #1f2937;
+  line-height: 1.4;
+  box-shadow: none;
+  transition: opacity .18s ease, transform .18s ease, border-color .15s ease, box-shadow .15s ease;
+}
+
+#mec_in_days .mec-in-days-card:hover {
+  border-color: #9bb8e0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .05);
+}
+
+#mec_in_days .mec-in-days-day {
+  flex: 1 1 auto;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+#mec_in_days .mec-in-days-day .mec-time-picker-label {
+  font-weight: 700;
+}
+
+#mec_in_days .mec-in-days-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+
+#mec_in_days .mec-in-days-edit,
+#mec_in_days .mec-not-in-days-remove {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+}
+
+#mec_in_days .mec-in-days-edit {
+  border: 1px solid #c7d7ee;
+  background-color: #fff;
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23374151' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 20h9'/%3E%3Cpath d='M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z'/%3E%3C/svg%3E");
+  background-position: center;
+  background-size: 14px 14px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background-color .15s ease, border-color .15s ease;
+}
+
+#mec_in_days .mec-in-days-edit:hover {
+  background-color: #eef4ff;
+  border-color: #07bbe9;
+}
+
+/* Fade-out animation when a custom day is removed (audit #6). */
+#mec_in_days .mec-in-days-card.mec-in-days-removing {
+  opacity: 0;
+  transform: scale(.96);
+}
+
+/* Dark mode: translucent blue cards on a dark surface. */
+.mec-admin-dark-mode.post-type-mec-events #mec_in_days .mec-in-days-card {
+  background: rgba(7, 187, 233, .1);
+  border-color: rgba(7, 187, 233, .35);
+  color: #cdddf3;
+}
+
+.mec-admin-dark-mode.post-type-mec-events #mec_in_days .mec-in-days-edit {
+  background-color: rgba(255, 255, 255, .06);
+  border-color: rgba(255, 255, 255, .2);
+}
+
+/* Currency options live preview (audit #11). */
+.mec-currency-preview-row {
+  margin-top: 14px;
+}
+
+.mec-currency-preview {
   display: inline-block;
-  margin-right: -5px;
-  margin-left: 6px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #07bbe9;
+  background: #f4f8ff;
+  border: 1px solid #c7d7ee;
+  border-radius: 6px;
+  padding: 6px 14px;
+  margin-right: 10px;
+  line-height: 1.4;
+  vertical-align: middle;
+}
+
+.mec-currency-preview-desc {
+  font-style: italic;
+}
+
+.mec-admin-dark-mode.post-type-mec-events .mec-currency-preview {
+  background: rgba(7, 187, 233, .12);
+  border-color: rgba(7, 187, 233, .35);
+  color: #6cd6f0;
 }
 
 .mec-xi-facebook-import-events .mec-success,
@@ -4383,7 +4723,7 @@ textarea.mec-import-settings-content {
   color: #fff;
   min-height: 260px;
   text-align: center;
-  border-radius: 11px;
+  border-radius: 10px;
 }
 
 #webnus-dashboard .search-form input {
@@ -4599,7 +4939,7 @@ textarea.mec-import-settings-content {
 }
 
 .w-box.support-page.videobox {
-  border-radius: 11px;
+  border-radius: 10px;
   min-height: 282px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.01) !important;
 }
@@ -4705,7 +5045,7 @@ textarea.mec-import-settings-content {
 
 .mec-form-row input[type="radio"]:checked:before,
 .w-box.mec-activation input[type="radio"].checked+label span:after {
-  background: #38d5ed;
+  background: #07bbe9;
   transform: scale(1);
 }
 
@@ -4720,7 +5060,8 @@ textarea.mec-import-settings-content {
   margin-top: 20px;
 }
 
-.w-box.mec-activation input[name="MECPurchaseCode"] {
+.w-box.mec-activation input[name="MECPurchaseCode"],
+.w-box.mec-activation input[name="MECOfflineToken"] {
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.07);
   min-width: 220px;
   background: #f7f8f9;
@@ -4932,7 +5273,7 @@ textarea.mec-import-settings-content {
   display: block;
   margin: 5px 0;
   padding: 5px 0;
-  width: 390px;
+  width: 100%;
   border: 1px solid #e1e2e3;
   border-radius: 2px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
@@ -5219,9 +5560,9 @@ textarea.mec-import-settings-content {
 }
 
 .mec-ticket-id {
-  font-size: 12px;
-  line-height: 12px;
-  font-weight: 400;
+  font-size: 15px;
+  line-height: 1.8;
+  font-weight: 600;
   color: #07bbe9;
   padding: 0 0 8px;
   margin-bottom: 14px;
@@ -5247,19 +5588,12 @@ textarea.mec-import-settings-content {
   min-width: 185px;
 }
 
-#mec_meta_box_hourly_schedule_days .mec-form-row input[type="text"] {
-  max-width: 180px;
-}
-
-#mec_meta_box_tickets_form .mec-form-row input[type="text"] {
-  max-width: 290px;
-}
-
 #mec_exceptions_not_in_days_date {
   width: 100%;
 }
 
-#mec-event-data input[type="date"],
+#mec-advanced-wraper div:first-child>ul
+/* #mec-event-data input[type="date"],
 #mec-event-data input[type="email"],
 #mec-event-data input[type="tel"],
 #mec-event-data input[type="text"],
@@ -5272,7 +5606,7 @@ textarea.mec-import-settings-content {
 #mec_select_tags.mec-create-shortcode-tab-content input[type="text"],
 #mec_settings_weather_module_api_key {
   max-width: 290px;
-}
+} */
 
 #mec-event-data input[type="text"].mec_date_picker.mec-col-4 #mec_meta_box_calendar_skin_options input[type="text"].mec_date_picker.mec-col-4 {
   max-width: 32.33333333%;
@@ -5508,7 +5842,7 @@ a.mec-intro-section-link-tag.button.button-secondary.button-hero {
 }
 
 .wns-be-sidebar li .submneu-hover a:hover {
-  background: #f6f6f6;
+  background: #f7f8f9;
   color: #222;
 }
 
@@ -5593,9 +5927,9 @@ a.mec-intro-section-link-tag.button.button-secondary.button-hero {
 }
 
 #webnus-dashboard .mec-tooltip .box p,
-.mec-tooltip .box p {
-  color: #fff;
-  font-size: 14px;
+.wns-be-group-tab .mec-tooltip .box p {
+  color: #fff !important;
+  font-size: 14px !important;
   line-height: 1.3;
   margin: 0;
   font-style: normal;
@@ -5807,7 +6141,7 @@ form#mec_reg_fields_form label {
 }
 
 .mec-addons-notification-box-content a {
-  background: #38d5ed;
+  background: #07bbe9;
   color: #fff !important;
   padding: 10px 26px;
   margin-top: 5px;
@@ -6148,13 +6482,6 @@ li.wns-be-group-menu-li.mec-settings-menu:hover>.mec-settings-submenu {
   background: #f7f8f9;
 }
 
-.mec-form-row.mec-skin-countdown-date-format-container input[type="text"],
-.mec-form-row.mec-skin-grid-date-format-container input[type="text"],
-.mec-form-row.mec-skin-list-date-format-container input[type="text"],
-.mec-skin-options-container input[type="text"] {
-  max-width: unset;
-}
-
 .wn-mec-select {
   width: 32.33333333% !important;
   clear: unset !important;
@@ -6165,7 +6492,6 @@ li.wns-be-group-menu-li.mec-settings-menu:hover>.mec-settings-submenu {
   background-color: #fff;
   border-radius: 3px;
   border: 1px solid #ddd;
-  margin-bottom: 8px;
   position: relative;
   text-align: left !important;
   -webkit-transition: all 0.2s ease-in-out;
@@ -6383,7 +6709,7 @@ li.wns-be-group-menu-li.mec-settings-menu:hover>.mec-settings-submenu {
 .wn-mec-select .option.focus,
 .wn-mec-select .option.selected.focus,
 .wn-mec-select .option:hover {
-  background-color: #f6f6f6;
+  background-color: #f7f8f9;
 }
 
 .wn-mec-select .option.selected {
@@ -6436,9 +6762,11 @@ li.wns-be-group-menu-li.mec-settings-menu:hover>.mec-settings-submenu {
 .mec-custom-nice-select ul.list {
   min-width: 600px !important;
   padding: 20px 10px !important;
-  background: #fcfbfd;
+  background: #ffffff;
   border: 1px solid #e9e9e9;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  transform: translateX(-50%);
+  left: 50%;
 }
 
 .mec-custom-nice-select ul.list li.option.selected {
@@ -6465,7 +6793,7 @@ li.wns-be-group-menu-li.mec-settings-menu:hover>.mec-settings-submenu {
 .wn-mec-select .option.focus .wn-img-sh img,
 .wn-mec-select .option.selected.focus .wn-img-sh img,
 .wn-mec-select .option:hover .wn-img-sh img {
-  background-color: #f6f6f6;
+  background-color: #f7f8f9;
   filter: grayscale(0);
   -webkit-filter: grayscale(0);
 }
@@ -6587,16 +6915,9 @@ li.wns-be-group-menu-li.mec-settings-menu:hover>.mec-settings-submenu {
 }
 
 .mec-add-booking-tabs-left,
-.mec-add-event-tabs-left {
+.mec-add-event-tabs-left,
+.mec-create-shortcode-tabs-left {
   min-width: 200px;
-}
-
-@media (max-width: 1366px) {
-
-  .mec-add-booking-tabs-left,
-  .mec-add-event-tabs-left {
-    min-width: 137px;
-  }
 }
 
 .mec-add-booking-tabs-left,
@@ -6637,7 +6958,7 @@ a.mec-create-shortcode-tabs-link {
 }
 
 .mec-create-shortcode-tabs-wrap {
-  margin: -30px -22px -42px;
+  margin: -6px -12px -12px;
 }
 
 .mec-add-booking-tabs-left,
@@ -6717,7 +7038,7 @@ a.mec-create-shortcode-tabs-link {
 .mec-add-booking-tabs-right,
 .mec-add-event-tabs-right,
 .mec-create-shortcode-tabs-right {
-  padding: 0 30px 40px;
+  padding: 10px 25px 20px;
   border-left: 1px solid #e2e2e2;
 }
 
@@ -6728,13 +7049,6 @@ a.mec-create-shortcode-tabs-link {
 }
 
 @media (max-width: 1366px) {
-
-  .mec-add-booking-tabs-right,
-  .mec-add-event-tabs-right,
-  .mec-create-shortcode-tabs-right {
-    padding: 0 15px 20px;
-  }
-
   .mec-form-row select {
     min-width: 60px;
   }
@@ -6764,6 +7078,7 @@ a.mec-create-shortcode-tabs-link {
   #mec_repeat_type {
     min-width: 220px;
     width: 220px;
+    max-width: var(--mec-input-w);
   }
 
   #mec_meta_box_hourly_schedule_days .mec-box.mec-form-row input[type="text"] {
@@ -6858,15 +7173,15 @@ a.mec-create-shortcode-tabs-link {
 
   #mec-exceptional-days .mec-certain-day>div,
   #mec_exceptions_in_days_container .mec-certain-day>div {
-    width: 100%;
-    max-width: 255px;
-    padding: 12px;
-    margin: 20px 10px 0 0;
-    border-radius: 8px;
+    width: auto;
+    max-width: none;
+    padding: 5px 5px 5px 12px;
+    margin: 0 6px 8px 0;
+    border-radius: 999px;
   }
 
-  .mec-certain-day .mec-in-days-day,
-  .mec-certain-day>div .mec-not-in-days-day {
+  /* "in days" (custom days) chips keep their compact text on narrow screens. */
+  .mec-certain-day .mec-in-days-day {
     line-height: 21px;
     font-size: 10px;
   }
@@ -7079,7 +7394,7 @@ a.mec-create-shortcode-tabs-link {
 
 .mec-form-row input:disabled {
   opacity: 0.6;
-  background: #f6f6f6;
+  background: #f7f8f9;
 }
 
 .wns-be-group-tab h5 {
@@ -7155,7 +7470,7 @@ a.mec-create-shortcode-tabs-link {
   border-radius: 5px;
   overflow: hidden;
   margin-top: 30px;
-  background: #f5f5f5;
+  background: #f7f8f9;
   border: 2px solid #e6e6e6;
   max-width: 700px;
 }
@@ -7174,6 +7489,10 @@ a.mec-create-shortcode-tabs-link {
   font-size: 14px;
   color: #888;
   cursor: default;
+}
+
+#mec_calendar_display_options .inside {
+  padding: 20px 25px;
 }
 
 #mec_calendar_display_options .mec-tooltip {
@@ -7202,7 +7521,8 @@ a.mec-create-shortcode-tabs-link {
   border: 1px solid #d1e5ec;
   text-shadow: none;
   padding: 0 12px;
-  height: 38px;
+  height: 40px;
+  min-width: 40px;
   letter-spacing: 0.2px;
   margin-right: 5px;
   background: #fff;
@@ -7211,7 +7531,7 @@ a.mec-create-shortcode-tabs-link {
   transition: all 0.2s ease;
   cursor: pointer;
   display: inline-block;
-  line-height: 36px;
+  line-height: 40px;
   text-decoration: none;
 }
 
@@ -7220,7 +7540,9 @@ a.mec-create-shortcode-tabs-link {
   border: 1px solid #d1e5ec;
   text-shadow: none;
   padding: 0 12px;
-  height: 38px;
+  text-align: center;
+  height: 40px;
+  min-width: 40px;
   letter-spacing: 0.2px;
   margin-right: 5px;
   background: #fff;
@@ -7228,7 +7550,7 @@ a.mec-create-shortcode-tabs-link {
   box-shadow: 0 1px 5px -1px rgb(0 0 0 / 5%);
   transition: all 0.2s ease;
   cursor: pointer;
-  line-height: 36px;
+  line-height: 40px;
   text-decoration: none;
 }
 
@@ -7239,7 +7561,7 @@ a.mec-create-shortcode-tabs-link {
 .mec-occurrences-wrapper .button:not(.wp-color-result):hover,
 .button:not(.wp-color-result):hover .mec-export-settings:hover,
 .mec-import-settings:hover {
-  background: #f0f9fc;
+  background: #f7f8f9;
   color: #07bbe9;
 }
 
@@ -7676,8 +7998,8 @@ a.mec-create-shortcode-tabs-link {
   outline: 0;
   transition: 50ms border-colorease-in-out;
   min-width: 200px;
-  width: 100% !important;
-  max-width: 290px !important;
+  width: 100%;
+  max-width: 290px;
   font-size: 14px;
   border: 1px solid #e6e9eb;
 }
@@ -7853,7 +8175,7 @@ button.fserv-button-submit {
   border-radius: 60px !important;
   box-shadow: 0 0 0 4px rgb(56 213 237 / 1%) !important;
   text-shadow: none !important;
-  background: #38d5ed !important;
+  background: #07bbe9 !important;
   border: none !important;
   transition: 0.24s !important;
 }
@@ -8344,7 +8666,7 @@ input.fserv-input-text {
 }
 
 .mec-report-selected-event-attendees-wrap .w-clearfix.mec-attendees-head {
-  background: #f5f6f7;
+  background: #f7f8f9;
   border-bottom: 1px solid #e1e2e3;
   padding: 15px;
   margin: 0;
@@ -8510,7 +8832,7 @@ input.fserv-input-text {
   padding-top: 2px;
   font-size: 11px;
   font-weight: 700;
-  color: #1aaffb;
+  color: #07bbe9;
   box-sizing: border-box;
 }
 
@@ -8551,7 +8873,7 @@ input.fserv-input-text {
 li.mec-step.mec-step-passed span,
 li.mec-step.mec-step-passed:after,
 li.mec-step.mec-step-passed:before {
-  background-color: #2dcb73;
+  background-color: #64e385;
   color: #fff;
 }
 
@@ -8626,7 +8948,7 @@ span.mec-steps-header-add-text {
 
 .mec-steps-header-dashboard a i,
 .mec-steps-header-settings a i {
-  color: #1aaffb;
+  color: #07bbe9;
   font-size: 16px;
   vertical-align: text-top;
   margin-right: 5px;
@@ -8830,7 +9152,7 @@ div#mec_popup_shortcode_form {
 }
 
 .mec-add-shortcode-popup .mec-steps-content-container.mec-steps-content-2 .mec-steps-content.mec-steps-content-2 ul li:hover {
-  background: #fcfbfd;
+  background: #ffffff;
 }
 
 .mec-add-shortcode-popup .mec-steps-content-container.mec-steps-content-2 .mec-step-popup-skin-img img {
@@ -8995,7 +9317,7 @@ div#mec_popup_shortcode_form {
   border: 2px dashed #dce2e3;
   border-radius: 3px;
   padding: 20px 20px 6px;
-  background: #fcfcfc;
+  background: #ffffff;
 }
 
 .mec-add-shortcode-popup .mec-steps-content-container.mec-steps-content-4 .mec-steps-content.mec-steps-content-4 .mec-multiple-skin-options div label {
@@ -9164,7 +9486,7 @@ div#mec_popup_shortcode_form {
 .mec-add-shortcode-popup .mec-steps-content-container.mec-steps-content-4 .wn-mec-select-popup .option.focus,
 .mec-add-shortcode-popup .mec-steps-content-container.mec-steps-content-4 .wn-mec-select-popup .option.selected.focus,
 .mec-add-shortcode-popup .mec-steps-content-container.mec-steps-content-4 .wn-mec-select-popup .option:hover {
-  background-color: #f6f6f6;
+  background-color: #f7f8f9;
 }
 
 .mec-add-shortcode-popup .mec-steps-content-container.mec-steps-content-4 .wn-mec-select-popup .option.selected {
@@ -9284,7 +9606,7 @@ div#mec_popup_shortcode_form {
 .mec-add-shortcode-popup .mec-steps-content-container.mec-steps-content-6 .mec-popup-shortcode {
   width: 325px;
   border: 2px dashed #dce2e3;
-  background: #fcfcfc;
+  background: #ffffff;
   padding: 42px 42px 47px;
   text-align: center;
 }
@@ -9337,7 +9659,7 @@ div#mec_popup_shortcode_form {
 .mec-add-shortcode-popup .mec-steps-content-container.mec-steps-content-6 .mec-steps-6-loading {
   width: 325px;
   border: 2px dashed #dce2e3;
-  background: #fcfcfc;
+  background: #ffffff;
   padding: 42px 42px 47px;
   text-align: center;
   height: 182px;
@@ -9583,7 +9905,7 @@ div#mec_popup_event_form #mec-organizer .mec-form-row {
 .mec-add-event-popup .mec-steps-content-container .wn-mec-select-popup .option.focus,
 .mec-add-event-popup .mec-steps-content-container .wn-mec-select-popup .option.selected.focus,
 .mec-add-event-popup .mec-steps-content-container .wn-mec-select-popup .option:hover {
-  background-color: #f6f6f6;
+  background-color: #f7f8f9;
 }
 
 .mec-add-event-popup .mec-steps-content-container .wn-mec-select-popup .option.selected {
@@ -9677,12 +9999,12 @@ div#mec_popup_event_form #mec-organizer .mec-form-row {
 .mec-add-event-popup .mec-form-row.mec-available-color-row {
   border: 2px dashed #dce2e3;
   padding: 13px 20px !important;
-  background: #fcfcfc;
+  background: #ffffff;
   border-radius: 3px;
 }
 
 .mec-add-event-popup .wp-color-result-text {
-  background: #f7f7f7;
+  background: #f7f8f9;
   border-radius: unset;
   border-left: none;
   color: #555;
@@ -10150,7 +10472,7 @@ div#mec_popup_event_form #mec-organizer .mec-form-row {
 
 .mec-add-event-popup .mec-steps-content.mec-steps-content-6 .mce-container-body.mce-stack-layout {
   height: 100%;
-  background: #f5f5f5;
+  background: #f7f8f9;
 }
 
 .mec-add-event-popup .mec-steps-content.mec-steps-content-6 .mce-container * {
@@ -10344,12 +10666,12 @@ div#mec_popup_event_form #mec-organizer .mec-form-row {
 }
 
 .mec-add-event-popup .mec-steps-content-container .mec-time-picker .wn-mec-select-popup .list::-webkit-scrollbar-track {
-  background-color: #f6f6f6;
+  background-color: #f7f8f9;
 }
 
 .mec-add-event-popup .mec-steps-content-container .mec-time-picker .wn-mec-select-popup .list::-webkit-scrollbar {
   width: 3px;
-  background-color: #f6f6f6;
+  background-color: #f7f8f9;
 }
 
 .mec-add-event-popup .mec-steps-content-container .mec-time-picker .wn-mec-select-popup .list::-webkit-scrollbar-thumb {
@@ -10612,7 +10934,7 @@ div#mec_popup_event_form #mec-organizer .mec-form-row {
 
 .mec-add-shortcode-popup .mec-steps-content-container.mec-steps-content-5 .mec-switcher input[value="1"]:checked+label,
 .mec-add-shortcode-popup .mec-steps-content-container.mec-steps-content-5 .mec-switcher input[value="1"]:checked+label:before {
-  box-shadow: 2px 2px 12px -2px #4fdc73 inset;
+  box-shadow: 2px 2px 12px -2px #64e385 inset;
   position: relative;
   background: #64e385;
   border-color: #64e385;
@@ -11207,6 +11529,7 @@ mec_popup_event_form #mec_popup_settings .mec-image-select-wrap li input:checked
 .mec-admin-dark-mode.post-type-mec_calendars select,
 .mec-admin-dark-mode.post-type-mec_calendars textarea,
 .mec-admin-dark-mode.toplevel_page_mec-intro .w-box.mec-activation input[name="MECPurchaseCode"],
+.mec-admin-dark-mode.toplevel_page_mec-intro .w-box.mec-activation input[name="MECOfflineToken"],
 .mec-admin-dark-mode.toplevel_page_mec-intro .w-box.mec-activation input[type="radio"]+label span,
 .mec-select-deselect-actions li,
 .mec-admin-dark-mode .mec-backend-tab {
@@ -12207,7 +12530,7 @@ div#mec_widget_news_features .inside {
 
 .mec-metabox-upcoming-wrap ul {
   padding: 0 12px;
-  background: #f7f7f7;
+  background: #f7f8f9;
   margin: 0;
 }
 
@@ -12263,7 +12586,7 @@ div#mec_widget_news_features .inside {
   border-radius: 60px !important;
   box-shadow: 0 0 0 4px rgb(56 213 237 / 1%) !important;
   text-shadow: none !important;
-  background: #38d5ed !important;
+  background: #07bbe9 !important;
   border: none !important;
   transition: 0.24s !important;
   line-height: 36px;
@@ -12355,16 +12678,6 @@ div#mec-schema .mec-form-row label {
   border: 1px solid #e6e6e6;
 }
 
-@media (min-width: 1281px) {
-  .event-status-schema {
-    max-width: 70%;
-  }
-}
-
-.event-status-schema p {
-  margin-bottom: 35px;
-}
-
 div#mec_cancelled_reason_wrapper label {
   width: 100% !important;
 }
@@ -12421,7 +12734,8 @@ div#mec_cancelled_reason_wrapper label {
     height: auto !important;
   }
 
-  .w-box.mec-activation input[name="MECPurchaseCode"] {
+  .w-box.mec-activation input[name="MECPurchaseCode"],
+  .w-box.mec-activation input[name="MECOfflineToken"] {
     min-width: 200px !important;
     width: 330px;
   }
@@ -12612,7 +12926,8 @@ body.rtl .w-box.mec-activation .LicenseField {
   direction: rtl;
 }
 
-body.rtl .w-box.mec-activation input[name="MECPurchaseCode"] {
+body.rtl .w-box.mec-activation input[name="MECPurchaseCode"],
+body.rtl .w-box.mec-activation input[name="MECOfflineToken"] {
   text-align: right;
   padding-right: 20px;
 }
@@ -12945,7 +13260,7 @@ body.rtl #mec-occurrences .mec-occurrences-list li,
 body.rtl #mec_bfixed_form_fields li,
 body.rtl #mec_event_form_fields li,
 body.rtl #mec_reg_form_fields li {
-  border-radius: 11px 3px 3px 3px;
+  border-radius: 10px 3px 3px 3px;
 }
 
 body.rtl #mec-occurrences .mec-occurrences-list .mec-occurrences-delete-button,
@@ -13160,23 +13475,17 @@ div[id*="mec_event_fields"] div[aria-label="Fullscreen"] {
   display: none;
 }
 
-.mec-backend-tab-wrap,
-.mec-event-appointment-tab-wrap {
-  margin-bottom: 40px;
-}
-
-.mec-backend-tab,
-.mec-event-appointment-tab {
+.mec-backend-tab {
   display: inline-block;
   padding: 4px;
+  margin: 20px 0 10px;
   border: 1px solid #e3e4e5;
   border-radius: 6px;
   background: #fff;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-.mec-backend-tab-item,
-.mec-event-appointment-tab-item {
+.mec-backend-tab-item {
   display: inline-block;
   padding: 11px 33px;
   line-height: 1;
@@ -13188,8 +13497,7 @@ div[id*="mec_event_fields"] div[aria-label="Fullscreen"] {
   transition: all 0.2s ease;
 }
 
-.mec-backend-tab-item:hover,
-.mec-event-appointment-tab-item:hover {
+.mec-backend-tab-item:hover {
   color: #07bbe9;
 }
 
@@ -13365,7 +13673,7 @@ body[class*="page_MEC-settings"] .mec-custom-msg-notification-set-box.extra,
 body[class*="page_MEC-settings"] .mec-custom-msg-2-notification-set-box.extra {
   font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Oxygen, Roboto, sans-serif;
   max-width: 1018px;
-  border-radius: 11px;
+  border-radius: 10px;
   overflow: hidden;
   margin-right: auto;
   margin-left: auto;
@@ -13952,7 +14260,7 @@ body.index-php .ui-datepicker .ui-datepicker-next {
 }
 
 .lsd-apt-to {
-  margin: 0 2% 0 1%;
+  margin: 0 2%;
 }
 
 .lsd-apt-day-label {
@@ -13977,6 +14285,8 @@ body.index-php .ui-datepicker .ui-datepicker-next {
 
 .lsd-apt-day-timeslot-wrapper>div {
   width: calc(100% - 43px);
+  display: flex;
+  align-items: center;
 }
 
 .button.lsd-apt-day-timeslot-wrapper>span,
@@ -14056,10 +14366,21 @@ textarea[readonly] {
 #taxes_option .mec-form-row.mec-box .button.mec_field_sort {
   font-size: 0;
   position: relative;
-  width: 38px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
   text-align: center;
-  cursor: move;
+  cursor: grab;
   transition: all 0.3s;
+}
+
+#mec-hourly-schedule .mec-form-row.mec-box .button.mec_field_sort:active,
+#mec-faq .mec_faq_row.mec-box .button.mec_field_sort:active,
+#mec_tickets .mec_ticket_row.mec-box .button.mec_field_sort:active,
+#mec_fees_list .mec-form-row.mec-box .button.mec_field_sort:active,
+#mec_ticket_variations_list .mec_ticket_variation_row.mec-box .button.mec_field_sort:active,
+#taxes_option .mec-form-row.mec-box .button.mec_field_sort:active {
+  cursor: grabbing;
 }
 
 #mec-hourly-schedule .mec-form-row.mec-box .button.mec_field_sort:before,
@@ -14068,15 +14389,68 @@ textarea[readonly] {
 #mec_fees_list .mec-form-row.mec-box .button.mec_field_sort:before,
 #mec_ticket_variations_list .mec_ticket_variation_row.mec-box .button.mec_field_sort:before {
   position: absolute;
-  top: 0;
-  left: calc(50% - 10px);
-  width: 20px;
-  height: 20px;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  transform: translate(-50%, -50%);
   display: block;
-  font-family: simple-line-icons;
-  content: "\e023";
-  font-size: 15px;
-  color: #07bbe9;
+  content: "";
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cg fill='%23555'%3E%3Ccircle cx='3.5' cy='3.5' r='1.4'/%3E%3Ccircle cx='3.5' cy='7' r='1.4'/%3E%3Ccircle cx='3.5' cy='10.5' r='1.4'/%3E%3Ccircle cx='10.5' cy='3.5' r='1.4'/%3E%3Ccircle cx='10.5' cy='7' r='1.4'/%3E%3Ccircle cx='10.5' cy='10.5' r='1.4'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+/* Row "Remove" buttons: trash icon to match the sort grip (audit #9 follow-up).
+   Scoped to repeater rows only so unrelated .mec-dash-remove-btn uses
+   (image/file removal, appointment spans) keep their text labels. The
+   "Remove" text stays in the DOM (font-size:0 hides it visually but screen
+   readers still announce it). */
+#mec_tickets .mec_ticket_row .mec_ticket_remove_button,
+#mec_tickets .mec_ticket_row .mec_ticket_price_remove_button,
+#mec_fees_list .mec-form-row .mec-dash-remove-btn,
+[id^="mec_ticket_variations_list"] .mec_remove_ticket_variation_button,
+#mec-hourly-schedule .mec-form-row.mec-box .mec-remove-hourly-schedule-button,
+#mec-faq .mec_faq_row .mec-faq-remove {
+  font-size: 0;
+  position: relative;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  cursor: pointer;
+  border-color: #e6c1c4;
+}
+
+#mec_tickets .mec_ticket_row .mec_ticket_remove_button:before,
+#mec_tickets .mec_ticket_row .mec_ticket_price_remove_button:before,
+#mec_fees_list .mec-form-row .mec-dash-remove-btn:before,
+[id^="mec_ticket_variations_list"] .mec_remove_ticket_variation_button:before,
+#mec-hourly-schedule .mec-form-row.mec-box .mec-remove-hourly-schedule-button:before,
+#mec-faq .mec_faq_row .mec-faq-remove:before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  transform: translate(-50%, -50%);
+  display: block;
+  content: "";
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23c4474a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3 6 5 6 21 6'/%3E%3Cpath d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'/%3E%3Cline x1='10' y1='11' x2='10' y2='17'/%3E%3Cline x1='14' y1='11' x2='14' y2='17'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+#mec_tickets .mec_ticket_row .mec_ticket_remove_button:hover:before,
+#mec_tickets .mec_ticket_row .mec_ticket_price_remove_button:hover:before,
+#mec_fees_list .mec-form-row .mec-dash-remove-btn:hover:before,
+[id^="mec_ticket_variations_list"] .mec_remove_ticket_variation_button:hover:before,
+#mec-hourly-schedule .mec-form-row.mec-box .mec-remove-hourly-schedule-button:hover:before,
+#mec-faq .mec_faq_row .mec-faq-remove:hover:before {
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23a32023' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3 6 5 6 21 6'/%3E%3Cpath d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'/%3E%3Cline x1='10' y1='11' x2='10' y2='17'/%3E%3Cline x1='14' y1='11' x2='14' y2='17'/%3E%3C/svg%3E");
 }
 
 body.post-type-mec_invoice #post-body-content {
@@ -14240,4 +14614,681 @@ body.post-type-mec_invoice #post-body-content {
 
 #mec_select_entity_type label {
   display: block
+}
+
+#mec_metabox_details #mec_start_date,
+#mec_metabox_details #mec_end_date {
+  width: 100% !important;
+  max-width: none;
+}
+
+/* Refinements section 19 pins these to var(--mec-input-w) — kept here for
+   history; the override lives in backend-refinements.css (loaded after). */
+
+/* === Audit issue #1: required-field markers + inline validation feedback === */
+#mec_metabox_details .mec-required {
+  color: #d63638;
+  font-weight: 700;
+  margin-left: 2px;
+}
+
+#post-body #mec_start_date.mec-field-invalid,
+#post-body #mec_end_date.mec-field-invalid {
+  border-color: #d63638 !important;
+  box-shadow: 0 0 0 1px #d63638;
+}
+
+.mec-field-error {
+  display: block;
+  color: #d63638;
+  font-size: 12px;
+  line-height: 1.4;
+  margin-top: 4px;
+  font-style: italic;
+}
+
+/* Repeat Interval unit suffix (audit issue #17) */
+.mec-interval-unit {
+  display: inline-block;
+  margin: 0 0 0 8px;
+  line-height: 38px;
+  font-size: 13px;
+  color: #50575e;
+}
+
+/* "This event is free" locked cost field (audit issue #15) */
+.mec-cost-locked {
+  background: #f0f0f1 !important;
+  color: #50575e;
+  cursor: not-allowed;
+}
+
+/* Mobile pass for the event editor (audit N1) */
+@media (max-width: 782px) {
+
+  /* Tab rail → horizontal scrollable bar (not 15 stacked links) */
+  .post-type-mec-events .mec-add-event-tabs-wrap,
+  .post-type-mec-events .mec-add-booking-tabs-wrap {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .post-type-mec-events .mec-add-event-tabs-left,
+  .post-type-mec-events .mec-add-booking-tabs-left {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    width: 100% !important;
+    min-width: 0 !important;
+    border-bottom: 1px solid #e0e3e6;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .post-type-mec-events .mec-add-event-tabs-left .mec-add-event-tabs-link,
+  .post-type-mec-events .mec-add-booking-tabs-left .mec-add-booking-tabs-link {
+    white-space: nowrap;
+    flex-shrink: 0;
+    padding: 10px 14px;
+    border: none !important;
+    border-bottom: 2px solid transparent !important;
+  }
+
+  .post-type-mec-events .mec-add-event-tabs-left .mec-add-event-tabs-link.mec-tab-active {
+    border-bottom-color: #07bbe9 !important;
+    background: transparent !important;
+  }
+
+  .post-type-mec-events .mec-add-event-tabs-right,
+  .post-type-mec-events .mec-add-booking-tabs-right {
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 15px !important;
+    border-left: none !important;
+  }
+
+  /* Form fields: stack vertically */
+  .post-type-mec-events .mec-form-row>div[class*="mec-col-"] {
+    width: 100% !important;
+    float: none !important;
+    margin-bottom: 6px;
+  }
+
+  /* Combobox: flexible */
+  .mec-time-combo {
+    width: 100% !important;
+    max-width: 180px;
+  }
+
+  /* Notice: compact */
+  .mec-notice {
+    margin: 8px 0;
+  }
+
+  .mec-notice-body {
+    padding: 10px 12px;
+  }
+
+  .mec-notice-actions {
+    flex-wrap: wrap;
+  }
+
+  /* Recurrence preview: compact */
+  .mec-repeat-preview {
+    margin: 8px 0;
+  }
+
+  .mec-repeat-preview-dates {
+    gap: 4px;
+  }
+
+  /* Help text: full width */
+  .post-type-mec-events .description {
+    max-width: 100% !important;
+  }
+}
+
+/* Unified help-text styling across the event editor (audit N2) */
+#mec_metabox_details .description,
+#mec_metabox_booking .description,
+#mec_metabox_visibility .description,
+#mec_metabox_gallery .description {
+  display: block;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #6b7280;
+  font-weight: 400;
+  margin: 5px 0;
+  padding: 0;
+  border: none;
+  font-style: normal;
+  max-width: 500px;
+}
+
+/* MEC reusable notice system (R5 + future use) */
+.mec-notice {
+  display: flex;
+  align-items: stretch;
+  margin: 12px 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
+  border: 1px solid #e2e4e7;
+  background: #fff;
+  animation: mec-notice-in .2s ease-out;
+}
+
+@keyframes mec-notice-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mec-notice-accent {
+  flex-shrink: 0;
+  width: 4px;
+}
+
+.mec-notice-body {
+  flex: 1;
+  padding: 14px 16px;
+  min-width: 0;
+}
+
+.mec-notice-title {
+  font-weight: 600;
+  font-size: 14px;
+  margin: 0 0 6px;
+  line-height: 1.4;
+}
+
+.mec-notice-text {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #3c434a;
+}
+
+.mec-notice-list {
+  margin: 0 0 10px;
+  padding-left: 18px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: #3c434a;
+}
+
+.mec-notice-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.mec-notice-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 18px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background .15s ease, border-color .15s ease;
+  line-height: 1.4;
+}
+
+.mec-notice-btn--primary {
+  background: #2271b1;
+  color: #fff;
+  border-color: #2271b1;
+}
+
+.mec-notice-btn--primary:hover {
+  background: #135e96;
+}
+
+.mec-notice-btn--ghost {
+  background: transparent;
+  color: #50575e;
+  border-color: #c3c4c7;
+}
+
+.mec-notice-btn--ghost:hover {
+  background: #f6f7f7;
+  color: #1d2327;
+}
+
+.mec-notice-close {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  margin: 10px 10px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+  color: #8c8f94;
+  font-size: 18px;
+  line-height: 1;
+  transition: background .15s ease, color .15s ease;
+}
+
+.mec-notice-close:hover {
+  background: #f0f0f1;
+  color: #1d2327;
+}
+
+.mec-notice--error .mec-notice-accent {
+  background: #e53935;
+}
+
+.mec-notice--error .mec-notice-title {
+  color: #c62828;
+}
+
+.mec-notice--warning .mec-notice-accent {
+  background: #f9a825;
+}
+
+.mec-notice--warning .mec-notice-title {
+  color: #8a6500;
+}
+
+.mec-notice--info .mec-notice-accent {
+  background: #2271b1;
+}
+
+.mec-notice--info .mec-notice-title {
+  color: #2271b1;
+}
+
+.mec-notice--success .mec-notice-accent {
+  background: #2e7d32;
+}
+
+.mec-notice--success .mec-notice-title {
+  color: #2e7d32;
+}
+
+/* Recurrence summary + next-5 preview (audit issue #6) */
+.mec-repeat-preview {
+  margin: 10px 0 16px;
+  background: #fbfbfd;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .04), 0 1px 2px rgba(0, 0, 0, .03);
+  overflow: hidden;
+}
+
+.mec-repeat-preview-head {
+  padding: 7px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: #6b7280;
+  background: rgba(0, 0, 0, .015);
+  border-bottom: 1px solid #eef0f2;
+}
+
+.mec-repeat-preview-body {
+  padding: 10px 14px;
+}
+
+.mec-repeat-preview-summary {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+  line-height: 1.5;
+}
+
+.mec-repeat-preview-dates {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.mec-repeat-preview-label {
+  font-size: 12px;
+  color: #6b7280;
+  margin-right: 2px;
+}
+
+.mec-repeat-preview-dates ul {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.mec-repeat-preview-dates li {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 12px;
+  color: #374151;
+}
+
+.mec-repeat-preview-empty {
+  margin: 0;
+  font-size: 12.5px;
+  font-style: italic;
+  color: #6b7280;
+}
+
+/* Truncation chip: marks the 5 shown dates as samples when more exist. */
+.mec-repeat-preview-dates li.mec-repeat-preview-more {
+  background: transparent;
+  border: 1px dashed #c5c9d0;
+  color: #9ca3af;
+  font-style: italic;
+  font-weight: 600;
+  cursor: default;
+}
+
+.mec-repeat-preview-count {
+  display: inline-block;
+  margin-top: 8px;
+  color: #6b7280;
+  font-size: 12px;
+}
+
+/* Unified editor nav (audit R1, issue #2) — feature-flagged */
+.mec-unified-rail .mec-unified-bucket {
+  margin-bottom: 2px;
+}
+
+.mec-unified-rail .mec-unified-bucket-header {
+  padding: 12px 15px 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: #6b7280;
+}
+
+/* Combobox time control (audit R3, issue #8 part C) */
+.mec-time-combo-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+.mec-time-combo {
+  width: 130px;
+  padding: 6px 26px 6px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 13px;
+  line-height: 1.4;
+  background: #fff;
+}
+
+.mec-time-clear {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  user-select: none;
+  padding: 2px 5px;
+  font-size: 15px;
+  line-height: 1;
+  color: #8c8c8c;
+  display: none;
+}
+
+.mec-time-clear:hover {
+  color: #1d2327;
+}
+
+.mec-time-dd {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 99999;
+  width: 100%;
+  max-height: 220px;
+  overflow-y: auto;
+  margin-top: 2px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .12);
+}
+
+.mec-time-dd ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.mec-time-dd li {
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #1d2327;
+}
+
+.mec-time-dd li:hover,
+.mec-time-dd li.mec-time-dd-active {
+  background: #f0f5fa;
+  color: #111827;
+}
+
+/* Hourly schedule string time combobox (audit #5) */
+.mec-hourly-time-wrap {
+  position: relative;
+  display: inline-block;
+  box-sizing: border-box;
+}
+
+.mec-hourly-time-wrap .mec-hourly-time {
+  width: 100%;
+  padding: 6px 26px 6px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 13px;
+  line-height: 1.4;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+/* Location duplicate-name warning (audit issue #14) */
+.mec-location-duplicate-warn {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 6px 0 10px;
+  padding: 8px 12px;
+  background: #fff7e6;
+  border: 1px solid #f0c36d;
+  border-radius: 6px;
+  font-size: 12.5px;
+  color: #7a5400;
+}
+
+.mec-location-duplicate-warn .mec-location-use-existing {
+  margin-left: auto;
+}
+
+/* Inline field help text inside editor tab panels + visibility (audit issue #12) */
+.mec-event-tab-content .description,
+#mec_metabox_visibility .description {
+  display: inline-block;
+  border-left: 1px dashed #ccc;
+  padding-left: 12px;
+  font-size: 12px;
+  line-height: 18px;
+  color: #8d9599;
+  font-weight: 400;
+  margin: 9px 0;
+}
+
+.mec-tooltip:focus-within .box {
+  visibility: visible;
+  opacity: 1;
+  transition-delay: 0s, 0s;
+}
+
+.mec-add-event-tabs-left .mec-add-event-tabs-link:focus-visible,
+.mec-add-booking-tabs-left .mec-add-booking-tabs-link:focus-visible {
+  outline: 2px solid #2271b1;
+  outline-offset: -2px;
+}
+
+/* Offline activation ------------------------------------------------------ */
+/* Its input reuses the purchase-code pill (the selectors above list both
+   names), so only the surrounding block needs rules. Width is capped like
+   .w-box-head is, because .w-box.mec-activation carries a decorative image
+   anchored top right and full-width text runs underneath it. */
+.w-box.mec-activation .box-mec-offline-activation {
+  max-width: 75%;
+  margin-top: 34px;
+  padding-top: 26px;
+  border-top: 1px solid #e6e9ec;
+}
+
+.w-box.mec-activation .box-mec-offline-activation>p {
+  margin: 0 0 6px;
+}
+
+.w-box.mec-activation .mec-offline-site-id {
+  color: #6c7781;
+  font-size: 13px;
+}
+
+.w-box.mec-activation .mec-offline-site-id code {
+  background: #f7f8f9;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 13px;
+  color: #40d47e;
+}
+
+/* Copy: quiet secondary action, inline with the host code. A slim outline
+   pill so it doesn't compete with the primary CTA. */
+.w-box.mec-activation .box-mec-offline-activation .mec-offline-copy-host {
+  display: inline-block;
+  border: 1px solid #d6dbe0;
+  border-radius: 33px;
+  background: transparent;
+  color: #56606a;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 6px 14px;
+  margin-left: 6px;
+  vertical-align: middle;
+  box-shadow: none;
+  cursor: pointer;
+  transition: border-color .2s ease, color .2s ease;
+}
+
+.w-box.mec-activation .box-mec-offline-activation .mec-offline-copy-host:hover {
+  border-color: #9aa5ae;
+  color: #1d2327;
+}
+
+.w-box.mec-activation .box-mec-offline-activation .mec-offline-copy-host.mec-copied {
+  border-color: #64e385;
+  color: #1a7f37;
+}
+
+/* Contact support: same green pill as this box's primary submit button. */
+.w-box.mec-activation .box-mec-offline-activation .mec-offline-support-btn {
+  display: inline-block;
+  border: none;
+  border-radius: 33px;
+  background: #64e385;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  line-height: 1;
+  padding: 10px 22px;
+  box-shadow: none;
+  text-decoration: none;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background .28s ease;
+}
+
+.w-box.mec-activation .box-mec-offline-activation .mec-offline-support-btn:hover {
+  background: #45ce68;
+  color: #fff;
+}
+
+.w-box.mec-activation .mec-offline-support-link {
+  margin: 0 0 10px;
+}
+
+.w-box.mec-activation .box-mec-avtivation>.mec-notice--success {
+  margin: 0 0 14px;
+}
+
+.mec-admin-dark-mode .w-box.mec-activation .box-mec-offline-activation .mec-offline-copy-host {
+  border-color: #3c434a;
+  background: transparent;
+  color: #aeb7bf;
+}
+
+.mec-admin-dark-mode .w-box.mec-activation .box-mec-offline-activation .mec-offline-copy-host:hover {
+  border-color: #6b747c;
+  color: #fff;
+}
+
+.mec-admin-dark-mode .w-box.mec-activation .box-mec-offline-activation .mec-offline-copy-host.mec-copied {
+  border-color: #64e385;
+  color: #64e385;
+}
+
+.w-box.mec-activation .MECOfflineMessage {
+  margin-top: 14px;
+  font-size: 13px;
+  min-height: 18px;
+}
+
+.w-box.mec-activation .MECOfflineMessage.mec-offline-error {
+  color: #e6584b;
+}
+
+body.rtl .w-box.mec-activation .mec-offline-site-id code {
+  direction: ltr;
+  display: inline-block;
+}
+
+.mec-admin-dark-mode .w-box.mec-activation .box-mec-offline-activation {
+  border-top-color: #333;
+}
+
+.mec-admin-dark-mode .w-box.mec-activation .mec-offline-site-id code {
+  background: #1d1d1d;
+}
+
+@media (max-width: 960px) {
+  .w-box.mec-activation .box-mec-offline-activation {
+    max-width: 100%;
+  }
+}
+
+#MECActivation .mec-notice {
+  max-width: 60%;
 }
