@@ -1,4 +1,9 @@
-﻿v 7.36.2 - 1 September 2026
+v 7.36.2.1 - 2sept26
+- fixed ical CREATED/LAST-MODIFIED format
+- added missing timezone display, reformat
+- fixed countdown
+
+v 7.36.2 - 1 September 2026
 - Fixed: The Pro license system (activation form, offline activation and license notices) incorrectly shipping in the Lite package and appearing to free users.
 - Fixed: Some minor styling issues in frontend and backend.
 
