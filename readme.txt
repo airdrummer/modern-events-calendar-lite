@@ -1,10 +1,10 @@
-=== Modern Events Calendar Lite ===
+﻿=== Modern Events Calendar Lite ===
 Contributors: webnus
 Donate link: https://webnus.net
 Tags: Event, Events, Calendar, Booking, Schedule, Organizer, Venue
 Requires at least: 4.0.0
 Tested up to: 7.1
-Stable tag: 7.36.1.1
+Stable tag: 7.36.2
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -473,13 +473,12 @@ You can see [plugin documentation](https://webnus.net/dox/modern-events-calendar
 
 == Changelog ==
 
-v 7.36.1.1 - 1sept26
-- fixed ical CREATED/LAST-MODIFIED format
-- added missing timezone display, reformat
-- fixed countdown
+= 7.36.2 - 1 September 2026 =
+- Fixed: The Pro license system (activation form, offline activation and license notices) incorrectly shipping in the Lite package and appearing to free users.
+- Fixed: Some minor styling issues in frontend and backend.
 
-= 7.36.1 - 1 September 2026
--Improved: The offline activation experience.
+= 7.36.1 - 1 September 2026 =
+- Improved: The offline activation experience.
 
 = 7.36.0 - 1 September 2026 =
 - Added: A signed license system with offline token activation and phased enforcement of Pro features.

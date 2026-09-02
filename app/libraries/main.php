@@ -4722,8 +4722,8 @@ class MEC_main extends MEC_base
         $event_content = str_replace("\n", "\\n", $event_content);
         $event_content = preg_replace('/(<script[^>]*>.+?<\/script>|<style[^>]*>.+?<\/style>)/s', '', $event_content);
 
-        $ical .= "CREATED:" . gmdate('Ymd\\THis\\Z', $stamp) . $crlf;
-        $ical .= "LAST-MODIFIED:" . gmdate('Ymd\\THis\\Z', $modified) . $crlf;
+        $ical .= "CREATED:" . date('Ymd', $stamp) . $crlf;
+        $ical .= "LAST-MODIFIED:" . date('Ymd', $modified) . $crlf;
         $ical .= "PRIORITY:5" . $crlf;
         $ical .= "SEQUENCE:" . $sequence . $crlf;
         $ical .= "TRANSP:OPAQUE" . $crlf;
@@ -4819,8 +4819,8 @@ class MEC_main extends MEC_base
         $event_content = str_replace("\n", "\\n", $event_content);
         $event_content = preg_replace('/(<script[^>]*>.+?<\/script>|<style[^>]*>.+?<\/style>)/s', '', $event_content);
 
-        $ical .= "CREATED:" . gmdate('Ymd\\THis\\Z', $stamp) . $crlf;
-        $ical .= "LAST-MODIFIED:" . gmdate('Ymd\\THis\\Z', $modified) . $crlf;
+        $ical .= "CREATED:" . date('Ymd', $stamp) . $crlf;
+        $ical .= "LAST-MODIFIED:" . date('Ymd', $modified) . $crlf;
         $ical .= "PRIORITY:5" . $crlf;
         $ical .= "SEQUENCE:" . $sequence . $crlf;
         $ical .= "TRANSP:OPAQUE" . $crlf;
@@ -4912,8 +4912,8 @@ class MEC_main extends MEC_base
         $ical .= "DTSTART:" . gmdate($time_format, ($start_time - $gmt_offset_seconds)) . $crlf;
         $ical .= "DTEND:" . gmdate($time_format, ($end_time - $gmt_offset_seconds)) . $crlf;
         $ical .= "DTSTAMP:" . gmdate($time_format, ($stamp - $gmt_offset_seconds)) . $crlf;
-        $ical .= "CREATED:" . gmdate('Ymd\\THis\\Z', $stamp) . $crlf;
-        $ical .= "LAST-MODIFIED:" . gmdate('Ymd\\THis\\Z', $modified) . $crlf;
+        $ical .= "CREATED:" . date('Ymd', $stamp) . $crlf;
+        $ical .= "LAST-MODIFIED:" . date('Ymd', $modified) . $crlf;
         $ical .= "PRIORITY:5" . $crlf;
         $ical .= "SEQUENCE:" . $sequence . $crlf;
         $ical .= "TRANSP:OPAQUE" . $crlf;
@@ -9839,6 +9839,33 @@ class MEC_main extends MEC_base
     {
         $link = 'https://webnus.net/mec-purchase/?ref=17/';
         return apply_filters('MEC_upgrade_link', $link);
+    }
+
+    /**
+     * The linked subject of a "... is required to use this feature" notice.
+     *
+     * On Lite that is the product, and the link goes to the store. On the Pro
+     * package it is the LICENCE, and the link goes to the activation screen —
+     * because the person reading it has already bought Pro, and telling them to
+     * buy it again reads as though their purchase never registered. That is a
+     * support ticket, and an entirely self-inflicted one.
+     *
+     * Returning only the anchor rather than the whole sentence is deliberate:
+     * the twenty-one surrounding sentences stay exactly as they are, so no
+     * existing translation is invalidated by this change.
+     *
+     * @return string
+     */
+    public function pro_notice_link()
+    {
+        if (!$this->isProBuild())
+        {
+            return '<a href="' . esc_url($this->get_pro_link()) . '" target="_blank">'
+                . esc_html__('Pro version of Modern Events Calendar', 'modern-events-calendar-lite') . '</a>';
+        }
+
+        return '<a href="' . esc_url(admin_url('admin.php?page=mec-intro')) . '">'
+            . esc_html__('Activating your Modern Events Calendar Pro license', 'modern-events-calendar-lite') . '</a>';
     }
 
     /**
