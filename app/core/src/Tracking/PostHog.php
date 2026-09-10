@@ -435,7 +435,12 @@ class PostHog
         $account = get_option(self::ACCOUNT_ID_OPTION);
         if (is_string($account) && $account !== '') return $account;
 
-        $account = get_option('mec_license_account_id');
+        // The licence core writes this network-wide on multisite, because the
+        // claim it comes from is made once for the whole network.
+        $account = (function_exists('is_multisite') && is_multisite())
+            ? get_site_option('mec_license_account_id')
+            : get_option('mec_license_account_id');
+
         if (is_string($account) && $account !== '') return $account;
 
         return '';

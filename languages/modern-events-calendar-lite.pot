@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Modern Events Calendar Lite\n"
-"POT-Creation-Date: 2026-09-01 14:54+0330\n"
+"POT-Creation-Date: 2026-09-10 10:47+0330\n"
 "PO-Revision-Date: 2023-01-12 09:55+0330\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -24,9 +24,9 @@ msgstr ""
 #: app/addons/KC.php:68 app/addons/VC.php:59
 #: app/core/src/ImportExport/Terms.php:357 app/features/ix/import.php:27
 #: app/features/ix/import.php:51 app/features/ix/import.php:80
-#: app/features/ix/thirdparty.php:27 app/features/licensegate.php:428
-#: app/features/licensegate.php:652 app/features/mec.php:1703
-#: app/features/mec.php:1737 app/features/mec/addons.php:25
+#: app/features/ix/thirdparty.php:27 app/features/licensegate.php:465
+#: app/features/licensegate.php:695 app/features/mec.php:1801
+#: app/features/mec.php:1835 app/features/mec/addons.php:25
 #: app/features/mec/addons.php:29 app/features/mec/dashboard.php:61
 #: app/features/mec/support-page.php:25 app/features/mec/support-page.php:29
 #: app/features/mec/wizard.php:504 app/widgets/MEC.php:33
@@ -40,7 +40,7 @@ msgid "Content"
 msgstr ""
 
 #: app/addons/KC.php:75 app/addons/VC.php:70 app/addons/avada.php:63
-#: app/features/mec.php:667 app/features/mec.php:698 app/features/mec.php:728
+#: app/features/mec.php:765 app/features/mec.php:796 app/features/mec.php:826
 msgid "Shortcode"
 msgstr ""
 
@@ -576,7 +576,7 @@ msgstr ""
 #: app/features/events.php:976 app/features/events.php:1264
 #: app/features/events.php:1268 app/features/events.php:3400
 #: app/features/events.php:3511 app/features/events.php:3869
-#: app/features/ix/import_g_calendar.php:39 app/features/mec.php:2005
+#: app/features/ix/import_g_calendar.php:39 app/features/mec.php:2109
 #: app/features/mec/meta_boxes/display_options.php:160
 #: app/features/mec/meta_boxes/display_options.php:437
 #: app/features/mec/meta_boxes/display_options.php:731
@@ -602,7 +602,7 @@ msgstr ""
 #: app/features/events.php:1285 app/features/events.php:1289
 #: app/features/events.php:1641 app/features/events.php:1646
 #: app/features/events.php:3512 app/features/events.php:3871
-#: app/features/ix/import_g_calendar.php:45 app/features/mec.php:2008
+#: app/features/ix/import_g_calendar.php:45 app/features/mec.php:2112
 #: app/features/mec/meta_boxes/display_options.php:182
 #: app/features/mec/meta_boxes/display_options.php:459
 #: app/features/mec/meta_boxes/display_options.php:753
@@ -654,7 +654,7 @@ msgid "Repeats"
 msgstr ""
 
 #: app/core/src/FES/FormBuilder.php:278 app/features/events.php:1157
-#: app/features/mec.php:2012 app/libraries/skins.php:2644
+#: app/features/mec.php:2116 app/libraries/skins.php:2644
 #: app/skins/default_full_calendar/tpl.php:88
 #: app/skins/full_calendar/tpl.php:176 app/skins/full_calendar/tpl.php:205
 msgid "Daily"
@@ -681,14 +681,14 @@ msgid "Weekly"
 msgstr ""
 
 #: app/core/src/FES/FormBuilder.php:283 app/features/events.php:1197
-#: app/features/mec.php:2014 app/libraries/skins.php:2650
+#: app/features/mec.php:2118 app/libraries/skins.php:2650
 #: app/skins/default_full_calendar/tpl.php:86
 #: app/skins/full_calendar/tpl.php:170 app/skins/full_calendar/tpl.php:199
 msgid "Monthly"
 msgstr ""
 
 #: app/core/src/FES/FormBuilder.php:284 app/features/events.php:1205
-#: app/features/mec.php:2016 app/libraries/skins.php:2653
+#: app/features/mec.php:2120 app/libraries/skins.php:2653
 #: app/skins/default_full_calendar/tpl.php:85
 #: app/skins/full_calendar/tpl.php:167 app/skins/full_calendar/tpl.php:196
 msgid "Yearly"
@@ -1243,7 +1243,7 @@ msgstr ""
 
 #: app/core/src/FES/FormBuilder.php:1242 app/features/events.php:263
 #: app/features/events.php:3464 app/features/events.php:3882
-#: app/features/ix/test_data.php:49 app/features/mec.php:569
+#: app/features/ix/test_data.php:49 app/features/mec.php:667
 #: app/features/mec/meta_boxes/filter.php:78
 #: app/features/mec/meta_boxes/filter.php:123 app/libraries/main.php:9369
 #: app/libraries/main.php:9434
@@ -1258,7 +1258,7 @@ msgstr ""
 #: app/core/src/FES/FormBuilder.php:1305
 #: app/core/src/SingleBuilder/Widgets/EventLabels/EventLabels.php:51
 #: app/features/events.php:3881 app/features/labels.php:61
-#: app/features/labels.php:232 app/features/mec.php:570
+#: app/features/labels.php:232 app/features/mec.php:668
 #: app/features/mec/meta_boxes/filter.php:86
 #: app/features/mec/meta_boxes/filter.php:315
 #: app/features/mec/meta_boxes/filter.php:322 app/libraries/main.php:9371
@@ -1273,7 +1273,7 @@ msgid "Event Color"
 msgstr ""
 
 #: app/core/src/FES/FormBuilder.php:1384 app/features/events.php:3883
-#: app/features/ix/test_data.php:60 app/features/mec.php:568
+#: app/features/ix/test_data.php:60 app/features/mec.php:666
 #: app/features/mec/meta_boxes/filter.php:90
 #: app/features/mec/meta_boxes/filter.php:390
 #: app/features/mec/meta_boxes/filter.php:397
@@ -1291,7 +1291,7 @@ msgid "To show this widget, you need to enable \"Speakers\" module."
 msgstr ""
 
 #: app/core/src/FES/FormBuilder.php:1437 app/features/events.php:3887
-#: app/features/mec.php:582 app/features/mec/fes.php:467
+#: app/features/mec.php:680 app/features/mec/fes.php:467
 #: app/features/mec/meta_boxes/filter.php:84
 #: app/features/mec/meta_boxes/filter.php:267 app/features/mec/modules.php:34
 #: app/features/mec/modules.php:44 app/features/popup/settings.php:323
@@ -1414,7 +1414,7 @@ msgstr ""
 msgid "Remove image"
 msgstr ""
 
-#: app/core/src/FES/FormBuilder.php:1550 app/features/mec.php:588
+#: app/core/src/FES/FormBuilder.php:1550 app/features/mec.php:686
 #: app/features/mec/fes.php:492 app/features/mec/meta_boxes/filter.php:88
 #: app/features/mec/meta_boxes/filter.php:363
 #: app/features/mec/meta_boxes/filter.php:370 app/features/mec/modules.php:149
@@ -1664,7 +1664,7 @@ msgstr ""
 #: app/core/src/FES/FormBuilder.php:2110 app/core/src/FES/FormBuilder.php:2120
 #: app/core/src/FES/FormBuilder.php:2311 app/core/src/FES/FormBuilder.php:2321
 #: app/core/src/ImportExport/Terms.php:41 app/features/locations.php:182
-#: app/features/locations.php:244 app/features/mec.php:1391
+#: app/features/locations.php:244 app/features/mec.php:1489
 #: app/features/organizers.php:184 app/features/organizers.php:237
 #: app/features/speakers.php:222 app/features/speakers.php:299
 msgid "Thumbnail"
@@ -1848,7 +1848,7 @@ msgstr ""
 
 #: app/core/src/FES/FormBuilder.php:2473 app/core/src/FES/FormBuilder.php:3394
 #: app/core/src/FES/FormBuilder.php:3483 app/core/src/Forms/FormFields.php:501
-#: app/core/src/Forms/SettingsForm.php:128 app/features/mec.php:2314
+#: app/core/src/Forms/SettingsForm.php:128 app/features/mec.php:2418
 #: app/features/mec/booking.php:159 app/features/mec/booking.php:1113
 #: app/features/mec/booking.php:1210
 #: app/features/mec/meta_boxes/search_form.php:78
@@ -2083,7 +2083,7 @@ msgid "Email Verification"
 msgstr ""
 
 #: app/core/src/FES/FormBuilder.php:2722 app/core/src/FES/FormBuilder.php:2734
-#: app/features/mec.php:1495 app/features/mec.php:2305
+#: app/features/mec.php:1593 app/features/mec.php:2409
 #: app/features/mec/booking.php:219 app/features/mec/booking.php:287
 #: app/features/mec/booking.php:302 app/features/mec/booking.php:446
 #: app/features/mec/booking.php:1297 app/features/mec/booking.php:1324
@@ -2522,12 +2522,12 @@ msgid "Occurrence"
 msgstr ""
 
 #: app/core/src/FES/FormBuilder.php:3654 app/core/src/FES/FormBuilder.php:4158
-#: app/features/mec.php:2245
+#: app/features/mec.php:2349
 msgid "Previous Occurrences"
 msgstr ""
 
 #: app/core/src/FES/FormBuilder.php:3661 app/core/src/FES/FormBuilder.php:4165
-#: app/features/mec.php:2255 app/modules/next-event/multiple.php:60
+#: app/features/mec.php:2359 app/modules/next-event/multiple.php:60
 msgid "Next Occurrences"
 msgstr ""
 
@@ -3887,7 +3887,7 @@ msgstr ""
 msgid "Export All Excel"
 msgstr ""
 
-#: app/features/autoemails.php:61 app/features/mec.php:599
+#: app/features/autoemails.php:61 app/features/mec.php:697
 msgid "Emails"
 msgstr ""
 
@@ -3920,7 +3920,7 @@ msgid "No %s found in Trash!"
 msgstr ""
 
 #: app/features/autoemails.php:113 app/features/events.php:450
-#: app/features/mec/addons.php:73 app/features/webhooks.php:125
+#: app/features/mec/addons.php:74 app/features/webhooks.php:125
 msgid "Details"
 msgstr ""
 
@@ -4015,7 +4015,7 @@ msgstr ""
 msgid "Certificate"
 msgstr ""
 
-#: app/features/certificates.php:66 app/features/mec.php:606
+#: app/features/certificates.php:66 app/features/mec.php:704
 #: app/features/mec/modules.php:447 app/libraries/main.php:866
 msgid "Certificates"
 msgstr ""
@@ -4032,8 +4032,8 @@ msgstr ""
 msgid "Recent Colors"
 msgstr ""
 
-#: app/features/contextual.php:55 app/features/mec.php:617
-#: app/features/mec/dashboard.php:182 app/features/mec/support.php:20
+#: app/features/contextual.php:55 app/features/mec.php:715
+#: app/features/mec/dashboard.php:183 app/features/mec/support.php:20
 #: app/features/mec/wizard.php:536 app/features/popup/event.php:72
 #: app/features/popup/settings.php:36 app/features/popup/shortcode.php:43
 #: app/libraries/main.php:879
@@ -4051,7 +4051,7 @@ msgstr ""
 
 #: app/features/contextual.php:70 app/features/events.php:2209
 #: app/features/mec/booking.php:1264 app/features/mec/booking.php:1283
-#: app/features/mec/support-page.php:132 app/features/mec/support.php:36
+#: app/features/mec/support-page.php:133 app/features/mec/support.php:36
 #: app/libraries/main.php:780
 msgid "Payment Gateways"
 msgstr ""
@@ -4163,7 +4163,7 @@ msgid "Next Event Module"
 msgstr ""
 
 #: app/features/contextual.php:274 app/features/mec/fes.php:46
-#: app/features/mec/support-page.php:107
+#: app/features/mec/support-page.php:108
 msgid "Frontend Event Submission"
 msgstr ""
 
@@ -4186,7 +4186,7 @@ msgstr ""
 msgid "Mailchimp Integration"
 msgstr ""
 
-#: app/features/contextual.php:334
+#: app/features/contextual.php:340
 msgid "MEC Activation"
 msgstr ""
 
@@ -4241,7 +4241,7 @@ msgid "event occurrence."
 msgstr ""
 
 #: app/features/emails/details.php:42 app/features/events.php:235
-#: app/features/ix/export.php:39 app/features/mec/dashboard.php:498
+#: app/features/ix/export.php:39 app/features/mec/dashboard.php:494
 #: app/features/mec/meta_boxes/filter.php:111 app/libraries/main.php:8159
 #: app/libraries/main.php:8181 app/skins/daily_view/tpl.php:84
 #: app/skins/monthly_view/calendar_clean.php:47
@@ -4262,12 +4262,12 @@ msgid ""
 "events or with Daylight Saving Time."
 msgstr ""
 
-#: app/features/events.php:237 app/features/mec.php:567
+#: app/features/events.php:237 app/features/mec.php:665
 #: app/features/mec/wizard.php:526
 msgid "Add Event"
 msgstr ""
 
-#: app/features/events.php:238 app/features/mec/dashboard.php:181
+#: app/features/events.php:238 app/features/mec/dashboard.php:182
 msgid "Add New Event"
 msgstr ""
 
@@ -4519,7 +4519,7 @@ msgid ""
 "Booking > Tickets). The manual cost above is ignored."
 msgstr ""
 
-#: app/features/events.php:1796 app/features/mec.php:1390
+#: app/features/events.php:1796 app/features/mec.php:1488
 #: app/features/mec/modules.php:529 app/features/mec/single.php:147
 msgid "Default"
 msgstr ""
@@ -4568,13 +4568,13 @@ msgstr ""
 msgid "Link text"
 msgstr ""
 
-#: app/features/events.php:2136 app/features/mec.php:1367
+#: app/features/events.php:2136 app/features/mec.php:1465
 #: app/features/mec/fes.php:303 app/features/occurrences.php:431
 #: app/features/popup/shortcode.php:486
 msgid "Current Window"
 msgstr ""
 
-#: app/features/events.php:2137 app/features/mec.php:1368
+#: app/features/events.php:2137 app/features/mec.php:1466
 #: app/features/mec/fes.php:304 app/features/occurrences.php:432
 #: app/features/popup/shortcode.php:490
 msgid "New Window"
@@ -4589,7 +4589,7 @@ msgid "Booking Options"
 msgstr ""
 
 #: app/features/events.php:2200 app/features/mec/booking.php:1360
-#: app/features/mec/support-page.php:133
+#: app/features/mec/support-page.php:134
 msgid "Organizer Payment"
 msgstr ""
 
@@ -4603,8 +4603,8 @@ msgstr ""
 msgid "Expired Events"
 msgstr ""
 
-#: app/features/events.php:3383 app/features/mec.php:1748
-#: app/features/mec/dashboard.php:530 app/features/mec/settings.php:708
+#: app/features/events.php:3383 app/features/mec.php:1846
+#: app/features/mec/dashboard.php:526 app/features/mec/settings.php:708
 #: app/features/mec/settings.php:823
 msgid "Upcoming Events"
 msgstr ""
@@ -4648,7 +4648,7 @@ msgid "JSON Export"
 msgstr ""
 
 #: app/features/events.php:3748 app/features/events.php:3749
-#: app/features/events.php:4060 app/features/mec.php:741
+#: app/features/events.php:4060 app/features/mec.php:839
 #: app/libraries/factory.php:518
 msgid "Duplicate"
 msgstr ""
@@ -4936,7 +4936,7 @@ msgstr ""
 msgid "Expired"
 msgstr ""
 
-#: app/features/fes/list.php:145 app/features/mec.php:2024
+#: app/features/fes/list.php:145 app/features/mec.php:2128
 #: app/skins/general_calendar/tpl.php:218
 msgid "Filter"
 msgstr ""
@@ -5451,8 +5451,8 @@ msgstr ""
 msgid "Import all of your Facebook events into MEC."
 msgstr ""
 
-#: app/features/ix/import_f_calendar.php:28 app/features/mec/dashboard.php:183
-#: app/features/mec/support-page.php:64 app/features/mec/support.php:93
+#: app/features/ix/import_f_calendar.php:28 app/features/mec/dashboard.php:184
+#: app/features/mec/support-page.php:65 app/features/mec/support.php:93
 msgid "Documentation"
 msgstr ""
 
@@ -5731,7 +5731,7 @@ msgid "Generate and Assign"
 msgstr ""
 
 #: app/features/ix/test_data.php:71 app/features/locations.php:62
-#: app/features/mec.php:571 app/features/mec/dashboard.php:512
+#: app/features/mec.php:669 app/features/mec/dashboard.php:508
 #: app/features/mec/meta_boxes/filter.php:79
 #: app/features/mec/meta_boxes/filter.php:170 app/features/mec/modules.php:112
 #: app/libraries/main.php:790 app/libraries/main.php:852
@@ -5739,8 +5739,8 @@ msgstr ""
 msgid "Locations"
 msgstr ""
 
-#: app/features/ix/test_data.php:82 app/features/mec.php:576
-#: app/features/mec/dashboard.php:519 app/features/mec/meta_boxes/filter.php:81
+#: app/features/ix/test_data.php:82 app/features/mec.php:674
+#: app/features/mec/dashboard.php:515 app/features/mec/meta_boxes/filter.php:81
 #: app/features/mec/meta_boxes/filter.php:218 app/features/mec/modules.php:56
 #: app/features/organizers.php:65 app/libraries/main.php:789
 #: app/libraries/main.php:850 app/libraries/main.php:9375
@@ -5899,62 +5899,74 @@ msgstr ""
 msgid "Event %s"
 msgstr ""
 
-#: app/features/licensegate.php:263
+#: app/features/licensegate.php:290
 msgid ""
 "This token was issued for a different domain. Ask support to reissue it for "
 "this site address."
 msgstr ""
 
-#: app/features/licensegate.php:266
+#: app/features/licensegate.php:293
 msgid ""
 "This token has been superseded by a newer one. Ask support for the current "
 "token."
 msgstr ""
 
-#: app/features/licensegate.php:269
+#: app/features/licensegate.php:296
 msgid ""
 "The license server did not recognise this site. Check your purchase code, or "
 "contact support for an offline activation token."
 msgstr ""
 
-#: app/features/licensegate.php:274
+#: app/features/licensegate.php:301
 msgid ""
 "This site could not reach the license server. If your host blocks outbound "
 "connections, ask support for an offline activation token."
 msgstr ""
 
-#: app/features/licensegate.php:277
+#: app/features/licensegate.php:305
+msgid ""
+"Your purchase code was accepted, but this site could not be licensed. Please "
+"contact support, or ask for an offline activation token."
+msgstr ""
+
+#: app/features/licensegate.php:306
 msgid ""
 "That is not a valid activation token. Copy it again exactly as support sent "
 "it."
 msgstr ""
 
-#: app/features/licensegate.php:303 app/features/mec/dashboard.php:211
-#: app/features/mec/dashboard.php:486
+#: app/features/licensegate.php:332 app/features/mec/dashboard.php:212
+#: app/features/mec/dashboard.php:482
 msgid "You cannot access this section."
 msgstr ""
 
-#: app/features/licensegate.php:304
+#: app/features/licensegate.php:333
 msgid "Please reload the page and try again."
 msgstr ""
 
-#: app/features/licensegate.php:307
+#: app/features/licensegate.php:340 app/features/mec.php:247
+msgid ""
+"This network is licensed from its main site. Please activate there — every "
+"site in the network is covered by that one activation."
+msgstr ""
+
+#: app/features/licensegate.php:344
 msgid "Paste the activation token support sent you."
 msgstr ""
 
-#: app/features/licensegate.php:319
+#: app/features/licensegate.php:356 app/features/mec/dashboard.php:318
 msgid "License activated. Thank you."
 msgstr ""
 
 #. translators: %s: expiry date
-#: app/features/licensegate.php:328
+#: app/features/licensegate.php:365 app/features/mec/dashboard.php:314
 #, php-format
 msgid ""
 "License activated. This offline token is valid until %s. Activate your real "
 "purchase code before then to keep Pro running."
 msgstr ""
 
-#: app/features/licensegate.php:429
+#: app/features/licensegate.php:466
 msgid ""
 "The following Pro feature was NOT saved because your license is not active:"
 msgid_plural ""
@@ -5962,35 +5974,35 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: app/features/licensegate.php:437
+#: app/features/licensegate.php:474
 msgid ""
 "The fields are still filled in on this page. Copy anything you need before "
 "leaving."
 msgstr ""
 
-#: app/features/licensegate.php:438 app/features/licensegate.php:654
+#: app/features/licensegate.php:475 app/features/licensegate.php:697
 msgid "Activate your license"
 msgstr ""
 
-#: app/features/licensegate.php:439
+#: app/features/licensegate.php:476
 msgid "to save them."
 msgstr ""
 
-#: app/features/licensegate.php:466
+#: app/features/licensegate.php:503
 msgid ""
 "Your Modern Events Calendar Pro license is not activated, so new coupons "
 "cannot be created. Your existing coupons are unaffected. Activate your "
 "license to add coupons again."
 msgstr ""
 
-#: app/features/licensegate.php:571
+#: app/features/licensegate.php:608
 msgid ""
 "Modern Events Calendar Pro is not activated. Activate your license to keep "
 "Pro features."
 msgstr ""
 
 #. translators: %s: date
-#: app/features/licensegate.php:574
+#: app/features/licensegate.php:611
 #, php-format
 msgid ""
 "Modern Events Calendar Pro is not activated. Pro features start switching "
@@ -5998,7 +6010,7 @@ msgid ""
 msgstr ""
 
 #. translators: %s: date
-#: app/features/licensegate.php:581
+#: app/features/licensegate.php:618
 #, php-format
 msgid ""
 "Modern Events Calendar Pro is not activated. New coupons, new ticket "
@@ -6008,7 +6020,7 @@ msgid ""
 msgstr ""
 
 #. translators: %s: date
-#: app/features/licensegate.php:588
+#: app/features/licensegate.php:625
 #, php-format
 msgid ""
 "Modern Events Calendar Pro is not activated. Pro-only calendar layouts now "
@@ -6017,7 +6029,7 @@ msgid ""
 msgstr ""
 
 #. translators: %s: date
-#: app/features/licensegate.php:595
+#: app/features/licensegate.php:632
 #, php-format
 msgid ""
 "Modern Events Calendar Pro is not activated. New bookings are disabled. Your "
@@ -6025,7 +6037,7 @@ msgid ""
 "be exported. Remaining Pro features stop on %s."
 msgstr ""
 
-#: app/features/licensegate.php:600
+#: app/features/licensegate.php:637
 msgid ""
 "Modern Events Calendar Pro is not activated and is running with Lite "
 "features. Your events and bookings are intact. Activate your license to "
@@ -6068,370 +6080,392 @@ msgstr ""
 msgid "Forgot Password?"
 msgstr ""
 
-#: app/features/mec.php:249
-msgid "success"
-msgstr ""
-
-#: app/features/mec.php:251 app/features/mec/dashboard.php:264
-#: app/features/mec/dashboard.php:269
-msgid "revoke"
-msgstr ""
-
-#: app/features/mec.php:273
-msgid "Activation failed"
-msgstr ""
-
-#: app/features/mec.php:275 app/features/mec.php:319
-#: app/features/mec/dashboard.php:235
+#: app/features/mec.php:249 app/features/mec.php:317 app/features/mec.php:374
+#: app/features/mec/dashboard.php:261
 msgid "submit"
 msgstr ""
 
-#: app/features/mec.php:418
+#: app/features/mec.php:288 app/features/mec.php:345
+#: app/features/mec/dashboard.php:290 app/features/mec/dashboard.php:295
+msgid "revoke"
+msgstr ""
+
+#: app/features/mec.php:310
+msgid "This site could not be licensed. Please contact support."
+msgstr ""
+
+#: app/features/mec.php:343
+msgid ""
+"This network is licensed from its main site. The license can only be revoked "
+"there."
+msgstr ""
+
+#: app/features/mec.php:402
+msgid ""
+"Pro has been turned off on this site, but the store did not confirm that "
+"your activation was released. If your purchase code will not activate on "
+"another site, please contact support."
+msgstr ""
+
+#: app/features/mec.php:405
+msgid ""
+"Pro has been turned off on this site. Because it was activated without a "
+"purchase code, support may still need to release the activation for you."
+msgstr ""
+
+#: app/features/mec.php:410
+msgid ""
+"Pro has been turned off on this site, but the license server could not be "
+"reached, so your activation may still be in use. Please contact support if "
+"the code will not activate elsewhere."
+msgstr ""
+
+#: app/features/mec.php:516
 msgid ""
 "Your option is not in JSON format. Please insert correct options in this "
 "field and try again."
 msgstr ""
 
-#: app/features/mec.php:425
+#: app/features/mec.php:523
 msgid "Your options field can not be empty!"
 msgstr ""
 
-#: app/features/mec.php:431
+#: app/features/mec.php:529
 msgid "Your options imported successfuly."
 msgstr ""
 
-#: app/features/mec.php:551
+#: app/features/mec.php:649
 msgid "MEC - Support"
 msgstr ""
 
-#: app/features/mec.php:551 app/features/mec/support-page.php:23
+#: app/features/mec.php:649 app/features/mec/support-page.php:23
 #: app/features/mec/support.php:86
 msgid "Support"
 msgstr ""
 
-#: app/features/mec.php:593 app/features/mec.php:666
-#: app/features/mec/dashboard.php:505
+#: app/features/mec.php:691 app/features/mec.php:764
+#: app/features/mec/dashboard.php:501
 msgid "Shortcodes"
 msgstr ""
 
-#: app/features/mec.php:613 app/features/mec/booking.php:684
+#: app/features/mec.php:711 app/features/mec/booking.php:684
 #: app/features/webhooks.php:73
 msgid "Webhooks"
 msgstr ""
 
-#: app/features/mec.php:617
+#: app/features/mec.php:715
 msgid "MEC - Settings"
 msgstr ""
 
-#: app/features/mec.php:620
+#: app/features/mec.php:718
 msgid "MEC - Addons"
 msgstr ""
 
-#: app/features/mec.php:620 app/features/mec/addons.php:23
+#: app/features/mec.php:718 app/features/mec/addons.php:23
 msgid "Addons"
 msgstr ""
 
-#: app/features/mec.php:621
+#: app/features/mec.php:719
 msgid "MEC - Wizard"
 msgstr ""
 
-#: app/features/mec.php:621 app/features/mec/wizard.php:527
+#: app/features/mec.php:719 app/features/mec/wizard.php:527
 #: app/features/mec/wizard.php:532 app/features/mec/wizard.php:537
 msgid "Wizard"
 msgstr ""
 
-#: app/features/mec.php:627
+#: app/features/mec.php:725
 msgid "MEC - Go Pro"
 msgstr ""
 
-#: app/features/mec.php:627 app/features/mec.php:1880
+#: app/features/mec.php:725 app/features/mec.php:1984
 #: app/features/mec/go-pro.php:9
 msgid "Go Pro"
 msgstr ""
 
-#: app/features/mec.php:668 app/features/mec/wizard.php:531
+#: app/features/mec.php:766 app/features/mec/wizard.php:531
 msgid "Add Shortcode"
 msgstr ""
 
-#: app/features/mec.php:669
+#: app/features/mec.php:767
 msgid "Add New Shortcode"
 msgstr ""
 
-#: app/features/mec.php:670
+#: app/features/mec.php:768
 msgid "No shortcodes found!"
 msgstr ""
 
-#: app/features/mec.php:671
+#: app/features/mec.php:769
 msgid "All Shortcodes"
 msgstr ""
 
-#: app/features/mec.php:672
+#: app/features/mec.php:770
 msgid "Edit shortcodes"
 msgstr ""
 
-#: app/features/mec.php:673
+#: app/features/mec.php:771
 msgid "No shortcodes found in Trash!"
 msgstr ""
 
-#: app/features/mec.php:726
+#: app/features/mec.php:824
 msgid "Display Options"
 msgstr ""
 
-#: app/features/mec.php:727
+#: app/features/mec.php:825
 msgid "Filter Options"
 msgstr ""
 
-#: app/features/mec.php:729
+#: app/features/mec.php:827
 msgid "Search Form"
 msgstr ""
 
-#: app/features/mec.php:730
+#: app/features/mec.php:828
 msgid "Icon Options"
 msgstr ""
 
-#: app/features/mec.php:935
+#: app/features/mec.php:1033
 #, php-format
 msgid ""
 "The start date \"%s\" is not a valid date. The calendar may render empty or "
 "incorrectly on the front end."
 msgstr ""
 
-#: app/features/mec.php:936
+#: app/features/mec.php:1034
 #, php-format
 msgid ""
 "The maximum date \"%s\" is not a valid date. The calendar may render empty "
 "or incorrectly on the front end."
 msgstr ""
 
-#: app/features/mec.php:937
+#: app/features/mec.php:1035
 #, php-format
 msgid ""
 "The start date (%1$s) is after the maximum date (%2$s). Events will be "
 "listed in reverse order. Swap the dates if this is unintentional."
 msgstr ""
 
-#: app/features/mec.php:944
+#: app/features/mec.php:1042
 msgid ""
 "This skin displays a single event, but no event is chosen. The front end "
 "will stay empty until you pick one. If no events exist yet, create an event "
 "first."
 msgstr ""
 
-#: app/features/mec.php:949
+#: app/features/mec.php:1047
 msgid ""
 "\"Next Upcoming Event\" is selected, but no upcoming events were found. The "
 "front end will stay empty until an event is scheduled."
 msgstr ""
 
-#: app/features/mec.php:951
+#: app/features/mec.php:1049
 #, php-format
 msgid ""
 "The selected event (ID %s) is not published anymore. Pick another event to "
 "keep the calendar working."
 msgstr ""
 
-#: app/features/mec.php:975
+#: app/features/mec.php:1073
 msgid "MEC Shortcode: please review"
 msgstr ""
 
-#: app/features/mec.php:990
+#: app/features/mec.php:1088
 msgid "Internal name (not shown to visitors)"
 msgstr ""
 
-#: app/features/mec.php:1357
+#: app/features/mec.php:1455
 msgid "Display content's images as Popup"
 msgstr ""
 
-#: app/features/mec.php:1362 app/features/popup/shortcode.php:482
+#: app/features/mec.php:1460 app/features/popup/shortcode.php:482
 msgid "Single Event Display Method"
 msgstr ""
 
-#: app/features/mec.php:1369 app/features/popup/shortcode.php:494
+#: app/features/mec.php:1467 app/features/popup/shortcode.php:494
 msgid "Modal Popup"
 msgstr ""
 
-#: app/features/mec.php:1370
+#: app/features/mec.php:1468
 msgid "Disable Link"
 msgstr ""
 
-#: app/features/mec.php:1381
+#: app/features/mec.php:1479
 msgid "Descending Order"
 msgstr ""
 
-#: app/features/mec.php:1383
+#: app/features/mec.php:1481
 msgid "Enable this option to sort events in descending order."
 msgstr ""
 
-#: app/features/mec.php:1392
+#: app/features/mec.php:1490
 msgid "Medium"
 msgstr ""
 
-#: app/features/mec.php:1393
+#: app/features/mec.php:1491
 msgid "Medium Large"
 msgstr ""
 
-#: app/features/mec.php:1394
+#: app/features/mec.php:1492
 msgid "Large"
 msgstr ""
 
-#: app/features/mec.php:1395
+#: app/features/mec.php:1493
 msgid "Full"
 msgstr ""
 
-#: app/features/mec.php:1430
+#: app/features/mec.php:1528
 msgid "Image Size"
 msgstr ""
 
-#: app/features/mec.php:1451
+#: app/features/mec.php:1549
 msgid "Booking Button / Icon"
 msgstr ""
 
-#: app/features/mec.php:1453
+#: app/features/mec.php:1551
 msgid "Enable this option to display booking button / icon in this shortcode."
 msgstr ""
 
-#: app/features/mec.php:1462
+#: app/features/mec.php:1560
 msgid "Display Organizers"
 msgstr ""
 
-#: app/features/mec.php:1464
+#: app/features/mec.php:1562
 msgid "Enable this option to display events organizers in this shortcode."
 msgstr ""
 
-#: app/features/mec.php:1473
+#: app/features/mec.php:1571
 msgid "Display Custom Fields"
 msgstr ""
 
-#: app/features/mec.php:1475
+#: app/features/mec.php:1573
 msgid "Enable this option to display events custom data in this shortcode."
 msgstr ""
 
-#: app/features/mec.php:1488
+#: app/features/mec.php:1586
 msgid "Pagination Method"
 msgstr ""
 
-#: app/features/mec.php:1492
+#: app/features/mec.php:1590
 msgid "Load More Button"
 msgstr ""
 
-#: app/features/mec.php:1493
+#: app/features/mec.php:1591
 msgid "Infinite Scroll"
 msgstr ""
 
-#: app/features/mec.php:1494
+#: app/features/mec.php:1592
 msgid "Next / Prev"
 msgstr ""
 
-#: app/features/mec.php:1503
+#: app/features/mec.php:1601
 msgid "The price shows in List View and Tile View."
 msgstr ""
 
-#: app/features/mec.php:1508
+#: app/features/mec.php:1606
 msgid "Display Event Price"
 msgstr ""
 
-#: app/features/mec.php:1510
+#: app/features/mec.php:1608
 msgid "Enable this option to display events price in this shortcode."
 msgstr ""
 
-#: app/features/mec.php:1519
+#: app/features/mec.php:1617
 msgid "Display Status Bar"
 msgstr ""
 
-#: app/features/mec.php:1521
+#: app/features/mec.php:1619
 msgid "Enable this option to display the status bar in this shortcode."
 msgstr ""
 
-#: app/features/mec.php:1534
+#: app/features/mec.php:1632
 msgid "Display Progress Bar (Ongoing Events)"
 msgstr ""
 
-#: app/features/mec.php:1544
+#: app/features/mec.php:1642
 msgid "Detailed Time"
 msgstr ""
 
-#: app/features/mec.php:1546
+#: app/features/mec.php:1644
 msgid "For Multiple Day Events"
 msgstr ""
 
-#: app/features/mec.php:1711 app/features/mec.php:1964
+#: app/features/mec.php:1809 app/features/mec.php:2068
 msgid "Total Bookings"
 msgstr ""
 
-#: app/features/mec.php:1729
+#: app/features/mec.php:1827
 msgid "Create New Event"
 msgstr ""
 
-#: app/features/mec.php:1737 app/features/mec/dashboard.php:61
+#: app/features/mec.php:1835 app/features/mec/dashboard.php:61
 msgid "Modern Events Calendar (Lite)"
 msgstr ""
 
-#: app/features/mec.php:1837
+#: app/features/mec.php:1941
 msgid "News & Updates"
 msgstr ""
 
-#: app/features/mec.php:1868
+#: app/features/mec.php:1972
 msgid "Blog"
 msgstr ""
 
-#: app/features/mec.php:1873
+#: app/features/mec.php:1977
 msgid "Help"
 msgstr ""
 
-#: app/features/mec.php:1938
+#: app/features/mec.php:2042
 #, php-format
 msgid "Total Sales (%s)"
 msgstr ""
 
-#: app/features/mec.php:1973
+#: app/features/mec.php:2077
 msgid "This Month"
 msgstr ""
 
-#: app/features/mec.php:1979
+#: app/features/mec.php:2083
 msgid "Last Month"
 msgstr ""
 
-#: app/features/mec.php:1985
+#: app/features/mec.php:2089
 msgid "This Year"
 msgstr ""
 
-#: app/features/mec.php:1991
+#: app/features/mec.php:2095
 msgid "Last Year"
 msgstr ""
 
-#: app/features/mec.php:2020
+#: app/features/mec.php:2124
 msgid "Bar"
 msgstr ""
 
-#: app/features/mec.php:2022
+#: app/features/mec.php:2126
 msgid "Line"
 msgstr ""
 
-#: app/features/mec.php:2048
+#: app/features/mec.php:2152
 msgid "Print Calendar"
 msgstr ""
 
-#: app/features/mec.php:2053
+#: app/features/mec.php:2157
 msgid "Year"
 msgstr ""
 
-#: app/features/mec.php:2059
+#: app/features/mec.php:2163
 msgid "Month"
 msgstr ""
 
-#: app/features/mec.php:2065
+#: app/features/mec.php:2169
 msgid "Display Events"
 msgstr ""
 
-#: app/features/mec.php:2112
+#: app/features/mec.php:2216
 msgid "Include MEC Assets"
 msgstr ""
 
-#: app/features/mec.php:2125
+#: app/features/mec.php:2229
 msgid "Include Modern Events Calendar Assets (CSS, JavaScript, etc files.)"
 msgstr ""
 
-#: app/features/mec.php:2308 app/features/mec/meta_boxes/search_form.php:213
+#: app/features/mec.php:2412 app/features/mec/meta_boxes/search_form.php:213
 #: app/features/mec/meta_boxes/search_form.php:368
 #: app/features/mec/meta_boxes/search_form.php:523
 #: app/features/mec/meta_boxes/search_form.php:677
@@ -6446,15 +6480,15 @@ msgstr ""
 msgid "Text Input"
 msgstr ""
 
-#: app/features/mec.php:2311
+#: app/features/mec.php:2415
 msgid "Date Range Picker"
 msgstr ""
 
-#: app/features/mec.php:2324
+#: app/features/mec.php:2428
 msgid "Event Fields"
 msgstr ""
 
-#: app/features/mec.php:2363
+#: app/features/mec.php:2467
 msgid "Database setup is done."
 msgstr ""
 
@@ -6470,46 +6504,46 @@ msgstr ""
 msgid "Version"
 msgstr ""
 
-#: app/features/mec/addons.php:40
+#: app/features/mec/addons.php:41
 msgid "Filter addons. Try \"Elementor\", \"Zoom\", \"payment\"…"
 msgstr ""
 
-#: app/features/mec/addons.php:41
+#: app/features/mec/addons.php:42
 #, php-format
 msgid "%d addon"
 msgid_plural "%d addons"
 msgstr[0] ""
 msgstr[1] ""
 
-#: app/features/mec/addons.php:60
+#: app/features/mec/addons.php:61
 msgid "Coming Soon"
 msgstr ""
 
-#: app/features/mec/addons.php:63
+#: app/features/mec/addons.php:64
 msgid "Pro Required"
 msgstr ""
 
-#: app/features/mec/addons.php:63
+#: app/features/mec/addons.php:64
 msgid "Lite & Pro"
 msgstr ""
 
-#: app/features/mec/addons.php:70
+#: app/features/mec/addons.php:71
 msgid "Watch introduction video"
 msgstr ""
 
-#: app/features/mec/addons.php:73
+#: app/features/mec/addons.php:74
 msgid "View addon details"
 msgstr ""
 
-#: app/features/mec/addons.php:77
+#: app/features/mec/addons.php:78
 msgid "Get Addon"
 msgstr ""
 
-#: app/features/mec/addons.php:87
+#: app/features/mec/addons.php:88
 msgid "No addons matched your search. Try a different keyword."
 msgstr ""
 
-#: app/features/mec/addons.php:93
+#: app/features/mec/addons.php:94
 msgid ""
 "The addons list could not be loaded. Please make sure your MEC installation "
 "is complete (the app/api/addons-api folder must exist), then reload this "
@@ -6882,8 +6916,8 @@ msgstr ""
 #: app/features/mec/fes.php:430 app/features/mec/fes.php:446
 #: app/features/mec/fes.php:477 app/features/mec/fes.php:502
 #: app/features/mec/modules.php:790 app/features/mec/notifications.php:69
-#: app/features/mec/notifications.php:80 app/features/mec/support-page.php:261
-#: app/features/mec/support-page.php:273 app/libraries/main.php:3951
+#: app/features/mec/notifications.php:80 app/features/mec/support-page.php:262
+#: app/features/mec/support-page.php:274 app/libraries/main.php:3951
 #: app/libraries/main.php:3967 app/libraries/main.php:4018
 #: app/libraries/main.php:4313 app/libraries/main.php:4363
 #: app/libraries/notifications.php:2595 app/libraries/notifications.php:3031
@@ -6903,7 +6937,7 @@ msgstr ""
 #: app/features/mec/fes.php:399 app/features/mec/fes.php:429
 #: app/features/mec/fes.php:445 app/features/mec/modules.php:791
 #: app/features/mec/notifications.php:70 app/features/mec/notifications.php:79
-#: app/features/mec/support-page.php:261 app/features/mec/support-page.php:273
+#: app/features/mec/support-page.php:262 app/features/mec/support-page.php:274
 #: app/libraries/main.php:3951 app/libraries/main.php:3967
 #: app/libraries/main.php:4018 app/libraries/main.php:4313
 #: app/libraries/main.php:4363 app/libraries/notifications.php:2595
@@ -7717,7 +7751,7 @@ msgstr ""
 msgid "%s - Most Powerful & Easy to Use Events Management System"
 msgstr ""
 
-#: app/features/mec/dashboard.php:137 app/features/mec/go-pro.php:66
+#: app/features/mec/dashboard.php:138 app/features/mec/go-pro.php:67
 #, php-format
 msgid ""
 "You're using %s version of Modern Events Calendar. To use advanced booking "
@@ -7725,107 +7759,104 @@ msgid ""
 "Spots, etc you should upgrade to the Pro version."
 msgstr ""
 
-#: app/features/mec/dashboard.php:137 app/features/mec/go-pro.php:66
+#: app/features/mec/dashboard.php:138 app/features/mec/go-pro.php:67
 msgid "lite"
 msgstr ""
 
-#: app/features/mec/dashboard.php:140 app/features/mec/go-pro.php:69
+#: app/features/mec/dashboard.php:141 app/features/mec/go-pro.php:70
 #: app/features/mec/support.php:120
 msgid "GO PREMIUM"
 msgstr ""
 
-#: app/features/mec/dashboard.php:174
+#: app/features/mec/dashboard.php:175
 msgid "Getting started with Modern Events Calendar"
 msgstr ""
 
-#: app/features/mec/dashboard.php:175
+#: app/features/mec/dashboard.php:176
 msgid ""
 "In this short video, you can learn how to make an event and put a calendar "
 "on your website. Please watch this 2 minutes video to the end."
 msgstr ""
 
-#: app/features/mec/dashboard.php:197 app/features/mec/dashboard.php:222
+#: app/features/mec/dashboard.php:198 app/features/mec/dashboard.php:235
 msgid "License Activation"
 msgstr ""
 
-#: app/features/mec/dashboard.php:203 app/features/mec/dashboard.php:314
+#: app/features/mec/dashboard.php:204 app/features/mec/dashboard.php:244
+#: app/features/mec/dashboard.php:341
 msgid "Activate Addons"
 msgstr ""
 
-#: app/features/mec/dashboard.php:228
+#: app/features/mec/dashboard.php:235
+msgid "Addons Activation"
+msgstr ""
+
+#: app/features/mec/dashboard.php:254
 msgid ""
 "In order to use all plugin features and options, please enter your purchase "
 "code."
 msgstr ""
 
-#: app/features/mec/dashboard.php:285 app/features/mec/dashboard.php:473
+#: app/features/mec/dashboard.php:306
 msgid "Offline activation"
 msgstr ""
 
-#. translators: %s: expiry date
-#: app/features/mec/dashboard.php:291
-#, php-format
-msgid ""
-"Your offline activation token expires on %s. Enter your real purchase code "
-"below before then to keep Pro features running."
-msgstr ""
-
-#: app/features/mec/dashboard.php:300
+#: app/features/mec/dashboard.php:327
 msgid "Activated via offline token. Enter your purchase code to switch"
 msgstr ""
 
-#: app/features/mec/dashboard.php:306
+#: app/features/mec/dashboard.php:333
 msgid ""
 "Activation failed. Please check your purchase code or license type. Note: "
 "Your purchase code should match your licesne type."
 msgstr ""
 
-#: app/features/mec/dashboard.php:306 app/features/mec/support-page.php:147
+#: app/features/mec/dashboard.php:333 app/features/mec/support-page.php:148
 msgid "Troubleshooting"
 msgstr ""
 
-#: app/features/mec/dashboard.php:332
+#: app/features/mec/dashboard.php:359
 msgid ""
 "No outbound internet connection on this server, or bought through a "
 "reseller? Ask support for an offline activation token and paste it below."
 msgstr ""
 
-#: app/features/mec/dashboard.php:343
+#: app/features/mec/dashboard.php:370
 #, php-format
 msgid "Quote this site address when you ask: %s"
 msgstr ""
 
-#: app/features/mec/dashboard.php:346 app/features/popup/shortcode.php:549
+#: app/features/mec/dashboard.php:373 app/features/popup/shortcode.php:549
 msgid "Copy"
 msgstr ""
 
-#: app/features/mec/dashboard.php:349
+#: app/features/mec/dashboard.php:374
 msgid "Contact support"
 msgstr ""
 
-#: app/features/mec/dashboard.php:353
+#: app/features/mec/dashboard.php:378
 msgid "Paste your offline activation token here"
 msgstr ""
 
-#: app/features/mec/dashboard.php:354
+#: app/features/mec/dashboard.php:379
 msgid "Activate offline"
 msgstr ""
 
-#: app/features/mec/dashboard.php:371
+#: app/features/mec/dashboard.php:400
 #: app/features/mec/meta_boxes/shortcode.php:8
 msgid "Copied!"
 msgstr ""
 
-#: app/features/mec/dashboard.php:435
+#: app/features/mec/dashboard.php:468
 msgid ""
 "Could not reach this site's admin. Please reload the page and try again."
 msgstr ""
 
-#: app/features/mec/dashboard.php:554
+#: app/features/mec/dashboard.php:550
 msgid "Popular Gateways"
 msgstr ""
 
-#: app/features/mec/dashboard.php:612
+#: app/features/mec/dashboard.php:608
 msgid "Change Log"
 msgstr ""
 
@@ -12884,7 +12915,7 @@ msgstr ""
 msgid "Private Key"
 msgstr ""
 
-#: app/features/mec/settings.php:1080 app/features/mec/support-page.php:92
+#: app/features/mec/settings.php:1080 app/features/mec/support-page.php:93
 #: app/features/search_bar/search_bar.php:52 app/libraries/main.php:749
 msgid "Search"
 msgstr ""
@@ -13002,7 +13033,7 @@ msgstr ""
 msgid "Sendfox Integration"
 msgstr ""
 
-#: app/features/mec/single.php:46 app/features/mec/support-page.php:119
+#: app/features/mec/single.php:46 app/features/mec/support-page.php:120
 #: app/libraries/main.php:767
 msgid "Single Event Page"
 msgstr ""
@@ -13496,219 +13527,219 @@ msgstr ""
 msgid "%s: everything you need to master MEC and get help fast."
 msgstr ""
 
-#: app/features/mec/support-page.php:40 app/features/mec/support-page.php:52
+#: app/features/mec/support-page.php:41 app/features/mec/support-page.php:53
 msgid "🚨 Is your MEC up to date? 🚨"
 msgstr ""
 
-#: app/features/mec/support-page.php:41 app/features/mec/support-page.php:53
+#: app/features/mec/support-page.php:42 app/features/mec/support-page.php:54
 msgid ""
 "Hackers are exploiting WordPress plugin vulnerabilities faster than ever "
 "with AI-powered tools. If you're still on an older version, update MEC now."
 msgstr ""
 
-#: app/features/mec/support-page.php:42
+#: app/features/mec/support-page.php:43
 msgid ""
 "Tip: enable auto-updates for MEC so security fixes are applied as soon as "
 "they're released."
 msgstr ""
 
-#: app/features/mec/support-page.php:54
+#: app/features/mec/support-page.php:55
 msgid ""
 "Updating MEC is free and takes less than a minute. Keep your site secure by "
 "staying current."
 msgstr ""
 
-#: app/features/mec/support-page.php:65
+#: app/features/mec/support-page.php:66
 msgid "Step-by-step guides covering every MEC feature and setting."
 msgstr ""
 
-#: app/features/mec/support-page.php:66
+#: app/features/mec/support-page.php:67
 msgid "Browse docs"
 msgstr ""
 
-#: app/features/mec/support-page.php:70 app/features/mec/support-page.php:153
+#: app/features/mec/support-page.php:71 app/features/mec/support-page.php:154
 msgid "Video Tutorials"
 msgstr ""
 
-#: app/features/mec/support-page.php:71
+#: app/features/mec/support-page.php:72
 msgid "Watch over-the-shoulder tutorials and get started in minutes."
 msgstr ""
 
-#: app/features/mec/support-page.php:72
+#: app/features/mec/support-page.php:73
 msgid "Watch videos"
 msgstr ""
 
-#: app/features/mec/support-page.php:76 app/features/mec/support.php:132
+#: app/features/mec/support-page.php:77 app/features/mec/support.php:132
 msgid "Knowledgebase"
 msgstr ""
 
-#: app/features/mec/support-page.php:77
+#: app/features/mec/support-page.php:78
 msgid "Short answers to the questions users ask us the most."
 msgstr ""
 
-#: app/features/mec/support-page.php:78
+#: app/features/mec/support-page.php:79
 msgid "Find answers"
 msgstr ""
 
-#: app/features/mec/support-page.php:82
+#: app/features/mec/support-page.php:83
 msgid "Developer Docs"
 msgstr ""
 
-#: app/features/mec/support-page.php:83
+#: app/features/mec/support-page.php:84
 msgid "Hooks, filters, theming guides and the MEC API reference."
 msgstr ""
 
-#: app/features/mec/support-page.php:84
+#: app/features/mec/support-page.php:85
 msgid "Open reference"
 msgstr ""
 
-#: app/features/mec/support-page.php:91
+#: app/features/mec/support-page.php:92
 msgid ""
 "Search the knowledgebase. Try \"booking form\", \"taxes\", \"shortcode\"…"
 msgstr ""
 
-#: app/features/mec/support-page.php:96
+#: app/features/mec/support-page.php:97
 msgid "Browse by Topic"
 msgstr ""
 
-#: app/features/mec/support-page.php:101
+#: app/features/mec/support-page.php:102
 msgid "Getting Started"
 msgstr ""
 
-#: app/features/mec/support-page.php:104
+#: app/features/mec/support-page.php:105
 msgid "Install MEC"
 msgstr ""
 
-#: app/features/mec/support-page.php:105 app/features/mec/support-page.php:161
+#: app/features/mec/support-page.php:106 app/features/mec/support-page.php:162
 msgid "Activate Your License"
 msgstr ""
 
-#: app/features/mec/support-page.php:106
+#: app/features/mec/support-page.php:107
 msgid "Add Your First Event"
 msgstr ""
 
-#: app/features/mec/support-page.php:108
+#: app/features/mec/support-page.php:109
 msgid "Import & Export Events"
 msgstr ""
 
-#: app/features/mec/support-page.php:114
+#: app/features/mec/support-page.php:115
 msgid "Settings & Shortcodes"
 msgstr ""
 
-#: app/features/mec/support-page.php:117
+#: app/features/mec/support-page.php:118
 msgid "General Settings"
 msgstr ""
 
-#: app/features/mec/support-page.php:118
+#: app/features/mec/support-page.php:119
 msgid "Appearance & Styling"
 msgstr ""
 
-#: app/features/mec/support-page.php:120
+#: app/features/mec/support-page.php:121
 msgid "Making Advanced Shortcodes"
 msgstr ""
 
-#: app/features/mec/support-page.php:121 app/libraries/main.php:1053
+#: app/features/mec/support-page.php:122 app/libraries/main.php:1053
 msgid "Integrations"
 msgstr ""
 
-#: app/features/mec/support-page.php:127
+#: app/features/mec/support-page.php:128
 msgid "Booking & Payments"
 msgstr ""
 
-#: app/features/mec/support-page.php:130
+#: app/features/mec/support-page.php:131
 msgid "Add a Booking System"
 msgstr ""
 
-#: app/features/mec/support-page.php:131
+#: app/features/mec/support-page.php:132
 msgid "Booking Settings & Tickets"
 msgstr ""
 
-#: app/features/mec/support-page.php:134
+#: app/features/mec/support-page.php:135
 msgid "Emails & Notifications"
 msgstr ""
 
-#: app/features/mec/support-page.php:140
+#: app/features/mec/support-page.php:141
 msgid "Update, Translate & Fix"
 msgstr ""
 
-#: app/features/mec/support-page.php:143
+#: app/features/mec/support-page.php:144
 msgid "Auto-Update MEC"
 msgstr ""
 
-#: app/features/mec/support-page.php:144
+#: app/features/mec/support-page.php:145
 msgid "Update Manually (FTP)"
 msgstr ""
 
-#: app/features/mec/support-page.php:145
+#: app/features/mec/support-page.php:146
 msgid "Translate MEC"
 msgstr ""
 
-#: app/features/mec/support-page.php:146
+#: app/features/mec/support-page.php:147
 msgid "Theme Integration Guide"
 msgstr ""
 
-#: app/features/mec/support-page.php:154
+#: app/features/mec/support-page.php:155
 msgid "View channel"
 msgstr ""
 
-#: app/features/mec/support-page.php:163
+#: app/features/mec/support-page.php:164
 msgid "Log in to your Webnus dashboard"
 msgstr ""
 
-#: app/features/mec/support-page.php:164
+#: app/features/mec/support-page.php:165
 msgid "Copy your license key"
 msgstr ""
 
-#: app/features/mec/support-page.php:165
+#: app/features/mec/support-page.php:166
 msgid "Activate MEC in one click"
 msgstr ""
 
-#: app/features/mec/support-page.php:167 app/features/mec/support-page.php:179
-#: app/features/mec/support-page.php:191
+#: app/features/mec/support-page.php:168 app/features/mec/support-page.php:180
+#: app/features/mec/support-page.php:192
 msgid "Watch video"
 msgstr ""
 
-#: app/features/mec/support-page.php:173
+#: app/features/mec/support-page.php:174
 msgid "Build a Booking Form"
 msgstr ""
 
-#: app/features/mec/support-page.php:175
+#: app/features/mec/support-page.php:176
 msgid "Enable booking from settings"
 msgstr ""
 
-#: app/features/mec/support-page.php:176
+#: app/features/mec/support-page.php:177
 msgid "Set up your booking form"
 msgstr ""
 
-#: app/features/mec/support-page.php:177
+#: app/features/mec/support-page.php:178
 msgid "Customize fields & tickets"
 msgstr ""
 
-#: app/features/mec/support-page.php:185
+#: app/features/mec/support-page.php:186
 msgid "MEC Settings Overview"
 msgstr ""
 
-#: app/features/mec/support-page.php:187
+#: app/features/mec/support-page.php:188
 msgid "Tour every settings panel"
 msgstr ""
 
-#: app/features/mec/support-page.php:188
+#: app/features/mec/support-page.php:189
 msgid "Configure MEC for your site"
 msgstr ""
 
-#: app/features/mec/support-page.php:189
+#: app/features/mec/support-page.php:190
 msgid "Use the advanced options"
 msgstr ""
 
-#: app/features/mec/support-page.php:197
+#: app/features/mec/support-page.php:198
 msgid "Frequently Asked Questions"
 msgstr ""
 
-#: app/features/mec/support-page.php:199
+#: app/features/mec/support-page.php:200
 msgid "How should I update the plugin?"
 msgstr ""
 
-#: app/features/mec/support-page.php:201
+#: app/features/mec/support-page.php:202
 #, php-format
 msgid ""
 "You have two options:<br>\n"
@@ -13721,33 +13752,33 @@ msgid ""
 "here</a>."
 msgstr ""
 
-#: app/features/mec/support-page.php:206
+#: app/features/mec/support-page.php:207
 msgid "Do I lose all my data or customization if I update MEC?"
 msgstr ""
 
-#: app/features/mec/support-page.php:207
+#: app/features/mec/support-page.php:208
 msgid ""
 "Your events, bookings and settings are stored in the database and are kept "
 "after the update. However, if you have added files to the main MEC folder, "
 "those files will be removed, so please get a full backup before updating."
 msgstr ""
 
-#: app/features/mec/support-page.php:210
+#: app/features/mec/support-page.php:211
 msgid "Can I customize the event pages?"
 msgstr ""
 
-#: app/features/mec/support-page.php:212
+#: app/features/mec/support-page.php:213
 #, php-format
 msgid ""
 "Yes, it is possible. In order to see the related documentations, please <a "
 "href=\"%s\" target=\"_blank\" rel=\"noopener\">click here</a>."
 msgstr ""
 
-#: app/features/mec/support-page.php:215
+#: app/features/mec/support-page.php:216
 msgid "Does MEC have default languages or does it need to be translated?"
 msgstr ""
 
-#: app/features/mec/support-page.php:217
+#: app/features/mec/support-page.php:218
 #, php-format
 msgid ""
 "MEC ships with a number of community translations, but they may be "
@@ -13756,21 +13787,21 @@ msgid ""
 "here</a>."
 msgstr ""
 
-#: app/features/mec/support-page.php:220
+#: app/features/mec/support-page.php:221
 msgid "Can I have more than one calendar on one website?"
 msgstr ""
 
-#: app/features/mec/support-page.php:221
+#: app/features/mec/support-page.php:222
 msgid ""
 "Absolutely! You can create unlimited shortcodes, each with its own skin, "
 "filters and events, then place them anywhere on your website."
 msgstr ""
 
-#: app/features/mec/support-page.php:223
+#: app/features/mec/support-page.php:224
 msgid "Can I import/export events to/from MEC?"
 msgstr ""
 
-#: app/features/mec/support-page.php:224
+#: app/features/mec/support-page.php:225
 #, php-format
 msgid ""
 "Yes, you can export your MEC data as XML or import an existing file. You can "
@@ -13778,111 +13809,111 @@ msgid ""
 "Schedule. See %s for details."
 msgstr ""
 
-#: app/features/mec/support-page.php:224
+#: app/features/mec/support-page.php:225
 msgid "Import & Export"
 msgstr ""
 
-#: app/features/mec/support-page.php:229
+#: app/features/mec/support-page.php:230
 msgid "System Information"
 msgstr ""
 
-#: app/features/mec/support-page.php:232
+#: app/features/mec/support-page.php:233
 msgid "Home URL"
 msgstr ""
 
-#: app/features/mec/support-page.php:236
+#: app/features/mec/support-page.php:237
 msgid "Site URL"
 msgstr ""
 
-#: app/features/mec/support-page.php:240
+#: app/features/mec/support-page.php:241
 msgid "Locale"
 msgstr ""
 
-#: app/features/mec/support-page.php:244
+#: app/features/mec/support-page.php:245
 msgid "Character Set"
 msgstr ""
 
-#: app/features/mec/support-page.php:248
+#: app/features/mec/support-page.php:249
 msgid "MEC Version"
 msgstr ""
 
-#: app/features/mec/support-page.php:252
+#: app/features/mec/support-page.php:253
 msgid "Package"
 msgstr ""
 
-#: app/features/mec/support-page.php:253
+#: app/features/mec/support-page.php:254
 msgid "Pro"
 msgstr ""
 
-#: app/features/mec/support-page.php:253
+#: app/features/mec/support-page.php:254
 msgid "Lite"
 msgstr ""
 
-#: app/features/mec/support-page.php:256
+#: app/features/mec/support-page.php:257
 msgid "WordPress Version"
 msgstr ""
 
-#: app/features/mec/support-page.php:260
+#: app/features/mec/support-page.php:261
 msgid "Multisite"
 msgstr ""
 
-#: app/features/mec/support-page.php:264
+#: app/features/mec/support-page.php:265
 msgid "WordPress Memory Limit"
 msgstr ""
 
-#: app/features/mec/support-page.php:268
+#: app/features/mec/support-page.php:269
 msgid "PHP Version"
 msgstr ""
 
-#: app/features/mec/support-page.php:272
+#: app/features/mec/support-page.php:273
 msgid "PHP cURL"
 msgstr ""
 
-#: app/features/mec/support-page.php:278
+#: app/features/mec/support-page.php:279
 msgid "Debug Log"
 msgstr ""
 
-#: app/features/mec/support-page.php:287
+#: app/features/mec/support-page.php:288
 #, php-format
 msgid "Log file size is about %s. %s"
 msgstr ""
 
-#: app/features/mec/support-page.php:287 app/skins/single.php:2039
+#: app/features/mec/support-page.php:288 app/skins/single.php:2039
 msgid "Download"
 msgstr ""
 
-#: app/features/mec/support-page.php:289
+#: app/features/mec/support-page.php:290
 msgid ""
 "WP Debug mode is turned on but there is no log to download at the moment."
 msgstr ""
 
-#: app/features/mec/support-page.php:292
+#: app/features/mec/support-page.php:293
 msgid ""
 "WordPress debug is not enabled in your website. To download the debug log "
 "file, you need to enable WP Debug mode on your website first."
 msgstr ""
 
-#: app/features/mec/support-page.php:301
+#: app/features/mec/support-page.php:302
 msgid "Still need a hand?"
 msgstr ""
 
-#: app/features/mec/support-page.php:303
+#: app/features/mec/support-page.php:304
 msgid ""
 "Our support specialists are one click away. Open a chat and we will get back "
 "to you shortly."
 msgstr ""
 
-#: app/features/mec/support-page.php:305
+#: app/features/mec/support-page.php:306
 msgid ""
 "Search the knowledgebase for a quick answer, or post your question in the "
 "WordPress.org forums where our team is active."
 msgstr ""
 
-#: app/features/mec/support-page.php:309
+#: app/features/mec/support-page.php:310
 msgid "Chat with Support"
 msgstr ""
 
-#: app/features/mec/support-page.php:311
+#: app/features/mec/support-page.php:312
 msgid "Open Knowledgebase"
 msgstr ""
 
@@ -15023,15 +15054,15 @@ msgstr ""
 msgid "Custom sidebar for single and modal page of MEC."
 msgstr ""
 
-#: app/libraries/factory.php:1613
+#: app/libraries/factory.php:1621
 msgid "Notice:"
 msgstr ""
 
-#: app/libraries/factory.php:1614
+#: app/libraries/factory.php:1622
 msgid "If you are unable to auto update, please check this article:  "
 msgstr ""
 
-#: app/libraries/factory.php:1616
+#: app/libraries/factory.php:1624
 msgid "How to manually update"
 msgstr ""
 

@@ -31,6 +31,7 @@ $dox = 'https://webnus.net/dox/modern-events-calendar/';
             </div>
         </div>
     </div>
+    <hr class="wp-header-end">
     <div class="welcome-content w-clearfix extra">
 
         <?php if (!$this->getPRO()): ?>

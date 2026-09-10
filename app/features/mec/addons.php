@@ -31,6 +31,7 @@ $addons = is_object($addons) ? get_object_vars($addons) : [];
             </div>
         </div>
     </div>
+    <hr class="wp-header-end">
     <div class="welcome-content w-clearfix extra">
         <?php if (current_user_can('read')): ?>
             <?php if (count($addons)): ?>

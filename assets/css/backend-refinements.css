@@ -1603,6 +1603,19 @@ body.rtl .mec-field-warning {
 
 /* 23.1 — Layout grids -------------------------------------------------- */
 
+/* 23.0 — Keep WP admin notices visible on the about-wrap dashboard pages.
+   WordPress core hides every notice inside .about-wrap / .about__container
+   (wp-admin about.css), and common.js moves all notices into .wrap after
+   DOM-ready — so on the MEC dashboard pages (support/addons/intro/go-pro,
+   which reuse the about-wrap class) every notice appeared for a moment and
+   then vanished. Un-hide them; the wp-header-end marker in the templates
+   pins them right below the page header. */
+#webnus-dashboard.about-wrap .notice,
+#webnus-dashboard.about-wrap div.error,
+#webnus-dashboard.about-wrap div.updated {
+    display: block !important;
+}
+
 /* Support page: white canvas (WP default admin bg is #f0f0f1). Dark mode
    keeps its own body-level rule in backend.css. */
 body.m-e-calendar_page_MEC-support:not(.mec-admin-dark-mode),

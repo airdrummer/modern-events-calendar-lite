@@ -15,6 +15,7 @@ defined('MECEXEC') or die();
             </div>
         </div>
     </div>
+    <hr class="wp-header-end">
     <div class="mec-custom-msg-notification-set-box extra">
         <div class="w-row mec-custom-msg-notification-wrap">
             <div class="w-col-sm-12">

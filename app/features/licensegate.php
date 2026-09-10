@@ -186,7 +186,13 @@ class MEC_feature_licensegate extends MEC_base
      */
     private function purchase_code()
     {
-        $options = get_option('mec_options');
+        // On a network the code is entered once, on the main site, so that is
+        // where every site has to read it from — including the subsites, which
+        // never hold one of their own.
+        $options = MEC_license::network_licensing()
+            ? get_blog_option(MEC_license::license_site(), 'mec_options')
+            : get_option('mec_options');
+
         if (!is_array($options) or empty($options['purchase_code'])) return '';
 
         return (string) $options['purchase_code'];
@@ -204,6 +210,12 @@ class MEC_feature_licensegate extends MEC_base
     public function schedule_claim()
     {
         if (!current_user_can('manage_options')) return;
+
+        // One claim per network, made by the main site. A subsite claiming
+        // would ask the store for the same token the main site already holds
+        // and burn an activation slot doing it.
+        if (!MEC_license::is_license_site()) return;
+
         if ($this->purchase_code() === '') return;
         if (!MEC_license::instance()->claim_due()) return;
 
@@ -233,6 +245,10 @@ class MEC_feature_licensegate extends MEC_base
      */
     public function run_claim()
     {
+        // Cron fires this in the context of whichever site scheduled it, so
+        // the main-site check has to be repeated here.
+        if (!MEC_license::is_license_site()) return;
+
         $code = $this->purchase_code();
         if ($code === '') return;
 
@@ -252,10 +268,21 @@ class MEC_feature_licensegate extends MEC_base
      * Every one of these is something the customer is about to read while
      * already annoyed, so each says what went wrong AND what to do next.
      *
+     * Public and static because the activation endpoint in MEC_feature_mec
+     * needs the same wording: a claim that fails there is the same failure,
+     * and describing it two different ways in two places is how a customer
+     * ends up with two contradictory explanations of one problem.
+     *
      * @param string $reason machine-readable code from MEC_license
+     * @param string $context 'token' when the customer pasted an offline
+     *                        token, 'claim' when they entered a purchase code.
+     *                        Only the catch-all differs, but it differs a lot:
+     *                        telling someone who typed a purchase code to
+     *                        "copy the token again" describes a step they
+     *                        never took.
      * @return string
      */
-    private function reason_text($reason)
+    public static function reason_text($reason, $context = 'token')
     {
         switch ($reason)
         {
@@ -274,7 +301,9 @@ class MEC_feature_licensegate extends MEC_base
                 return esc_html__('This site could not reach the license server. If your host blocks outbound connections, ask support for an offline activation token.', 'modern-events-calendar-lite');
 
             default:
-                return esc_html__('That is not a valid activation token. Copy it again exactly as support sent it.', 'modern-events-calendar-lite');
+                return $context === 'claim'
+                    ? esc_html__('Your purchase code was accepted, but this site could not be licensed. Please contact support, or ask for an offline activation token.', 'modern-events-calendar-lite')
+                    : esc_html__('That is not a valid activation token. Copy it again exactly as support sent it.', 'modern-events-calendar-lite');
         }
     }
 
@@ -288,10 +317,10 @@ class MEC_feature_licensegate extends MEC_base
     {
         if ($this->purchase_code() === '') return '';
 
-        $state = get_option(MEC_license::OPT_CLAIM, null);
+        $state = MEC_license::instance()->claim_state();
         if (!is_array($state) or empty($state['last'])) return '';
 
-        return $this->reason_text($state['last']);
+        return self::reason_text($state['last']);
     }
 
     /**
@@ -303,12 +332,20 @@ class MEC_feature_licensegate extends MEC_base
         if (!current_user_can('manage_options')) wp_send_json_error(['message' => esc_html__('You cannot access this section.', 'modern-events-calendar-lite')], 403);
         if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['nonce'] ?? '')), 'mec_settings_nonce')) wp_send_json_error(['message' => esc_html__('Please reload the page and try again.', 'modern-events-calendar-lite')], 403);
 
+        // A token installed from a subsite would be written to the network
+        // row anyway, but it is minted for the main site's address, so let the
+        // customer do it where the address on screen matches the token.
+        if (!MEC_license::is_license_site())
+        {
+            wp_send_json_error(['message' => esc_html__('This network is licensed from its main site. Please activate there — every site in the network is covered by that one activation.', 'modern-events-calendar-lite')], 403);
+        }
+
         $token = trim(sanitize_text_field(wp_unslash($_REQUEST['token'] ?? '')));
         if ($token === '') wp_send_json_error(['message' => esc_html__('Paste the activation token support sent you.', 'modern-events-calendar-lite')], 400);
 
         $result = MEC_license::instance()->install_token($token);
 
-        if ($result !== true) wp_send_json_error(['message' => $this->reason_text($result)], 400);
+        if ($result !== true) wp_send_json_error(['message' => self::reason_text($result)], 400);
 
         // A successful manual install ends the automatic retry schedule too.
         MEC_license::instance()->record_claim(true);
@@ -611,6 +648,12 @@ class MEC_feature_licensegate extends MEC_base
 
         // A licensed site never sees any of this.
         if ($license->licensed()) return;
+
+        // Neither does a multisite subsite. The licence covers the whole
+        // network and is entered on the main site; a subsite owner cannot act
+        // on this notice, so showing it would only be noise on a screen they
+        // have no control over. The main site still gets the full sequence.
+        if (!MEC_license::is_license_site()) return;
 
         // Administrators only. A shop manager or author cannot act on it.
         if (!current_user_can('manage_options')) return;

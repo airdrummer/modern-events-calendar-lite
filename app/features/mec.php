@@ -237,6 +237,20 @@ class MEC_feature_mec extends MEC_base
 
             if (!wp_verify_nonce(sanitize_text_field($_REQUEST['nonce'] ?? ''), 'mec_settings_nonce')) exit();
 
+            // Multisite: the licence belongs to the network and is entered on
+            // the main site only. Refusing here as well as hiding the form
+            // means a subsite cannot overwrite the network's licence by
+            // posting to this endpoint directly.
+            if (class_exists('MEC_license') and !MEC_license::is_license_site())
+            {
+                echo MEC_kses::element(json_encode([
+                    'message' => esc_html__('This network is licensed from its main site. Please activate there — every site in the network is covered by that one activation.', 'modern-events-calendar-lite'),
+                    'status' => false,
+                    'button_text' => esc_html__('submit', 'modern-events-calendar-lite'),
+                ]));
+                wp_die();
+            }
+
             $options = get_option('mec_options');
             $options['product_name'] = sanitize_text_field($_REQUEST['content']['LicenseTypeJson'] ?? '');
             $options['purchase_code'] = sanitize_text_field($_REQUEST['content']['PurchaseCodeJson'] ?? '');
@@ -246,9 +260,6 @@ class MEC_feature_mec extends MEC_base
 
             if ($verify && isset($verify->item_link))
             {
-                $payload['message'] = esc_html__('success');
-                $payload['status'] = true;
-                $payload['button_text'] = esc_html__('revoke', 'modern-events-calendar-lite');
                 update_option('mec_license_status', 'active');
                 $options['product_id'] = $verify->item_id;
 
@@ -256,21 +267,52 @@ class MEC_feature_mec extends MEC_base
                 // runtime licence is the signed token, and without one this
                 // site would still ramp down despite having just activated, so
                 // claim a token in the same request.
-                //
-                // A failure here is deliberately not reported as an activation
-                // failure: the purchase code is valid and is being stored, and
-                // the licence notice explains the rest. Saying "activation
-                // failed" would send the customer to re-enter a code that was
-                // never the problem.
+                $claim = true;
+
                 if (class_exists('MEC_license'))
                 {
                     $license = MEC_license::instance();
-                    $license->record_claim($license->claim($options['purchase_code']));
+
+                    $claim = $license->claim($options['purchase_code']);
+                    $license->record_claim($claim);
+
+                    // A site that already held a valid token is licensed even
+                    // if this particular claim did not go through.
+                    if ($claim !== true and $license->licensed()) $claim = true;
+                }
+
+                // 'success' and 'claim_failed' are protocol tokens the script
+                // compares against, NOT prose — they must never be run through
+                // a translation function, or the comparison fails on every
+                // non-English site.
+                $payload['button_text'] = esc_html__('revoke', 'modern-events-calendar-lite');
+
+                if ($claim === true)
+                {
+                    $payload['message'] = 'success';
+                    $payload['status'] = true;
+                }
+                else
+                {
+                    // The dashboard renders its green tick from the TOKEN, so
+                    // reporting success here when the claim failed is exactly
+                    // what produced a green tick that turned into a red cross
+                    // as soon as the page reloaded. Report what the reloaded
+                    // page will show, and say why.
+                    //
+                    // Still not an "activation failed": the purchase code is
+                    // valid and has been stored, so the customer must not be
+                    // sent to re-enter a code that was never the problem.
+                    $payload['message'] = 'claim_failed';
+                    $payload['status'] = false;
+                    $payload['reason'] = class_exists('MEC_feature_licensegate')
+                        ? MEC_feature_licensegate::reason_text($claim, 'claim')
+                        : esc_html__('This site could not be licensed. Please contact support.', 'modern-events-calendar-lite');
                 }
             }
             else
             {
-                $payload['message'] = esc_html__('Activation failed');
+                $payload['message'] = 'failed';
                 $payload['status'] = false;
                 $payload['button_text'] = esc_html__('submit', 'modern-events-calendar-lite');
                 update_option('mec_license_status', 'faild');
@@ -293,6 +335,18 @@ class MEC_feature_mec extends MEC_base
 
             if (!wp_verify_nonce(sanitize_text_field($_REQUEST['nonce'] ?? ''), 'mec_settings_nonce')) exit();
 
+            // Only the main site may revoke — a subsite doing so would strip
+            // the licence from every other site on the network.
+            if (class_exists('MEC_license') and !MEC_license::is_license_site())
+            {
+                echo MEC_kses::element(json_encode([
+                    'message' => esc_html__('This network is licensed from its main site. The license can only be revoked there.', 'modern-events-calendar-lite'),
+                    'status' => false,
+                    'button_text' => esc_html__('revoke', 'modern-events-calendar-lite'),
+                ]));
+                wp_die();
+            }
+
             $options = get_option('mec_options');
 
             // Capture the code BEFORE clearing it — revoke() needs it to
@@ -311,14 +365,49 @@ class MEC_feature_mec extends MEC_base
             // the local token. This frees the customer's activation slot so they
             // can reuse the code on another site, and prevents replay of the
             // token we held.
+            $revoked = true;
             if (class_exists('MEC_license'))
             {
-                MEC_license::instance()->revoke($purchase_code);
+                $revoked = MEC_license::instance()->revoke($purchase_code);
             }
 
-            $payload = json_encode(['message' => 'revoked', 'status' => true, 'button_text' => esc_html__('submit', 'modern-events-calendar-lite')]);
+            $payload = ['message' => 'revoked', 'status' => true, 'button_text' => esc_html__('submit', 'modern-events-calendar-lite')];
+
+            // Pro is off on this site either way, so this stays a success. But
+            // if the store did not confirm that the activation was released,
+            // say so here rather than let the customer discover it later, when
+            // the code will not activate anywhere else and nothing explains it.
+            if ($revoked !== true) $payload['warning'] = $this->revoke_warning($revoked);
+
+            $payload = json_encode($payload);
             echo MEC_kses::element($payload);
             wp_die();
+        }
+    }
+
+    /**
+     * Why a revoke did not free the activation on the store side.
+     *
+     * Each one says what DID happen (Pro is off here) before what did not, so
+     * the customer is not left thinking the revoke silently failed altogether.
+     *
+     * @param string $reason machine-readable code from MEC_license::revoke()
+     * @return string
+     */
+    private function revoke_warning($reason)
+    {
+        switch ($reason)
+        {
+            case 'EDD_NOT_DEACTIVATED':
+                return esc_html__('Pro has been turned off on this site, but the store did not confirm that your activation was released. If your purchase code will not activate on another site, please contact support.', 'modern-events-calendar-lite');
+
+            case 'NO_CODE':
+                return esc_html__('Pro has been turned off on this site. Because it was activated without a purchase code, support may still need to release the activation for you.', 'modern-events-calendar-lite');
+
+            case 'HTTP_ERROR':
+            case 'NO_ENDPOINT':
+            default:
+                return esc_html__('Pro has been turned off on this site, but the license server could not be reached, so your activation may still be in use. Please contact support if the code will not activate elsewhere.', 'modern-events-calendar-lite');
         }
     }
 
@@ -330,7 +419,16 @@ class MEC_feature_mec extends MEC_base
 
         $product_name = $options['product_name'];
         $item_id = $options['product_id'];
-        $url = get_home_url();
+
+        // The SAME string the token claim sends, so one activation produces one
+        // EDD row. These two calls used to disagree — this one sent the full
+        // home URL while the claim sent the bare host — so a subdirectory
+        // install registered twice (webnus.top AND webnus.top/staff-2) and
+        // burned two activation slots per activation.
+        //
+        // On multisite this also resolves to the network's main site, matching
+        // the one-licence-per-network rule rather than activating each subsite.
+        $url = class_exists('MEC_license') ? MEC_license::site_url() : get_home_url();
         $verify_url = MEC_API_ACTIVATION . '/activation/verify?category=mec&license=' . $code . '&url=' . $url . '&item_id=' . $item_id;
 
         $JSON = wp_remote_retrieve_body(wp_remote_get($verify_url, [
@@ -1800,7 +1898,7 @@ class MEC_feature_mec extends MEC_base
             $response = wp_remote_get(
                 'https://webnus.net/wp-json/wninfo/v1/posts/',
                 [
-                    'timeout'     => 15,
+                    'timeout'     => 5,
                     'redirection' => 5,
                     'sslverify'   => true,
                     'user-agent'  => 'Mozilla/5.0',
@@ -1828,6 +1926,12 @@ class MEC_feature_mec extends MEC_base
                     // Cache for 24 hours
                     set_transient('mec_webnus_news', $obj, DAY_IN_SECONDS);
                 }
+            }
+
+            // Cache empty result so we don't retry on every page load
+            if (empty($obj))
+            {
+                set_transient('mec_webnus_news', [], 6 * HOUR_IN_SECONDS);
             }
         }
 

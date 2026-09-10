@@ -886,11 +886,19 @@ class MEC_factory extends MEC_base
      */
     public function load_auto_update()
     {
-        $options = get_option('mec_options');
+        // Auto-update credentials follow the licence. On multisite that is
+        // the main site's purchase code and address: the update state store is
+        // a network option (see Puc StateStore), so a subsite checking with an
+        // empty code would write "unlicensed" for the whole network.
+        $license_site = (class_exists('MEC_license') and MEC_license::network_licensing()) ? MEC_license::license_site() : 0;
+
+        $options = $license_site ? get_blog_option($license_site, 'mec_options') : get_option('mec_options');
+        if (!is_array($options)) $options = [];
+
         $product_name = !empty($options['product_name']) ? esc_html__($options['product_name']) : '';
         $product_id = !empty($options['product_id']) ? esc_html__($options['product_id']) : '';
         $purchase_code = !empty($options['purchase_code']) ? esc_html__($options['purchase_code']) : '';
-        $url = urlencode(get_home_url());
+        $url = urlencode($license_site ? get_home_url($license_site) : get_home_url());
 
         require_once MEC_ABSPATH . 'app/core/puc/plugin-update-checker.php';
 

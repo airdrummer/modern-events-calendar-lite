@@ -746,14 +746,38 @@ jQuery(document).ready(function ($) {
               $(
                 "#MECActivation input[type=password][name=MECPurchaseCode]"
               ).val("");
-              // Reload so the dashboard reflects the unlicensed state.
-              setTimeout(function () { window.location.reload(); }, 800);
+
+              // The licence was dropped here, but the store did not confirm
+              // that the activation was released. Show that instead of
+              // reloading, or the only notice of it scrolls away unread.
+              if (res.warning) {
+                LicenseMessage.text(res.warning).removeClass(
+                  "mec-message-hidden"
+                );
+              } else {
+                // Reload so the dashboard reflects the unlicensed state.
+                setTimeout(function () { window.location.reload(); }, 800);
+              }
             }
           } else {
-            $("#MECActivation input[type=submit]").text(res.button_text);
+            // .val(), not .text() — this is an <input>, whose label is its
+            // value. .text() left the button reading whatever it read before.
+            $("#MECActivation input[type=submit]").val(res.button_text);
             PurchaseStatus.removeClass("PurchaseSuccess").addClass(
               "PurchaseError"
             );
+
+            // The purchase code was accepted and stored, but this site could
+            // not be licensed. Keep the revoke button (there IS a stored code
+            // to revoke), show the specific reason, and do NOT reload — the
+            // reloaded page shows the same red cross with no explanation.
+            if (res.message == "claim_failed") {
+              $("#MECActivation input[type=submit]")
+                .removeClass("mec_activate")
+                .addClass("mec_revoke");
+              if (res.reason) LicenseMessage.text(res.reason);
+            }
+
             LicenseMessage.removeClass("mec-message-hidden");
           }
         },

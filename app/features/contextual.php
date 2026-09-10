@@ -330,6 +330,12 @@ class MEC_feature_contextual extends MEC_base
                 </ul>
             </ul>   
 
+            <?php
+            // Multisite subsites are licensed by the network's main site, so
+            // telling their owner to enter a purchase code here would send them
+            // after something they cannot do.
+            if (!class_exists('MEC_license') or MEC_license::is_license_site()):
+            ?>
             <ul class="mec-accordion mec-message-categories" id="mec_message_categories_wp">
                 <li class="mec-acc-label" data-key="activation" data-status="close"><?php esc_html_e('MEC Activation', 'modern-events-calendar-lite'); ?></li>
                 <ul id="mec-acc-activation" style="display: none;">
@@ -339,6 +345,7 @@ class MEC_feature_contextual extends MEC_base
                     <iframe width="600" height="300" src="https://www.youtube.com/embed/c9DKvsrxD9I" frameborder="0" allowfullscreen></iframe>
                 </ul>
             </ul>
+            <?php endif; ?>
         </div>
         <?php
     }
