@@ -1,10 +1,10 @@
-﻿=== Modern Events Calendar Lite ===
+=== Modern Events Calendar Lite ===
 Contributors: webnus
 Donate link: https://webnus.net
 Tags: Event, Events, Calendar, Booking, Schedule, Organizer, Venue
 Requires at least: 4.0.0
 Tested up to: 7.1
-Stable tag: 7.36.4
+Stable tag: 7.36.4.1
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -473,7 +473,7 @@ You can see [plugin documentation](https://webnus.net/dox/modern-events-calendar
 
 == Changelog ==
 
-v 7.36.4 - 10 September 2026
+v 7.36.4.1 - 10 September 2026
 - Fixed: Some issues in license activation and revocation.
 - Fixed: Double activation slot usage on subdirectory installs.
 - Fixed: Admin notices disappearing on MEC dashboard pages.

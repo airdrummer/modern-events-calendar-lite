@@ -1,4 +1,9 @@
-﻿v 7.36.4 - 10 September 2026
+v 7.36.4.1 - 10sept26
+- fixed ical CREATED/LAST-MODIFIED format
+- added missing timezone display, reformat
+- fixed countdown
+
+v 7.36.4 - 10 September 2026
 - Fixed: Some issues in license activation and revocation.
 - Fixed: Double activation slot usage on subdirectory installs.
 - Fixed: Admin notices disappearing on MEC dashboard pages.
