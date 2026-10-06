@@ -1,4 +1,9 @@
-﻿v 7.37.0 - 1 October 2026
+v 7.37.0.1 - 6oct26
+- fixed ical CREATED/LAST-MODIFIED format
+- added missing timezone display, reformat
+- fixed countdown
+
+v 7.37.0 - 1 October 2026
 - Added: Event Creation task for MEC AI.
 - Added: MEC AI menu to the admin menu.
 - Added: A "Bundle license" notice for sites licensed through a bundled theme (such as X), making clear that no purchase code is needed.

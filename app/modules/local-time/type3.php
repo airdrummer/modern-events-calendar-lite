@@ -42,11 +42,14 @@ $allday = isset($event->data->meta['mec_allday']) ? $event->data->meta['mec_alld
 $hide_time = isset($event->data->meta['mec_hide_time']) ? $event->data->meta['mec_hide_time'] : 0;
 $hide_end_time = $this->hide_end_time_status($event->ID);
 ?>
-<div class="mec-localtime-details" id="mec_localtime_details">
+<div class="mec-localtime-details t3" id="mec_localtime_details">
     <div class="mec-localtime-wrap">
-        <div class="mec-localdate"><?php echo sprintf(esc_html__('Local Date: %s |', 'modern-events-calendar-lite'), $this->date_label(array('date'=>date('Y-m-d', $user_start_time)), array('date'=>date('Y-m-d', $user_end_time)), $date_format1)); ?></div>
+        <div class="mec-localdate"><?php echo sprintf(esc_html__('Local Time: %s', 'modern-events-calendar-lite'), $this->date_label(array('date'=>date('Y-m-d', $user_start_time)), array('date'=>date('Y-m-d', $user_end_time)), $date_format1)); ?></div>
         <?php if(!$hide_time and trim($time_format)): ?>
-        <div class="mec-localtime"><?php echo sprintf(esc_html__('Local Time: %s', 'modern-events-calendar-lite'), '<span>'.($allday ? $this->m('all_day', esc_html__('All Day' , 'modern-events-calendar-lite')) : ($hide_end_time ? date($time_format, $user_start_time) : date($time_format, $user_start_time).' - '.date($time_format, $user_end_time))).'</span>'); ?></div>
+        <div class="mec-localtime"><?php echo sprintf(esc_html__('%s', 'modern-events-calendar-lite'), 
+        			 '<span>'.($allday ? $this->m('all_day', esc_html__('All Day' , 'modern-events-calendar-lite'))
+        					 : date($time_format, $user_start_time)
+        					 . ($hide_end_time ? "" : ' - '. date($time_format, $user_end_time))).'</span>'); ?></div>
         <?php endif; ?>
     </div>
 </div>
