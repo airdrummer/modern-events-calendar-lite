@@ -7,29 +7,16 @@ defined('MECEXEC') or die();
 wp_enqueue_style('mec-lity-style');
 wp_enqueue_script('mec-lity-script');
 
-$styling = $this->main->get_styling();
-$darkadmin_mode = $styling['dark_mode'] ?? '';
-$logo = plugin_dir_url(__FILE__) . '../../../assets/img/' . ($darkadmin_mode == 1 ? 'mec-logo-w2.png' : 'mec-logo-w.png');
-
 $addons = [];
 $addons_json_path = plugin_dir_path(__FILE__) . '../../api/addons-api/addons-api.json';
 if (file_exists($addons_json_path)) $addons = json_decode((string) @file_get_contents($addons_json_path));
 $addons = is_object($addons) ? get_object_vars($addons) : [];
 ?>
 <div id="webnus-dashboard" class="wrap about-wrap mec-addons mec-support-page">
-    <div class="welcome-head w-clearfix">
-        <div class="w-row">
-            <div class="w-col-sm-9">
-                <h1> <?php echo esc_html__('Addons', 'modern-events-calendar-lite'); ?> </h1>
-                <div class="w-welcome">
-                    <?php echo sprintf(esc_html__('%s: extend MEC with powerful addons for page builders, payments, reports and more.', 'modern-events-calendar-lite'), '<strong>' . esc_html__('Modern Events Calendar', 'modern-events-calendar-lite') . '</strong>'); ?>
-                </div>
-            </div>
-            <div class="w-col-sm-3">
-                <img src="<?php echo esc_url($logo); ?>" alt="<?php echo esc_attr__('Modern Events Calendar', 'modern-events-calendar-lite'); ?>" />
-                <span class="w-theme-version"><?php echo esc_html__('Version', 'modern-events-calendar-lite'); ?> <?php echo MEC_VERSION; ?></span>
-            </div>
-        </div>
+    <div class="mec-page-head">
+        <span class="mec-page-eyebrow"><?php esc_html_e('Modern Events Calendar', 'modern-events-calendar-lite'); ?></span>
+        <h1><span class="mec-page-mark" aria-hidden="true"><i class="mec-sl-layers"></i></span><?php esc_html_e('Addons', 'modern-events-calendar-lite'); ?></h1>
+        <p class="mec-page-lead"><?php esc_html_e('Extend MEC with powerful addons for page builders, payments, reports and more.', 'modern-events-calendar-lite'); ?></p>
     </div>
     <hr class="wp-header-end">
     <div class="welcome-content w-clearfix extra">

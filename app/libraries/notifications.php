@@ -258,13 +258,13 @@ class MEC_notifications extends MEC_base
         $subject = isset($this->notif_settings['attendee_report']['subject']) ? stripslashes(esc_html__($this->notif_settings['attendee_report']['subject'], 'modern-events-calendar-lite')) : esc_html__('Attendee Report', 'modern-events-calendar-lite');
         $subject = $this->content($this->get_subject($subject, 'attendee_report', $event_id, 0), 0);
         $subject = str_replace('%%event_title%%', $event->post_title, $subject);
-        $subject = str_replace('%%total_attendees%%', count($attendees), $subject);
+        $subject = str_replace('%%total_attendees%%', $total_attendees, $subject);
         $subject = str_replace('%%event_start_datetime%%', $this->main->date_i18n($date_format.' '.$time_format, $start_timestamp), $subject);
         $subject = str_replace('%%event_end_datetime%%', $this->main->date_i18n($date_format.' '.$time_format, $end_timestamp), $subject);
 
         $message = $this->notif_settings['attendee_report']['content'] ?? '';
         $message = str_replace('%%event_title%%', $event->post_title, $message);
-        $message = str_replace('%%total_attendees%%', count($attendees), $message);
+        $message = str_replace('%%total_attendees%%', $total_attendees, $message);
         $message = str_replace('%%event_start_datetime%%', $this->main->date_i18n($date_format.' '.$time_format, $start_timestamp), $message);
         $message = str_replace('%%event_end_datetime%%', $this->main->date_i18n($date_format.' '.$time_format, $end_timestamp), $message);
         $message = $this->content($this->get_content($message, 'attendee_report', $event_id, 0), 0, [], $timestamps);
@@ -3106,7 +3106,7 @@ class MEC_notifications extends MEC_base
             <tr>
                 <td class="wn-container" style="display: block; margin: 0 auto !important; max-width: 680px; padding: 10px;font-family: sans-serif; font-size: 14px; vertical-align: top;">
                     <div class="wn-wrapper" style="box-sizing: border-box; padding: 38px 9% 50px; width: 100%; height: auto; background: #fff; background-size: contain; margin-bottom: 25px; margin-top: 30px; border-radius: 4px; box-shadow: 0 3px 55px -18px rgba(0,0,0,0.1);">
-                        ' . MEC_kses::page($content) . '
+                        ' . MEC_kses::wysiwyg($content) . '
                     </div>
                 </td>
             </tr>

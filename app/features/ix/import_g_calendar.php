@@ -5,7 +5,11 @@ defined('MECEXEC') or die();
 $ix_options = $this->main->get_ix_options();
 ?>
 <div class="wrap" id="mec-wrap">
-    <h1><?php esc_html_e('MEC Import / Export', 'modern-events-calendar-lite'); ?></h1>
+    <div class="mec-page-head">
+        <span class="mec-page-eyebrow"><?php esc_html_e('Modern Events Calendar', 'modern-events-calendar-lite'); ?></span>
+        <h1><span class="mec-page-mark" aria-hidden="true"><i class="mec-sl-refresh"></i></span><?php esc_html_e('Import / Export', 'modern-events-calendar-lite'); ?></h1>
+        <p class="mec-page-lead"><?php esc_html_e('Move events and bookings in and out of MEC, and keep them in sync with Google, Facebook, and Meetup calendars.', 'modern-events-calendar-lite'); ?></p>
+    </div>
     <h2 class="nav-tab-wrapper">
         <a href="<?php echo esc_url($this->main->remove_qs_var('tab')); ?>" class="nav-tab nav-tab-active"><?php echo esc_html__('Google Cal. Import', 'modern-events-calendar-lite'); ?></a>
         <a href="<?php echo esc_url($this->main->add_qs_var('tab', 'MEC-g-calendar-export')); ?>" class="nav-tab"><?php echo esc_html__('Google Cal. Export', 'modern-events-calendar-lite'); ?></a>

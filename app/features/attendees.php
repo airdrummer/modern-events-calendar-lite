@@ -82,7 +82,7 @@ class MEC_feature_attendees extends MEC_base
 
         if ($message === '') return;
 
-        echo '<div class="notice notice-error"><p>' . esc_html($message) . '</p></div>';
+        echo '<div class="notice notice-error mec-admin-notice"><p>' . esc_html($message) . '</p></div>';
     }
 
     public function hide_menu_item()

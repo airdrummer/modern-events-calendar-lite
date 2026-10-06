@@ -121,14 +121,14 @@ else $set_dark = '';
                     <?php endif; ?>
                 </div>
                 <div class="mec-event-loction">
-                    <?php echo $this->icons->display('location-pin'); ?>
                     <?php if(isset($location['name']) and trim($location['name'])): ?>
+                        <?php echo $this->icons->display('location-pin'); ?>
                         <span><?php echo esc_html($location['name']); ?></span>
                     <?php endif; ?>
                 </div>
                 <div class="mec-event-organizer">
-                    <?php echo $this->icons->display('user'); ?>
                     <?php if(isset($organizer['name']) and trim($organizer['name'])): ?>
+                        <?php echo $this->icons->display('user'); ?>
                         <span><?php echo esc_html($organizer['name']); ?></span>
                     <?php endif; ?>
                 </div>

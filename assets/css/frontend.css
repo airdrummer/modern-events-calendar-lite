@@ -14280,6 +14280,130 @@ body .lity-close:active {
   }
 }
 
+/* Timetable Week Navigator
+    -------------------------------- */
+.mec-wrap .mec-timetable-week-navigator {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 14px 16px;
+  margin: 0 0 20px;
+  background: #fff;
+  border: 1px solid #e7e9ec;
+  border-radius: var(--mec-primary-border-radius);
+}
+
+.mec-wrap .mec-timetable-week-navigator .mec-load-week {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  color: #767c84;
+  background: #f7f8fa;
+  border: 1px solid #e3e6ea;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.mec-wrap .mec-timetable-week-navigator .mec-load-week i {
+  font-size: 15px;
+  line-height: 1;
+  transition: transform 0.25s ease;
+}
+
+.mec-wrap .mec-timetable-week-navigator .mec-load-week:hover,
+.mec-wrap .mec-timetable-week-navigator .mec-load-week:focus-visible {
+  color: #fff;
+  background: var(--mec-color-skin);
+  border-color: var(--mec-color-skin);
+}
+
+.mec-wrap .mec-timetable-week-navigator .mec-previous-week:hover i,
+.mec-wrap .mec-timetable-week-navigator .mec-previous-week:focus-visible i {
+  transform: translateX(-2px);
+}
+
+.mec-wrap .mec-timetable-week-navigator .mec-next-week:hover i,
+.mec-wrap .mec-timetable-week-navigator .mec-next-week:focus-visible i {
+  transform: translateX(2px);
+}
+
+.mec-wrap .mec-timetable-week-navigator .mec-previous-week {
+  grid-column: 1;
+}
+
+.mec-wrap .mec-timetable-week-navigator .mec-next-week {
+  grid-column: 3;
+  justify-self: end;
+}
+
+.mec-wrap .mec-timetable-week-navigator .mec-month-label {
+  grid-column: 2;
+  margin: 0;
+  color: #3c4148;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  line-height: 1.4;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mec-wrap .mec-timetable-week-navigator .mec-month-label:before,
+.mec-wrap .mec-timetable-week-navigator .mec-month-label:after {
+  content: "";
+  display: inline-block;
+  width: 22px;
+  height: 2px;
+  margin: 0 14px;
+  vertical-align: middle;
+  background: var(--mec-color-skin-rgba-2);
+  border-radius: 2px;
+}
+
+/* Dark Mode */
+.mec-wrap.mec-dark-mode .mec-timetable-week-navigator {
+  background: #1f1f1f;
+  border-color: #353535;
+}
+
+.mec-wrap.mec-dark-mode .mec-timetable-week-navigator .mec-load-week {
+  color: #d2d2d2;
+  background: #282828;
+  border-color: #353535;
+}
+
+.mec-wrap.mec-dark-mode .mec-timetable-week-navigator .mec-month-label {
+  color: #d2d2d2;
+}
+
+@media only screen and (max-width: 479px) {
+  .mec-wrap .mec-timetable-week-navigator {
+    padding: 10px 12px;
+  }
+
+  .mec-wrap .mec-timetable-week-navigator .mec-load-week {
+    width: 32px;
+    height: 32px;
+  }
+
+  .mec-wrap .mec-timetable-week-navigator .mec-month-label {
+    font-size: 14px;
+    letter-spacing: 0;
+  }
+
+  .mec-wrap .mec-timetable-week-navigator .mec-month-label:before,
+  .mec-wrap .mec-timetable-week-navigator .mec-month-label:after {
+    width: 12px;
+    margin: 0 8px;
+  }
+}
+
 /* Timetable View type 2
     -------------------------------- */
 .mec-timetable-t2-wrap {

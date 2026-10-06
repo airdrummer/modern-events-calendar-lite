@@ -150,7 +150,7 @@ wp_enqueue_script('mec-niceselect-script');
         <h4><?php echo ($from_shortcode ? $event->data->post->post_title : esc_html__('Book Event', 'modern-events-calendar-lite')); ?></h4>
     <?php endif; ?>
 
-    <?php if(!$book_all_occurrences and count($dates) > 1): ?>
+    <?php if(!$book_all_occurrences and (count($dates) > 1 or $date_selection === 'express-calendar')): ?>
     <div class="mec-book-first">
         <?php if(in_array($date_selection, ['calendar', 'express-calendar'])): $default_selected_datetime = $book->timestamp($dates[0]['start'], $dates[0]['end']); $default_selected_datetime_ex = explode(':', $default_selected_datetime); ?>
 

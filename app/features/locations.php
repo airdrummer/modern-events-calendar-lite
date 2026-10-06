@@ -127,9 +127,9 @@ class MEC_feature_locations extends MEC_base
                 <script>
                 jQuery(document).ready(function()
                 {
-                    if(typeof google !== 'undefined')
+                    if(typeof mecPlaceAutocomplete === 'function')
                     {
-                        new google.maps.places.Autocomplete(document.getElementById('mec_address'));
+                        mecPlaceAutocomplete(document.getElementById('mec_address'));
                     }
                 });
                 </script>
@@ -211,9 +211,9 @@ class MEC_feature_locations extends MEC_base
             <script>
             jQuery(document).ready(function()
             {
-                if(typeof google !== 'undefined')
+                if(typeof mecPlaceAutocomplete === 'function')
                 {
-                    new google.maps.places.Autocomplete(document.getElementById('mec_address'));
+                    mecPlaceAutocomplete(document.getElementById('mec_address'));
                 }
             });
             </script>

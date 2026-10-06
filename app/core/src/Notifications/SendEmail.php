@@ -476,7 +476,7 @@ class SendEmail{
             <tr>
                 <td class="wn-container" style="display: block; margin: 0 auto !important; max-width: 680px; padding: 10px;font-family: sans-serif; font-size: 14px; vertical-align: top;">
                     <div class="wn-wrapper" style="box-sizing: border-box; padding: 38px 9% 50px; width: 100%; height: auto; background: #fff; background-size: contain; margin-bottom: 25px; margin-top: 30px; border-radius: 4px; box-shadow: 0 3px 55px -18px rgba(0,0,0,0.1);">
-                        '.\MEC_kses::page($content).'
+                        '.\MEC_kses::wysiwyg($content).'
                     </div>
                 </td>
             </tr>

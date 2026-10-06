@@ -389,11 +389,13 @@ class MEC_feature_restful extends MEC_base
     private function get_taxonomy_entity_items(array $vars, array $tax, string $entity): array
     {
         $items = [];
+        $single = $this->get_taxonomy_entities()[$entity]['single'];
 
         if (isset($tax[$entity]) && is_array($tax[$entity])) $items = $tax[$entity];
         elseif (isset($vars[$entity]) && is_array($vars[$entity])) $items = $vars[$entity];
+        elseif (isset($vars[$single]) && is_array($vars[$single])) $items = $vars[$single];
 
-        $ids_key = $this->get_taxonomy_entities()[$entity]['single'] . '_ids';
+        $ids_key = $single . '_ids';
         if (isset($vars[$ids_key]) && is_array($vars[$ids_key])) $items = array_merge($items, $vars[$ids_key]);
 
         return $items;

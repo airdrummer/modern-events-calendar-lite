@@ -211,7 +211,7 @@ class MEC_feature_events extends MEC_base
         {
             add_action('admin_notices', function ()
             {
-                echo '<div class="notice notice-warning is-dismissible">
+                echo '<div class="notice notice-warning is-dismissible mec-admin-notice">
                     <p>' . esc_html__('It is advisable to utilize a geographic timezone, such as "America/Los_Angeles" instead of a UTC timezone offset, like "UTC+0," while using The Modern Events Calendar. The latter may cause issues when importing events or with Daylight Saving Time.', 'modern-events-calendar-lite') . '</p>
                 </div>';
             });
@@ -2458,27 +2458,7 @@ class MEC_feature_events extends MEC_base
      */
     private function sanitize_wysiwyg_field($html)
     {
-        if (!is_string($html) or trim($html) === '') return '';
-
-        $allowed = wp_kses_allowed_html('post');
-        $allowed['iframe'] = [
-            'src' => 1,
-            'width' => 1,
-            'height' => 1,
-            'frameborder' => 1,
-            'allow' => 1,
-            'allowfullscreen' => 1,
-            'loading' => 1,
-            'title' => 1,
-            'name' => 1,
-            'referrerpolicy' => 1,
-            'sandbox' => 1,
-            'style' => 1,
-            'class' => 1,
-            'id' => 1,
-        ];
-
-        return wp_kses($html, apply_filters('mec_wysiwyg_field_allowed_html', $allowed));
+        return MEC_kses::wysiwyg($html);
     }
 
     /**
@@ -2710,12 +2690,20 @@ class MEC_feature_events extends MEC_base
         $repeat_status = isset($repeat['status']) ? 1 : 0;
         $repeat_type = ($repeat_status and isset($repeat['type'])) ? $repeat['type'] : '';
 
-        // Unset Repeat if no days are selected
-        if ($repeat_type == 'certain_weekdays' && (!is_array($certain_weekdays) || !count($certain_weekdays)))
+        // Sanitize certain weekdays to valid integers (1-7)
+        if ($repeat_type != 'certain_weekdays') $certain_weekdays = [];
+        else $certain_weekdays = array_filter(array_map('intval', (array) $certain_weekdays), function ($weekday)
+        {
+            return $weekday >= 1 && $weekday <= 7;
+        });
+
+        // Unset Repeat if no valid weekdays remain after sanitization
+        if ($repeat_type == 'certain_weekdays' && !count($certain_weekdays))
         {
             $repeat_status = 0;
             $repeat['status'] = 0;
             $repeat['type'] = '';
+            $repeat_type = '';
         }
 
         $repeat_interval = ($repeat_status and isset($repeat['interval']) and trim($repeat['interval'])) ? $repeat['interval'] : 1;
@@ -3085,7 +3073,7 @@ class MEC_feature_events extends MEC_base
                 $q1 .= "`$key`,";
 
                 if (is_null($value)) $q2 .= 'NULL,';
-                else $q2 .= "'$value',";
+                else $q2 .= "'" . $this->db->escape($value) . "',";
             }
 
             $this->db->q('INSERT INTO `#__mec_events` (' . trim($q1, ', ') . ') VALUES (' . trim($q2, ', ') . ')', 'INSERT');
@@ -3097,7 +3085,7 @@ class MEC_feature_events extends MEC_base
             foreach ($event as $key => $value)
             {
                 if (is_null($value)) $q .= "`$key`=NULL,";
-                else $q .= "`$key`='$value',";
+                else $q .= "`$key`='" . $this->db->escape($value) . "',";
             }
 
             $this->db->q('UPDATE `#__mec_events` SET ' . trim($q, ', ') . " WHERE `id`='$mec_event_id'");
@@ -3291,13 +3279,13 @@ class MEC_feature_events extends MEC_base
             {
                 if (isset($raw_notification['content']))
                 {
-                    $_mec['notifications'][$notif_key]['content'] = wp_kses_post($raw_notification['content']);
+                    $_mec['notifications'][$notif_key]['content'] = MEC_kses::wysiwyg($raw_notification['content']);
                 }
 
                 // Zoom addon custom message (mec-zoom-integration)
                 if (isset($raw_notification['zoom_content']))
                 {
-                    $_mec['notifications'][$notif_key]['zoom_content'] = wp_kses_post($raw_notification['zoom_content']);
+                    $_mec['notifications'][$notif_key]['zoom_content'] = MEC_kses::wysiwyg($raw_notification['zoom_content']);
                 }
             }
 
@@ -4382,8 +4370,15 @@ class MEC_feature_events extends MEC_base
 
     public function mec_event_bookings()
     {
-        $id = isset($_POST['id']) ? sanitize_text_field($_POST['id']) : 0;
+        $id = isset($_POST['id']) ? (int) sanitize_text_field($_POST['id']) : 0;
         $backend = isset($_POST['backend']) ? sanitize_text_field($_POST['backend']) : 0;
+
+        // Only users who can edit the event can view its bookings
+        if (!$id || !current_user_can('edit_post', $id))
+        {
+            echo json_encode(['html' => '', 'found' => false]);
+            exit;
+        }
 
         $p_occurrence = isset($_POST['occurrence']) ? sanitize_text_field($_POST['occurrence']) : null;
         $occurrence = explode(':', $p_occurrence)[0];

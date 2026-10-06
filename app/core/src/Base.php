@@ -305,7 +305,7 @@ final class Base
 					});
 				});
 			</script>
-			<div class="notice notice-error is-dismissible">
+			<div class="notice notice-error is-dismissible mec-admin-notice">
 				<p><?php echo $message; ?></p>
 			</div>
 			<?php
@@ -338,6 +338,7 @@ final class Base
 					'per_page' => 1,
 					'page' => 1,
 					'categories' => $category,
+					'_embed' => 'wp:featuredmedia',
 				),
 				'https://notifications.webnus.site/wp-json/wp/v2/posts'
 			),
@@ -376,27 +377,9 @@ final class Base
 			return;
 		}
 
-		$featured_media = $body[0]->featured_media;
 		$title = $body[0]->title->rendered;
 		$content = $body[0]->content->rendered;
-
-		$featured_image = wp_remote_get(
-			'https://notifications.webnus.site/wp-json/wp/v2/media/' . $featured_media,
-			array(
-				'timeout' => 50, // Fix for: cURL error 28: Operation timed out after...
-			)
-		);
-
-		if (is_wp_error($featured_image) || wp_remote_retrieve_response_code($featured_image) !== 200) {
-			if ($debug) {
-				$reason = is_wp_error($featured_image) ? $featured_image->get_error_message() : 'HTTP ' . wp_remote_retrieve_response_code($featured_image);
-				echo '<div class="notice notice-error"><p><strong>MEC notice debug:</strong> media request failed: ' . esc_html($reason) . '</p></div>';
-			}
-			return;
-		}
-
-		$body_featured_image = json_decode(wp_remote_retrieve_body($featured_image));
-		$lite_featured_image = $body_featured_image->guid->rendered;
+		$lite_featured_image = $body[0]->_embedded->{'wp:featuredmedia'}[0]->source_url ?? '';
 		?>
 				<style>
 					.notice.mec-marketing-notice {
@@ -459,9 +442,11 @@ final class Base
 						box-shadow: 0 0 0 4px rgb(56 213 237 / 15%) !important;
 					}
 				</style>
-				<div class="notice is-dismissible mec-marketing-notice" data-mec-post-id="<?php echo esc_attr($post_id); ?>">
+				<div class="notice is-dismissible mec-marketing-notice mec-admin-notice" data-mec-post-id="<?php echo esc_attr($post_id); ?>">
 					<div class="mec-marketing-notice-body">
+						<?php if ($lite_featured_image): ?>
 						<img class="mec-marketing-notice-image" src="<?php echo esc_url($lite_featured_image); ?>" alt="<?php echo esc_attr(wp_strip_all_tags($title)); ?>" />
+						<?php endif; ?>
 						<div class="mec-marketing-notice-content">
 							<div class="mec-marketing-notice-label"><?php echo $title; ?></div>
 							<?php echo $content ?>

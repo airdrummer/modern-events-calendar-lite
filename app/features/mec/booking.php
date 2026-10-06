@@ -1278,10 +1278,10 @@ if(isset($_POST['mec']['settings']['booking_registration'])) {
                                             <p class="mec-error" id="mec_wc_status_mec_cart_error"><?php esc_html_e("Please disable MEC Cart first otherwise you're not able to use WooCommerce feature.", 'modern-events-calendar-lite'); ?></p>
                                             <?php endif; ?>
 
-                                            <p><?php esc_html_e("You cannot use following MEC features so you should use WooCommerc and its add-ons if you need them.", 'modern-events-calendar-lite'); ?></p>
+                                            <p><?php esc_html_e('The following MEC features are not supported with WooCommerce as Payment System. Use WooCommerce and compatible add-ons instead.', 'modern-events-calendar-lite'); ?></p>
                                             <ul>
                                                 <li><?php esc_html_e('Payment Gateways', 'modern-events-calendar-lite'); ?></li>
-                                                <li><?php esc_html_e('Price per Dates of Tickets', 'modern-events-calendar-lite'); ?></li>
+                                                <li><?php esc_html_e('Date-based ticket prices, including Early Bird pricing', 'modern-events-calendar-lite'); ?></li>
                                                 <li><?php esc_html_e('Coupons', 'modern-events-calendar-lite'); ?></li>
                                                 <li><?php esc_html_e('Ticket Variations', 'modern-events-calendar-lite'); ?></li>
                                                 <li><?php esc_html_e('Taxes / Fees', 'modern-events-calendar-lite'); ?></li>

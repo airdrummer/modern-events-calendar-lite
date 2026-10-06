@@ -71,10 +71,10 @@ $cost = $this->main->get_event_cost($event);
                 <div class="mec-single-event-label">
                     <?php echo $this->icons->display('bookmark'); ?>
                     <h3 class="mec-cost"><?php echo esc_html($this->main->m('taxonomy_labels', esc_html__('Labels', 'modern-events-calendar-lite'))); ?></h3>
-                    <?php foreach($event->data->labels as $labels=>$label) :
-                    $seperator = (++$mec_i === $mec_items) ? '' : ',';
-                    echo '<dl><dd style=color:"' . esc_attr($label['color']) . '">' . esc_html($label["name"] . $seperator) . '</dd></dl>';
-                    endforeach; ?>
+                    <dl><dd><?php foreach($event->data->labels as $label) :
+                    $separator = (++$mec_i === $mec_items) ? '' : ',';
+                    echo '<span style="color: ' . esc_attr($label['color']) . ';">' . esc_html($label["name"] . $separator) . '</span>';
+                    endforeach; ?></dd></dl>
                 </div>
                 <?php
             }
@@ -113,7 +113,7 @@ $cost = $this->main->get_event_cost($event);
                                     <h6><?php echo (isset($organizer['name']) ? esc_html($organizer['name']) : ''); ?></h6>
                                 </a>
                             <?php }else{ ?>
-                                <?php echo $this->icons->display('wallet'); ?>
+                                <?php echo $this->icons->display('people'); ?>
                                 <h6><?php echo (isset($organizer['name']) ? esc_html($organizer['name']) : ''); ?></h6>
                             <?php } ?>
                         </dd>

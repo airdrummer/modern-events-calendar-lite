@@ -160,6 +160,17 @@ class MEC_feature_mec extends MEC_base
 
         // Close Custom Text Notification
         $this->factory->action('wp_ajax_close_cmsg_notification', [$this, 'close_cmsg_notification']);
+
+        // IA-01: per-user, temporary dismissal of the Lite upsell card on the
+        // dashboard. The card returns automatically after 30 days (the
+        // template compares the stored timestamp), so this only records when
+        // the user closed it.
+        $this->factory->action('wp_ajax_mec_intro_upsell_dismiss', [$this, 'dismiss_intro_upsell']);
+
+        // I-02: per-user dismissal of the remote dashboard announcement,
+        // keyed by the remote post ID - a NEW announcement (different ID)
+        // shows again, the dismissed one stays gone for that user.
+        $this->factory->action('wp_ajax_mec_intro_remote_dismiss', [$this, 'dismiss_intro_remote']);
         $this->factory->action('wp_ajax_close_cmsg_2_notification', [$this, 'close_cmsg_2_notification']);
 
         // Occurrences Dropdown
@@ -228,7 +239,7 @@ class MEC_feature_mec extends MEC_base
     public function activate_license()
     {
         // Package, not licence. Gating this on getPRO() would mean an
-        // unlicensed site could never enter its licence — a deadlock that is
+        // unlicensed site could never enter its licence - a deadlock that is
         // unrecoverable without FTP once the ramp reaches its final phase.
         if ($this->isProBuild())
         {
@@ -244,9 +255,9 @@ class MEC_feature_mec extends MEC_base
             if (class_exists('MEC_license') and !MEC_license::is_license_site())
             {
                 echo MEC_kses::element(json_encode([
-                    'message' => esc_html__('This network is licensed from its main site. Please activate there — every site in the network is covered by that one activation.', 'modern-events-calendar-lite'),
+                    'message' => esc_html__('This network is licensed from its main site. Please activate there - every site in the network is covered by that one activation.', 'modern-events-calendar-lite'),
                     'status' => false,
-                    'button_text' => esc_html__('submit', 'modern-events-calendar-lite'),
+                    'button_text' => esc_html__('Activate', 'modern-events-calendar-lite'),
                 ]));
                 wp_die();
             }
@@ -261,6 +272,7 @@ class MEC_feature_mec extends MEC_base
             if ($verify && isset($verify->item_link))
             {
                 update_option('mec_license_status', 'active');
+                delete_transient('mec_activation_network_error');
                 $options['product_id'] = $verify->item_id;
 
                 // The legacy endpoint above only unlocks auto-updates. The
@@ -282,10 +294,10 @@ class MEC_feature_mec extends MEC_base
                 }
 
                 // 'success' and 'claim_failed' are protocol tokens the script
-                // compares against, NOT prose — they must never be run through
+                // compares against, NOT prose - they must never be run through
                 // a translation function, or the comparison fails on every
                 // non-English site.
-                $payload['button_text'] = esc_html__('revoke', 'modern-events-calendar-lite');
+                $payload['button_text'] = esc_html__('Revoke License', 'modern-events-calendar-lite');
 
                 if ($claim === true)
                 {
@@ -312,9 +324,22 @@ class MEC_feature_mec extends MEC_base
             }
             else
             {
-                $payload['message'] = 'failed';
+                // Network/infrastructure failure - the store was never reached,
+                // so blaming the purchase code would send the customer hunting
+                // for a problem their code does not have. The JS swaps the
+                // message for res.reason, exactly like claim_failed.
+                if (get_transient('mec_activation_network_error'))
+                {
+                    $payload['message'] = 'network_error';
+                    $payload['reason'] = esc_html__('The license server could not be reached, so your purchase code could not be checked. Please try again in a few minutes. If it keeps failing, contact support.', 'modern-events-calendar-lite');
+                }
+                else
+                {
+                    $payload['message'] = 'failed';
+                }
+
                 $payload['status'] = false;
-                $payload['button_text'] = esc_html__('submit', 'modern-events-calendar-lite');
+                $payload['button_text'] = esc_html__('Activate', 'modern-events-calendar-lite');
                 update_option('mec_license_status', 'faild');
             }
 
@@ -327,7 +352,7 @@ class MEC_feature_mec extends MEC_base
 
     public function revoke_license()
     {
-        // Package, not licence — see activate_license().
+        // Package, not licence - see activate_license().
         if ($this->isProBuild())
         {
             // Current User is not Permitted
@@ -335,21 +360,21 @@ class MEC_feature_mec extends MEC_base
 
             if (!wp_verify_nonce(sanitize_text_field($_REQUEST['nonce'] ?? ''), 'mec_settings_nonce')) exit();
 
-            // Only the main site may revoke — a subsite doing so would strip
+            // Only the main site may revoke - a subsite doing so would strip
             // the licence from every other site on the network.
             if (class_exists('MEC_license') and !MEC_license::is_license_site())
             {
                 echo MEC_kses::element(json_encode([
                     'message' => esc_html__('This network is licensed from its main site. The license can only be revoked there.', 'modern-events-calendar-lite'),
                     'status' => false,
-                    'button_text' => esc_html__('revoke', 'modern-events-calendar-lite'),
+                    'button_text' => esc_html__('Revoke License', 'modern-events-calendar-lite'),
                 ]));
                 wp_die();
             }
 
             $options = get_option('mec_options');
 
-            // Capture the code BEFORE clearing it — revoke() needs it to
+            // Capture the code BEFORE clearing it - revoke() needs it to
             // deactivate the EDD activation for this site.
             $purchase_code = $options['purchase_code'] ?? '';
 
@@ -371,7 +396,7 @@ class MEC_feature_mec extends MEC_base
                 $revoked = MEC_license::instance()->revoke($purchase_code);
             }
 
-            $payload = ['message' => 'revoked', 'status' => true, 'button_text' => esc_html__('submit', 'modern-events-calendar-lite')];
+            $payload = ['message' => 'revoked', 'status' => true, 'button_text' => esc_html__('Activate', 'modern-events-calendar-lite')];
 
             // Pro is off on this site either way, so this stays a success. But
             // if the store did not confirm that the activation was released,
@@ -421,8 +446,8 @@ class MEC_feature_mec extends MEC_base
         $item_id = $options['product_id'];
 
         // The SAME string the token claim sends, so one activation produces one
-        // EDD row. These two calls used to disagree — this one sent the full
-        // home URL while the claim sent the bare host — so a subdirectory
+        // EDD row. These two calls used to disagree - this one sent the full
+        // home URL while the claim sent the bare host - so a subdirectory
         // install registered twice (webnus.top AND webnus.top/staff-2) and
         // burned two activation slots per activation.
         //
@@ -431,19 +456,38 @@ class MEC_feature_mec extends MEC_base
         $url = class_exists('MEC_license') ? MEC_license::site_url() : get_home_url();
         $verify_url = MEC_API_ACTIVATION . '/activation/verify?category=mec&license=' . $code . '&url=' . $url . '&item_id=' . $item_id;
 
-        $JSON = wp_remote_retrieve_body(wp_remote_get($verify_url, [
+        $response = wp_remote_get($verify_url, [
             'body' => null,
-            'timeout' => '120',
+            // Long enough for a slow store, short enough that a blocked or
+            // hanging endpoint does not freeze the settings page for two
+            // minutes - the licence check runs on a page load the admin is
+            // staring at. The token claim uses 15 for the same reason.
+            'timeout' => 30,
             'redirection' => '10',
             'user-agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36',
-        ]));
+        ]);
 
-        if ($JSON != '')
+        // Transport-level failure: DNS, connection, timeout. The store was
+        // never reached, so this is not an answer about the purchase code.
+        // Leave a note so the dashboard can say "server unreachable" instead
+        // of blaming the code the customer just paid for.
+        if (is_wp_error($response))
         {
-            $data = json_decode($JSON);
-            return $data;
+            set_transient('mec_activation_network_error', 1, 10 * MINUTE_IN_SECONDS);
+            return false;
         }
-        else return false;
+
+        $data = json_decode(wp_remote_retrieve_body($response));
+
+        // A body that is not JSON is an infrastructure page (WAF block,
+        // proxy error), not a store answer. Same note, same treatment.
+        if (!is_object($data))
+        {
+            set_transient('mec_activation_network_error', 1, 10 * MINUTE_IN_SECONDS);
+            return false;
+        }
+
+        return $data;
     }
 
     /* Download MEC settings */
@@ -500,6 +544,32 @@ class MEC_feature_mec extends MEC_base
         if (!wp_verify_nonce(sanitize_text_field($_REQUEST['nonce']), 'mec_settings_nonce')) exit();
 
         update_option('mec_custom_msg_close_option', 'open');
+        wp_die();
+    }
+
+    /* IA-01: dismiss the dashboard Lite upsell card for this user only.
+       Per-user on purpose: one editor closing the card must not hide it for
+       the person who can actually upgrade. The card resurfaces after 30 days
+       - the template decides from the timestamp, this only records it. */
+    public function dismiss_intro_upsell()
+    {
+        if (!is_user_logged_in()) $this->main->response(['success' => 0, 'code' => 'LOGIN_REQUIRED']);
+        if (!wp_verify_nonce(sanitize_text_field($_REQUEST['nonce']), 'mec_settings_nonce')) exit();
+
+        update_user_meta(get_current_user_id(), 'mec_intro_upsell_dismissed', time());
+        wp_die();
+    }
+
+    /* I-02: dismiss the remote announcement card for this user, keyed by
+       the remote post ID. Per-user on purpose (WP admin-notice pattern):
+       the stored ID only hides THAT announcement; anything new the feed
+       publishes shows up until it is dismissed in turn. */
+    public function dismiss_intro_remote()
+    {
+        if (!is_user_logged_in()) $this->main->response(['success' => 0, 'code' => 'LOGIN_REQUIRED']);
+        if (!wp_verify_nonce(sanitize_text_field($_REQUEST['nonce']), 'mec_settings_nonce')) exit();
+
+        update_user_meta(get_current_user_id(), 'mec_intro_remote_dismissed', absint($_REQUEST['post_id']));
         wp_die();
     }
 
@@ -1023,7 +1093,7 @@ class MEC_feature_mec extends MEC_base
 
         foreach ($mec as $key => $value) update_post_meta($post_id, $key, $value);
 
-        // Non-blocking validation warnings (UX audit — Issue 4)
+        // Non-blocking validation warnings (UX audit - Issue 4)
         $warnings = [];
 
         $skin_options = (isset($mec['sk-options'][$skin]) and is_array($mec['sk-options'][$skin])) ? $mec['sk-options'][$skin] : [];
@@ -1034,7 +1104,7 @@ class MEC_feature_mec extends MEC_base
         if ($end_date_type === 'date' and $maximum_date_range != '' and strtotime($maximum_date_range) === false) $warnings[] = sprintf(esc_html__('The maximum date "%s" is not a valid date. The calendar may render empty or incorrectly on the front end.', 'modern-events-calendar-lite'), $maximum_date_range);
         if ($start_date != '' and $maximum_date_range != '' and strtotime($start_date) and strtotime($maximum_date_range) and strtotime($start_date) > strtotime($maximum_date_range)) $warnings[] = sprintf(esc_html__('The start date (%1$s) is after the maximum date (%2$s). Events will be listed in reverse order. Swap the dates if this is unintentional.', 'modern-events-calendar-lite'), $start_date, $maximum_date_range);
 
-        // Single-event skins need a valid event to render (round-2 proposal — required-event check)
+        // Single-event skins need a valid event to render (round-2 proposal - required-event check)
         if (in_array($skin, ['cover', 'countdown', 'available_spot']))
         {
             $event_id = (isset($skin_options['event_id']) and trim($skin_options['event_id']) != '') ? trim($skin_options['event_id']) : '';
@@ -1070,14 +1140,14 @@ class MEC_feature_mec extends MEC_base
 
         delete_transient('mec_cal_validation_' . $post_id);
 
-        echo '<div class="notice notice-warning is-dismissible"><p><strong>' . esc_html__('MEC Shortcode: please review', 'modern-events-calendar-lite') . '</strong></p><ul style="list-style:disc;padding-inline-start:20px;margin-top:4px">';
+        echo '<div class="notice notice-warning is-dismissible mec-admin-notice"><p><strong>' . esc_html__('MEC Shortcode: please review', 'modern-events-calendar-lite') . '</strong></p><ul style="list-style:disc;padding-inline-start:20px;margin-top:4px">';
         foreach ($warnings as $warning) echo '<li>' . esc_html($warning) . '</li>';
         echo '</ul></div>';
     }
 
     /**
      * Annotate the title placeholder of the calendar/shortcode post type
-     * (UX audit — Issue 14): the WP title is only an internal name, visitors never see it.
+     * (UX audit - Issue 14): the WP title is only an internal name, visitors never see it.
      * @param string $text
      * @param WP_Post $post
      * @return string
@@ -2063,10 +2133,10 @@ class MEC_feature_mec extends MEC_base
         ?>
         <div class="w-row <?php echo(($current_page == 'dashboard') ? 'mec-dashboard-widget-total-bookings' : ''); ?>">
             <div class="w-col-sm-12">
-                <div class="w-box total-bookings">
-                    <div class="w-box-head">
+                <div class="w-box total-bookings mec-intro-card">
+                    <h2 class="w-box-head">
                         <?php echo esc_html__('Total Bookings', 'modern-events-calendar-lite'); ?>
-                    </div>
+                    </h2>
                     <div class="w-box-content">
                         <ul>
                             <li class="mec-chart-this-month"><a href="<?php echo esc_url(add_query_arg([
@@ -2144,14 +2214,21 @@ class MEC_feature_mec extends MEC_base
         $start_year = $min_start_year = $this->db->select("SELECT MIN(cast(meta_value as unsigned)) AS date FROM `#__postmeta` WHERE `meta_key`='mec_start_date'", 'loadResult');
         $end_year = $max_end_year = $this->db->select("SELECT MAX(cast(meta_value as unsigned)) AS date FROM `#__postmeta` WHERE `meta_key`='mec_end_date'", 'loadResult');
         $current_month = current_time('m');
+
+        // E-01: with no dated events MIN/MAX come back NULL and the year loop
+        // below produced empty selects - a broken form on exactly the fresh
+        // installs that need guidance the most. Show an empty state with a
+        // way forward instead of the crippled form.
+        $mec_has_dated_events = ($start_year && $end_year && (int) $start_year <= (int) $end_year);
         ?>
         <div class="w-row">
             <div class="w-col-sm-12">
-                <div class="w-box total-bookings print-events">
-                    <div class="w-box-head">
+                <div class="w-box total-bookings print-events mec-intro-card">
+                    <h2 class="w-box-head">
                         <?php echo esc_html__('Print Calendar', 'modern-events-calendar-lite'); ?>
-                    </div>
+                    </h2>
                     <div class="w-box-content">
+                        <?php if ($mec_has_dated_events): ?>
                         <form method="GET" action="<?php echo home_url(); ?>" target="_blank">
                             <input type="hidden" name="method" value="mec-print">
                             <select name="mec-year" title="<?php esc_attr_e('Year', 'modern-events-calendar-lite'); ?>">
@@ -2166,8 +2243,14 @@ class MEC_feature_mec extends MEC_base
                                         value="<?php echo($i < 10 ? esc_attr('0' . $i) : esc_attr($i)); ?>" <?php echo($current_month == $i ? 'selected="selected"' : ''); ?>><?php echo esc_html($this->main->date_i18n('F', mktime(0, 0, 0, $i, 10))); ?></option>
                                 <?php endfor; ?>
                             </select>
-                            <button type="submit"><?php esc_html_e('Display Events', 'modern-events-calendar-lite'); ?></button>
+                            <button type="submit"><?php esc_html_e('View Printable Calendar', 'modern-events-calendar-lite'); ?></button>
                         </form>
+                        <?php else: ?>
+                        <p style="margin:0 0 14px;color:#7a868d;font-size:13px;">
+                            <?php esc_html_e('Nothing to print yet - once your events have dates, a printable monthly calendar can be generated here.', 'modern-events-calendar-lite'); ?>
+                        </p>
+                        <a class="mec-intro-btn" href="<?php echo esc_url(admin_url('post-new.php?post_type=mec-events')); ?>"><?php esc_html_e('Add New Event', 'modern-events-calendar-lite'); ?></a>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>

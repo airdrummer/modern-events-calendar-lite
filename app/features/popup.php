@@ -590,7 +590,7 @@ class MEC_feature_popup extends MEC_base
                 $q1 .= "`$key`,";
 
                 if (is_null($value)) $q2 .= "NULL,";
-                else $q2 .= "'$value',";
+                else $q2 .= "'" . $db->escape($value) . "',";
             }
 
             $db->q("INSERT INTO `#__mec_events` (" . trim($q1, ', ') . ") VALUES (" . trim($q2, ', ') . ")", 'INSERT');
@@ -602,7 +602,7 @@ class MEC_feature_popup extends MEC_base
             foreach ($event as $key => $value)
             {
                 if (is_null($value)) $q .= "`$key`=NULL,";
-                else $q .= "`$key`='$value',";
+                else $q .= "`$key`='" . $db->escape($value) . "',";
             }
 
             $db->q("UPDATE `#__mec_events` SET " . trim($q, ', ') . " WHERE `id`='$mec_event_id'");

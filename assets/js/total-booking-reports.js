@@ -18,8 +18,22 @@ jQuery(document).ready(function($){
         return data;
     }
 
-    $('.mec-chart-this-month a , .mec-chart-last-month a , .mec-chart-this-year a , .mec-chart-last-year a').on('click',function(e){
+    var mec_sort_links = '.mec-chart-this-month a , .mec-chart-last-month a , .mec-chart-this-year a , .mec-chart-last-year a';
+
+    function mec_mark_active_sort() {
+        var current = mec_get_url_parameters(window.location.href);
+        var sort = current.sort || 'this_month';
+        $(mec_sort_links).removeClass('active').each(function(){
+            var link = mec_get_url_parameters($(this).attr('href'));
+            if (link.sort === sort) $(this).addClass('active');
+        });
+    }
+
+    mec_mark_active_sort();
+
+    $(mec_sort_links).on('click',function(e){
         $(e.currentTarget).parents('.w-box-content').find(' ul li').removeClass('active');
+        $(e.currentTarget).parents('.w-box-content').find(' ul li a').removeClass('active');
         $(e.currentTarget).addClass('active');
         var url = $(e.currentTarget).attr('href');
         var data = mec_get_url_parameters(url);

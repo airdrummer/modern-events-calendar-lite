@@ -43,8 +43,10 @@ class MEC_skin_general_calendar extends MEC_skins
             return;
         }
 
-        if (function_exists('PLL') && trim((string) $language)) pll_switch_language(sanitize_text_field($language));
-        else if (function_exists('PLL') && isset(PLL()->curlang->locale)) $language = PLL()->curlang->locale;
+        if (function_exists('pll_current_language'))
+        {
+            $language = pll_current_language('locale');
+        }
 
         if ($language) switch_to_locale($language);
     }
@@ -146,7 +148,7 @@ class MEC_skin_general_calendar extends MEC_skins
             $filter_ex_tag,
             $filter_author,
             $filter_ex_author,
-            $locale,
+            $lang,
             $type_event
         );
 
@@ -437,7 +439,7 @@ class MEC_skin_general_calendar extends MEC_skins
         $filter_ex_tag = null,
         $filter_author = null,
         $filter_ex_author = null,
-        $locale = 'en',
+        $lang = 'en',
         $type_event = null
     )
     {

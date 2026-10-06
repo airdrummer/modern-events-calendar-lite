@@ -77,8 +77,8 @@ class MEC_skin_timetable extends MEC_skins
         $this->style = $this->skin_options['style'] ?? 'modern';
         if($this->style == 'fluent' and !is_plugin_active('mec-fluent-layouts/mec-fluent-layouts.php')) $this->style = 'modern';
 
-        // Next/Previous Month
-        $this->next_previous_button = $this->skin_options['next_previous_button'] ?? true;
+        // Keep the existing Modern default while making Clean navigation opt-in.
+        $this->next_previous_button = $this->skin_options['next_previous_button'] ?? ($this->style === 'modern');
 
         // HTML class
         $this->html_class = '';
@@ -491,6 +491,20 @@ class MEC_skin_timetable extends MEC_skins
 
         // Initialize the skin
         $this->initialize($atts);
+
+        // Clean Timetable navigation moves its configured date range one week at a time.
+        $start_date = isset($_REQUEST['mec_start_date']) ? sanitize_text_field($_REQUEST['mec_start_date']) : '';
+        if($this->style === 'clean' and preg_match('/^\d{4}-\d{2}-\d{2}$/', $start_date) and strtotime($start_date))
+        {
+            $this->start_date = date('Y-m-d', strtotime($start_date));
+            $this->year = date('Y', strtotime($this->start_date));
+            $this->month = date('m', strtotime($this->start_date));
+            $this->day = date('d', strtotime($this->start_date));
+            $this->today = $this->start_date;
+            $this->maximum_date = date('Y-m-d', strtotime('+'.(max(1, (int) $this->number_of_days) - 1).' days', strtotime($this->start_date)));
+
+            if($this->show_only_expired_events and strtotime($this->maximum_date) > current_time('timestamp')) $this->maximum_date = date('Y-m-d', strtotime('yesterday'));
+        }
 
         // Start Date
         $this->year = isset($_REQUEST['mec_year']) ? sanitize_text_field($_REQUEST['mec_year']) : date('Y');

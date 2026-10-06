@@ -696,7 +696,7 @@ jQuery(document).ready(function ($) {
 
       // Basic Information
       var PurchaseCode = $(
-        "#MECActivation input[type=password][name=MECPurchaseCode]"
+              "#MECActivation input[name=MECPurchaseCode]"
       ).val();
       var information = { LicenseTypeJson: "", PurchaseCodeJson: PurchaseCode };
       var ajaxAction = "activate_license";
@@ -744,7 +744,8 @@ jQuery(document).ready(function ($) {
                 .addClass("mec_activate")
                 .val(res.button_text);
               $(
-                "#MECActivation input[type=password][name=MECPurchaseCode]"
+      // I-05: the field is type=text now - match by name, not by type.
+      "#MECActivation input[name=MECPurchaseCode]"
               ).val("");
 
               // The licence was dropped here, but the store did not confirm
@@ -767,6 +768,14 @@ jQuery(document).ready(function ($) {
               "PurchaseError"
             );
 
+            // The license server could not be reached — this is not a
+            // rejection of the code. Show the reason instead of the static
+            // "check your purchase code" default, which describes a problem
+            // this code does not have.
+            if (res.message == "network_error") {
+              if (res.reason) LicenseMessage.text(res.reason);
+            }
+
             // The purchase code was accepted and stored, but this site could
             // not be licensed. Keep the revoke button (there IS a stored code
             // to revoke), show the specific reason, and do NOT reload — the
@@ -788,7 +797,17 @@ jQuery(document).ready(function ($) {
   /* Addons Activation */
   if ($(".box-addon-activation-toggle-head").length > 0) {
     $(".box-addon-activation-toggle-head").on("click", function () {
-      $(".box-addon-activation-toggle-content").slideToggle("slow");
+      // Scope to this toggle's own box so multiple instances (dashboard
+      // tour/debug) do not open and close together.
+      var content = $(this)
+        .closest(".box-addons-activation")
+        .find(".box-addon-activation-toggle-content");
+      if (content.length) content.stop(true, true).slideToggle("slow");
+
+      // I-07: expose the open/closed state to assistive tech.
+      var expanded = $(this).attr("aria-expanded") === "true";
+      $(this).attr("aria-expanded", expanded ? "false" : "true");
+
       if ($(this).find("i").hasClass("mec-sl-plus")) {
         $(this).find("i").removeClass("mec-sl-plus").addClass("mec-sl-minus");
       } else if ($(this).find("i").hasClass("mec-sl-minus")) {
@@ -798,7 +817,7 @@ jQuery(document).ready(function ($) {
   }
 
   /* Addons Notification */
-  $(".mec-addons-notification-box-wrap span").on("click", function (e) {
+  $(".mec-addons-notification-box-wrap span, .mec-addons-notification-box-wrap .mec-notice-close").on("click", function (e) {
     e.preventDefault();
     $.ajax({
       url: mec_admin_localize.ajax_url,
@@ -819,7 +838,7 @@ jQuery(document).ready(function ($) {
   });
 
   /* Custom msg Notification */
-  $(".mec-cmsg-notification-box-wrap span").on("click", function (e) {
+  $(".mec-cmsg-notification-box-wrap span, .mec-cmsg-notification-box-wrap .mec-notice-close").on("click", function (e) {
     e.preventDefault();
     $.ajax({
       url: mec_admin_localize.ajax_url,
@@ -839,7 +858,7 @@ jQuery(document).ready(function ($) {
     });
   });
 
-  $(".mec-cmsg-2-notification-box-wrap span").on("click", function (e) {
+  $(".mec-cmsg-2-notification-box-wrap span, .mec-cmsg-2-notification-box-wrap .mec-notice-close").on("click", function (e) {
     e.preventDefault();
     $.ajax({
       url: mec_admin_localize.ajax_url,

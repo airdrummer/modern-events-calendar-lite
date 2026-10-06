@@ -9,15 +9,13 @@ $current_event_id = $_GET['event_id'] ?? 0;
 
 $events = $this->main->get_events(-1, ['pending', 'draft', 'future', 'publish']);
 $date_format = get_option('date_format');
-
-$styling = $this->main->get_styling();
-$dark_mode = $styling['dark_mode'] ?? '';
-
-$logo = plugin_dir_url(__FILE__ ) . '../../../assets/img/mec-logo-w.png';
-if($dark_mode == 1) $logo = plugin_dir_url(__FILE__ ) . '../../../assets/img/mec-logo-w2.png';
 ?>
 <div class="wrap" id="mec-wrap">
-    <h1><?php echo esc_html__('Booking Report', 'modern-events-calendar-lite'); ?></h1>
+    <div class="mec-page-head">
+        <span class="mec-page-eyebrow"><?php esc_html_e('Modern Events Calendar', 'modern-events-calendar-lite'); ?></span>
+        <h1><span class="mec-page-mark" aria-hidden="true"><i class="mec-sl-chart"></i></span><?php esc_html_e('Booking Report', 'modern-events-calendar-lite'); ?></h1>
+        <p class="mec-page-lead"><?php esc_html_e('Track bookings and attendees, email them selectively or in bulk, and export or purge historical bookings.', 'modern-events-calendar-lite'); ?></p>
+    </div>
     <div class="welcome-content w-clearfix extra">
         <div class="mec-report-wrap">
             <div class="nav-tab-wrapper">

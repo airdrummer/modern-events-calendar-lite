@@ -199,6 +199,23 @@ class MEC_feature_licensegate extends MEC_base
     }
 
     /**
+     * Does this site have anything to claim WITH?
+     *
+     * A purchase code, or a bundling entitlement from the active theme. Both
+     * guards below used to test the purchase code alone, which meant a bundled
+     * site — an X theme install, which by design has no MEC purchase code —
+     * never claimed at all, and never renewed once its token expired.
+     *
+     * @return bool
+     */
+    private function has_credential()
+    {
+        if ($this->purchase_code() !== '') return true;
+
+        return MEC_license::instance()->partner_credential() !== null;
+    }
+
+    /**
      * Queue the one-off grandfather claim.
      *
      * Deferred to cron rather than run here, because an admin page load must
@@ -216,7 +233,7 @@ class MEC_feature_licensegate extends MEC_base
         // and burn an activation slot doing it.
         if (!MEC_license::is_license_site()) return;
 
-        if ($this->purchase_code() === '') return;
+        if (!$this->has_credential()) return;
         if (!MEC_license::instance()->claim_due()) return;
 
         $scheduled = wp_next_scheduled('mec_license_claim');
@@ -249,8 +266,11 @@ class MEC_feature_licensegate extends MEC_base
         // the main-site check has to be repeated here.
         if (!MEC_license::is_license_site()) return;
 
+        // The code may be empty on a bundled site — claim() then presents the
+        // partner entitlement instead.
+        if (!$this->has_credential()) return;
+
         $code = $this->purchase_code();
-        if ($code === '') return;
 
         $license = MEC_license::instance();
 
@@ -295,6 +315,9 @@ class MEC_feature_licensegate extends MEC_base
             case 'REFUSED':
                 return esc_html__('The license server did not recognise this site. Check your purchase code, or contact support for an offline activation token.', 'modern-events-calendar-lite');
 
+            case 'PARTNER_REFUSED':
+                return esc_html__('The theme license that entitles this site to Pro could not be verified. Check that your theme license is active, or enter a Modern Events Calendar purchase code instead.', 'modern-events-calendar-lite');
+
             case 'HTTP_ERROR':
             case 'NO_HTTP':
             case 'NO_ENDPOINT':
@@ -309,13 +332,15 @@ class MEC_feature_licensegate extends MEC_base
 
     /**
      * Why the automatic claim has not produced a token, if the site holds a
-     * purchase code and the claim has already failed at least once.
+     * credential and the claim has already failed at least once.
      *
      * @return string empty when there is nothing to explain
      */
     private function claim_failure()
     {
-        if ($this->purchase_code() === '') return '';
+        // A bundled site has no purchase code but is still owed an explanation
+        // when its partner entitlement is refused.
+        if (!$this->has_credential()) return '';
 
         $state = MEC_license::instance()->claim_state();
         if (!is_array($state) or empty($state['last'])) return '';
@@ -460,7 +485,7 @@ class MEC_feature_licensegate extends MEC_base
 
         $activate = admin_url('admin.php?page=mec-intro');
         ?>
-        <div class="notice notice-error" data-mec-pro-blocked="1">
+        <div class="notice notice-error mec-admin-notice" data-mec-pro-blocked="1">
             <p>
                 <strong><?php esc_html_e('Modern Events Calendar', 'modern-events-calendar-lite'); ?>:</strong>
                 <?php echo esc_html(_n('The following Pro feature was NOT saved because your license is not active:', 'The following Pro features were NOT saved because your license is not active:', count($labels), 'modern-events-calendar-lite')); ?>
@@ -686,7 +711,7 @@ class MEC_feature_licensegate extends MEC_base
         if ($stuck !== '') $message .= ' ' . $stuck;
 
         $activate = admin_url('admin.php?page=mec-intro');
-        $classes = 'notice ' . $this->severity($phase);
+        $classes = 'notice mec-admin-notice ' . $this->severity($phase);
         if ($snooze !== null) $classes .= ' is-dismissible';
 
         ?>

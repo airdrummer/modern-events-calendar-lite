@@ -376,8 +376,6 @@ class MEC_factory extends MEC_base
                 'src' => $this->main->asset('css/mec-ai.css'),
                 'deps' => ['wp-color-picker'],
             ],
-            'mec-ai-setup-guide' => $this->main->asset('css/mec-ai-setup-guide.css'),
-            'mec-ai-layout-adjustments' => $this->main->asset('css/mec-ai-layout-adjustments.css'),
             'mec-google-fonts' => '//fonts.googleapis.com/css?family=Montserrat:400,700|Roboto:100,300,400,700',
             'mec-custom-google-font' => get_option('mec_gfont'),
         ];
@@ -501,8 +499,6 @@ class MEC_factory extends MEC_base
             if (isset($_REQUEST['page']) && sanitize_key(wp_unslash($_REQUEST['page'])) === 'mec-ai')
             {
                 wp_enqueue_style('mec-ai-task-runner');
-                wp_enqueue_style('mec-ai-setup-guide');
-                wp_enqueue_style('mec-ai-layout-adjustments');
                 wp_enqueue_script('mec-ai-task-runner');
                 wp_localize_script('mec-ai-task-runner', 'mec_ai_task_runner', [
                     'ajax_url' => admin_url('admin-ajax.php'),
@@ -512,7 +508,10 @@ class MEC_factory extends MEC_base
                     'coming_soon_copy' => __('This task is visible now and will use the same reviewed AI workflow when it is ready.', 'modern-events-calendar-lite'),
                     'preview_title' => __('Ready to generate a category preview?', 'modern-events-calendar-lite'),
                     'preview_copy' => __('MEC will send your brief and existing category context to the WordPress AI provider. No categories are created yet.', 'modern-events-calendar-lite'),
+                    'event_preview_title' => __('Ready to generate an event preview?', 'modern-events-calendar-lite'),
+                    'event_preview_copy' => __('MEC will create a structured event preview from your brief. Nothing is saved until you confirm the draft.', 'modern-events-calendar-lite'),
                     'prompt_required' => __('Please describe the categories you want to create.', 'modern-events-calendar-lite'),
+                    'event_prompt_required' => __('Please describe the event you want to create.', 'modern-events-calendar-lite'),
                     'preview_ready' => __('Your category suggestions are ready to review.', 'modern-events-calendar-lite'),
                     'include' => __('Include', 'modern-events-calendar-lite'),
                     'duplicate' => __('Duplicate', 'modern-events-calendar-lite'),
@@ -525,6 +524,24 @@ class MEC_factory extends MEC_base
                     'created' => __('Created', 'modern-events-calendar-lite'),
                     'skipped' => __('Skipped', 'modern-events-calendar-lite'),
                     'failed' => __('Failed', 'modern-events-calendar-lite'),
+                    'event_preview_required' => __('Generate an event preview before creating the draft.', 'modern-events-calendar-lite'),
+                    'quick_edits' => __('Quick edits', 'modern-events-calendar-lite'),
+                    'title' => __('Title', 'modern-events-calendar-lite'),
+                    'start' => __('Start', 'modern-events-calendar-lite'),
+                    'end' => __('End', 'modern-events-calendar-lite'),
+                    'price' => __('Price', 'modern-events-calendar-lite'),
+                    'capacity' => __('Capacity', 'modern-events-calendar-lite'),
+                    'terms_hint' => __('Separate names with commas.', 'modern-events-calendar-lite'),
+                    'date_time' => __('Date & time', 'modern-events-calendar-lite'),
+                    'location' => __('Location', 'modern-events-calendar-lite'),
+                    'organizer' => __('Organizer', 'modern-events-calendar-lite'),
+                    'categories' => __('Categories', 'modern-events-calendar-lite'),
+                    'tags' => __('Tags', 'modern-events-calendar-lite'),
+                    'labels' => __('Labels', 'modern-events-calendar-lite'),
+                    'hourly_schedule' => __('Hourly schedule', 'modern-events-calendar-lite'),
+                    'tickets' => __('Tickets', 'modern-events-calendar-lite'),
+                    'all_day' => __('All day', 'modern-events-calendar-lite'),
+                    'repeats' => __('Repeats', 'modern-events-calendar-lite'),
                 ]);
             }
 
@@ -539,6 +556,7 @@ class MEC_factory extends MEC_base
                 'datepicker_format' => (isset($settings['datepicker_format']) and trim($settings['datepicker_format'])) ? trim($settings['datepicker_format']) : 'yy-mm-dd',
                 'start_date_required' => __('Please enter a start date for the event.', 'modern-events-calendar-lite'),
                 'end_after_start' => __('The end date and time must be on or after the start date and time.', 'modern-events-calendar-lite'),
+                'publish_warnings_status' => (!isset($settings['publish_warnings_status']) or $settings['publish_warnings_status']) ? 1 : 0,
                 'repeat_preview_off' => __('Repeating is off.', 'modern-events-calendar-lite'),
                 'repeat_preview_next' => __('Next occurrences (from start date)', 'modern-events-calendar-lite'),
                 'repeat_preview_total' => __('This event will occur %d times in total.', 'modern-events-calendar-lite'),

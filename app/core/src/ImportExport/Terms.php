@@ -150,6 +150,9 @@ class Terms {
 
 	public function upload_featured_image( $image_url ) {
 
+		$image_url = trim( esc_url_raw( (string) $image_url ) );
+		if ( ! $image_url || ! wp_http_validate_url( $image_url ) || strpbrk( $image_url, "'\"" ) !== false ) return 0;
+
         $attach_id = \MEC\Base::get_main()->get_attach_id($image_url);
         if(!$attach_id) {
 

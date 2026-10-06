@@ -16,6 +16,17 @@ $user_post_count = $count_events->publish ?? '0';
 $count_calendars = wp_count_posts('mec_calendars');
 $user_post_count_c = $count_calendars->publish ?? '0';
 
+// I-04: stat cards link to their lists, so their numbers should match what
+// those lists show - every status except trash/auto-draft, not just
+// published (drafts and pending are real work in progress).
+$mec_stat_count = function ($counts_object) {
+    $statuses = (array) $counts_object;
+    unset($statuses['trash'], $statuses['auto-draft']);
+    return array_sum(array_map('intval', $statuses));
+};
+$mec_stat_events = $mec_stat_count($count_events);
+$mec_stat_calendars = $mec_stat_count($count_calendars);
+
 // mec location
 $user_location_count_l = wp_count_terms('mec_location', array(
     'hide_empty' => false,
@@ -46,571 +57,674 @@ if ($booking_status) wp_enqueue_script('mec-chartjs-script');
 // Whether to show dashboard boxes or not!
 $box_support = apply_filters('mec_dashboard_box_support', true);
 $box_stats = apply_filters('mec_dashboard_box_stats', true);
+
+$styling = $this->get_styling();
+$darkadmin_mode = $styling['dark_mode'] ?? '';
+$mec_logo_src = plugin_dir_url(__FILE__) . '../../../assets/img/' . ($darkadmin_mode == 1 ? 'mec-logo-w2.png' : 'mec-logo-w.png');
+
+// IA-04: "Welcome {first name}" broke for users without a first name (a
+// dangling "Welcome ") and kept its onboarding tone forever. Fall back to
+// the display name, and once the site actually has published events, swap
+// the header to a dashboard tone with a live status line instead of the
+// static marketing sentence.
+$mec_hello_name = trim((string) $current_user->user_firstname) ? $current_user->user_firstname : $current_user->display_name;
+$mec_is_onboarding = ((int) $user_post_count === 0);
+
+// IA-06: the version chip must answer "what package is this, and is it
+// current?". Package + version render locally; the update state is a cheap
+// read of the WP updates transient (wp.org for Lite, MEC's update server
+// for Pro - both register themselves in the same place).
+//
+// The basename must match the key WP files updates under: the plugin's REAL
+// entry file is mec.php (bugfix: a hand-built path to
+// modern-events-calendar.php never matched, so the chip stayed green
+// forever). MEC_ABSPATH points at the plugin root, so this is depth-proof.
+$mec_plugin_basename = plugin_basename(MEC_ABSPATH . 'mec.php');
+$mec_updates_transient = get_site_transient('update_plugins');
+$mec_update_available = is_object($mec_updates_transient) && isset($mec_updates_transient->response[$mec_plugin_basename]);
+
+/* ════════════════════════════════════════════════════════════════════
+   IA-01 state engine.
+
+   The page renders in six zones (A: brandhead · B: license/critical ·
+   C: announcements · D: primary work · E: analytics · F: utilities) and
+   what each zone shows is decided here, from data that is already
+   computed. The license flags below used to live mid-template inside the
+   activation box; they are lifted here so Zone B can act on them without
+   duplicating logic. No new queries, no behavior change inside the form.
+   ════════════════════════════════════════════════════════════════════ */
+
+// Single fetch (Q-02): this option was read three times per load.
+$mec_options = get_option('mec_options');
+
+// Multisite: the licence is bought, entered and revoked once, on the
+// network's main site, and every subsite inherits it. A subsite owner has
+// nothing to enter; add-ons are separate products and render as a toggle
+// inside the same box when the subsite has any.
+$mec_network_licence = $this->isProBuild() && class_exists('MEC_license') && !MEC_license::is_license_site();
+
+// Bundled entitlement (X theme and anything like it): licensed through the
+// theme, no purchase code of their own.
+$mec_partner = (!$mec_network_licence && class_exists('MEC_license')) ? MEC_license::instance()->partner_licence() : null;
+$mec_partner_name = is_array($mec_partner) ? ucwords(str_replace(array('-', '_'), ' ', $mec_partner['partner'])) : '';
+
+$product_license = (!empty($mec_options) and is_array($mec_options) and isset($mec_options['purchase_code'])) ? $mec_options['purchase_code'] : '';
+
+// Whether Pro actually runs is the signed token, not mec_license_status:
+// a site can hold a valid purchase code while the claim was refused or the
+// server was unreachable - the exact state where Pro ramps down.
+$mec_license_token = class_exists('MEC_license') && MEC_license::instance()->licensed();
+$mec_token_exp = ($mec_license_token && class_exists('MEC_license')) ? MEC_license::instance()->token_expiry() : null;
+
+// The offline notice must persist for the whole life of a limited token -
+// it answers "how long is my license valid?", which never stops mattering.
+// Gating it on "no purchase code stored" made it vanish on reload for any
+// install that also holds a (possibly unclaimable) code. token_expiry() is
+// non-null exactly for limited, non-partner tokens - the real offline
+// population - so that is the whole condition.
+$mec_is_offline_licensed = $mec_license_token && $mec_token_exp !== null;
+$mec_license_active = $mec_license_token || is_array($mec_partner);
+
+// IA-01 (v2): the Lite upsell is dismissible per user, but only for 30
+// days - a new look must eventually return, and marketing campaigns must
+// keep their surface. The template compares the stored timestamp.
+$mec_upsell_dismissed_at = (int) get_user_meta(get_current_user_id(), 'mec_intro_upsell_dismissed', true);
+$mec_show_upsell = !$mec_upsell_dismissed_at || (time() - $mec_upsell_dismissed_at) > 30 * DAY_IN_SECONDS;
 ?>
-<style>
-    .upcoming-events .mec-credit-url {
-        display: none;
-    }
-</style>
-<div id="webnus-dashboard" class="wrap about-wrap">
-    <div class="welcome-head w-clearfix">
-        <div class="w-row">
-            <div class="w-col-sm-9">
-                <h1> <?php echo sprintf(esc_html__('Welcome %s', 'modern-events-calendar-lite'), $current_user->user_firstname); ?> </h1>
-                <div class="w-welcome">
-                    <?php echo sprintf(esc_html__('%s - Most Powerful & Easy to Use Events Management System', 'modern-events-calendar-lite'), '<strong>' . ($this->getPRO() ? esc_html__('Modern Events Calendar', 'modern-events-calendar-lite') : esc_html__('Modern Events Calendar (Lite)', 'modern-events-calendar-lite')) . '</strong>'); ?>
-                </div>
-            </div>
-            <div class="w-col-sm-3">
-                <?php $styling = $this->get_styling();
-                $darkadmin_mode = $styling['dark_mode'] ?? '';
-                if ($darkadmin_mode == 1): $darklogo = plugin_dir_url(__FILE__) . '../../../assets/img/mec-logo-w2.png';
-                else: $darklogo = plugin_dir_url(__FILE__) . '../../../assets/img/mec-logo-w.png';
-                endif; ?>
-                <img src="<?php echo esc_url($darklogo); ?>" />
-                <span class="w-theme-version"><?php echo esc_html__('Version', 'modern-events-calendar-lite'); ?> <?php echo MEC_VERSION; ?></span>
-            </div>
+<div id="webnus-dashboard" class="wrap about-wrap mec-intro-page">
+    <?php /* ═══ ZONE A - orientation (revisions 10-11: welcome + tagline are
+           evergreen; the live counts live ONLY in the stat cards, not in a
+           duplicate header line) ═══ */ ?>
+    <div class="mec-intro-brandhead">
+        <div class="mec-page-head">
+            <span class="mec-page-eyebrow"><?php esc_html_e('Modern Events Calendar', 'modern-events-calendar-lite'); ?></span>
+            <h1><span class="mec-page-mark" aria-hidden="true"><i class="mec-sl-home"></i></span> <?php echo sprintf(esc_html__('Welcome %s', 'modern-events-calendar-lite'), esc_html($mec_hello_name)); ?></h1>
+            <p class="mec-page-lead">
+                <?php echo sprintf(esc_html__('%s - the most powerful yet easy-to-use event management system', 'modern-events-calendar-lite'), '<strong>' . ($this->getPRO() ? esc_html__('Modern Events Calendar', 'modern-events-calendar-lite') : esc_html__('Modern Events Calendar (Lite)', 'modern-events-calendar-lite')) . '</strong>'); ?>
+            </p>
+        </div>
+        <div class="mec-intro-brandbox">
+            <img class="mec-intro-logo" src="<?php echo esc_url($mec_logo_src); ?>" alt="<?php echo esc_attr__('Modern Events Calendar', 'modern-events-calendar-lite'); ?>" />
+            <span class="mec-intro-ver<?php echo $mec_update_available ? ' mec-intro-ver--old' : ''; ?>">
+                <i aria-hidden="true"></i>
+                <?php echo esc_html($this->isProBuild() ? 'Pro' : 'Lite'); ?> · v<?php echo esc_html(MEC_VERSION); ?>
+                <?php if ($mec_update_available): ?>
+                    · <a href="<?php echo esc_url(admin_url('update-core.php')); ?>"><?php esc_html_e('Update available', 'modern-events-calendar-lite'); ?></a>
+                <?php endif; ?>
+            </span>
         </div>
     </div>
     <hr class="wp-header-end">
-    <!-- remove update notification section for high request -->
     <div class="welcome-content w-clearfix extra">
-        <?php
-        // Remote announcement box. The wrapper row renders only when the
-        // remote actually returns a post — an empty/unreachable response must
-        // not leave a margin-only row behind.
-        // Category 3 targets Lite installs, 6 targets Pro.
-        $notification_category = $this->getPRO() ? 6 : 3;
 
-        $response_lite = wp_remote_get(
-            add_query_arg(
-                array( // posts from 101 to 200
-                    'per_page' => 1,
-                    'page' => 1,
-                    'categories' => $notification_category,
-                ),
-                'https://notifications.webnus.site/wp-json/wp/v2/posts'
-            ),
-            array(
-                'timeout' => 50, // Fix for: cURL error 28: Operation timed out after...
-            )
-        );
-
-        $body = null;
-        if (!is_wp_error($response_lite) && isset($response_lite['body'])) {
-            $decoded = json_decode($response_lite['body']);
-            if (is_array($decoded)) {
-                $body = $decoded;
-            }
-        }
-
-        if (!empty($body) && is_array($body) && count($body) > 0) :
-            $featured_media = $body[0]->featured_media ?? '';
-            $title          = $body[0]->title->rendered ?? '';
-            $content        = $body[0]->content->rendered ?? '';
-
-            // Get featured image from $featured_media
-            $featured_image = wp_remote_get(
-                'https://notifications.webnus.site/wp-json/wp/v2/media/' . $featured_media,
-                array(
-                    'timeout' => 50, // Fix for: cURL error 28: Operation timed out after...
-                )
-            );
-            $body_featured_image = json_decode($featured_image['body']);
-            $lite_featured_image = $body_featured_image->guid->rendered;
-            ?>
-            <div class="w-row mec-lite-notification" style="margin-bottom: 30px;margin-top: 30px;">
-                <div class="w-col-sm-12">
-                    <?php echo '<link rel = "stylesheet" type = "text/css" href="https://files.webnus.site/addons-api/mec-extra-content/style2.css" /><div class="mec-custom-msg-2-notification-set-box extra"><div style="margin: 0" class="w-row mec-custom-msg-notification-wrap"><div class="w-col-sm-12"><div class="w-clearfix w-box mec-cmsg-2-notification-box-wrap mec-new-addons-wrap" style="margin-top:0;"><div class="w-box-head">Announcement</div><div class="w-box-content"><div class="mec-addons-notification-box-image" style="width: 240px; margin-right: 10px;"><img src="' . $lite_featured_image . '" /></div><div class="mec-addons-notification-box-content mec-new-addons" style="width: calc(100% - 270px);"><div class="w-box-content"><div class="csm-message-notice" style="text-align: center; background: #BAF0FC57; border-radius: 6px;letter-spacing: 4.4px; color: #00CAE6; text-transform: uppercase; padding: 10px 5px; font-weight: bold; margin-bottom: 40px;">' . $title . '</div><p>' . $content . '</p><div style="clear:both"></div></div></div></div></div></div></div></div>'; ?>
-                </div>
-            </div>
-        <?php endif; ?>
-        <?php
-        // Package, not licence. This box says "You're using the lite version",
-        // which is simply untrue on an unlicensed Pro install — and it sits
-        // directly above the licence notice that tells them the actual problem.
-        ?>
-        <?php if (!$this->isProBuild()): ?>
-            <div class="w-row mec-pro-notice" style="margin-bottom: 30px;">
-                <div class="w-col-sm-12">
-                    <div class="info-msg">
-                        <p>
-                            <?php echo sprintf(esc_html__("You're using %s version of Modern Events Calendar. To use advanced booking system, modern skins like Agenda, Timetable, Masonry, Yearly View, Available Spots, etc you should upgrade to the Pro version.", 'modern-events-calendar-lite'), '<strong>' . esc_html__('lite', 'modern-events-calendar-lite') . '</strong>'); ?>
-                        </p>
-                        <a class="info-msg-link" href="<?php echo esc_url($this->get_pro_link()); ?>" target="_blank">
-                            <?php esc_html_e('GO PREMIUM', 'modern-events-calendar-lite'); ?>
-                        </a>
-                        <div class="info-msg-coupon">
-
-                        </div>
-                        <div class="socialfollow">
-                            <a target="_blank" href="https://www.facebook.com/WebnusCo/" class="facebook">
-                                <i class="mec-sl-social-facebook"></i>
-                            </a>
-                            <a target="_blank" href="https://twitter.com/webnus" class="twitter">
-                                <i class="mec-sl-social-twitter"></i>
-                            </a>
-                            <a target="_blank" href="https://www.instagram.com/webnus/" class="instagram">
-                                <i class="mec-sl-social-instagram"></i>
-                            </a>
-                            <a target="_blank" href="https://www.youtube.com/channel/UCmQ-VeVK7nLR3bGpAkSYB1Q" class="youtube">
-                                <i class="mec-sl-social-youtube"></i>
-                            </a>
-                            <a target="_blank" href="https://dribbble.com/Webnus" class="dribbble">
-                                <i class="mec-sl-social-dribbble"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <?php /* ═══ ZONE W - getting-started walkthrough (revision 12: the
+               FIRST content block, above the license box - owner decision) ═══ */ ?>
+        <?php include plugin_dir_path(__FILE__) . 'dashboard-walkthrough.php'; ?>
 
 
-        <?php endif; ?>
-        <?php echo MEC_kses::full($this->mec_custom_msg_2('yes', 'yes')); ?>
-        <?php echo MEC_kses::full($this->mec_custom_msg('yes', 'yes')); ?>
-        <div class="w-row">
-            <div class="w-col-sm-12">
-                <div class="w-box mec-intro-section">
-                    <div class="w-box-content mec-intro-section-welcome">
-                        <h3><?php esc_html_e('Getting started with Modern Events Calendar', 'modern-events-calendar-lite'); ?></h3>
-                        <p><?php esc_html_e('In this short video, you can learn how to make an event and put a calendar on your website. Please watch this 2 minutes video to the end.', 'modern-events-calendar-lite'); ?></p>
-                    </div>
-                    <div class="w-box-content mec-intro-section-ifarme">
-                        <iframe width="560" height="315" src="https://www.youtube.com/embed/P0c2G1qhusk?si=96nFmtSdPzARY4ed" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-                    </div>
-                    <div class="w-box-content mec-intro-section-links wp-core-ui">
-                        <a class="mec-intro-section-link-tag button button-primary button-hero" href="<?php esc_html_e(admin_url('post-new.php?post_type=mec-events')); ?>" target="_blank"><?php esc_html_e('Add New Event', 'modern-events-calendar-lite'); ?>
-                            <a class="mec-intro-section-link-tag button button-secondary button-hero" href="<?php esc_html_e(admin_url('admin.php?page=MEC-settings')); ?>" target="_blank"><?php esc_html_e('Settings', 'modern-events-calendar-lite'); ?>
-                                <a class="mec-intro-section-link-tag button button-secondary button-hero" href="https://webnus.net/dox/modern-events-calendar/" target="_blank"><?php esc_html_e('Documentation', 'modern-events-calendar-lite'); ?></a>
-                    </div>
-                </div>
-            </div>
+        <?php /* ═══ ZONE B - license & critical status (IA-01) ═══ */ ?>
+        <?php if ($this->isProBuild()): ?>
+
             <?php
-            // Package, not licence. On getPRO() this box appeared on Lite only;
-            // now that getPRO() also goes false at the final phase, an unlicensed
-            // Pro install would render it alongside the full activation box below
-            // — two boxes both titled "License Activation" on the same screen.
-            ?>
-            <?php if (!$this->isProBuild() && has_action('addons_activation')) : ?>
-                <div class="w-col-sm-12">
-                    <div class="w-box mec-activation">
-                        <div class="w-box-head">
-                            <?php esc_html_e('License Activation', 'modern-events-calendar-lite'); ?>
-                        </div>
-                        <?php if (current_user_can('administrator')): ?>
-                            <div class="w-box-content">
-                                <div class="box-addons-activation">
-                                    <?php $mec_options = get_option('mec_options'); ?>
-                                    <div class="box-addon-activation-toggle-head"><i class="mec-sl-plus"></i><span><?php esc_html_e('Activate Addons', 'modern-events-calendar-lite'); ?></span></div>
-                                    <div class="box-addon-activation-toggle-content">
-                                        <?php do_action('addons_activation'); ?>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php else: ?>
-                            <div class="w-box-content">
-                                <p style="background: #f7f7f7f7;display: inline-block;padding: 17px 35px;border-radius: 3px;/* box-shadow: 0 1px 16px rgba(0,0,0,.034); */"><?php echo esc_html__('You cannot access this section.', 'modern-events-calendar-lite'); ?></p>
-                            </div>
-                        <?php endif; ?>
-                    </div>
-                </div>
-            <?php endif; ?>
-            <?php
-            // Multisite: the licence is bought, entered and revoked once, on
-            // the network's main site, and every subsite inherits it. A subsite
-            // owner has nothing to enter and no way to act, so this screen says
-            // nothing about licensing at all there.
-            //
-            // Add-ons are separate products with their own activation, so their
-            // box survives on its own — otherwise a subsite administrator would
-            // lose the only place they can activate one.
-            $mec_network_licence = $this->isProBuild() && class_exists('MEC_license') && !MEC_license::is_license_site();
-            $mec_show_activation = $this->isProBuild() && (!$mec_network_licence || has_action('addons_activation'));
-            ?>
-            <?php // Package, not licence: this box is how an unlicensed site recovers. ?>
-            <?php if ($mec_show_activation) : ?>
-                <div class="w-col-sm-12">
-                    <div class="w-box mec-activation">
-                        <div class="w-box-head">
-                            <?php if ($mec_network_licence) esc_html_e('Addons Activation', 'modern-events-calendar-lite'); else esc_html_e('License Activation', 'modern-events-calendar-lite'); ?>
-                        </div>
-                        <?php
-                        if (current_user_can('administrator')):
-
-                        if ($mec_network_licence):
-                        ?>
-                            <div class="w-box-content">
-                                <div class="box-addons-activation">
-                                    <div class="box-addon-activation-toggle-head"><i class="mec-sl-plus"></i><span><?php esc_html_e('Activate Addons', 'modern-events-calendar-lite'); ?></span></div>
-                                    <div class="box-addon-activation-toggle-content">
-                                        <?php do_action('addons_activation'); ?>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php
-                        else:
-                        ?>
-                            <div class="w-box-content">
-                                <p><?php echo esc_html__('In order to use all plugin features and options, please enter your purchase code.', 'modern-events-calendar-lite'); ?></p>
-                                <div class="box-mec-avtivation">
-                                    <?php
-                                    $mec_options = get_option('mec_options');
-                                    $product_license = '';
-                                    $license_status = '';
-                                    $class_name = 'mec_activate';
-                                    $button_value = esc_html__('submit', 'modern-events-calendar-lite');
-
-                                    if (!empty($mec_options) and is_array($mec_options) and isset($mec_options['purchase_code'])) $product_license = $mec_options['purchase_code'];
-
-                                    // An offline-activated site has no purchase code stored, but
-                                    // it is still licensed. Show a placeholder so the field does
-                                    // not look broken/empty next to the green "activated" state.
-                                    $mec_is_offline_licensed = class_exists('MEC_license')
-                                        && MEC_license::instance()->licensed()
-                                        && empty($product_license);
-
-                                    // mec_license_status only records what the legacy
-                                    // activation endpoint said, which now governs auto-updates
-                                    // alone. Whether Pro actually runs is the signed token, and a
-                                    // site can hold a perfectly valid purchase code while having
-                                    // no token — the claim was refused, or the server was
-                                    // unreachable. That is precisely the state in which Pro is
-                                    // quietly ramping down, so it must not show green.
-                                    $mec_license_token = class_exists('MEC_license') && MEC_license::instance()->licensed();
-
-                                    if ($mec_license_token) {
-                                        // The signed token is valid — Pro is running. This covers
-                                        // both the online claim and the offline-token path. In the
-                                        // offline case, purchase_code may be empty and
-                                        // mec_license_status may be unset, but the token is what
-                                        // matters.
-                                        $license_status = 'PurchaseSuccess';
-                                        $revoke = true;
-                                        $class_name = 'mec_revoke';
-                                        $button_value = esc_html__('revoke', 'modern-events-calendar-lite');
-                                    } elseif (!empty($mec_options['purchase_code']) && $mec_license_status == 'active') {
-                                        $license_status = 'PurchaseError';
-                                        $revoke = true;
-                                        $class_name = 'mec_revoke';
-                                        $button_value = esc_html__('revoke', 'modern-events-calendar-lite');
-                                    } elseif (!empty($mec_options['purchase_code']) && $mec_license_status == 'faild') {
-                                        $license_status = 'PurchaseError';
-                                        $revoke = false;
-                                    }
-
-                                    ?>
-                                    <?php if ($mec_is_offline_licensed): ?>
-                                        <div class="mec-notice mec-notice--success">
-                                            <div class="mec-notice-accent"></div>
-                                            <div class="mec-notice-body">
-                                                <div class="mec-notice-title"><?php esc_html_e('Offline activation', 'modern-events-calendar-lite'); ?></div>
-                                                <p class="mec-notice-text">
-                                                    <?php
-                                                    $mec_token_exp = (class_exists('MEC_license')) ? MEC_license::instance()->token_expiry() : null;
-                                                    if ($mec_token_exp !== null) {
-                                                        $exp_format = get_option('date_format') ?: 'Y-m-d';
-                                                        printf(
-                                                            /* translators: %s: expiry date */
-                                                            esc_html__('License activated. This offline token is valid until %s. Activate your real purchase code before then to keep Pro running.', 'modern-events-calendar-lite'),
-                                                            '<strong>' . esc_html(date_i18n($exp_format, $mec_token_exp)) . '</strong>'
-                                                        );
-                                                    } else {
-                                                        esc_html_e('License activated. Thank you.', 'modern-events-calendar-lite');
-                                                    }
-                                                    ?>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    <?php endif; ?>
-                                    <form id="MECActivation" action="#" method="post">
-                                        <div class="LicenseField">
-                                            <input type="password" placeholder="<?php echo $mec_is_offline_licensed ? esc_attr__('Activated via offline token. Enter your purchase code to switch', 'modern-events-calendar-lite') : 'Put your purchase code here'; ?>" name="MECPurchaseCode" value="<?php echo esc_html($product_license); ?>">
-                                            <input type="submit" class="<?php echo esc_html($class_name); ?>" value="<?php echo esc_html($button_value); ?>">
-                                            <div class="MECPurchaseStatus <?php echo esc_html($license_status); ?>"></div>
-                                        </div>
-                                        <div class="MECLicenseMessage mec-message-hidden">
-                                            <?php
-                                            echo esc_html__('Activation failed. Please check your purchase code or license type. Note: Your purchase code should match your licesne type.', 'modern-events-calendar-lite') . '<a style="text-decoration: underline; padding-left: 7px;" href="https://webnus.net/dox/modern-events-calendar/auto-update/" target="_blank">'  . esc_html__('Troubleshooting', 'modern-events-calendar-lite') . '</a>';
-                                            ?>
-                                        </div>
-                                    </form>
-                                </div>
-
-                                <div class="box-addons-activation">
-                                    <?php $mec_options = get_option('mec_options'); ?>
-                                    <div class="box-addon-activation-toggle-head"><i class="mec-sl-plus"></i><span><?php esc_html_e('Activate Addons', 'modern-events-calendar-lite'); ?></span></div>
-                                    <div class="box-addon-activation-toggle-content">
-                                        <?php do_action('addons_activation'); ?>
-                                    </div>
-                                </div>
-
-                                <?php
-                                // Offline activation. For the customer who bought through a
-                                // reseller, lost their purchase code, or runs on a host with no
-                                // outbound HTTPS. Support mints a token for their domain and they
-                                // paste it here.
-                                //
-                                // Hidden once the site is licensed: an activated site (online or
-                                // offline) has no use for another token, and showing the box next
-                                // to a green "activated" state is confusing.
-                                if (!$mec_license_token):
-                                ?>
-                                <div class="box-mec-offline-activation">
-                                    <p><?php esc_html_e('No outbound internet connection on this server, or bought through a reseller? Ask support for an offline activation token and paste it below.', 'modern-events-calendar-lite'); ?></p>
-                                    <?php
-                                    // The exact host the token is bound to. Shown because the
-                                    // customer's idea of their domain and home_url() disagree
-                                    // often enough — a subdomain, a path, a stray www — and a
-                                    // token minted for the wrong one is refused, costing a
-                                    // second support round trip on a site that is already
-                                    // ramping. Quoting it here makes the ticket unambiguous.
-                                    ?>
-                                    <p class="mec-offline-site-id">
-                                        <?php printf(
-                                            esc_html__('Quote this site address when you ask: %s', 'modern-events-calendar-lite'),
-                                            '<code>' . esc_html(MEC_license::instance()->host()) . '</code>'
-                                        ); ?>
-                                        <button type="button" class="mec-offline-copy-host" data-host="<?php echo esc_attr(MEC_license::instance()->host()); ?>"><?php esc_html_e('Copy', 'modern-events-calendar-lite'); ?></button>
-                                        <button type="button" class="mec-offline-support-btn" data-support-url="https://webnus.net/support"><?php esc_html_e('Contact support', 'modern-events-calendar-lite'); ?></button>
-                                    </p>
-                                    <form id="MECOfflineActivation" action="#" method="post">
-                                        <div class="LicenseField">
-                                            <input type="text" name="MECOfflineToken" autocomplete="off" spellcheck="false" placeholder="<?php echo esc_attr__('Paste your offline activation token here', 'modern-events-calendar-lite'); ?>">
-                                            <input type="submit" value="<?php echo esc_attr__('Activate offline', 'modern-events-calendar-lite'); ?>">
-                                        </div>
-                                        <div class="MECOfflineMessage" role="status" aria-live="polite"></div>
-                                    </form>
-                                </div>
-
-                                <script>
-                                (function () {
-                                    var copyBtn = document.querySelector('.mec-offline-copy-host');
-
-                                    // One-click copy of the host so the support ticket is unambiguous.
-                                    // The state class is "mec-copy-done", NOT "mec-copied": a legacy
-                                    // ".mec-copied" rule in backend.css hides any element with it.
-                                    if (copyBtn) {
-                                        var copiedTimer = null;
-                                        var label = copyBtn.textContent;
-
-                                        copyBtn.addEventListener('click', function () {
-                                            var host = copyBtn.getAttribute('data-host') || '';
-
-                                            var done = function () {
-                                                copyBtn.textContent = <?php echo wp_json_encode(esc_html__('Copied!', 'modern-events-calendar-lite')); ?>;
-                                                copyBtn.classList.add('mec-copy-done');
-
-                                                window.clearTimeout(copiedTimer);
-                                                copiedTimer = window.setTimeout(function () {
-                                                    copyBtn.textContent = label;
-                                                    copyBtn.classList.remove('mec-copy-done');
-                                                }, 2000);
-                                            };
-
-                                            if (navigator.clipboard && navigator.clipboard.writeText) {
-                                                navigator.clipboard.writeText(host).then(done, done);
-                                            } else {
-                                                var ta = document.createElement('textarea');
-                                                ta.value = host;
-                                                document.body.appendChild(ta);
-                                                ta.select();
-                                                try { document.execCommand('copy'); } catch (e) {}
-                                                document.body.removeChild(ta);
-                                                done();
-                                            }
-                                        });
-                                    }
-
-                                    var supportBtn = document.querySelector('.mec-offline-support-btn');
-                                    if (supportBtn) {
-                                        supportBtn.addEventListener('click', function () {
-                                            window.open(supportBtn.getAttribute('data-support-url'), '_blank', 'noopener,noreferrer');
-                                        });
-                                    }
-
-                                    var form = document.getElementById('MECOfflineActivation');
-                                    if (!form) return;
-
-                                    var out = form.querySelector('.MECOfflineMessage');
-                                    var submit = form.querySelector('input[type=submit]');
-
-                                    form.addEventListener('submit', function (event) {
-                                        event.preventDefault();
-
-                                        var body = new FormData();
-                                        body.append('action', 'mec_lic_token');
-                                        body.append('nonce', mec_admin_localize.ajax_nonce);
-                                        body.append('token', form.querySelector('input[name=MECOfflineToken]').value);
-
-                                        submit.disabled = true;
-                                        out.textContent = '';
-
-                                        window.fetch(mec_admin_localize.ajax_url, {
-                                            method: 'POST',
-                                            credentials: 'same-origin',
-                                            body: body
-                                        }).then(function (response) {
-                                            return response.json();
-                                        }).then(function (result) {
-                                            var success = !!(result && result.success);
-                                            var message = (result && result.data && result.data.message) ? result.data.message : '';
-
-                                            if (success) {
-                                                // Reload so the server-rendered success notice
-                                                // replaces the box.
-                                                window.location.reload();
-                                                return;
-                                            }
-
-                                            out.textContent = message;
-                                            out.className = 'MECOfflineMessage mec-offline-error';
-                                        })['catch'](function () {
-                                            out.textContent = <?php echo wp_json_encode(esc_html__('Could not reach this site\'s admin. Please reload the page and try again.', 'modern-events-calendar-lite')); ?>;
-                                            out.className = 'MECOfflineMessage mec-offline-error';
-                                        }).then(function () {
-                                            submit.disabled = false;
-                                        });
-                                    });
-                                })();
-                                </script>
-                            </div>
-                                <?php endif; // !$mec_license_token ?>
-                        <?php
-                        endif; // $mec_network_licence
-                        else: ?>
-                            <div class="w-box-content">
-                                <p style="background: #f7f7f7f7;display: inline-block;padding: 17px 35px;border-radius: 3px;/* box-shadow: 0 1px 16px rgba(0,0,0,.034); */"><?php echo esc_html__('You cannot access this section.', 'modern-events-calendar-lite'); ?></p>
-                            </div>
-                        <?php
-                        endif;
-                        ?>
-                    </div>
-                </div>
-            <?php endif; ?>
-            <?php if (current_user_can('read')): ?>
-                <div class="w-col-sm-3">
-                    <div class="w-box doc">
-                        <div class="w-box-child mec-count-child">
-                            <p><?php echo '<p class="mec_dash_count">' . esc_html($user_post_count) . '</p> ' . esc_html__('Events', 'modern-events-calendar-lite'); ?></p>
-                        </div>
-                    </div>
-                </div>
-                <div class="w-col-sm-3">
-                    <div class="w-box doc">
-                        <div class="w-box-child mec-count-child">
-                            <p><?php echo '<p class="mec_dash_count">' . esc_html($user_post_count_c) . '</p> ' . esc_html__('Shortcodes', 'modern-events-calendar-lite'); ?></p>
-                        </div>
-                    </div>
-                </div>
-                <div class="w-col-sm-3">
-                    <div class="w-box doc">
-                        <div class="w-box-child mec-count-child">
-                            <p><?php echo '<p class="mec_dash_count">' . esc_html($user_location_count_l) . '</p> ' . esc_html__('Locations', 'modern-events-calendar-lite'); ?></p>
-                        </div>
-                    </div>
-                </div>
-                <div class="w-col-sm-3">
-                    <div class="w-box doc">
-                        <div class="w-box-child mec-count-child">
-                            <p><?php echo '<p class="mec_dash_count">' . esc_html($user_organizer_count_l) . '</p> ' . esc_html__('Organizers', 'modern-events-calendar-lite'); ?></p>
-                        </div>
-                    </div>
-                </div>
-            <?php endif; ?>
-        </div>
-        <?php if ($box_stats): ?>
-            <div class="w-row">
-                <div class="w-col-sm-<?php echo ($booking_status ? 6 : 12); ?>">
-                    <div class="w-box upcoming-events">
-                        <div class="w-box-head">
-                            <?php esc_html_e('Upcoming Events', 'modern-events-calendar-lite'); ?>
-                        </div>
+            // Multisite subsite (revision 7): same box, same notice
+            // component as the offline/partner states. The network notice
+            // sits inside the License Activation box where the intro
+            // paragraph would be (that paragraph is wrong for a subsite -
+            // there is no code to enter), and the addons toggle renders
+            // below it only when the subsite actually has add-ons.
+            // C-04: administrator-only - no dead "no access" box for others.
+            if ($mec_network_licence && current_user_can('administrator')): ?>
+                <div class="w-box mec-activation mec-intro-card" id="mec-activation-box">
+                    <h2 class="w-box-head">
+                        <?php esc_html_e('License Activation', 'modern-events-calendar-lite'); ?>
+                    </h2>
                         <div class="w-box-content">
-                            <?php
-                            $render = $this->getRender();
-                            echo MEC_kses::full($render->skin('list', array(
-                                'sk-options' => array('list' => array(
-                                    'style' => 'minimal',
-                                    'start_date_type' => 'today',
-                                    'pagination_method' => '0',
-                                    'limit' => '6',
-                                    'month_divider' => '0',
-                                    'load_more_button' => false,
-                                    'ignore_js' => true
-                                ))
-                            )));
-                            ?>
+                            <div class="mec-notice mec-notice--success">
+                                <div class="mec-notice-accent"></div>
+                                <div class="mec-notice-body">
+                                    <h3 class="mec-notice-title"><?php esc_html_e('Network license', 'modern-events-calendar-lite'); ?></h3>
+                                    <p class="mec-notice-text"><?php esc_html_e('MEC Pro is licensed by your network, so no purchase code is needed on this site.', 'modern-events-calendar-lite'); ?></p>
+                                </div>
+                            </div>
+                            <?php if (has_action('addons_activation')) include plugin_dir_path(__FILE__) . 'dashboard-addonstoggle.php'; ?>
                         </div>
-                    </div>
                 </div>
-                <?php if ($booking_status): ?>
-                    <div class="w-col-sm-6">
-                        <div class="w-box gateways">
-                            <div class="w-box-head">
-                                <?php echo esc_html__('Popular Gateways', 'modern-events-calendar-lite'); ?>
-                            </div>
-                            <div class="w-box-content">
-                                <?php
-                                $results = $db->select("SELECT COUNT(`meta_id`) AS count, `meta_value` AS gateway FROM `#__postmeta` WHERE `meta_key`='mec_gateway' GROUP BY `meta_value`", 'loadAssocList');
 
-                                $labels = '';
-                                $data = '';
-                                $bg_colors = '';
+            <?php
+            // Licensed (token or partner): the activation box stays fully
+            // visible (owner decision, no collapsed toggle) - its own green
+            // state and revoke button answer "am I okay?" directly.
+            elseif ($mec_license_active): ?>
+                <?php include plugin_dir_path(__FILE__) . 'dashboard-licensebox.php'; ?>
 
-                                foreach ($results as $result) {
-                                    if (!class_exists($result['gateway'])) {
-                                        continue;
-                                    }
-
-                                    $gateway = new $result['gateway'];
-                                    $stats[] = array('label' => $gateway->title(), 'count' => $result['count']);
-
-                                    $labels .= '"' . esc_html($gateway->title()) . '",';
-                                    $data .= ((int) $result['count']) . ',';
-                                    $bg_colors .= "'" . $gateway->color() . "',";
-                                }
-                                echo '<canvas id="mec_gateways_chart" width="300" height="300"></canvas>';
-
-                                $this->getFactory()->params('footer', '<script>
-                            jQuery(document).ready(function()
-                            {
-                                var ctx = document.getElementById("mec_gateways_chart");
-                                var mecGatewaysChart = new Chart(ctx,
-                                {
-                                    type: "doughnut",
-                                    data:
-                                    {
-                                        labels: [' . trim($labels, ', ') . '],
-                                        datasets: [
-                                        {
-                                            data: [' . trim($data, ', ') . '],
-                                            backgroundColor: [' . trim($bg_colors, ', ') . ']
-                                        }]
-                                    }
-                                });
-                            });
-                            </script>');
-                                ?>
-                            </div>
-                        </div>
+            <?php
+            // Unlicensed: the box is THE action of this screen, so it sits
+            // directly below the header. A stored-but-inactive code means
+            // Pro is ramping down - that state gets an explicit warning bar.
+            else: ?>
+                <?php if (!empty($product_license)): ?>
+                    <div class="mec-licensebar mec-licensebar--warn" role="alert">
+                        <span class="mec-licensebar__dot" aria-hidden="true"></span>
+                        <span class="mec-licensebar__text"><?php esc_html_e('Your purchase code is saved but not activated - Pro features will keep winding down until you activate the license.', 'modern-events-calendar-lite'); ?></span>
                     </div>
                 <?php endif; ?>
+                <?php include plugin_dir_path(__FILE__) . 'dashboard-licensebox.php'; ?>
+            <?php endif; ?>
+
+        <?php
+        // Lite: the upsell card keeps its full size and its prime spot in
+        // Zone B (v2 decision) - data-driven copy for mature installs,
+        // coupon slot and social proof intact, dismissible for 30 days.
+        elseif ($mec_show_upsell): ?>
+            <div class="mec-intro-notice mec-intro-notice--upsell" id="mecIntroUpsell">
+                <button type="button" class="mec-upsell-close" aria-label="<?php echo esc_attr__('Hide this for 30 days', 'modern-events-calendar-lite'); ?>"><i class="mec-sl-close" aria-hidden="true"></i></button>
+                <div class="mec-intro-notice__body">
+                    <h2><span class="mec-intro-notice__tag"><?php esc_html_e('Lite', 'modern-events-calendar-lite'); ?></span></h2>
+                    <?php if (!$mec_is_onboarding): ?>
+                        <p>
+                            <?php printf(
+                                esc_html__("You're managing %s events on the Lite version. Upgrade to Pro to unlock the booking system, modern skins like Agenda, Timetable, Masonry, Yearly View, Available Spots, and more.", 'modern-events-calendar-lite'),
+                                '<strong>' . esc_html(number_format_i18n((int) $user_post_count)) . '</strong>'
+                            ); ?>
+                        </p>
+                    <?php else: ?>
+                        <p>
+                            <?php esc_html_e("You're using the Lite version of Modern Events Calendar. Upgrade to Pro to unlock the booking system, modern skins like Agenda, Timetable, Masonry, Yearly View, Available Spots, and more.", 'modern-events-calendar-lite'); ?>
+                        </p>
+                    <?php endif; ?>
+                    <div class="info-msg-coupon"></div>
+                    <div class="socialfollow">
+                        <?php
+                        // A-02: icon-only links are announced as "link, link,
+                        // link..." by screen readers - every one needs its
+                        // accessible name. Twitter is labeled for X, the rebranded
+                        // name; the URL redirects on its own.
+                        ?>
+                        <a target="_blank" rel="noopener noreferrer" href="https://www.facebook.com/WebnusCo/" class="facebook" aria-label="<?php echo esc_attr__('Webnus on Facebook', 'modern-events-calendar-lite'); ?>">
+                            <i class="mec-sl-social-facebook" aria-hidden="true"></i>
+                        </a>
+                        <a target="_blank" rel="noopener noreferrer" href="https://twitter.com/webnus" class="twitter" aria-label="<?php echo esc_attr__('Webnus on X (Twitter)', 'modern-events-calendar-lite'); ?>">
+                            <i class="mec-sl-social-twitter" aria-hidden="true"></i>
+                        </a>
+                        <a target="_blank" rel="noopener noreferrer" href="https://www.instagram.com/webnus/" class="instagram" aria-label="<?php echo esc_attr__('Webnus on Instagram', 'modern-events-calendar-lite'); ?>">
+                            <i class="mec-sl-social-instagram" aria-hidden="true"></i>
+                        </a>
+                        <a target="_blank" rel="noopener noreferrer" href="https://www.youtube.com/channel/UCmQ-VeVK7nLR3bGpAkSYB1Q" class="youtube" aria-label="<?php echo esc_attr__('Webnus on YouTube', 'modern-events-calendar-lite'); ?>">
+                            <i class="mec-sl-social-youtube" aria-hidden="true"></i>
+                        </a>
+                        <a target="_blank" rel="noopener noreferrer" href="https://dribbble.com/Webnus" class="dribbble" aria-label="<?php echo esc_attr__('Webnus on Dribbble', 'modern-events-calendar-lite'); ?>">
+                            <i class="mec-sl-social-dribbble" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                </div>
+                <a class="mec-intro-btn" href="<?php echo esc_url($this->get_pro_link()); ?>" target="_blank" rel="noopener noreferrer">
+                    <?php esc_html_e('Go Premium', 'modern-events-calendar-lite'); ?>
+                </a>
             </div>
+            <script>
+                (function () {
+                    var card = document.getElementById('mecIntroUpsell');
+                    if (!card) return;
+
+                    var btn = card.querySelector('.mec-upsell-close');
+                    if (!btn) return;
+
+                    // Per-user, 30-day dismissal. The card hides optimistically;
+                    // the server only records the timestamp (the template decides
+                    // when it may return).
+                    btn.addEventListener('click', function () {
+                        var body = new FormData();
+                        body.append('action', 'mec_intro_upsell_dismiss');
+                        body.append('nonce', mec_admin_localize.ajax_nonce);
+
+                        card.style.display = 'none';
+
+                        window.fetch(mec_admin_localize.ajax_url, {
+                            method: 'POST',
+                            credentials: 'same-origin',
+                            body: body
+                        })['catch'](function () {});
+                    });
+                })();
+            </script>
+        <?php endif; ?>
+
+        <?php /* ═══ ZONE C - announcements (single system: the remote feed) ═══ */ ?>
+        <?php
+        // IA-02: one notification system, one design. The announcement comes
+        // exclusively from notifications.webnus.site (category 3 = Lite, 6 =
+        // Pro) and renders in the unified mec-intro-notice--remote card.
+        // The legacy mec_custom_msg / mec_custom_msg_2 boxes (old w-box
+        // design, hardcoded promo HTML, broken option-cache chain - see
+        // P-05) were retired from rendering everywhere.
+        $notification_category = $this->getPRO() ? 6 : 3;
+
+        // The announcement is served from a transient: this remote call used
+        // to run inline on every dashboard load with a 50s timeout, so a slow
+        // or unreachable notifications server could hang the whole admin page
+        // (the old "Fix for cURL error 28" only made the hang longer). It now
+        // runs only on a cold cache with a short timeout, and failures are
+        // negative-cached so a dead endpoint is not retried on every load.
+        $remote_posts = get_transient('mec_intro_remote_posts_' . $notification_category);
+
+        if ($remote_posts === false) {
+            $response_lite = wp_remote_get(
+                add_query_arg(
+                    array( // posts from 101 to 200
+                        'per_page' => 1,
+                        'page' => 1,
+                        'categories' => $notification_category,
+                        '_embed' => 'wp:featuredmedia',
+                    ),
+                    'https://notifications.webnus.site/wp-json/wp/v2/posts'
+                ),
+                array(
+                    'timeout' => 3,
+                )
+            );
+
+            $remote_posts = array();
+            if (!is_wp_error($response_lite) && wp_remote_retrieve_response_code($response_lite) == 200) {
+                $decoded = json_decode(wp_remote_retrieve_body($response_lite));
+                if (is_array($decoded)) {
+                    $remote_posts = $decoded;
+                }
+            }
+
+            // Keep a good response for 12 hours; an error or empty result for
+            // only 1 hour so a transient outage is retried reasonably soon.
+            set_transient('mec_intro_remote_posts_' . $notification_category, $remote_posts, !empty($remote_posts) ? 12 * HOUR_IN_SECONDS : HOUR_IN_SECONDS);
+        }
+
+        $body = $remote_posts;
+
+        if (!empty($body) && is_array($body) && count($body) > 0) :
+            $title = $body[0]->title->rendered ?? '';
+            $content = $body[0]->content->rendered ?? '';
+            $lite_featured_image = $body[0]->_embedded->{'wp:featuredmedia'}[0]->source_url ?? '';
+
+            // I-02: the announcement is dismissible per user, keyed by the
+            // remote post ID. A dismissed post stays hidden for that user;
+            // whatever the feed publishes next shows up until dismissed.
+            $remote_post_id = (int) ($body[0]->id ?? 0);
+            $mec_remote_dismissed_id = (int) get_user_meta(get_current_user_id(), 'mec_intro_remote_dismissed', true);
+            ?>
+            <?php if ($remote_post_id && $remote_post_id !== $mec_remote_dismissed_id): ?>
+            <div class="mec-intro-notice mec-intro-notice--remote<?php echo $lite_featured_image ? ' has-image' : ''; ?>" id="mecRemoteNotice">
+                <button type="button" class="mec-remote-close" aria-label="<?php echo esc_attr__('Dismiss this announcement', 'modern-events-calendar-lite'); ?>" title="<?php echo esc_attr__('Dismiss this announcement', 'modern-events-calendar-lite'); ?>" data-post-id="<?php echo esc_attr($remote_post_id); ?>"><i class="mec-sl-close" aria-hidden="true"></i></button>
+                <?php if ($lite_featured_image): ?>
+                    <span class="mec-intro-notice__img"><img src="<?php echo esc_url($lite_featured_image); ?>" alt="<?php echo esc_attr(wp_strip_all_tags($title)); ?>" /></span>
+                <?php endif; ?>
+                <div class="mec-intro-notice__body">
+                    <h2><span class="mec-intro-notice__tag"><?php esc_html_e('Announcement', 'modern-events-calendar-lite'); ?></span><?php echo esc_html(wp_strip_all_tags($title)); ?></h2>
+                    <?php // Remote HTML must pass core KSES. MEC_kses::full is NOT safe here: it whitelists raw <script>/<style> blocks for MEC's own trusted markup, which would defeat the point of sanitizing an untrusted feed. ?>
+                    <p><?php echo wp_kses($content, wp_kses_allowed_html('post')); ?></p>
+                </div>
+            </div>
+            <script>
+                (function () {
+                    var card = document.getElementById('mecRemoteNotice');
+                    if (!card) return;
+
+                    var btn = card.querySelector('.mec-remote-close');
+                    if (!btn) return;
+
+                    // Per-user dismissal, keyed by the remote post ID. The card
+                    // hides optimistically; the server records which post was
+                    // dismissed so this one stays gone while new ones appear.
+                    btn.addEventListener('click', function () {
+                        var body = new FormData();
+                        body.append('action', 'mec_intro_remote_dismiss');
+                        body.append('nonce', mec_admin_localize.ajax_nonce);
+                        body.append('post_id', btn.getAttribute('data-post-id') || '0');
+
+                        card.style.display = 'none';
+
+                        window.fetch(mec_admin_localize.ajax_url, {
+                            method: 'POST',
+                            credentials: 'same-origin',
+                            body: body
+                        })['catch'](function () {});
+                    });
+                })();
+            </script>
+            <?php endif; ?>
+        <?php
+        // IA-02: no legacy fallback anymore. When the feed has nothing, no
+        // announcement renders at all - the empty/unreachable case leaves no
+        // margin-only row behind.
+        endif;
+        ?>
+
+        <?php /* ═══ ZONE D - primary work (fresh: checklist · mature: stats + upcoming) ═══ */ ?>
+        <?php if ($mec_is_onboarding): ?>
+            <?php
+            // Fresh install: a 3-step checklist with REAL completion state
+            // replaces the stats wall of zeros and the generic copy (v2
+            // decision: stats stay hidden until the first event exists).
+            $mec_step1_done = ((int) $user_post_count > 0);
+            $mec_step2_done = ((int) $user_post_count_c > 0);
+            $mec_step3_done = $mec_license_active;
+            ?>
+            <div class="mec-intro-card mec-intro-card--pad mec-checklist-card">
+                <h2><?php esc_html_e('Set up your calendar', 'modern-events-calendar-lite'); ?></h2>
+                <p><?php esc_html_e('Three quick steps and your first calendar is live.', 'modern-events-calendar-lite'); ?></p>
+                <ol class="mec-checklist">
+                    <li class="<?php echo $mec_step1_done ? 'done' : ''; ?>">
+                        <a href="<?php echo esc_url(admin_url('post-new.php?post_type=mec-events')); ?>"><?php esc_html_e('Create your first event', 'modern-events-calendar-lite'); ?></a>
+                        <span><?php esc_html_e('Dates, location, organizers - the works.', 'modern-events-calendar-lite'); ?></span>
+                    </li>
+                    <li class="<?php echo $mec_step2_done ? 'done' : ''; ?>">
+                        <a href="<?php echo esc_url(admin_url('edit.php?post_type=mec_calendars')); ?>"><?php esc_html_e('Publish a calendar shortcode', 'modern-events-calendar-lite'); ?></a>
+                        <span><?php esc_html_e('Pick a skin, then drop the shortcode on any page.', 'modern-events-calendar-lite'); ?></span>
+                    </li>
+                    <?php if ($this->isProBuild()): ?>
+                    <li class="<?php echo $mec_step3_done ? 'done' : ''; ?>">
+                        <a href="#mec-activation-box"><?php esc_html_e('Activate your license', 'modern-events-calendar-lite'); ?></a>
+                        <span><?php esc_html_e('Enter your purchase code to unlock all Pro features.', 'modern-events-calendar-lite'); ?></span>
+                    </li>
+                    <?php else: ?>
+                    <li class="optional">
+                        <a href="<?php echo esc_url($this->get_pro_link()); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e('Unlock Pro features', 'modern-events-calendar-lite'); ?> <i class="mec-sl-action-redo" aria-hidden="true"></i></a>
+                        <span><?php esc_html_e('Booking, Agenda, Timetable, Yearly View, Available Spots and more.', 'modern-events-calendar-lite'); ?></span>
+                    </li>
+                    <?php endif; ?>
+                </ol>
+            </div>
+
+        <?php else: ?>
+
+            <?php // Mature install: the daily numbers come first (v2 decision). ?>
+            <?php if (current_user_can('read')): ?>
+                <div class="mec-intro-grid mec-intro-grid--4">
+                    <a class="mec-intro-card mec-intro-stat" href="<?php echo esc_url(admin_url('edit.php?post_type=mec-events')); ?>">
+                        <span class="mec-intro-chip"><i class="mec-sl-calendar"></i></span>
+                        <div><span class="mec-intro-stat__num"><?php echo esc_html(number_format_i18n($mec_stat_events)); ?></span><span class="mec-intro-stat__cap"><?php esc_html_e('Events', 'modern-events-calendar-lite'); ?></span></div>
+                    </a>
+                    <a class="mec-intro-card mec-intro-stat" href="<?php echo esc_url(admin_url('edit.php?post_type=mec_calendars')); ?>">
+                        <span class="mec-intro-chip"><i class="mec-sl-layers"></i></span>
+                        <div><span class="mec-intro-stat__num"><?php echo esc_html(number_format_i18n($mec_stat_calendars)); ?></span><span class="mec-intro-stat__cap"><?php esc_html_e('Shortcodes', 'modern-events-calendar-lite'); ?></span></div>
+                    </a>
+                    <a class="mec-intro-card mec-intro-stat" href="<?php echo esc_url(admin_url('edit-tags.php?taxonomy=mec_location&post_type=' . $this->get_main_post_type())); ?>">
+                        <span class="mec-intro-chip"><i class="mec-sl-map"></i></span>
+                        <div><span class="mec-intro-stat__num"><?php echo esc_html($user_location_count_l); ?></span><span class="mec-intro-stat__cap"><?php esc_html_e('Locations', 'modern-events-calendar-lite'); ?></span></div>
+                    </a>
+                    <a class="mec-intro-card mec-intro-stat" href="<?php echo esc_url(admin_url('edit-tags.php?taxonomy=mec_organizer&post_type=' . $this->get_main_post_type())); ?>">
+                        <span class="mec-intro-chip"><i class="mec-sl-organization"></i></span>
+                        <div><span class="mec-intro-stat__num"><?php echo esc_html($user_organizer_count_l); ?></span><span class="mec-intro-stat__cap"><?php esc_html_e('Organizers', 'modern-events-calendar-lite'); ?></span></div>
+                    </a>
+                </div>
+
+                <?php
+                // Additive sales surface (v2): one thin strip under the stats
+                // reminding Lite users what the numbers are missing. Licensed
+                // Pro users see nothing.
+                if (!$this->isProBuild()): ?>
+                    <div class="mec-prostrip">
+                        <span class="mec-prostrip__tag"><?php esc_html_e('Pro', 'modern-events-calendar-lite'); ?></span>
+                        <span class="mec-prostrip__text"><?php esc_html_e('Booking system, Agenda, Timetable, Masonry, Yearly View, Available Spots…', 'modern-events-calendar-lite'); ?></span>
+                        <a class="mec-prostrip__link" href="<?php echo esc_url($this->get_pro_link()); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e('Go Premium', 'modern-events-calendar-lite'); ?> <i class="mec-sl-action-redo" aria-hidden="true"></i></a>
+                    </div>
+                <?php endif; ?>
+            <?php endif; ?>
+
+            <?php if ($box_stats): ?>
+                <div class="w-row">
+                    <div class="w-col-sm-<?php echo ($booking_status ? 6 : 12); ?>">
+                        <div class="w-box upcoming-events mec-intro-card">
+                            <h2 class="w-box-head">
+                                <?php esc_html_e('Upcoming Events', 'modern-events-calendar-lite'); ?>
+                            </h2>
+                            <div class="w-box-content">
+                                <?php
+                                // I-08 + E-03: a light, dashboard-owned list
+                                // instead of rendering the front-end skin (which
+                                // pulled its own markup/CSS plus a credit link
+                                // that then had to be hidden with CSS). ONE
+                                // query drives both the list and the empty
+                                // state; the OR clause keeps long-running and
+                                // recurring spans visible after they start.
+                                $mec_today = current_time('Y-m-d');
+                                $mec_upcoming = new WP_Query(array(
+                                    'post_type' => $this->get_main_post_type(),
+                                    'post_status' => 'publish',
+                                    'posts_per_page' => 6,
+                                    'no_found_rows' => true,
+                                    'meta_key' => 'mec_start_date',
+                                    'orderby' => 'meta_value',
+                                    'order' => 'ASC',
+                                    'meta_query' => array(
+                                        'relation' => 'OR',
+                                        array('key' => 'mec_start_date', 'value' => $mec_today, 'compare' => '>=', 'type' => 'DATE'),
+                                        array('key' => 'mec_end_date', 'value' => $mec_today, 'compare' => '>=', 'type' => 'DATE'),
+                                    ),
+                                ));
+
+                                if ($mec_upcoming->have_posts()):
+                                ?>
+                                <ul class="mec-upcoming-list">
+                                    <?php
+                                    while ($mec_upcoming->have_posts()):
+                                        $mec_upcoming->the_post();
+                                        $mec_sd = (string) get_post_meta(get_the_ID(), 'mec_start_date', true);
+                                        $mec_sd_ts = $mec_sd ? strtotime($mec_sd) : false;
+                                    ?>
+                                    <li>
+                                        <span class="mec-upcoming-list__date"><b><?php echo $mec_sd_ts ? esc_html(date_i18n('d', $mec_sd_ts)) : ''; ?></b><i><?php echo $mec_sd_ts ? esc_html(date_i18n('M', $mec_sd_ts)) : ''; ?></i></span>
+                                        <a href="<?php echo esc_url(get_permalink()); ?>"><?php echo esc_html(get_the_title()); ?></a>
+                                    </li>
+                                    <?php endwhile; wp_reset_postdata(); ?>
+                                </ul>
+                                <?php
+                                else:
+                                ?>
+                                <div class="mec-upcoming-empty">
+                                    <p><?php esc_html_e('Nothing coming up yet - publish an event with an upcoming date and it will appear here.', 'modern-events-calendar-lite'); ?></p>
+                                    <div class="mec-intro-cta">
+                                        <a class="mec-intro-btn" href="<?php echo esc_url(admin_url('post-new.php?post_type=mec-events')); ?>"><?php esc_html_e('Add New Event', 'modern-events-calendar-lite'); ?></a>
+                                        <a class="mec-intro-btn mec-intro-btn--ghost" href="<?php echo esc_url(admin_url('admin.php?page=MEC-ix')); ?>"><?php esc_html_e('Import Events', 'modern-events-calendar-lite'); ?></a>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                    <?php if ($booking_status): ?>
+                        <div class="w-col-sm-6">
+                            <div class="w-box gateways mec-intro-card">
+                                <h2 class="w-box-head">
+                                    <?php echo esc_html__('Popular Gateways', 'modern-events-calendar-lite'); ?>
+                                </h2>
+                                <div class="w-box-content">
+                                    <?php
+                                    $results = $db->select("SELECT COUNT(`meta_id`) AS count, `meta_value` AS gateway FROM `#__postmeta` WHERE `meta_key`='mec_gateway' GROUP BY `meta_value`", 'loadAssocList');
+
+                                    $labels = '';
+                                    $data = '';
+                                    $bg_colors = '';
+                                    $stats = array();
+
+                                    foreach ($results as $result) {
+                                        if (!class_exists($result['gateway'])) {
+                                            continue;
+                                        }
+
+                                        $gateway = new $result['gateway'];
+                                        $stats[] = array('label' => $gateway->title(), 'count' => $result['count']);
+
+                                        $labels .= '"' . esc_html($gateway->title()) . '",';
+                                        $data .= ((int) $result['count']) . ',';
+                                        $bg_colors .= "'" . $gateway->color() . "',";
+                                    }
+                                    ?>
+
+                                    <?php if (!empty($stats)): ?>
+                                    <?php echo '<canvas id="mec_gateways_chart" width="300" height="300"></canvas>'; ?>
+                                    <p class="mec-gateways-note"><?php esc_html_e('Payment gateways enabled across your events.', 'modern-events-calendar-lite'); ?></p>
+
+                                    <?php $this->getFactory()->params('footer', '<script>
+                                jQuery(document).ready(function()
+                                {
+                                    var ctx = document.getElementById("mec_gateways_chart");
+                                    var mecGatewaysChart = new Chart(ctx,
+                                    {
+                                        type: "doughnut",
+                                        data:
+                                        {
+                                            labels: [' . trim($labels, ', ') . '],
+                                            datasets: [
+                                            {
+                                                data: [' . trim($data, ', ') . '],
+                                                backgroundColor: [' . trim($bg_colors, ', ') . ']
+                                            }]
+                                        }
+                                    });
+                                });
+                                </script>'); ?>
+                                    <?php else: ?>
+                                    <?php
+                                    // E-02: an empty chart renders as a broken-looking
+                                    // blank circle - show where to fix it instead.
+                                    ?>
+                                    <div class="mec-gateways-empty">
+                                        <p><?php esc_html_e('No payment gateway is enabled on your events yet.', 'modern-events-calendar-lite'); ?></p>
+                                        <a class="mec-intro-btn" href="<?php echo esc_url(admin_url('admin.php?page=MEC-settings')); ?>"><?php esc_html_e('Booking Settings', 'modern-events-calendar-lite'); ?></a>
+                                    </div>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
+
+            <?php /* ═══ ZONE E - analytics (mature, Pro + booking) ═══ */ ?>
             <?php if ($booking_status and current_user_can('mec_settings')) echo (new MEC_feature_mec())->widget_total_bookings(); ?>
+        <?php endif; ?>
+
+        <?php /* ═══ ZONE F - utilities (addons · print · changelog) ═══ */ ?>
+        <?php
+        // Revision 12: the walkthrough moved up to the top of the page
+        // (above the license box), so it has no slot here anymore.
+        ?>
+
+        <?php
+        // Lite + add-ons: the only add-on activation surface (Zone F
+        // utility). C-04: administrator-only, no dead box for others.
+        ?>
+        <?php if (!$this->isProBuild() && has_action('addons_activation') && current_user_can('administrator')) : ?>
+            <div class="w-box mec-activation mec-intro-card">
+                <h2 class="w-box-head">
+                    <?php esc_html_e('License Activation', 'modern-events-calendar-lite'); ?>
+                </h2>
+                    <div class="w-box-content">
+                        <?php include plugin_dir_path(__FILE__) . 'dashboard-addonstoggle.php'; ?>
+                    </div>
+            </div>
         <?php endif; ?>
 
         <?php if ($this->getPRO()) (new MEC_feature_mec())->widget_print(); ?>
 
-        <div class="w-row">
-            <div class="w-col-sm-12">
-                <div class="w-box change-log">
-                    <div class="w-box-head">
-                        <?php echo esc_html__('Change Log', 'modern-events-calendar-lite'); ?>
-                    </div>
-                    <div class="w-box-content">
-                        <pre><?php echo file_get_contents(plugin_dir_path(__FILE__) . '../../../changelog.txt'); ?></pre>
-                    </div>
+        <?php
+        // P-03: changelog.txt used to be read and dumped raw into a <pre> on
+        // every dashboard load - unescaped (any tag in the file would render
+        // as HTML), uncached (disk I/O per request) and untrimmed (300+
+        // versions in one endless block). It is now parsed into version
+        // blocks, escaped on output, cached in a transient keyed by plugin
+        // version + file mtime, and only the latest few versions render -
+        // the rest stay behind a <details> toggle.
+        $changelog_file = plugin_dir_path(__FILE__) . '../../../changelog.txt';
+        // "_r2" is the parser revision: headers older than ~v7.19 use a Unicode
+        // en-dash instead of an ASCII hyphen and some versions are 4-part
+        // (1.9.5.1), so it changes whenever the parsing rules change.
+        $changelog_cache_key = 'mec_intro_changelog_r2_' . MEC_VERSION . '_' . ((@filemtime($changelog_file)) ?: 0);
+        $changelog_versions = get_transient($changelog_cache_key);
+
+        if ($changelog_versions === false) {
+            $changelog_versions = array();
+            $changelog_raw = @file_get_contents($changelog_file);
+
+            // The file ships with a UTF-8 BOM; strip it or the first version header ("v 7.36.4 - …") never matches.
+            if ($changelog_raw) $changelog_raw = preg_replace('/^\xEF\xBB\xBF/', '', $changelog_raw);
+
+            if ($changelog_raw) {
+                // Split on "v X.Y.Z - date" header lines, keeping the headers.
+                // The file mixes separators: newer headers use an ASCII hyphen,
+                // older ones (pre ~7.19) a Unicode en-dash - and a few versions
+                // are 4-part. Accept all of them.
+                $changelog_blocks = preg_split('/^\s*(?=v\s*\d+(?:\.\d+)+\s*[-\x{2013}\x{2014}])/mu', $changelog_raw, -1, PREG_SPLIT_NO_EMPTY);
+
+                foreach ($changelog_blocks as $changelog_block) {
+                    $changelog_lines = preg_split('/\r\n|\r|\n/', trim($changelog_block));
+                    $changelog_header = trim(array_shift($changelog_lines));
+
+                    if (!preg_match('/^v\s*(\d+(?:\.\d+)+)\s*[-\x{2013}\x{2014}]\s*(.+)$/u', $changelog_header, $changelog_matches)) continue;
+
+                    $changelog_entries = array();
+                    foreach ($changelog_lines as $changelog_line) {
+                        $changelog_line = trim($changelog_line);
+                        if ($changelog_line === '') continue;
+
+                        // Normal entries start with "- "; keep any other line as-is so nothing is silently dropped.
+                        $changelog_entries[] = (strpos($changelog_line, '-') === 0) ? ltrim($changelog_line, "- \t") : $changelog_line;
+                    }
+
+                    if (!empty($changelog_entries)) $changelog_versions[] = array('version' => $changelog_matches[1], 'date' => $changelog_matches[2], 'entries' => $changelog_entries);
+                }
+            }
+
+            // The key already carries MEC_VERSION/file mtime/parser revision,
+            // so a long TTL is safe.
+            set_transient($changelog_cache_key, $changelog_versions, WEEK_IN_SECONDS);
+        }
+
+        // How many recent versions render expanded; older ones go into <details>.
+        $changelog_latest_count = 3;
+        ?>
+        <div class="w-box change-log mec-intro-card">
+            <h2 class="w-box-head">
+                <?php echo esc_html__('Changelog', 'modern-events-calendar-lite'); ?>
+                <?php
+                // Additive sales surface (v2): most changelog entries describe
+                // Pro-only features - on Lite, link them to the upgrade page.
+                // No <span> here: a legacy ".w-box-head span" rule absolutely
+                // positions every span inside a box head.
+                if (!$this->isProBuild()): ?>
+                    <a class="mec-changelog-pro" href="<?php echo esc_url($this->get_pro_link()); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e('Pro - Unlock all features', 'modern-events-calendar-lite'); ?> <i class="mec-sl-action-redo" aria-hidden="true"></i></a>
+                <?php endif; ?>
+            </h2>
+            <div class="w-box-content">
+                <?php if (!empty($changelog_versions)): ?>
+                <div class="mec-changelog">
+                    <?php foreach ($changelog_versions as $changelog_i => $changelog_version): ?>
+                        <?php if ($changelog_i === $changelog_latest_count): ?>
+                        <details class="mec-changelog-more">
+                            <summary><?php echo esc_html(sprintf(__('Show older versions (%d)', 'modern-events-calendar-lite'), count($changelog_versions) - $changelog_latest_count)); ?></summary>
+                        <?php endif; ?>
+                        <div class="mec-changelog-entry<?php echo ($changelog_i === 0) ? ' mec-changelog-entry--latest' : ''; ?>">
+                            <div class="mec-changelog-entry-head">
+                                <span class="mec-changelog-entry-ver">v<?php echo esc_html($changelog_version['version']); ?></span>
+                                <span class="mec-changelog-entry-date"><?php echo esc_html($changelog_version['date']); ?></span>
+                            </div>
+                            <ul>
+                                <?php foreach ($changelog_version['entries'] as $changelog_entry): ?>
+                                <li><?php
+                                // Historical entries contain occasional <a> links. Everything is
+                                // escaped; only a bare <a href/target/rel> is allowed through, so
+                                // wp_kses strips any script/on* vector and javascript: URLs.
+                                echo wp_kses($changelog_entry, array('a' => array('href' => true, 'target' => true, 'rel' => true)));
+                                ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
+                        <?php if (count($changelog_versions) > $changelog_latest_count && $changelog_i + 1 === count($changelog_versions)): ?>
+                        </details>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
                 </div>
+                <?php else: ?>
+                <p class="mec-changelog-empty"><?php esc_html_e('No changelog available.', 'modern-events-calendar-lite'); ?></p>
+                <?php endif; ?>
             </div>
         </div>
     </div>

@@ -2049,12 +2049,10 @@ $interval_unit_map = [
                         <?php if ($status and trim($api_key)): ?>
                             <script>
                                 jQuery(document).ready(function() {
-                                    if (typeof google !== 'undefined') {
-                                        var location_autocomplete = new google.maps.places.Autocomplete(document.getElementById('mec_location_address'));
-                                        google.maps.event.addListener(location_autocomplete, 'place_changed', function() {
-                                            var place = location_autocomplete.getPlace();
-                                            jQuery('#mec_location_latitude').val(place.geometry.location.lat());
-                                            jQuery('#mec_location_longitude').val(place.geometry.location.lng());
+                                    if (typeof mecPlaceAutocomplete === 'function') {
+                                        mecPlaceAutocomplete(document.getElementById('mec_location_address'), {
+                                            latitude: document.getElementById('mec_location_latitude'),
+                                            longitude: document.getElementById('mec_location_longitude')
                                         });
                                     }
                                 });

@@ -1683,12 +1683,13 @@ $skin_meta = [
                 <?php endif; ?>
 
                 <?php $sk_options_timetable = isset($sk_options['timetable']) ? $sk_options['timetable'] : []; ?>
+                <?php $timetable_navigation_default = !isset($sk_options_timetable['style']) || $sk_options_timetable['style'] === 'modern'; ?>
                 <div class="mec-form-row mec-field">
                     <div class="mec-field__label">
                         <label for="mec_skin_timetable_style"><?php esc_html_e('Style', 'modern-events-calendar-lite'); ?></label>
                     </div>
                     <div class="mec-field__control">
-                        <select class="wn-mec-select" name="mec[sk-options][timetable][style]" id="mec_skin_timetable_style" onchange="mec_skin_style_changed('timetable', this.value); if(this.value == 'clean' || this.value == 'fluent'){ jQuery('.mec-timetable-clean-style-depended').show(); jQuery('.mec-timetable-classic-style-depended').hide(); jQuery('.mec-timetable-modern-style-depended').hide(); } else if ( this.value == 'classic' ) { jQuery('.mec-timetable-classic-style-depended').show(); jQuery('.mec-timetable-clean-style-depended').show(); jQuery('.mec-timetable-modern-style-depended').hide(); } else { jQuery('.mec-timetable-clean-style-depended').hide(); jQuery('.mec-timetable-classic-style-depended').hide(); jQuery('.mec-timetable-modern-style-depended').show(); }">
+                        <select class="wn-mec-select" name="mec[sk-options][timetable][style]" id="mec_skin_timetable_style" onchange="mec_skin_style_changed('timetable', this.value); if(this.value == 'clean' || this.value == 'fluent'){ jQuery('.mec-timetable-clean-style-depended').show(); jQuery('.mec-timetable-classic-style-depended').hide(); jQuery('.mec-timetable-modern-style-depended').hide(); jQuery('.mec-timetable-navigation-style-depended').toggle(this.value == 'clean'); } else if ( this.value == 'classic' ) { jQuery('.mec-timetable-classic-style-depended').show(); jQuery('.mec-timetable-clean-style-depended').show(); jQuery('.mec-timetable-modern-style-depended').hide(); jQuery('.mec-timetable-navigation-style-depended').hide(); } else { jQuery('.mec-timetable-clean-style-depended').hide(); jQuery('.mec-timetable-classic-style-depended').hide(); jQuery('.mec-timetable-modern-style-depended').show(); jQuery('.mec-timetable-navigation-style-depended').show(); }">
                         <option value="modern" <?php if(isset($sk_options_timetable['style']) and $sk_options_timetable['style'] == 'modern') echo 'selected="selected"'; ?>><?php esc_html_e('Modern', 'modern-events-calendar-lite'); ?></option>
                         <option value="clean" <?php if(isset($sk_options_timetable['style']) and $sk_options_timetable['style'] == 'clean') echo 'selected="selected"'; ?>><?php esc_html_e('Clean', 'modern-events-calendar-lite'); ?></option>
                         <?php do_action('mec_timetable_fluent', (isset($sk_options_timetable['style']) ? $sk_options_timetable['style'] : NULL)); ?>
@@ -1841,11 +1842,11 @@ $skin_meta = [
                     <p class="mec-field__help"><?php esc_html_e('Show why the event was canceled instead of hiding it.', 'modern-events-calendar-lite'); ?></p>
                 </div>
                 <!-- End Display Reason for Cancellation -->
-                <div class="mec-timetable-modern-style-depended">
+                <div class="mec-timetable-navigation-style-depended">
                     <div class="mec-form-row mec-field mec-field--check">
                         <label class="mec-check" for="mec_skin_timetable_next_previous_button">
                             <input type="hidden" name="mec[sk-options][timetable][next_previous_button]" value="0" />
-                            <input type="checkbox" name="mec[sk-options][timetable][next_previous_button]" id="mec_skin_timetable_next_previous_button" value="1" <?php if(!isset($sk_options_timetable['next_previous_button']) or (isset($sk_options_timetable['next_previous_button']) and $sk_options_timetable['next_previous_button'])) echo 'checked="checked"'; ?> />
+                            <input type="checkbox" name="mec[sk-options][timetable][next_previous_button]" id="mec_skin_timetable_next_previous_button" value="1" <?php if((isset($sk_options_timetable['next_previous_button']) and $sk_options_timetable['next_previous_button']) or (!isset($sk_options_timetable['next_previous_button']) and $timetable_navigation_default)) echo 'checked="checked"'; ?> />
                             <span><?php esc_html_e('Next/Previous Buttons', 'modern-events-calendar-lite'); ?></span>
                         </label>
                         <p class="mec-field__help"><?php esc_html_e('Show arrows to navigate between periods.', 'modern-events-calendar-lite'); ?></p>

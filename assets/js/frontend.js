@@ -86,11 +86,16 @@ function mecFormatA11yString(template, replacements)
             start_date: '',
             callback: function () { }
         }, options);
-
         if (typeof mec_search_callbacks[settings.id] === 'undefined') mec_search_callbacks[settings.id] = [];
-        mec_search_callbacks[settings.id].push(settings.callback);
 
-        $('#mec_search_form_' + settings.id).on('submit', (e) => {
+        var callback_exists = false;
+        for (const callback of mec_search_callbacks[settings.id]) {
+            if (callback.toString() === settings.callback.toString()) callback_exists = true;
+        }
+
+        if (!callback_exists) mec_search_callbacks[settings.id].push(settings.callback);
+
+        $('#mec_search_form_' + settings.id).off('submit.mecSearchForm' + settings.id).on('submit.mecSearchForm' + settings.id, (e) => {
             e.preventDefault();
         });
 
@@ -192,7 +197,7 @@ function mecFormatA11yString(template, replacements)
         var $year = $("#mec_sf_year_" + settings.id);
         var $month_or_year = $("#mec_sf_month_" + settings.id + ', ' + "#mec_sf_year_" + settings.id);
 
-        $month_or_year.on('change', function (e) {
+        $month_or_year.off('change.mecSearchForm' + settings.id).on('change.mecSearchForm' + settings.id, function (e) {
             last_field = 'date-dropdown';
 
             var mec_month_val = $month.val();
@@ -306,39 +311,39 @@ function mecFormatA11yString(template, replacements)
                 });
             }
 
-            $("#mec_sf_category_" + settings.id).on('change', function (e) {
+            $("#mec_sf_category_" + settings.id).off('change.mecSearchForm' + settings.id).on('change.mecSearchForm' + settings.id, function (e) {
                 last_field = 'category';
                 search();
             });
 
-            $("#mec_sf_location_" + settings.id).on('change', function (e) {
+            $("#mec_sf_location_" + settings.id).off('change.mecSearchForm' + settings.id).on('change.mecSearchForm' + settings.id, function (e) {
                 last_field = 'location';
                 search();
             });
 
-            $("#mec_sf_organizer_" + settings.id).on('change', function (e) {
+            $("#mec_sf_organizer_" + settings.id).off('change.mecSearchForm' + settings.id).on('change.mecSearchForm' + settings.id, function (e) {
                 last_field = 'organizer';
                 search();
             });
 
-            $("#mec_sf_speaker_" + settings.id).on('change', function (e) {
+            $("#mec_sf_speaker_" + settings.id).off('change.mecSearchForm' + settings.id).on('change.mecSearchForm' + settings.id, function (e) {
                 last_field = 'speaker';
                 search();
             });
 
-            $("#mec_sf_tag_" + settings.id).on('change', function (e) {
+            $("#mec_sf_tag_" + settings.id).off('change.mecSearchForm' + settings.id).on('change.mecSearchForm' + settings.id, function (e) {
                 last_field = 'tag';
                 search();
             });
 
-            $("#mec_sf_label_" + settings.id).on('change', function (e) {
+            $("#mec_sf_label_" + settings.id).off('change.mecSearchForm' + settings.id).on('change.mecSearchForm' + settings.id, function (e) {
                 last_field = 'label';
                 search();
             });
 
             var fields = get_fields();
             $.each(fields, function (i, field) {
-                $("#mec_sf_" + field + "_" + settings.id).on('change', function (e) {
+                $("#mec_sf_" + field + "_" + settings.id).off('change.mecSearchForm' + settings.id).on('change.mecSearchForm' + settings.id, function (e) {
                     last_field = field;
                     search();
                 });
@@ -2772,6 +2777,7 @@ jQuery(window).on('load', function () {
             atts: '',
             sf: {}
         }, options);
+        var currentStartDate = settings.start_date;
 
         // Search Widget
         if (settings.sf.container !== '') {
@@ -2794,6 +2800,13 @@ jQuery(window).on('load', function () {
         setListeners();
 
         function setListeners() {
+            if (settings.week_navigator) {
+                $('#mec_skin_' + settings.id + ' .mec-timetable-week-navigator .mec-load-week').off('click').on('click', function (e) {
+                    e.preventDefault();
+                    loadWeek($(this).data('mec-start-date'));
+                });
+            }
+
             // Single Event Method
             if (settings.sed_method != '0') {
                 sed();
@@ -2809,7 +2822,7 @@ jQuery(window).on('load', function () {
 
             $.ajax({
                 url: settings.ajax_url,
-                data: "action=mec_weeklyprogram_load&" + settings.atts + "&apply_sf_date=1",
+                data: "action=mec_weeklyprogram_load&mec_start_date=" + encodeURIComponent(currentStartDate) + "&" + settings.atts + "&apply_sf_date=1",
                 dataType: "json",
                 type: "post",
                 success: function (response) {
@@ -2825,6 +2838,31 @@ jQuery(window).on('load', function () {
                     $(document).trigger('mec_search_init', ['weeklyprogram', settings, response]);
                 },
                 error: function () { }
+            });
+        }
+
+        function loadWeek(startDate) {
+            if (!startDate) return;
+
+            var $modal = $('.mec-modal-result');
+            if ($modal.length === 0) $('.mec-wrap').append('<div class="mec-modal-result"></div>');
+            $('.mec-modal-result').addClass('mec-month-navigator-loading');
+
+            $.ajax({
+                url: settings.ajax_url,
+                data: "action=mec_weeklyprogram_load&mec_start_date=" + encodeURIComponent(startDate) + "&" + settings.atts + "&apply_sf_date=0",
+                dataType: "json",
+                type: "post",
+                success: function (response) {
+                    $('.mec-modal-result').removeClass('mec-month-navigator-loading');
+                    currentStartDate = startDate;
+                    $('#mec_skin_events_' + settings.id).html(response.date_events);
+                    $('#mec_skin_' + settings.id + ' .mec-timetable-week-navigator').html(response.navigator);
+                    setListeners();
+                },
+                error: function () {
+                    $('.mec-modal-result').removeClass('mec-month-navigator-loading');
+                }
             });
         }
 
@@ -4961,37 +4999,32 @@ jQuery(window).on('load', function () {
 
 // MEC COUNTDOWN MODULE
 (function ($) {
-    $.fn.mecCountDown = function (options, callBack) 
-	{
+    $.fn.mecCountDown = function (options, callBack) {
         // Default Options
-        var settings = $.extend(
-		{
+        var settings = $.extend({
             // These are the defaults.
             date: null,
-            format: null,
-            interval: 1000
+            format: null
         }, options);
 
         var callback = callBack;
         var selector = $(this);
 
         startCountdown();
-        var intervalID = setInterval(startCountdown, settings.interval);
+        var interval = setInterval(startCountdown, 1000);
 
-        function startCountdown() 
-        {
+        function startCountdown() {
             var eventDate = Date.parse(settings.date) / 1000;
             var currentDate = Math.floor($.now() / 1000);
 
-            if (eventDate <= currentDate) 
-			{
+            if (eventDate <= currentDate) {
                 selector.find(".mec-days").text("00");
                 selector.find(".mec-hours").text("00");
                 selector.find(".mec-minutes").text("00");
                 selector.find(".mec-seconds").text("00");
 
                 callback.call(this);
-                clearInterval(intervalID);
+                clearInterval(interval);
                 return;
             }
 
@@ -5006,18 +5039,17 @@ jQuery(window).on('load', function () {
             var minutes = Math.floor(seconds / 60);
             seconds -= minutes * 60;
 
-            selector.find(".mec-timeRefDays").text((days == 1 
-            					? mecdata.day
-            					: mecdata.days));
-            selector.find(".mec-timeRefHours").text((hours == 1
-            					? mecdata.hour
-            					: mecdata.hours));
-			selector.find(".mec-timeRefMinutes").text((minutes == 1
-            					? mecdata.minute
-            					: mecdata.minutes));
-            selector.find(".mec-timeRefSeconds").text((seconds == 1
-								? mecdata.second
-								: mecdata.seconds));
+            if (days == 1) selector.find(".mec-timeRefDays").text(mecdata.day);
+            else selector.find(".mec-timeRefDays").text(mecdata.days);
+
+            if (hours == 1) selector.find(".mec-timeRefHours").text(mecdata.hour);
+            else selector.find(".mec-timeRefHours").text(mecdata.hours);
+
+            if (minutes == 1) selector.find(".mec-timeRefMinutes").text(mecdata.minute);
+            else selector.find(".mec-timeRefMinutes").text(mecdata.minutes);
+
+            if (seconds == 1) selector.find(".mec-timeRefSeconds").text(mecdata.second);
+            else selector.find(".mec-timeRefSeconds").text(mecdata.seconds);
 
             if (settings.format === "on") {
                 days = (String(days).length >= 2) ? days : "0" + days;
@@ -5032,7 +5064,7 @@ jQuery(window).on('load', function () {
                 selector.find(".mec-minutes").text(minutes);
                 selector.find(".mec-seconds").text(seconds);
             } else {
-                clearInterval(intervalID);
+                clearInterval(interval);
             }
         }
     };
@@ -7062,8 +7094,9 @@ function mecFluentYearlyUI(eventID, yearID) {
                 $chosenMsg.removeClass("disable");
                 $chosenMsg.find(".mec-choosen-time").empty().append($(this).data('formatted-date'));
 
-                // Hide sidebar when a single-time day is selected
-                $("#mec_booking_calendar_" + settings.id + " .mec-booking-tooltip-container").hide();
+                var $container = $("#mec_booking_calendar_" + settings.id + " .mec-booking-tooltip-container");
+                var $content = $(this).find(".mec-booking-tooltip").children().clone();
+                $container.empty().append($content).show();
             });
 
             var $has_time_repeat = $("#mec_booking_calendar_" + settings.id + " .mec-has-time-repeat");
@@ -7088,12 +7121,15 @@ function mecFluentYearlyUI(eventID, yearID) {
             });
 
             // Selected DateTime
-            if (settings.selected_datetime && $has_time_repeat.length) {
+            if (settings.selected_datetime) {
                 var $selected_datetime = $(".mec-booking-calendar-date[data-timestamp='" + settings.selected_datetime + "']");
                 if ($selected_datetime.length) {
-                    $selected_datetime.closest(".mec-has-time-repeat").trigger('click');
-                    var $sidebarDate = $(".mec-booking-tooltip-container .mec-booking-calendar-date[data-timestamp='" + settings.selected_datetime + "']");
-                    if ($sidebarDate.length) $sidebarDate.trigger('click');
+                    var $repeatDay = $selected_datetime.closest(".mec-has-time-repeat");
+                    if ($repeatDay.length) {
+                        $repeatDay.trigger('click');
+                        var $sidebarDate = $(".mec-booking-tooltip-container .mec-booking-calendar-date[data-timestamp='" + settings.selected_datetime + "']");
+                        if ($sidebarDate.length) $sidebarDate.trigger('click');
+                    } else $selected_datetime.closest(".mec-has-one-repeat-in-day").trigger('click');
                 }
             }
 

@@ -213,7 +213,7 @@ class MEC_feature_notifications extends MEC_base
             <li><span>%%booking_transaction_id%%</span>: <?php esc_html_e('Transaction ID of Booking', 'modern-events-calendar-lite'); ?></li>
             <li><span>%%admin_link%%</span>: <?php esc_html_e('Admin booking management link.', 'modern-events-calendar-lite'); ?></li>
             <li><span>%%total_attendees%%</span>: <?php esc_html_e('Total attendees of current booking', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%amount_tickets%%</span>: <?php esc_html_e('Amount of Booked Tickets (Total attendees of all bookings)', 'modern-events-calendar-lite'); ?></li>
+            <li><span>%%amount_tickets%%</span>: <?php esc_html_e('Amount of Booked Tickets (Total ticket units)', 'modern-events-calendar-lite'); ?></li>
             <li><span>%%ticket_name%%</span>: <?php esc_html_e('Ticket name', 'modern-events-calendar-lite'); ?></li>
             <li><span>%%ticket_time%%</span>: <?php esc_html_e('Ticket time', 'modern-events-calendar-lite'); ?></li>
             <li><span>%%ticket_name_time%%</span>: <?php esc_html_e('Ticket name & time', 'modern-events-calendar-lite'); ?></li>

@@ -1208,7 +1208,7 @@ class MEC_main extends MEC_base
         <div class="w-row mec-addons-notification-wrap">
             <div class="w-col-sm-12">
                 <div class="w-clearfix w-box mec-addons-notification-box-wrap">
-                    <div class="w-box-head">' . esc_html__('New Addons For MEC! Now Customize MEC in Elementor', 'modern-events-calendar-lite') . '<span><i class="mec-sl-close"></i></span></div>
+                    <div class="w-box-head">' . esc_html__('New Addons For MEC! Now Customize MEC in Elementor', 'modern-events-calendar-lite') . '<button type="button" class="mec-notice-close" aria-label="' . esc_attr__('Close', 'modern-events-calendar-lite') . '"><i class="mec-sl-close" aria-hidden="true"></i></button></div>
                     <div class="w-box-content">
                         <div class="mec-addons-notification-box-image">
                             <img src="' . plugin_dir_url(__FILE__) . '../../assets/img/mec-addons-teaser1.png" />
@@ -1236,6 +1236,16 @@ class MEC_main extends MEC_base
      * Returns MEC custom message 2
      * @return string
      * @author Webnus <info@webnus.net>
+     */
+    /**
+     * @deprecated IA-02: retired from all core pages. Announcements come
+     *             from the remote feed (notifications.webnus.site) and render
+     *             in the unified dashboard card. Kept only so third-party
+     *             code calling it does not fatal; it no longer renders
+     *             anywhere in MEC itself. See also P-05 for why its
+     *             option-cache chain was broken in practice.
+     *
+     * @return array
      */
     public function mec_custom_msg_2($display_option = '', $message = '')
     {
@@ -1285,7 +1295,7 @@ class MEC_main extends MEC_base
 
             foreach ($obj as $value)
             {
-                $html = '<div class="mec-custom-msg-2-notification-set-box extra"><div style="margin: 0" class="w-row mec-custom-msg-notification-wrap"><div class="w-col-sm-12"><div class="w-clearfix w-box mec-cmsg-2-notification-box-wrap mec-new-addons-wrap" style="margin-top:0;"><div class="w-box-head">Announcement<span><i class="mec-sl-close"></i></span></div><div class="w-box-content"><div class="mec-addons-notification-box-image" style="width: 240px; margin-right: 10px;"><img src="' . plugin_dir_url(__FILE__) . '../api/addons-api/square-integration-addon.svg" /></div><div class="mec-addons-notification-box-content mec-new-addons" style="width: calc(100% - 270px);"><div class="w-box-content"><div class="csm-message-notice" style="text-align: center; background: #BAF0FC57; border-radius: 6px;letter-spacing: 4.4px; color: #00CAE6; text-transform: uppercase; padding: 10px 5px; font-weight: bold; margin-bottom: 40px;">Square Payment</div><p>As promised, another one of the most-requested addons by you, Square Payment, is released this week. The first six addons are out already. Webex Integration and Social Auto Poster and Elementor FES Builder and Seat and Gutenberg Single Builder and Square Payment are now available on our website for purchase.<br/></p><div style="clear:both"></div><a href="https://webnus.net/modern-events-calendar/addons/square-payment/?ref=17" target="_blank">Read More</a></div></div></div></div></div></div></div>';
+                $html = '<div class="mec-custom-msg-2-notification-set-box extra"><div style="margin: 0" class="w-row mec-custom-msg-notification-wrap"><div class="w-col-sm-12"><div class="w-clearfix w-box mec-cmsg-2-notification-box-wrap mec-new-addons-wrap" style="margin-top:0;"><div class="w-box-head">Announcement' . '<button type="button" class="mec-notice-close" aria-label="' . esc_attr__('Close', 'modern-events-calendar-lite') . '"><i class="mec-sl-close" aria-hidden="true"></i></button>' . '</div><div class="w-box-content"><div class="mec-addons-notification-box-image" style="width: 240px; margin-right: 10px;"><img src="' . plugin_dir_url(__FILE__) . '../api/addons-api/square-integration-addon.svg" /></div><div class="mec-addons-notification-box-content mec-new-addons" style="width: calc(100% - 270px);"><div class="w-box-content"><div class="csm-message-notice" style="text-align: center; background: #BAF0FC57; border-radius: 6px;letter-spacing: 4.4px; color: #00CAE6; text-transform: uppercase; padding: 10px 5px; font-weight: bold; margin-bottom: 40px;">Square Payment</div><p>As promised, another one of the most-requested addons by you, Square Payment, is released this week. The first six addons are out already. Webex Integration and Social Auto Poster and Elementor FES Builder and Seat and Gutenberg Single Builder and Square Payment are now available on our website for purchase.<br/></p><div style="clear:both"></div><a href="https://webnus.net/modern-events-calendar/addons/square-payment/?ref=17" target="_blank">Read More</a></div></div></div></div></div></div></div>';
                 update_option('mec_custom_msg_2_html', $html);
                 $display = $value->display;
                 update_option('mec_custom_msg_2_display', $display);
@@ -1309,7 +1319,8 @@ class MEC_main extends MEC_base
     }
 
     /**
-     * Returns MEC custom message
+     * @deprecated IA-02: retired from all core pages, same as mec_custom_msg_2.
+     *
      * @return array
      * @author Webnus <info@webnus.net>
      */
@@ -1357,7 +1368,7 @@ class MEC_main extends MEC_base
         if (!empty($obj)) :
             foreach ($obj as $key => $value)
             {
-                $html = '<div class="mec-custom-msg-notification-set-box extra"><div style="margin: 0" class="w-row mec-custom-msg-notification-wrap"><div class="w-col-sm-12"><div class="w-clearfix w-box mec-cmsg-notification-box-wrap mec-new-addons-wrap" style="margin-top:0;"><div class="w-box-head">Announcement<span><i class="mec-sl-close"></i></span></div><div class="w-box-content"><div class="mec-addons-notification-box-image" style="width: 240px; margin-right: 10px;"><img src="' . plugin_dir_url(__FILE__) . '../api/addons-api/liquid-view-layouts.svg" /></div><div class="mec-addons-notification-box-content mec-new-addons" style="width: calc(100% - 270px);"><div class="w-box-content"><div class="csm-message-notice" style="text-align: center; background: #BAF0FC57; border-radius: 6px;letter-spacing: 4.4px; color: #00CAE6; text-transform: uppercase; padding: 10px 5px; font-weight: bold; margin-bottom: 40px;">Liquid View Layouts</div><p>As promised, another one of the most-requested addons by you, Liquid View Layouts, is released this week. The all addons are out already. Webex Integration and Social Auto Poster and Elementor FES Builder and Seat and Gutenberg Single Builder and Square Payment and Liquid View Layouts are now available on our website for purchase.<br/></p><div style="clear:both"></div><a href="https://webnus.net/modern-events-calendar/addons/liquid-view-layout/?ref=17" target="_blank">Read More</a></div></div></div></div></div></div></div>';
+                $html = '<div class="mec-custom-msg-notification-set-box extra"><div style="margin: 0" class="w-row mec-custom-msg-notification-wrap"><div class="w-col-sm-12"><div class="w-clearfix w-box mec-cmsg-notification-box-wrap mec-new-addons-wrap" style="margin-top:0;"><div class="w-box-head">Announcement' . '<button type="button" class="mec-notice-close" aria-label="' . esc_attr__('Close', 'modern-events-calendar-lite') . '"><i class="mec-sl-close" aria-hidden="true"></i></button>' . '</div><div class="w-box-content"><div class="mec-addons-notification-box-image" style="width: 240px; margin-right: 10px;"><img src="' . plugin_dir_url(__FILE__) . '../api/addons-api/liquid-view-layouts.svg" /></div><div class="mec-addons-notification-box-content mec-new-addons" style="width: calc(100% - 270px);"><div class="w-box-content"><div class="csm-message-notice" style="text-align: center; background: #BAF0FC57; border-radius: 6px;letter-spacing: 4.4px; color: #00CAE6; text-transform: uppercase; padding: 10px 5px; font-weight: bold; margin-bottom: 40px;">Liquid View Layouts</div><p>As promised, another one of the most-requested addons by you, Liquid View Layouts, is released this week. The all addons are out already. Webex Integration and Social Auto Poster and Elementor FES Builder and Seat and Gutenberg Single Builder and Square Payment and Liquid View Layouts are now available on our website for purchase.<br/></p><div style="clear:both"></div><a href="https://webnus.net/modern-events-calendar/addons/liquid-view-layout/?ref=17" target="_blank">Read More</a></div></div></div></div></div></div></div>';
                 update_option('mec_custom_msg_html', $html);
                 $display = $value->display;
                 update_option('mec_custom_msg_display', $display);
@@ -2249,13 +2260,13 @@ class MEC_main extends MEC_base
         {
             if (isset($raw_notification['content']))
             {
-                $notifications[$notif_key]['content'] = wp_kses_post(wp_unslash($raw_notification['content']));
+                $notifications[$notif_key]['content'] = MEC_kses::wysiwyg(wp_unslash($raw_notification['content']));
             }
 
-            // Zoom addon custom message (mec-zoom-integration) — same treatment as content
+            // Zoom addon custom message (mec-zoom-integration) - same treatment as content
             if (isset($raw_notification['zoom_content']))
             {
-                $notifications[$notif_key]['zoom_content'] = wp_kses_post(wp_unslash($raw_notification['zoom_content']));
+                $notifications[$notif_key]['zoom_content'] = MEC_kses::wysiwyg(wp_unslash($raw_notification['zoom_content']));
             }
         }
 
@@ -4722,8 +4733,8 @@ class MEC_main extends MEC_base
         $event_content = str_replace("\n", "\\n", $event_content);
         $event_content = preg_replace('/(<script[^>]*>.+?<\/script>|<style[^>]*>.+?<\/style>)/s', '', $event_content);
 
-        $ical .= "CREATED:" . gmdate('Ymd\\THis\\Z', $stamp) . $crlf;
-        $ical .= "LAST-MODIFIED:" . gmdate('Ymd\\THis\\Z', $modified) . $crlf;
+        $ical .= "CREATED:" . date('Ymd', $stamp) . $crlf;
+        $ical .= "LAST-MODIFIED:" . date('Ymd', $modified) . $crlf;
         $ical .= "PRIORITY:5" . $crlf;
         $ical .= "SEQUENCE:" . $sequence . $crlf;
         $ical .= "TRANSP:OPAQUE" . $crlf;
@@ -4819,8 +4830,8 @@ class MEC_main extends MEC_base
         $event_content = str_replace("\n", "\\n", $event_content);
         $event_content = preg_replace('/(<script[^>]*>.+?<\/script>|<style[^>]*>.+?<\/style>)/s', '', $event_content);
 
-        $ical .= "CREATED:" . gmdate('Ymd\\THis\\Z', $stamp) . $crlf;
-        $ical .= "LAST-MODIFIED:" . gmdate('Ymd\\THis\\Z', $modified) . $crlf;
+        $ical .= "CREATED:" . date('Ymd', $stamp) . $crlf;
+        $ical .= "LAST-MODIFIED:" . date('Ymd', $modified) . $crlf;
         $ical .= "PRIORITY:5" . $crlf;
         $ical .= "SEQUENCE:" . $sequence . $crlf;
         $ical .= "TRANSP:OPAQUE" . $crlf;
@@ -4912,8 +4923,8 @@ class MEC_main extends MEC_base
         $ical .= "DTSTART:" . gmdate($time_format, ($start_time - $gmt_offset_seconds)) . $crlf;
         $ical .= "DTEND:" . gmdate($time_format, ($end_time - $gmt_offset_seconds)) . $crlf;
         $ical .= "DTSTAMP:" . gmdate($time_format, ($stamp - $gmt_offset_seconds)) . $crlf;
-        $ical .= "CREATED:" . gmdate('Ymd\\THis\\Z', $stamp) . $crlf;
-        $ical .= "LAST-MODIFIED:" . gmdate('Ymd\\THis\\Z', $modified) . $crlf;
+        $ical .= "CREATED:" . date('Ymd', $stamp) . $crlf;
+        $ical .= "LAST-MODIFIED:" . date('Ymd', $modified) . $crlf;
         $ical .= "PRIORITY:5" . $crlf;
         $ical .= "SEQUENCE:" . $sequence . $crlf;
         $ical .= "TRANSP:OPAQUE" . $crlf;
@@ -7208,12 +7219,8 @@ class MEC_main extends MEC_base
             if (!is_null($time))
             {
                 $php_timezone = new DateTimeZone(date_default_timezone_get());
-                $datetime = new DateTime(date('Y-m-d H:i:s', $time), $php_timezone);
-
-                $php_offset = $php_timezone->getOffset($datetime);
-                $target_offset = $TZO->getOffset($datetime);
-
-                $time += ($php_offset - $target_offset);
+                $datetime = new DateTimeImmutable(date('Y-m-d H:i:s', $time), $php_timezone);
+                $time = (new DateTimeImmutable($datetime->format('Y-m-d H:i:s'), $TZO))->getTimestamp();
             }
 
             return wp_date($format, $time, $TZO);
@@ -7646,7 +7653,7 @@ class MEC_main extends MEC_base
                 $q1 .= "`$key`,";
 
                 if (is_null($value)) $q2 .= "NULL,";
-                else $q2 .= "'$value',";
+                else $q2 .= "'" . $db->escape($value) . "',";
             }
 
             $result = $db->q("INSERT INTO `#__mec_events` (" . trim($q1, ', ') . ") VALUES (" . trim($q2, ', ') . ")", 'INSERT');
@@ -7662,7 +7669,7 @@ class MEC_main extends MEC_base
             foreach ($mec as $key => $value)
             {
                 if (is_null($value)) $q .= "`$key`=NULL,";
-                else $q .= "`$key`='$value',";
+                else $q .= "`$key`='" . $db->escape($value) . "',";
             }
 
             $result = $db->q("UPDATE `#__mec_events` SET " . trim($q, ', ') . " WHERE `id`='$mec_event_id'");
@@ -8723,6 +8730,9 @@ class MEC_main extends MEC_base
      */
     public function get_bookings($event_id, $timestamp = null, $limit = '-1', $user_id = null, $verified = true)
     {
+        $conditions = ["`event_id`=%d"];
+        $parameters = [$event_id];
+
         if ($timestamp)
         {
             $booking_options = get_post_meta($event_id, 'mec_booking', true);
@@ -8730,24 +8740,30 @@ class MEC_main extends MEC_base
 
             $book_all_occurrences = isset($booking_options['bookings_all_occurrences']) ? (int) $booking_options['bookings_all_occurrences'] : 0;
 
-            if (!$book_all_occurrences) $date_query = " AND `timestamp`=" . $timestamp;
-            else $date_query = " AND `timestamp`<=" . $timestamp;
+            $conditions[] = (!$book_all_occurrences ? "`timestamp`=%d" : "`timestamp`<=%d");
+            $parameters[] = $timestamp;
         }
-        else $date_query = "";
 
-        if ($user_id) $user_query = " AND `user_id`=" . $user_id;
-        else $user_query = "";
+        if ($user_id)
+        {
+            $conditions[] = "`user_id`=%d";
+            $parameters[] = $user_id;
+        }
 
-        if (is_numeric($limit) and $limit > 0) $limit_query = " LIMIT " . $limit;
-        else $limit_query = "";
-
-        if ($verified) $status_query = " AND `status` IN ('publish', 'future') AND `confirmed`='1' AND `verified`='1'";
-        else $status_query = "";
+        if ($verified) $conditions[] = "`status` IN ('publish', 'future') AND `confirmed`='1' AND `verified`='1'";
 
         // Database
         $db = $this->getDB();
 
-        $records = $db->select("SELECT `id`,`booking_id`,`timestamp` FROM `#__mec_bookings` WHERE `event_id`=" . $event_id . $status_query . $date_query . $user_query . $limit_query);
+        $query = "SELECT `id`,`booking_id`,`timestamp` FROM `#__mec_bookings` WHERE " . implode(' AND ', $conditions);
+
+        if (is_numeric($limit) and $limit > 0)
+        {
+            $query .= " LIMIT %d";
+            $parameters[] = $limit;
+        }
+
+        $records = $db->select($db->prepare($query, ...$parameters));
 
         $results = [];
         foreach ($records as $record)
@@ -8778,24 +8794,27 @@ class MEC_main extends MEC_base
 
         // Query
         $query = "SELECT `id`,`booking_id`,`timestamp` FROM `#__mec_bookings` WHERE 1";
+        $parameters = [];
 
         // Confirmation
         if (!is_null($confirmed))
         {
-            $query .= " AND `confirmed`='" . esc_sql($confirmed) . "'";
+            $query .= " AND `confirmed`=%d";
+            $parameters[] = $confirmed;
         }
 
         // Verification
         if (!is_null($verified))
         {
-            $query .= " AND `verified`='" . esc_sql($verified) . "'";
+            $query .= " AND `verified`=%d";
+            $parameters[] = $verified;
         }
 
         // Status
         if (count($status))
         {
             $status_str = '';
-            foreach ($status as $s) $status_str .= "'" . $s . "', ";
+            foreach ($status as $s) $status_str .= "'" . esc_sql($s) . "', ";
 
             $query .= " AND `status` IN (" . trim($status_str, ', ') . ")";
         }
@@ -8803,23 +8822,34 @@ class MEC_main extends MEC_base
         // Event ID
         if ($event_id)
         {
-            $query .= " AND `event_id`=" . esc_sql($event_id);
+            $query .= " AND `event_id`=%d";
+            $parameters[] = $event_id;
         }
 
         // Times
         if ($start and $end)
         {
-            $query .= " AND `timestamp`>='" . esc_sql($start) . "' AND `timestamp`<'" . esc_sql($end) . "'";
+            $query .= " AND `timestamp`>=%d AND `timestamp`<%d";
+            $parameters[] = $start;
+            $parameters[] = $end;
         }
-        else $query .= " AND `timestamp`='" . esc_sql($start) . "'";
+        else
+        {
+            $query .= " AND `timestamp`=%d";
+            $parameters[] = $start;
+        }
 
         // Order
         $query .= " ORDER BY `id` ASC";
 
         // Limit
-        if ($limit > 0) $query .= " LIMIT " . $limit;
+        if ($limit > 0)
+        {
+            $query .= " LIMIT %d";
+            $parameters[] = $limit;
+        }
 
-        $records = $db->select($query);
+        $records = $db->select($db->prepare($query, ...$parameters));
 
         $results = [];
         foreach ($records as $record)
@@ -8962,6 +8992,8 @@ class MEC_main extends MEC_base
         $image_url = trim(esc_url_raw((string) $image_url));
         if (!$image_url || !wp_http_validate_url($image_url)) return false;
 
+        if (strpbrk($image_url, "'\"") !== false) return false;
+
         $scheme = wp_parse_url($image_url, PHP_URL_SCHEME);
         if (!in_array(strtolower((string) $scheme), ['http', 'https'], true)) return false;
 
@@ -9045,7 +9077,7 @@ class MEC_main extends MEC_base
     public function get_attach_id($image_url)
     {
         $db = $this->getDB();
-        return $db->select("SELECT `ID` FROM `#__posts` WHERE `guid`='$image_url'", 'loadResult');
+        return (int) $db->select($db->prepare("SELECT `ID` FROM `#__posts` WHERE `guid`=%s", (string) $image_url), 'loadResult');
     }
 
     /**
@@ -9092,8 +9124,9 @@ class MEC_main extends MEC_base
         $region = ((isset($ex[1]) and trim($ex[1])) ? $ex[1] : 'US');
 
         $gm_include = apply_filters('mec_gm_include', true);
-        if ($gm_include or $force) $assets['js']['googlemap'] = '//maps.googleapis.com/maps/api/js?libraries=places' . ((isset($settings['google_maps_api_key']) and trim($settings['google_maps_api_key']) != '') ? '&key=' . $settings['google_maps_api_key'] : '') . '&language=' . $language . '&region=' . $region;
+        if ($gm_include or $force) $assets['js']['googlemap'] = '//maps.googleapis.com/maps/api/js?' . ((isset($settings['google_maps_api_key']) and trim($settings['google_maps_api_key']) != '') ? 'key=' . $settings['google_maps_api_key'] . '&' : '') . 'language=' . $language . '&region=' . $region;
 
+        $assets['js']['mec-google-places-script'] = $this->asset('js/google-places.js'); // Google Places API
         $assets['js']['mec-richmarker-script'] = $this->asset('packages/richmarker/richmarker.min.js'); // Google Maps Rich Marker
         $assets['js']['mec-clustering-script'] = $this->asset('packages/clusterer/markerclusterer.min.js'); // Google Maps Clustering
         $assets['js']['mec-googlemap-script'] = $this->asset('js/googlemap.js'); // Google Maps Javascript API
@@ -9845,7 +9878,7 @@ class MEC_main extends MEC_base
      * The linked subject of a "... is required to use this feature" notice.
      *
      * On Lite that is the product, and the link goes to the store. On the Pro
-     * package it is the LICENCE, and the link goes to the activation screen —
+     * package it is the LICENCE, and the link goes to the activation screen -
      * because the person reading it has already bought Pro, and telling them to
      * buy it again reads as though their purchase never registered. That is a
      * support ticket, and an entirely self-inflicted one.
@@ -11910,10 +11943,16 @@ class MEC_main extends MEC_base
             $db->q("UPDATE `#__mec_bookings` SET `timestamp`='" . esc_sql($new_start_timestamp) . "', `date`='" . date('Y-m-d H:i:s', $new_start_timestamp) . "' WHERE `id`='" . esc_sql($booking->mec_booking_record_id) . "' AND `event_id`='" . esc_sql($event_id) . "'");
             $db->q("UPDATE `#__posts` SET `post_date`='" . esc_sql(date('Y-m-d H:i:s', $new_start_timestamp)) . "', `post_date_gmt`='" . esc_sql(get_gmt_from_date(date('Y-m-d H:i:s', $new_start_timestamp))) . "' WHERE `ID`='" . esc_sql($booking->ID) . "'");
 
-            update_post_meta($booking->ID, 'mec_date', $new_start_timestamp . ':' . $new_end_timestamp);
-            update_post_meta($booking->ID, 'mec_attention_time', $new_start_timestamp . ':' . $new_end_timestamp);
-            update_post_meta($booking->ID, 'mec_attention_time_start', $new_start_timestamp);
-            update_post_meta($booking->ID, 'mec_attention_time_end', $new_end_timestamp);
+            foreach ([
+                'mec_date' => $new_start_timestamp . ':' . $new_end_timestamp,
+                'mec_attention_time' => $new_start_timestamp . ':' . $new_end_timestamp,
+                'mec_attention_time_start' => $new_start_timestamp,
+                'mec_attention_time_end' => $new_end_timestamp,
+            ] as $key => $value)
+            {
+                update_post_meta($booking->ID, $key . '_prev', get_post_meta($booking->ID, $key, true));
+                update_post_meta($booking->ID, $key, $value);
+            }
 
             $transaction_id = get_post_meta($booking->ID, 'mec_transaction_id', true);
 
@@ -11921,6 +11960,7 @@ class MEC_main extends MEC_base
             $transaction['date'] = $new_start_timestamp . ':' . $new_end_timestamp;
 
             $book->update_transaction($transaction_id, $transaction);
+            $book->move_notify($booking->ID, $new_start_timestamp);
         }
     }
 

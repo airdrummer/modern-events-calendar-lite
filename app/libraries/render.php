@@ -811,8 +811,12 @@ class MEC_render extends MEC_base
         }
         else
         {
-            $content_fetched = $this->main->get_post_content($post_id);
-            $data->content = is_null($content) ? (is_string($content_fetched) ? $content_fetched : '') : $content;
+            if (is_null($content))
+            {
+                $content_fetched = $this->main->get_post_content($post_id);
+                $data->content = is_string($content_fetched) ? $content_fetched : '';
+            }
+            else $data->content = $content;
         }
 
         // All Post Data

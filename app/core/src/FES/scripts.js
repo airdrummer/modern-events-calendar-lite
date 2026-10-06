@@ -217,6 +217,7 @@ function mec_fes_form_submit()
     // Abort previous request
     if (mec_fes_form_ajax) mec_fes_form_ajax.abort();
 
+    if (typeof mecPlaceAutocompleteSync === "function") mecPlaceAutocompleteSync($form[0]);
     var data = $form.serialize();
     mec_fes_form_ajax = $.ajax({
         type: "POST",

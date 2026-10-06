@@ -13,8 +13,9 @@ $currencies = $this->main->get_currencies();
 // WordPress Pages
 $pages = get_pages();
 
-echo MEC_kses::full($this->main->mec_custom_msg_2('yes', 'yes'));
-echo MEC_kses::full($this->main->mec_custom_msg('', ''));
+// IA-02/IA-07: the legacy announcement renders (mec_custom_msg_2 /
+// mec_custom_msg) were removed - announcements now come exclusively from the
+// remote feed on the dashboard, in the unified card design.
 
 // Display Addons Notification
 $get_n_option = get_option('mec_addons_notification_option');
@@ -329,6 +330,20 @@ $shortcodes = get_posts(array(
                                 <div class="mec-form-row">
                                     <div class="mec-col-12">
                                         <p style="margin-top: 0;"><?php esc_html_e('If enabled, a calendar view will be added with month navigation to the backend event manager.', 'modern-events-calendar-lite'); ?></p>
+                                    </div>
+                                </div>
+                                <div class="mec-form-row" style="padding-bottom: 3px;">
+                                    <label class="mec-col-3" for="mec_settings_publish_warnings_status"><?php esc_html_e('Pre-publish Warnings', 'modern-events-calendar-lite'); ?></label>
+                                    <div class="mec-col-9">
+                                        <label id="mec_settings_publish_warnings_status">
+                                            <input type="hidden" name="mec[settings][publish_warnings_status]" value="0" />
+                                            <input value="1" type="checkbox" name="mec[settings][publish_warnings_status]" <?php if(!isset($settings['publish_warnings_status']) or $settings['publish_warnings_status']) echo 'checked="checked"'; ?> /><?php esc_html_e('Enable', 'modern-events-calendar-lite'); ?>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="mec-form-row">
+                                    <div class="mec-col-12">
+                                        <p style="margin-top: 0;"><?php esc_html_e('If enabled, a confirmation dialog is shown when publishing an event with missing optional details. Required validations are not affected by this option.', 'modern-events-calendar-lite'); ?></p>
                                     </div>
                                 </div>
                                 <?php /*

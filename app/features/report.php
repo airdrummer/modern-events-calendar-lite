@@ -289,7 +289,14 @@ class MEC_feature_report extends MEC_base
 
     public function attendees()
     {
-        $id = isset($_POST['id']) ? sanitize_text_field($_POST['id']) : 0;
+        // Only users with bookings access can view attendees
+        if (!current_user_can(current_user_can('administrator') ? 'manage_options' : 'mec_bookings'))
+        {
+            echo json_encode(['html' => '', 'email_button' => '']);
+            exit;
+        }
+
+        $id = isset($_POST['id']) ? (int) sanitize_text_field($_POST['id']) : 0;
 
         $occurrence = isset($_POST['occurrence']) ? sanitize_text_field($_POST['occurrence']) : null;
         $occurrence = explode(':', $occurrence)[0];

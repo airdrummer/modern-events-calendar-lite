@@ -994,6 +994,8 @@ jQuery(document).ready(function($)
                     }
                 }
 
+                if(parseInt(mecVL.publish_warnings_status, 10) === 0) return;
+
                 // --- WARNINGS (allow publish with confirmation) ---
                 // Booking-specific warnings only if there are real tickets
                 if(hasTickets)

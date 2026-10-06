@@ -285,7 +285,7 @@ $additional_organizers = (isset($settings['additional_organizers']) and $setting
                                             <li><span>%%booking_transaction_id%%</span>: <?php esc_html_e('Transaction ID of Booking', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%invoice_link%%</span>: <?php esc_html_e('Invoice Link', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%total_attendees%%</span>: <?php esc_html_e('Total attendees of current booking', 'modern-events-calendar-lite'); ?></li>
-                                            <li><span>%%amount_tickets%%</span>: <?php esc_html_e('Amount of Booked Tickets (Total attendees of all bookings)', 'modern-events-calendar-lite'); ?></li>
+                                            <li><span>%%amount_tickets%%</span>: <?php esc_html_e('Amount of Booked Tickets (Total ticket units)', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%ticket_name%%</span>: <?php esc_html_e('Ticket name', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%ticket_time%%</span>: <?php esc_html_e('Ticket time', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%ticket_name_time%%</span>: <?php esc_html_e('Ticket name & time', 'modern-events-calendar-lite'); ?></li>
@@ -453,7 +453,7 @@ $additional_organizers = (isset($settings['additional_organizers']) and $setting
                                         <li><span>%%booking_transaction_id%%</span>: <?php esc_html_e('Transaction ID of Booking', 'modern-events-calendar-lite'); ?></li>
                                         <li><span>%%verification_link%%</span>: <?php esc_html_e('Email/Booking verification link.', 'modern-events-calendar-lite'); ?></li>
                                         <li><span>%%total_attendees%%</span>: <?php esc_html_e('Total attendees of current booking', 'modern-events-calendar-lite'); ?></li>
-                                        <li><span>%%amount_tickets%%</span>: <?php esc_html_e('Amount of Booked Tickets (Total attendees of all bookings)', 'modern-events-calendar-lite'); ?></li>
+                                        <li><span>%%amount_tickets%%</span>: <?php esc_html_e('Amount of Booked Tickets (Total ticket units)', 'modern-events-calendar-lite'); ?></li>
                                         <li><span>%%ticket_name%%</span>: <?php esc_html_e('Ticket name', 'modern-events-calendar-lite'); ?></li>
                                         <li><span>%%ticket_time%%</span>: <?php esc_html_e('Ticket time', 'modern-events-calendar-lite'); ?></li>
                                         <li><span>%%ticket_name_time%%</span>: <?php esc_html_e('Ticket name & time', 'modern-events-calendar-lite'); ?></li>
@@ -631,7 +631,7 @@ $additional_organizers = (isset($settings['additional_organizers']) and $setting
                                             <li><span>%%cancellation_link%%</span>: <?php esc_html_e('Booking cancellation link.', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%invoice_link%%</span>: <?php esc_html_e('Invoice Link', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%total_attendees%%</span>: <?php esc_html_e('Total attendees of current booking', 'modern-events-calendar-lite'); ?></li>
-                                            <li><span>%%amount_tickets%%</span>: <?php esc_html_e('Amount of Booked Tickets (Total attendees of all bookings)', 'modern-events-calendar-lite'); ?></li>
+                                            <li><span>%%amount_tickets%%</span>: <?php esc_html_e('Amount of Booked Tickets (Total ticket units)', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%ticket_name%%</span>: <?php esc_html_e('Ticket name', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%ticket_time%%</span>: <?php esc_html_e('Ticket time', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%ticket_name_time%%</span>: <?php esc_html_e('Ticket name & time', 'modern-events-calendar-lite'); ?></li>
@@ -848,7 +848,7 @@ $additional_organizers = (isset($settings['additional_organizers']) and $setting
                                             <li><span>%%cancellation_link%%</span>: <?php esc_html_e('Booking cancellation link.', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%invoice_link%%</span>: <?php esc_html_e('Invoice Link', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%total_attendees%%</span>: <?php esc_html_e('Total attendees of current booking', 'modern-events-calendar-lite'); ?></li>
-                                            <li><span>%%amount_tickets%%</span>: <?php esc_html_e('Amount of Booked Tickets (Total attendees of all bookings)', 'modern-events-calendar-lite'); ?></li>
+                                            <li><span>%%amount_tickets%%</span>: <?php esc_html_e('Amount of Booked Tickets (Total ticket units)', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%ticket_name%%</span>: <?php esc_html_e('Ticket name', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%ticket_time%%</span>: <?php esc_html_e('Ticket time', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%ticket_name_time%%</span>: <?php esc_html_e('Ticket name & time', 'modern-events-calendar-lite'); ?></li>
@@ -1047,7 +1047,7 @@ $additional_organizers = (isset($settings['additional_organizers']) and $setting
                                             <li><span>%%booking_transaction_id%%</span>: <?php esc_html_e('Transaction ID of Booking', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%admin_link%%</span>: <?php esc_html_e('Admin booking management link.', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%total_attendees%%</span>: <?php esc_html_e('Total attendees of current booking', 'modern-events-calendar-lite'); ?></li>
-                                            <li><span>%%amount_tickets%%</span>: <?php esc_html_e('Amount of Booked Tickets (Total attendees of all bookings)', 'modern-events-calendar-lite'); ?></li>
+                                            <li><span>%%amount_tickets%%</span>: <?php esc_html_e('Amount of Booked Tickets (Total ticket units)', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%ticket_name%%</span>: <?php esc_html_e('Ticket name', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%ticket_time%%</span>: <?php esc_html_e('Ticket time', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%ticket_name_time%%</span>: <?php esc_html_e('Ticket name & time', 'modern-events-calendar-lite'); ?></li>
@@ -1229,7 +1229,7 @@ $additional_organizers = (isset($settings['additional_organizers']) and $setting
                                             <li><span>%%booking_transaction_id%%</span>: <?php esc_html_e('Transaction ID of Booking', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%admin_link%%</span>: <?php esc_html_e('Admin booking management link.', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%total_attendees%%</span>: <?php esc_html_e('Total attendees of current booking', 'modern-events-calendar-lite'); ?></li>
-                                            <li><span>%%amount_tickets%%</span>: <?php esc_html_e('Amount of Booked Tickets (Total attendees of all bookings)', 'modern-events-calendar-lite'); ?></li>
+                                            <li><span>%%amount_tickets%%</span>: <?php esc_html_e('Amount of Booked Tickets (Total ticket units)', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%ticket_name%%</span>: <?php esc_html_e('Ticket name', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%ticket_time%%</span>: <?php esc_html_e('Ticket time', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%ticket_name_time%%</span>: <?php esc_html_e('Ticket name & time', 'modern-events-calendar-lite'); ?></li>
@@ -1401,7 +1401,7 @@ $additional_organizers = (isset($settings['additional_organizers']) and $setting
                                             <li><span>%%online_link%%</span>: <?php esc_html_e('Event online link', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%admin_link%%</span>: <?php esc_html_e('Admin booking management link.', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%total_attendees%%</span>: <?php esc_html_e('Total attendees of current booking', 'modern-events-calendar-lite'); ?></li>
-                                            <li><span>%%amount_tickets%%</span>: <?php esc_html_e('Amount of Booked Tickets (Total attendees of all bookings)', 'modern-events-calendar-lite'); ?></li>
+                                            <li><span>%%amount_tickets%%</span>: <?php esc_html_e('Amount of Booked Tickets (Total ticket units)', 'modern-events-calendar-lite'); ?></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -1574,7 +1574,7 @@ $additional_organizers = (isset($settings['additional_organizers']) and $setting
                                             <li><span>%%cancellation_link%%</span>: <?php esc_html_e('Booking cancellation link.', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%invoice_link%%</span>: <?php esc_html_e('Invoice Link', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%total_attendees%%</span>: <?php esc_html_e('Total attendees of current booking', 'modern-events-calendar-lite'); ?></li>
-                                            <li><span>%%amount_tickets%%</span>: <?php esc_html_e('Amount of Booked Tickets (Total attendees of all bookings)', 'modern-events-calendar-lite'); ?></li>
+                                            <li><span>%%amount_tickets%%</span>: <?php esc_html_e('Amount of Booked Tickets (Total ticket units)', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%ticket_name%%</span>: <?php esc_html_e('Ticket name', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%ticket_time%%</span>: <?php esc_html_e('Ticket time', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%ticket_name_time%%</span>: <?php esc_html_e('Ticket name & time', 'modern-events-calendar-lite'); ?></li>
@@ -1863,7 +1863,7 @@ $additional_organizers = (isset($settings['additional_organizers']) and $setting
                                             <li><span>%%cancellation_link%%</span>: <?php esc_html_e('Booking cancellation link.', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%invoice_link%%</span>: <?php esc_html_e('Invoice Link', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%total_attendees%%</span>: <?php esc_html_e('Total attendees of current booking', 'modern-events-calendar-lite'); ?></li>
-                                            <li><span>%%amount_tickets%%</span>: <?php esc_html_e('Amount of Booked Tickets (Total attendees of all bookings)', 'modern-events-calendar-lite'); ?></li>
+                                            <li><span>%%amount_tickets%%</span>: <?php esc_html_e('Amount of Booked Tickets (Total ticket units)', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%ticket_name%%</span>: <?php esc_html_e('Ticket name', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%ticket_time%%</span>: <?php esc_html_e('Ticket time', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%ticket_name_time%%</span>: <?php esc_html_e('Ticket name & time', 'modern-events-calendar-lite'); ?></li>
@@ -2012,7 +2012,7 @@ $additional_organizers = (isset($settings['additional_organizers']) and $setting
                                         <li><span>%%cancellation_link%%</span>: <?php esc_html_e('Booking cancellation link.', 'modern-events-calendar-lite'); ?></li>
                                         <li><span>%%invoice_link%%</span>: <?php esc_html_e('Invoice Link', 'modern-events-calendar-lite'); ?></li>
                                         <li><span>%%total_attendees%%</span>: <?php esc_html_e('Total attendees of current booking', 'modern-events-calendar-lite'); ?></li>
-                                        <li><span>%%amount_tickets%%</span>: <?php esc_html_e('Amount of Booked Tickets (Total attendees of all bookings)', 'modern-events-calendar-lite'); ?></li>
+                                        <li><span>%%amount_tickets%%</span>: <?php esc_html_e('Amount of Booked Tickets (Total ticket units)', 'modern-events-calendar-lite'); ?></li>
                                         <li><span>%%ticket_name%%</span>: <?php esc_html_e('Ticket name', 'modern-events-calendar-lite'); ?></li>
                                         <li><span>%%ticket_time%%</span>: <?php esc_html_e('Ticket time', 'modern-events-calendar-lite'); ?></li>
                                         <li><span>%%ticket_name_time%%</span>: <?php esc_html_e('Ticket name & time', 'modern-events-calendar-lite'); ?></li>
@@ -2487,7 +2487,7 @@ $additional_organizers = (isset($settings['additional_organizers']) and $setting
                                             <li><span>%%cancellation_link%%</span>: <?php esc_html_e('Booking cancellation link.', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%invoice_link%%</span>: <?php esc_html_e('Invoice Link', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%total_attendees%%</span>: <?php esc_html_e('Total attendees of current booking', 'modern-events-calendar-lite'); ?></li>
-                                            <li><span>%%amount_tickets%%</span>: <?php esc_html_e('Amount of Booked Tickets (Total attendees of all bookings)', 'modern-events-calendar-lite'); ?></li>
+                                            <li><span>%%amount_tickets%%</span>: <?php esc_html_e('Amount of Booked Tickets (Total ticket units)', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%ticket_name%%</span>: <?php esc_html_e('Ticket name', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%ticket_time%%</span>: <?php esc_html_e('Ticket time', 'modern-events-calendar-lite'); ?></li>
                                             <li><span>%%ticket_name_time%%</span>: <?php esc_html_e('Ticket name & time', 'modern-events-calendar-lite'); ?></li>
@@ -2720,6 +2720,7 @@ $this->getFactory()->params('footer', function()
             jQuery(".mec-purchase-verify").text("<?php echo esc_js(esc_attr__('Checking ...', 'modern-events-calendar-lite')); ?>");
         }
 
+        if(typeof tinymce !== 'undefined') tinymce.triggerSave();
         var settings = jQuery("#mec_notifications_form").serialize();
         jQuery.ajax(
         {

@@ -1680,6 +1680,7 @@ function mec_partial_or_full_payment'.esc_js($uniqueid).'(transaction_id, method
                 else jQuery("#mec_booking'.esc_js($uniqueid).' .mec-book-price-total").html(data.data.price);
 
                 jQuery("#mec_booking'.esc_js($uniqueid).' #mec_do_transaction_paypal_express_form"+data.data.transaction_id+" input[name=amount]").val(data.data.price_raw);
+                jQuery("#mec_booking'.esc_js($uniqueid).' #mec_do_transaction_paypal_standard_amount_"+data.data.transaction_id+"").val(data.data.price_raw);
             }
         },
         error: function(jqXHR, textStatus, errorThrown)

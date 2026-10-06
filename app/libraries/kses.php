@@ -11,6 +11,7 @@ class MEC_kses extends MEC_base
     static $allowed_html_form = NULL;
     static $allowed_html_element = NULL;
     static $allowed_html_rich = NULL;
+    static $allowed_html_wysiwyg = NULL;
     static $allowed_html_embed = NULL;
     static $allowed_html_page = NULL;
     static $allowed_html_full = NULL;
@@ -160,6 +161,42 @@ class MEC_kses extends MEC_base
         }
 
         return wp_kses($html, self::$allowed_html_rich);
+    }
+
+    /**
+     * Sanitizes editor content while allowing safe iframe embeds.
+     *
+     * @param string $html
+     * @return string
+     */
+    public static function wysiwyg($html)
+    {
+        if(is_null($html)) return '';
+
+        if(is_null(self::$allowed_html_wysiwyg))
+        {
+            $allowed = wp_kses_allowed_html('post');
+            $allowed['iframe'] = [
+                'src' => 1,
+                'width' => 1,
+                'height' => 1,
+                'frameborder' => 1,
+                'allow' => 1,
+                'allowfullscreen' => 1,
+                'loading' => 1,
+                'title' => 1,
+                'name' => 1,
+                'referrerpolicy' => 1,
+                'sandbox' => 1,
+                'style' => 1,
+                'class' => 1,
+                'id' => 1,
+            ];
+
+            self::$allowed_html_wysiwyg = apply_filters('mec_wysiwyg_field_allowed_html', $allowed);
+        }
+
+        return wp_kses($html, self::$allowed_html_wysiwyg);
     }
 
     /**

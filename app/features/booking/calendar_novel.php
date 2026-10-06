@@ -169,13 +169,13 @@ echo MEC_kses::full($javascript);
                         if($repeat == 1) $date_timestamp_ex = explode(':', $date_timestamp);
 
                         $repeat_class = $repeat > 1 ? ' mec-has-time-repeat' : '';
-                        $date_for_wrap = $repeat == 1 ? 'data-timestamp="'.esc_attr($date_timestamp).'" data-formatted-date="'.esc_attr($this->main->date_i18n($date_format, $date_timestamp_ex[0])).'"' : '';
+                        $date_for_wrap = $repeat == 1 ? 'data-timestamp="'.esc_attr($date_timestamp).'" data-formatted-date="'.esc_attr($this->main->date_i18n($date_format.' '.$time_format, $date_timestamp_ex[0])).'"' : '';
                         $custom_class1 = $repeat == 1 ? ' mec-has-one-repeat-in-day' : '';
                         $custom_class2 = $repeat >= 1 ? ' mec-has-event-for-booking' : '';
                         $soldout_class = ($is_soldout ? ' mec-booking-calendar-date-soldout' : '');
 
                         echo '<dt class="mec-calendar-day '.$default_day.$repeat_class.$custom_class1.$custom_class2.$first_day.$last_day.$middle_day.$soldout_class.'" '.$date_for_wrap.'><div class="mec-calendar-novel-selected-day"><span>'.$list_day.'</span></div>';
-                        if($repeat > 1) echo '<div class="mec-booking-tooltip" style="display:none">'.MEC_kses::full($render).'</div>';
+                        if($repeat >= 1) echo '<div class="mec-booking-tooltip" style="display:none">'.MEC_kses::full($render).'</div>';
                         echo '</dt>';
 
                         if($running_day == 6)

@@ -1384,6 +1384,19 @@ class MEC_feature_fes extends MEC_base
 
         // Reset certain weekdays if repeat type is not set to certain weekdays
         if ($repeat_type != 'certain_weekdays') $certain_weekdays = [];
+        else $certain_weekdays = array_filter(array_map('intval', (array) $certain_weekdays), function ($weekday)
+        {
+            return $weekday >= 1 && $weekday <= 7;
+        });
+
+        // Unset Repeat if no valid weekdays remain after sanitization
+        if ($repeat_type == 'certain_weekdays' && !count($certain_weekdays))
+        {
+            $repeat_status = 0;
+            $repeat['status'] = 0;
+            $repeat['type'] = '';
+            $repeat_type = '';
+        }
 
         if (!is_null($repeat_interval)) $repeat_interval = $repeat_interval * $interval_multiply;
 
@@ -1699,7 +1712,7 @@ class MEC_feature_fes extends MEC_base
                 $q1 .= "`$key`,";
 
                 if (is_null($value)) $q2 .= "NULL,";
-                else $q2 .= "'$value',";
+                else $q2 .= "'" . $this->db->escape($value) . "',";
             }
 
             $this->db->q("INSERT INTO `#__mec_events` (" . trim($q1, ', ') . ") VALUES (" . trim($q2, ', ') . ")", 'INSERT');
@@ -1711,7 +1724,7 @@ class MEC_feature_fes extends MEC_base
             foreach ($event as $key => $value)
             {
                 if (is_null($value)) $q .= "`$key`=NULL,";
-                else $q .= "`$key`='$value',";
+                else $q .= "`$key`='" . $this->db->escape($value) . "',";
             }
 
             $this->db->q("UPDATE `#__mec_events` SET " . trim($q, ', ') . " WHERE `id`='$mec_event_id'");
@@ -1863,7 +1876,7 @@ class MEC_feature_fes extends MEC_base
         {
             if (($event_field['type'] ?? '') !== 'textarea' || empty($event_field['editor']) || !isset($raw_mec['fields'][$field_id]) || !is_string($raw_mec['fields'][$field_id])) continue;
 
-            $fields[$field_id] = MEC_kses::page($raw_mec['fields'][$field_id]);
+            $fields[$field_id] = MEC_kses::wysiwyg($raw_mec['fields'][$field_id]);
         }
 
         update_post_meta($post_id, 'mec_fields', $fields);
@@ -1878,7 +1891,7 @@ class MEC_feature_fes extends MEC_base
             }
 
             $is_html_editor = (($event_fields[$field_id]['type'] ?? '') === 'textarea' && !empty($event_fields[$field_id]['editor']));
-            update_post_meta($post_id, 'mec_fields_' . $field_id, $is_html_editor ? MEC_kses::page($values) : sanitize_text_field($values));
+            update_post_meta($post_id, 'mec_fields_' . $field_id, $is_html_editor ? MEC_kses::wysiwyg($values) : sanitize_text_field($values));
         }
 
         // Downloadable File

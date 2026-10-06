@@ -1,10 +1,10 @@
-=== Modern Events Calendar Lite ===
+﻿=== Modern Events Calendar Lite ===
 Contributors: webnus
 Donate link: https://webnus.net
 Tags: Event, Events, Calendar, Booking, Schedule, Organizer, Venue
 Requires at least: 4.0.0
 Tested up to: 7.1
-Stable tag: 7.36.4.1
+Stable tag: 7.37.0
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -473,7 +473,37 @@ You can see [plugin documentation](https://webnus.net/dox/modern-events-calendar
 
 == Changelog ==
 
-v 7.36.4.1 - 10 September 2026
+= 7.37.0 - 1 October 2026 =
+- Added: Event Creation task for MEC AI.
+- Added: MEC AI menu to the admin menu.
+- Added: A "Bundle license" notice for sites licensed through a bundled theme (such as X), making clear that no purchase code is needed.
+- Added: Activating on staging, localhost and development domains no longer consumes license activation slots.
+- Added: Week navigation for the clean style of the timetable view.
+- Added: A setting to toggle the pre-publish warnings dialog of the event editor.
+- Redesigned: The MEC admin dashboard with a unified page header across backend pages.
+- Enhanced: MEC multilingual support.
+- Enhanced: The MEC timezone system to detect the Daylight Saving Time better.
+- Enhanced: MEC security.
+- Enhanced: MEC geocoding system.
+- Improved: The dashboard news widget performance by loading the featured image in a single request.
+- Fixed: An issue in partial payment and PayPal gateway.
+- Fixed: An issue in Booking Reschedule Notification.
+- Fixed: Some issues in PDF invoices.
+- Fixed: Some issues in displaying event labels and icons.
+- Fixed: Some issues in displaying attendee count.
+- Fixed: An issue in Express mode of booking module.
+- Fixed: Some issues in date and time selection of the booking calendar.
+- Fixed: Some issues in HTML escaping.
+- Fixed: An issue in MEC integration with WooCommerce for Square payment gateway.
+- Fixed: Some issues in RESTful API.
+- Fixed: Some issues in PHP 8.4.
+- Fixed: An issue in MEC search module.
+- Fixed: A PHP-FPM crash (503 error) caused by infinite recursion when the booking shortcode is embedded in the event content.
+- Fixed: The license claim and renewal for sites with a bundled theme license such as XTheme.
+- Fixed: The notification email content not being saved from the visual editor.
+- Fixed: The month calculation of expired events in monthly view.
+
+v 7.36.4 - 10 September 2026
 - Fixed: Some issues in license activation and revocation.
 - Fixed: Double activation slot usage on subdirectory installs.
 - Fixed: Admin notices disappearing on MEC dashboard pages.

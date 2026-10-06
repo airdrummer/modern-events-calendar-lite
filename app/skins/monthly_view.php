@@ -210,8 +210,9 @@ class MEC_skin_monthly_view extends MEC_skins
     {
         if($this->show_only_expired_events)
         {
-            $start = date('Y-m-d H:i:s', current_time('timestamp'));
-            $end = date('Y-m-d', strtotime('first day of this month'));
+            $month = strtotime($this->start_date);
+            $start = date('Y-m-d H:i:s', min(current_time('timestamp'), strtotime(date('Y-m-t 23:59:59', $month))));
+            $end = date('Y-m-01', $month);
 
             $this->weeks = $this->main->split_to_weeks($end, $start);
 

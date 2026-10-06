@@ -487,7 +487,7 @@ function AddFont($family, $style='', $file='', $uni=false)
 		if (file_exists($unifilename.'.mtx.php')) {
 			include($unifilename.'.mtx.php');
 		}
-		if (!isset($type) ||  !isset($name) || $originalsize != $ttfstat['size']) {
+		if (!isset($type) || !isset($name) || !isset($ttffile) || !is_file($ttffile) || $originalsize != $ttfstat['size']) {
 			$ttffile = $ttffilename;
 			require_once($this->fontpath.'unifont/ttfonts.php');
 			$ttf = new TTFontFile();

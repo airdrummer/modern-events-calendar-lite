@@ -10,26 +10,13 @@ wp_enqueue_script('mec-lity-script');
 
 global $wp_version;
 
-$styling = $this->main->get_styling();
-$darkadmin_mode = $styling['dark_mode'] ?? '';
-$logo = plugin_dir_url(__FILE__) . '../../../assets/img/' . ($darkadmin_mode == 1 ? 'mec-logo-w2.png' : 'mec-logo-w.png');
-
 $dox = 'https://webnus.net/dox/modern-events-calendar/';
 ?>
 <div id="webnus-dashboard" class="wrap about-wrap mec-support-page">
-    <div class="welcome-head w-clearfix">
-        <div class="w-row">
-            <div class="w-col-sm-9">
-                <h1><?php echo esc_html__('Support', 'modern-events-calendar-lite'); ?></h1>
-                <div class="w-welcome">
-                    <?php echo sprintf(esc_html__('%s: everything you need to master MEC and get help fast.', 'modern-events-calendar-lite'), '<strong>' . esc_html__('Modern Events Calendar', 'modern-events-calendar-lite') . '</strong>'); ?>
-                </div>
-            </div>
-            <div class="w-col-sm-3">
-                <img src="<?php echo esc_url($logo); ?>" alt="<?php echo esc_attr__('Modern Events Calendar', 'modern-events-calendar-lite'); ?>" />
-                <span class="w-theme-version"><?php echo esc_html__('Version', 'modern-events-calendar-lite'); ?> <?php echo MEC_VERSION; ?></span>
-            </div>
-        </div>
+    <div class="mec-page-head">
+        <span class="mec-page-eyebrow"><?php esc_html_e('Modern Events Calendar', 'modern-events-calendar-lite'); ?></span>
+        <h1><span class="mec-page-mark" aria-hidden="true"><i class="mec-sl-support"></i></span><?php esc_html_e('Support', 'modern-events-calendar-lite'); ?></h1>
+        <p class="mec-page-lead"><?php esc_html_e('Everything you need to master MEC and get help fast.', 'modern-events-calendar-lite'); ?></p>
     </div>
     <hr class="wp-header-end">
     <div class="welcome-content w-clearfix extra">
