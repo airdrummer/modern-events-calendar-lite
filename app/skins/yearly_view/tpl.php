@@ -2,6 +2,8 @@
 /** no direct access **/
 defined('MECEXEC') or die();
 
+$date_heading_tag = $this->get_date_heading_tag('h2');
+
 /** @var MEC_skin_yearly_view $this */
 
 // Get layout path
@@ -33,7 +35,7 @@ if($this->next_previous_button)
         $navigator_html .= '<div class="mec-previous-year mec-load-year mec-color-hover" data-mec-year="'.date('Y', $_1year_before).'"><a href="#" class="mec-load-month-link"><i class="mec-sl-angle-left"></i> '.esc_html($this->main->date_i18n('Y', $_1year_before)).'</a></div>';
     }
 
-    $navigator_html .= '<h2>'.esc_html($this->main->date_i18n('Y', $current_year_time)).'</h2>';
+    $navigator_html .= '<'.$date_heading_tag.'>'.esc_html($this->main->date_i18n('Y', $current_year_time)).'</'.$date_heading_tag.'>';
 
     // Show next month handler if needed
     if(!$this->show_only_expired_events or
@@ -72,6 +74,7 @@ jQuery(document).ready(function()
         jQuery("#mec_yearly_view_year_'.esc_js($this->id).'_'.date('Y', $current_year_time).'").mecYearlyView(
         {
             id: "'.esc_js($this->id).'",
+            search_form_id: "'.esc_js($this->atts['search_form_id'] ?? $this->id).'",
             today: "'.date('Ymd', strtotime($this->active_day)).'",
             year_id: "'.date('Y', $current_year_time).'",
             next_year: {year: "'.date('Y', $_1year_after).'"},
@@ -124,7 +127,7 @@ do_action('mec_yearly_skin_head');
         <?php else: ?>
         <div class="mec-yearly-title-sec">
             <div class="mec-year-navigator">
-                <h2><?php echo esc_html($this->main->date_i18n('Y', $current_year_time)); ?></h2>
+                <<?php echo $date_heading_tag; ?>><?php echo esc_html($this->main->date_i18n('Y', $current_year_time)); ?></<?php echo $date_heading_tag; ?>>
             </div>
         </div>
         <?php endif; ?>

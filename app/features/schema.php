@@ -266,8 +266,7 @@ class MEC_feature_schema extends MEC_base
             try
             {
                 $tz = new \DateTimeZone($this->main->get_timezone($event->ID));
-                $dtS = new \DateTime('@' . $start_ts);
-                $dtS->setTimezone($tz);
+                $dtS = new \DateTimeImmutable(gmdate('Y-m-d H:i:s', $start_ts), $tz);
                 $start_schema = $dtS->format('Y-m-d\TH:i:sP');
             }
             catch (\Exception $e)
@@ -281,8 +280,7 @@ class MEC_feature_schema extends MEC_base
             try
             {
                 $tz = new \DateTimeZone($this->main->get_timezone($event->ID));
-                $dtE = new \DateTime('@' . $end_ts);
-                $dtE->setTimezone($tz);
+                $dtE = new \DateTimeImmutable(gmdate('Y-m-d H:i:s', $end_ts), $tz);
                 $end_schema = $dtE->format('Y-m-d\TH:i:sP');
             }
             catch (\Exception $e)

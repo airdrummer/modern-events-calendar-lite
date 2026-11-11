@@ -2229,7 +2229,7 @@ class MEC_notifications extends MEC_base
         return true;
     }
 
-    public function booking_moved($book_id)
+    public function booking_moved($book_id, $moved_to = null, $previous_timestamps = null, $timestamps = '')
     {
         if (!$book_id) return false;
 
@@ -2297,18 +2297,18 @@ class MEC_notifications extends MEC_base
 
             $message = $notif_settings['booking_moved']['content'] ?? '';
 
-            $prev_timestamps = get_post_meta($book_id, 'mec_date_prev', true);
+            $prev_timestamps = $previous_timestamps ?? get_post_meta($book_id, 'mec_date_prev', true);
             $prev_datetime = $this->main->get_book_datetime_string($prev_timestamps, $event_id, $book_id);
 
             $message = str_replace('%%book_datetime_prev%%', $prev_datetime, $message);
 
-            $message = $this->content($this->get_content($message, 'booking_moved', $event_id, $book_id), $book_id, $attendee);
+            $message = $this->content($this->get_content($message, 'booking_moved', $event_id, $book_id), $book_id, $attendee, $timestamps);
 
             // Remove remained placeholders
             $message = preg_replace('/%%.*%%/', '', $message);
 
             $message = $this->add_template($message);
-            $mail_subject = $this->content($subject, $book_id, $attendee);
+            $mail_subject = $this->content($subject, $book_id, $attendee, $timestamps);
 
             // Filter the email
             $mail_arg = [
@@ -2430,11 +2430,13 @@ class MEC_notifications extends MEC_base
         $date_format = get_option('date_format');
         $time_format = get_option('time_format');
 
-        if (!trim($timestamps)) $timestamps = get_post_meta($book_id, 'mec_date', true);
+        $explicit_timestamps = (bool) trim($timestamps);
+        if (!$explicit_timestamps) $timestamps = get_post_meta($book_id, 'mec_date', true);
         list($start_timestamp, $end_timestamp) = explode(':', $timestamps);
 
         // Event Data
-        $message = $this->content_event($message, $event_id, $start_timestamp, $end_timestamp);
+        $hide_date = $this->main->hide_date_status($event_id);
+        $message = $this->content_event($message, $event_id, $start_timestamp, $end_timestamp, $hide_date);
 
         // Book Date
         if (trim($timestamps) and strpos($timestamps, ':') !== false)
@@ -2443,11 +2445,13 @@ class MEC_notifications extends MEC_base
             {
                 $book_date = sprintf(esc_html__('%s to %s', 'modern-events-calendar-lite'), $this->main->date_i18n($date_format, $start_timestamp), $this->main->date_i18n($date_format, $end_timestamp));
             }
-            else $book_date = get_the_date($date_format, $book_id);
+            else $book_date = $explicit_timestamps ? $this->main->date_i18n($date_format, $start_timestamp) : get_the_date($date_format, $book_id);
         }
         else $book_date = get_the_date($date_format, $book_id);
 
-        $message = str_replace('%%book_date%%', $book_date, $message);
+        // Condition for check some parameter simple hide event date
+        if (!$hide_date) $message = str_replace('%%book_date%%', $book_date, $message);
+        else $message = str_replace('%%book_date%%', $this->main->get_tba_label(), $message);
 
         // Book Time
         $event_start_time = $this->main->get_time($start_timestamp);
@@ -2464,6 +2468,7 @@ class MEC_notifications extends MEC_base
 
         // Book Date & Time
         $book_datetime = $this->main->get_book_datetime_string($timestamps, $event_id, $book_id);
+        if ($hide_date) $book_datetime = $this->main->get_tba_label();
 
         $message = str_replace('%%book_datetime%%', $book_datetime, $message);
 
@@ -2481,6 +2486,9 @@ class MEC_notifications extends MEC_base
 
         $event_booking_options = get_post_meta($event_id, 'mec_booking', true);
         if (!is_array($event_booking_options)) $event_booking_options = [];
+
+        // Condition for check some parameter simple hide event date
+        if ($hide_date and trim($other_dates_datetime)) $other_dates_datetime = $this->main->get_tba_label();
 
         $book_all_occurrences = 0;
         if (isset($event_booking_options['bookings_all_occurrences'])) $book_all_occurrences = (int) $event_booking_options['bookings_all_occurrences'];
@@ -2624,8 +2632,8 @@ class MEC_notifications extends MEC_base
             $user_start_time = $gmt_start_time + $offset;
             $user_end_time = $gmt_end_time + $offset;
 
-            $message = str_replace('%%event_start_date_local%%', $this->main->date_i18n($date_format, $user_start_time), $message);
-            $message = str_replace('%%event_end_date_local%%', $this->main->date_i18n($date_format, $user_end_time), $message);
+            $message = str_replace('%%event_start_date_local%%', ($hide_date ? $this->main->get_tba_label() : $this->main->date_i18n($date_format, $user_start_time)), $message);
+            $message = str_replace('%%event_end_date_local%%', ($hide_date ? $this->main->get_tba_label() : $this->main->date_i18n($date_format, $user_end_time)), $message);
             $message = str_replace('%%event_start_time_local%%', date_i18n($time_format, $user_start_time), $message);
             $message = str_replace('%%event_end_time_local%%', date_i18n($time_format, $user_end_time), $message);
         }
@@ -2656,7 +2664,8 @@ class MEC_notifications extends MEC_base
                 if ($ticket != $value) continue;
 
                 $ticket_names[] = $ticket_info['name'];
-                $ticket_private_descriptions[] = $ticket_info['private_description'] ?? '';
+                $private_description = $ticket_info['private_description'] ?? '';
+                $ticket_private_descriptions[] = is_string($private_description) ? wp_kses_post($private_description) : '';
 
                 $ticket_start_hour = $ticket_info['ticket_start_time_hour'] ?? '';
                 $ticket_start_minute = $ticket_info['ticket_start_time_minute'] ?? '';
@@ -2709,9 +2718,9 @@ class MEC_notifications extends MEC_base
         // Recurring Rules
         $rrule = $this->main->get_ical_rrules($event_id, true);
 
-        $google_calendar_link = '<a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=' . urlencode($event_title) . '&dates=' . gmdate('Ymd\\THi00\\Z', ($start_timestamp - $gmt_offset_seconds)) . '/' . gmdate('Ymd\\THi00\\Z', ($end_timestamp - $gmt_offset_seconds)) . '&details=' . urlencode($event_content) . (trim($google_calendar_location) ? '&location=' . urlencode($google_calendar_location) : '') . ((trim($rrule) ? '&recur=' . urlencode($rrule) : '')) . '" target="_blank">' . esc_html__('+ Add to Google Calendar', 'modern-events-calendar-lite') . '</a>';
-        $ical_export_link = '<a href="' . esc_url($this->main->ical_URL_email($event_id, $book_id, get_the_date('Y-m-d', $book_id))) . '">' . esc_html__('+ iCal / Outlook export', 'modern-events-calendar-lite') . '</a>';
-        $ical_export_link_all = '<a href="' . esc_url($this->main->ical_URL($event_id)) . '">' . esc_html__('+ iCal / Outlook export', 'modern-events-calendar-lite') . '</a>';
+        $google_calendar_link = '<a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=' . urlencode($event_title) . '&dates=' . gmdate('Ymd\\THi00\\Z', ($start_timestamp - $gmt_offset_seconds)) . '/' . gmdate('Ymd\\THi00\\Z', ($end_timestamp - $gmt_offset_seconds)) . '&details=' . urlencode($event_content) . (trim($google_calendar_location) ? '&location=' . urlencode($google_calendar_location) : '') . ((trim($rrule) ? '&recur=' . urlencode($rrule) : '')) . '" target="_blank">' . esc_html__('Add to Google Calendar', 'modern-events-calendar-lite') . '</a>';
+        $ical_export_link = '<a href="' . esc_url($this->main->ical_URL_email($event_id, $book_id, get_the_date('Y-m-d', $book_id))) . '">' . esc_html__('iCal / Outlook export', 'modern-events-calendar-lite') . '</a>';
+        $ical_export_link_all = '<a href="' . esc_url($this->main->ical_URL($event_id)) . '">' . esc_html__('iCal / Outlook export', 'modern-events-calendar-lite') . '</a>';
 
         $message = str_replace('%%google_calendar_link%%', $google_calendar_link, $message);
         $message = str_replace('%%ics_link%%', $ical_export_link, $message);
@@ -2747,7 +2756,7 @@ class MEC_notifications extends MEC_base
                 $book_datetime_next_occurrences .= $this->main->date_i18n($date_format . ((!$allday and !$hide_time) ? ' ' . $time_format : ''), $next_occurrence['tstart']) . '<br>';
             }
 
-            $google_calendar_links .= '<a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=' . urlencode($event_title) . '&dates=' . gmdate('Ymd\\THi00\\Z', ($next_occurrence['tstart'] - $gmt_offset_seconds)) . '/' . gmdate('Ymd\\THi00\\Z', ($next_occurrence['tend'] - $gmt_offset_seconds)) . '&details=' . urlencode($event_content) . (trim($google_calendar_location) ? '&location=' . urlencode($google_calendar_location) : '') . '" target="_blank">' . sprintf(esc_html__('+ %s to Google Calendar', 'modern-events-calendar-lite'), date($date_format . ' ' . $time_format, $next_occurrence['tstart'])) . '</a><br>';
+            $google_calendar_links .= '<a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=' . urlencode($event_title) . '&dates=' . gmdate('Ymd\\THi00\\Z', ($next_occurrence['tstart'] - $gmt_offset_seconds)) . '/' . gmdate('Ymd\\THi00\\Z', ($next_occurrence['tend'] - $gmt_offset_seconds)) . '&details=' . urlencode($event_content) . (trim($google_calendar_location) ? '&location=' . urlencode($google_calendar_location) : '') . '" target="_blank">' . sprintf(esc_html__('%s to Google Calendar', 'modern-events-calendar-lite'), date($date_format . ' ' . $time_format, $next_occurrence['tstart'])) . '</a><br>';
         }
 
         $message = str_replace('%%google_calendar_link_next_occurrences%%', $google_calendar_links, $message);
@@ -2764,7 +2773,7 @@ class MEC_notifications extends MEC_base
         return apply_filters('mec_render_message_email', $message, $book_id, $attendee, $timestamps);
     }
 
-    public function content_event($message, $event_id, $start_timestamp, $end_timestamp)
+    public function content_event($message, $event_id, $start_timestamp, $end_timestamp, $hide_date = false)
     {
         // Occurrence Params
         $params = MEC_feature_occurrences::param($event_id, $start_timestamp, '*');
@@ -2827,7 +2836,7 @@ class MEC_notifications extends MEC_base
         $more_info = get_post_meta($event_id, 'mec_more_info', true);
         $more_info = (isset($params['more_info']) and trim($params['more_info']) != '') ? $params['more_info'] : $more_info;
 
-        $event_link = $this->main->get_event_date_permalink(get_permalink($event_id), date('Y-m-d', $start_timestamp));
+        $event_link = $hide_date ? get_permalink($event_id) : $this->main->get_event_date_permalink(get_permalink($event_id), date('Y-m-d', $start_timestamp));
 
         // Add Time
         $repeat_type = get_post_meta($event_id, 'mec_repeat_type', true);
@@ -2837,8 +2846,8 @@ class MEC_notifications extends MEC_base
         $message = str_replace('%%event_link%%', $event_link, $message);
         $message = str_replace('%%event_more_info%%', esc_url($read_more), $message);
         $message = str_replace('%%event_other_info%%', esc_url($more_info), $message);
-        $message = str_replace('%%event_start_date%%', $this->main->date_i18n($date_format, $start_timestamp), $message);
-        $message = str_replace('%%event_end_date%%', $this->main->date_i18n($date_format, $end_timestamp), $message);
+        $message = str_replace('%%event_start_date%%', ($hide_date ? $this->main->get_tba_label() : $this->main->date_i18n($date_format, $start_timestamp)), $message);
+        $message = str_replace('%%event_end_date%%', ($hide_date ? $this->main->get_tba_label() : $this->main->date_i18n($date_format, $end_timestamp)), $message);
         $message = str_replace('%%event_start_time%%', date_i18n($time_format, $start_timestamp), $message);
         $message = str_replace('%%event_end_time%%', date_i18n($time_format, $end_timestamp), $message);
         $message = str_replace('%%event_timezone%%', $this->main->get_timezone($event_id), $message);

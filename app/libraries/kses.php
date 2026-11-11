@@ -17,7 +17,19 @@ class MEC_kses extends MEC_base
     static $allowed_html_full = NULL;
     static $allowed_attrs = array(
         'data-*' => 1,
-        'aria-*' => 1,
+        // wp_kses only special-cases the data-* wildcard; aria-* must be
+        // listed literally or every aria attribute is stripped.
+        'aria-label' => 1,
+        'aria-hidden' => 1,
+        'aria-labelledby' => 1,
+        'aria-describedby' => 1,
+        'aria-modal' => 1,
+        'aria-expanded' => 1,
+        'aria-pressed' => 1,
+        'aria-current' => 1,
+        'aria-live' => 1,
+        'aria-invalid' => 1,
+        'role' => 1,
         'type' => 1,
         'value' => 1,
         'class' => 1,

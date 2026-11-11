@@ -3039,7 +3039,7 @@ span.mec-event-title-soldout {
 .mec-event-list-standard .mec-event-meta svg {
   vertical-align: middle;
   margin-left: 12px;
-  width: 20px;
+  width: auto;
   height: 20px;
 }
 
@@ -6769,9 +6769,23 @@ address.mec-events-address {
 }
 
 .mec-calendar .mec-calendar-topsec {
-  display: block;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
   background: #fff;
   border-radius: var(--mec-primary-border-radius);
+}
+
+/* Tablet fix: flexbox sizing for the calendar side and events side so widths calculate correctly between 768px and 1200px */
+.mec-calendar .mec-calendar-topsec > .mec-calendar-side {
+  display: block;
+  flex: 0 0 auto;
+}
+
+.mec-calendar .mec-calendar-topsec > .mec-calendar-events-side {
+  display: block;
+  flex: 1 1 0%;
+  min-width: 0;
 }
 
 .mec-calendar .mec-calendar-topsec .mec-calendar-side .mec-calendar-table {
@@ -6832,7 +6846,7 @@ address.mec-events-address {
   width: unset;
 }
 
-.mec-calendar .mec-calendar-header h2 {
+.mec-calendar .mec-calendar-header :is(h2, h3, h4, h5, h6) {
   text-transform: uppercase;
   font-size: 22px;
   font-weight: 700;
@@ -6847,6 +6861,7 @@ address.mec-events-address {
 
 .mec-calendar dl {
   display: table;
+  width: 100%;
   margin: 0;
   border: none;
   padding: 0;
@@ -6860,6 +6875,7 @@ address.mec-events-address {
   border: none;
   padding: 0;
   table-layout: fixed;
+  box-sizing: border-box;
 }
 
 .mec-calendar dt {
@@ -6869,7 +6885,7 @@ address.mec-events-address {
   background: #fff;
   border-radius: 44px;
   font-size: 13px;
-  width: 80px;
+  width: calc(100% / 7);
   height: 80px;
   line-height: 80px;
   text-align: center;
@@ -6882,7 +6898,7 @@ address.mec-events-address {
   background: transparent;
   border-radius: 44px;
   font-size: 14px;
-  width: 80px;
+  width: calc(100% / 7);
   height: 80px;
   line-height: 80px;
   text-align: center;
@@ -7162,19 +7178,25 @@ address.mec-events-address {
   }
 
   .mec-calendar dt {
-    width: 50px;
+    width: calc(100% / 7);
     height: 50px;
     line-height: 50px;
   }
 }
 
 @media only screen and (max-width: 767px) {
-  .mec-calendar .mec-calendar-header h2 {
+  .mec-calendar .mec-calendar-header :is(h2, h3, h4, h5, h6) {
     font-size: 18px;
   }
 
   .mec-calendar .mec-calendar-topsec {
     width: 100%;
+    flex-direction: column;
+  }
+
+  .mec-calendar .mec-calendar-topsec > .mec-calendar-side,
+  .mec-calendar .mec-calendar-topsec > .mec-calendar-events-side {
+    flex: 0 0 auto;
   }
 
   .mec-calendar .mec-calendar-side {
@@ -7201,7 +7223,7 @@ address.mec-events-address {
   }
 
   .mec-calendar dt {
-    width: 14%;
+    width: calc(100% / 7);
     height: 60px;
     line-height: 60px;
     border-radius: 50px;
@@ -7214,7 +7236,7 @@ address.mec-events-address {
     height: 4px;
   }
 
-  .mec-calendar .mec-calendar-header h2 {
+  .mec-calendar .mec-calendar-header :is(h2, h3, h4, h5, h6) {
     font-size: 16px;
     margin-top: 33px;
   }
@@ -7285,7 +7307,7 @@ address.mec-events-address {
   border-radius: var(--mec-secondary-border-radius);
 }
 
-.mec-box-calendar.mec-calendar h4.mec-month-label {
+.mec-box-calendar.mec-calendar .mec-month-label {
   position: relative;
   width: 560px;
   margin-top: 2px;
@@ -7296,7 +7318,7 @@ address.mec-events-address {
   color: #333;
 }
 
-.mec-widget .mec-box-calendar.mec-calendar h4.mec-month-label {
+.mec-widget .mec-box-calendar.mec-calendar .mec-month-label {
   width: 100%;
   margin-top: 8px;
   font-size: 13px;
@@ -7311,7 +7333,7 @@ address.mec-events-address {
     left: 42px;
   }
 
-  .mec-calendar .mec-calendar-header h2 {
+  .mec-calendar .mec-calendar-header :is(h2, h3, h4, h5, h6) {
     font-size: 17px;
     margin-top: 7px;
   }
@@ -7333,7 +7355,7 @@ address.mec-events-address {
     left: 30px;
   }
 
-  .mec-calendar .mec-calendar-header h2 {
+  .mec-calendar .mec-calendar-header :is(h2, h3, h4, h5, h6) {
     font-size: 15px;
   }
 }
@@ -7373,10 +7395,10 @@ address.mec-events-address {
 }
 
 .mec-calendar.mec-event-calendar-classic .mec-calendar-table-head,
-.mec-calendar.mec-event-calendar-classic .mec-calendar-table-head,
 .mec-calendar.mec-event-calendar-classic dl.mec-calendar-row {
   width: 100%;
   padding: 0;
+  box-sizing: border-box;
 }
 
 .mec-booking-calendar .mec-calendar.mec-event-calendar-classic .mec-calendar-table-head,
@@ -7411,6 +7433,8 @@ address.mec-events-address {
   line-height: 36px;
   padding: 5px 7px;
   text-align: right;
+  width: 15%;
+  box-sizing: border-box;
 }
 
 .mec-calendar.mec-event-calendar-classic dl dt {
@@ -7420,6 +7444,7 @@ address.mec-events-address {
   text-align: right;
   padding: 5px 7px;
   position: relative;
+  box-sizing: border-box;
 }
 
 .mec-box-calendar.mec-calendar.mec-event-calendar-classic .mec-calendar-side .mec-previous-month,
@@ -7525,7 +7550,7 @@ address.mec-events-address {
   display: block;
 }
 
-.mec-calendar .mec-event-article.mec-single-event-novel h4 {
+.mec-calendar .mec-event-article.mec-single-event-novel .mec-event-title {
   margin: 0;
   font-size: 13px;
   line-height: 1.5;
@@ -7566,11 +7591,11 @@ address.mec-events-address {
   min-height: auto;
 }
 
-.mec-single-event-novel.light h4 {
+.mec-single-event-novel.light .mec-event-title {
   color: #000 !important;
 }
 
-.mec-single-event-novel.dark h4 {
+.mec-single-event-novel.dark .mec-event-title {
   color: #fff !important;
 }
 
@@ -7580,14 +7605,14 @@ address.mec-events-address {
     min-height: 5px;
   }
 
-  .mec-calendar .mec-event-article.mec-single-event-novel h4 {
+  .mec-calendar .mec-event-article.mec-single-event-novel .mec-event-title {
     display: block;
     font-size: 13px;
   }
 }
 
 @media only screen and (max-width: 480px) {
-  .mec-calendar .mec-event-article.mec-single-event-novel h4 {
+  .mec-calendar .mec-event-article.mec-single-event-novel .mec-event-title {
     font-size: 11px;
   }
 }
@@ -7602,14 +7627,14 @@ address.mec-events-address {
   min-height: unset;
 }
 
-.mec-event-container-simple .mec-monthly-tooltip h4 {
+.mec-event-container-simple .mec-monthly-tooltip .mec-event-title {
   font-size: 13px;
   font-weight: 500;
   margin: 0;
   color: #444;
 }
 
-.mec-event-container-simple .mec-monthly-tooltip h4:hover {
+.mec-event-container-simple .mec-monthly-tooltip .mec-event-title:hover {
   text-decoration: underline;
   color: #111;
 }
@@ -7809,13 +7834,13 @@ address.mec-events-address {
 }
 
 @media (max-width: 768px) {
-  .mec-event-container-simple .mec-monthly-tooltip.event-single-link-simple h4 {
+  .mec-event-container-simple .mec-monthly-tooltip.event-single-link-simple .mec-event-title {
     font-size: 13px;
   }
 }
 
 @media (max-width: 480px) {
-  .mec-event-container-simple .mec-monthly-tooltip.event-single-link-simple h4 {
+  .mec-event-container-simple .mec-monthly-tooltip.event-single-link-simple .mec-event-title {
     font-size: 11px;
   }
 }
@@ -7842,7 +7867,7 @@ address.mec-events-address {
   border-radius: var(--mec-primary-border-radius) var(--mec-primary-border-radius) 0 0;
 }
 
-.mec-calendar.mec-calendar-daily .mec-calendar-a-month h4 {
+.mec-calendar.mec-calendar-daily .mec-calendar-a-month .mec-month-label {
   color: #444;
   font-size: 18px;
   line-height: 1.2;
@@ -8039,13 +8064,13 @@ address.mec-events-address {
     margin-right: 80px;
   }
 
-  .mec-calendar.mec-calendar-daily .mec-calendar-a-month h4 {
+  .mec-calendar.mec-calendar-daily .mec-calendar-a-month .mec-month-label {
     font-size: 14px;
     letter-spacing: 0;
   }
 }
 
-.widget .mec-calendar.mec-calendar-daily .mec-calendar-a-month h4 {
+.widget .mec-calendar.mec-calendar-daily .mec-calendar-a-month .mec-month-label {
   font-size: 14px;
   letter-spacing: 0;
 }
@@ -8220,7 +8245,7 @@ li.mec-no-event-found .mec-event-title {
   padding: 10px;
 }
 
-.mec-widget .mec-calendar .mec-calendar-header h2 {
+.mec-widget .mec-calendar .mec-calendar-header :is(h2, h3, h4, h5, h6) {
   font-size: 13px;
   margin-top: 8px;
 }
@@ -8477,7 +8502,7 @@ li.mec-no-event-found .mec-event-title {
     -------------------------------- */
 
 .mec-single-event .mec-events-meta-group-countdown {
-  color: #c9c9c9;
+  color: #000000;
   text-align: center;
   margin-bottom: 30px;
   padding: 20px 30px;
@@ -9396,6 +9421,10 @@ li.mec-no-event-found .mec-event-title {
   .mec-fes-submit-mobile {
     display: none;
   }
+}
+
+.mec-fes-form form#mec_fes_form {
+  display: flow-root;
 }
 
 .mec-fes-form .mec-meta-box-fields {
@@ -11578,7 +11607,7 @@ body:has(.mec-fes-form, .mec-search-form) .ui-datepicker .ui-datepicker-calendar
 }
 
 .mec-event-countdown-style1 .mec-events-meta-group-countdown {
-  color: #c9c9c9;
+  color: #000000;
   margin-bottom: 30px;
   padding: 20px 30px;
   background: #fff;
@@ -11790,7 +11819,7 @@ body:has(.mec-fes-form, .mec-search-form) .ui-datepicker .ui-datepicker-calendar
 }
 
 .mec-event-countdown-style2 .mec-events-meta-group-countdown {
-  color: #c9c9c9;
+  color: #000000;
   margin-bottom: 30px;
   padding: 20px 30px;
   background: #fff;
@@ -11989,7 +12018,7 @@ body:has(.mec-fes-form, .mec-search-form) .ui-datepicker .ui-datepicker-calendar
 }
 
 .mec-event-countdown-style3 .mec-events-meta-group-countdown {
-  color: #c9c9c9;
+  color: #000000;
   margin-bottom: 30px;
   padding: 20px 30px;
   background: #fff;
@@ -14007,7 +14036,7 @@ body .lity-close:active {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
-.mec-yearly-view-wrap .mec-yearly-title-sec h2 {
+.mec-yearly-view-wrap .mec-yearly-title-sec :is(h2, h3, h4, h5, h6) {
   font-size: 30px;
   line-height: 40px;
   color: #333;
@@ -14096,7 +14125,7 @@ body .lity-close:active {
     width: 14.2%;
   }
 
-  .mec-yearly-view-wrap .mec-yearly-title-sec h2 {
+  .mec-yearly-view-wrap .mec-yearly-title-sec :is(h2, h3, h4, h5, h6) {
     font-size: 25px;
   }
 }
@@ -15847,7 +15876,7 @@ body .lity-close:active {
   background: #ebebeb;
 }
 
-.mec-month-divider h5 {
+.mec-month-divider h2 {
   font-size: 22px;
   font-weight: 700;
   text-transform: uppercase;
@@ -21858,8 +21887,8 @@ body.mec-dark-mode .mec-single-modern .mec-single-event-bar {
 }
 
 /* Date Selection > Navigation  */
-.mec-single-fluent-wrap .mec-booking-calendar-month-navigation .mec-calendar-header h2,
-.mec-booking-calendar-month-navigation .mec-calendar-header h2 {
+.mec-single-fluent-wrap .mec-booking-calendar-month-navigation .mec-calendar-header :is(h2, h3, h4, h5, h6),
+.mec-booking-calendar-month-navigation .mec-calendar-header :is(h2, h3, h4, h5, h6) {
   font-size: 13px;
   font-weight: 600;
   line-height: 40px;
@@ -26469,4 +26498,55 @@ ul#mec_loc_form_row li .mec-additional-location-remove:hover {
 .rtl .mec-wrap .mec-timetable-week-navigator .mec-next-week:hover i,
 .rtl .mec-wrap .mec-timetable-week-navigator .mec-next-week:focus-visible i {
   transform: translateX(-2px);
+}
+
+/* Monthly calendar action buttons retain the former link styling. */
+.mec-full-calendar-wrap .mec-totalcal-view [role="button"]:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+.mec-wrap .mec-calendar button.mec-has-event-a,
+.mec-wrap .mec-calendar button.mec-load-month-link {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: inherit !important;
+  font: inherit !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-transform: inherit !important;
+  cursor: pointer;
+}
+
+.mec-wrap .mec-calendar button.mec-has-event-a {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50% !important;
+  color: #4d4d4d !important;
+}
+
+.mec-wrap .mec-calendar .mec-has-event:hover button.mec-has-event-a,
+.mec-wrap .mec-calendar .mec-selected-day button.mec-has-event-a {
+  color: #fff !important;
+}
+
+.mec-wrap .mec-calendar.mec-event-calendar-classic .mec-selected-day button.mec-has-event-a {
+  color: #4d4d4d !important;
+}
+
+.mec-wrap .mec-calendar button.mec-load-month-link {
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  line-height: 15px !important;
+  letter-spacing: 1px;
+  text-transform: uppercase !important;
+}
+
+.mec-wrap .mec-calendar button.mec-has-event-a:focus-visible,
+.mec-wrap .mec-calendar button.mec-load-month-link:focus-visible {
+  outline: 2px solid currentColor !important;
+  outline-offset: 3px;
 }

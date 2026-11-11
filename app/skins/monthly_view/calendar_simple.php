@@ -2,6 +2,8 @@
 /** no direct access **/
 defined('MECEXEC') or die();
 
+$event_heading_tag = $this->get_calendar_event_heading_tag('h4', 1);
+
 /** @var MEC_skin_monthly_view $this */
 /** @var int $month */
 /** @var int $year */
@@ -73,7 +75,11 @@ elseif($week_start == 5) // Friday
                     // Event Content
                     if(!$this->cache->has($event->data->ID.'_content'))
                     {
-                        if(get_post_meta($event->data->ID, '_elementor_edit_mode', true) && class_exists('\Elementor\Plugin')) $event_content = get_the_excerpt($event->data->ID);
+                        if(get_post_meta($event->data->ID, '_elementor_edit_mode', true) && class_exists('\Elementor\Plugin'))
+                        {
+                            $event_raw_content = isset($event->data->content) ? trim((string) $event->data->content) : '';
+                            $event_content = $event_raw_content !== '' ? wp_trim_words($event_raw_content, 20, ' ...') : '';
+                        }
                         else $event_content = isset($event->data->content) && trim($event->data->content) != '' ? mb_substr(strip_tags($event->data->content, '<style>'), 0, 320) : '';
 
                         $this->cache->set($event->data->ID.'_content', $event_content);
@@ -82,7 +88,7 @@ elseif($week_start == 5) // Friday
 
                     echo '<div class="'.($this->main->is_expired($event) ? 'mec-past-event ' : '').'ended-relative simple-skin-ended">';
                     if($sed_method !== 'no') echo '<a class="mec-monthly-tooltip event-single-link-simple" data-tooltip-content="#mec-tooltip-'.esc_attr($event_unique.'-'.$day_id).'" data-event-id="'.esc_attr($event->data->ID).'" href="'.esc_url($this->main->get_event_date_permalink($event, $event->date['start']['date'])).'" '.$target_url.'>';
-                    echo '<h4 class="mec-event-title">'.esc_html(apply_filters('mec_occurrence_event_title', $event->data->title, $event)).'</h4>'.MEC_kses::element($this->main->get_normal_labels($event, $display_label).$this->main->display_cancellation_reason($event, $reason_for_cancellation));
+                    echo '<'.$event_heading_tag.' class="mec-event-title">'.esc_html(apply_filters('mec_occurrence_event_title', $event->data->title, $event)).'</'.$event_heading_tag.'>'.MEC_kses::element($this->main->get_normal_labels($event, $display_label).$this->main->display_cancellation_reason($event, $reason_for_cancellation));
                     do_action('mec_shortcode_virtual_badge', $event->data->ID);
                     if($sed_method !== 'no') echo '</a>';
                     echo '</div>';
@@ -150,7 +156,11 @@ elseif($week_start == 5) // Friday
                     // Event Content
                     if(!$this->cache->has($event->data->ID.'_content'))
                     {
-                        if(get_post_meta($event->data->ID, '_elementor_edit_mode', true) && class_exists('\Elementor\Plugin')) $event_content = get_the_excerpt($event->data->ID);
+                        if(get_post_meta($event->data->ID, '_elementor_edit_mode', true) && class_exists('\Elementor\Plugin'))
+                        {
+                            $event_raw_content = isset($event->data->content) ? trim((string) $event->data->content) : '';
+                            $event_content = $event_raw_content !== '' ? wp_trim_words($event_raw_content, 20, ' ...') : '';
+                        }
                         else $event_content = isset($event->data->content) && trim($event->data->content) != '' ? mb_substr(strip_tags($event->data->content, '<style>'), 0, 320) : '';
 
                         $this->cache->set($event->data->ID.'_content', $event_content);
@@ -159,7 +169,7 @@ elseif($week_start == 5) // Friday
 
                     echo '<div class="'.($this->main->is_expired($event) ? 'mec-past-event ' : '').'ended-relative simple-skin-ended">';
                     if($sed_method !== 'no') echo '<a class="mec-monthly-tooltip event-single-link-simple" data-tooltip-content="#mec-tooltip-'.esc_attr($event_unique.'-'.$day_id).'" data-event-id="'.esc_attr($event->data->ID).'" href="'.esc_url($this->main->get_event_date_permalink($event, $event->date['start']['date'])).'" '.$target_url.'>';
-                    echo '<h4 class="mec-event-title">'.esc_html(apply_filters('mec_occurrence_event_title', $event->data->title, $event)).'</h4>'.MEC_kses::element($this->main->get_normal_labels($event, $display_label).$this->main->display_cancellation_reason($event, $reason_for_cancellation));
+                    echo '<'.$event_heading_tag.' class="mec-event-title">'.esc_html(apply_filters('mec_occurrence_event_title', $event->data->title, $event)).'</'.$event_heading_tag.'>'.MEC_kses::element($this->main->get_normal_labels($event, $display_label).$this->main->display_cancellation_reason($event, $reason_for_cancellation));
                     do_action('mec_shortcode_virtual_badge', $event->data->ID);
                     if($sed_method !== 'no') echo '</a>';
                     echo '</div>';
@@ -244,7 +254,11 @@ elseif($week_start == 5) // Friday
                         // Event Content
                         if(!$this->cache->has($event->data->ID.'_content'))
                         {
-                            if(get_post_meta($event->data->ID, '_elementor_edit_mode', true) && class_exists('\Elementor\Plugin')) $event_content = get_the_excerpt($event->data->ID);
+                            if(get_post_meta($event->data->ID, '_elementor_edit_mode', true) && class_exists('\Elementor\Plugin'))
+                            {
+                                $event_raw_content = isset($event->data->content) ? trim((string) $event->data->content) : '';
+                                $event_content = $event_raw_content !== '' ? wp_trim_words($event_raw_content, 20, ' ...') : '';
+                            }
                             else $event_content = isset($event->data->content) && trim($event->data->content) != '' ? mb_substr(strip_tags($event->data->content, '<style>'), 0, 320) : '';
 
                             $this->cache->set($event->data->ID.'_content', $event_content);
@@ -255,7 +269,7 @@ elseif($week_start == 5) // Friday
                         $event_classes = $this->get_event_classes($event);
                         echo '<div class="'.($this->main->is_expired($event) ? 'mec-past-event ' : '').'ended-relative simple-skin-ended'.(!empty($event_classes) ? ' '.esc_attr($event_classes) : '').'">';
                         if ($sed_method !== 'no') echo '<a class="mec-monthly-tooltip event-single-link-simple" data-tooltip-content="#mec-tooltip-'.esc_attr($event_unique.'-'.$day_id).'" data-event-id="'.esc_attr($event->data->ID).'" href="'.esc_url($this->main->get_event_date_permalink($event, $event->date['start']['date'])).'" '.$target_url.'>';
-                        echo '<h4 class="mec-event-title">'.esc_html(apply_filters('mec_occurrence_event_title', $event->data->title, $event)).'</h4>'.MEC_kses::element($this->main->get_normal_labels($event, $display_label).$this->main->display_cancellation_reason($event, $reason_for_cancellation));
+                        echo '<'.$event_heading_tag.' class="mec-event-title">'.esc_html(apply_filters('mec_occurrence_event_title', $event->data->title, $event)).'</'.$event_heading_tag.'>'.MEC_kses::element($this->main->get_normal_labels($event, $display_label).$this->main->display_cancellation_reason($event, $reason_for_cancellation));
                         do_action('mec_shortcode_virtual_badge', $event->data->ID);
                         if($sed_method !== 'no') echo '</a>';
                         echo '</div>';

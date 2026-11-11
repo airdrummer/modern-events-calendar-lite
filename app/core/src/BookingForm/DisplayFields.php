@@ -318,7 +318,7 @@ class DisplayFields {
                                                        $checked       = in_array( $current_value, (array) $value );
                                                        $input_html   .= '<label>'
                                                                 . '<input type="' . esc_attr( $field_type ) . '" id="mec_' . esc_attr( $form_type . '_field_' . $type . $j . '_' . $field_id . '_' . strtolower( str_replace( ' ', '_', $field_label ) ) ) . '" name="' . esc_attr( $field_name ) . '" value="' . esc_attr( $current_value ) . '" data-option-key="' . esc_attr( $option_key ) . '" ' . checked( $checked, true, false ) . '/>'
-                                                                . esc_html__( $field_label, 'modern-events-calendar-lite')
+                                                                . esc_html__( $field_label, 'modern-events-calendar-lite' )
                                                                 . '</label>';
                                                }
 
@@ -332,7 +332,7 @@ class DisplayFields {
                                                        $checked       = in_array( $current_value, (array) $value );
                                                        $input_html   .= '<label>'
                                                                 . '<input type="' . esc_attr( $field_type ) . '" id="mec_' . esc_attr( $form_type . '_field_' . $type . $j . '_' . $field_id . '_' . strtolower( str_replace( ' ', '_', $field_label ) ) ) . '" name="' . esc_attr( $field_name ) . '[]" value="' . esc_attr( $current_value ) . '" data-option-key="' . esc_attr( $option_key ) . '" ' . checked( $checked, true, false ) . '/>'
-                                                                . esc_html__( $field_label, 'modern-events-calendar-lite')
+                                                                . esc_html__( $field_label, 'modern-events-calendar-lite' )
                                                                 . '</label>';
                                                }
 

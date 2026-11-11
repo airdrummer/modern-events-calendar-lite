@@ -253,7 +253,7 @@ class MEC_formBuilder extends MEC_base
                         <input type="hidden" name="<?php echo esc_attr($name_prefix); ?>[<?php echo esc_attr($i); ?>]"
                             value="<?php echo esc_attr($this->main->standardize_format($not_in_day, $datepicker_format)); ?>"/>
                         <span class="mec-not-in-days-day"><?php echo esc_html($this->main->standardize_format($not_in_day, $datepicker_format)); ?></span>
-                        <span class="mec-not-in-days-remove" onclick="mec_not_in_days_remove(<?php echo esc_attr($i); ?>);">x</span>
+                        <span class="mec-not-in-days-remove" role="button" tabindex="0" onclick="mec_not_in_days_remove(<?php echo esc_attr($i); ?>);" title="<?php esc_attr_e('Remove', 'modern-events-calendar-lite'); ?>" aria-label="<?php esc_attr_e('Remove', 'modern-events-calendar-lite'); ?>">x</span>
                     </div>
                     <?php
                     $i++;
@@ -265,7 +265,7 @@ class MEC_formBuilder extends MEC_base
                 <div id="<?php echo esc_attr($prefix); ?>_not_in_days_row:i:" class="<?php echo esc_attr($prefix); ?>-date-:d:">
                     <input type="hidden" name="<?php echo esc_attr($name_prefix); ?>[:i:]" value=":val:"/>
                     <span class="mec-not-in-days-day">:val:</span>
-                    <span class="mec-not-in-days-remove" onclick="mec_not_in_days_remove(:i:);">x</span>
+                    <span class="mec-not-in-days-remove" role="button" tabindex="0" onclick="mec_not_in_days_remove(:i:);" title="<?php esc_attr_e('Remove', 'modern-events-calendar-lite'); ?>" aria-label="<?php esc_attr_e('Remove', 'modern-events-calendar-lite'); ?>">x</span>
                 </div>
             </div>
         </div>

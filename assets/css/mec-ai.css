@@ -173,7 +173,7 @@ body.m-e-calendar_page_MEC-ai {
 }
 
 .mec-admin-dark-mode .mec-ai-badge {
-    background: rgba(0, 138, 255, .18);
+    background: rgba(0, 190, 235, .18);
     color: #3ed0f2
 }
 
@@ -235,7 +235,7 @@ body.m-e-calendar_page_MEC-ai {
 .mec-ai-task-choice:has(input:checked) {
     border-color: var(--mec-ai-accent);
     background: var(--mec-ai-accent-soft);
-    box-shadow: 0 0 0 3px rgba(0, 138, 255, .14)
+    box-shadow: 0 0 0 3px rgba(0, 190, 235, .14)
 }
 
 .mec-ai-task-choice>input {
@@ -461,41 +461,76 @@ body.m-e-calendar_page_MEC-ai {
     font-size: 14px
 }
 
+/* Notices use the MEC unified notice system (backend-refinements.css §31,
+   tokens --mec-n-*): soft tint, 1px inset ring, 14px radius, no side accent,
+   no icon. Type -> --n-bg / --n-line; no type class = info. */
 .mec-ai-request-notice,
-.mec-ai-category-result {
+.mec-ai-category-result,
+.mec-ai-event-warnings {
+    --n-bg: var(--mec-n-info-bg, #EEF6FF);
+    --n-line: var(--mec-n-info-line, #CBE2FF);
     display: none;
+    box-sizing: border-box;
     margin-top: 14px;
-    padding: 12px 14px;
-    border: 1px solid var(--mec-ai-border);
-    border-inline-start: 3px solid transparent;
-    border-radius: var(--mec-ai-r-input);
+    padding: 14px 16px;
+    border: 0;
+    border-radius: 14px;
+    background: var(--n-bg);
+    box-shadow: inset 0 0 0 1px var(--n-line);
+    color: var(--mec-n-text, #4A4F5C);
     font-size: 13px;
-    line-height: 1.55
+    line-height: 1.65;
+    text-align: start;
+    white-space: pre-line;
+    overflow-wrap: anywhere
 }
 
 .mec-ai-request-notice:not(:empty),
-.mec-ai-category-result:not(:empty) {
+.mec-ai-category-result:not(:empty),
+.mec-ai-event-warnings:not(:empty) {
     display: block
 }
 
 .mec-ai-request-notice.is-success,
 .mec-ai-category-result.is-success {
-    background: var(--mec-ai-ok-bg);
-    border-color: var(--mec-ai-ok-border);
-    border-inline-start-color: var(--mec-ai-ok);
-    color: var(--mec-ai-ok)
+    --n-bg: var(--mec-n-success-bg, #ECFDF3);
+    --n-line: var(--mec-n-success-line, #D1FADF)
 }
 
 .mec-ai-request-notice.is-error,
 .mec-ai-category-result.is-error {
-    background: var(--mec-ai-err-bg);
-    border-color: var(--mec-ai-err-border);
-    border-inline-start-color: var(--mec-ai-err);
-    color: var(--mec-ai-err)
+    --n-bg: var(--mec-n-error-bg, #FEF3F2);
+    --n-line: var(--mec-n-error-line, #FEE4E2)
+}
+
+.mec-ai-event-warnings {
+    --n-bg: var(--mec-n-warning-bg, #FFF8EB);
+    --n-line: var(--mec-n-warning-line, #FEF0C7);
+    margin-top: 10px
 }
 
 .mec-ai-category-result {
     margin-top: 18px
+}
+
+.mec-ai-request-notice :is(p, li),
+.mec-ai-category-result :is(p, li),
+.mec-ai-event-warnings :is(p, li) {
+    margin: 0;
+    color: var(--mec-n-text, #4A4F5C);
+    font-size: 13px;
+    line-height: 1.65
+}
+
+.mec-ai-request-notice :is(p, li)+:is(p, li),
+.mec-ai-category-result :is(p, li)+:is(p, li),
+.mec-ai-event-warnings :is(p, li)+:is(p, li) {
+    margin-top: 6px
+}
+
+.mec-ai-request-notice strong,
+.mec-ai-category-result strong {
+    color: var(--mec-n-strong, #1C1E2F)
 }
 
 .mec-ai-category-result p {
@@ -508,8 +543,10 @@ body.m-e-calendar_page_MEC-ai {
 
 .mec-ai-request-notice a,
 .mec-ai-category-result a {
-    color: inherit;
-    text-decoration: underline
+    color: var(--mec-n-link, #0A6E8F);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 2px
 }
 
 .mec-ai-setup-lead {
@@ -663,7 +700,7 @@ body.m-e-calendar_page_MEC-ai {
 
 .mec-ai-connectors-link:hover,
 .mec-ai-connectors-link:focus {
-    background: rgba(0, 138, 255, .09);
+    background: rgba(0, 190, 235, .09);
     color: var(--mec-ai-accent)
 }
 
@@ -719,6 +756,33 @@ body.m-e-calendar_page_MEC-ai {
     color: var(--mec-ai-warn);
     font-size: 12px;
     font-weight: 600
+}
+
+.mec-ai-taxonomy-image [hidden] {
+    display: none !important;
+}
+
+.mec-ai-taxonomy-image img {
+    display: block;
+    width: 240px;
+    max-width: 100%;
+    height: auto;
+    margin: 10px 0;
+}
+
+.mec-ai-taxonomy-image .button {
+    margin: 6px 6px 0 0;
+    white-space: normal;
+}
+
+.mec-ai-taxonomy-field-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+    gap: 14px;
+}
+
+#mec-ai-taxonomy-preview .mec-ai-category-generated {
+    overflow-wrap: anywhere;
 }
 
 .mec-ai-category-fields {
@@ -1000,25 +1064,6 @@ body.m-e-calendar_page_MEC-ai {
     border-radius: 9px
 }
 
-.mec-ai-event-warnings {
-    padding: 12px 14px;
-    border: 1px solid var(--mec-ai-err-border);
-    border-inline-start: 3px solid var(--mec-ai-err);
-    border-radius: var(--mec-ai-r-input);
-    background: var(--mec-ai-err-bg);
-    color: var(--mec-ai-err);
-    font-size: 12.5px;
-    line-height: 1.5
-}
-
-.mec-ai-event-warnings p {
-    margin: 0
-}
-
-.mec-ai-event-warnings p+p {
-    margin-top: 6px
-}
-
 .mec-ai-icon-picker {
     position: fixed;
     z-index: 100100;
@@ -1108,7 +1153,7 @@ body.m-e-calendar_page_MEC-ai {
 }
 
 .mec-ai-icon-choice:hover {
-    border-color: #008aff !important;
+    border-color: var(--mec-ai-accent) !important;
     background: #f7fbff !important;
     color: #006fd6 !important
 }
@@ -1120,13 +1165,46 @@ body.m-e-calendar_page_MEC-ai {
 }
 
 .mec-admin-dark-mode .mec-ai-icon-choice:hover {
-    border-color: #008aff !important;
+    border-color: var(--mec-ai-accent) !important;
     background: #12253c !important;
     color: #3ed0f2 !important
 }
 
 .mec-ai-icon-choice i {
     font-size: 18px
+}
+
+.mec-ai-new-event-action {
+    margin: 12px 0 18px
+}
+
+.mec-ai-mode-button .mec-sl-energy {
+    margin-right: 4px
+}
+
+.mec-ai-event-modal {
+    display: none
+}
+
+.ui-dialog.mec-ai-dialog {
+    max-width: calc(100vw - 40px);
+    z-index: 100100
+}
+
+.ui-dialog.mec-ai-dialog .ui-dialog-content {
+    max-height: calc(100vh - 140px);
+    padding: 0
+}
+
+.mec-ai-event-runner {
+    background: var(--mec-ai-panel-bg);
+    color: var(--mec-ai-text);
+    padding: 16px
+}
+
+.mec-ai-event-runner .mec-ai-step,
+.mec-ai-event-runner .mec-ai-setup-guide {
+    margin: 0
 }
 
 @media(max-width:960px) {
@@ -1198,4 +1276,555 @@ body.m-e-calendar_page_MEC-ai {
     .mec-ai-icon-grid {
         grid-template-columns: repeat(auto-fill, minmax(42px, 1fr))
     }
+
+    .mec-ai-event-runner {
+        padding: 14px
+    }
+}
+
+/* Compact AI dialog (new event screen) */
+.ui-dialog.mec-ai-dialog {
+    width: 720px !important
+}
+
+.ui-dialog.mec-ai-dialog .ui-dialog-titlebar {
+    padding: 10px 16px;
+    font-size: 14px
+}
+
+.ui-dialog.mec-ai-dialog .ui-dialog-content {
+    max-height: calc(100vh - 120px);
+    overflow-y: auto
+}
+
+.mec-ai-compact {
+    font-size: 13px
+}
+
+.mec-ai-compact .mec-ai-prompt-row {
+    margin: 0 0 10px
+}
+
+.mec-ai-compact .mec-ai-prompt-content textarea {
+    min-height: 0;
+    padding: 8px 10px;
+    font-size: 13px;
+    line-height: 1.5
+}
+
+.mec-ai-compact .mec-ai-prompt-help {
+    margin-top: 8px;
+    padding: 8px 12px
+}
+
+.mec-ai-compact .mec-ai-prompt-help summary {
+    color: var(--mec-ai-accent-ink);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer
+}
+
+.mec-ai-compact .mec-ai-prompt-help ul {
+    margin-top: 6px
+}
+
+.mec-ai-compact .mec-ai-submit-row {
+    gap: 12px;
+    margin-top: 8px;
+    padding: 10px 12px
+}
+
+.mec-ai-compact .mec-ai-submit-row>div {
+    gap: 2px
+}
+
+.mec-ai-compact .mec-ai-submit-row strong {
+    font-size: 13px
+}
+
+.mec-ai-compact .mec-ai-submit-row span {
+    font-size: 11.5px
+}
+
+.mec-ai-compact .mec-ai-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 34px;
+    padding: 0 16px;
+    border: 1px solid transparent;
+    border-radius: var(--mec-ai-r-btn);
+    background: var(--mec-ai-accent);
+    color: #fff;
+    box-shadow: none;
+    font-size: 12.5px;
+    font-weight: 600;
+    white-space: nowrap
+}
+
+.mec-ai-compact .mec-ai-submit:hover,
+.mec-ai-compact .mec-ai-submit:focus {
+    background: var(--mec-ai-accent-hover);
+    color: #fff
+}
+
+.mec-ai-compact .mec-ai-submit[disabled],
+.mec-ai-compact .mec-ai-submit.is-loading {
+    opacity: .55;
+    cursor: not-allowed
+}
+
+.mec-ai-compact .mec-ai-event-preview {
+    margin-top: 12px;
+    padding-top: 12px
+}
+
+.mec-ai-compact .mec-ai-event-preview .mec-ai-step-head {
+    gap: 2px;
+    margin-bottom: 8px
+}
+
+.mec-ai-compact .mec-ai-event-preview .mec-ai-eyebrow,
+.mec-ai-compact .mec-ai-event-preview .mec-ai-step-head p {
+    display: none
+}
+
+.mec-ai-compact .mec-ai-event-preview .mec-ai-step-head h2 {
+    font-size: 14px
+}
+
+.mec-ai-compact .mec-ai-event-preview-content {
+    gap: 10px
+}
+
+.mec-ai-compact .mec-ai-event-editor,
+.mec-ai-compact .mec-ai-event-summary,
+.mec-ai-compact .mec-ai-event-list {
+    padding: 10px 12px
+}
+
+.mec-ai-compact .mec-ai-event-editor h3,
+.mec-ai-compact .mec-ai-event-summary h3,
+.mec-ai-compact .mec-ai-event-list h3 {
+    margin-bottom: 6px;
+    font-size: 13px
+}
+
+.mec-ai-compact .mec-ai-event-editor-grid {
+    gap: 8px 12px;
+    margin-top: 8px
+}
+
+.mec-ai-compact .mec-ai-event-editor-tickets {
+    margin-top: 10px;
+    padding-top: 8px
+}
+
+.mec-ai-compact .mec-ai-event-ticket-row {
+    grid-template-columns: minmax(0, 1.2fr) 96px 96px;
+    gap: 8px;
+    padding: 6px 8px
+}
+
+.mec-ai-compact .mec-ai-event-content {
+    max-height: 120px;
+    margin-bottom: 8px;
+    overflow-y: auto;
+    font-size: 12.5px;
+    line-height: 1.5
+}
+
+.mec-ai-compact .mec-ai-event-detail {
+    grid-template-columns: 90px minmax(0, 1fr);
+    gap: 8px;
+    padding: 4px 0
+}
+
+.mec-ai-compact .mec-ai-event-image img {
+    max-height: 140px;
+    object-fit: cover
+}
+
+.mec-ai-setup-compact {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: var(--ms-card);
+    box-shadow: inset 0 0 0 1px var(--ms-line), var(--ms-shadow)
+}
+
+.mec-ai-setup-mark {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: var(--ms-warn-bg);
+    color: var(--ms-warn);
+    font-size: 16px
+}
+
+.mec-ai-setup-text {
+    display: grid;
+    gap: 3px;
+    min-width: 0
+}
+
+.mec-ai-setup-text strong {
+    color: var(--ms-ink);
+    font-size: 13.5px;
+    line-height: 1.35
+}
+
+.mec-ai-setup-text p {
+    margin: 0;
+    color: var(--ms-text);
+    font-size: 12.5px;
+    line-height: 1.55
+}
+
+.mec-ai-setup-text small {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 2px;
+    color: var(--ms-muted);
+    font-size: 11.5px
+}
+
+.mec-ai-compact .mec-ai-setup-compact .mec-ai-submit {
+    align-self: center
+}
+
+@media(max-width:600px) {
+    .mec-ai-setup-compact {
+        grid-template-columns: auto minmax(0, 1fr)
+    }
+
+    .mec-ai-setup-compact .mec-ai-submit {
+        grid-column: 1/-1
+    }
+}
+
+@media(max-width:760px) {
+    .ui-dialog.mec-ai-dialog {
+        width: calc(100vw - 20px) !important;
+        left: 10px !important
+    }
+}
+
+/* Rounded MEC-style dialog */
+.ui-dialog.mec-ai-dialog {
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid var(--ms-line);
+    border-radius: 16px;
+    background: var(--ms-card);
+    box-shadow: 0 24px 60px -12px rgba(16, 24, 40, .3), 0 0 0 1px rgba(16, 24, 40, .04)
+}
+
+.ui-dialog.mec-ai-dialog .ui-dialog-titlebar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    border: 0;
+    border-bottom: 1px solid var(--ms-line);
+    border-radius: 0;
+    background: var(--ms-card);
+    color: var(--ms-ink);
+    font-size: 15px;
+    font-weight: 600
+}
+
+.ui-dialog.mec-ai-dialog .ui-dialog-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    float: none;
+    width: auto;
+    margin: 0
+}
+
+.ui-dialog.mec-ai-dialog .ui-dialog-title::before {
+    content: "";
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23fff'%3E%3Cpath d='M9.5 3.5 11 8l4.5 1.5L11 11l-1.5 4.5L8 11 3.5 9.5 8 8z'/%3E%3Cpath d='M17.5 12l.9 2.6 2.6.9-2.6.9-.9 2.6-.9-2.6-2.6-.9 2.6-.9z'/%3E%3C/svg%3E") center/17px no-repeat, linear-gradient(135deg, #00BEEB, #00E68C)
+}
+
+.ui-dialog.mec-ai-dialog .ui-dialog-titlebar-close {
+    position: static;
+    width: 28px;
+    height: 28px;
+    margin: 0 0 0 auto;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--mec-ai-text-2);
+    transform: none;
+    transition: background .15s ease
+}
+
+.ui-dialog.mec-ai-dialog .ui-dialog-titlebar-close:hover,
+.ui-dialog.mec-ai-dialog .ui-dialog-titlebar-close:focus {
+    background: var(--mec-ai-accent-soft-2);
+    color: var(--mec-ai-accent-ink)
+}
+
+.ui-dialog.mec-ai-dialog .ui-dialog-titlebar-close .ui-icon {
+    margin: 0;
+    top: 6px;
+    left: 6px
+}
+
+.ui-dialog.mec-ai-dialog.mec-ds {
+    padding: 0
+}
+
+.ui-dialog.mec-ai-dialog .ui-dialog-content,
+.mec-ai-event-runner {
+    background: var(--ms-soft)
+}
+
+.mec-ai-compact .mec-ai-prompt-content textarea {
+    border-radius: 12px
+}
+
+.mec-ai-compact .mec-ai-prompt-help,
+.mec-ai-compact .mec-ai-submit-row,
+.mec-ai-compact .mec-ai-event-editor,
+.mec-ai-compact .mec-ai-event-summary,
+.mec-ai-compact .mec-ai-event-list {
+    border-radius: 14px;
+    background: var(--mec-ai-card-bg)
+}
+
+.mec-ai-compact .mec-ai-submit,
+.mec-ai-compact .mec-ai-event-editor-input,
+.mec-ai-compact .mec-ai-event-editor-date input,
+.mec-ai-compact .mec-ai-event-ticket-row input {
+    border-radius: 10px
+}
+
+.mec-ai-compact .mec-ai-event-ticket-row {
+    border-radius: 11px
+}
+
+/* AI Mode trigger: MEC ink pill, animated brand-gradient rim, MEC mark + sparkle */
+.button.mec-ai-mode-button {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    min-height: 40px;
+    padding: 0 18px 0 7px;
+    overflow: hidden;
+    border: 1.5px solid transparent;
+    border-radius: 999px;
+    background:
+        linear-gradient(#1C1E2F, #1C1E2F) padding-box,
+        linear-gradient(110deg, #00BEEB, #0A7CFF 35%, #00E68C 65%, #00BEEB) border-box;
+    background-size: 100% 100%, 250% 100%;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .1px;
+    box-shadow: 0 6px 16px -6px rgba(0, 190, 235, .55);
+    cursor: pointer;
+    animation: mec-ai-rim 5s linear infinite;
+    transition: box-shadow .2s ease, filter .2s ease
+}
+
+.button.mec-ai-mode-button::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(120px 40px at 20% 0%, rgba(0, 190, 235, .28), transparent 70%);
+    opacity: .7;
+    pointer-events: none;
+    transition: opacity .2s ease
+}
+
+.button.mec-ai-mode-button:hover,
+.button.mec-ai-mode-button:focus,
+.button.mec-ai-mode-button:active {
+    border: 1.5px solid transparent;
+    background:
+        linear-gradient(#262A42, #262A42) padding-box,
+        linear-gradient(110deg, #00BEEB, #0A7CFF 35%, #00E68C 65%, #00BEEB) border-box;
+    background-size: 100% 100%, 250% 100%;
+    color: #fff;
+    box-shadow: 0 8px 22px -6px rgba(0, 190, 235, .7), 0 0 0 3px rgba(0, 190, 235, .18)
+}
+
+.button.mec-ai-mode-button:hover::after {
+    opacity: 1
+}
+
+.button.mec-ai-mode-button:focus-visible {
+    outline: 0;
+    box-shadow: 0 0 0 3px rgba(0, 190, 235, .45)
+}
+
+.mec-ai-magic-logo {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    flex: none;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 0 2px rgba(0, 190, 235, .25)
+}
+
+.mec-ai-magic-logo::before {
+    content: "";
+    width: 16px;
+    height: 16px;
+    background: url("../img/mec-logo-icon.svg") center/contain no-repeat
+}
+
+.mec-ai-mode-button>span:not(.mec-ai-magic-logo) {
+    position: relative;
+    z-index: 1
+}
+
+.mec-ai-magic-icon {
+    position: relative;
+    z-index: 1;
+    width: 15px;
+    height: 15px;
+    flex: none;
+    margin-inline-start: -2px;
+    color: #7AF6FF;
+    filter: drop-shadow(0 0 4px rgba(122, 246, 255, .8));
+    animation: mec-ai-twinkle 2.4s ease-in-out infinite
+}
+
+@keyframes mec-ai-rim {
+    to { background-position: 0 0, -250% 0 }
+}
+
+@keyframes mec-ai-twinkle {
+    0%, 100% { transform: scale(1) rotate(0); opacity: 1 }
+    50% { transform: scale(1.2) rotate(14deg); opacity: .8 }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .button.mec-ai-mode-button,
+    .mec-ai-magic-icon {
+        animation: none
+    }
+}
+
+/* Dialog close button: plain X, no animation */
+.ui-dialog.mec-ai-dialog .ui-dialog-titlebar-close {
+    display: block;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    border-radius: 8px;
+    background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2380858F' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M7 7l10 10M17 7 7 17'/%3E%3C/svg%3E") center/16px no-repeat;
+    color: transparent;
+    font-size: 0;
+    text-indent: -9999px;
+    box-shadow: none;
+    cursor: pointer;
+    transform: none;
+    transition: none
+}
+
+.ui-dialog.mec-ai-dialog .ui-dialog-titlebar-close .ui-icon,
+.ui-dialog.mec-ai-dialog .ui-dialog-titlebar-close .ui-button-icon,
+.ui-dialog.mec-ai-dialog .ui-dialog-titlebar-close .ui-button-icon-space {
+    display: none
+}
+
+.ui-dialog.mec-ai-dialog .ui-dialog-titlebar-close:hover,
+.ui-dialog.mec-ai-dialog .ui-dialog-titlebar-close:focus,
+.ui-dialog.mec-ai-dialog .ui-dialog-titlebar-close:active {
+    background: var(--ms-soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231C1E2F' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M7 7l10 10M17 7 7 17'/%3E%3C/svg%3E") center/16px no-repeat;
+    color: transparent;
+    box-shadow: none;
+    transform: none
+}
+
+.ui-dialog.mec-ai-dialog .ui-dialog-titlebar-close:focus-visible {
+    outline: 0;
+    box-shadow: 0 0 0 2px rgba(0, 190, 235, .45)
+}
+
+.mec-ai-compact .mec-ai-event-editor-grid>.mec-ai-event-editor-field:nth-child(-n+2) {
+    grid-column: 1/-1
+}
+
+/* Dialog follows the MEC design-system section language */
+.mec-ai-compact .mec-ai-prompt-row>label,
+.mec-ai-compact .mec-ai-event-editor h3,
+.mec-ai-compact .mec-ai-event-preview .mec-ai-step-head h2 {
+    position: relative;
+    padding-inline-start: 12px;
+    color: var(--ms-ink);
+    font-size: 13.5px;
+    font-weight: 600
+}
+
+.mec-ai-compact .mec-ai-prompt-row>label::before,
+.mec-ai-compact .mec-ai-event-editor h3::before,
+.mec-ai-compact .mec-ai-event-preview .mec-ai-step-head h2::before {
+    content: "";
+    position: absolute;
+    inset-inline-start: 0;
+    top: 50%;
+    width: 3px;
+    height: 14px;
+    border-radius: 2px;
+    transform: translateY(-50%);
+    background: linear-gradient(180deg, #00BEEB, #00E68C)
+}
+
+.mec-ai-compact .mec-ai-prompt-help,
+.mec-ai-compact .mec-ai-submit-row,
+.mec-ai-compact .mec-ai-event-editor,
+.mec-ai-compact .mec-ai-event-summary,
+.mec-ai-compact .mec-ai-event-list {
+    border-color: var(--ms-line);
+    box-shadow: var(--ms-shadow)
+}
+
+.mec-ai-compact .mec-ai-submit-row {
+    background: var(--ms-soft-blue)
+}
+
+.mec-ai-compact .mec-ai-prompt-content textarea,
+.mec-ai-compact .mec-ai-event-editor-input,
+.mec-ai-compact .mec-ai-event-editor-date input,
+.mec-ai-compact .mec-ai-event-ticket-row input {
+    border-color: var(--ms-line-2);
+    background: var(--ms-card);
+    color: var(--ms-ink)
+}
+
+.mec-ai-compact .mec-ai-prompt-content textarea:focus,
+.mec-ai-compact .mec-ai-event-editor-input:focus,
+.mec-ai-compact .mec-ai-event-editor-date input:focus,
+.mec-ai-compact .mec-ai-event-ticket-row input:focus {
+    border-color: var(--ms-blue);
+    box-shadow: var(--mec-ai-focus)
+}
+
+/* Notices inside the dialog: same notice style (defined above), tighter spacing */
+.mec-ai-compact :is(.mec-ai-request-notice, .mec-ai-category-result, .mec-ai-event-warnings):not(:empty) {
+    margin: 10px 0 0
 }

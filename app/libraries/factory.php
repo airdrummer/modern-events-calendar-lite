@@ -107,6 +107,7 @@ class MEC_factory extends MEC_base
         // Add AJAX actions
         $this->action('wp_ajax_mec_save_styles', [$this->main, 'save_options']);
         $this->action('wp_ajax_mec_save_settings', [$this->main, 'save_options']);
+        $this->action('wp_ajax_mec_test_captcha_keys', [$this->main, 'test_captcha_keys']);
         $this->action('wp_ajax_mec_save_reg_form', [$this->main, 'save_options']);
         $this->action('wp_ajax_mec_save_gateways', [$this->main, 'save_options']);
         $this->action('wp_ajax_mec_save_styling', [$this->main, 'save_options']);
@@ -360,7 +361,8 @@ class MEC_factory extends MEC_base
             'mec-font-icons' => $this->main->asset('css/iconfonts.css'),
             'mec-backend-rtl-style' => $this->main->asset('css/mecrtl.min.css'),
             'mec-backend-style' => [
-                'src' => $this->main->asset('css/backend.min.css'),
+                // backend.min.css is built from backend.css (Gruntfile cssmin); SCRIPT_DEBUG loads the source.
+                'src' => $this->main->asset((defined('SCRIPT_DEBUG') && SCRIPT_DEBUG) ? 'css/backend.css' : 'css/backend.min.css'),
                 'deps' => $backend_css_dependencies,
             ],
             'mec-lity-style' => $this->main->asset('packages/lity/lity.min.css'),
@@ -498,65 +500,23 @@ class MEC_factory extends MEC_base
 
             if (isset($_REQUEST['page']) && sanitize_key(wp_unslash($_REQUEST['page'])) === 'mec-ai')
             {
-                wp_enqueue_style('mec-ai-task-runner');
-                wp_enqueue_script('mec-ai-task-runner');
-                wp_localize_script('mec-ai-task-runner', 'mec_ai_task_runner', [
-                    'ajax_url' => admin_url('admin-ajax.php'),
-                    'nonce' => wp_create_nonce('mec_ai_task_nonce'),
-                    'error' => __('The AI request could not be completed. Please review the form and try again.', 'modern-events-calendar-lite'),
-                    'coming_soon' => __('Coming soon', 'modern-events-calendar-lite'),
-                    'coming_soon_copy' => __('This task is visible now and will use the same reviewed AI workflow when it is ready.', 'modern-events-calendar-lite'),
-                    'preview_title' => __('Ready to generate a category preview?', 'modern-events-calendar-lite'),
-                    'preview_copy' => __('MEC will send your brief and existing category context to the WordPress AI provider. No categories are created yet.', 'modern-events-calendar-lite'),
-                    'event_preview_title' => __('Ready to generate an event preview?', 'modern-events-calendar-lite'),
-                    'event_preview_copy' => __('MEC will create a structured event preview from your brief. Nothing is saved until you confirm the draft.', 'modern-events-calendar-lite'),
-                    'prompt_required' => __('Please describe the categories you want to create.', 'modern-events-calendar-lite'),
-                    'event_prompt_required' => __('Please describe the event you want to create.', 'modern-events-calendar-lite'),
-                    'preview_ready' => __('Your category suggestions are ready to review.', 'modern-events-calendar-lite'),
-                    'include' => __('Include', 'modern-events-calendar-lite'),
-                    'duplicate' => __('Duplicate', 'modern-events-calendar-lite'),
-                    'duplicate_note' => __('Already exists, so it will be skipped.', 'modern-events-calendar-lite'),
-                    'name' => __('Name', 'modern-events-calendar-lite'),
-                    'description' => __('Description', 'modern-events-calendar-lite'),
-                    'icon' => __('Icon', 'modern-events-calendar-lite'),
-                    'color' => __('Color', 'modern-events-calendar-lite'),
-                    'select_category' => __('Select at least one category to create.', 'modern-events-calendar-lite'),
-                    'created' => __('Created', 'modern-events-calendar-lite'),
-                    'skipped' => __('Skipped', 'modern-events-calendar-lite'),
-                    'failed' => __('Failed', 'modern-events-calendar-lite'),
-                    'event_preview_required' => __('Generate an event preview before creating the draft.', 'modern-events-calendar-lite'),
-                    'quick_edits' => __('Quick edits', 'modern-events-calendar-lite'),
-                    'title' => __('Title', 'modern-events-calendar-lite'),
-                    'start' => __('Start', 'modern-events-calendar-lite'),
-                    'end' => __('End', 'modern-events-calendar-lite'),
-                    'price' => __('Price', 'modern-events-calendar-lite'),
-                    'capacity' => __('Capacity', 'modern-events-calendar-lite'),
-                    'terms_hint' => __('Separate names with commas.', 'modern-events-calendar-lite'),
-                    'date_time' => __('Date & time', 'modern-events-calendar-lite'),
-                    'location' => __('Location', 'modern-events-calendar-lite'),
-                    'organizer' => __('Organizer', 'modern-events-calendar-lite'),
-                    'categories' => __('Categories', 'modern-events-calendar-lite'),
-                    'tags' => __('Tags', 'modern-events-calendar-lite'),
-                    'labels' => __('Labels', 'modern-events-calendar-lite'),
-                    'hourly_schedule' => __('Hourly schedule', 'modern-events-calendar-lite'),
-                    'tickets' => __('Tickets', 'modern-events-calendar-lite'),
-                    'all_day' => __('All day', 'modern-events-calendar-lite'),
-                    'repeats' => __('Repeats', 'modern-events-calendar-lite'),
-                ]);
+                $this->enqueue_ai_task_assets();
             }
 
             // Settings
             $settings = $this->main->get_settings();
 
-            wp_localize_script('mec-backend-script', 'mec_admin_localize', [
+            $mec_admin_localize = [
                 'ajax_url' => admin_url('admin-ajax.php'),
                 'ajax_nonce' => wp_create_nonce('mec_settings_nonce'),
+                'captcha_nonce' => wp_create_nonce('mec_test_captcha_keys'),
                 'skins_assets_url' => $this->main->asset('img/skins/'),
                 'mce_items' => $this->main->mce_get_shortcode_list(),
                 'datepicker_format' => (isset($settings['datepicker_format']) and trim($settings['datepicker_format'])) ? trim($settings['datepicker_format']) : 'yy-mm-dd',
                 'start_date_required' => __('Please enter a start date for the event.', 'modern-events-calendar-lite'),
                 'end_after_start' => __('The end date and time must be on or after the start date and time.', 'modern-events-calendar-lite'),
                 'publish_warnings_status' => (!isset($settings['publish_warnings_status']) or $settings['publish_warnings_status']) ? 1 : 0,
+                'publish_warning_checks' => isset($settings['publish_warning_checks']) && is_array($settings['publish_warning_checks']) ? array_map('intval', $settings['publish_warning_checks']) : [],
                 'repeat_preview_off' => __('Repeating is off.', 'modern-events-calendar-lite'),
                 'repeat_preview_next' => __('Next occurrences (from start date)', 'modern-events-calendar-lite'),
                 'repeat_preview_total' => __('This event will occur %d times in total.', 'modern-events-calendar-lite'),
@@ -580,15 +540,106 @@ class MEC_factory extends MEC_base
                     'checked_message' => __('This field will show when "%s" is checked.', 'modern-events-calendar-lite'),
                     'select_value' => __('Choose the value that should reveal this field.', 'modern-events-calendar-lite'),
                 ],
-            ]);
+                // Settings-page runtime strings (backend.js) — kept here so
+                // they are translatable instead of hardcoded English in JS.
+                'l10n' => [
+                    'captcha_select_provider' => __('Select a captcha provider first.', 'modern-events-calendar-lite'),
+                    'captcha_testing' => __('Testing ...', 'modern-events-calendar-lite'),
+                    'captcha_keys_valid' => __('Keys look valid.', 'modern-events-calendar-lite'),
+                    'captcha_test_failed' => __('Test failed.', 'modern-events-calendar-lite'),
+                    'captcha_request_failed' => __('Test request failed.', 'modern-events-calendar-lite'),
+                    'search_other_tabs' => __('Found in other tabs', 'modern-events-calendar-lite'),
+                    'search_no_match' => __('No matching settings', 'modern-events-calendar-lite'),
+                    'search_section_found_single' => __('%s section found', 'modern-events-calendar-lite'),
+                    'search_section_found' => __('%s sections found', 'modern-events-calendar-lite'),
+                    'search_setting_found_single' => __('%s setting found', 'modern-events-calendar-lite'),
+                    'search_setting_found' => __('%s settings found', 'modern-events-calendar-lite'),
+                    // U2 - in-page match reachability (backend.js search jump)
+                    'search_setting_found_here_single' => __('%s setting found on this page', 'modern-events-calendar-lite'),
+                    'search_setting_found_here' => __('%s settings found on this page', 'modern-events-calendar-lite'),
+                    'search_jump_hint' => __('Jump to match', 'modern-events-calendar-lite'),
+                    'search_indexing' => __('Searching other tabs…', 'modern-events-calendar-lite'),
+                    'unsaved_changes' => __('You have unsaved changes on this page. Leaving now will discard them.', 'modern-events-calendar-lite'),
+                    // Save feedback (mecSettingsSaveFeedback); same msgids as the General tab.
+                    'save_changes' => __('Save Changes', 'modern-events-calendar-lite'),
+                    'saving' => __('Saving ...', 'modern-events-calendar-lite'),
+                    'settings_saved' => __('Settings Saved!', 'modern-events-calendar-lite'),
+                    'save_failed' => __("Couldn't save your changes. Your edits are still on this page - nothing was lost.", 'modern-events-calendar-lite'),
+                    'retry' => __('Retry', 'modern-events-calendar-lite'),
+                    'dismiss_notice' => __('Dismiss notification', 'modern-events-calendar-lite'),
+                    'separator_one_char' => __('Separator must be exactly one character.', 'modern-events-calendar-lite'),
+                    'slug_invalid' => __('Use only lowercase letters (a-z), numbers and hyphens.', 'modern-events-calendar-lite'),
+                    'no_spaces' => __('This value should not start or end with a space.', 'modern-events-calendar-lite'),
+                    'decimals_range' => __('Decimals must be a whole number between 0 and 6.', 'modern-events-calendar-lite'),
+                    'copied' => __('Copied!', 'modern-events-calendar-lite'),
+                    'press_ctrl_c' => __('Press Ctrl+C', 'modern-events-calendar-lite'),
+                    /* translators: %s: the code or placeholder that gets copied. */
+                    'copy_code' => __('Copy: %s', 'modern-events-calendar-lite'),
+                    'search_placeholders' => __('Search placeholders...', 'modern-events-calendar-lite'),
+                    'placeholders' => __('Placeholders', 'modern-events-calendar-lite'),
+                    'search_no_match_hint' => __('Try a different keyword, or check the other tabs in the sidebar.', 'modern-events-calendar-lite'),
+                    /* translators: %s: sample date or time. */
+                    'preview' => __('Preview: %s', 'modern-events-calendar-lite'),
+                    'more_information' => __('More information', 'modern-events-calendar-lite'),
+                    // Translate Options (Messages) page runtime strings (messages.php footer script)
+                    'msg_customized_count' => __('%1$s of %2$s customized', 'modern-events-calendar-lite'),
+                    'msg_panel_customized' => __('%s customized', 'modern-events-calendar-lite'),
+                ],
+            ];
+
+            wp_localize_script('mec-backend-script', 'mec_admin_localize', $mec_admin_localize);
+
+            // Cross-group settings search index: on every MEC settings tab
+            // (core and add-on tabs), not only the General tab. Added after
+            // wp_localize_script so it is printed once, by the Object.assign
+            // below (backend.js reads it on DOM ready).
+            $_mec_page = isset($_REQUEST['page']) ? sanitize_text_field(wp_unslash($_REQUEST['page'])) : '';
+            if ($_mec_page === 'MEC-settings')
+            {
+                $mec_admin_localize['settings_search_index'] = $this->main->get_settings_search_index();
+
+                // U3 - version stamp for the client-side deep-search cache
+                // (sessionStorage); a plugin update invalidates it.
+                $mec_admin_localize['settings_search_index_version'] = $this->main->get_version();
+            }
+
+            // Third-party scripts (e.g. MEC addons) sometimes re-localize
+            // 'mec_admin_localize' with a partial set of keys after us, which
+            // silently strips core keys such as publish_warnings_status (the
+            // last `var mec_admin_localize = {...}` declaration wins in JS).
+            // Re-apply the complete set after the script tag via Object.assign
+            // so core keys always survive without dropping anyone else's keys.
+            wp_add_inline_script('mec-backend-script',
+                'window.mec_admin_localize = Object.assign(window.mec_admin_localize || {}, ' . wp_json_encode($mec_admin_localize) . ');',
+                'after'
+            );
 
             wp_enqueue_script('mec-events-script');
 
+            // The media modal and TinyMCE are only rendered by the heavy
+            // settings tabs (notifications email bodies, styling background
+            // image, booking/single/modules forms...). Skip them on the
+            // lightweight tabs to save the load.
+            $_mec_lite_tabs = array('MEC-settings', 'MEC-messages', 'MEC-ie', 'MEC-customcss');
+            $_mec_current_tab = isset($_REQUEST['tab']) ? sanitize_text_field(wp_unslash($_REQUEST['tab'])) : '';
+            $_mec_skip_heavy_editor = in_array($_mec_current_tab, $_mec_lite_tabs, true);
+
+            // Custom CSS tab: upgrade the styles box to the WordPress core
+            // CodeMirror editor (syntax highlight, line numbers, tab-indent).
+            // Core ships the bundle since WP 4.9, so nothing is added to the
+            // plugin. The plain textarea stays as the fallback when the editor
+            // is disabled (wp_code_editor_settings filter) or its script is
+            // blocked; styles.php initializes only if wp.codeEditor exists.
+            if ($_mec_page === 'MEC-settings' && $_mec_current_tab === 'MEC-customcss' && function_exists('wp_enqueue_code_editor'))
+            {
+                wp_enqueue_code_editor(array('type' => 'text/css'));
+            }
+
             // Thickbox
-            wp_enqueue_media();
+            if (!$_mec_skip_heavy_editor) wp_enqueue_media();
 
             // WP Editor
-            wp_enqueue_editor();
+            if (!$_mec_skip_heavy_editor) wp_enqueue_editor();
 
             // MEC Icons
             wp_enqueue_style('mec-font-icons');
@@ -606,7 +657,81 @@ class MEC_factory extends MEC_base
         // Refinement layer — conservative polish overlay (loaded after backend.css)
         wp_enqueue_style('mec-backend-refinements', $this->main->asset('css/backend-refinements.css'), ['mec-backend-style'], $this->asset_version($this->main->asset('css/backend-refinements.css')));
 
+        // Inter font for the redesigned #mec-wrap pages (Settings, Report, Import/Export, AI, Support, Addons)
+        $_mec_inter_page = isset($_GET['page']) ? sanitize_text_field(wp_unslash($_GET['page'])) : '';
+        if (in_array($_mec_inter_page, ['MEC-settings', 'MEC-report', 'MEC-ix', 'MEC-ai', 'MEC-support', 'MEC-addons'], true))
+        {
+            wp_enqueue_style('mec-inter-font', 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap', [], null);
+        }
+
         if (isset($styling) and isset($styling['accessibility']) && $styling['accessibility']) wp_enqueue_style('mec-backend-accessibility', $this->main->asset('css/a11y-backend.min.css'), $this->main->get_version());
+    }
+
+    /**
+     * Loads the shared MEC AI task runner and its localized labels.
+     *
+     * @return void
+     */
+    public function enqueue_ai_task_assets()
+    {
+        wp_enqueue_style('mec-ai-task-runner');
+        wp_enqueue_script('mec-ai-task-runner');
+
+        $ai = MEC::getInstance('app.features.ai', 'MEC_feature_ai');
+        wp_localize_script('mec-ai-task-runner', 'mec_ai_task_runner', [
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('mec_ai_task_nonce'),
+            'taxonomy_tasks' => $ai->get_ai_taxonomy_tasks(),
+            'taxonomy_images_available' => current_user_can('upload_files') && $ai->get_ai_task_status()['image_available'],
+            'taxonomy_preview_title' => __('Ready to generate a preview?', 'modern-events-calendar-lite'),
+            'taxonomy_preview_copy' => __('Review suggestions before creating the selected items.', 'modern-events-calendar-lite'),
+            'taxonomy_prompt_required' => __('Describe the items you want to create.', 'modern-events-calendar-lite'),
+            'select_terms' => __('Select at least one item to create.', 'modern-events-calendar-lite'),
+            'image_prompt' => __('Image prompt', 'modern-events-calendar-lite'),
+            'generate_image' => __('Generate image', 'modern-events-calendar-lite'),
+            'regenerate_image' => __('Regenerate image', 'modern-events-calendar-lite'),
+            'remove_image' => __('Remove image', 'modern-events-calendar-lite'),
+            'taxonomy_image_unavailable' => __('Image generation requires an image provider and permission to upload files.', 'modern-events-calendar-lite'),
+            'error' => __('The AI request could not be completed. Please review the form and try again.', 'modern-events-calendar-lite'),
+            'coming_soon' => __('Coming soon', 'modern-events-calendar-lite'),
+            'coming_soon_copy' => __('This task is visible now and will use the same reviewed AI workflow when it is ready.', 'modern-events-calendar-lite'),
+            'preview_title' => __('Ready to generate a category preview?', 'modern-events-calendar-lite'),
+            'preview_copy' => __('MEC will send your brief and existing category context to the WordPress AI provider. No categories are created yet.', 'modern-events-calendar-lite'),
+            'event_preview_title' => __('Ready to generate an event preview?', 'modern-events-calendar-lite'),
+            'event_preview_copy' => __('MEC will create a structured event preview from your brief. Nothing is saved until you confirm the draft.', 'modern-events-calendar-lite'),
+            'prompt_required' => __('Please describe the categories you want to create.', 'modern-events-calendar-lite'),
+            'event_prompt_required' => __('Please describe the event you want to create.', 'modern-events-calendar-lite'),
+            'preview_ready' => __('Your category suggestions are ready to review.', 'modern-events-calendar-lite'),
+            'include' => __('Include', 'modern-events-calendar-lite'),
+            'duplicate' => __('Duplicate', 'modern-events-calendar-lite'),
+            'duplicate_note' => __('Already exists, so it will be skipped.', 'modern-events-calendar-lite'),
+            'name' => __('Name', 'modern-events-calendar-lite'),
+            'description' => __('Description', 'modern-events-calendar-lite'),
+            'icon' => __('Icon', 'modern-events-calendar-lite'),
+            'color' => __('Color', 'modern-events-calendar-lite'),
+            'select_category' => __('Select at least one category to create.', 'modern-events-calendar-lite'),
+            'created' => __('Created', 'modern-events-calendar-lite'),
+            'skipped' => __('Skipped', 'modern-events-calendar-lite'),
+            'failed' => __('Failed', 'modern-events-calendar-lite'),
+            'event_preview_required' => __('Generate an event preview before creating the draft.', 'modern-events-calendar-lite'),
+            'quick_edits' => __('Quick edits', 'modern-events-calendar-lite'),
+            'title' => __('Title', 'modern-events-calendar-lite'),
+            'start' => __('Start', 'modern-events-calendar-lite'),
+            'end' => __('End', 'modern-events-calendar-lite'),
+            'price' => __('Price', 'modern-events-calendar-lite'),
+            'capacity' => __('Capacity', 'modern-events-calendar-lite'),
+            'terms_hint' => __('Separate names with commas.', 'modern-events-calendar-lite'),
+            'date_time' => __('Date & time', 'modern-events-calendar-lite'),
+            'location' => __('Location', 'modern-events-calendar-lite'),
+            'organizer' => __('Organizer', 'modern-events-calendar-lite'),
+            'categories' => __('Categories', 'modern-events-calendar-lite'),
+            'tags' => __('Tags', 'modern-events-calendar-lite'),
+            'labels' => __('Labels', 'modern-events-calendar-lite'),
+            'hourly_schedule' => __('Hourly schedule', 'modern-events-calendar-lite'),
+            'tickets' => __('Tickets', 'modern-events-calendar-lite'),
+            'all_day' => __('All day', 'modern-events-calendar-lite'),
+            'repeats' => __('Repeats', 'modern-events-calendar-lite'),
+        ]);
     }
 
     /**
@@ -1503,12 +1628,13 @@ class MEC_factory extends MEC_base
      */
     public function mec_admin_body_class($darkadmin)
     {
-        $styling = $this->main->get_styling();
+        if (!$this->main->is_admin_dark_mode()) return $darkadmin;
 
-        $darkadmin_mode = $styling['dark_mode'] ?? '';
-        if ($darkadmin_mode == 1) $darkadmin = 'mec-admin-dark-mode';
+        // Only MEC screens get the dark class, so other wp-admin pages stay untouched
+        if (!function_exists('get_current_screen') or !get_current_screen() or !$this->should_include_assets('backend')) return $darkadmin;
 
-        return $darkadmin;
+        // Append (never replace) so classes added by WordPress and other plugins survive
+        return trim($darkadmin . ' mec-admin-dark-mode');
     }
 
     public function should_include_assets($client = 'frontend')

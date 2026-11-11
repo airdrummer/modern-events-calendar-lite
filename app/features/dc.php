@@ -76,6 +76,12 @@ class MEC_feature_dc extends MEC_base
         $meta = $event->data->meta;
         $date = $event->date;
 
+        // The event date is hidden
+        if(in_array($key, array('start_date', 'start_datetime', 'end_date', 'end_datetime', 'occurrence', 'occurrence_start_date', 'occurrence_start_datetime', 'occurrence_end_date', 'occurrence_end_datetime')) and $this->main->hide_date_status($event->ID))
+        {
+            return $this->main->get_tba_label();
+        }
+
         if($key === 'start_date')
         {
             $date_format = get_option('date_format');

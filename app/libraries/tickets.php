@@ -241,7 +241,7 @@ class MEC_tickets extends MEC_base
                                     <span class="mec-tooltip">
                                         <div class="box top">
                                             <h5 class="title"><?php esc_html_e('Private Description', 'modern-events-calendar-lite'); ?></h5>
-                                            <div class="content"><p><?php esc_attr_e("The value can be displayed on the email notifications by placing the %%ticket_private_description%% placeholder into the email content.", 'modern-events-calendar-lite'); ?></p></div>
+                                            <div class="content"><p><?php esc_attr_e("Use %%ticket_private_description%% in email notifications to display this content. Safe HTML, such as links, paragraphs, bold text, and lists, is supported. Scripts and iframes are not allowed.", 'modern-events-calendar-lite'); ?></p></div>
                                         </div>
                                         <i title="" class="dashicons-before dashicons-editor-help"></i>
                                     </span>
@@ -351,8 +351,8 @@ class MEC_tickets extends MEC_base
                             <div class="mec-field__control">
                                 <input type="number" class="mec-stop-selling-tickets" id="mec_stop_selling_value_<?php echo esc_attr($key); ?>" name="<?php echo $name_prefix; ?>[<?php echo esc_attr($key); ?>][stop_selling_value]" value="<?php echo((isset($ticket['stop_selling_value']) and trim($ticket['stop_selling_value'])) ? esc_attr($ticket['stop_selling_value']) : '0'); ?>">
                                 <select id="mec_stop_selling_type_<?php echo esc_attr($key); ?>" name="<?php echo $name_prefix; ?>[<?php echo esc_attr($key); ?>][stop_selling_type]">
-                                    <option value="day" <?php echo(isset($ticket['stop_selling_type']) and trim($ticket['stop_selling_type']) == 'day') ? 'selected="selected"' : ''; ?>><?php esc_html_e("Day", "mec"); ?></option>
-                                    <option value="hour" <?php echo(isset($ticket['stop_selling_type']) and trim($ticket['stop_selling_type']) == 'hour') ? 'selected="selected"' : ''; ?>><?php esc_html_e("Hour", "mec"); ?></option>
+                                    <option value="day" <?php echo(isset($ticket['stop_selling_type']) and trim($ticket['stop_selling_type']) == 'day') ? 'selected="selected"' : ''; ?>><?php esc_html_e("Day", "modern-events-calendar-lite"); ?></option>
+                                    <option value="hour" <?php echo(isset($ticket['stop_selling_type']) and trim($ticket['stop_selling_type']) == 'hour') ? 'selected="selected"' : ''; ?>><?php esc_html_e("Hour", "modern-events-calendar-lite"); ?></option>
                                 </select>
                                 <span class="mec-label"><?php esc_html_e('before event start.', 'modern-events-calendar-lite'); ?></span>
                                 <span class="mec-tooltip">
@@ -366,14 +366,16 @@ class MEC_tickets extends MEC_base
                         </div>
                         <?php endif; ?>
                         <div class="<?php echo $advanced_class; ?>">
-                            <?php do_action('custom_field_ticket', $ticket, $key); ?>
+                            <?php do_action('custom_field_ticket', $ticket, $key, $name_prefix); ?>
                         </div>
                         <?php if($price_per_date_display): ?>
                         <div id="mec_price_per_dates_container" class="<?php echo $advanced_class; ?>">
-                            <div class="mec-form-row">
-                                <h5><?php esc_html_e('Price per Date', 'modern-events-calendar-lite'); ?></h5>
-                                <button class="button mec_add_price_date_button" type="button"
-                                        data-key="<?php echo esc_attr($key); ?>"><?php esc_html_e('Add', 'modern-events-calendar-lite'); ?></button>
+                            <div class="mec-form-row mec-field">
+                                <div class="mec-field__label"><label><?php esc_html_e('Price per Date', 'modern-events-calendar-lite'); ?></label></div>
+                                <div class="mec-field__control">
+                                    <button class="button mec_add_price_date_button" type="button"
+                                            data-key="<?php echo esc_attr($key); ?>"><?php esc_html_e('Add', 'modern-events-calendar-lite'); ?></button>
+                                </div>
                             </div>
                             <div id="mec-ticket-price-dates-<?php echo esc_attr($key); ?>">
                                 <?php $j = 0; if(isset($ticket['dates']) and count($ticket['dates'])) : ?>
@@ -604,7 +606,7 @@ class MEC_tickets extends MEC_base
                             <span class="mec-tooltip">
                                 <div class="box top">
                                     <h5 class="title"><?php esc_html_e('Private Description', 'modern-events-calendar-lite'); ?></h5>
-                                    <div class="content"><p><?php esc_attr_e("The value can be displayed on the email notifications by placing the %%ticket_private_description%% placeholder into the email content.", 'modern-events-calendar-lite'); ?></p></div>
+                                    <div class="content"><p><?php esc_attr_e("Use %%ticket_private_description%% in email notifications to display this content. Safe HTML, such as links, paragraphs, bold text, and lists, is supported. Scripts and iframes are not allowed.", 'modern-events-calendar-lite'); ?></p></div>
                                 </div>
                                 <i title="" class="dashicons-before dashicons-editor-help"></i>
                             </span>
@@ -703,8 +705,8 @@ class MEC_tickets extends MEC_base
                     <div class="mec-field__control">
                         <input type="number" class="mec-stop-selling-tickets" id="mec_stop_selling_value_:i:" name="<?php echo $name_prefix; ?>[:i:][stop_selling_value]" value="0">
                         <select id="mec_stop_selling_type_:i:" name="<?php echo $name_prefix; ?>[:i:][stop_selling_type]">
-                            <option value="day"><?php esc_html_e("Day", "mec"); ?></option>
-                            <option value="hour"><?php esc_html_e("Hour", "mec"); ?></option>
+                            <option value="day"><?php esc_html_e("Day", "modern-events-calendar-lite"); ?></option>
+                            <option value="hour"><?php esc_html_e("Hour", "modern-events-calendar-lite"); ?></option>
                         </select>
                         <span class="mec-label"><?php esc_html_e('before event start.', 'modern-events-calendar-lite'); ?></span>
                         <span class="mec-tooltip">
@@ -718,14 +720,16 @@ class MEC_tickets extends MEC_base
                 </div>
                 <?php endif; ?>
                 <div class="<?php echo $advanced_class; ?>">
-                    <?php do_action('custom_field_dynamic_ticket'); ?>
+                    <?php do_action('custom_field_dynamic_ticket', $name_prefix); ?>
                 </div>
                 <?php if($price_per_date_display): ?>
                 <div id="mec_price_per_dates_container_:i:" class="<?php echo $advanced_class; ?>">
-                    <div class="mec-form-row">
-                        <h5><?php esc_html_e('Price per Date', 'modern-events-calendar-lite'); ?></h5>
-                        <button class="button mec_add_price_date_button" type="button"
-                                data-key=":i:"><?php esc_html_e('Add', 'modern-events-calendar-lite'); ?></button>
+                    <div class="mec-form-row mec-field">
+                        <div class="mec-field__label"><label><?php esc_html_e('Price per Date', 'modern-events-calendar-lite'); ?></label></div>
+                        <div class="mec-field__control">
+                            <button class="button mec_add_price_date_button" type="button"
+                                    data-key=":i:"><?php esc_html_e('Add', 'modern-events-calendar-lite'); ?></button>
+                        </div>
                     </div>
                     <div id="mec-ticket-price-dates-:i:">
                     </div>

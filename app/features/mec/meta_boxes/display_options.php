@@ -871,6 +871,20 @@ $skin_meta = [
                     </div>
                 </div>
                 <?php do_action('mec_skin_options_full_calendar_after_start_date', $sk_options_full_calendar); ?>
+
+                <div class="mec-form-row mec-field">
+                    <div class="mec-field__label">
+                        <label for="mec_skin_full_calendar_date_heading_level"><?php esc_html_e('Date Heading Level', 'modern-events-calendar-lite'); ?></label>
+                    </div>
+                    <div class="mec-field__control">
+                        <select name="mec[sk-options][full_calendar][date_heading_level]" id="mec_skin_full_calendar_date_heading_level">
+                            <?php foreach ([2, 3, 4, 5, 6] as $heading_level): ?>
+                                <option value="<?php echo esc_attr($heading_level); ?>" <?php selected((int) ($sk_options_full_calendar['date_heading_level'] ?? 2), $heading_level); ?>><?php echo esc_html('H' . $heading_level); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <p class="mec-field__help"><?php esc_html_e('Heading level for month, week, day, and year titles. Choose the level immediately below the surrounding page heading. Defaults to H2; this changes semantics, not the displayed date.', 'modern-events-calendar-lite'); ?></p>
+                    </div>
+                </div>
                 <div class="mec-form-row mec-field">
                     <div class="mec-field__label">
                         <label for="mec_skin_full_calendar_default_view"><?php esc_html_e('Default View', 'modern-events-calendar-lite'); ?></label>

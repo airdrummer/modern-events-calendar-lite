@@ -148,7 +148,12 @@ abstract class MEC_base extends MEC
      */
     final public function getQRcode()
     {
-        self::import('app.libraries.qrcode');
+        // Avoid "Cannot declare class qrstr" when another plugin already loaded phpqrcode.
+        if (!class_exists('qrstr') && !class_exists('QRcode'))
+        {
+            self::import('app.libraries.qrcode');
+        }
+
         return new QRcode();
     }
 

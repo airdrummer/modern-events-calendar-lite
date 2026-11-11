@@ -826,8 +826,8 @@ class MEC_feature_fes extends MEC_base
         $post_labels = isset($mec['labels']) ? array_map('sanitize_text_field', $mec['labels']) : [];
         $featured_image = isset($mec['featured_image']) ? sanitize_text_field($mec['featured_image']) : '';
 
-        $read_more = isset($mec['read_more']) ? sanitize_url($mec['read_more']) : '';
-        $more_info = (isset($mec['more_info']) and trim($mec['more_info'])) ? sanitize_url($mec['more_info']) : '';
+        $read_more = isset($raw_mec['read_more']) && is_string($raw_mec['read_more']) ? sanitize_url($raw_mec['read_more']) : '';
+        $more_info = isset($raw_mec['more_info']) && is_string($raw_mec['more_info']) ? sanitize_url($raw_mec['more_info']) : '';
         $more_info_title = isset($mec['more_info_title']) ? sanitize_text_field($mec['more_info_title']) : '';
         $more_info_target = isset($this->settings['fes_event_link_target']) && $this->settings['fes_event_link_target'] ? $this->settings['fes_event_link_target'] : '';
 
@@ -1320,6 +1320,7 @@ class MEC_feature_fes extends MEC_base
         $allday = isset($date['allday']) ? 1 : 0;
         $one_occurrence = isset($date['one_occurrence']) ? 1 : 0;
         $hide_time = isset($date['hide_time']) ? 1 : 0;
+        $hide_date = isset($date['hide_date']) ? 1 : 0;
         $hide_end_time = isset($date['hide_end_time']) ? 1 : 0;
         $comment = isset($date['comment']) ? sanitize_text_field($date['comment']) : '';
         $timezone = (isset($mec['timezone']) and trim($mec['timezone']) != '') ? sanitize_text_field($mec['timezone']) : 'global';
@@ -1414,6 +1415,7 @@ class MEC_feature_fes extends MEC_base
         update_post_meta($post_id, 'mec_allday', $allday);
         update_post_meta($post_id, 'one_occurrence', $one_occurrence);
         update_post_meta($post_id, 'mec_hide_time', $hide_time);
+        update_post_meta($post_id, 'mec_hide_date', $hide_date);
         update_post_meta($post_id, 'mec_hide_end_time', $hide_end_time);
         update_post_meta($post_id, 'mec_comment', $comment);
         update_post_meta($post_id, 'mec_timezone', $timezone);
@@ -1770,6 +1772,8 @@ class MEC_feature_fes extends MEC_base
                     $new_tickets = [];
                     foreach ($tickets as $key => $ticket)
                     {
+                        $private_description = $raw_mec['tickets'][$key]['private_description'] ?? '';
+                        $ticket['private_description'] = is_string($private_description) ? wp_kses_post($private_description) : '';
                         unset($ticket['dates'][':j:']);
 
                         $ticket_start_time_ampm = ((intval($ticket['ticket_start_time_hour']) > 0 and intval($ticket['ticket_start_time_hour']) < 13) and isset($ticket['ticket_start_time_ampm'])) ? $ticket['ticket_start_time_ampm'] : '';
@@ -1927,7 +1931,7 @@ class MEC_feature_fes extends MEC_base
         update_post_meta($post_id, 'mec_banner', $event_banner);
 
         // Event Dates Changed?
-        if ($prev_start_datetime and $prev_end_datetime and !$repeat_status and $prev_start_datetime != $start_datetime and $prev_end_datetime != $end_datetime)
+        if ($prev_start_datetime and $prev_end_datetime and !$repeat_status and ($prev_start_datetime != $start_datetime or $prev_end_datetime != $end_datetime))
         {
             $this->main->event_date_updated($post_id, $prev_start_datetime, $prev_end_datetime);
         }

@@ -534,6 +534,7 @@ class MEC_feature_popup extends MEC_base
         update_post_meta($post_id, 'mec_certain_weekdays', '');
         update_post_meta($post_id, 'mec_allday', $allday);
         update_post_meta($post_id, 'mec_hide_time', 0);
+        update_post_meta($post_id, 'mec_hide_date', 0);
         update_post_meta($post_id, 'mec_hide_end_time', 0);
         update_post_meta($post_id, 'mec_comment', '');
         update_post_meta($post_id, 'mec_repeat_status', $repeat_status);

@@ -250,12 +250,12 @@ class MEC_feature_report extends MEC_base
 
             if (get_post_meta($event_id, 'mec_repeat_type', true) === 'custom_days') $date_format .= ' ' . get_option('time_format');
 
-            echo '<select name="mec-report-event-dates" class="mec-reports-selectbox mec-reports-selectbox-dates" onchange="mec_event_attendees(' . esc_attr($event_id) . ', this.value);">';
-            echo '<option value="none">' . esc_html__("Select Date", "mec") . '</option>';
+            echo '<div class="mec-form-row mec-field mec-reports-selectbox-dates"><div class="mec-field__label"><span>' . esc_html__("Date", "modern-events-calendar-lite") . '</span></div><div class="mec-field__control"><select name="mec-report-event-dates" class="mec-reports-selectbox" onchange="mec_event_attendees(' . esc_attr($event_id) . ', this.value);">';
+            echo '<option value="none">' . esc_html__("Select Date", "modern-events-calendar-lite") . '</option>';
 
             if ($bookings_all_occurrences)
             {
-                echo '<option value="all">' . esc_html__("All", "mec") . '</option>';
+                echo '<option value="all">' . esc_html__("All", "modern-events-calendar-lite") . '</option>';
             }
 
             foreach ($dates as $date)
@@ -277,7 +277,7 @@ class MEC_feature_report extends MEC_base
                 echo '<option value="' . esc_attr($date->tstart) . '" ' . ($occurrence == $date->tstart ? 'class="selected-day"' : '') . '>' . strip_tags($this->main->date_label($start, $end, $date_format, ' - ', false)) . '</option>';
             }
 
-            echo '</select>';
+            echo '</select></div></div>';
         }
         else
         {
@@ -310,7 +310,7 @@ class MEC_feature_report extends MEC_base
         if (count($attendees))
         {
             $html .= $this->main->get_attendees_table($attendees, $id, $occurrence);
-            $email_button = '<p>' . esc_html__('If you want to send an email, first select your attendees and then click in the button below, please.', 'modern-events-calendar-lite') . '</p><button data-id="' . esc_attr($id) . '" onclick="mec_submit_event_email(' . esc_attr($id) . ');">' . esc_html__('Send Email', 'modern-events-calendar-lite') . '</button>';
+            $email_button = '<p class="description mec-report-email-hint">' . esc_html__('If you want to send an email, first select your attendees and then click in the button below, please.', 'modern-events-calendar-lite') . '</p><button class="button button-primary mec-report-email-button" data-id="' . esc_attr($id) . '" onclick="mec_submit_event_email(' . esc_attr($id) . ');">' . esc_html__('Send Email', 'modern-events-calendar-lite') . '</button>';
 
             // Certificate
             if ($occurrence && isset($this->settings['certificate_status']) && $this->settings['certificate_status'])
@@ -329,13 +329,20 @@ class MEC_feature_report extends MEC_base
                     $certificate_options .= '<option value="' . esc_attr($certificate->ID) . '">' . esc_html($certificate->post_title) . '</option>';
                 }
 
-                $email_button .= '<div class="mec-report-certificate-wrap">
-                    <h3>' . esc_html__('Certificate', 'modern-events-calendar-lite') . '</h3>
-                    <select id="certificate_select" name="certificate" title="' . esc_attr__('Certificate', 'modern-events-calendar-lite') . '">
-                        <option value="">-----</option>
-                        ' . $certificate_options . '
-                    </select>
-                    <button data-id="' . esc_attr($id) . '" onclick="mec_certificate_send();">' . esc_html__('Send Certificate', 'modern-events-calendar-lite') . '</button>
+                $email_button .= '<div class="mec-panel mec-report-certificate-wrap">
+                    <h5 class="mec-panel__title">' . esc_html__('Certificate', 'modern-events-calendar-lite') . '</h5>
+                    <div class="mec-form-row mec-field">
+                        <div class="mec-field__label">
+                            <label for="certificate_select">' . esc_html__('Certificate', 'modern-events-calendar-lite') . '</label>
+                        </div>
+                        <div class="mec-field__control">
+                            <select id="certificate_select" name="certificate" title="' . esc_attr__('Certificate', 'modern-events-calendar-lite') . '">
+                                <option value="">-----</option>
+                                ' . $certificate_options . '
+                            </select>
+                            <button class="button button-primary" data-id="' . esc_attr($id) . '" onclick="mec_certificate_send();">' . esc_html__('Send Certificate', 'modern-events-calendar-lite') . '</button>
+                        </div>
+                    </div>
                     <div id="mec-certificate-message"></div>
                 </div>';
             }

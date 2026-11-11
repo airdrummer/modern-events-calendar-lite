@@ -37,6 +37,7 @@ jQuery(document).ready(function()
         jQuery("#mec_skin_'.esc_js($this->id).'").mecGridView(
         {
             id: "'.esc_js($this->id).'",
+            search_form_id: "'.esc_js($this->atts['search_form_id'] ?? $this->id).'",
             start_date: "'.esc_js($this->start_date).'",
             end_date: "'.esc_js($this->end_date).'",
             offset: "'.esc_js($this->next_offset).'",

@@ -3,6 +3,7 @@
 namespace MEC;
 
 use MEC\Libraries\FlushNotices;
+use MEC\Libraries\AddonCompatibilityNotice;
 use MEC\Attendees\AttendeesTable;
 
 /**
@@ -91,6 +92,9 @@ final class Base
 		}
 
 		FlushNotices::getInstance()->init();
+
+		// Combined "addon needs a newer MEC" notice (reads add-on "Requires MEC" headers).
+		AddonCompatibilityNotice::getInstance()->init();
 	}
 
 

@@ -284,7 +284,7 @@ jQuery(document).ready(function($)
                         changeMonth: true,
                         dateFormat: datepicker_format,
                         gotoCurrent: true,
-                        yearRange: 'c-3:c+5',
+                        yearRange: '-50:+50',
                     });
                 }
 
@@ -302,7 +302,7 @@ jQuery(document).ready(function($)
             changeMonth: true,
             dateFormat: datepicker_format,
             gotoCurrent: true,
-            yearRange: 'c-3:c+5',
+            yearRange: '-50:+50',
         });
 
         $('#mec_start_date').datepicker(
@@ -311,7 +311,7 @@ jQuery(document).ready(function($)
             changeMonth: true,
             dateFormat: datepicker_format,
             gotoCurrent: true,
-            yearRange: 'c-3:c+5',
+            yearRange: '-50:+50',
             onSelect: function(value, i)
             {
                 const end = $("#mec_end_date");
@@ -337,7 +337,7 @@ jQuery(document).ready(function($)
             changeMonth: true,
             dateFormat: datepicker_format,
             gotoCurrent: true,
-            yearRange: 'c-3:c+5',
+            yearRange: '-50:+50',
             onSelect: function(value, i)
             {
                 const start = $("#mec_start_date");
@@ -734,6 +734,11 @@ jQuery(document).ready(function($)
             var mecVL = (typeof mec_admin_localize !== 'undefined') ? mec_admin_localize : {};
             var warningsAcknowledged = false;
 
+            function warningEnabled(key)
+            {
+                return !mecVL.publish_warning_checks || parseInt(mecVL.publish_warning_checks[key], 10) !== 0;
+            }
+
             // MEC reusable notice system — modern card with accent bar, type-aware,
             // dismissible. Supports title, message/items, primary + dismiss buttons.
             function mecNotice(opts)
@@ -994,14 +999,17 @@ jQuery(document).ready(function($)
                     }
                 }
 
-                if(parseInt(mecVL.publish_warnings_status, 10) === 0) return;
+                // Fail-open: the gate runs only when the key is explicitly 1.
+                // A missing key (e.g. another script clobbered mec_admin_localize)
+                // must never block publishing silently.
+                if(parseInt(mecVL.publish_warnings_status, 10) !== 1) return;
 
                 // --- WARNINGS (allow publish with confirmation) ---
                 // Booking-specific warnings only if there are real tickets
                 if(hasTickets)
                 {
                     // W2: ticket with name but no price
-                    $realTickets.each(function(){
+                    if(warningEnabled('ticket_price')) $realTickets.each(function(){
                         var $name = $(this);
                         var $row = $name.closest('.mec-ticket-start-time, .wn-ticket-time').parent();
                         var $price = $row.find('input[name*="price"]');
@@ -1009,21 +1017,21 @@ jQuery(document).ready(function($)
                         if($price.length && $.trim($price.val()) === '') warnings.push('A ticket has a name but no price set.');
                     });
                     // W3: cost empty on bookable event with tickets
-                    if($.trim($('#mec_cost').val()) === '' && !$('#mec_cost_is_free').is(':checked') && !$('#mec_cost_auto_calculate').is(':checked')) warnings.push('This event has tickets but no cost is displayed.');
+                    if(warningEnabled('event_cost') && $.trim($('#mec_cost').val()) === '' && !$('#mec_cost_is_free').is(':checked') && !$('#mec_cost_auto_calculate').is(':checked')) warnings.push('This event has tickets but no cost is displayed.');
                 }
-                // W4: no featured image
-                if(!$('#set-post-thumbnail img').length && !$('#postimagediv img').length) warnings.push('No featured image set.');
+                // W4: no featured image — only when the metabox exists and is not hidden via Screen Options
+                if(warningEnabled('featured_image') && $('#postimagediv').length && $('#postimagediv').is(':visible') && !$('#set-post-thumbnail img').length && !$('#postimagediv img').length) warnings.push('No featured image set.');
                 // W5: no content
                 var c = (typeof tinymce !== 'undefined' && tinymce.get('content')) ? tinymce.get('content').getContent() : ($('#content').val() || '');
-                if($.trim(c.replace(/<[^>]*>/g, '')) === '') warnings.push('No event description/content.');
-                // W6: no location
-                var lv = $('#mec_location_id').val(); if(!lv || lv === '0' || lv === '1') warnings.push('No location set.');
-                // W7: no organizer
-                var ov = $('#mec_organizer_id').val(); if(!ov || ov === '0' || ov === '1') warnings.push('No organizer set.');
+                if(warningEnabled('description') && $.trim(c.replace(/<[^>]*>/g, '')) === '') warnings.push('No event description/content.');
+                // W6: no location — only when the field exists in the editor
+                var $locationField = $('#mec_location_id'); if(warningEnabled('location') && $locationField.length){ var lv = $locationField.val(); if(!lv || lv === '0' || lv === '1') warnings.push('No location set.'); }
+                // W7: no organizer — skip when the organizers module is disabled (field is not rendered)
+                var $organizerField = $('#mec_organizer_id'); if(warningEnabled('organizer') && $organizerField.length){ var ov = $organizerField.val(); if(!ov || ov === '0' || ov === '1') warnings.push('No organizer set.'); }
                 // W8: occurrences <= 1
-                if($endRadio.val() === 'occurrences'){ var ow = parseInt($('#mec_date_repeat_end_at_occurrences').val(), 10); if(!isNaN(ow) && ow <= 1) warnings.push('Repeat ends after only ' + ow + ' occurrence(s).'); }
+                if(warningEnabled('repeat_count') && $endRadio.val() === 'occurrences'){ var ow = parseInt($('#mec_date_repeat_end_at_occurrences').val(), 10); if(!isNaN(ow) && ow <= 1) warnings.push('Repeat ends after only ' + ow + ' occurrence(s).'); }
                 // W10: zero duration
-                if(!$('#mec_allday').is(':checked')){ var sT = mecVLTime24('mec_start_'), eT = mecVLTime24('mec_end_'); if(sT && eT && sT.hour === eT.hour && sT.min === eT.min) warnings.push('Start and end times are identical (zero duration).'); }
+                if(warningEnabled('zero_duration') && !$('#mec_allday').is(':checked')){ var sT = mecVLTime24('mec_start_'), eT = mecVLTime24('mec_end_'); if(sT && eT && sT.hour === eT.hour && sT.min === eT.min) warnings.push('Start and end times are identical (zero duration).'); }
 
                 if(!warningsAcknowledged && warnings.length > 0)
                 {
@@ -1081,7 +1089,7 @@ jQuery(document).ready(function($)
             changeMonth: true,
             dateFormat: datepicker_format,
             gotoCurrent: true,
-            yearRange: 'c-3:c+5',
+            yearRange: '-50:+50',
         });
 
         $('.mec_date_picker_dynamic_format').datepicker(
@@ -1090,7 +1098,7 @@ jQuery(document).ready(function($)
             changeMonth: true,
             dateFormat: datepicker_format,
             gotoCurrent: true,
-            yearRange: 'c-3:c+5',
+            yearRange: '-50:+50',
         });
 
         // End Repeat: conditional fields driven by the type <select> (was radios).
@@ -1108,7 +1116,7 @@ jQuery(document).ready(function($)
             changeMonth: true,
             dateFormat: 'yy-mm-dd',
             gotoCurrent: true,
-            yearRange: 'c-3:c+5',
+            yearRange: '-50:+50',
         });
 
         $('.mec_date_picker_dynamic_format_start').datepicker(
@@ -1117,7 +1125,7 @@ jQuery(document).ready(function($)
             changeMonth: true,
             dateFormat: datepicker_format,
             gotoCurrent: true,
-            yearRange: 'c-1:c+5',
+            yearRange: '-50:+50',
             onSelect: function(date)
             {
                 var selectedDate;
@@ -1149,7 +1157,11 @@ jQuery(document).ready(function($)
             changeMonth: true,
             dateFormat: datepicker_format,
             gotoCurrent: true,
-            yearRange: 'c-1:c+5',
+            yearRange: '-50:+50',
+            onSelect: function()
+            {
+                $(this).trigger('change');
+            }
         });
 
         trigger_period_picker();
@@ -1315,7 +1327,9 @@ jQuery(document).ready(function($)
     });
 
     // Make hover-only help tooltips keyboard accessible (audit issue #3).
-    $('.mec-tooltip').each(function(idx) {
+    // Settings pages (body.mec-ds-settings) are handled by backend.js, which
+    // makes the .mec-tooltip wrapper the single Tab stop; skip them here.
+    $('.mec-tooltip').not('body.mec-ds-settings .mec-tooltip').each(function(idx) {
         var $tip = $(this);
         var $box = $tip.find('.box').first();
         var $icon = $tip.find('i').first();
@@ -2004,7 +2018,7 @@ jQuery(document).ready(function($)
             changeMonth: true,
             dateFormat: datepicker_format,
             gotoCurrent: true,
-            yearRange: 'c-3:c+5',
+            yearRange: '-50:+50',
         });
     }
     function mec_toggle_repeat_type()
@@ -2130,7 +2144,7 @@ jQuery(document).ready(function($)
                 changeMonth: true,
                 dateFormat: datepicker_format,
                 gotoCurrent: true,
-                yearRange: 'c-3:c+5',
+                yearRange: '-50:+50',
             });
         }
     });
@@ -2167,7 +2181,7 @@ function trigger_period_picker()
         changeMonth: true,
         dateFormat: 'yy-mm-dd',
         gotoCurrent: true,
-        yearRange: 'c-1:c+5',
+        yearRange: '-50:+50',
         onSelect: function(date)
         {
             const selectedDate = new Date(date);
@@ -2186,7 +2200,7 @@ function trigger_period_picker()
         changeMonth: true,
         dateFormat: 'yy-mm-dd',
         gotoCurrent: true,
-        yearRange: 'c-1:c+5',
+        yearRange: '-50:+50',
     });
 }
 
@@ -2718,7 +2732,7 @@ function mec_handle_add_price_date_button(e)
         changeMonth: true,
         dateFormat: datepicker_format,
         gotoCurrent: true,
-        yearRange: 'c-3:c+5',
+        yearRange: '-50:+50',
     });
 }
 
@@ -2888,7 +2902,7 @@ jQuery(document).on('focus', '.mec_date_picker', function ()
             changeMonth: true,
             dateFormat: 'yy-mm-dd',
             gotoCurrent: true,
-            yearRange: 'c-3:c+5',
+            yearRange: '-50:+50',
         });
     }
 });
@@ -2917,7 +2931,7 @@ jQuery(document).on('focus', '.mec-date-picker-start, .mec-date-picker-end', fun
             changeMonth: true,
             dateFormat: 'yy-mm-dd',
             gotoCurrent: true,
-            yearRange: 'c-1:c+5',
+            yearRange: '-50:+50',
             onSelect: isStart ? function(date)
             {
                 var endDate = new Date(date);
@@ -2941,7 +2955,7 @@ jQuery(document).on('focus', '.mec-date-picker-start, .mec-date-picker-end', fun
                     changeMonth: true,
                     dateFormat: 'yy-mm-dd',
                     gotoCurrent: true,
-                    yearRange: 'c-1:c+5',
+                    yearRange: '-50:+50',
                 });
             }
         }
@@ -2968,7 +2982,7 @@ jQuery(document).on('focus', '.mec-apt-date-picker', function ()
             changeMonth: true,
             dateFormat: datepicker_format,
             gotoCurrent: true,
-            yearRange: 'c-3:c+5',
+            yearRange: '-50:+50',
         });
     }
 

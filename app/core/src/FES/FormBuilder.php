@@ -141,6 +141,7 @@ class FormBuilder extends Singleton
         $one_occurrence = get_post_meta($post_id, 'one_occurrence', true);
         $comment = get_post_meta($post_id, 'mec_comment', true);
         $hide_time = get_post_meta($post_id, 'mec_hide_time', true);
+        $hide_date = get_post_meta($post_id, 'mec_hide_date', true);
 
         // MEC Main
         $main = \MEC\Base::get_main();
@@ -253,10 +254,16 @@ class FormBuilder extends Singleton
                         <input <?php if ($allday == '1') echo 'checked="checked"'; ?> type="checkbox" name="mec[date][allday]" id="mec_allday" value="1" onchange="jQuery('.mec-time-picker').toggle();" /><label for="mec_allday"><?php esc_html_e('All-day Event', 'modern-events-calendar-lite'); ?></label>
                     </div>
                     <div class="mec-form-row">
+                        <input <?php if ($hide_date == '1') echo 'checked="checked"'; ?> type="checkbox" name="mec[date][hide_date]" id="mec_hide_date" value="1" /><label for="mec_hide_date"><?php esc_html_e('Hide Event Date', 'modern-events-calendar-lite'); ?></label>
+                        <p class="description"><?php esc_html_e('The event date is not shown on the single event page, listings and emails. Also the event will no longer appear in the calendar views since its date is not determined.', 'modern-events-calendar-lite'); ?></p>
+                    </div>
+                    <div class="mec-form-row">
                         <input <?php if ($hide_time == '1') echo 'checked="checked"'; ?> type="checkbox" name="mec[date][hide_time]" id="mec_hide_time" value="1" /><label for="mec_hide_time"><?php esc_html_e('Hide Event Time', 'modern-events-calendar-lite'); ?></label>
+                        <p class="description"><?php esc_html_e('The event start and end times are not shown on the single event page, listings and emails.', 'modern-events-calendar-lite'); ?></p>
                     </div>
                     <div class="mec-form-row <?php echo $hide_end_time_global ? 'mec-util-hidden' : ''; ?>">
                         <input <?php if ($hide_end_time == '1') echo 'checked="checked"'; ?> type="checkbox" name="mec[date][hide_end_time]" id="mec_hide_end_time" value="1" /><label for="mec_hide_end_time"><?php esc_html_e('Hide Event End Time', 'modern-events-calendar-lite'); ?></label>
+                        <p class="description"><?php esc_html_e('The event end time is not shown on the single event page, listings and emails. The start time will still be displayed.', 'modern-events-calendar-lite'); ?></p>
                     </div>
                     <div class="mec-form-row">
                         <div class="mec-col-12">
@@ -406,7 +413,7 @@ $interval_unit_map = [
                                 <div class="mec-form-row" id="mec_in_days_row<?php echo esc_attr($i); ?>">
                                     <input type="hidden" name="mec[in_days][<?php echo esc_attr($i); ?>]" value="<?php echo esc_attr($in_day); ?>" />
                                     <span class="mec-not-in-days-day"><?php echo \MEC_kses::element($in_day_label); ?></span>
-                                    <span class="mec-not-in-days-remove" onclick="mec_in_days_remove(<?php echo esc_attr($i); ?>);">x</span>
+                                    <span class="mec-not-in-days-remove" role="button" tabindex="0" onclick="mec_in_days_remove(<?php echo esc_attr($i); ?>);" title="<?php esc_attr_e('Remove', 'modern-events-calendar-lite'); ?>" aria-label="<?php esc_attr_e('Remove', 'modern-events-calendar-lite'); ?>">x</span>
                                 </div>
                             <?php $i++;
                             endforeach; ?>
@@ -416,7 +423,7 @@ $interval_unit_map = [
                             <div class="mec-form-row" id="mec_in_days_row:i:">
                                 <input type="hidden" name="mec[in_days][:i:]" value=":val:" />
                                 <span class="mec-not-in-days-day">:label:</span>
-                                <span class="mec-not-in-days-remove" onclick="mec_in_days_remove(:i:);">x</span>
+                                <span class="mec-not-in-days-remove" role="button" tabindex="0" onclick="mec_in_days_remove(:i:);" title="<?php esc_attr_e('Remove', 'modern-events-calendar-lite'); ?>" aria-label="<?php esc_attr_e('Remove', 'modern-events-calendar-lite'); ?>">x</span>
                             </div>
                         </div>
                     </div>
@@ -2406,7 +2413,7 @@ $interval_unit_map = [
         $bookings_limit_unlimited = isset($booking_options['bookings_limit_unlimited']) && $booking_options['bookings_limit_unlimited'] == 1 ? true : false;
     ?>
         <div class="mec-meta-box-fields" id="mec-total-booking-limit">
-            <h4 class="mec-panel__title"><?php esc_html_e('Total booking limit', 'modern-events-calendar-lite'); ?></h4>
+            <h5 class="mec-form-subtitle"><?php esc_html_e('Total booking limit', 'modern-events-calendar-lite'); ?></h5>
             <div class="mec-form-row mec-field">
                 <div class="mec-field__label">
                     <label for="mec_bookings_limit"><?php esc_html_e('Limit', 'modern-events-calendar-lite'); ?></label>
@@ -2460,7 +2467,7 @@ $interval_unit_map = [
         $bookings_date_selection = isset($booking_options['bookings_date_selection']) ? $booking_options['bookings_date_selection'] : 'global';
     ?>
         <div class="mec-meta-box-fields" id="mec-booking-date-selection">
-            <h4 class="mec-panel__title"><?php esc_html_e('Date Selection', 'modern-events-calendar-lite'); ?></h4>
+            <h5 class="mec-form-subtitle"><?php esc_html_e('Date Selection', 'modern-events-calendar-lite'); ?></h5>
             <div class="mec-form-row mec-field">
                 <div class="mec-field__label">
                     <label for="mec_bookings_date_selection"><?php esc_html_e('Date Selection', 'modern-events-calendar-lite'); ?></label>
@@ -2502,7 +2509,7 @@ $interval_unit_map = [
         $bookings_minimum_per_booking = (isset($booking_options['bookings_minimum_per_booking']) and trim($booking_options['bookings_minimum_per_booking'])) ? (int) $booking_options['bookings_minimum_per_booking'] : 1;
     ?>
         <div class="mec-meta-box-fields" id="mec-minimum-ticket-per-booking">
-            <h4 class="mec-panel__title"><?php esc_html_e('Minimum ticket per booking', 'modern-events-calendar-lite'); ?></h4>
+            <h5 class="mec-form-subtitle"><?php esc_html_e('Minimum ticket per booking', 'modern-events-calendar-lite'); ?></h5>
             <div class="mec-form-row mec-field">
                 <div class="mec-field__label">
                     <label for="mec_bookings_mtpb"><?php esc_html_e('Minimum', 'modern-events-calendar-lite'); ?></label>
@@ -2543,7 +2550,7 @@ $interval_unit_map = [
 
     ?>
         <div class="mec-meta-box-fields" id="mec-discount-per-user-roles">
-            <h4 class="mec-panel__title"><?php esc_html_e('Discount per user roles', 'modern-events-calendar-lite'); ?></h4>
+            <h5 class="mec-form-subtitle"><?php esc_html_e('Discount per user roles', 'modern-events-calendar-lite'); ?></h5>
             <?php
             foreach ($roles as $role_key => $role_name):
                 $role_discount = isset($booking_options['roles_discount_' . $role_key]) ? $booking_options['roles_discount_' . $role_key] : $loggedin_discount;
@@ -2587,7 +2594,7 @@ $interval_unit_map = [
 
     ?>
         <div class="mec-meta-box-fields" id="mec-book-all-occurrences">
-            <h4 class="mec-panel__title"><?php esc_html_e('Book All Occurrences', 'modern-events-calendar-lite'); ?></h4>
+            <h5 class="mec-form-subtitle"><?php esc_html_e('Book All Occurrences', 'modern-events-calendar-lite'); ?></h5>
             <div class="mec-form-row mec-field mec-field--check">
                 <label class="mec-check" for="mec_bookings_all_occurrences">
                     <input type="hidden" name="mec[booking][bookings_all_occurrences]" value="0" />
@@ -2652,7 +2659,7 @@ $interval_unit_map = [
         $bookings_stop_selling_after_first_occurrence = isset($booking_options['stop_selling_after_first_occurrence']) ? $booking_options['stop_selling_after_first_occurrence'] : 0;
     ?>
         <div class="mec-meta-box-fields" id="mec-interval-options">
-            <h4 class="mec-panel__title"><?php esc_html_e('Interval Options', 'modern-events-calendar-lite'); ?></h4>
+            <h5 class="mec-form-subtitle"><?php esc_html_e('Interval Options', 'modern-events-calendar-lite'); ?></h5>
             <div class="mec-form-row mec-field">
                 <div class="mec-field__label">
                     <label class="mec_booking_show_booking_form_interval_label" for="mec_booking_show_booking_form_interval"><?php esc_html_e('Show Booking Form Interval', 'modern-events-calendar-lite'); ?></label>
@@ -2709,7 +2716,7 @@ $interval_unit_map = [
 
     ?>
         <div class="mec-meta-box-fields" id="mec-automatic-approval">
-            <h4 class="mec-panel__title"><?php esc_html_e('Automatic Approval', 'modern-events-calendar-lite'); ?></h4>
+            <h5 class="mec-form-subtitle"><?php esc_html_e('Automatic Approval', 'modern-events-calendar-lite'); ?></h5>
             <div class="mec-form-row mec-field">
                 <div class="mec-field__label">
                     <label for="mec_booking_auto_verify"><?php esc_html_e('Email Verification', 'modern-events-calendar-lite'); ?></label>
@@ -2765,7 +2772,7 @@ $interval_unit_map = [
 
     ?>
         <div class="mec-meta-box-fields" id="mec-last-few-tickets-percentage">
-            <h4 class="mec-panel__title"><?php esc_html_e('Last Few Tickets Percentage', 'modern-events-calendar-lite'); ?></h4>
+            <h5 class="mec-form-subtitle"><?php esc_html_e('Last Few Tickets Percentage', 'modern-events-calendar-lite'); ?></h5>
             <div class="mec-form-row mec-field">
                 <div class="mec-field__label">
                     <label for="mec_bookings_last_few_tickets_percentage_inherit"><?php esc_html_e('Value', 'modern-events-calendar-lite'); ?></label>
@@ -2815,7 +2822,7 @@ $interval_unit_map = [
     ?>
 
         <div class="mec-meta-box-fields" id="mec-thankyou-page">
-            <h4 class="mec-panel__title"><?php esc_html_e('Thank You Page', 'modern-events-calendar-lite'); ?></h4>
+            <h5 class="mec-form-subtitle"><?php esc_html_e('Thank You Page', 'modern-events-calendar-lite'); ?></h5>
             <div class="mec-form-row mec-field mec-field--check">
                 <label class="mec-check mec_bookings_thankyou_page_inherit" for="mec_bookings_thankyou_page_inherit">
                     <input type="hidden" name="mec[booking][thankyou_page_inherit]" value="0" />
@@ -2899,7 +2906,7 @@ $interval_unit_map = [
 
     ?>
         <div class="mec-meta-box-fields" id="mec-booking-button-label">
-            <h4 class="mec-panel__title"><?php esc_html_e('Booking Button Label', 'modern-events-calendar-lite'); ?></h4>
+            <h5 class="mec-form-subtitle"><?php esc_html_e('Booking Button Label', 'modern-events-calendar-lite'); ?></h5>
             <div class="mec-form-row mec-field">
                 <div class="mec-field__label">
                     <label for="mec_bookings_bbl"><?php esc_html_e('Label', 'modern-events-calendar-lite'); ?></label>
@@ -2945,7 +2952,7 @@ $interval_unit_map = [
         list($payable, $payable_type) = $partial_payment->validate_payable_options($payable, $payable_type);
     ?>
         <div class="mec-meta-box-fields" id="mec-booking-partial-payment">
-            <h4 class="mec-panel__title"><?php esc_html_e('Partial Payment', 'modern-events-calendar-lite'); ?></h4>
+            <h5 class="mec-form-subtitle"><?php esc_html_e('Partial Payment', 'modern-events-calendar-lite'); ?></h5>
             <div class="mec-form-row mec-field mec-field--check">
                 <label class="mec-check mec-bookings-payable-inherit" for="mec_bookings_payable_inherit">
                     <input type="hidden" name="mec[booking][bookings_payable_inherit]" value="0" />
@@ -3002,7 +3009,7 @@ $interval_unit_map = [
 
     ?>
         <div class="mec-meta-box-fields" id="mec_bookings_user_limit">
-            <h4 class="mec-panel__title"><?php esc_html_e('Total User Booking Limits', 'modern-events-calendar-lite'); ?></h4>
+            <h5 class="mec-form-subtitle"><?php esc_html_e('Total User Booking Limits', 'modern-events-calendar-lite'); ?></h5>
             <div class="mec-form-row mec-field">
                 <div class="mec-field__label">
                     <label for="mec_bookings_user_limit_value"><?php esc_html_e('Limit', 'modern-events-calendar-lite'); ?></label>

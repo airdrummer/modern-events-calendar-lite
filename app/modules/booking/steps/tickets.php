@@ -126,6 +126,10 @@ $omit_end_dates = isset($settings['booking_omit_end_date']) && $settings['bookin
 // Modal Booking
 $modal_booking = isset($_GET['method']) && sanitize_text_field($_GET['method']) === 'mec-booking-modal';
 wp_enqueue_script('mec-niceselect-script');
+
+// Hidden Event Date
+$hide_date = (isset($event->data->meta['mec_hide_date']) and $event->data->meta['mec_hide_date']) ? true : false;
+$mec_hidden_date_i = 0;
 ?>
 <form id="mec_book_form<?php echo esc_attr($uniqueid); ?>" onsubmit="mec_book_form_submit(event, <?php echo esc_attr($uniqueid); ?>);">
 
@@ -161,7 +165,7 @@ wp_enqueue_script('mec-niceselect-script');
                     <div class="mec-select-date-calendar-dropdown-wrapper">
                         <div class="mec-select-date-calendar-dropdown">
                             <span class="mec-select-date-calendar-icon"><?php echo $this->svg('form/calendar-icon'); ?></span>
-                            <span class="mec-select-date-calendar-formatted-date"><?php echo $this->date_i18n($date_format, $default_selected_datetime_ex[0]); ?></span>
+                            <span class="mec-select-date-calendar-formatted-date"><?php echo ($hide_date ? esc_html($this->get_tba_label()) : $this->date_i18n($date_format, $default_selected_datetime_ex[0])); ?></span>
                             <span class="mec-select-date-calendar-icons">
                                 <span class="mec-select-date-calendar-icons-up"><?php echo $this->svg('form/up-icon'); ?></span>
                                 <span class="mec-select-date-calendar-icons-down mec-util-hidden"><?php echo $this->svg('form/down-icon'); ?></span>
@@ -181,7 +185,7 @@ wp_enqueue_script('mec-niceselect-script');
                 <input type="hidden" name="book[date]" id="mec_book_form_date<?php echo esc_attr($uniqueid); ?>" value="<?php echo esc_attr($default_selected_datetime); ?>" onchange="mec_get_tickets_availability<?php echo esc_attr($uniqueid); ?>(<?php echo esc_attr($event_id); ?>, this.value);">
             <?php else: ?>
                 <div>
-                    <h6><?php echo MEC_kses::element($this->date_label($dates[0]['start'], $dates[0]['end'], $date_format, ' - ', false, ($dates[0]['allday'] ?? 0))); ?></h6>
+                    <h6><?php echo MEC_kses::element($hide_date ? $this->get_tba_label() : $this->date_label($dates[0]['start'], $dates[0]['end'], $date_format, ' - ', false, ($dates[0]['allday'] ?? 0))); ?></h6>
                     <input type="hidden" name="book[date]" id="mec_book_form_date<?php echo esc_attr($uniqueid); ?>" value="<?php echo esc_attr($default_selected_datetime); ?>" onchange="mec_get_tickets_availability<?php echo esc_attr($uniqueid); ?>(<?php echo esc_attr($event_id); ?>, this.value);">
                 </div>
             <?php endif; ?>
@@ -190,7 +194,7 @@ wp_enqueue_script('mec-niceselect-script');
         <label><?php esc_html_e('Dates', 'modern-events-calendar-lite'); ?>: </label>
         <div class="mec-booking-dates-checkboxes">
             <?php foreach($dates as $date): ?>
-            <label><input type="checkbox" name="book[date][]" value="<?php echo esc_attr($book->timestamp($date['start'], $date['end'])); ?>" onchange="mec_get_tickets_availability_multiple<?php echo esc_attr($uniqueid); ?>(<?php echo esc_attr($event_id); ?>);">&nbsp;<?php echo strip_tags($this->date_label($date['start'], $date['end'], $date_format, ' - ', false, ($date['allday'] ?? 0), null, $omit_end_dates)); ?></label>
+            <label><input type="checkbox" name="book[date][]" value="<?php echo esc_attr($book->timestamp($date['start'], $date['end'])); ?>" onchange="mec_get_tickets_availability_multiple<?php echo esc_attr($uniqueid); ?>(<?php echo esc_attr($event_id); ?>);">&nbsp;<?php echo ($hide_date ? esc_html(sprintf(esc_html__('%s %s', 'modern-events-calendar-lite'), esc_html__('Option', 'modern-events-calendar-lite'), ++$mec_hidden_date_i)) : strip_tags($this->date_label($date['start'], $date['end'], $date_format, ' - ', false, ($date['allday'] ?? 0), null, $omit_end_dates))); ?></label>
             <?php endforeach; ?>
         </div>
         <?php else: ?>
@@ -202,7 +206,7 @@ wp_enqueue_script('mec-niceselect-script');
                     <select class="mec-custom-nice-select" name="book[date]" id="mec_book_form_date<?php echo esc_attr($uniqueid); ?>" onchange="mec_get_tickets_availability<?php echo esc_attr($uniqueid); ?>(<?php echo esc_attr($event_id); ?>, this.value);">
                         <?php foreach($dates as $date): ?>
                         <option value="<?php echo esc_attr($book->timestamp($date['start'], $date['end'])); ?>">
-                            <?php echo strip_tags($this->date_label($date['start'], $date['end'], $date_format, ' - ', false, ($date['allday'] ?? 0), null, $omit_end_dates)); ?>
+                            <?php echo ($hide_date ? esc_html(sprintf(esc_html__('%s %s', 'modern-events-calendar-lite'), esc_html__('Option', 'modern-events-calendar-lite'), ++$mec_hidden_date_i)) : strip_tags($this->date_label($date['start'], $date['end'], $date_format, ' - ', false, ($date['allday'] ?? 0), null, $omit_end_dates))); ?>
                         </option>
                         <?php endforeach; ?>
                     </select>
@@ -214,11 +218,11 @@ wp_enqueue_script('mec-niceselect-script');
     <?php elseif($book_all_occurrences): ?>
     <div class="mec-next-occ-booking-p">
         <?php esc_html_e('By booking this event you can attend all occurrences. Some of them are listed below but there might be more.', 'modern-events-calendar-lite'); ?>
-        <div class="mec-next-occ-booking"><?php foreach($dates as $date) echo MEC_kses::element($this->date_label($date['start'], $date['end'], $date_format, ' - ', false))."<br>"; ?></div>
+        <div class="mec-next-occ-booking"><?php if($hide_date) echo esc_html($this->get_tba_label()); else foreach($dates as $date) echo MEC_kses::element($this->date_label($date['start'], $date['end'], $date_format, ' - ', false))."<br>"; ?></div>
     </div>
     <input type="hidden" name="book[date]" id="mec_book_form_date<?php echo esc_attr($uniqueid); ?>" value="<?php echo esc_attr($book->timestamp($dates[0]['start'], $dates[0]['end'])); ?>">
     <?php else: ?>
-        <?php if($from_shortcode) echo '<h4>'.MEC_kses::element($this->date_label($dates[0]['start'], $dates[0]['end'], $date_format, ' - ', false)).'</h4>'; ?>
+        <?php if($from_shortcode) echo '<h4>'.MEC_kses::element($hide_date ? $this->get_tba_label() : $this->date_label($dates[0]['start'], $dates[0]['end'], $date_format, ' - ', false)).'</h4>'; ?>
         <input type="hidden" name="book[date]" id="mec_book_form_date<?php echo esc_attr($uniqueid); ?>" value="<?php echo esc_attr($book->timestamp($dates[0]['start'], $dates[0]['end'])); ?>">
     <?php endif; ?>
 

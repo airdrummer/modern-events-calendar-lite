@@ -2,6 +2,8 @@
 /** no direct access **/
 defined('MECEXEC') or die();
 
+$date_heading_tag = $this->get_date_heading_tag('h4');
+
 /** @var MEC_skin_daily_view $this */
 
 // Get layout path
@@ -35,7 +37,7 @@ if($this->next_previous_button)
         $navigator_html .= '<div class="mec-previous-month mec-color mec-load-month" data-mec-year="'.date('Y', $_1month_before).'" data-mec-month="'.date('m', $_1month_before).'"><a href="#" class="mec-load-month-link"><i class="mec-sl-angle-left"></i></a></div>';
     }
 
-    $navigator_html .= '<h4>'.esc_html($this->main->date_i18n('Y F', $current_month_time)).'</h4>';
+    $navigator_html .= '<'.$date_heading_tag.' class="mec-month-label">'.esc_html($this->main->date_i18n('Y F', $current_month_time)).'</'.$date_heading_tag.'>';
 
     // Show next month handler if needed
     if(!$this->show_only_expired_events or
@@ -76,6 +78,7 @@ var mec_daily_view_init_'.esc_js($this->id).' = function()
     jQuery("#mec_daily_view_month_'.esc_js($this->id).'_'.date('Ym', $current_month_time).'").mecDailyView(
     {
         id: "'.esc_js($this->id).'",
+        search_form_id: "'.esc_js($this->atts['search_form_id'] ?? $this->id).'",
         today: "'.date('Ymd', strtotime($this->active_day)).'",
         month_id: "'.date('Ym', $current_month_time).'",
         year: "'.date('Y', $current_month_time).'",
@@ -143,7 +146,7 @@ do_action('mec_daily_skin_head');
             <div class="mec-month-navigator" id="mec_month_navigator<?php echo esc_attr($this->id); ?>_<?php echo date('Ym', $current_month_time); ?>"><?php echo MEC_kses::page($navigator_html); ?></div>
         </div>
         <?php else: ?>
-        <div class="mec-calendar-a-month mec-clear"><h4 class="mec-month-label"><?php echo esc_html($this->main->date_i18n('Y F', $current_month_time)); ?></h4></div>
+        <div class="mec-calendar-a-month mec-clear"><<?php echo $date_heading_tag; ?> class="mec-month-label"><?php echo esc_html($this->main->date_i18n('Y F', $current_month_time)); ?></<?php echo $date_heading_tag; ?>></div>
         <?php endif; ?>
 
         <div class="mec-skin-daily-view-events-container" id="mec_skin_events_<?php echo esc_attr($this->id); ?>">

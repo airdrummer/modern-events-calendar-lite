@@ -783,10 +783,10 @@ class MEC_book extends MEC_base
         do_action('mec_booking_moved', $booking_id, $to_start);
     }
 
-    public function move_notify($booking_id, $moved_to)
+    public function move_notify($booking_id, $moved_to, $previous_timestamps = null, $timestamps = '')
     {
         // Fires after moving a booking to send notifications etc.
-        do_action('mec_booking_moved_notify', $booking_id, $moved_to);
+        do_action('mec_booking_moved_notify', $booking_id, $moved_to, $previous_timestamps, $timestamps);
     }
 
     /**
@@ -1273,12 +1273,28 @@ class MEC_book extends MEC_base
 
     public function recalculate($transaction, $partial = true)
     {
+        if (!is_array($transaction) || empty($transaction)) {
+            return is_array($transaction) ? $transaction : [];
+        }
+
+        if (!isset($transaction['price_details']) || !is_array($transaction['price_details'])) {
+            $transaction['price_details'] = [
+                'details' => [],
+                'total' => 0,
+                'payable' => 0,
+            ];
+        }
+
+        if (!isset($transaction['price_details']['details']) || !is_array($transaction['price_details']['details'])) {
+            $transaction['price_details']['details'] = [];
+        }
+
         $price_details = $transaction['price_details']['details'];
 
         $other_dates = (isset($transaction['other_dates']) and is_array($transaction['other_dates'])) ? $transaction['other_dates'] : [];
         $dates_count = count($other_dates) + 1;
 
-        $booked_tickets = $transaction['tickets'];
+        $booked_tickets = (isset($transaction['tickets']) and is_array($transaction['tickets'])) ? $transaction['tickets'] : [];
         if (isset($booked_tickets['attachments'])) unset($booked_tickets['attachments']);
 
         $total_tickets_count = (count($booked_tickets) * $dates_count);
@@ -1979,6 +1995,18 @@ class MEC_book extends MEC_base
     public function remove_fees($transaction_id)
     {
         $transaction = $this->get_transaction($transaction_id);
+        if (!is_array($transaction) || empty($transaction)) {
+            return false;
+        }
+
+        if (!isset($transaction['price_details']) || !is_array($transaction['price_details'])) {
+            return false;
+        }
+
+        if (!isset($transaction['price_details']['details']) || !is_array($transaction['price_details']['details'])) {
+            return false;
+        }
+
         $price_details = $transaction['price_details']['details'];
 
         $removed_fees = [];
@@ -2013,9 +2041,20 @@ class MEC_book extends MEC_base
     public function readd_fees($transaction_id)
     {
         $transaction = $this->get_transaction($transaction_id);
+        if (!is_array($transaction) || empty($transaction)) {
+            return false;
+        }
 
         $is_removed = $transaction['removed_fees_status'] ?? 0;
         if (!$is_removed) return false;
+
+        if (!isset($transaction['price_details']) || !is_array($transaction['price_details'])) {
+            $transaction['price_details'] = ['details' => []];
+        }
+
+        if (!isset($transaction['price_details']['details']) || !is_array($transaction['price_details']['details'])) {
+            $transaction['price_details']['details'] = [];
+        }
 
         $price_details = $transaction['price_details']['details'];
 

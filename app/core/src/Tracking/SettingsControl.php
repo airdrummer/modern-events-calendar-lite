@@ -40,16 +40,20 @@ class SettingsControl
     {
         $checked = (get_option(PostHog::CONSENT_OPTION) === 'accepted');
         ?>
-        <div class="mec-form-row mec-basvanced-advanced w-hidden">
-            <h5 class="mec-form-subtitle"><?php esc_html_e('Usage Tracking', 'modern-events-calendar-lite'); ?></h5>
-            <label>
-                <input type="hidden" name="mec[settings][<?php echo esc_attr(self::SETTING_KEY); ?>]" value="0" />
-                <input value="1" type="checkbox" name="mec[settings][<?php echo esc_attr(self::SETTING_KEY); ?>]" <?php echo $checked ? 'checked="checked"' : ''; ?> /><?php esc_html_e('Share non-sensitive usage data (only feature usage) to help us improve the plugin and guide future development.', 'modern-events-calendar-lite'); ?>
-            </label>
-            <p class="description" style="margin-top:6px;">
-                <strong><?php esc_html_e('Privacy first:', 'modern-events-calendar-lite'); ?></strong>
-                <?php esc_html_e('Your data is strictly for internal development and will never be sold or used for ads.', 'modern-events-calendar-lite'); ?>
-            </p>
+        <div class="mec-basvanced-advanced w-hidden">
+            <h5 class="mec-panel__title"><?php esc_html_e('Usage Tracking', 'modern-events-calendar-lite'); ?></h5>
+            <div class="mec-form-row mec-field mec-field--check">
+                <div class="mec-field__control">
+                    <label class="mec-check">
+                        <input type="hidden" name="mec[settings][<?php echo esc_attr(self::SETTING_KEY); ?>]" value="0" />
+                        <input value="1" type="checkbox" name="mec[settings][<?php echo esc_attr(self::SETTING_KEY); ?>]" <?php echo $checked ? 'checked="checked"' : ''; ?> /><span><?php esc_html_e('Share anonymous feature usage to help us improve the plugin', 'modern-events-calendar-lite'); ?></span>
+                    </label>
+                    <p class="mec-field__help">
+                        <strong><?php esc_html_e('Privacy first:', 'modern-events-calendar-lite'); ?></strong>
+                        <?php esc_html_e('Your data is strictly for internal development and will never be sold or used for ads.', 'modern-events-calendar-lite'); ?>
+                    </p>
+                </div>
+            </div>
         </div>
         <?php
     }

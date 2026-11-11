@@ -33,6 +33,16 @@ class MEC_feature_mec extends MEC_base
     public $PT;
 
     /**
+     * Why the last plugin_activation_request() did not return a licence:
+     * ['type' => 'network'|'rejected', 'reason' => translated text].
+     * "network" = the licence server was not (usefully) reached; "rejected" =
+     * it answered and said no (limit reached, expired, unknown code...).
+     *
+     * @var array|null
+     */
+    private $activation_error = null;
+
+    /**
      * Constructor method
      * @author Webnus <info@webnus.net>
      */
@@ -69,6 +79,7 @@ class MEC_feature_mec extends MEC_base
         $this->factory->action('add_meta_boxes', [$this, 'register_meta_boxes'], 1);
         $this->factory->filter('post_row_actions', [$this, 'action_links'], 10, 2);
         $this->factory->action('admin_init', [$this, 'duplicate_shortcode']);
+        $this->factory->filter('admin_body_class', [$this, 'admin_body_class']);
 
         $this->factory->action('parent_file', [$this, 'mec_parent_menu_highlight']);
         $this->factory->action('submenu_file', [$this, 'mec_sub_menu_highlight']);
@@ -130,7 +141,7 @@ class MEC_feature_mec extends MEC_base
         $this->factory->action('mec_after_publish_admin_event', [$this->notifications, 'new_event'], 10, 2);
         $this->factory->action('mec_event_published', [$this->notifications, 'user_event_publishing'], 10, 3);
         $this->factory->action('mec_event_soldout', [$this->notifications, 'event_soldout'], 10, 2);
-        $this->factory->action('mec_booking_moved_notify', [$this->notifications, 'booking_moved'], 11);
+        $this->factory->action('mec_booking_moved_notify', [$this->notifications, 'booking_moved'], 11, 4);
 
         $this->page = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : 'MEC-settings';
 
@@ -154,6 +165,9 @@ class MEC_feature_mec extends MEC_base
         // License Activation
         $this->factory->action('wp_ajax_activate_license', [$this, 'activate_license']);
         $this->factory->action('wp_ajax_revoke_license', [$this, 'revoke_license']);
+
+        // Support page: create one-time context token on my.webnus.net
+        $this->factory->action('wp_ajax_mec_support_context', [$this, 'support_context']);
 
         // Close Notification
         $this->factory->action('wp_ajax_close_notification', [$this, 'close_notification']);
@@ -328,10 +342,20 @@ class MEC_feature_mec extends MEC_base
                 // so blaming the purchase code would send the customer hunting
                 // for a problem their code does not have. The JS swaps the
                 // message for res.reason, exactly like claim_failed.
-                if (get_transient('mec_activation_network_error'))
+                $error = $this->activation_error;
+
+                if (is_array($error) and $error['type'] === 'rejected')
+                {
+                    // The store answered and said no. Say why - never "server
+                    // unreachable", which sends the customer to retry something
+                    // that will keep failing (e.g. a licence with no slots left).
+                    $payload['message'] = 'rejected';
+                    $payload['reason'] = $error['reason'];
+                }
+                elseif (get_transient('mec_activation_network_error'))
                 {
                     $payload['message'] = 'network_error';
-                    $payload['reason'] = esc_html__('The license server could not be reached, so your purchase code could not be checked. Please try again in a few minutes. If it keeps failing, contact support.', 'modern-events-calendar-lite');
+                    $payload['reason'] = is_array($error) ? $error['reason'] : esc_html__('The license server could not be reached, so your purchase code could not be checked. Please try again in a few minutes. If it keeps failing, contact support.', 'modern-events-calendar-lite');
                 }
                 else
                 {
@@ -424,7 +448,7 @@ class MEC_feature_mec extends MEC_base
         switch ($reason)
         {
             case 'EDD_NOT_DEACTIVATED':
-                return esc_html__('Pro has been turned off on this site, but the store did not confirm that your activation was released. If your purchase code will not activate on another site, please contact support.', 'modern-events-calendar-lite');
+                return esc_html__('Your license key is already tied to another domain. Please change the domain tied to your license from your account on Webnus, then activate it here again.', 'modern-events-calendar-lite');
 
             case 'NO_CODE':
                 return esc_html__('Pro has been turned off on this site. Because it was activated without a purchase code, support may still need to release the activation for you.', 'modern-events-calendar-lite');
@@ -454,7 +478,11 @@ class MEC_feature_mec extends MEC_base
         // On multisite this also resolves to the network's main site, matching
         // the one-licence-per-network rule rather than activating each subsite.
         $url = class_exists('MEC_license') ? MEC_license::site_url() : get_home_url();
-        $verify_url = MEC_API_ACTIVATION . '/activation/verify?category=mec&license=' . $code . '&url=' . $url . '&item_id=' . $item_id;
+        // format=json: the store then answers a refusal as {"error","message"}
+        // instead of bare prose, so "the store said no" can be told apart from
+        // "the store was never reached". Older servers ignore the parameter.
+        $verify_url = MEC_API_ACTIVATION . '/activation/verify?category=mec&license=' . $code . '&url=' . $url . '&item_id=' . $item_id . '&format=json';
+        $this->activation_error = null;
 
         $response = wp_remote_get($verify_url, [
             'body' => null,
@@ -474,20 +502,112 @@ class MEC_feature_mec extends MEC_base
         if (is_wp_error($response))
         {
             set_transient('mec_activation_network_error', 1, 10 * MINUTE_IN_SECONDS);
+            $this->activation_error = ['type' => 'network', 'reason' => $this->transport_error_text($response)];
             return false;
         }
 
-        $data = json_decode(wp_remote_retrieve_body($response));
+        $status = (int) wp_remote_retrieve_response_code($response);
+        $body = (string) wp_remote_retrieve_body($response);
+        $data = json_decode($body);
 
-        // A body that is not JSON is an infrastructure page (WAF block,
-        // proxy error), not a store answer. Same note, same treatment.
         if (!is_object($data))
         {
+            // A short plain-text sentence with HTTP 200 is the store's own
+            // answer (older servers refuse in prose, e.g. "Your license key has
+            // reached its activation limit."). Show it rather than pretend the
+            // server was unreachable.
+            $text = trim($body);
+            if ($status === 200 and $text !== '' and strlen($text) < 200 and strpos($text, '<') === false)
+            {
+                delete_transient('mec_activation_network_error');
+                $this->activation_error = ['type' => 'rejected', 'reason' => sanitize_text_field($text)];
+                return false;
+            }
+
+            // Anything else (HTML from a WAF/proxy, empty body, 5xx) is an
+            // infrastructure page, not a store answer.
             set_transient('mec_activation_network_error', 1, 10 * MINUTE_IN_SECONDS);
+            $this->activation_error = ['type' => 'network', 'reason' => sprintf(
+                /* translators: %d: HTTP status code */
+                esc_html__('The license server returned an unexpected response (HTTP %d). Please try again in a few minutes. If it keeps failing, contact support.', 'modern-events-calendar-lite'),
+                $status
+            )];
+            return false;
+        }
+
+        // The store answered and refused.
+        if (isset($data->error))
+        {
+            delete_transient('mec_activation_network_error');
+            $this->activation_error = ['type' => 'rejected', 'reason' => $this->activation_refusal_text((string) $data->error, isset($data->message) ? (string) $data->message : '')];
             return false;
         }
 
         return $data;
+    }
+
+    /**
+     * Why the HTTP request itself failed.
+     *
+     * The common cause on staging copies is WP_HTTP_BLOCK_EXTERNAL (or a "safety"
+     * mu-plugin): WordPress refuses the request locally, nothing ever reaches
+     * the licence server, and "try again in a few minutes" is useless advice.
+     *
+     * @param WP_Error $error
+     * @return string
+     */
+    private function transport_error_text($error)
+    {
+        $message = (string) $error->get_error_message();
+
+        if ($error->get_error_code() === 'http_request_not_executed' or (defined('WP_HTTP_BLOCK_EXTERNAL') and WP_HTTP_BLOCK_EXTERNAL and stripos($message, 'block') !== false))
+        {
+            return esc_html__("Outgoing requests are blocked on this site (WP_HTTP_BLOCK_EXTERNAL or a security plugin), so the license server cannot be contacted. Please allow my.webnus.net, for example by adding define( 'WP_ACCESSIBLE_HOSTS', 'my.webnus.net' ); to wp-config.php, then try again.", 'modern-events-calendar-lite');
+        }
+
+        $text = esc_html__('The license server could not be reached, so your purchase code could not be checked. Please try again in a few minutes. If it keeps failing, contact support.', 'modern-events-calendar-lite');
+
+        if ($message !== '') $text .= ' ' . sprintf(
+            /* translators: %s: technical error message */
+            esc_html__('Details: %s', 'modern-events-calendar-lite'),
+            sanitize_text_field($message)
+        );
+
+        return $text;
+    }
+
+    /**
+     * Customer-facing text for a refusal code from the activation server.
+     *
+     * @param string $code     machine-readable code from /activation/verify
+     * @param string $fallback the server's own wording, used for unknown codes
+     * @return string
+     */
+    private function activation_refusal_text($code, $fallback = '')
+    {
+        switch ($code)
+        {
+            case 'no_activations_left':
+                return esc_html__('This license has reached its activation limit. Deactivate it on one of your other sites from your Webnus account (or upgrade your license), then try again.', 'modern-events-calendar-lite');
+
+            case 'expired':
+                return esc_html__('This license has expired. Please renew it to activate it on this site.', 'modern-events-calendar-lite');
+
+            case 'revoked':
+                return esc_html__('This license has been disabled. Please contact support.', 'modern-events-calendar-lite');
+
+            case 'invalid_license':
+                return esc_html__('This purchase code was not recognised. Please check that you copied it correctly.', 'modern-events-calendar-lite');
+
+            case 'item_name_mismatch':
+                return esc_html__('This purchase code belongs to a different product or license type. Please check the license type you selected.', 'modern-events-calendar-lite');
+
+            case 'site_inactive':
+                return esc_html__('This license is not active for this site address.', 'modern-events-calendar-lite');
+        }
+
+        $fallback = sanitize_text_field($fallback);
+        return $fallback !== '' ? $fallback : esc_html__('Activation failed. Check your purchase code - it must match your license type.', 'modern-events-calendar-lite');
     }
 
     /* Download MEC settings */
@@ -717,6 +837,23 @@ class MEC_feature_mec extends MEC_base
     public function support_menu()
     {
         add_submenu_page('mec-intro', esc_html__('MEC - Support', 'modern-events-calendar-lite'), esc_html__('Support', 'modern-events-calendar-lite'), 'manage_options', 'MEC-support', [$this, 'support_page']);
+    }
+
+    /**
+     * Add the .mec-ds-settings body class on the settings page (UX plan item D1).
+     * Report & IX pages share the same design-system tokens (section 31 of
+     * backend-refinements.css) so they render on the settings look.
+     * @param string $classes
+     * @return string
+     * @author Webnus <info@webnus.net>
+     */
+    public function admin_body_class($classes)
+    {
+        $page = isset($_REQUEST['page']) ? sanitize_text_field($_REQUEST['page']) : '';
+
+        if(in_array(trim($page), ['MEC-settings', 'MEC-report', 'MEC-ix', 'MEC-ai', 'MEC-support', 'MEC-addons'])) $classes .= ' mec-ds-settings';
+
+        return $classes;
     }
 
     /**
@@ -1313,6 +1450,204 @@ class MEC_feature_mec extends MEC_base
     }
 
     /**
+     * AJAX: collect system report server-side and ask my.webnus for a ctx token.
+     * License key never leaves PHP / browser JS.
+     *
+     * @return void
+     */
+    public function support_context()
+    {
+        if (!check_ajax_referer('mec_support', 'nonce', false)) {
+            wp_send_json_error(['reason' => 'forbidden'], 403);
+        }
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['reason' => 'forbidden'], 403);
+        }
+
+        $theme = wp_get_theme();
+        $topic = isset($_POST['topic']) ? sanitize_text_field(wp_unslash($_POST['topic'])) : '';
+        $message = isset($_POST['message']) ? sanitize_textarea_field(wp_unslash($_POST['message'])) : '';
+        $updated = isset($_POST['updated']) && '1' === (string) $_POST['updated'];
+        $include_sys = !isset($_POST['include_sys']) || '1' === (string) $_POST['include_sys'];
+
+        $mec_options = get_option('mec_options');
+        $license_key = (is_array($mec_options) && !empty($mec_options['purchase_code']))
+            ? (string) $mec_options['purchase_code']
+            : '';
+        $license_product = (is_array($mec_options) && !empty($mec_options['product_name']))
+            ? (string) $mec_options['product_name']
+            : '';
+
+        // Same entitlement logic as Support page (token / partner), never the raw key.
+        $is_pro = $this->isProBuild();
+        $token_ok = ($is_pro && class_exists('MEC_license')) ? (bool) MEC_license::instance()->licensed() : false;
+        $partner = ($is_pro && class_exists('MEC_license')) ? MEC_license::instance()->partner_licence() : null;
+        $lic_active = ($token_ok || is_array($partner));
+        if (!$is_pro) {
+            $license_status = 'Lite';
+        } elseif ($lic_active) {
+            $license_status = 'Active';
+        } elseif ($license_key !== '') {
+            $license_status = 'Expired';
+        } else {
+            $license_status = 'Not activated';
+        }
+
+        $memory = (string) ini_get('memory_limit');
+        $curl_on = function_exists('curl_version');
+        $debug_on = (defined('WP_DEBUG') && WP_DEBUG);
+
+        // Leading blank lines so the user can type their issue above the report in Crisp.
+        $report_text = "\n\n" . implode("\n", [
+            '### System report (MEC Support page)',
+            'Home URL: ' . home_url(),
+            'Site URL: ' . site_url(),
+            'MEC: ' . (defined('MEC_VERSION') ? MEC_VERSION : '') . ' (' . ($is_pro ? 'Pro' : 'Lite') . ') - License: ' . $license_status,
+            'WordPress: ' . get_bloginfo('version') . ' - Multisite: ' . (is_multisite() ? 'Yes' : 'No') . ' - Locale: ' . get_locale(),
+            'PHP: ' . PHP_VERSION . ' - Memory: ' . $memory . ' - cURL: ' . ($curl_on ? 'Yes' : 'No') . ' - WP_DEBUG: ' . ($debug_on ? 'On' : 'Off'),
+        ]);
+
+        $report = [
+            'mec_version' => defined('MEC_VERSION') ? MEC_VERSION : '',
+            'package' => $is_pro ? 'Pro' : 'Lite',
+            'license_status' => $license_status,
+            'license_product' => $license_product,
+            'wp' => get_bloginfo('version'),
+            'php' => PHP_VERSION,
+            'memory' => $memory,
+            'multisite' => is_multisite(),
+            'locale' => get_locale(),
+            'curl' => $curl_on,
+            'debug' => $debug_on,
+            'theme' => trim($theme->get('Name') . ' ' . $theme->get('Version')),
+            'active_plugins' => $include_sys ? $this->support_context_active_plugins() : [],
+            'home_url' => home_url(),
+            'site_url_report' => site_url(),
+            'report_text' => $report_text,
+            'ticket_topic' => $topic,
+            'ticket_message' => $message,
+            'ticket_updated' => $updated,
+        ];
+
+        $endpoint = apply_filters(
+            'mec_support_context_endpoint',
+            'https://my.webnus.net/wp-json/webnus-support/v1/context'
+        );
+
+        $portal = apply_filters(
+            'mec_support_context_portal',
+            'https://my.webnus.net/support-tickets/'
+        );
+
+        // Lite / no key: open portal without ctx (fallback copy left to JS).
+        if ($license_key === '') {
+            wp_send_json_error([
+                'fallback' => true,
+                'reason' => 'no_license',
+                'message' => 'No license key stored on this site.',
+                'report' => $report,
+                'url' => $portal,
+            ]);
+        }
+
+        $response = wp_remote_post($endpoint, [
+            'timeout' => 12,
+            'headers' => ['Content-Type' => 'application/json'],
+            'body' => wp_json_encode([
+                'license_key' => $license_key,
+                'site_url' => home_url(),
+                'product' => 'mec',
+                'report' => $report,
+            ]),
+        ]);
+
+        if (is_wp_error($response)) {
+            wp_send_json_error([
+                'fallback' => true,
+                'reason' => 'http_error',
+                'message' => $response->get_error_message(),
+                'report' => $report,
+                'url' => $portal,
+            ]);
+        }
+
+        $code = (int) wp_remote_retrieve_response_code($response);
+        $raw = wp_remote_retrieve_body($response);
+        $body = json_decode($raw, true);
+        if (!is_array($body)) {
+            $body = [];
+        }
+
+        if (in_array($code, [403, 429], true) && !empty($body['reason'])) {
+            wp_send_json_error([
+                'reason' => sanitize_key($body['reason']),
+                'message' => isset($body['message']) ? sanitize_text_field($body['message']) : '',
+                'fallback' => false,
+            ], $code);
+        }
+
+        if (!empty($body['url']) && false !== strpos($body['url'], 'ctx=')) {
+            wp_send_json([
+                'token' => isset($body['token']) ? sanitize_text_field($body['token']) : '',
+                'url' => esc_url_raw($body['url']),
+            ]);
+        }
+
+        $remote_msg = isset($body['message']) ? sanitize_text_field($body['message']) : '';
+        if ('' === $remote_msg) {
+            // HTML fatal pages from WP won't JSON-decode — surface a short raw snippet.
+            $remote_msg = 'HTTP ' . $code;
+            if ($raw !== '') {
+                $snippet = wp_strip_all_tags($raw);
+                $snippet = preg_replace('/\s+/', ' ', $snippet);
+                $snippet = substr(trim((string) $snippet), 0, 240);
+                if ($snippet !== '') {
+                    $remote_msg .= ' — ' . $snippet;
+                }
+            }
+        }
+
+        // Do not put system report in the portal URL (leaks data + bypasses rate limit / ownership).
+        wp_send_json_error([
+            'fallback' => true,
+            'reason' => isset($body['reason']) ? sanitize_key($body['reason']) : 'remote_error',
+            'message' => $remote_msg,
+            'where' => isset($body['where']) ? sanitize_text_field((string) $body['where']) : '',
+            'url' => add_query_arg('view', 'create', $portal),
+            'http' => $code,
+        ]);
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function support_context_active_plugins()
+    {
+        if (!function_exists('get_plugins')) {
+            require_once ABSPATH . 'wp-admin/includes/plugin.php';
+        }
+
+        $all = get_plugins();
+        $active = (array) get_option('active_plugins', []);
+        $list = [];
+
+        foreach ($active as $file) {
+            if (!isset($all[$file])) {
+                continue;
+            }
+            $name = isset($all[$file]['Name']) ? $all[$file]['Name'] : $file;
+            $ver = isset($all[$file]['Version']) ? $all[$file]['Version'] : '';
+            $list[] = trim($name . ' ' . $ver);
+            if (count($list) >= 80) {
+                break;
+            }
+        }
+
+        return $list;
+    }
+
+    /**
      * Show content settings menu
      * @return void
      * @author Webnus <info@webnus.net>
@@ -1320,6 +1655,10 @@ class MEC_feature_mec extends MEC_base
     public function page()
     {
         $tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'MEC-settings';
+
+        // Same single #mec-wrap root the Report (MEC-report) and Import /
+        // Export (MEC-ix) pages render, so every settings tab shares it.
+        echo '<div class="wrap" id="mec-wrap">';
 
         if ($tab == 'MEC-customcss') $this->styles();
         else if ($tab == 'MEC-ie') $this->import_export();
@@ -1331,11 +1670,81 @@ class MEC_feature_mec extends MEC_base
         else if ($tab == 'MEC-booking') $this->booking();
         else if ($tab == 'MEC-modules') $this->modules();
         else if ($tab == 'MEC-integrations') $this->integrations();
-        else if (apply_filters('mec_is_custom_settings', false, $tab))
+        else
         {
-            do_action('mec_display_settings_page', $tab);
+            // Some add-ons print their whole tab from inside this filter (and
+            // others from the action below). Capture whatever they print so the
+            // standard page header can always be placed above it, whichever
+            // way the add-on renders.
+            ob_start();
+            $is_custom = apply_filters('mec_is_custom_settings', false, $tab);
+            $filter_output = ob_get_clean();
+
+            if ($is_custom)
+            {
+                $this->custom_settings_head($tab);
+
+                echo $filter_output; // phpcs:ignore WordPress.Security.EscapeOutput -- printed by the add-on that owns the tab
+                do_action('mec_display_settings_page', $tab);
+            }
+            else $this->settings();
         }
-        else $this->settings();
+
+        echo '</div>';
+    }
+
+    /**
+     * Prints the standard header above an add-on settings tab, identical to the
+     * header core tabs print. Add-ons describe their tab through
+     * 'mec_settings_custom_tab_meta' (title, icon, lead); core ships defaults
+     * for the MEC add-ons that own a tab so they are consistent out of the box.
+     *
+     * @param string $tab
+     * @return void
+     */
+    public function custom_settings_head($tab)
+    {
+        $defaults = [
+            'mec-user-dashboard' => [
+                'title' => __('User Dashboard', 'modern-events-calendar-lite'),
+                'icon' => 'dashicons-admin-users',
+                'lead' => __('Set up the front-end user dashboard: its page, layout and the sections your users can see.', 'modern-events-calendar-lite'),
+            ],
+            'mec-virtual-events' => [
+                'title' => __('Virtual Events', 'modern-events-calendar-lite'),
+                'icon' => 'dashicons-video-alt2',
+                'lead' => __('Connect meeting platforms and choose the defaults for your virtual events.', 'modern-events-calendar-lite'),
+            ],
+            'mec-rsvp' => [
+                'title' => __('RSVP', 'modern-events-calendar-lite'),
+                'icon' => 'dashicons-groups',
+                'lead' => __('Let visitors respond to your events and control RSVP forms, limits and reminders.', 'modern-events-calendar-lite'),
+            ],
+            'mec-seat' => [
+                'title' => __('Seat', 'modern-events-calendar-lite'),
+                'icon' => 'dashicons-tickets-alt',
+                'lead' => __('Configure seat selection for event bookings.', 'modern-events-calendar-lite'),
+            ],
+            'mec-invoice' => [
+                'title' => __('Invoice Options', 'modern-events-calendar-lite'),
+                'icon' => 'dashicons-media-text',
+                'lead' => __('Customize the invoices generated for bookings.', 'modern-events-calendar-lite'),
+            ],
+        ];
+
+        $meta = isset($defaults[strtolower($tab)]) ? $defaults[strtolower($tab)] : [];
+
+        /**
+         * Add-ons: ['title' => 'RSVP', 'icon' => 'dashicons-groups', 'lead' => 'One line description']
+         */
+        $filtered = apply_filters('mec_settings_custom_tab_meta', $meta, $tab);
+        if (is_array($filtered)) $meta = array_merge($meta, $filtered);
+
+        $this->main->render_settings_page_head(
+            isset($meta['title']) ? (string) $meta['title'] : '',
+            isset($meta['icon']) ? (string) $meta['icon'] : 'dashicons-admin-generic',
+            isset($meta['lead']) ? (string) $meta['lead'] : ''
+        );
     }
 
     /**

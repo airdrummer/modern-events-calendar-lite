@@ -337,16 +337,20 @@
                         <div class="mec-form-row">
                             <div id="mec_export_module_options_container_toggle" class="<?php if((isset($settings['export_module_status']) and !$settings['export_module_status']) or !isset($settings['export_module_status'])) echo 'mec-util-hidden'; ?>">
                                 <div class="mec-form-row">
-                                    <ul id="mec_export_module_options" class="mec-form-row">
+                                    <ul>
                                         <?php
                                         $event_options = array('googlecal'=>__('Google Calendar', 'modern-events-calendar-lite'), 'ical'=>__('iCal', 'modern-events-calendar-lite'));
-                                        foreach($event_options as $event_key=>$event_option): ?>
-                                        <li id="mec_sn_<?php echo esc_attr($event_key); ?>" data-id="<?php echo esc_attr($event_key); ?>" class="mec-form-row mec-switcher <?php echo ((isset($settings['sn'][$event_key]) and $settings['sn'][$event_key]) ? 'mec-enabled' : 'mec-disabled'); ?>">
-                                            <label class="mec-col-3"><?php echo esc_html($event_option); ?></label>
-                                            <div class="mec-col-9">
-                                                <input class="mec-status" type="hidden" name="mec[settings][sn][<?php echo esc_attr($event_key); ?>]" value="<?php echo (isset($settings['sn'][$event_key]) ? esc_attr($settings['sn'][$event_key]) : '1'); ?>" />
-                                                <label for="mec[settings][sn][<?php echo esc_attr($event_key); ?>]"></label>
-                                            </div>
+                                        foreach($event_options as $event_key=>$event_option):
+                                            // Both export targets default to enabled when the option was never saved
+                                            // (same behavior as the old switcher).
+                                            $export_checked = !isset($settings['sn'][$event_key]) || $settings['sn'][$event_key];
+                                        ?>
+                                        <li>
+                                            <label for="mec_export_<?php echo esc_attr($event_key); ?>">
+                                                <input type="hidden" name="mec[settings][sn][<?php echo esc_attr($event_key); ?>]" value="0" />
+                                                <input class="checkbox" type="checkbox" <?php if($export_checked) echo 'checked="checked"'; ?> id="mec_export_<?php echo esc_attr($event_key); ?>" name="mec[settings][sn][<?php echo esc_attr($event_key); ?>]" value="1" />
+                                                <?php echo esc_html($event_option); ?>
+                                            </label>
                                         </li>
                                         <?php endforeach; ?>
                                     </ul>

@@ -11,6 +11,9 @@ $settings = $this->get_settings();
 // The module is disabled
 if(!isset($settings['next_event_module_status']) || !$settings['next_event_module_status']) return;
 
+// The event date is hidden
+if($this->hide_date_status($event->ID)) return;
+
 // Next Event Method
 $method = $settings['next_event_module_method'] ?? 'occurrence';
 

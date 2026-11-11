@@ -41,6 +41,7 @@ class EventDate extends WidgetBase {
 
 		$html = '';
 		$midnight_event = Base::get_main()->is_midnight_event($event_detail);
+		$hide_date = ( isset($event_detail->data->meta['mec_hide_date']) and $event_detail->data->meta['mec_hide_date'] ) ? true : false;
 		ob_start();
 			?>
 			<div class="mec-event-meta">
@@ -52,7 +53,9 @@ class EventDate extends WidgetBase {
 						<div class="mec-date"><?php esc_html_e('Date', 'modern-events-calendar-lite'); ?></div>
 					<?php } ?>
 					<dl>
-						<?php if($midnight_event): ?>
+						<?php if( $hide_date ): ?>
+							<dd><abbr class="mec-events-abbr"><?php echo esc_html( Base::get_main()->get_tba_label() ); ?></abbr></dd>
+						<?php elseif($midnight_event): ?>
 							<dd><abbr class="mec-events-abbr"><?php echo Base::get_main()->dateify( $event_detail, $date_format ); ?></abbr></dd>
 						<?php else: ?>
 							<dd><abbr class="mec-events-abbr"><?php echo wp_kses( $date_label, array('span' => array( 'class' => array(), 'itemprop' => array() ) ) ); ?></abbr></dd>

@@ -5,6 +5,7 @@
     {
         var active_month;
         var active_year;
+        var month_focus;
 
         // Default Options
         var settings = $.extend(
@@ -40,6 +41,7 @@
             // Add onclick event
             $("#mec_skin_" + settings.id + ' .mec-load-month').on('click', function()
             {
+                month_focus = $(this).find('button:focus').length ? ($(this).hasClass('mec-next-month') ? '.mec-next-month' : '.mec-previous-month') : null;
                 var year = $(this).data('mec-year');
                 var month = $(this).data('mec-month');
 
@@ -52,6 +54,8 @@
             var month_id = year + "" + month;
             active_month = month;
             active_year = year;
+            var $calendar = $("#mec_skin_" + settings.id);
+            $calendar.find('.mec-admin-calendar-error').remove();
 
             // Month exists so we just show it
             if($("#mec_monthly_view_month_" + settings.id + "_" + month_id).length)
@@ -61,7 +65,14 @@
             }
             else
             {
-                var $modalResult = $('.mec-modal-result');
+                var $modalResult = $calendar.find('.mec-modal-result');
+
+                function showError(xhr, status)
+                {
+                    $calendar.find('.mec-admin-calendar-error').remove();
+                    $calendar.prepend($('<div class="notice notice-error mec-admin-calendar-error" role="alert"></div>').append($('<p></p>').text(mecAdminCalendar.loadError)));
+                    console.error('MEC admin calendar: month loading failed.', status, xhr ? xhr.status : '');
+                }
 
                 // Add Loading Class
                 $modalResult.addClass('mec-month-navigator-loading');
@@ -74,6 +85,12 @@
                     type: "post",
                     success: function(response)
                     {
+                        if (!response || !response.current_month || !response.current_month.id || typeof response.month !== 'string' || typeof response.navigator !== 'string')
+                        {
+                            showError(null, 'invalid_response');
+                            return;
+                        }
+
                         // Append Month
                         $("#mec_skin_events_" + settings.id).append('<div class="mec-month-container" id="mec_monthly_view_month_' + settings.id + '_' + response.current_month.id + '" data-month-id="' + response.current_month.id + '">' + response.month + '</div>');
 
@@ -86,12 +103,13 @@
                         // Toggle Month
                         toggleMonth(response.current_month.id);
 
-                        // Remove loading Class
-                        $modalResult.removeClass("mec-month-navigator-loading");
-
                         jQuery(document).trigger('load_calendar_data');
                     },
-                    error: function(){}
+                    error: showError,
+                    complete: function()
+                    {
+                        $modalResult.removeClass('mec-month-navigator-loading');
+                    }
                 });
             }
         }
@@ -116,6 +134,14 @@
             // Toggle Events Side
             $("#mec_skin_" + settings.id + " .mec-month-side").hide();
             $("#mec_month_side_" + settings.id + "_" + month_id).show();
+
+            if (month_focus)
+            {
+                var $navigator = $("#mec_month_navigator_" + settings.id + "_" + month_id);
+                var $button = $navigator.find(month_focus + ' button');
+                ($button.length ? $button : $navigator.find('button')).first().trigger('focus');
+                month_focus = null;
+            }
 
             jQuery(document).trigger('mec_toggle_month', settings, month_id);
         }

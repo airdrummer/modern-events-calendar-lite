@@ -339,6 +339,11 @@ class MEC_capacity extends MEC_base
         self::$bypass_filter = true;
         try {
             $book = $this->getBook();
+            $cache = $this->getCache();
+            $tickets = get_post_meta($event_id, 'mec_tickets', true);
+            foreach (is_array($tickets) ? array_keys($tickets) : [] as $ticket_id) {
+                $cache->delete($event_id . ':' . $ticket_id . ':' . $this->normalize_timestamp($event_timestamp));
+            }
 
             return $book->get_tickets_availability($event_id, $event_timestamp);
         } finally {
@@ -513,12 +518,14 @@ class MEC_capacity extends MEC_base
             return true; // nothing to enforce
         }
 
-        // Ignore this transaction's unpaid hold — only real bookings can block us.
-        $availability = $this->get_availability_without_holds($event_id, $event_timestamp);
-
-        $fits = $this->demand_fits_availability($availability, $demand);
-
-        return $fits;
+        $this->begin_exclude_transaction($transaction_id);
+        try {
+            $availability = $this->get_availability_without_holds($event_id, $event_timestamp);
+            $availability = $this->filter_availability($availability, $event_id, $event_timestamp, 'availability', []);
+            return $this->demand_fits_availability($availability, $demand);
+        } finally {
+            $this->end_exclude_transaction();
+        }
     }
 
     /**

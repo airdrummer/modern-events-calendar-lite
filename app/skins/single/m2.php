@@ -19,6 +19,7 @@ $more_info_target = MEC_feature_occurrences::param($event->ID, $event->date['sta
 if(!trim($more_info_target) && isset($settings['fes_event_link_target']) && trim($settings['fes_event_link_target'])) $more_info_target = $settings['fes_event_link_target'];
 
 $more_info_title = MEC_feature_occurrences::param($event->ID, $event->date['start']['timestamp'], 'more_info_title', ((isset($event->data->meta['mec_more_info_title']) and trim($event->data->meta['mec_more_info_title'])) ? $event->data->meta['mec_more_info_title'] : esc_html__('Read More', 'modern-events-calendar-lite')));
+$more_info_a11y = $this->main->get_more_info_link_accessibility($more_info, ($event->data->title ?? ''), $more_info_target);
 
 $location_id = $this->main->get_master_location_id($event);
 $location = ($location_id ? $this->main->get_location_data($location_id) : array());
@@ -109,7 +110,7 @@ $organizer = ($organizer_id ? $this->main->get_organizer_data($organizer_id) : a
                 <?php elseif($event_link and !$this->main->is_expired($event)): ?>
                     <a class="mec-booking-button mec-bg-color" target="_blank" rel="noopener noreferrer" href="<?php echo esc_url($event_link); ?>"><?php echo esc_html($this->main->m('register_button', esc_html__('REGISTER', 'modern-events-calendar-lite'))); ?></a>
                 <?php elseif($more_info and !$this->main->is_expired($event)): ?>
-                    <a class="mec-booking-button mec-bg-color" target="<?php echo esc_attr($more_info_target); ?>" href="<?php echo esc_url($more_info); ?>"><?php if($more_info_title) echo esc_html__($more_info_title, 'modern-events-calendar-lite'); else echo esc_html($this->main->m('register_button', esc_html__('REGISTER', 'modern-events-calendar-lite'))); ?></a>
+                    <a class="mec-booking-button mec-bg-color" target="<?php echo esc_attr($more_info_target); ?>" href="<?php echo esc_url($more_info); ?>"<?php echo $more_info_a11y['attr']; ?>><?php if($more_info_title) echo esc_html__($more_info_title, 'modern-events-calendar-lite'); else echo esc_html($this->main->m('register_button', esc_html__('REGISTER', 'modern-events-calendar-lite'))); ?><?php echo $more_info_a11y['sr']; ?></a>
                 <?php endif; ?>
             </div>
 
@@ -204,7 +205,7 @@ $organizer = ($organizer_id ? $this->main->get_organizer_data($organizer_id) : a
                         <div class="mec-event-more-info">
                             <?php echo $this->icons->display('info'); ?>
                             <h3 class="mec-cost"><?php echo esc_html($this->main->m('more_info_link', esc_html__('More Info', 'modern-events-calendar-lite'))); ?></h3>
-                            <dd class="mec-events-event-more-info"><a class="mec-more-info-button mec-color-hover" target="<?php echo esc_attr($more_info_target); ?>" href="<?php echo esc_url($more_info); ?>"><?php echo esc_html($more_info_title); ?></a></dd>
+                            <dd class="mec-events-event-more-info"><a class="mec-more-info-button mec-color-hover" target="<?php echo esc_attr($more_info_target); ?>" href="<?php echo esc_url($more_info); ?>"<?php echo $more_info_a11y['attr']; ?>><?php echo esc_html($more_info_title); ?><?php echo $more_info_a11y['sr']; ?></a></dd>
                         </div>
                         <?php
                     }

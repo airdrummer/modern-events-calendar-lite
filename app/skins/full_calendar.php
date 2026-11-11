@@ -184,6 +184,10 @@ class MEC_skin_full_calendar extends MEC_skins
 
     public function prepare_skin_options( $skin, $atts ) {
 
+        // The embedded view must not reuse the Full Calendar wrapper's DOM ID.
+        $atts['instance_id'] = $this->id . '_' . sanitize_key($skin);
+        $atts['search_form_id'] = $this->id;
+
         switch($skin)
         {
             case 'yearly':
@@ -377,6 +381,9 @@ class MEC_skin_full_calendar extends MEC_skins
 
                 break;
         }
+
+        $view = ['yearly' => 'yearly_view', 'monthly' => 'monthly_view', 'weekly' => 'weekly_view', 'daily' => 'daily_view', 'tile' => 'tile', 'grid' => 'grid', 'list' => 'list'][$skin] ?? 'list';
+        $atts['sk-options'][$view]['date_heading_level'] = $this->skin_options['date_heading_level'] ?? 2;
 
         return $atts;
     }

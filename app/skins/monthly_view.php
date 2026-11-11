@@ -438,8 +438,24 @@ class MEC_skin_monthly_view extends MEC_skins
         // Return the output
         $output = $this->output();
 
-        echo json_encode($output);
-        exit;
+        while(ob_get_level()) ob_end_clean();
+
+        wp_send_json($output, null, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
+    }
+
+    public function day_panel_id($time)
+    {
+        return 'mec-calendar-events-sec-' . $this->id . '-' . $this->year . $this->month . '-' . date('Ymd', $time);
+    }
+
+    public function day_control($time, $day, $selected)
+    {
+        $label = esc_attr(sprintf(__('Show events for %s', 'modern-events-calendar-lite'), $this->main->date_i18n('F j, Y', $time)));
+        $content = MEC_kses::full(apply_filters('mec_filter_list_day_value', $day, date('Y-m-d', $time), $this));
+        $panel = esc_attr($this->day_panel_id($time));
+        if ($this->display_all) return '<a href="#' . $panel . '" class="mec-has-event-a" aria-label="' . $label . '">' . $content . '</a>';
+
+        return '<button type="button" class="mec-has-event-a" aria-label="' . $label . '" aria-controls="' . $panel . '" aria-expanded="' . (trim($selected) !== '' ? 'true' : 'false') . '">' . $content . '</button>';
     }
 
     public function day_label($time)
@@ -448,6 +464,13 @@ class MEC_skin_monthly_view extends MEC_skins
         if($this->display_all) return '';
 
         $date_suffix = (isset($this->settings['date_suffix']) && $this->settings['date_suffix'] == '0') ? $this->main->date_i18n('jS', $time) : $this->main->date_i18n('j', $time);
+
+        if (isset($this->skin_options['date_heading_level']))
+        {
+            $tag = $this->get_calendar_event_heading_tag('h3');
+            $label = sprintf(__('Events for %s', 'modern-events-calendar-lite'), $this->main->date_i18n('F j, Y', $time));
+            return '<div class="mec-table-side-title">' . esc_html(sprintf(__('Events for %s', 'modern-events-calendar-lite'), $this->main->date_i18n('F', $time))) . '</div><' . $tag . ' class="mec-table-side-day" aria-label="' . esc_attr($label) . '">' . esc_html($date_suffix) . '</' . $tag . '>';
+        }
 
         if($this->main->is_day_first())
         {

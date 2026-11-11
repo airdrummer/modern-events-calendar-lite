@@ -71,7 +71,7 @@ $with_css = $is_load_more ? false : true;
                         $post = $event->data->post;
 
                         if($this->count == '1' and $this->month_divider and $month_id != $current_month_divider): $current_month_divider = $month_id; ?>
-                            <div class="mec-month-divider" data-toggle-divider="mec-toggle-<?php echo date('Ym', strtotime($date)); ?>-<?php echo esc_attr($this->id); ?>"><h5 style="display: inline;"><?php echo esc_html($this->main->date_i18n('F Y', strtotime($date))); ?></h5><i class="mec-sl-arrow-down"></i></div>
+                            <div class="mec-month-divider" data-toggle-divider="mec-toggle-<?php echo date('Ym', strtotime($date)); ?>-<?php echo esc_attr($this->id); ?>"><h2 style="display: inline;"><?php echo esc_html($this->main->date_i18n('F Y', strtotime($date))); ?></h2><i class="mec-sl-arrow-down"></i></div>
                         <?php endif;
 
                         echo ($rcount == 1) ? '<div class="row">' : '';

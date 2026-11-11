@@ -51,6 +51,8 @@ class EventMoreInfo extends WidgetBase {
 
 			ob_start();
 			if ( trim($more_info) && $more_info != 'http://') {
+				$event_title = $event_detail->data->title ?? get_the_title($event_id);
+				$a11y = Base::get_main()->get_more_info_link_accessibility($more_info, $event_title, $more_info_target);
 				?>
 				<style>.mec-event-more-info h3{display:inline;}</style>
 				<div class="mec-event-meta">
@@ -61,7 +63,7 @@ class EventMoreInfo extends WidgetBase {
 						<?php if( isset( $atts['mec_more_info_show_title'] ) && $atts['mec_more_info_show_title'] ){ ?>
 							<h3 class="mec-more-info-label"><?php echo Base::get_main()->m('more_info_link', esc_html__('More Info', 'modern-events-calendar-lite')); ?></h3>
 						<?php } ?>
-						<dd class="mec-events-event-more-info"><a class="mec-more-info-button a mec-color-hover" target="<?php echo esc_attr( $more_info_target ); ?>" href="<?php echo esc_attr( $more_info ); ?>"><?php echo esc_html( $more_info_title ); ?></a></dd>
+						<dd class="mec-events-event-more-info"><a class="mec-more-info-button a mec-color-hover" target="<?php echo esc_attr( $more_info_target ); ?>" href="<?php echo esc_attr( $more_info ); ?>"<?php echo $a11y['attr']; ?>><?php echo esc_html( $more_info_title ); ?><?php echo $a11y['sr']; ?></a></dd>
 					</div>
 				</div>
 				<?php

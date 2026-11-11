@@ -2,29 +2,41 @@
     'use strict';
 
     $(function () {
-        var $form = $('#mec-ai-task-form');
-        if (!$form.length || typeof mec_ai_task_runner === 'undefined') return;
+        if (typeof mec_ai_task_runner === 'undefined') return;
 
+        $('.mec-ai-runner').each(function () {
+        var $root = $(this);
+        var $form = $root.find('.mec-ai-task-form');
+        if (!$form.length) return;
         var $tasks = $form.find('input[name="mec_ai_task[type]"]');
-        var $notice = $('#mec-ai-request-notice');
+        var $notice = $root.find('.mec-ai-request-notice');
         var $submit = $form.find('.mec-ai-submit');
-        var $submitTitle = $('#mec-ai-submit-title');
-        var $submitCopy = $('#mec-ai-submit-copy');
-        var $categoryPreview = $('#mec-ai-category-preview');
-        var $categoryList = $('#mec-ai-category-preview-list');
-        var $eventPreview = $('#mec-ai-event-preview');
-        var $eventContent = $('#mec-ai-event-preview-content');
-        var $result = $('#mec-ai-category-result');
-        var $createCategories = $('#mec-ai-create-categories');
-        var $createEvent = $('#mec-ai-create-event');
+        var $submitTitle = $root.find('.mec-ai-submit-title');
+        var $submitCopy = $root.find('.mec-ai-submit-copy');
+        var $categoryPreview = $root.find('.mec-ai-category-preview-main');
+        var $categoryList = $root.find('.mec-ai-category-preview-list').first();
+        var $eventPreview = $root.find('.mec-ai-event-preview');
+        var $eventContent = $root.find('.mec-ai-event-preview-content');
+        var $result = $root.find('.mec-ai-category-result');
+        var $createCategories = $root.find('.mec-ai-create-categories');
+        var $createEvent = $root.find('.mec-ai-create-event');
         var activeTask = null;
         var eventPreviewToken = '';
         var eventPreviewPayload = null;
         var defaultSubmitHtml = $submit.html();
         var defaultCategoryHtml = $createCategories.html();
         var defaultEventHtml = $createEvent.html();
+        var taxonomyTasks = mec_ai_task_runner.taxonomy_tasks || {};
+        var $termPreview = $root.find('#mec-ai-taxonomy-preview');
+        var $termList = $root.find('.mec-ai-taxonomy-preview-list');
+        var $createTerms = $root.find('.mec-ai-create-terms');
+        var termPreviewToken = '';
+        var previewVersion = 0;
+        var generationPending = false;
+        var imagePending = false;
+        var termsPending = false;
 
-        function option() { return $tasks.filter(':checked'); }
+        function option() { return $tasks.filter(':checked, [type="hidden"]').first(); }
 
         function setNotice(type, message) { $notice.removeClass('is-error is-success').addClass(type ? 'is-' + type : '').text(message || ''); }
 
@@ -46,6 +58,10 @@
         }
 
         function clearPreviews(clearResults) {
+            previewVersion++;
+            termPreviewToken = '';
+            $termPreview.prop('hidden', true);
+            $termList.empty();
             $categoryPreview.prop('hidden', true);
             $categoryList.empty();
             $eventPreview.prop('hidden', true);
@@ -65,11 +81,11 @@
             if (activeTask !== task) clearPreviews(true);
             $panels.each(function () { setPanelState($(this), $(this).data('task') === task); });
             activeTask = task;
-            $('#mec-ai-task-description').text($selected.data('description') || '');
-            $submit.html(($selected.data('actionLabel') || mec_ai_task_runner.coming_soon) + ' <i class="mec-sl-arrow-right" aria-hidden="true"></i>').prop('disabled', status !== 'generate_preview');
+            $root.find('#mec-ai-task-description').text($selected.data('description') || '');
+            $submit.html(($selected.data('actionLabel') || mec_ai_task_runner.coming_soon) + ' <i class="mec-sl-arrow-right" aria-hidden="true"></i>').prop('disabled', status !== 'generate_preview' || generationPending || termsPending);
             if (status === 'generate_preview') {
-                $submitTitle.text(task === 'create_event' ? mec_ai_task_runner.event_preview_title : mec_ai_task_runner.preview_title);
-                $submitCopy.text(task === 'create_event' ? mec_ai_task_runner.event_preview_copy : mec_ai_task_runner.preview_copy);
+                $submitTitle.text(taxonomyTasks[task] ? mec_ai_task_runner.taxonomy_preview_title : (task === 'create_event' ? mec_ai_task_runner.event_preview_title : mec_ai_task_runner.preview_title));
+                $submitCopy.text(taxonomyTasks[task] ? mec_ai_task_runner.taxonomy_preview_copy : (task === 'create_event' ? mec_ai_task_runner.event_preview_copy : mec_ai_task_runner.preview_copy));
             } else {
                 $submitTitle.text(mec_ai_task_runner.coming_soon);
                 $submitCopy.text(mec_ai_task_runner.coming_soon_copy);
@@ -129,6 +145,133 @@
             $.each(payload.categories || [], function (_, category) { addCategoryRow(category, duplicateNames || []); });
             $categoryPreview.prop('hidden', false)[0].scrollIntoView({behavior: 'smooth', block: 'start'});
         }
+
+        function updateTermButtons() {
+            $createTerms.prop('disabled', imagePending || termsPending);
+            $termList.find('.mec-ai-generate-image, .mec-ai-remove-image').prop('disabled', imagePending || termsPending);
+        }
+
+        function renderTermPreview(response) {
+            var config = taxonomyTasks[response.payload.task_type];
+            if (!config) return;
+            termPreviewToken = response.preview_token;
+            $termList.empty();
+            $.each(response.payload.items, function (_, item) {
+                var duplicate = (response.duplicate_names || []).indexOf(item.name) !== -1;
+                var $row = $('<article>', {'class': 'mec-ai-category-row'}).data('item', item).toggleClass('is-duplicate', duplicate);
+                var $check = $('<input>', {type: 'checkbox', 'class': 'mec-ai-term-enabled'}).prop({checked: !duplicate, disabled: duplicate});
+                $row.append($('<div>', {'class': 'mec-ai-category-row-heading'}).append($('<label>', {'class': 'mec-ai-category-select'}).append($check).append($('<span>').text(duplicate ? mec_ai_task_runner.duplicate_note : mec_ai_task_runner.include))));
+                var $fields = $('<div>', {'class': 'mec-ai-category-fields'});
+                $fields.append($('<div>', {'class': 'mec-ai-category-generated'}).append($('<span>').text(mec_ai_task_runner.name)).append($('<strong>').text(item.name)));
+                $fields.append($('<div>', {'class': 'mec-ai-category-generated'}).append($('<span>').text(mec_ai_task_runner.description)).append($('<p>').text(item.description)));
+                var $grid = $('<div>', {'class': 'mec-ai-taxonomy-field-grid'});
+                $.each(config.fields, function (key, field) {
+                    var $input;
+                    if (field.type === 'select') {
+                        $input = $('<select>');
+                        $.each(field.options, function (value, label) { $input.append($('<option>', {value: value}).text(label)); });
+                    } else {
+                        $input = $('<input>', {type: field.type === 'color' ? 'text' : field.type});
+                        if (field.type === 'number') $input.attr({min: field.min, max: field.max, step: 'any'});
+                    }
+                    $input.attr('data-term-field', key).addClass('mec-ai-event-editor-input').val(item[key]).prop('disabled', duplicate);
+                    if (field.type === 'color') $input.addClass('mec-ai-category-color');
+                    $grid.append($('<label>').append($('<span>').text(field.label)).append($input));
+                });
+                $fields.append($grid);
+                if (config.image_meta && !duplicate) {
+                    var $image = $('<div>', {'class': 'mec-ai-taxonomy-image'});
+                    if (mec_ai_task_runner.taxonomy_images_available) {
+                        $image.append($('<label>').append($('<span>').text(mec_ai_task_runner.image_prompt)).append($('<input>', {type: 'text', maxlength: 2000, 'class': 'mec-ai-image-prompt mec-ai-event-editor-input'})));
+                        $image.append($('<img>', {alt: item.name, hidden: true}));
+                        $image.append($('<button>', {type: 'button', 'class': 'button mec-ai-generate-image'}).text(mec_ai_task_runner.generate_image));
+                        $image.append($('<button>', {type: 'button', 'class': 'button mec-ai-remove-image', hidden: true}).text(mec_ai_task_runner.remove_image));
+                        $image.append($('<p>', {'class': 'mec-ai-image-status', role: 'status', 'aria-live': 'polite'}));
+                    } else $image.append($('<p>').text(mec_ai_task_runner.taxonomy_image_unavailable));
+                    $fields.append($image);
+                }
+                $row.append($fields);
+                $termList.append($row);
+                if (!duplicate) $row.find('[data-term-field="color"]').each(function () { initializeColorPicker($(this)); });
+            });
+            updateTermButtons();
+            $termPreview.prop('hidden', false)[0].scrollIntoView({behavior: 'smooth', block: 'start'});
+        }
+
+        $termList.on('click', '.mec-ai-generate-image', function () {
+            if (imagePending || termsPending || !termPreviewToken) return;
+            var $row = $(this).closest('.mec-ai-category-row');
+            var item = $row.data('item');
+            var version = previewVersion;
+            imagePending = true;
+            updateTermButtons();
+            $row.find('.mec-ai-image-status').empty();
+            $(this).addClass('is-loading');
+            $.post(mec_ai_task_runner.ajax_url, {
+                action: 'mec_ai_generate_taxonomy_image', nonce: mec_ai_task_runner.nonce, task_type: activeTask,
+                preview_token: termPreviewToken, item_id: item.id, image_prompt: $row.find('.mec-ai-image-prompt').val()
+            }).done(function (response) {
+                if (version !== previewVersion) return;
+                if (!response || !response.success || !response.image) { $row.find('.mec-ai-image-status').text((response && response.message) || mec_ai_task_runner.error); return; }
+                $row.data('hasImage', true).find('img').attr({src: response.image.url, alt: response.image.alt_text}).prop('hidden', false);
+                $row.find('.mec-ai-generate-image').text(mec_ai_task_runner.regenerate_image);
+                $row.find('.mec-ai-remove-image').prop('hidden', false);
+            }).fail(function () {
+                if (version === previewVersion) $row.find('.mec-ai-image-status').text(mec_ai_task_runner.error);
+            }).always(function () {
+                imagePending = false;
+                $row.find('.mec-ai-generate-image').removeClass('is-loading');
+                updateTermButtons();
+            });
+        });
+
+        $termList.on('click', '.mec-ai-remove-image', function () {
+            if (imagePending || termsPending) return;
+            var $row = $(this).closest('.mec-ai-category-row');
+            $row.data('hasImage', false).find('img').removeAttr('src').prop('hidden', true);
+            $row.find('.mec-ai-generate-image').text(mec_ai_task_runner.generate_image);
+            $(this).prop('hidden', true);
+        });
+
+        $createTerms.on('click', function () {
+            if (imagePending || termsPending || !termPreviewToken) return;
+            var items = [];
+            $termList.find('.mec-ai-category-row').each(function () {
+                var $row = $(this);
+                if (!$row.find('.mec-ai-term-enabled').prop('checked')) return;
+                var item = $.extend({}, $row.data('item'), {include_image: !!$row.data('hasImage')});
+                $row.find('[data-term-field]').each(function () { item[$(this).data('termField')] = $(this).val(); });
+                items.push(item);
+            });
+            if (!items.length) { setNotice('error', mec_ai_task_runner.select_terms); return; }
+            var version = previewVersion;
+            termsPending = true;
+            updateTermButtons();
+            $submit.prop('disabled', true);
+            $createTerms.addClass('is-loading');
+            $.post(mec_ai_task_runner.ajax_url, {
+                action: 'mec_ai_apply_task_preview', nonce: mec_ai_task_runner.nonce, task_type: activeTask,
+                preview_token: termPreviewToken, payload: JSON.stringify({task_type: activeTask, schema_version: 1, items: items})
+            }).done(function (response) {
+                if (version !== previewVersion) return;
+                if (!response || !response.success) { setNotice('error', (response && response.message) || mec_ai_task_runner.error); return; }
+                setNotice('', '');
+                renderCategoryResults(response);
+                var completed = $.map(response.created || [], function (item) { return item.id; });
+                $termList.find('.mec-ai-category-row').each(function () {
+                    var item = $(this).data('item');
+                    if (completed.indexOf(item.id) !== -1 || (response.skipped || []).indexOf(item.name) !== -1) $(this).remove();
+                });
+                if (!$termList.find('.mec-ai-category-row').length) $termPreview.prop('hidden', true);
+            }).fail(function () {
+                if (version === previewVersion) setNotice('error', mec_ai_task_runner.error);
+            }).always(function () {
+                termsPending = false;
+                $createTerms.removeClass('is-loading');
+                updateTermButtons();
+                showTask();
+            });
+        });
 
         function eventValue(label, value) { return value ? $('<div>', {'class': 'mec-ai-event-detail'}).append($('<strong>').text(label)).append($('<span>').text(value)) : $(); }
 
@@ -226,6 +369,7 @@
             }
             if (skipped.length) $wrap.append($('<p>').append($('<strong>').text(mec_ai_task_runner.skipped + ' (' + skipped.length + '): ')).append(document.createTextNode(skipped.join(', '))));
             if (failed.length) $wrap.append($('<p>').append($('<strong>').text(mec_ai_task_runner.failed + ' (' + failed.length + '): ')).append(document.createTextNode($.map(failed, function (item) { return item.name + ': ' + item.message; }).join('; '))));
+            $.each(response.warnings || [], function (_, warning) { $wrap.append($('<p>').text(warning)); });
             $result.empty().append($wrap).removeClass('is-success is-error').addClass(failed.length ? 'is-error' : 'is-success');
         }
 
@@ -240,22 +384,30 @@
         $tasks.on('change', showTask);
         showTask();
 
-        $form.on('submit', function (event) {
+        function generatePreview(event) {
             event.preventDefault();
-            if ((option().data('status') || '') !== 'generate_preview') return;
+            if (generationPending || termsPending || (option().data('status') || '') !== 'generate_preview') return;
             var currentTask = option().val();
-            var $prompt = currentTask === 'create_event' ? $('#mec_ai_event_prompt') : $('#mec_ai_category_prompt');
-            if (!$prompt.length || !$.trim($prompt.val() || '')) { setNotice('error', currentTask === 'create_event' ? mec_ai_task_runner.event_prompt_required : mec_ai_task_runner.prompt_required); $prompt.trigger('focus'); return; }
+            var $prompt = taxonomyTasks[currentTask] ? $root.find('#mec_ai_' + currentTask + '_prompt') : (currentTask === 'create_event' ? $root.find('.mec-ai-event-prompt') : $root.find('#mec_ai_category_prompt'));
+            if (!$prompt.length || !$.trim($prompt.val() || '')) { setNotice('error', taxonomyTasks[currentTask] ? mec_ai_task_runner.taxonomy_prompt_required : (currentTask === 'create_event' ? mec_ai_task_runner.event_prompt_required : mec_ai_task_runner.prompt_required)); $prompt.trigger('focus'); return; }
             clearPreviews(true);
+            var version = previewVersion;
+            generationPending = true;
             setNotice('', '');
             $submit.prop('disabled', true).addClass('is-loading');
-            $.post(mec_ai_task_runner.ajax_url, $form.serialize() + '&action=mec_ai_generate_task_preview&nonce=' + encodeURIComponent(mec_ai_task_runner.nonce)).done(function (response) {
+            var formData = $form.is('form') ? $form.serialize() : $form.find(':input').serialize();
+            $.post(mec_ai_task_runner.ajax_url, formData + '&action=mec_ai_generate_task_preview&nonce=' + encodeURIComponent(mec_ai_task_runner.nonce)).done(function (response) {
+                if (version !== previewVersion) return;
                 if (!response || !response.success || !response.payload) { setNotice('error', (response && response.message) || mec_ai_task_runner.error); return; }
                 if (currentTask === 'create_event') { eventPreviewToken = response.preview_token || ''; eventPreviewPayload = response.payload; renderEventPreview(response.payload, response.image || {}, response.warnings || []); }
+                else if (taxonomyTasks[currentTask]) renderTermPreview(response);
                 else renderCategoryPreview(response.payload, response.duplicate_names || []);
                 setNotice('success', response.message || mec_ai_task_runner.preview_ready);
-            }).fail(function () { setNotice('error', mec_ai_task_runner.error); }).always(function () { $submit.prop('disabled', false).removeClass('is-loading').html(defaultSubmitHtml); showTask(); });
-        });
+            }).fail(function () { if (version === previewVersion) setNotice('error', mec_ai_task_runner.error); }).always(function () { generationPending = false; $submit.prop('disabled', false).removeClass('is-loading').html(defaultSubmitHtml); showTask(); });
+        }
+
+        $form.on('submit', generatePreview);
+        $form.on('click', '.mec-ai-generate-preview', generatePreview);
 
         $createCategories.on('click', function () {
             var payload = categoryPayload();
@@ -273,19 +425,32 @@
             if (!eventPreviewToken) { setNotice('error', mec_ai_task_runner.event_preview_required); return; }
             var payload = reviewedEventPayload();
             if (!payload) { setNotice('error', mec_ai_task_runner.event_preview_required); return; }
+            var version = previewVersion;
             setNotice('', '');
             $result.empty().removeClass('is-success is-error');
             setButtonLoading($createEvent, true);
             $.post(mec_ai_task_runner.ajax_url, {action: 'mec_ai_apply_task_preview', nonce: mec_ai_task_runner.nonce, task_type: 'create_event', preview_token: eventPreviewToken, payload: JSON.stringify(payload)}).done(function (response) {
-                if (response && response.success) { renderEventResult(response); $eventPreview.prop('hidden', true); $eventContent.empty(); eventPreviewToken = ''; eventPreviewPayload = null; }
+                if (version !== previewVersion) return;
+                if (response && response.success) {
+                    if ($root.data('redirectOnCreate') && !(response.warnings || []).length && response.event && response.event.edit_url) {
+                        window.location.assign(response.event.edit_url);
+                        return;
+                    }
+
+                    renderEventResult(response);
+                    $eventPreview.prop('hidden', true);
+                    $eventContent.empty();
+                    eventPreviewToken = '';
+                    eventPreviewPayload = null;
+                }
                 else setNotice('error', (response && response.message) || mec_ai_task_runner.error);
-            }).fail(function () { setNotice('error', mec_ai_task_runner.error); }).always(function () { setButtonLoading($createEvent, false, defaultEventHtml); });
+            }).fail(function () { if (version === previewVersion) setNotice('error', mec_ai_task_runner.error); }).always(function () { if (version === previewVersion) setButtonLoading($createEvent, false, defaultEventHtml); });
         });
 
-        $(document).on('click', '.mec-ai-category-icon-picker', function () {
+        $root.on('click', '.mec-ai-category-icon-picker', function () {
             var $button = $(this);
             var $target = $button.closest('.mec-ai-category-fields').find('.mec-ai-category-icon');
-            var template = $('#mec-ai-icon-picker-template').html();
+            var template = $root.find('.mec-ai-icon-picker-template').html();
             if (!template) return;
             var $picker = $(template);
             $('body').append($picker);
@@ -293,6 +458,37 @@
             $picker.find('.mec-ai-close-icon-picker').on('click', function () { $picker.remove(); });
             $picker.on('click', function (event) { if (event.target === this) $picker.remove(); });
             $picker.find('.mec-ai-icon-search').on('input', function () { var query = String($(this).val() || '').toLowerCase(); $picker.find('.mec-ai-icon-choice').each(function () { $(this).toggle(!query || String($(this).data('icon')).toLowerCase().indexOf(query) !== -1); }); }).trigger('focus');
+        });
+
+        $root.data('mecAiReset', function () {
+            if ($form.is('form')) $form[0].reset();
+            else $form.find('textarea').val('');
+            clearPreviews(true);
+            setButtonLoading($createEvent, false, defaultEventHtml);
+            setNotice('', '');
+            showTask();
+        });
+        });
+
+        $('.mec-ai-event-modal').each(function () {
+            var $modal = $(this);
+            var modalId = $modal.attr('id');
+            var $trigger = $('[data-mec-ai-modal="' + modalId + '"]');
+            if (!$.fn.dialog || !$trigger.length) return;
+
+            $modal.dialog({
+                autoOpen: false,
+                modal: true,
+                width: 720,
+                maxHeight: Math.round(window.innerHeight * 0.88),
+                position: {my: 'center top', at: 'center top+5%', of: window, collision: 'fit'},
+                dialogClass: 'mec-ai-dialog mec-ds mec-ai-v2',
+                close: function () {
+                    var reset = $modal.find('.mec-ai-runner').data('mecAiReset');
+                    if (reset) reset();
+                },
+            });
+            $trigger.on('click', function () { $modal.dialog('open'); });
         });
     });
 }(jQuery));

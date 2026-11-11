@@ -749,6 +749,7 @@ class MEC_feature_ix extends MEC_base
                 $allday = (int) $meta->mec_date->allday;
                 $time_comment = (string) $meta->mec_date->comment;
                 $hide_time = (int) $meta->mec_date->hide_time;
+                $hide_date = (int) ($meta->mec_date->hide_date ?? 0);
                 $hide_end_time = (int) $meta->mec_date->hide_end_time;
 
                 // Repeat Options
@@ -910,6 +911,7 @@ class MEC_feature_ix extends MEC_base
                         'allday' => $allday,
                         'comment' => $time_comment,
                         'hide_time' => $hide_time,
+                        'hide_date' => $hide_date,
                         'hide_end_time' => $hide_end_time,
                     ],
                     'start' => $start_date,
@@ -953,6 +955,7 @@ class MEC_feature_ix extends MEC_base
                         ],
                         'mec_allday' => $allday,
                         'mec_hide_time' => $hide_time,
+                        'mec_hide_date' => $hide_date,
                         'mec_hide_end_time' => $hide_end_time,
                         'mec_comment' => $time_comment,
                         'mec_repeat_end' => (string) $meta->mec_repeat_end,

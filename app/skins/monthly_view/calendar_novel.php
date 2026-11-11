@@ -2,6 +2,8 @@
 /** no direct access **/
 defined('MECEXEC') or die();
 
+$event_heading_tag = $this->get_calendar_event_heading_tag('h4', 1);
+
 /** @var MEC_skin_monthly_view $this */
 /** @var int $month */
 /** @var int $year */
@@ -74,7 +76,7 @@ elseif($week_start == 5) // Friday
                     if($target_set !== 'no') echo '<a class="'.($this->main->is_expired($event) ? 'mec-past-event ' : '').'event-single-link-novel" data-event-id="'.esc_attr($event->data->ID).'" href="'.esc_url($this->main->get_event_date_permalink($event, $event->date['start']['date'])).'" '.$target_url.'>';
 
                     echo '<div style="background:'.esc_attr($event_color).'" class="mec-single-event-novel mec-event-article '.esc_attr($this->get_event_classes($event)).'">';
-                    echo '<h4 class="mec-event-title">'.MEC_kses::element(apply_filters('mec_occurrence_event_title', $event->data->title, $event)).'</h4>'.$this->main->get_normal_labels($event, $display_label).$this->main->display_cancellation_reason($event, $reason_for_cancellation);
+                    echo '<'.$event_heading_tag.' class="mec-event-title">'.MEC_kses::element(apply_filters('mec_occurrence_event_title', $event->data->title, $event)).'</'.$event_heading_tag.'>'.$this->main->get_normal_labels($event, $display_label).$this->main->display_cancellation_reason($event, $reason_for_cancellation);
                     echo MEC_kses::element($this->get_label_captions($event));
 
                     do_action('mec_shortcode_virtual_badge', $event->data->ID);
@@ -123,7 +125,7 @@ elseif($week_start == 5) // Friday
                     if($target_set !== 'no') echo '<a class="'.($this->main->is_expired($event) ? 'mec-past-event ' : '').'event-single-link-novel" data-event-id="'.esc_attr($event->data->ID).'" href="'.esc_url($this->main->get_event_date_permalink($event, $event->date['start']['date'])).'" '.$target_url.'>';
 
                     echo '<div style="background:'.esc_attr($event_color).'" class="mec-single-event-novel mec-event-article '.esc_attr($this->get_event_classes($event)).'">';
-                    echo '<h4 class="mec-event-title">'.MEC_kses::element(apply_filters('mec_occurrence_event_title', $event->data->title, $event)).'</h4>'.$this->main->get_normal_labels($event, $display_label).$this->main->display_cancellation_reason($event, $reason_for_cancellation);
+                    echo '<'.$event_heading_tag.' class="mec-event-title">'.MEC_kses::element(apply_filters('mec_occurrence_event_title', $event->data->title, $event)).'</'.$event_heading_tag.'>'.$this->main->get_normal_labels($event, $display_label).$this->main->display_cancellation_reason($event, $reason_for_cancellation);
                     echo MEC_kses::element($this->get_label_captions($event));
 
                     do_action('mec_shortcode_virtual_badge', $event->data->ID);
@@ -189,7 +191,7 @@ elseif($week_start == 5) // Friday
                         if($target_set !== 'no') echo '<a class="'.($this->main->is_expired($event) ? 'mec-past-event ' : '').'event-single-link-novel" data-event-id="'.esc_attr($event->data->ID).'" href="'.esc_url($this->main->get_event_date_permalink($event, $event->date['start']['date'])).'" '.$target_url.'>';
 
                         echo '<div style="background:'.esc_attr($event_color).'" class="mec-single-event-novel mec-event-article '.esc_attr($this->get_event_classes($event)).'">';
-                        echo '<h4 class="mec-event-title">'.MEC_kses::element(apply_filters('mec_occurrence_event_title', $event->data->title, $event)).'</h4>'.$this->main->get_normal_labels($event, $display_label).$this->main->display_cancellation_reason($event, $reason_for_cancellation);
+                        echo '<'.$event_heading_tag.' class="mec-event-title">'.MEC_kses::element(apply_filters('mec_occurrence_event_title', $event->data->title, $event)).'</'.$event_heading_tag.'>'.$this->main->get_normal_labels($event, $display_label).$this->main->display_cancellation_reason($event, $reason_for_cancellation);
                         echo MEC_kses::element($this->get_label_captions($event));
 
                         do_action('mec_shortcode_virtual_badge', $event->data->ID);

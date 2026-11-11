@@ -101,8 +101,6 @@ body.toplevel_page_mec-intro #webnus-dashboard .mec-cmsg-2-notification-box-wrap
 }
 
 .wns-be-container {
-  max-width: 1020px;
-  background-color: #f7f8f9;
   background-repeat: repeat-x;
   border: 1px solid #dcdfe1;
   border-radius: 15px;
@@ -125,6 +123,11 @@ body.toplevel_page_mec-intro #webnus-dashboard .mec-cmsg-2-notification-box-wrap
   list-style: none;
   margin: 0;
   transition: all 0.2s ease;
+}
+
+body.mec-ds-settings .wns-be-sidebar .wns-be-group-menu>li:last-of-type {
+  border-radius: 0 0 0 15px;
+  overflow: hidden;
 }
 
 .wns-be-sidebar .wns-be-group-menu li a {
@@ -160,7 +163,6 @@ body.toplevel_page_mec-intro #webnus-dashboard .mec-cmsg-2-notification-box-wrap
 }
 
 .wns-be-main {
-  background: #fff;
   margin-left: 230px;
   border-left: 1px solid #e6e9eb;
   box-shadow: inset 0 1px 0 #fff;
@@ -225,15 +227,6 @@ body.toplevel_page_mec-intro #webnus-dashboard .mec-cmsg-2-notification-box-wrap
   min-height: 650px;
 }
 
-.wns-be-main .wns-saved-settings {
-  margin: 0;
-  border-bottom: 1px solid #dedede;
-  background: #dff0d8;
-  color: #468847;
-  padding: 8px 35px 8px 14px;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
-}
-
 .wns-be-container .dpr-btn {
   display: inline-block;
   font-size: 13px;
@@ -255,26 +248,17 @@ body.toplevel_page_mec-intro #webnus-dashboard .mec-cmsg-2-notification-box-wrap
   color: #303030;
 }
 
+/* .dpr-save-btn: the two formerly stacked rules (base + green skin) merged
+   into one; the effective computed values are identical. */
 .wns-be-container .dpr-btn.dpr-save-btn {
   display: inline-block;
   text-decoration: none;
-  padding: 0 16px;
+  padding: 1px 22px;
   height: 36px;
   line-height: 36px;
   font-weight: 500;
   font-size: 14px;
   border-radius: 20px;
-  box-shadow: 0 1px 2px rgb(0 0 0 / 2%);
-  text-shadow: none;
-  margin-right: 5px;
-  background: #fff;
-  color: #07bbe9;
-  border: 1px solid #d1e5ec;
-  letter-spacing: 0.2px;
-  transition: 0.24s all ease;
-}
-
-.wns-be-container .dpr-btn.dpr-save-btn {
   box-shadow: 0 0 0 4px #e4ffe6;
   text-shadow: none;
   margin-right: 5px;
@@ -282,7 +266,8 @@ body.toplevel_page_mec-intro #webnus-dashboard .mec-cmsg-2-notification-box-wrap
   color: #fff;
   border: none;
   cursor: pointer;
-  padding: 1px 22px;
+  letter-spacing: 0.2px;
+  transition: 0.24s all ease;
 }
 
 .wns-be-container .dpr-btn.dpr-save-btn:hover {
@@ -313,7 +298,7 @@ body.toplevel_page_mec-intro #webnus-dashboard .mec-cmsg-2-notification-box-wrap
   content: "";
   width: 4px;
   height: 16px;
-  margin-right: 5px;
+  margin: 0 5px;
   background-color: #07bbe9;
   display: block;
   position: absolute;
@@ -352,8 +337,6 @@ body.toplevel_page_mec-intro #webnus-dashboard .mec-cmsg-2-notification-box-wrap
 }
 
 .wns-be-sidebar .wns-be-group-tab-link-a span.wns-be-group-menu-title {
-  padding-left: 24px;
-  padding-top: 1px;
   font-size: 14px;
   font-weight: 600;
 }
@@ -458,7 +441,7 @@ body.toplevel_page_mec-intro #webnus-dashboard .mec-cmsg-2-notification-box-wrap
 
 .wns-be-container #wns-be-footer {
   border-top: 1px solid #dedede;
-  z-index: 999;
+  z-index: 1;
   padding: 25px 20px 20px;
   background: #ffffff !important;
   height: 44px;
@@ -467,7 +450,7 @@ body.toplevel_page_mec-intro #webnus-dashboard .mec-cmsg-2-notification-box-wrap
 }
 
 .wns-be-container #wns-be-content {
-  padding: 0px 20px 20px 40px;
+  padding: 0px 20px 20px 30px;
 }
 
 .wns-be-container #wns-be-infobar {
@@ -738,10 +721,8 @@ body.post-type-mec-books th.column-author {
 .mec-tooltip {
   display: inline-block;
   position: relative;
-  margin-right: 10px;
   cursor: help;
   bottom: 0;
-  /* padding-right: 10px; */
 }
 
 .mec-tooltip:last-child {
@@ -893,7 +874,8 @@ body.post-type-mec-books th.column-author {
 #mec-occurrences .mec-occurrences-list,
 #mec_bfixed_form_fields,
 #mec_event_form_fields,
-#mec_reg_form_fields {
+#mec_reg_form_fields,
+#mec_waiting_form_fields {
   background: #f7f8f9;
   padding: 20px;
   margin: 0 0 20px 0;
@@ -906,7 +888,8 @@ body.post-type-mec-books th.column-author {
 #mec_bfixed_form_fields li,
 #mec_event_form_fields li,
 #mec_orgz_form_row li,
-#mec_reg_form_fields li {
+#mec_reg_form_fields li,
+#mec_waiting_form_fields li {
   border-radius: 5px;
   padding: 25px;
   background: #fff;
@@ -916,13 +899,16 @@ body.post-type-mec-books th.column-author {
   box-shadow: 0 1px 5px rgb(0 0 0 / 2%);
 }
 
-#mec_reg_form_fields li div select {
+#mec_reg_form_fields li div select,
+
+#mec_waiting_form_fields li div select {
   display: block;
 }
 
 #mec_bfixed_form_fields li ul,
 #mec_event_form_fields li ul,
-#mec_reg_form_fields li ul {
+#mec_reg_form_fields li ul,
+#mec_waiting_form_fields li ul {
   padding-top: 15px;
   padding-bottom: 15px;
   margin: 1px;
@@ -930,7 +916,8 @@ body.post-type-mec-books th.column-author {
 
 #mec_bfixed_form_fields li ul li,
 #mec_event_form_fields li ul li,
-#mec_reg_form_fields li ul li {
+#mec_reg_form_fields li ul li,
+#mec_waiting_form_fields li ul li {
   padding: 7px 30px 7px 46px;
 }
 
@@ -948,7 +935,8 @@ body.post-type-mec-books th.column-author {
 #mec_bfixed_form_fields span.mec_event_field_type,
 #mec_event_form_fields span.mec_event_field_type,
 #mec_orgz_form_row span.mec_orgz_item_name,
-#mec_reg_form_fields span.mec_reg_field_type {
+#mec_reg_form_fields span.mec_reg_field_type,
+#mec_waiting_form_fields span.mec_waiting_field_type {
   font-size: 15px;
   line-height: 1.8;
   font-weight: 600;
@@ -967,8 +955,11 @@ body.post-type-mec-books th.column-author {
 #mec_orgz_form_row span.mec-additional-organizer-remove,
 #mec_orgz_form_row span.mec-additional-organizer-sort,
 #mec_reg_form_fields span.mec_reg_field_option_sort,
+#mec_waiting_form_fields span.mec_waiting_field_option_sort,
 #mec_reg_form_fields span.mec_reg_field_remove,
-#mec_reg_form_fields span.mec_reg_field_sort {
+#mec_waiting_form_fields span.mec_waiting_field_remove,
+#mec_reg_form_fields span.mec_reg_field_sort,
+#mec_waiting_form_fields span.mec_waiting_field_sort {
   font-size: 0;
   color: #fff;
 }
@@ -977,7 +968,8 @@ body.post-type-mec-books th.column-author {
 #mec_bfixed_form_fields span.mec_bfixed_field_remove,
 #mec_event_form_fields span.mec_event_field_remove,
 #mec_orgz_form_row span.mec-additional-organizer-remove,
-#mec_reg_form_fields span.mec_reg_field_remove {
+#mec_reg_form_fields span.mec_reg_field_remove,
+#mec_waiting_form_fields span.mec_waiting_field_remove {
   position: absolute;
   right: 0;
   top: 0;
@@ -994,8 +986,11 @@ body.post-type-mec-books th.column-author {
 #mec_orgz_form_row span.mec-additional-organizer-remove:before,
 #mec_orgz_form_row span.mec-additional-organizer-sort:before,
 #mec_reg_form_fields span.mec_reg_field_option_sort:before,
+#mec_waiting_form_fields span.mec_waiting_field_option_sort:before,
 #mec_reg_form_fields span.mec_reg_field_remove:before,
-#mec_reg_form_fields span.mec_reg_field_sort:before {
+#mec_waiting_form_fields span.mec_waiting_field_remove:before,
+#mec_reg_form_fields span.mec_reg_field_sort:before,
+#mec_waiting_form_fields span.mec_waiting_field_sort:before {
   position: absolute;
   left: 26px;
   top: 26px;
@@ -1009,7 +1004,9 @@ body.post-type-mec-books th.column-author {
   color: #07bbe9;
 }
 
-#mec_reg_form_fields span.mec_reg_field_option_sort {
+#mec_reg_form_fields span.mec_reg_field_option_sort,
+
+#mec_waiting_form_fields span.mec_waiting_field_option_sort {
   position: absolute;
   left: 0;
   top: 0;
@@ -1023,7 +1020,8 @@ body.post-type-mec-books th.column-author {
 #mec_bfixed_form_fields span.mec_bfixed_field_remove:before,
 #mec_event_form_fields span.mec_event_field_remove:before,
 #mec_orgz_form_row span.mec-additional-organizer-remove:before,
-#mec_reg_form_fields span.mec_reg_field_remove:before {
+#mec_reg_form_fields span.mec_reg_field_remove:before,
+#mec_waiting_form_fields span.mec_waiting_field_remove:before {
   content: "\e082";
   width: 20px;
   height: 20px;
@@ -1034,14 +1032,17 @@ body.post-type-mec-books th.column-author {
   font-size: 18px;
 }
 
-#mec_reg_form_fields span.mec_reg_field_remove:before {
+#mec_reg_form_fields span.mec_reg_field_remove:before,
+
+#mec_waiting_form_fields span.mec_waiting_field_remove:before {
   font-size: 20px;
   right: 25px;
 }
 
 #mec_bfixed_form_fields span.mec_bfixed_field_option_sort:before,
 #mec_event_form_fields span.mec_event_field_option_sort:before,
-#mec_reg_form_fields span.mec_reg_field_option_sort:before {
+#mec_reg_form_fields span.mec_reg_field_option_sort:before,
+#mec_waiting_form_fields span.mec_waiting_field_option_sort:before {
   font-size: 13px;
   left: 15px;
   top: 25px;
@@ -1191,7 +1192,8 @@ body.post-type-mec-books th.column-author {
 
 #mec_bfixed_form_fields p.mec_bfixed_field_options,
 #mec_event_form_fields p.mec_event_field_options,
-#mec_reg_form_fields p.mec_reg_field_options {
+#mec_reg_form_fields p.mec_reg_field_options,
+#mec_waiting_form_fields p.mec_waiting_field_options {
   margin: 12px 0 8px;
 }
 
@@ -1204,9 +1206,13 @@ body.post-type-mec-books th.column-author {
 #mec_event_form_fields select,
 #mec_event_form_fields textarea,
 #mec_reg_form_fields input[type="number"],
+#mec_waiting_form_fields input[type="number"],
 #mec_reg_form_fields input[type="text"],
+#mec_waiting_form_fields input[type="text"],
 #mec_reg_form_fields select,
-#mec_reg_form_fields textarea {
+#mec_waiting_form_fields select,
+#mec_reg_form_fields textarea,
+#mec_waiting_form_fields textarea {
   min-width: 260px;
   min-height: 34px;
   margin-bottom: 7px;
@@ -1216,7 +1222,8 @@ body.post-type-mec-books th.column-author {
 
 #mec_bfixed_form_fields textarea,
 #mec_event_form_fields textarea,
-#mec_reg_form_fields textarea {
+#mec_reg_form_fields textarea,
+#mec_waiting_form_fields textarea {
   min-height: 66px;
 }
 
@@ -1225,7 +1232,9 @@ body.post-type-mec-books th.column-author {
 #mec_event_form_field_types button,
 #mec_event_form_fields button,
 #mec_reg_form_field_types button,
-#mec_reg_form_fields button {
+#mec_waiting_form_field_types button,
+#mec_reg_form_fields button,
+#mec_waiting_form_fields button {
   position: relative;
   outline: 0;
   background: #fff;
@@ -1249,7 +1258,9 @@ body.post-type-mec-books th.column-author {
 #mec_event_form_field_types button:hover,
 #mec_event_form_fields button:hover,
 #mec_reg_form_field_types button:hover,
-#mec_reg_form_fields button:hover {
+#mec_waiting_form_field_types button:hover,
+#mec_reg_form_fields button:hover,
+#mec_waiting_form_fields button:hover {
   border-color: #07bbe9;
   box-shadow: 0 0 7px rgba(0, 0, 0, 0.1);
 }
@@ -1259,7 +1270,9 @@ body.post-type-mec-books th.column-author {
 #mec_event_form_field_types button:before,
 #mec_event_form_fields button:before,
 #mec_reg_form_field_types button:before,
-#mec_reg_form_fields button:before {
+#mec_waiting_form_field_types button:before,
+#mec_reg_form_fields button:before,
+#mec_waiting_form_fields button:before {
   position: absolute;
   left: 10px;
   color: #07bbe9;
@@ -1274,7 +1287,9 @@ body.post-type-mec-books th.column-author {
 #mec_event_form_field_types button.red,
 #mec_event_form_fields button.red,
 #mec_reg_form_field_types button.red,
-#mec_reg_form_fields button.red {
+#mec_waiting_form_field_types button.red,
+#mec_reg_form_fields button.red,
+#mec_waiting_form_fields button.red {
   color: #ea6485;
 }
 
@@ -1283,7 +1298,9 @@ body.post-type-mec-books th.column-author {
 #mec_event_form_field_types button.red:hover,
 #mec_event_form_fields button.red:hover,
 #mec_reg_form_field_types button.red:hover,
-#mec_reg_form_fields button.red:hover {
+#mec_waiting_form_field_types button.red:hover,
+#mec_reg_form_fields button.red:hover,
+#mec_waiting_form_fields button.red:hover {
   border-color: #ea6485;
   box-shadow: 0 0 7px rgba(0, 0, 0, 0.1);
 }
@@ -1293,7 +1310,9 @@ body.post-type-mec-books th.column-author {
 #mec_event_form_field_types button.red:before,
 #mec_event_form_fields button.red:before,
 #mec_reg_form_field_types button.red:before,
-#mec_reg_form_fields button.red:before {
+#mec_waiting_form_field_types button.red:before,
+#mec_reg_form_fields button.red:before,
+#mec_waiting_form_fields button.red:before {
   position: absolute;
   left: 12px;
   color: #ea6485;
@@ -1303,9 +1322,9 @@ body.post-type-mec-books th.column-author {
   display: inline-block;
 }
 
-#mec_reg_form_fields .mec-field-regex-wrapper {
+#mec_reg_form_fields .mec-field-regex-wrapper,
+#mec_waiting_form_fields .mec-field-regex-wrapper {
   margin-bottom: 20px;
-  `
 }
 
 .mec_form_fields .notification_placeholder,
@@ -1327,9 +1346,13 @@ body.post-type-mec-books th.column-author {
   #mec_event_form_fields select,
   #mec_event_form_fields textarea,
   #mec_reg_form_fields input[type="number"],
+  #mec_waiting_form_fields input[type="number"],
   #mec_reg_form_fields input[type="text"],
+  #mec_waiting_form_fields input[type="text"],
   #mec_reg_form_fields select,
-  #mec_reg_form_fields textarea {
+  #mec_waiting_form_fields select,
+  #mec_reg_form_fields textarea,
+  #mec_waiting_form_fields textarea {
     min-width: 80px;
     width: 100%;
   }
@@ -1397,10 +1420,8 @@ body.post-type-mec-books th.column-author {
 }
 
 .mec-options-fields {
-  padding-top: 25px;
   overflow: hidden;
   animation: fadeEffect 0.31s;
-  /* min-height: 450px; */
 }
 
 #mec_booking_form .mec-options-fields,
@@ -1510,9 +1531,13 @@ body.post-type-mec-books th.column-author {
 #mec_event_form_fields select,
 #mec_event_form_fields textarea,
 #mec_reg_form_fields input[type="number"],
+#mec_waiting_form_fields input[type="number"],
 #mec_reg_form_fields input[type="text"],
+#mec_waiting_form_fields input[type="text"],
 #mec_reg_form_fields select,
+#mec_waiting_form_fields select,
 #mec_reg_form_fields textarea,
+#mec_waiting_form_fields textarea,
 .wns-be-main .mec-form-row input[type="email"],
 .wns-be-main .mec-form-row input[type="number"],
 .wns-be-main .mec-form-row input[type="password"],
@@ -1528,6 +1553,7 @@ body.post-type-mec-books th.column-author {
   box-shadow: inset 0 1px 2px rgb(0 0 0 / 7%);
 }
 
+/* [SELECT2 CLEAN SLATE — backend.css legacy flat select2 look — temporarily disabled]
 .select2-container--default .select2-selection--multiple,
 .select2-container--default.select2-container--focus .select2-selection--multiple {
   border-radius: 5px;
@@ -1619,6 +1645,8 @@ body.post-type-mec-books th.column-author {
   max-width: 290px !important;
 }
 
+[SELECT2 CLEAN SLATE end] */
+
 .wns-be-main #mec_messages_form_container input[type="text"] {
   max-width: 100%;
 }
@@ -1668,7 +1696,6 @@ body.post-type-mec-books th.column-author {
   margin-bottom: 0;
   line-height: 40px;
   font-weight: 600;
-  padding: 0 !important;
 }
 
 .mec-form-row input[type="checkbox"]+label {
@@ -1681,8 +1708,11 @@ body.post-type-mec-books th.column-author {
 }
 
 #mec_reg_form_fields label,
+
+#mec_waiting_form_fields label,
 #mec_bfixed_form_fields label,
 #mec_reg_form_fields p.description,
+#mec_waiting_form_fields p.description,
 #mec_bfixed_form_fields p.description {
   display: block;
 }
@@ -1698,6 +1728,7 @@ body.post-type-mec-books th.column-author {
 
 #mec_bfixed_form_fields input[type="checkbox"],
 #mec_reg_form_fields input[type="checkbox"],
+#mec_waiting_form_fields input[type="checkbox"],
 .mec-form-row input[type="checkbox"] {
   width: 22px;
   height: 22px;
@@ -1711,6 +1742,7 @@ body.post-type-mec-books th.column-author {
 
 #mec_bfixed_form_fields input[type="checkbox"]:checked,
 #mec_reg_form_fields input[type="checkbox"]:checked,
+#mec_waiting_form_fields input[type="checkbox"]:checked,
 .mec-form-row input[type="checkbox"]:checked {
   background: #64e385;
   border-color: #64e385;
@@ -1718,6 +1750,7 @@ body.post-type-mec-books th.column-author {
 
 #mec_bfixed_form_fields input[type="checkbox"]:checked:before,
 #mec_reg_form_fields input[type="checkbox"]:checked:before,
+#mec_waiting_form_fields input[type="checkbox"]:checked:before,
 .mec-form-row input[type="checkbox"]:checked:before {
   content: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIxNC42ODgiIHZpZXdCb3g9IjAgMCAyMCAxNC42ODgiPg0KICA8ZyBpZD0idGlja18xXyIgZGF0YS1uYW1lPSJ0aWNrICgxKSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAtNjcuOTk4KSI+DQogICAgPGcgaWQ9Ikdyb3VwXzEiIGRhdGEtbmFtZT0iR3JvdXAgMSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCA2Ny45OTcpIj4NCiAgICAgIDxwYXRoIGlkPSJQYXRoXzEiIGRhdGEtbmFtZT0iUGF0aCAxIiBkPSJNMTkuNzA3LDY4LjI5YTEsMSwwLDAsMC0xLjQxNCwwTDYuMzEyLDgwLjI3MSwxLjcwNyw3NS42NjZBMSwxLDAsMCwwLC4yOTIsNzcuMDhMNS42LDgyLjM5MmExLDEsMCwwLDAsMS40MTQsMEwxOS43MDcsNjkuN0ExLDEsMCwwLDAsMTkuNzA3LDY4LjI5WiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAtNjcuOTk3KSIgZmlsbD0iI2ZmZiIvPg0KICAgIDwvZz4NCiAgPC9nPg0KPC9zdmc+DQo=");
   line-height: 22px;
@@ -1728,57 +1761,6 @@ body.post-type-mec-books th.column-author {
   border: unset;
   position: unset;
   transform: unset;
-}
-
-.post-type-mec-events #mec_metabox_label input[type="checkbox"],
-.post-type-mec-events .components-panel__body input[type="checkbox"] {
-  border-radius: 4px;
-  box-shadow: inset 0 1px 2px rgb(0 0 0 / 10%);
-}
-
-.post-type-mec-events #mec_metabox_label input[type="checkbox"]:focus,
-.post-type-mec-events .components-panel__body input[type="checkbox"]:focus {
-  outline: unset;
-  box-shadow: unset;
-}
-
-.post-type-mec-events #mec_metabox_label input[type="checkbox"]+label,
-.post-type-mec-events .components-panel__body input[type="checkbox"]+label {
-  padding-top: 1px;
-}
-
-.post-type-mec-events #mec_metabox_label input[type="checkbox"],
-.post-type-mec-events .components-panel__body input[type="checkbox"] {
-  width: 22px;
-  height: 22px;
-  min-height: 0;
-  background: #f7f8f9;
-  border: none;
-  box-shadow: inset 0 1px 2px rgb(0 0 0 / 7%);
-}
-
-.post-type-mec-events #mec_metabox_label input[type="checkbox"]:checked,
-.post-type-mec-events .components-panel__body input[type="checkbox"]:checked {
-  background: #64e385;
-  border-color: #64e385;
-  color: #64e385;
-}
-
-.post-type-mec-events #mec_metabox_label input[type="checkbox"]:checked:before,
-.post-type-mec-events .components-panel__body input[type="checkbox"]:checked:before {
-  color: #64e385;
-  line-height: 16px;
-  width: 15px;
-  float: none;
-  margin: 2px;
-}
-
-#mec_settings_fes_thankyou_page_url,
-.mec-form-row .mec-col-4 input[type="number"],
-.mec-form-row .mec-col-4 input[type="text"],
-.mec-form-row .mec-col-4 select,
-.mec-form-row .mec-col-4 textarea {
-  max-width: 290px;
 }
 
 .mec-form-row .description {
@@ -1876,8 +1858,7 @@ body.post-type-mec-books th.column-author {
 }
 
 .mec-container {
-  background: #fff;
-  padding: 15px 0 0 15px;
+  padding: 35px 0 0 15px;
 }
 
 #mec_booking_form .mec-container,
@@ -1983,15 +1964,15 @@ body.post-type-mec-books th.column-author {
 }
 
 #mec_gateways_form li .mec-gateway-options-form,
-#payment_gateways_option li .mec-gateway-options-form {
-  padding: 35px 10px 5px 10px;
+#payment_gateways_option li .mec-gateway-options-form,
+#mec_settings_booking_booking_wcb_options {
+  padding: 10px;
   background-color: #fff;
   border: 1px solid #e6e9eb;
   border-left: 6px solid #e6e9eb;
   margin-bottom: 40px;
   margin-top: -5px;
-  border-top-right-radius: 4px;
-  border-bottom-right-radius: 4px;
+  border-radius: 10px;
   box-shadow: 0 1px 4px -1px rgba(0, 0, 0, 0.05);
 }
 
@@ -2024,11 +2005,6 @@ div#mec_gateways_form_container .mec-required.mec-mandatory {
 #mec_payment_options_wrapper .mec-col-9 .mec-form-row .mec-col-4 {
   width: 103px;
   margin-left: -5px;
-}
-
-#booking_notification_section label {
-  display: inline-block;
-  min-width: 160px;
 }
 
 div#booking_notification_section iframe {
@@ -2268,7 +2244,7 @@ td:has(.mec-webnus-icon) a {
 .mec-image-select-wrap {
   clear: both;
   overflow: hidden;
-  padding: 10px 0;
+  padding: 10px 5px;
   margin: 0;
 }
 
@@ -2310,7 +2286,7 @@ td:has(.mec-webnus-icon) a {
   display: block;
   margin: 3px;
   border-radius: 2px;
-  border: 3px solid transparent;
+  border: 2px solid transparent;
   transition: all 0.2s ease;
 }
 
@@ -2324,9 +2300,12 @@ td:has(.mec-webnus-icon) a {
   font-family: simple-line-icons;
   font-size: 18px;
   line-height: 18px;
-  display: inline-block;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: #fff;
-  padding: 8px 9px;
   max-width: 100%;
   max-height: 100%;
   font-weight: 400;
@@ -3021,24 +3000,6 @@ p.mec_dash_count {
   outline-offset: 0;
 }
 
-.info-msg,
-.mec-error,
-.mec-success,
-.warning-msg {
-  margin: 10px 0;
-  padding: 10px;
-  border-radius: 10px;
-}
-
-.post-type-mec-events.taxonomy-mec_speaker .warning-msg p {
-  color: #9f6000;
-}
-
-.info-msg {
-  color: #059;
-  background-color: #bef;
-}
-
 .info-msg-link {
   background: #fff;
   padding: 4px 12px 6px;
@@ -3046,21 +3007,6 @@ p.mec_dash_count {
   line-height: 1;
   font-weight: 600;
   color: #008aff;
-}
-
-.mec-success {
-  color: #270;
-  background-color: #dff2bf;
-}
-
-.warning-msg {
-  color: #9f6000;
-  background-color: #feefb3;
-}
-
-.mec-error {
-  color: #d8000c !important;
-  background-color: #ffbaba;
 }
 
 .w-row .fs-notifier.success.show.visible {
@@ -3148,21 +3094,22 @@ p.mec_dash_count {
   box-shadow: none;
 }
 
-/* Exceptional-day chip remove button (audit #7): circular × that fills on hover.
-   The × is an SVG background pinned with background-position:center — the same
-   pattern as the .mec-in-days-edit icon button next to it. A text glyph proved
-   unreliable to center across font stacks. The legacy lowercase "x" text stays
-   in the DOM hidden (font-size:0) for screen readers. */
+/* Exceptional-day chip remove button (audit #7): matches the in-days card
+   action buttons (26x26, radius 6) with an SVG X pinned via
+   background-position:center — the same pattern as the .mec-in-days-edit icon
+   button next to it. A text glyph proved unreliable to center across font
+   stacks. The legacy lowercase "x" text stays in the DOM hidden (font-size:0)
+   for screen readers. */
 .mec-not-in-days-remove {
   font-size: 0;
-  width: 20px;
-  height: 20px;
-  border: 0;
-  border-radius: 50%;
-  background-color: #fca5a5;
-  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23b91c1c' stroke-width='3' stroke-linecap='round'%3E%3Cline x1='6' y1='6' x2='18' y2='18'/%3E%3Cline x1='18' y1='6' x2='6' y2='18'/%3E%3C/svg%3E");
+  width: 26px;
+  height: 26px;
+  border: 1px solid #f3c2c9;
+  border-radius: 6px;
+  background-color: #fff;
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23e95271' stroke-width='3' stroke-linecap='round'%3E%3Cline x1='6' y1='6' x2='18' y2='18'/%3E%3Cline x1='18' y1='6' x2='6' y2='18'/%3E%3C/svg%3E");
   background-position: center;
-  background-size: 11px 11px;
+  background-size: 12px 12px;
   background-repeat: no-repeat;
   color: #b91c1c;
   padding: 0;
@@ -3171,12 +3118,13 @@ p.mec_dash_count {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: background-color .15s ease;
+  transition: background-color .15s ease, border-color .15s ease;
 }
 
 .mec-not-in-days-remove:hover {
-  background-color: #dc2626;
-  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round'%3E%3Cline x1='6' y1='6' x2='18' y2='18'/%3E%3Cline x1='18' y1='6' x2='6' y2='18'/%3E%3C/svg%3E");
+  background-color: #feebee;
+  border-color: #e95271;
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23c2253f' stroke-width='3' stroke-linecap='round'%3E%3Cline x1='6' y1='6' x2='18' y2='18'/%3E%3Cline x1='18' y1='6' x2='6' y2='18'/%3E%3C/svg%3E");
 }
 
 /* Dark mode: translucent red chips so they read well on a dark surface. */
@@ -3313,11 +3261,6 @@ p.mec_dash_count {
   color: #6cd6f0;
 }
 
-.mec-xi-facebook-import-events .mec-success,
-.mec-xi-google-import-events .mec-success {
-  width: 460px;
-}
-
 .mec-xi-facebook-import-events .mec-select-deselect-actions li,
 .mec-xi-google-import-events .mec-select-deselect-actions li {
   display: inline-block;
@@ -3362,7 +3305,9 @@ p.mec_dash_count {
 }
 
 span.mec-archive-skins,
-span.mec-category-skins {
+span.mec-category-skins,
+div.mec-archive-skins,
+div.mec-category-skins {
   vertical-align: text-bottom;
 }
 
@@ -3394,7 +3339,9 @@ span.mec-category-skins {
 @media (max-width: 1280px) {
 
   span.mec-archive-skins,
-  span.mec-category-skins {
+  span.mec-category-skins,
+  div.mec-archive-skins,
+  div.mec-category-skins {
     margin-left: 0;
   }
 }
@@ -4606,13 +4553,6 @@ hr {
   width: 82%;
 }
 
-.wns-be-main .wns-saved-settings.sticky {
-  position: fixed;
-  width: 62.5%;
-  top: 111px;
-  z-index: 999999999999999999;
-}
-
 textarea.mec-import-settings-content {
   display: block;
   width: 100%;
@@ -4627,8 +4567,6 @@ textarea.mec-import-settings-content {
 
 .mec-import-options-notification .mec-message-import-error,
 .mec-import-options-notification .mec-message-import-success {
-  display: inline-block;
-  margin-left: 12px;
   opacity: 0;
   visibility: hidden;
 }
@@ -4664,10 +4602,6 @@ textarea.mec-import-settings-content {
   right: 0;
   background: rgba(202, 202, 202, 0.7);
   z-index: 9999;
-}
-
-.mec-loarder-wrap.mec-settings-loader {
-  top: 34px;
 }
 
 .mec-loarder {
@@ -5309,7 +5243,7 @@ textarea.mec-import-settings-content {
 
 #mec-advanced-wraper div:first-child>ul>ul>li:hover,
 .mec-active {
-  background: #07bbe9 !important;
+  background: #00BEEB !important;
   color: #fff !important;
 }
 
@@ -5801,10 +5735,6 @@ a.mec-intro-section-link-tag.button.button-secondary.button-hero {
   margin-bottom: 60px;
 }
 
-#mec_taxes_fees_container_toggle {
-  margin-bottom: 60px;
-}
-
 .wns-be-sidebar li {
   position: relative;
 }
@@ -5941,7 +5871,8 @@ a.mec-intro-section-link-tag.button.button-secondary.button-hero {
   transition-delay: 0s, 0s;
 }
 
-.mec-tooltip .box h5 {
+.mec-tooltip .box h5,
+.mec-tooltip .box span.title {
   color: #fff;
   font-size: 17px;
   font-weight: 600;
@@ -5953,9 +5884,11 @@ a.mec-intro-section-link-tag.button.button-secondary.button-hero {
   border-bottom: 1px solid #30353a;
   border-radius: 6px 6px 0 0;
   z-index: 9999;
+  display: block;
 }
 
-.mec-tooltip .box h5:after {
+.mec-tooltip .box h5:after,
+.mec-tooltip .box span.title:after {
   display: none;
 }
 
@@ -5986,20 +5919,6 @@ a.mec-intro-section-link-tag.button.button-secondary.button-hero {
   height: 24px !important;
   overflow: hidden !important;
   transform: rotate(-90deg) !important;
-}
-
-.mec-tooltip .box:before {
-  display: block;
-  content: "" !important;
-  position: absolute !important;
-  width: 12px;
-  height: 12px;
-  left: -10px !important;
-  top: 50% !important;
-  transform: translate(50%, -50%) rotate(-45deg) !important;
-  background-color: #535a61 !important;
-  box-shadow: 0 8px 9px -4px #535a61 !important;
-  z-index: 0 !important;
 }
 
 .mec-tooltip .box.top {
@@ -6049,12 +5968,6 @@ a.mec-intro-section-link-tag.button.button-secondary.button-hero {
   transform: translateY(-50%);
 }
 
-.mec-tooltip .box.left:before {
-  right: 0 !important;
-  left: auto !important;
-  top: 50% !important;
-}
-
 form#mec_reg_fields_form input[type="radio"]:before {
   content: "";
   display: inline-block;
@@ -6090,7 +6003,8 @@ form#mec_reg_fields_form label {
     min-width: 290px;
   }
 
-  .mec-tooltip .box h5 {
+  .mec-tooltip .box h5,
+  .mec-tooltip .box span.title {
     font-size: 15px;
   }
 
@@ -6376,31 +6290,6 @@ body .csh-category-item a h6 {
   text-align: left;
 }
 
-.mec-form-row.mec-syn-schedule {
-  background: #fff;
-  padding: 20px;
-  border: 1px solid #eee;
-  margin-bottom: 10px;
-  border-radius: 3px;
-}
-
-.mec-form-row.mec-syn-schedule p {
-  padding-left: 26px;
-}
-
-.mec-form-row.mec-syn-schedule h2 {
-  margin-top: 0;
-}
-
-.mec-form-row.mec-syn-schedule h4 {
-  margin: 10px 0;
-}
-
-li.wns-be-group-menu-li.mec-settings-menu a svg {
-  position: absolute;
-  margin-top: 2px;
-}
-
 li.wns-be-group-menu-li.mec-settings-menu a svg {
   fill: #a0abb5;
   stroke: #a0abb5;
@@ -6433,7 +6322,7 @@ li.wns-be-group-menu-li.mec-settings-menu .mec-settings-submenu {
   transition: all 0.23s ease;
   padding-top: 8px;
   padding-bottom: 12px;
-  border-radius: 0 2px 2px 0;
+  border-radius: 0 15px 15px 0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
 }
 
@@ -7363,32 +7252,42 @@ a.mec-create-shortcode-tabs-link {
   box-shadow: 0 3px 16px -3px #40d9f1;
 }
 
-.mec-form-row label+span.mec-tooltip {
+.mec-form-row label+span.mec-tooltip,
+.mec-form-row label+div.mec-tooltip {
   bottom: 0;
 }
 
-.mec-form-row textarea+span.mec-tooltip {
+.mec-form-row textarea+span.mec-tooltip,
+.mec-form-row textarea+div.mec-tooltip {
   bottom: auto;
   vertical-align: top;
   top: 12px;
 }
 
-.mec-form-row span+span.mec-tooltip {
+.mec-form-row span+span.mec-tooltip,
+.mec-form-row span+div.mec-tooltip,
+.mec-form-row div+span.mec-tooltip,
+.mec-form-row div+div.mec-tooltip {
   bottom: 0;
   vertical-align: middle;
 }
 
-.mec-form-row .tooltip-move-up span+span.mec-tooltip i {
+.mec-form-row .tooltip-move-up span+span.mec-tooltip i,
+.mec-form-row .tooltip-move-up span+div.mec-tooltip i,
+.mec-form-row .tooltip-move-up div+span.mec-tooltip i,
+.mec-form-row .tooltip-move-up div+div.mec-tooltip i {
   margin-top: -40px;
 }
 
 .mec-form-row .mec-col-8 input[type="text"],
 .mec-form-row .mec-col-8 select,
-.mec-form-row .mec-col-8 span.mec-archive-skins {
+.mec-form-row .mec-col-8 span.mec-archive-skins,
+.mec-form-row .mec-col-8 div.mec-archive-skins {
   vertical-align: top;
 }
 
-.mec-form-row .mec-col-8 span.mec-archive-skins input[type="text"] {
+.mec-form-row .mec-col-8 span.mec-archive-skins input[type="text"],
+.mec-form-row .mec-col-8 div.mec-archive-skins input[type="text"] {
   max-width: 225px;
 }
 
@@ -7411,11 +7310,6 @@ a.mec-create-shortcode-tabs-link {
   min-height: 100px;
   padding-top: 8.5px;
   padding-bottom: 8.5px;
-}
-
-.mec-form-row .wp-picker-container {
-  margin: 4px 0;
-  vertical-align: top;
 }
 
 .mec-form-row .wp-picker-container input[type="text"].wp-color-picker {
@@ -7581,7 +7475,7 @@ a.mec-create-shortcode-tabs-link {
 }
 
 #mec-hourly-schedule .mec-form-row.mec-box .button.mec_field_sort {
-  color: #07bbe9 !important;
+  color: #00BEEB !important;
   border-color: #d1e5ec !important;
 }
 
@@ -7666,7 +7560,8 @@ a.mec-create-shortcode-tabs-link {
   background: #fff;
 }
 
-#mec-read-more .mec-form-row span.mec-tooltip {
+#mec-read-more .mec-form-row span.mec-tooltip,
+#mec-read-more .mec-form-row div.mec-tooltip {
   top: 2px;
   left: -4px;
 }
@@ -7704,29 +7599,6 @@ a.mec-create-shortcode-tabs-link {
   border: unset;
   padding-left: 0;
   margin-left: 0;
-}
-
-#mec-search-settings {
-  border-radius: 21px;
-  min-height: 32px;
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
-  margin-right: 10px;
-  color: #7c838a;
-  font-size: 13px;
-  width: 260px;
-  background: #f7f8f9;
-  border: none;
-  z-index: 1;
-  transition: all 0.18s ease;
-  outline: 0;
-  line-height: 36px;
-  padding: 2px 10px 1px 38px;
-}
-
-#mec-search-settings:focus {
-  background: #fff;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.07), 0 0 0 1px #e6e6e6;
-  width: 270px;
 }
 
 .mec-search-settings-wrap {
@@ -7978,15 +7850,16 @@ a.mec-create-shortcode-tabs-link {
 }
 
 #mec_organizer_user+label span.mec-tooltip,
-#mec_speaker_user+label span.mec-tooltip {
+#mec_organizer_user+label div.mec-tooltip,
+#mec_speaker_user+label span.mec-tooltip,
+#mec_speaker_user+label div.mec-tooltip {
   line-height: 22.5px;
   height: 22.5px;
 }
 
 .mec-add-event-tabs-wrap .select2-container,
 .post-type-mec_calendars .select2-container,
-.mec-create-shortcode-tab-content .select2-container,
-.wns-be-main .mec-form-row .select2-container {
+.mec-create-shortcode-tab-content .select2-container {
   min-height: 38px;
   height: auto;
   box-sizing: border-box;
@@ -8175,7 +8048,7 @@ button.fserv-button-submit {
   border-radius: 60px !important;
   box-shadow: 0 0 0 4px rgb(56 213 237 / 1%) !important;
   text-shadow: none !important;
-  background: #07bbe9 !important;
+  background: #00BEEB !important;
   border: none !important;
   transition: 0.24s !important;
 }
@@ -8535,6 +8408,7 @@ input.fserv-input-text {
   border-color: #d7d8d9;
 }
 
+/* [SELECT2 CLEAN SLATE — global select2 search--dropdown]
 .select2-container--default .select2-search--dropdown {
   padding: 12px;
 }
@@ -8545,6 +8419,8 @@ input.fserv-input-text {
   border-radius: 4px;
   line-height: 20px;
 }
+
+[SELECT2 CLEAN SLATE end — global select2 search--dropdown] */
 
 .mec-report-select-event-wrap input,
 .mec-report-select-event-wrap select,
@@ -8581,10 +8457,13 @@ input.fserv-input-text {
   max-width: 400px;
 }
 
+/* [SELECT2 CLEAN SLATE — global select2-dropdown override]
 .select2-dropdown.select2-dropdown {
   border-color: #e3e5e7 !important;
   box-shadow: none !important;
 }
+
+[SELECT2 CLEAN SLATE end — global select2-dropdown override] */
 
 .mec-report-select-event-wrap select.mec-reports-selectbox-dates,
 .mec-select-wrap select.mec-reports-selectbox-dates {
@@ -10166,7 +10045,9 @@ div#mec_popup_event_form #mec-organizer .mec-form-row {
 }
 
 #mec-location .mec-form-row span+span.mec-tooltip i,
-#mec-organizer .mec-form-row span+span.mec-tooltip i {
+#mec-location .mec-form-row span+div.mec-tooltip i,
+#mec-organizer .mec-form-row span+span.mec-tooltip i,
+#mec-organizer .mec-form-row span+div.mec-tooltip i {
   margin-top: -18px;
 }
 
@@ -11142,7 +11023,9 @@ mec_popup_event_form #mec_popup_settings .mec-image-select-wrap li input:checked
 .mec-admin-dark-mode.m-e-calendar_page_MEC-settings #mec_event_form_fields button,
 .mec-admin-dark-mode.m-e-calendar_page_MEC-settings #mec_event_form_fields li,
 .mec-admin-dark-mode.m-e-calendar_page_MEC-settings #mec_reg_form_field_types button,
+.mec-admin-dark-mode.m-e-calendar_page_MEC-settings #mec_waiting_form_field_types button,
 .mec-admin-dark-mode.m-e-calendar_page_MEC-settings #mec_reg_form_fields li,
+.mec-admin-dark-mode.m-e-calendar_page_MEC-settings #mec_waiting_form_fields li,
 .mec-admin-dark-mode.m-e-calendar_page_MEC-settings .wns-be-container #wns-be-content,
 .mec-admin-dark-mode.m-e-calendar_page_MEC-settings .wns-be-container #wns-be-infobar,
 .mec-admin-dark-mode.m-e-calendar_page_MEC-settings .wns-be-main,
@@ -11155,6 +11038,7 @@ mec_popup_event_form #mec_popup_settings .mec-image-select-wrap li input:checked
 .mec-admin-dark-mode.post-type-mec-events #major-publishing-actions,
 .mec-admin-dark-mode.post-type-mec-events #mec_event_form_fields li,
 .mec-admin-dark-mode.post-type-mec-events #mec_reg_form_fields li,
+.mec-admin-dark-mode.post-type-mec-events #mec_waiting_form_fields li,
 .mec-admin-dark-mode.post-type-mec-events #post-status-info,
 .mec-admin-dark-mode.post-type-mec-events #screen-meta,
 .mec-admin-dark-mode.post-type-mec-events #screen-meta-links .show-settings,
@@ -11232,6 +11116,7 @@ mec_popup_event_form #mec_popup_settings .mec-image-select-wrap li input:checked
 .mec-admin-dark-mode.m-e-calendar_page_MEC-ix .mec-form-row.mec-syn-schedule,
 .mec-admin-dark-mode.post-type-mec-events #mec_event_form_fields,
 .mec-admin-dark-mode.post-type-mec-events #mec_reg_form_fields,
+.mec-admin-dark-mode.post-type-mec-events #mec_waiting_form_fields,
 .mec-admin-dark-mode.post-type-mec-events .select2-search--dropdown,
 .mec-admin-dark-mode.post-type-mec_calendars .select2-search--dropdown {
   background: #282828;
@@ -11265,7 +11150,9 @@ mec_popup_event_form #mec_popup_settings .mec-image-select-wrap li input:checked
 .mec-admin-dark-mode.m-e-calendar_page_MEC-report .select2-dropdown,
 .mec-admin-dark-mode.m-e-calendar_page_MEC-settings #mec_gateways_form li .mec-gateway-options-form,
 .mec-admin-dark-mode.m-e-calendar_page_MEC-settings #payment_gateways_option li .mec-gateway-options-form,
+/* [SELECT2 CLEAN SLATE — settings dark select2]
 .mec-admin-dark-mode.m-e-calendar_page_MEC-settings .select2-container--default .select2-selection--multiple,
+[SELECT2 CLEAN SLATE end — settings dark select2] */
 .mec-admin-dark-mode.post-type-mec_calendars .mec-custom-nice-select ul.list {
   background: #000;
   box-shadow: 0 2px 12px -5px #000;
@@ -11285,7 +11172,9 @@ mec_popup_event_form #mec_popup_settings .mec-image-select-wrap li input:checked
 .mec-admin-dark-mode.m-e-calendar_page_MEC-settings #mec_event_form_fields button,
 .mec-admin-dark-mode.m-e-calendar_page_MEC-settings #mec_event_form_fields li,
 .mec-admin-dark-mode.m-e-calendar_page_MEC-settings #mec_reg_form_field_types button,
+.mec-admin-dark-mode.m-e-calendar_page_MEC-settings #mec_waiting_form_field_types button,
 .mec-admin-dark-mode.m-e-calendar_page_MEC-settings #mec_reg_form_fields li,
+.mec-admin-dark-mode.m-e-calendar_page_MEC-settings #mec_waiting_form_fields li,
 .mec-admin-dark-mode.m-e-calendar_page_MEC-settings .html-active .switch-html,
 .mec-admin-dark-mode.m-e-calendar_page_MEC-settings .mec-custom-msg-notification-set-box.extra,
 .mec-admin-dark-mode.m-e-calendar_page_MEC-settings .select2-container--default .select2-selection--multiple,
@@ -11388,6 +11277,7 @@ mec_popup_event_form #mec_popup_settings .mec-image-select-wrap li input:checked
 .mec-admin-dark-mode #mec_metabox_details .mec-form-row.mec-skin-list-date-format-container input[type="text"],
 .mec-admin-dark-mode #mec_metabox_details .mec-meta-box-fields .mec-form-row input[type="checkbox"],
 .mec-admin-dark-mode #mec_reg_form_fields input[type="checkbox"],
+.mec-admin-dark-mode #mec_waiting_form_fields input[type="checkbox"],
 .mec-admin-dark-mode .mec-addon-box-version,
 .mec-admin-dark-mode .mec-calendar-metabox .wn-mec-select,
 .mec-admin-dark-mode .mec-form-row input[type="checkbox"],
@@ -11421,11 +11311,17 @@ mec_popup_event_form #mec_popup_settings .mec-image-select-wrap li input:checked
 .mec-admin-dark-mode.m-e-calendar_page_MEC-settings #mec_event_form_fields select,
 .mec-admin-dark-mode.m-e-calendar_page_MEC-settings #mec_event_form_fields textarea,
 .mec-admin-dark-mode.m-e-calendar_page_MEC-settings #mec_reg_form_field_types button,
+.mec-admin-dark-mode.m-e-calendar_page_MEC-settings #mec_waiting_form_field_types button,
 .mec-admin-dark-mode.m-e-calendar_page_MEC-settings #mec_reg_form_fields button,
+.mec-admin-dark-mode.m-e-calendar_page_MEC-settings #mec_waiting_form_fields button,
 .mec-admin-dark-mode.m-e-calendar_page_MEC-settings #mec_reg_form_fields input[type="number"],
+.mec-admin-dark-mode.m-e-calendar_page_MEC-settings #mec_waiting_form_fields input[type="number"],
 .mec-admin-dark-mode.m-e-calendar_page_MEC-settings #mec_reg_form_fields input[type="text"],
+.mec-admin-dark-mode.m-e-calendar_page_MEC-settings #mec_waiting_form_fields input[type="text"],
 .mec-admin-dark-mode.m-e-calendar_page_MEC-settings #mec_reg_form_fields select,
+.mec-admin-dark-mode.m-e-calendar_page_MEC-settings #mec_waiting_form_fields select,
 .mec-admin-dark-mode.m-e-calendar_page_MEC-settings #mec_reg_form_fields textarea,
+.mec-admin-dark-mode.m-e-calendar_page_MEC-settings #mec_waiting_form_fields textarea,
 .mec-admin-dark-mode.m-e-calendar_page_MEC-settings #titlediv #title,
 .mec-admin-dark-mode.m-e-calendar_page_MEC-settings .mec-add-event-tabs-wrap .select2-container,
 .mec-admin-dark-mode.m-e-calendar_page_MEC-settings .mec-add-event-tabs-wrap .select2-container span,
@@ -11472,7 +11368,9 @@ mec_popup_event_form #mec_popup_settings .mec-image-select-wrap li input:checked
 .mec-admin-dark-mode.post-type-mec-books textarea,
 .mec-admin-dark-mode.post-type-mec-events #mec_event_form_fields button,
 .mec-admin-dark-mode.post-type-mec-events #mec_reg_form_field_types button,
+.mec-admin-dark-mode.post-type-mec-events #mec_waiting_form_field_types button,
 .mec-admin-dark-mode.post-type-mec-events #mec_reg_form_fields button,
+.mec-admin-dark-mode.post-type-mec-events #mec_waiting_form_fields button,
 .mec-admin-dark-mode.post-type-mec-events #titlediv #title,
 .mec-admin-dark-mode.post-type-mec-events .components-form-token-field__input-container,
 .mec-admin-dark-mode.post-type-mec-events .components-panel__body,
@@ -11590,7 +11488,8 @@ mec_popup_event_form #mec_popup_settings .mec-image-select-wrap li input:checked
 .mec-admin-dark-mode .mec-message-categories li.mec-acc-label,
 .mec-admin-dark-mode.m-e-calendar_page_MEC-settings #mec_bfixed_form_fields,
 .mec-admin-dark-mode.m-e-calendar_page_MEC-settings #mec_event_form_fields,
-.mec-admin-dark-mode.m-e-calendar_page_MEC-settings #mec_reg_form_fields {
+.mec-admin-dark-mode.m-e-calendar_page_MEC-settings #mec_reg_form_fields,
+.mec-admin-dark-mode.m-e-calendar_page_MEC-settings #mec_waiting_form_fields {
   background: #000;
 }
 
@@ -11651,7 +11550,6 @@ mec_popup_event_form #mec_popup_settings .mec-image-select-wrap li input:checked
 .mec-admin-dark-mode .w-box.upcoming-events .mec-event-article h4.mec-event-title,
 .mec-admin-dark-mode.m-e-calendar_page_MEC-report .mec-report-selected-event-attendees-wrap .w-clearfix.mec-attendees-content,
 .mec-admin-dark-mode.m-e-calendar_page_MEC-report .select2-container--default .select2-selection--single .select2-selection__rendered,
-.mec-admin-dark-mode.m-e-calendar_page_MEC-support .about-wrap h3,
 .mec-admin-dark-mode.m-e-calendar_page_MEC-support .fserv-container .fserv-form-name,
 .mec-admin-dark-mode.toplevel_page_mec-intro .about-wrap h3,
 .mec-admin-dark-mode.toplevel_page_mec-intro .fserv-container .fserv-form-name {
@@ -11727,7 +11625,6 @@ mec_popup_event_form #mec_popup_settings .mec-image-select-wrap li input:checked
 }
 
 .mec-admin-dark-mode.m-e-calendar_page_MEC-addons,
-.mec-admin-dark-mode.m-e-calendar_page_MEC-addons .about-wrap h1,
 .mec-admin-dark-mode.m-e-calendar_page_MEC-go-pro,
 .mec-admin-dark-mode.m-e-calendar_page_MEC-go-pro h1,
 .mec-admin-dark-mode.m-e-calendar_page_MEC-ix,
@@ -11968,7 +11865,9 @@ mec_popup_event_form #mec_popup_settings .mec-image-select-wrap li input:checked
 .mec-admin-dark-mode #mec_event_form_fields button,
 .mec-admin-dark-mode #mec_meta_box_downloadable_file_options #mec_downloadable_file_remove_image_button,
 .mec-admin-dark-mode #mec_reg_form_field_types button,
+.mec-admin-dark-mode #mec_waiting_form_field_types button,
 .mec-admin-dark-mode #mec_reg_form_fields button,
+.mec-admin-dark-mode #mec_waiting_form_fields button,
 .mec-admin-dark-mode #taxes_option #mec_fees_list .mec-form-row .button,
 .mec-admin-dark-mode #ticket_variations_option #mec_ticket_variations_list .mec-form-row .button,
 .mec-admin-dark-mode .mec-export-settings,
@@ -11997,7 +11896,9 @@ mec_popup_event_form #mec_popup_settings .mec-image-select-wrap li input:checked
 .mec-admin-dark-mode #mec_event_form_fields button:hover,
 .mec-admin-dark-mode #mec_meta_box_downloadable_file_options #mec_downloadable_file_remove_image_button:hover,
 .mec-admin-dark-mode #mec_reg_form_field_types button:hover,
+.mec-admin-dark-mode #mec_waiting_form_field_types button:hover,
 .mec-admin-dark-mode #mec_reg_form_fields button:hover,
+.mec-admin-dark-mode #mec_waiting_form_fields button:hover,
 .mec-admin-dark-mode #taxes_option #mec_fees_list .mec-form-row .button:hover,
 .mec-admin-dark-mode #ticket_variations_option #mec_ticket_variations_list .mec-form-row .button:hover,
 .mec-admin-dark-mode .mec-export-settings:hover,
@@ -12085,7 +11986,8 @@ mec_popup_event_form #mec_popup_settings .mec-image-select-wrap li input:checked
 .mec-admin-dark-mode .w-box.total-bookings ul li,
 .mec-admin-dark-mode .w-box.total-bookings ul li a,
 .mec-admin-dark-mode .wns-be-sidebar .mec-settings-menu .mec-settings-submenu a,
-.mec-admin-dark-mode.m-e-calendar_page_MEC-settings #mec_reg_form_field_types button {
+.mec-admin-dark-mode.m-e-calendar_page_MEC-settings #mec_reg_form_field_types button,
+.mec-admin-dark-mode.m-e-calendar_page_MEC-settings #mec_waiting_form_field_types button {
   color: #d2d2d2 !important;
 }
 
@@ -12586,7 +12488,7 @@ div#mec_widget_news_features .inside {
   border-radius: 60px !important;
   box-shadow: 0 0 0 4px rgb(56 213 237 / 1%) !important;
   text-shadow: none !important;
-  background: #07bbe9 !important;
+  background: #00BEEB !important;
   border: none !important;
   transition: 0.24s !important;
   line-height: 36px;
@@ -12792,7 +12694,8 @@ div#mec_cancelled_reason_wrapper label {
   }
 
   #mec_event_form_fields,
-  #mec_reg_form_fields {
+  #mec_reg_form_fields,
+  #mec_waiting_form_fields {
     padding: 10px;
   }
 
@@ -12949,7 +12852,6 @@ body.rtl .wns-be-sidebar .wns-be-group-menu li a {
 
 body.rtl .wns-be-sidebar .wns-be-group-tab-link-a span.wns-be-group-menu-title {
   padding-left: 0;
-  padding-right: 24px;
 }
 
 body.rtl .wns-be-sidebar .has-sub span.extra-icon {
@@ -13259,14 +13161,16 @@ body.rtl .mec-occurrences-wrapper textarea {
 body.rtl #mec-occurrences .mec-occurrences-list li,
 body.rtl #mec_bfixed_form_fields li,
 body.rtl #mec_event_form_fields li,
-body.rtl #mec_reg_form_fields li {
+body.rtl #mec_reg_form_fields li,
+body.rtl #mec_waiting_form_fields li {
   border-radius: 10px 3px 3px 3px;
 }
 
 body.rtl #mec-occurrences .mec-occurrences-list .mec-occurrences-delete-button,
 body.rtl #mec_bfixed_form_fields span.mec_bfixed_field_remove,
 body.rtl #mec_event_form_fields span.mec_event_field_remove,
-body.rtl #mec_reg_form_fields span.mec_reg_field_remove {
+body.rtl #mec_reg_form_fields span.mec_reg_field_remove,
+body.rtl #mec_waiting_form_fields span.mec_waiting_field_remove {
   position: absolute;
   right: auto;
   left: 47px;
@@ -13282,8 +13186,11 @@ body.rtl #mec_event_form_fields span.mec_event_field_option_sort:before,
 body.rtl #mec_event_form_fields span.mec_event_field_remove:before,
 body.rtl #mec_event_form_fields span.mec_event_field_sort:before,
 body.rtl #mec_reg_form_fields span.mec_reg_field_option_sort:before,
+body.rtl #mec_waiting_form_fields span.mec_waiting_field_option_sort:before,
 body.rtl #mec_reg_form_fields span.mec_reg_field_remove:before,
-body.rtl #mec_reg_form_fields span.mec_reg_field_sort:before {
+body.rtl #mec_waiting_form_fields span.mec_waiting_field_remove:before,
+body.rtl #mec_reg_form_fields span.mec_reg_field_sort:before,
+body.rtl #mec_waiting_form_fields span.mec_waiting_field_sort:before {
   left: auto;
   right: 20px;
   top: 7px;
@@ -13292,7 +13199,8 @@ body.rtl #mec_reg_form_fields span.mec_reg_field_sort:before {
 body.rtl #mec_bfixed_form_fields span.mec_bfixed_field_type,
 body.rtl #mec_bfixed_form_fields span.mec_event_field_type,
 body.rtl #mec_event_form_fields span.mec_event_field_type,
-body.rtl #mec_reg_form_fields span.mec_reg_field_type {
+body.rtl #mec_reg_form_fields span.mec_reg_field_type,
+body.rtl #mec_waiting_form_fields span.mec_waiting_field_type {
   padding-left: 0;
   padding-right: 25px;
 }
@@ -13315,18 +13223,8 @@ body.rtl .mec-tooltip .box {
   right: 30px !important;
 }
 
-body.rtl .mec-tooltip .box:before {
-  left: auto !important;
-  right: 0 !important;
-}
-
 body.rtl .mec-tooltip .box.left {
   left: 30px !important;
-  right: auto !important;
-}
-
-body.rtl .mec-tooltip .box.left:before {
-  left: -12px !important;
   right: auto !important;
 }
 
@@ -13478,7 +13376,7 @@ div[id*="mec_event_fields"] div[aria-label="Fullscreen"] {
 .mec-backend-tab {
   display: inline-block;
   padding: 4px;
-  margin: 20px 0 10px;
+  margin: 0 0 10px;
   border: 1px solid #e3e4e5;
   border-radius: 6px;
   background: #fff;
@@ -13549,31 +13447,30 @@ div[id*="mec_event_fields"] div[aria-label="Fullscreen"] {
 
 .mec-image-picker-page .mec-image-picker-wrapper {
   box-sizing: border-box;
+  flex: 0 1 calc(50% - 10px);
   max-width: 332px;
-  flex-basis: calc(100% / 2);
+  min-height: 46px;
   border: 1px solid #e3e5e7;
   border-radius: 4px;
-  padding: 10px;
-  max-height: 46px;
+  padding: 6px 10px;
   display: flex;
-  flex-wrap: wrap;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
-  position: relative;
-  padding-right: 43px;
+  gap: 8px;
 }
 
 .mec-image-picker-page .mec-image-picker-wrapper .mec-icon-default {
+  flex: 1 1 auto;
+  min-width: 0;
   display: flex;
-  flex-wrap: wrap;
   flex-direction: row;
   align-items: center;
+  gap: 6px;
 }
 
 .mec-image-picker-page .mec-image-picker-wrapper .mec-icon-default .default {
   display: flex;
-  margin: 2px 5px 0 0;
+  flex: 0 0 auto;
 }
 
 .mec-image-picker-page .mec-image-picker-wrapper .mec-icon-default .default i {
@@ -13582,24 +13479,38 @@ div[id*="mec_event_fields"] div[aria-label="Fullscreen"] {
 }
 
 .mec-image-picker-page .mec-image-picker-wrapper .mec-icon-default label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-size: 13px;
   line-height: 17px;
   font-weight: 400;
   color: #686f73;
+  cursor: pointer;
 }
 
+.mec-image-picker-page .mec-image-picker-wrapper .mec-icon-uploader {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+}
+
+/* Upload / Remove share identical metrics so swapping them never shifts the row */
 .mec-image-picker-page .mec-image-picker-wrapper .mec-icon-uploader button {
+  box-sizing: border-box;
+  height: 26px;
+  margin: 0;
+  padding: 0 10px 0 27px;
   font-size: 11px;
   font-weight: 400;
   line-height: 24px;
   border: 1px solid;
   border-radius: 4px;
-  height: unset;
-  min-height: unset;
-  margin: 0 10px 0 0;
-  padding: 0 10px 0 28px;
+  box-shadow: none;
   background-repeat: no-repeat;
-  background-position: 10px center;
+  background-position: 9px center;
+  background-size: auto 11px;
+  cursor: pointer;
 }
 
 .mec-image-picker-page .mec-image-picker-wrapper .mec-icon-uploader button.mec-image-picker-upload {
@@ -13617,24 +13528,26 @@ div[id*="mec_event_fields"] div[aria-label="Fullscreen"] {
 }
 
 .mec-image-picker-page .mec-image-picker-wrapper .mec-image-picker-preview-wrapper {
-  background-color: #fafbfc;
+  box-sizing: border-box;
+  flex: 0 0 auto;
   width: 42px;
-  height: 44px;
-  border-left: 1px solid #e3e5e7;
-  display: block;
-  position: absolute;
-  right: 0;
-  top: 0;
-  border-radius: 0 4px 4px 0;
+  height: 34px;
+  border: 1px solid #e3e5e7;
+  border-radius: 4px;
+  background-color: #fafbfc;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 .mec-image-picker-page .mec-image-picker-wrapper .mec-image-picker-preview-wrapper .mec-image-picker-preview,
 .mec-image-picker-page .mec-image-picker-wrapper .mec-image-picker-preview-wrapper .mec-image-picker-preview img {
   display: block;
   max-width: 24px;
+  max-height: 24px;
+  width: auto;
+  height: auto;
 }
 
 button#mec_add_not_in_days {
@@ -14219,23 +14132,6 @@ body.index-php .ui-datepicker .ui-datepicker-next {
   padding: 0;
 }
 
-.mec-notice-content {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  padding: 20px;
-}
-
-.mec-notice-content h3,
-.mec-notice-content p {
-  margin: 0;
-  padding: 0;
-}
-
-.mec-notice-content .button-primary {
-  margin-block-start: 15px;
-}
-
 .mce-btn .mce-txt {
   color: #595959 !important;
 }
@@ -14346,7 +14242,8 @@ textarea[readonly] {
   align-items: center;
 }
 
-.mec-appointment-form-wrap span.mec-tooltip i {
+.mec-appointment-form-wrap span.mec-tooltip i,
+.mec-appointment-form-wrap div.mec-tooltip i {
   line-height: 38px;
 }
 
@@ -14486,8 +14383,456 @@ body.post-type-mec_invoice #post-body-content {
   margin: 0 0 10px 0;
 }
 
-.mec-book-details .mec_booking_edit_heading {
+.mec-book-details .mec_booking_edit_heading,
+.mec-book-edit h3.mec_booking_edit_heading {
   padding: unset;
+}
+
+/* ── MEC Bookings UX fixes (audit plan) ─────────────────────────── */
+
+/* Merged Paid / Total column (UX audit H2) */
+.post-type-mec-books .mec-book-price-paid {
+  white-space: nowrap;
+}
+
+.post-type-mec-books .mec-book-price-gateway {
+  opacity: .7;
+  font-size: 11px;
+}
+
+/* Attendees toggle: same look as the old bold number, but focusable/tappable */
+.post-type-mec-books .attendees .mec-booking-attendees-toggle,
+.mec-attendees-wrapper .mec-attendees-list .mec-booking-attendees-toggle {
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  line-height: 26px;
+}
+
+.post-type-mec-books .attendees .mec-booking-attendees-toggle strong,
+.mec-attendees-wrapper .mec-attendees-list .mec-booking-attendees-toggle strong {
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+}
+
+/* Attendees tooltip: also open when "pinned" or focus is inside */
+.mec-attendees-wrapper .mec-attendees-list .mec-booking-attendees-tooltip.is-open ul,
+.mec-attendees-wrapper .mec-attendees-list .mec-booking-attendees-tooltip:focus-within ul,
+.post-type-mec-books .attendees .mec-booking-attendees-tooltip.is-open ul,
+.post-type-mec-books .attendees .mec-booking-attendees-tooltip:focus-within ul {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Bookings filter toolbar region (UX audit M5/A11y) */
+.tablenav .actions .mec-books-filter-bar {
+  display: inline-block;
+}
+
+.post-type-mec-books .mec-books-filter-bar .mec-book-clear-filters {
+  float: left;
+  margin-right: 6px;
+}
+
+/* Booking screens: reveal animations + unobtrusive fieldsets (UX audit L3 / A11y) */
+#mec_book_edit_form:not(.mec-util-hidden),
+#mec_book_refund_options:not(.w-hide),
+#mec_book_refund_amount_options:not(.w-hide) {
+  animation: fadeEffect 0.31s;
+}
+
+.mec-book-fs {
+  border: 0;
+  padding: 0;
+  margin: 0 0 4px 0;
+  min-width: 0;
+}
+
+/* Bookings list empty state / onboarding (UX audit C3) */
+.mec-bookings-empty-state {
+  margin: 20px 0;
+  padding: 40px 20px;
+  text-align: center;
+  background: #fff;
+  border: 1px dashed #c3c4c7;
+  border-radius: 8px;
+}
+
+.mec-bookings-empty-state h3 {
+  font-size: 16px;
+  margin: 0 0 6px;
+}
+
+.mec-bookings-empty-state p {
+  color: #646970;
+  margin: 0;
+}
+
+.mec-bookings-empty-state-actions {
+  margin-top: 14px;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Manual booking attendee cap message (UX audit M4) */
+.mec-book-num-attendees-error {
+  color: #d63638;
+  margin-top: 4px;
+}
+
+/* Inline row status actions (UX audit C2) */
+.post-type-mec-books .column-confirmation .mec-book-row-actions {
+  display: flex;
+  gap: 4px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+  opacity: .55;
+  transition: opacity .15s;
+}
+
+.post-type-mec-books tr:hover .mec-book-row-actions,
+.post-type-mec-books .mec-book-row-actions:focus-within {
+  opacity: 1;
+}
+
+.post-type-mec-books .mec-book-row-actions .button-small {
+  height: 22px;
+  line-height: 20px;
+  padding: 0 8px;
+  font-size: 11px;
+  margin: 0;
+}
+
+.post-type-mec-books td.column-confirmation.mec-book-status-updated {
+  animation: mecFlashGreen 1.2s ease;
+}
+
+@keyframes mecFlashGreen {
+  0% {
+    background-color: #e7f8ec;
+  }
+
+  100% {
+    background-color: transparent;
+  }
+}
+
+/* Header export buttons (UX audit M2) */
+.post-type-mec-books .mec-book-export-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.post-type-mec-books .mec-book-export-label {
+  color: #646970;
+}
+
+/* Saved views bar (UX audit H1) */
+.post-type-mec-books .mec-book-views-bar {
+  clear: both;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 6px 0 10px;
+}
+
+.post-type-mec-books .mec-book-views-label {
+  color: #646970;
+  font-weight: 600;
+}
+
+.post-type-mec-books .mec-book-view-pill {
+  display: inline-block;
+  padding: 3px 12px;
+  border: 1px solid #c3c4c7;
+  border-radius: 99px;
+  text-decoration: none;
+  background: #fff;
+  color: #2c3338;
+  line-height: 22px;
+}
+
+.post-type-mec-books .mec-book-view-pill:hover {
+  border-color: #2271b1;
+  color: #2271b1;
+}
+
+.post-type-mec-books .mec-book-view-pill-wrap.mec-book-view-active .mec-book-view-pill,
+.post-type-mec-books a.mec-book-view-pill.mec-book-view-active {
+  background: #1d2327;
+  border-color: #1d2327;
+  color: #fff;
+}
+
+.post-type-mec-books .mec-book-view-pill-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  border-radius: 99px;
+}
+
+.post-type-mec-books .mec-book-view-pill-wrap .mec-book-view-pill {
+  border-radius: 99px 0 0 99px;
+}
+
+.post-type-mec-books .mec-book-view-delete {
+  border: 1px solid #c3c4c7;
+  border-inline-start: 0;
+  border-radius: 0 99px 99px 0;
+  background: #fff;
+  color: #646970;
+  cursor: pointer;
+  padding: 3px 9px;
+  line-height: 22px;
+}
+
+.post-type-mec-books .mec-book-view-pill-wrap.mec-book-view-active .mec-book-view-delete {
+  background: #1d2327;
+  border-color: #1d2327;
+  color: rgba(255, 255, 255, .8);
+}
+
+.post-type-mec-books .mec-book-view-delete:hover {
+  color: #d63638;
+  border-color: #d63638;
+}
+
+/* Status queue counts (UX audit WF #9) */
+.post-type-mec-books .mec-book-status-counts {
+  clear: both;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 0 0 8px;
+}
+
+.post-type-mec-books .mec-book-counts-label {
+  color: #646970;
+  font-weight: 600;
+}
+
+.post-type-mec-books .mec-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  color: #2c3338;
+  border-radius: 6px;
+  padding: 2px 6px;
+}
+
+.post-type-mec-books .mec-count:hover {
+  background: #f0f0f1;
+}
+
+.post-type-mec-books .mec-count-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 99px;
+  font-weight: 700;
+  font-size: 11.5px;
+  color: #fff;
+}
+
+.post-type-mec-books .mec-count-pending .mec-count-num {
+  background: #dba617;
+}
+
+.post-type-mec-books .mec-count-confirmed .mec-count-num {
+  background: #00a32a;
+}
+
+.post-type-mec-books .mec-count-rejected .mec-count-num {
+  background: #d63638;
+}
+
+.post-type-mec-books .mec-count-waiting .mec-count-num {
+  background: #8c8f94;
+}
+
+.post-type-mec-books .mec-count-verified .mec-count-num {
+  background: #2271b1;
+}
+
+.post-type-mec-books .mec-count-canceled .mec-count-num {
+  background: #a7aaad;
+}
+
+.post-type-mec-books .mec-count-sep {
+  width: 1px;
+  height: 16px;
+  background: #c3c4c7;
+}
+
+/* Status pills (UX audit M6) — never color alone: glyph + dashed/solid cue */
+.post-type-mec-books .mec-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 1px 9px;
+  border-radius: 99px;
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 20px;
+  white-space: nowrap;
+}
+
+.post-type-mec-books .mec-status-pill .mec-pill-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: .85;
+  flex-shrink: 0;
+}
+
+.post-type-mec-books .mec-status-pill .mec-pill-icon {
+  line-height: 1;
+  font-size: 12px;
+}
+
+.post-type-mec-books .mec-pill-confirmed {
+  background: #e7f8ec;
+  color: #00731f;
+  border: 1px solid #a6dfb0;
+}
+
+.post-type-mec-books .mec-pill-pending {
+  background: #fffdf5;
+  color: #8a6116;
+  border: 1px dashed #dba617;
+}
+
+.post-type-mec-books .mec-pill-rejected {
+  background: #fceded;
+  color: #8a1f21;
+  border: 1px solid #f3c2c9;
+}
+
+.post-type-mec-books .mec-pill-verified {
+  background: #ecf5fc;
+  color: #135e96;
+  border: 1px solid #a7c8e8;
+}
+
+.post-type-mec-books .mec-pill-waiting {
+  background: #fafafa;
+  color: #50575e;
+  border: 1px dashed #a7aaad;
+}
+
+.post-type-mec-books .mec-pill-canceled {
+  background: #f0f0f1;
+  color: #50575e;
+  border: 1px solid #c3c4c7;
+}
+
+/* Payment state badge (UX audit p2-09) — dashed border = ongoing, like status pills */
+.post-type-mec-books .mec-pay-badge {
+  display: inline-block;
+  padding: 0 7px;
+  border-radius: 99px;
+  font-size: 10.5px;
+  font-weight: 700;
+  line-height: 18px;
+  white-space: nowrap;
+}
+
+.post-type-mec-books .mec-pay-paid {
+  background: #e7f8ec;
+  color: #00731f;
+}
+
+.post-type-mec-books .mec-pay-partial {
+  background: #fffdf5;
+  color: #8a6116;
+  border: 1px dashed #dba617;
+  padding: 0 6px;
+  line-height: 16px;
+}
+
+.post-type-mec-books .mec-pay-refunded {
+  background: #fceded;
+  color: #8a1f21;
+}
+
+.post-type-mec-books .mec-pay-free {
+  background: #f0f0f1;
+  color: #50575e;
+}
+
+/* Combined booking state summary (UX audit C1 interim) */
+.post-type-mec-books .mec-book-state-summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0 14px;
+  padding: 8px 12px;
+  background: #f8f9fa;
+  border: 1px solid #ededef;
+  border-radius: 8px;
+}
+
+.post-type-mec-books .mec-book-state-summary .description {
+  margin: 0;
+}
+
+/* Focus visibility + contrast for injected widgets (UX audit A11y):
+   select2 containers, injected bulk controls and custom buttons must all
+   show a clearly visible keyboard focus ring on any admin color scheme. */
+.post-type-mec-books .mec-books-filter-bar .select2-container--default.select2-container--focus .select2-selection--single,
+.post-type-mec-books .mec-books-filter-bar .select2-selection:focus,
+.post-type-mec-books .select2-container--default.select2-container--open .select2-selection--single {
+  outline: 2px solid #2271b1;
+  outline-offset: 1px;
+}
+
+.post-type-mec-books .mec-book-inline-action:focus-visible,
+.post-type-mec-books .mec-booking-attendees-toggle:focus-visible,
+.post-type-mec-books .mec-attendee-checkin-toggle:focus-visible,
+.post-type-mec-books .mec-book-view-delete:focus-visible,
+.post-type-mec-books .mec-book-view-pill:focus-visible,
+.post-type-mec-books .mec-count:focus-visible,
+.post-type-mec-books .mec-book-save-view:focus-visible,
+.post-type-mec-books .mec-book-clear-filters:focus-visible {
+  outline: 2px solid #2271b1;
+  outline-offset: 1px;
+}
+
+/* Keep select2 selections readable regardless of admin theme */
+.post-type-mec-books .mec-books-filter-bar .select2-selection__rendered {
+  color: #2c3338;
+}
+
+/* Elementor Editor One interop: when its top bar turns #wpbody into a
+   fixed-height app shell, the long booking edit screens lose the standard
+   footer and scroll context. Our footer script flags the page with
+   .mec-footer-restored and we restore core layout here. */
+body.post-type-mec-books.mec-footer-restored #wpbody {
+  position: static !important;
+  inset: auto !important;
+  width: auto !important;
+}
+
+body.post-type-mec-books.mec-footer-restored #wpcontent #wpbody-content {
+  height: auto !important;
+  overflow: visible !important;
+  padding-block-end: 65px;
 }
 
 .label-checkbox+.label-checkbox {
@@ -14698,7 +15043,7 @@ body.post-type-mec_invoice #post-body-content {
   }
 
   .post-type-mec-events .mec-add-event-tabs-left .mec-add-event-tabs-link.mec-tab-active {
-    border-bottom-color: #07bbe9 !important;
+    border-bottom-color: #00BEEB !important;
     background: transparent !important;
   }
 
@@ -15127,19 +15472,6 @@ body.post-type-mec_invoice #post-body-content {
 
 .mec-location-duplicate-warn .mec-location-use-existing {
   margin-left: auto;
-}
-
-/* Inline field help text inside editor tab panels + visibility (audit issue #12) */
-.mec-event-tab-content .description,
-#mec_metabox_visibility .description {
-  display: inline-block;
-  border-left: 1px dashed #ccc;
-  padding-left: 12px;
-  font-size: 12px;
-  line-height: 18px;
-  color: #8d9599;
-  font-weight: 400;
-  margin: 9px 0;
 }
 
 .mec-tooltip:focus-within .box {

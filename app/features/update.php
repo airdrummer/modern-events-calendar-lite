@@ -629,28 +629,8 @@ class MEC_feature_update extends MEC_base
 
     public function version600()
     {
-        $this->db->q("CREATE TABLE IF NOT EXISTS `#__mec_bookings` (
-          `id` int UNSIGNED NOT NULL,
-          `booking_id` int UNSIGNED NOT NULL,
-          `event_id` int UNSIGNED NOT NULL,
-          `ticket_ids` varchar(255) NOT NULL,
-          `status` varchar(20) NOT NULL DEFAULT 'pending',
-          `confirmed` tinyint NOT NULL DEFAULT '0',
-          `verified` tinyint NOT NULL DEFAULT '0',
-          `all_occurrences` tinyint NOT NULL DEFAULT '0',
-          `date` datetime NOT NULL,
-          `timestamp` int UNSIGNED NOT NULL
-        ) DEFAULT CHARSET=[:CHARSET:] COLLATE=[:COLLATE:];");
-
-        $this->db->q("ALTER TABLE `#__mec_bookings` ADD PRIMARY KEY (`id`);");
-        $this->db->q("ALTER TABLE `#__mec_bookings` MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;");
-        $this->db->q("ALTER TABLE `#__mec_bookings` ADD KEY `event_id` (`event_id`,`ticket_ids`,`status`,`confirmed`,`verified`,`date`);");
-        $this->db->q("ALTER TABLE `#__mec_bookings` ADD KEY `booking_id` (`booking_id`);");
-        $this->db->q("ALTER TABLE `#__mec_bookings` ADD KEY `timestamp` (`timestamp`);");
-        $this->db->q("ALTER TABLE `#__mec_bookings` ADD `transaction_id` VARCHAR(20) NULL AFTER `booking_id`;");
-
-        $this->db->q("ALTER TABLE `#__mec_bookings` ADD `user_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `booking_id`;");
-        $this->db->q("ALTER TABLE `#__mec_bookings` ADD INDEX (`user_id`);");
+        // The booking-record writer requires the current booking and attendee tables.
+        $this->main->create_mec_tables();
 
         // Get Booking Posts
         $bookings = get_posts(array(

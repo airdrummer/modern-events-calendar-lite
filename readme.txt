@@ -1,10 +1,10 @@
-=== Modern Events Calendar Lite ===
+﻿=== Modern Events Calendar Lite ===
 Contributors: webnus
 Donate link: https://webnus.net
 Tags: Event, Events, Calendar, Booking, Schedule, Organizer, Venue
 Requires at least: 4.0.0
 Tested up to: 7.1
-Stable tag: 7.37.0.1
+Stable tag: 7.38.2
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -473,10 +473,59 @@ You can see [plugin documentation](https://webnus.net/dox/modern-events-calendar
 
 == Changelog ==
 
-= 7.37.0.1 - 6oct26
-- fixed ical CREATED/LAST-MODIFIED format
-- added missing timezone display, reformat
-- fixed countdown
+= 7.38.2 - 11 November 2026 =
+- Added: Admin Dark Mode option in Appearance settings, separate from the front-end dark mode (the front-end option is now labeled Frontend Dark Mode).
+- Added: Code editor with syntax highlighting and line numbers to the Custom CSS settings tab, plus a settings search box.
+- Added: Add-on settings tabs now get the standard page header, shared settings layout and AJAX save, and appear in the settings search.
+- Improved: Tooltips on dynamically added rows (tickets, fees, variations) now work and no longer get duplicate IDs.
+- Improved: Layout of ticket rows, Start/End Date and time fields, Price per Date and multi-select fields in the settings and event editor.
+- Fixed: Add-on sections rendering twice on the Integrations settings tab.
+- Fixed: Name and Email fields being saved as Booking Fixed Fields, which could show them twice in the booking form.
+- Fixed: Ticket Remove buttons overlapping the sort handle in the settings design.
+- Fixed: Admin dark mode class being added to non-MEC WordPress admin pages and replacing classes added by other plugins.
+
+= 7.38.1 - 9 November 2026 =
+- Fixed: MEC AI reporting the WordPress AI plugin as disabled ("Enable AI" setting is off) on WordPress AI 1.4.0 and later, which removed that setting.
+
+= 7.38.0 - 9 November 2026 =
+- Added: AI Mode to the Add New Event screen.
+- Added: AI tools for creating tags, labels, locations, organizers, speakers, and sponsors.
+- Added: Shared seat reservations for standard Stripe and PayPal Standard to prevent concurrent bookings from exceeding capacity.
+- Added: Hide Event Date option that replaces the date with a "TBA" placeholder across calendar views, single event page, emails, REST API and import/export.
+- Added: Separate settings to turn event editor warnings on or off.
+- Redesigned: Settings, Report, Import/Export, Translate Options, MEC AI, Support, Addons and Intro admin pages on a unified design system.
+- Redesigned: The printable calendar as a standalone print-friendly page.
+- Fixed: Attendee reports and reminders missing bookings after event time changes.
+- Fixed: Timezone handling in event dates and structured data.
+- Fixed: Database upgrade steps using tables before they were ready.
+- Fixed: PHP fatal errors in WooCommerce for deleted MEC transactions.
+- Fixed: Monthly navigation errors and calendars getting stuck while loading.
+- Fixed: Previous and new dates in booking reschedule emails.
+- Fixed: Coupon discounts not being kept in WooCommerce cart totals with inclusive tax.
+- Fixed: Event links losing encoded characters after saving.
+- Fixed: HTML formatting being removed from ticket private descriptions.
+- Fixed: Full Calendar filters not updating when navigating between dates.
+- Fixed: A script error in the admin calendar.
+- Fixed: Pre-publish warnings could silently block publishing when their setting was not available.
+- Fixed: The Liquid date-picker filter not jumping to the selected month.
+- Fixed: The date dropdown of the booking form not closing when clicking outside.
+- Fixed: Duplicate IDs in Full Calendar.
+- Fixed: Validation of the Read More and More Info URLs when saving an event.
+- Fixed: A misleading "wrong username or password" message on the login form when the captcha (Turnstile) fails.
+- Fixed: A misleading network license notice on unlicensed multisite subsites.
+- Fixed: A QR code class conflict when another plugin already loads phpqrcode.
+- Fixed: Calendar day-cell widths, event list styles and the layout of the front-end submission form.
+- Fixed: The weekday header alignment of the monthly view in multi-column layouts.
+- Fixed: Elementor event previews in the monthly view using the excerpt instead of the event content.
+- Added: Date Heading Level setting for the Full Calendar skin to keep a correct heading order on the page.
+- Added: A single combined admin notice listing active addons that need a newer MEC version, replacing per-addon version notices (reads each addon's "Requires MEC" header).
+- Added: Support tickets are now opened through a one-time Webnus portal with the system report prefilled.
+- Enhanced: Settings search now looks across all settings tabs and shows result counts.
+- Enhanced: Accessibility of heading order in the list and Full Calendar views (month dividers use h2, event titles use h3).
+- Enhanced: Accessibility of "Read More" and "More Info" links with event title, new-window hint and destination host for screen readers.
+- Enhanced: Accessibility of the countdown colors and the calendar export links.
+- Improved: The event date picker now allows selecting dates 50 years back and forward.
+- Improved: The wording of the license release and payment return messages.
 
 = 7.37.0 - 1 October 2026 =
 - Added: Event Creation task for MEC AI.

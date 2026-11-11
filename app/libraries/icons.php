@@ -177,11 +177,11 @@ class MEC_icons
                     </div>
                     <div class="mec-icon-uploader">
                         <button type="button" class="button button-secondary mec-image-picker-upload <?php echo $current ? 'w-hidden' : ''; ?>" id="mec_icons_<?php echo esc_attr($key); ?>"><?php esc_html_e('Upload', 'modern-events-calendar-lite'); ?></button>
-                        <button class="button button-secondary mec-image-picker-remove <?php echo $current ? '' : 'w-hidden'; ?>"><?php esc_html_e('Remove', 'modern-events-calendar-lite'); ?></button>
+                        <button type="button" class="button button-secondary mec-image-picker-remove <?php echo $current ? '' : 'w-hidden'; ?>"><?php esc_html_e('Remove', 'modern-events-calendar-lite'); ?></button>
                         <input class="mec-image-picker-input" type="hidden" name="<?php echo esc_attr($prefix); ?>[icons][<?php echo esc_attr($key); ?>]" value="<?php echo $current; ?>" />
                     </div>
-                    <div class="mec-icon-preview-remove mec-image-picker-preview-wrapper">
-                        <div class="mec-image-picker-preview <?php echo $current ? '' : 'w-hidden'; ?>"><img src="<?php echo esc_url_raw($current); ?>" alt="<?php echo esc_attr($icon['name']); ?>"></div>
+                    <div class="mec-image-picker-preview-wrapper <?php echo $current ? '' : 'w-hidden'; ?>">
+                        <div class="mec-image-picker-preview"><img src="<?php echo esc_url_raw($current); ?>" alt="<?php echo esc_attr($icon['name']); ?>"></div>
                     </div>
                 </div>
                 <?php endforeach; ?>

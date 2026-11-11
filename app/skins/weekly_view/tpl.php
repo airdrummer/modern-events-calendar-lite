@@ -2,6 +2,8 @@
 /** no direct access **/
 defined('MECEXEC') or die();
 
+$date_heading_tag = $this->get_date_heading_tag('h4');
+
 /** @var MEC_skin_weekly_view $this */
 
 // Get layout path
@@ -60,7 +62,7 @@ if($this->next_previous_button)
         $navigator_html .= '<div class="mec-previous-month mec-load-month mec-color" data-mec-year="'.date('Y', $_1month_before).'" data-mec-month="'.date('m', $_1month_before).'"><a href="#" class="mec-load-month-link"><i class="mec-sl-angle-left"></i></a></div>';
     }
 
-    $navigator_html .= '<h4 class="mec-month-label">'.esc_html($this->main->date_i18n('Y F', $current_month_time)).'</h4>';
+    $navigator_html .= '<'.$date_heading_tag.' class="mec-month-label">'.esc_html($this->main->date_i18n('Y F', $current_month_time)).'</'.$date_heading_tag.'>';
 
     // Show next month handler if needed
     if(!$this->show_only_expired_events || strtotime(date('Y-m-01', $_1month_after)) <= time())
@@ -103,6 +105,7 @@ jQuery(document).ready(function()
         jQuery("#mec_weekly_view_month_'.esc_js($this->id).'_'.date('Ym', $current_month_time).'").mecWeeklyView(
         {
             id: "'.esc_js($this->id).'",
+            search_form_id: "'.esc_js($this->atts['search_form_id'] ?? $this->id).'",
             today: "'.date('Ymd', strtotime($this->start_date)).'",
             week: "'.esc_js($this->week_of_days[$this->today]).'",
             month_id: "'.date('Ym', $current_month_time).'",
@@ -152,7 +155,7 @@ do_action('mec_weekly_skin_head');
         </div>
         <?php else: ?>
         <div class="mec-calendar-a-month mec-clear">
-            <h4 class="mec-month-label"><?php echo esc_html($this->main->date_i18n('Y F', $current_month_time)); ?></h4>
+            <<?php echo $date_heading_tag; ?> class="mec-month-label"><?php echo esc_html($this->main->date_i18n('Y F', $current_month_time)); ?></<?php echo $date_heading_tag; ?>>
         </div>
         <?php endif; ?>
 

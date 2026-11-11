@@ -38,6 +38,12 @@ class MEC_schedule extends MEC_base
 
     public function reschedule($event_id, $maximum = 200)
     {
+        $previous = [];
+        if (get_post_meta($event_id, 'mec_repeat_status', true))
+        {
+            $previous = $this->db->select($this->db->prepare("SELECT `dstart`,`dend`,`tstart`,`tend` FROM `#__mec_dates` WHERE `post_id`=%d", $event_id), 'loadAssocList');
+        }
+
         // Clean Current Schedule
         $this->clean($event_id);
 
@@ -49,6 +55,24 @@ class MEC_schedule extends MEC_base
 
         // New Schedule
         $this->schedule($event_id, $start, $maximum);
+
+        if (!$previous) return;
+
+        $current = $this->db->select($this->db->prepare("SELECT `dstart`,`dend`,`tstart`,`tend` FROM `#__mec_dates` WHERE `post_id`=%d", $event_id), 'loadAssocList');
+        $old_dates = $new_dates = [];
+        foreach ($previous as $date) $old_dates[$date['dstart'] . ':' . $date['dend']][] = $date;
+        foreach ($current as $date) $new_dates[$date['dstart'] . ':' . $date['dend']][] = $date;
+
+        foreach ($old_dates as $key => $dates)
+        {
+            // Multiple slots on the same dates cannot be safely matched by date alone.
+            if (count($dates) !== 1 || count($new_dates[$key] ?? []) !== 1) continue;
+            $old = $dates[0];
+            $new = $new_dates[$key][0];
+            if ($old['tstart'] == $new['tstart'] && $old['tend'] == $new['tend']) continue;
+
+            $this->main->event_date_updated($event_id, date('Y-m-d H:i:s', $old['tstart']), date('Y-m-d H:i:s', $old['tend']), date('Y-m-d H:i:s', $new['tstart']), date('Y-m-d H:i:s', $new['tend']));
+        }
     }
 
     public function append($event_id, $maximum = 25)

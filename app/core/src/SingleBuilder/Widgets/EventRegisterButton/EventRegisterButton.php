@@ -83,9 +83,14 @@ class EventRegisterButton extends WidgetBase {
 					</script>
 				</div>
 			<?php elseif ( $mec_more_info ) : ?>
+				<?php
+					$more_info_url = $event_detail->data->meta['mec_more_info'];
+					$event_title = $event_detail->data->title ?? get_the_title($event_id);
+					$a11y = Base::get_main()->get_more_info_link_accessibility($more_info_url, $event_title, $mec_more_info_target);
+				?>
 				<div class="mec-reg-btn mec-frontbox">
-					<a target="<?php echo esc_attr( $mec_more_info_target ); ?>" class="mec-booking-button mec-bg-color" href="<?php echo esc_url( $event_detail->data->meta['mec_more_info'] ); ?>">
-						<?php echo esc_html__( $button_text , 'modern-events-calendar-lite'); ?>
+					<a target="<?php echo esc_attr( $mec_more_info_target ); ?>" class="mec-booking-button mec-bg-color" href="<?php echo esc_url( $more_info_url ); ?>"<?php echo $a11y['attr']; ?>>
+						<?php echo esc_html__( $button_text , 'modern-events-calendar-lite'); ?><?php echo $a11y['sr']; ?>
 					</a>
 				</div>
 			<?php endif; ?>

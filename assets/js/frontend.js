@@ -1,3 +1,41 @@
+/**
+ * Resolve year/month for month-navigator skins (Liquid List/Grid) from search filters.
+ * Prefer date-picker start date, then year/month dropdown, else fallbacks.
+ */
+function mecResolveSearchFormMonthYear(settingsId, fallbackYear, fallbackMonth) {
+    var year = fallbackYear;
+    var month = fallbackMonth;
+    var $dateStart = jQuery('#mec_sf_date_start_' + settingsId);
+
+    if ($dateStart.length && $dateStart.val()) {
+        var format = (typeof mecdata !== 'undefined' && mecdata.datepicker_format)
+            ? mecdata.datepicker_format.split('&')[0]
+            : 'yy-mm-dd';
+
+        try {
+            var parsed = jQuery.datepicker.parseDate(format, $dateStart.val());
+            if (parsed instanceof Date && !isNaN(parsed.getTime())) {
+                return {
+                    year: parsed.getFullYear(),
+                    month: ('0' + (parsed.getMonth() + 1)).slice(-2)
+                };
+            }
+        } catch (e) { }
+    }
+
+    var $month = jQuery('#mec_sf_month_' + settingsId);
+    var $year = jQuery('#mec_sf_year_' + settingsId);
+    if (
+        $month.length && $year.length &&
+        $month.val() && $month.val() !== 'none' &&
+        $year.val() && $year.val() !== 'none'
+    ) {
+        return { year: $year.val(), month: $month.val() };
+    }
+
+    return { year: year, month: month };
+}
+
 // MEC Single Event Displayer
 var mecSingleEventDisplayer =
 {
@@ -88,7 +126,14 @@ function mecFormatA11yString(template, replacements)
         }, options);
         if (typeof mec_search_callbacks[settings.id] === 'undefined') mec_search_callbacks[settings.id] = [];
 
-        $('#mec_search_form_' + settings.id).on('submit', (e) => {
+        var callback_exists = false;
+        for (const callback of mec_search_callbacks[settings.id]) {
+            if (callback.toString() === settings.callback.toString()) callback_exists = true;
+        }
+
+        if (!callback_exists) mec_search_callbacks[settings.id].push(settings.callback);
+
+        $('#mec_search_form_' + settings.id).off('submit.mecSearchForm' + settings.id).on('submit.mecSearchForm' + settings.id, (e) => {
             e.preventDefault();
         });
 
@@ -1070,7 +1115,13 @@ jQuery(window).on('load', function () {
             });
 
             // Add the onclick event
-            $("#mec_skin_" + settings.id + " .mec-totalcal-box .mec-totalcal-view span:not(.mec-fluent-more-views-icon):not(.mec-fluent-more-views-content)").on('click', function (e) {
+            var $views = $("#mec_skin_" + settings.id + " .mec-totalcal-box .mec-totalcal-view span[data-skin]");
+            $views.off('keydown.mecFullCalendar click.mecFullCalendar').on('keydown.mecFullCalendar', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    $(this).trigger('click');
+                }
+            }).on('click.mecFullCalendar', function (e) {
                 e.preventDefault();
                 var skin = $(this).data('skin');
                 var mec_month_select = $('#mec_sf_month_' + settings.id);
@@ -1091,7 +1142,7 @@ jQuery(window).on('load', function () {
                 }
 
                 if (skin == 'list' || skin == 'grid' || skin == 'agenda') {
-                    var mec_filter_none = '<option class="mec-none-item" value="none">' + $('#mec-filter-none').val() + '</option>';
+                    var mec_filter_none = '<option class="mec-none-item" value="none">' + $(settings.sf.container).find('[data-mec-filter-none]').val() + '</option>';
                     if (mec_month_select.find('.mec-none-item').length == 0) mec_month_select.prepend(mec_filter_none);
                     if (mec_year_select.find('.mec-none-item').length == 0) mec_year_select.prepend(mec_filter_none);
                 }
@@ -1100,8 +1151,8 @@ jQuery(window).on('load', function () {
                     if (mec_year_select.find('.mec-none-item').length != 0) mec_year_select.find('.mec-none-item').remove();
                 }
 
-                $("#mec_skin_" + settings.id + " .mec-totalcal-box .mec-totalcal-view span").removeClass('mec-totalcalview-selected')
-                $(this).addClass('mec-totalcalview-selected');
+                $views.removeClass('mec-totalcalview-selected').attr('aria-pressed', 'false');
+                $(this).addClass('mec-totalcalview-selected').attr('aria-pressed', 'true');
                 if ($(this).closest('.mec-fluent-more-views-content').length > 0) {
                     $('.mec-fluent-more-views-icon').addClass('active');
                     $('.mec-fluent-more-views-content').removeClass('active');
@@ -1334,7 +1385,7 @@ jQuery(window).on('load', function () {
                             $('.mec-modal-result').removeClass("mec-month-navigator-loading");
 
                             // Set Year Filter values in search widget
-                            $("#mec_sf_year_" + settings.id).val(year);
+                            $("#mec_sf_year_" + (settings.search_form_id || settings.id)).val(year);
                         } else {
                             $("#mec_yearly_view_year_" + settings.id + "_" + response.current_year.id).hide();
                             $("#mec_year_navigator_" + settings.id + "_" + response.current_year.id).hide();
@@ -1509,6 +1560,7 @@ jQuery(window).on('load', function () {
     $.fn.mecMonthlyView = function (options) {
         var active_month;
         var active_year;
+        var month_focus;
 
         // Default Options
         var settings = $.extend({
@@ -1557,6 +1609,7 @@ jQuery(window).on('load', function () {
 
             // Add onclick event
             $("#mec_skin_" + settings.id + " .mec-load-month").on("click", function () {
+                month_focus = $(this).find('button:focus').length ? ($(this).hasClass('mec-next-month') ? '.mec-next-month' : '.mec-previous-month') : null;
                 var year = $(this).data("mec-year");
                 var month = $(this).data("mec-month");
 
@@ -1605,7 +1658,9 @@ jQuery(window).on('load', function () {
                         $(document).trigger('mec_search_init', ['monthly_view', settings, response]);
 
                     },
-                    error: function () { }
+                    error: function () {
+                        $('.mec-modal-result').removeClass("mec-month-navigator-loading");
+                    }
                 });
         }
 
@@ -1622,8 +1677,8 @@ jQuery(window).on('load', function () {
             // Month exists so we just show it
             if ($("#mec_monthly_view_month_" + settings.id + "_" + month_id).length) {
                 // Set Month Filter values in search widget
-                $("#mec_sf_month_" + settings.id).val(month);
-                $("#mec_sf_year_" + settings.id).val(year);
+                $("#mec_sf_month_" + (settings.search_form_id || settings.id)).val(month);
+                $("#mec_sf_year_" + (settings.search_form_id || settings.id)).val(year);
 
                 // Toggle Month
                 toggleMonth(month_id);
@@ -1664,8 +1719,8 @@ jQuery(window).on('load', function () {
                             $('.mec-modal-result').removeClass("mec-month-navigator-loading");
 
                             // Set Month Filter values in search widget
-                            $("#mec_sf_month_" + settings.id).val(month);
-                            $("#mec_sf_year_" + settings.id).val(year);
+                            $("#mec_sf_month_" + (settings.search_form_id || settings.id)).val(month);
+                            $("#mec_sf_year_" + (settings.search_form_id || settings.id)).val(year);
                         } else {
                             $("#mec_monthly_view_month_" + settings.id + "_" + response.current_month.id).hide();
                             $("#mec_month_navigator_" + settings.id + "_" + response.current_month.id).hide();
@@ -1683,7 +1738,9 @@ jQuery(window).on('load', function () {
                         jQuery(document).trigger('load_calendar_data');
 
                     },
-                    error: function () { }
+                    error: function () {
+                        $('.mec-modal-result').removeClass("mec-month-navigator-loading");
+                    }
                 });
             }
         }
@@ -1710,6 +1767,13 @@ jQuery(window).on('load', function () {
             $("#mec_skin_" + settings.id + " .mec-month-side").hide();
             $("#mec_month_side_" + settings.id + "_" + month_id).show();
 
+            if (month_focus) {
+                var $navigator = $("#mec_month_navigator_" + settings.id + "_" + month_id);
+                var $button = $navigator.find(month_focus + ' button');
+                ($button.length ? $button : $navigator.find('button')).first().trigger('focus');
+                month_focus = null;
+            }
+
             jQuery(document).trigger('mec_toggle_month', [settings, month_id]);
         }
 
@@ -1731,6 +1795,9 @@ jQuery(window).on('load', function () {
 
                     $("#mec_monthly_view_month_" + settings.id + "_" + month_id + " .mec-calendar-day").removeClass('mec-selected-day');
                     $this.addClass('mec-selected-day');
+
+                    $("#mec_monthly_view_month_" + settings.id + "_" + month_id + " .mec-has-event-a[aria-expanded]").attr('aria-expanded', 'false');
+                    $this.find('.mec-has-event-a[aria-expanded]').attr('aria-expanded', 'true');
 
                     $('#mec_month_side_' + settings.id + '_' + month_id + ' .mec-calendar-events-sec:not([data-mec-cell=' + data_mec_cell + '])').slideUp();
                     $('#mec_month_side_' + settings.id + '_' + month_id + ' .mec-calendar-events-sec[data-mec-cell=' + data_mec_cell + ']').slideDown();
@@ -2044,8 +2111,8 @@ jQuery(window).on('load', function () {
             // Month exists so we just show it
             if ($("#mec_weekly_view_month_" + settings.id + "_" + month_id).length) {
                 // Set Month Filter values in search widget
-                $("#mec_sf_month_" + settings.id).val(month);
-                $("#mec_sf_year_" + settings.id).val(year);
+                $("#mec_sf_month_" + (settings.search_form_id || settings.id)).val(month);
+                $("#mec_sf_year_" + (settings.search_form_id || settings.id)).val(year);
 
                 // Toggle Month
                 toggleMonth(month_id);
@@ -2085,8 +2152,8 @@ jQuery(window).on('load', function () {
                         setThisWeek(response.week_id, true);
 
                         // Set Month Filter values in search widget
-                        $("#mec_sf_month_" + settings.id).val(month);
-                        $("#mec_sf_year_" + settings.id).val(year);
+                        $("#mec_sf_month_" + (settings.search_form_id || settings.id)).val(month);
+                        $("#mec_sf_year_" + (settings.search_form_id || settings.id)).val(year);
                         mecFluentCustomScrollbar();
                     },
                     error: function () { }
@@ -2376,8 +2443,8 @@ jQuery(window).on('load', function () {
             // Month exists so we just show it
             if ($("#mec_daily_view_month_" + settings.id + "_" + month_id).length) {
                 // Set Month Filter values in search widget
-                $("#mec_sf_month_" + settings.id).val(month);
-                $("#mec_sf_year_" + settings.id).val(year);
+                $("#mec_sf_month_" + (settings.search_form_id || settings.id)).val(month);
+                $("#mec_sf_year_" + (settings.search_form_id || settings.id)).val(year);
 
                 // Toggle Month
                 toggleMonth(month_id);
@@ -2414,8 +2481,8 @@ jQuery(window).on('load', function () {
                         setToday('' + year + month + '01');
 
                         // Set Month Filter values in search widget
-                        $("#mec_sf_month_" + settings.id).val(month);
-                        $("#mec_sf_year_" + settings.id).val(year);
+                        $("#mec_sf_month_" + (settings.search_form_id || settings.id)).val(month);
+                        $("#mec_sf_year_" + (settings.search_form_id || settings.id)).val(year);
                         mecFluentCustomScrollbar();
                     },
                     error: function () { }
@@ -2717,8 +2784,8 @@ jQuery(window).on('load', function () {
                         setThisWeek(response.week_id);
 
                         // Set Month Filter values in search widget
-                        $("#mec_sf_month_" + settings.id).val(month);
-                        $("#mec_sf_year_" + settings.id).val(year);
+                        $("#mec_sf_month_" + (settings.search_form_id || settings.id)).val(month);
+                        $("#mec_sf_year_" + (settings.search_form_id || settings.id)).val(year);
                     },
                     error: function () { }
                 });
@@ -4992,37 +5059,32 @@ jQuery(window).on('load', function () {
 
 // MEC COUNTDOWN MODULE
 (function ($) {
-    $.fn.mecCountDown = function (options, callBack) 
-	{
+    $.fn.mecCountDown = function (options, callBack) {
         // Default Options
-        var settings = $.extend(
-		{
+        var settings = $.extend({
             // These are the defaults.
             date: null,
-            format: null,
-            interval: 1000
+            format: null
         }, options);
 
         var callback = callBack;
         var selector = $(this);
 
         startCountdown();
-        var intervalID = setInterval(startCountdown, settings.interval);
+        var interval = setInterval(startCountdown, 1000);
 
-        function startCountdown() 
-        {
+        function startCountdown() {
             var eventDate = Date.parse(settings.date) / 1000;
             var currentDate = Math.floor($.now() / 1000);
 
-            if (eventDate <= currentDate) 
-			{
+            if (eventDate <= currentDate) {
                 selector.find(".mec-days").text("00");
                 selector.find(".mec-hours").text("00");
                 selector.find(".mec-minutes").text("00");
                 selector.find(".mec-seconds").text("00");
 
                 callback.call(this);
-                clearInterval(intervalID);
+                clearInterval(interval);
                 return;
             }
 
@@ -5037,18 +5099,17 @@ jQuery(window).on('load', function () {
             var minutes = Math.floor(seconds / 60);
             seconds -= minutes * 60;
 
-            selector.find(".mec-timeRefDays").text((days == 1 
-            					? mecdata.day
-            					: mecdata.days));
-            selector.find(".mec-timeRefHours").text((hours == 1
-            					? mecdata.hour
-            					: mecdata.hours));
-			selector.find(".mec-timeRefMinutes").text((minutes == 1
-            					? mecdata.minute
-            					: mecdata.minutes));
-            selector.find(".mec-timeRefSeconds").text((seconds == 1
-								? mecdata.second
-								: mecdata.seconds));
+            if (days == 1) selector.find(".mec-timeRefDays").text(mecdata.day);
+            else selector.find(".mec-timeRefDays").text(mecdata.days);
+
+            if (hours == 1) selector.find(".mec-timeRefHours").text(mecdata.hour);
+            else selector.find(".mec-timeRefHours").text(mecdata.hours);
+
+            if (minutes == 1) selector.find(".mec-timeRefMinutes").text(mecdata.minute);
+            else selector.find(".mec-timeRefMinutes").text(mecdata.minutes);
+
+            if (seconds == 1) selector.find(".mec-timeRefSeconds").text(mecdata.second);
+            else selector.find(".mec-timeRefSeconds").text(mecdata.seconds);
 
             if (settings.format === "on") {
                 days = (String(days).length >= 2) ? days : "0" + days;
@@ -5063,7 +5124,7 @@ jQuery(window).on('load', function () {
                 selector.find(".mec-minutes").text(minutes);
                 selector.find(".mec-seconds").text(seconds);
             } else {
-                clearInterval(intervalID);
+                clearInterval(interval);
             }
         }
     };
@@ -5242,8 +5303,8 @@ jQuery(window).on('load', function () {
                                 $('.mec-modal-result').removeClass("mec-month-navigator-loading");
 
                                 // Set Month Filter values in search widget
-                                $("#mec_sf_month_" + settings.id).val(month);
-                                $("#mec_sf_year_" + settings.id).val(year);
+                                $("#mec_sf_month_" + (settings.search_form_id || settings.id)).val(month);
+                                $("#mec_sf_year_" + (settings.search_form_id || settings.id)).val(year);
                             }
                             else {
                                 $("#mec_tile_month_" + settings.id + "_" + response.current_month.id).hide();
@@ -6490,7 +6551,9 @@ function mecFluentYearlyUI(eventID, yearID) {
                 atts: settings.atts,
                 callback: function (atts) {
                     settings.atts = atts;
-                    search(active_year, active_month);
+                    // Liquid List boots this plugin; jump to the month of the date-picker range
+                    var resolved = mecResolveSearchFormMonthYear(settings.id, active_year, active_month);
+                    search(resolved.year, resolved.month);
                 }
             });
 
@@ -6531,7 +6594,9 @@ function mecFluentYearlyUI(eventID, yearID) {
             jQuery('.mec-modal-result').addClass('mec-month-navigator-loading');
 
             var ObjAtts = parseQuery(settings.atts);
-            if (!(ObjAtts['sf[month'] || ObjAtts['sf[year]'])) {
+            var hasDateRange = !!(ObjAtts['sf[start]'] || ObjAtts['sf[end]']);
+            // Do not force the initial month when a date-range filter is active
+            if (!hasDateRange && !(ObjAtts['sf[month]'] || ObjAtts['sf[year]'])) {
                 settings.atts = updateQueryStringParameter(settings.atts.trim(), 'sf[year]', initYear);
                 settings.atts = updateQueryStringParameter(settings.atts.trim(), 'sf[month]', initMonth);
             }
@@ -6619,8 +6684,8 @@ function mecFluentYearlyUI(eventID, yearID) {
 
 
                             // Set Month Filter values in search widget
-                            $("#mec_sf_month_" + settings.id).val(month);
-                            $("#mec_sf_year_" + settings.id).val(year);
+                            $("#mec_sf_month_" + (settings.search_form_id || settings.id)).val(month);
+                            $("#mec_sf_year_" + (settings.search_form_id || settings.id)).val(year);
                         } else {
                             $("#mec_list_view_month_" + settings.id + "_" + response.current_month.id).hide();
                             $("#mec_month_navigator_" + settings.id + "_" + response.current_month.id).hide();
@@ -6775,7 +6840,9 @@ function mecFluentYearlyUI(eventID, yearID) {
                 atts: settings.atts,
                 callback: function (atts) {
                     settings.atts = atts;
-                    search(active_year, active_month);
+                    // Liquid Grid boots this plugin; jump to the month of the date-picker range
+                    var resolved = mecResolveSearchFormMonthYear(settings.id, active_year, active_month);
+                    search(resolved.year, resolved.month);
                 }
             });
 
@@ -6816,7 +6883,9 @@ function mecFluentYearlyUI(eventID, yearID) {
             jQuery('.mec-modal-result').addClass('mec-month-navigator-loading');
 
             var ObjAtts = parseQuery(settings.atts);
-            if (!(ObjAtts['sf[month'] || ObjAtts['sf[year]'])) {
+            var hasDateRange = !!(ObjAtts['sf[start]'] || ObjAtts['sf[end]']);
+            // Do not force the initial month when a date-range filter is active
+            if (!hasDateRange && !(ObjAtts['sf[month]'] || ObjAtts['sf[year]'])) {
                 settings.atts = updateQueryStringParameter(settings.atts.trim(), 'sf[year]', initYear);
                 settings.atts = updateQueryStringParameter(settings.atts.trim(), 'sf[month]', initMonth);
             }
@@ -6902,8 +6971,8 @@ function mecFluentYearlyUI(eventID, yearID) {
 
 
                             // Set Month Filter values in search widget
-                            $("#mec_sf_month_" + settings.id).val(month);
-                            $("#mec_sf_year_" + settings.id).val(year);
+                            $("#mec_sf_month_" + (settings.search_form_id || settings.id)).val(month);
+                            $("#mec_sf_year_" + (settings.search_form_id || settings.id)).val(year);
                         } else {
                             $("#mec_grid_view_month_" + settings.id + "_" + response.current_month.id).hide();
                             $("#mec_month_navigator_" + settings.id + "_" + response.current_month.id).hide();
@@ -7068,6 +7137,8 @@ function mecFluentYearlyUI(eventID, yearID) {
                 var $chosenMsg = $(this).closest(".mec-booking-calendar-container").find(".mec-choosen-time-message");
                 $chosenMsg.removeClass("disable");
                 $chosenMsg.find(".mec-choosen-time").empty().append($(this).data('formatted-date'));
+
+                if ($(this).closest('.mec-booking-tooltip-container').length) mec_calendar_close_select_date_calendar();
             });
 
             // Add the onclick event on calendar date
@@ -7096,6 +7167,8 @@ function mecFluentYearlyUI(eventID, yearID) {
                 var $container = $("#mec_booking_calendar_" + settings.id + " .mec-booking-tooltip-container");
                 var $content = $(this).find(".mec-booking-tooltip").children().clone();
                 $container.empty().append($content).show();
+
+                mec_calendar_close_select_date_calendar();
             });
 
             var $has_time_repeat = $("#mec_booking_calendar_" + settings.id + " .mec-has-time-repeat");
@@ -7148,26 +7221,27 @@ function mecFluentYearlyUI(eventID, yearID) {
                         $('body').off('click').on('click', mec_calendar_close_calendar_on_body_click);
                     }, 100);
                 }
-                else {
-                    $up.removeClass('mec-util-hidden');
-                    $down.addClass('mec-util-hidden');
-                    $calendar.addClass('mec-util-hidden');
-                }
+                else mec_calendar_close_select_date_calendar();
             });
 
+            function mec_calendar_close_select_date_calendar() {
+                var $dropdown = $("#mec_booking_calendar_wrapper" + settings.id + " .mec-select-date-calendar-dropdown");
+                if (!$dropdown.length) return;
+
+                $("#mec_booking_calendar_wrapper" + settings.id + " .mec-select-date-calendar-icons-up").removeClass('mec-util-hidden');
+                $("#mec_booking_calendar_wrapper" + settings.id + " .mec-select-date-calendar-icons-down").addClass('mec-util-hidden');
+                $("#mec_booking_calendar_wrapper" + settings.id + " .mec-select-date-calendar-container").addClass('mec-util-hidden');
+
+                $('body').off('click', mec_calendar_close_calendar_on_body_click);
+            }
+
             function mec_calendar_close_calendar_on_body_click(e) {
-                var $up = $("#mec_booking_calendar_wrapper" + settings.id + " .mec-select-date-calendar-icons-up");
-                var $down = $("#mec_booking_calendar_wrapper" + settings.id + " .mec-select-date-calendar-icons-down");
                 var $calendar = $("#mec_booking_calendar_wrapper" + settings.id + " .mec-select-date-calendar-container");
 
                 // Click was inside calendar
                 if ($(e.target).closest($calendar).length > 0) return false;
 
-                $up.removeClass('mec-util-hidden');
-                $down.addClass('mec-util-hidden');
-                $calendar.addClass('mec-util-hidden');
-
-                $('body').off('click', mec_calendar_close_calendar_on_body_click);
+                mec_calendar_close_select_date_calendar();
             }
         }
     };

@@ -166,76 +166,85 @@ class MEC_feature_notifications extends MEC_base
     public static function display_placeholders()
     {
         ?>
-        <ul>
-            <li><span>%%name%%</span>: <?php esc_html_e('Full name of attendee', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%first_name%%</span>: <?php esc_html_e('First name of attendee', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%last_name%%</span>: <?php esc_html_e('Last name of attendee', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%user_email%%</span>: <?php esc_html_e('Email of attendee', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%book_date%%</span>: <?php esc_html_e('Booked date of event', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%book_time%%</span>: <?php esc_html_e('Booked time of event', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%book_datetime%%</span>: <?php esc_html_e('Booked date and time of event', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%book_other_datetimes%%</span>: <?php esc_html_e('Other date and times of booking for multiple date booking system', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%book_date_next_occurrences%%</span>: <?php esc_html_e('Date of next 20 occurrences of booked event (including the booked date)', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%book_datetime_next_occurrences%%</span>: <?php esc_html_e('Date and Time of next 20 occurrences of booked event (including the booked date)', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%book_price%%</span>: <?php esc_html_e('Booking Price', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%book_payable%%</span>: <?php esc_html_e('Booking Payable', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%attendee_price%%</span>: <?php esc_html_e('Attendee Price (for booking confirmation notification)', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%book_order_time%%</span>: <?php esc_html_e('Date and time of booking', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%blog_name%%</span>: <?php esc_html_e('Your website title', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%blog_url%%</span>: <?php esc_html_e('Your website URL', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%blog_description%%</span>: <?php esc_html_e('Your website description', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%event_title%%</span>: <?php esc_html_e('Event title', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%event_description%%</span>: <?php esc_html_e('Event Description', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%event_tags%%</span>: <?php esc_html_e('Event Tags', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%event_labels%%</span>: <?php esc_html_e('Event Labels', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%event_categories%%</span>: <?php esc_html_e('Event Categories', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%event_cost%%</span>: <?php esc_html_e('Event Cost', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%event_link%%</span>: <?php esc_html_e('Event link', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%event_speaker_name%%</span>: <?php esc_html_e('Speaker name of booked event', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%event_organizer_name%%</span>: <?php esc_html_e('Organizer name of booked event', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%event_organizer_tel%%</span>: <?php esc_html_e('Organizer tel of booked event', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%event_organizer_email%%</span>: <?php esc_html_e('Organizer email of booked event', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%event_organizer_url%%</span>: <?php esc_html_e('Organizer url of booked event', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%event_other_organizers_name%%</span>: <?php esc_html_e('Additional organizers name of booked event', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%event_other_organizers_tel%%</span>: <?php esc_html_e('Additional organizers tel of booked event', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%event_other_organizers_email%%</span>: <?php esc_html_e('Additional organizers email of booked event', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%event_location_name%%</span>: <?php esc_html_e('Location name of booked event', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%event_location_address%%</span>: <?php esc_html_e('Location address of booked event', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%event_other_locations_name%%</span>: <?php esc_html_e('Additional locations name of booked event', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%event_other_locations_address%%</span>: <?php esc_html_e('Additional locations address of booked event', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%event_featured_image%%</span>: <?php esc_html_e('Featured image of booked event', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%event_more_info%%</span>: <?php esc_html_e('Event link', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%event_other_info%%</span>: <?php esc_html_e('Event more info link', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%online_link%%</span>: <?php esc_html_e('Event online link', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%attendees_full_info%%</span>: <?php esc_html_e('Full Attendees info such as booking form data, name, email etc.', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%all_bfixed_fields%%</span>: <?php esc_html_e('All booking fixed fields data.', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%booking_id%%</span>: <?php esc_html_e('Booking ID', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%booking_transaction_id%%</span>: <?php esc_html_e('Transaction ID of Booking', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%admin_link%%</span>: <?php esc_html_e('Admin booking management link.', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%total_attendees%%</span>: <?php esc_html_e('Total attendees of current booking', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%amount_tickets%%</span>: <?php esc_html_e('Amount of Booked Tickets (Total ticket units)', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%ticket_name%%</span>: <?php esc_html_e('Ticket name', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%ticket_time%%</span>: <?php esc_html_e('Ticket time', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%ticket_name_time%%</span>: <?php esc_html_e('Ticket name & time', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%ticket_private_description%%</span>: <?php esc_html_e('Ticket private description', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%ticket_variations%%</span>: <?php esc_html_e('Ticket Variations', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%payment_gateway%%</span>: <?php esc_html_e('Payment Gateway', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%dl_file%%</span>: <?php esc_html_e('Link to the downloadable file', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%google_calendar_link%%</span>: <?php esc_html_e('Add to Google Calendar', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%google_calendar_link_next_occurrences%%</span>: <?php esc_html_e('Add to Google Calendar Links for next 20 occurrences', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%event_start_date%%</span>: <?php esc_html_e('Event Start Date', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%event_end_date%%</span>: <?php esc_html_e('Event End Date', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%event_start_time%%</span>: <?php esc_html_e('Event Start Time', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%event_end_time%%</span>: <?php esc_html_e('Event End Time', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%event_timezone%%</span>: <?php esc_html_e('Event Timezone', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%event_start_date_local%%</span>: <?php esc_html_e('Event Local Start Date', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%event_end_date_local%%</span>: <?php esc_html_e('Event Local End Date', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%event_start_time_local%%</span>: <?php esc_html_e('Event Local Start Time', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%event_end_time_local%%</span>: <?php esc_html_e('Event Local End Time', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%event_status%%</span>: <?php esc_html_e('Status of event', 'modern-events-calendar-lite'); ?></li>
-            <li><span>%%event_note%%</span>: <?php esc_html_e('Event Note', 'modern-events-calendar-lite'); ?></li>
-            <?php do_action('mec_extra_field_notifications'); ?>
-        </ul>
+        <div class="mec-info-card mec-placeholders-card">
+            <span class="dashicons dashicons-editor-code" aria-hidden="true"></span>
+            <div class="ic-body mec-placeholders-wrap">
+                <div class="mec-placeholders-toolbar">
+                    <input type="search" class="mec-placeholders-search" placeholder="<?php esc_attr_e('Search placeholders...', 'modern-events-calendar-lite'); ?>" aria-label="<?php esc_attr_e('Search placeholders', 'modern-events-calendar-lite'); ?>">
+                    <span class="mec-placeholders-count" title="<?php esc_attr_e('Placeholders', 'modern-events-calendar-lite'); ?>"></span>
+                </div>
+                <ul class="mec-placeholders-list">
+                    <li><code>%%name%%</code> <?php esc_html_e('Full name of attendee', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%first_name%%</code> <?php esc_html_e('First name of attendee', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%last_name%%</code> <?php esc_html_e('Last name of attendee', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%user_email%%</code> <?php esc_html_e('Email of attendee', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%book_date%%</code> <?php esc_html_e('Booked date of event', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%book_time%%</code> <?php esc_html_e('Booked time of event', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%book_datetime%%</code> <?php esc_html_e('Booked date and time of event', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%book_other_datetimes%%</code> <?php esc_html_e('Other date and times of booking for multiple date booking system', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%book_date_next_occurrences%%</code> <?php esc_html_e('Date of next 20 occurrences of booked event (including the booked date)', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%book_datetime_next_occurrences%%</code> <?php esc_html_e('Date and Time of next 20 occurrences of booked event (including the booked date)', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%book_price%%</code> <?php esc_html_e('Booking Price', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%book_payable%%</code> <?php esc_html_e('Booking Payable', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%attendee_price%%</code> <?php esc_html_e('Attendee Price (for booking confirmation notification)', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%book_order_time%%</code> <?php esc_html_e('Date and time of booking', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%blog_name%%</code> <?php esc_html_e('Your website title', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%blog_url%%</code> <?php esc_html_e('Your website URL', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%blog_description%%</code> <?php esc_html_e('Your website description', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%event_title%%</code> <?php esc_html_e('Event title', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%event_description%%</code> <?php esc_html_e('Event Description', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%event_tags%%</code> <?php esc_html_e('Event Tags', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%event_labels%%</code> <?php esc_html_e('Event Labels', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%event_categories%%</code> <?php esc_html_e('Event Categories', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%event_cost%%</code> <?php esc_html_e('Event Cost', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%event_link%%</code> <?php esc_html_e('Event link', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%event_speaker_name%%</code> <?php esc_html_e('Speaker name of booked event', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%event_organizer_name%%</code> <?php esc_html_e('Organizer name of booked event', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%event_organizer_tel%%</code> <?php esc_html_e('Organizer tel of booked event', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%event_organizer_email%%</code> <?php esc_html_e('Organizer email of booked event', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%event_organizer_url%%</code> <?php esc_html_e('Organizer url of booked event', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%event_other_organizers_name%%</code> <?php esc_html_e('Additional organizers name of booked event', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%event_other_organizers_tel%%</code> <?php esc_html_e('Additional organizers tel of booked event', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%event_other_organizers_email%%</code> <?php esc_html_e('Additional organizers email of booked event', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%event_location_name%%</code> <?php esc_html_e('Location name of booked event', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%event_location_address%%</code> <?php esc_html_e('Location address of booked event', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%event_other_locations_name%%</code> <?php esc_html_e('Additional locations name of booked event', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%event_other_locations_address%%</code> <?php esc_html_e('Additional locations address of booked event', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%event_featured_image%%</code> <?php esc_html_e('Featured image of booked event', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%event_more_info%%</code> <?php esc_html_e('Event link', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%event_other_info%%</code> <?php esc_html_e('Event more info link', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%online_link%%</code> <?php esc_html_e('Event online link', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%attendees_full_info%%</code> <?php esc_html_e('Full Attendees info such as booking form data, name, email etc.', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%all_bfixed_fields%%</code> <?php esc_html_e('All booking fixed fields data.', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%booking_id%%</code> <?php esc_html_e('Booking ID', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%booking_transaction_id%%</code> <?php esc_html_e('Transaction ID of Booking', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%admin_link%%</code> <?php esc_html_e('Admin booking management link.', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%total_attendees%%</code> <?php esc_html_e('Total attendees of current booking', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%amount_tickets%%</code> <?php esc_html_e('Amount of Booked Tickets (Total ticket units)', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%ticket_name%%</code> <?php esc_html_e('Ticket name', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%ticket_time%%</code> <?php esc_html_e('Ticket time', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%ticket_name_time%%</code> <?php esc_html_e('Ticket name & time', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%ticket_private_description%%</code> <?php esc_html_e('Ticket private description', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%ticket_variations%%</code> <?php esc_html_e('Ticket Variations', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%payment_gateway%%</code> <?php esc_html_e('Payment Gateway', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%dl_file%%</code> <?php esc_html_e('Link to the downloadable file', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%google_calendar_link%%</code> <?php esc_html_e('Add to Google Calendar', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%google_calendar_link_next_occurrences%%</code> <?php esc_html_e('Add to Google Calendar Links for next 20 occurrences', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%event_start_date%%</code> <?php esc_html_e('Event Start Date', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%event_end_date%%</code> <?php esc_html_e('Event End Date', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%event_start_time%%</code> <?php esc_html_e('Event Start Time', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%event_end_time%%</code> <?php esc_html_e('Event End Time', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%event_timezone%%</code> <?php esc_html_e('Event Timezone', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%event_start_date_local%%</code> <?php esc_html_e('Event Local Start Date', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%event_end_date_local%%</code> <?php esc_html_e('Event Local End Date', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%event_start_time_local%%</code> <?php esc_html_e('Event Local Start Time', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%event_end_time_local%%</code> <?php esc_html_e('Event Local End Time', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%event_status%%</code> <?php esc_html_e('Status of event', 'modern-events-calendar-lite'); ?></li>
+                    <li><code>%%event_note%%</code> <?php esc_html_e('Event Note', 'modern-events-calendar-lite'); ?></li>
+                    <?php do_action('mec_extra_field_notifications'); ?>
+                </ul>
+            </div>
+        </div>
         <?php
     }
 }

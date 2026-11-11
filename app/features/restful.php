@@ -1051,6 +1051,7 @@ class MEC_feature_restful extends MEC_base
         $allday = $vars['allday'] ?? 0;
         $time_comment = $vars['time_comment'] ?? '';
         $hide_time = $vars['hide_time'] ?? 0;
+        $hide_date = $vars['hide_date'] ?? 0;
         $hide_end_time = $vars['hide_end_time'] ?? 0;
 
         // Repeat Options
@@ -1121,6 +1122,7 @@ class MEC_feature_restful extends MEC_base
                 'allday' => $allday,
                 'comment' => $time_comment,
                 'hide_time' => $hide_time,
+                'hide_date' => $hide_date,
                 'hide_end_time' => $hide_end_time,
             ],
             'start' => $start_date,
@@ -1163,6 +1165,7 @@ class MEC_feature_restful extends MEC_base
                 ],
                 'mec_allday' => $allday,
                 'mec_hide_time' => $hide_time,
+                'mec_hide_date' => $hide_date,
                 'mec_hide_end_time' => $hide_end_time,
                 'mec_comment' => $time_comment,
                 'mec_repeat_end' => $vars['repeat_end'] ?? '',

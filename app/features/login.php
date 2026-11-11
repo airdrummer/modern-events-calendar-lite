@@ -48,7 +48,12 @@ class MEC_feature_login extends MEC_base
         $user_signon = wp_signon($info, true); // secure_cookie set true.
         if(is_wp_error($user_signon))
         {
-            echo json_encode(array('loggedin'=>false, 'message'=>__('<strong>'.esc_html__('Wrong username or password, reloading...', 'modern-events-calendar-lite').'</strong>')));
+            // Surface Turnstile / captcha failures instead of a misleading credential error.
+            $error_code = $user_signon->get_error_code();
+            $message = ($error_code === 'cfturnstile_error')
+                ? $user_signon->get_error_message()
+                : __('<strong>'.esc_html__('Wrong username or password, reloading...', 'modern-events-calendar-lite').'</strong>');
+            echo json_encode(array('loggedin'=>false, 'message'=>$message));
         }
         else
         {

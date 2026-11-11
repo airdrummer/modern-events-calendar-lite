@@ -47,6 +47,7 @@ class Events {
 			'mec_allday',
 			'one_occurrence',
 			'mec_hide_time',
+			'mec_hide_date',
 			'mec_hide_end_time',
 			'mec_comment',
 			'mec_timezone',

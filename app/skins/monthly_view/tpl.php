@@ -2,6 +2,8 @@
 /** no direct access **/
 defined('MECEXEC') or die();
 
+$date_heading_tag = $this->get_date_heading_tag('h2');
+
 /** @var MEC_skin_monthly_view $this */
 
 // Get layout path
@@ -30,32 +32,33 @@ if($this->next_previous_button)
        (isset($this->atts['show_past_events']) and !$this->atts['show_past_events'] and strtotime(date('Y-m-t', $_1month_before)) >= time())
     )
     {
-        $navigator_html .= '<div class="mec-previous-month mec-load-month mec-previous-month" data-mec-year="'.date('Y', $_1month_before).'" data-mec-month="'.date('m', $_1month_before).'"><a href="#" class="mec-load-month-link"><i class="mec-sl-angle-left"></i> '.esc_html($this->main->date_i18n('F', $_1month_before)).'</a></div>';
+        $navigator_html .= '<div class="mec-previous-month mec-load-month mec-previous-month" data-mec-year="'.date('Y', $_1month_before).'" data-mec-month="'.date('m', $_1month_before).'"><button type="button" class="mec-load-month-link" aria-label="'.esc_attr(sprintf(__('Go to previous month, %s', 'modern-events-calendar-lite'), $this->main->date_i18n('F Y', $_1month_before))).'"><i class="mec-sl-angle-left" aria-hidden="true"></i> '.esc_html($this->main->date_i18n('F', $_1month_before)).'</button></div>';
     }
 
-    $navigator_html .= '<div class="mec-calendar-header"><h2>'.esc_html($this->main->date_i18n('F Y', $current_month_time)).'</h2></div>';
+    $navigator_html .= '<div class="mec-calendar-header"><'.$date_heading_tag.'>'.esc_html($this->main->date_i18n('F Y', $current_month_time)).'</'.$date_heading_tag.'></div>';
 
     // Show next month handler if needed
     if(!$this->show_only_expired_events or
        ($this->show_only_expired_events and strtotime(date('Y-m-01', $_1month_after)) <= time())
     )
     {
-        $navigator_html .= '<div class="mec-next-month mec-load-month mec-next-month" data-mec-year="'.date('Y', $_1month_after).'" data-mec-month="'.date('m', $_1month_after).'"><a href="#" class="mec-load-month-link">'.esc_html($this->main->date_i18n('F', $_1month_after)).' <i class="mec-sl-angle-right"></i></a></div>';
+        $navigator_html .= '<div class="mec-next-month mec-load-month mec-next-month" data-mec-year="'.date('Y', $_1month_after).'" data-mec-month="'.date('m', $_1month_after).'"><button type="button" class="mec-load-month-link" aria-label="'.esc_attr(sprintf(__('Go to next month, %s', 'modern-events-calendar-lite'), $this->main->date_i18n('F Y', $_1month_after))).'">'.esc_html($this->main->date_i18n('F', $_1month_after)).' <i class="mec-sl-angle-right" aria-hidden="true"></i></button></div>';
     }
 }
 
 // Return the data if called by AJAX
 if(isset($this->atts['return_items']) and $this->atts['return_items'])
 {
-    echo json_encode(array(
+    while(ob_get_level()) ob_end_clean();
+
+    wp_send_json(array(
         'month' => $month_html,
         'events_side'=>(in_array($this->style, array('clean', 'modern')) ? $this->events_str : ''),
         'navigator' => $navigator_html,
         'previous_month' => array('label' => $this->main->date_i18n('Y F', $_1month_before), 'id' => date('Ym', $_1month_before), 'year' => date('Y', $_1month_before), 'month' => date('m', $_1month_before)),
         'current_month' => array('label' => $this->main->date_i18n('Y F', $current_month_time), 'id' => date('Ym', $current_month_time), 'year' => date('Y', $current_month_time), 'month' => date('m', $current_month_time)),
         'next_month' => array('label' => $this->main->date_i18n('Y F', $_1month_after), 'id' => date('Ym', $_1month_after), 'year' => date('Y', $_1month_after), 'month' => date('m', $_1month_after)),
-    ));
-    exit;
+    ), null, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
 }
 
 $sed_method = $this->sed_method;
@@ -73,6 +76,7 @@ jQuery(document).ready(function()
         jQuery("#mec_monthly_view_month_'.esc_js($this->id).'_'.date('Ym', $current_month_time).'").mecMonthlyView(
         {
             id: "'.esc_js($this->id).'",
+            search_form_id: "'.esc_js($this->atts['search_form_id'] ?? $this->id).'",
             today: "'.date('Ymd', strtotime($this->active_day)).'",
             display_all: "'.($this->display_all ? 1 : 0).'",
             month_id: "'.date('Ym', $current_month_time).'",
@@ -139,7 +143,7 @@ do_action('mec_monthly_skin_head');
                 <div class="mec-month-navigator" id="mec_month_navigator_<?php echo esc_attr($this->id); ?>_<?php echo date('Ym', $current_month_time); ?>"><?php echo MEC_kses::page($navigator_html); ?></div>
             </div>
             <?php else: ?>
-            <div class="mec-calendar-header"><h2><?php echo esc_html($this->main->date_i18n('Y F', $current_month_time)); ?></h2></div>
+            <div class="mec-calendar-header"><<?php echo $date_heading_tag; ?>><?php echo esc_html($this->main->date_i18n('Y F', $current_month_time)); ?></<?php echo $date_heading_tag; ?>></div>
             <?php endif; ?>
 
             <div class="mec-calendar-table" id="mec_skin_events_<?php echo esc_attr($this->id); ?>">

@@ -65,7 +65,7 @@ class MEC_feature_admincalendar extends MEC_base
                 jQuery(document).ready(function($)
                 {
                     $('hr.wp-header-end').before('<a href="<?php echo esc_url($this->main->remove_qs_var('adminview')); ?>" class="add-new-h2"><?php esc_html_e('Classic View', 'modern-events-calendar-lite'); ?></a>');
-                    $('#posts-filter').before(`<div><?php echo $HTML; ?></div>`);
+                    $('#posts-filter').before(<?php echo wp_json_encode('<div>' . $HTML . '</div>', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>);
                 });
                 </script>
                 <?php
@@ -91,6 +91,9 @@ class MEC_feature_admincalendar extends MEC_base
     {
         // JavaScript
         wp_enqueue_script('mec-admin-calendar-script', $this->main->asset('js/admin-calendar.js'), ['jquery'], $this->main->get_version());
+        wp_localize_script('mec-admin-calendar-script', 'mecAdminCalendar', [
+            'loadError' => __('Unable to load this month. Please click the month navigation button to try again.', 'modern-events-calendar-lite'),
+        ]);
 
         // Style
         wp_enqueue_style('mec-admin-calendar-style', $this->main->asset('css/admin-calendar.min.css'), ['mec-backend-style'], $this->main->get_version());

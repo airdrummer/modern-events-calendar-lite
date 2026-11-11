@@ -127,6 +127,12 @@ class MEC_skins extends MEC_base
     public $render_date_overrides = [];
 
     /**
+     * Whether the mec_skin_events filter is registered for hidden-date events
+     * @var bool
+     */
+    private static $hidden_date_filter_registered = false;
+
+    /**
      * Has More Events
      * @var bool
      */
@@ -184,6 +190,63 @@ class MEC_skins extends MEC_base
 
         // Icons
         $this->icons = $this->main->icons();
+
+        // Remove events with hidden dates from calendar-natured views (registered once)
+        if (!self::$hidden_date_filter_registered)
+        {
+            add_filter('mec_skin_events', ['MEC_skins', 'filter_hidden_date_events'], 10, 2);
+            self::$hidden_date_filter_registered = true;
+        }
+    }
+
+    /**
+     * Returns the skins that are positioned by date so events with hidden dates should be removed from them
+     * @return array
+     */
+    public static function get_calendar_natured_skins()
+    {
+        return apply_filters('mec_calendar_natured_skins', ['monthly_view', 'weekly_view', 'daily_view', 'yearly_view', 'full_calendar', 'general_calendar', 'timetable', 'agenda', 'timeline', 'countdown', 'map']);
+    }
+
+    /**
+     * Removes events with hidden dates from calendar-natured views
+     * @param array $events
+     * @param mixed $skin
+     * @return array
+     */
+    public static function filter_hidden_date_events($events, $skin = null)
+    {
+        if (!is_object($skin) or !isset($skin->skin) or !in_array($skin->skin, self::get_calendar_natured_skins())) return $events;
+
+        foreach ($events as $date => $list)
+        {
+            if (!is_array($list)) continue;
+
+            foreach ($list as $key => $event)
+            {
+                if (isset($event->data->meta['mec_hide_date']) and $event->data->meta['mec_hide_date'])
+                {
+                    unset($events[$date][$key]);
+
+                    // Keep the found count in sync
+                    if (isset($skin->found) and $skin->found > 0) $skin->found--;
+                }
+            }
+        }
+
+        return $events;
+    }
+
+    public function get_date_heading_tag($default = 'h4')
+    {
+        $level = (int) ($this->skin_options['date_heading_level'] ?? substr($default, 1));
+        return in_array($level, [2, 3, 4, 5, 6], true) ? 'h' . $level : $default;
+    }
+
+    public function get_calendar_event_heading_tag($default = 'h4', $depth = 1)
+    {
+        if (!isset($this->skin_options['date_heading_level'])) return $default;
+        return 'h' . min(6, (int) substr($this->get_date_heading_tag(), 1) + $depth);
     }
 
     /**
@@ -1586,8 +1649,8 @@ class MEC_skins extends MEC_base
 
                 foreach ($terms_category as $term_category)
                 {
-                    $output .= '<li id="mec_category-' . esc_attr($term_category->term_id) . '">
-                        <label class="selectit"><input value="' . esc_attr($term_category->term_id) . '" title="' . esc_attr($term_category->name) . '" type="checkbox" name="tax_input[mec_category][]" id="in-mec_category-' . esc_attr($term_category->term_id) . '" ' . (in_array($term_category->term_id, $selected) ? 'checked' : '') . '> ' . esc_html($term_category->name) . '</label>
+                    $output .= '<li id="mec_category-' . esc_attr($this->id) . '-' . esc_attr($term_category->term_id) . '">
+                        <label class="selectit"><input value="' . esc_attr($term_category->term_id) . '" title="' . esc_attr($term_category->name) . '" type="checkbox" name="tax_input[mec_category][]" id="in-mec_category-' . esc_attr($this->id) . '-' . esc_attr($term_category->term_id) . '" ' . (in_array($term_category->term_id, $selected) ? 'checked' : '') . '> ' . esc_html($term_category->name) . '</label>
                     </li>';
                 }
 
@@ -1646,8 +1709,8 @@ class MEC_skins extends MEC_base
 
                 foreach ($terms_location as $term_location)
                 {
-                    $output .= '<li id="mec_location-' . esc_attr($term_location->term_id) . '">
-                        <label class="selectit"><input value="' . esc_attr($term_location->term_id) . '" title="' . esc_attr($term_location->name) . '" type="checkbox" name="tax_input[mec_location][]" id="in-mec_location-' . esc_attr($term_location->term_id) . '" ' . (in_array($term_location->term_id, $selected) ? 'checked' : '') . '> ' . esc_html($term_location->name) . '</label>
+                    $output .= '<li id="mec_location-' . esc_attr($this->id) . '-' . esc_attr($term_location->term_id) . '">
+                        <label class="selectit"><input value="' . esc_attr($term_location->term_id) . '" title="' . esc_attr($term_location->name) . '" type="checkbox" name="tax_input[mec_location][]" id="in-mec_location-' . esc_attr($this->id) . '-' . esc_attr($term_location->term_id) . '" ' . (in_array($term_location->term_id, $selected) ? 'checked' : '') . '> ' . esc_html($term_location->name) . '</label>
                     </li>';
                 }
 
@@ -1706,8 +1769,8 @@ class MEC_skins extends MEC_base
 
                 foreach ($terms_organizer as $term_organizer)
                 {
-                    $output .= '<li id="mec_organizer-' . esc_attr($term_organizer->term_id) . '">
-                        <label class="selectit"><input value="' . esc_attr($term_organizer->term_id) . '" title="' . esc_attr($term_organizer->name) . '" type="checkbox" name="tax_input[mec_organizer][]" id="in-mec_organizer-' . esc_attr($term_organizer->term_id) . '" ' . (in_array($term_organizer->term_id, $selected) ? 'checked' : '') . '> ' . esc_html($term_organizer->name) . '</label>
+                    $output .= '<li id="mec_organizer-' . esc_attr($this->id) . '-' . esc_attr($term_organizer->term_id) . '">
+                        <label class="selectit"><input value="' . esc_attr($term_organizer->term_id) . '" title="' . esc_attr($term_organizer->name) . '" type="checkbox" name="tax_input[mec_organizer][]" id="in-mec_organizer-' . esc_attr($this->id) . '-' . esc_attr($term_organizer->term_id) . '" ' . (in_array($term_organizer->term_id, $selected) ? 'checked' : '') . '> ' . esc_html($term_organizer->name) . '</label>
                     </li>';
                 }
 
@@ -1766,8 +1829,8 @@ class MEC_skins extends MEC_base
 
                 foreach ($terms_speaker as $term_speaker)
                 {
-                    $output .= '<li id="mec_speaker-' . esc_attr($term_speaker->term_id) . '">
-                        <label class="selectit"><input value="' . esc_attr($term_speaker->term_id) . '" title="' . esc_attr($term_speaker->name) . '" type="checkbox" name="tax_input[mec_speaker][]" id="in-mec_speaker-' . esc_attr($term_speaker->term_id) . '" ' . (in_array($term_speaker->term_id, $selected) ? 'checked' : '') . '> ' . esc_html($term_speaker->name) . '</label>
+                    $output .= '<li id="mec_speaker-' . esc_attr($this->id) . '-' . esc_attr($term_speaker->term_id) . '">
+                        <label class="selectit"><input value="' . esc_attr($term_speaker->term_id) . '" title="' . esc_attr($term_speaker->name) . '" type="checkbox" name="tax_input[mec_speaker][]" id="in-mec_speaker-' . esc_attr($this->id) . '-' . esc_attr($term_speaker->term_id) . '" ' . (in_array($term_speaker->term_id, $selected) ? 'checked' : '') . '> ' . esc_html($term_speaker->name) . '</label>
                     </li>';
                 }
 
@@ -1861,8 +1924,8 @@ class MEC_skins extends MEC_base
 
                 foreach ($terms_label as $term_label)
                 {
-                    $output .= '<li id="mec_label-' . esc_attr($term_label->term_id) . '">
-                        <label class="selectit"><input value="' . esc_attr($term_label->term_id) . '" title="' . esc_attr($term_label->name) . '" type="checkbox" name="tax_input[mec_label][]" id="in-mec_label-' . esc_attr($term_label->term_id) . '" ' . (in_array($term_label->term_id, $selected) ? 'checked' : '') . '> ' . esc_html($term_label->name) . '</label>
+                    $output .= '<li id="mec_label-' . esc_attr($this->id) . '-' . esc_attr($term_label->term_id) . '">
+                        <label class="selectit"><input value="' . esc_attr($term_label->term_id) . '" title="' . esc_attr($term_label->name) . '" type="checkbox" name="tax_input[mec_label][]" id="in-mec_label-' . esc_attr($this->id) . '-' . esc_attr($term_label->term_id) . '" ' . (in_array($term_label->term_id, $selected) ? 'checked' : '') . '> ' . esc_html($term_label->name) . '</label>
                     </li>';
                 }
 
@@ -1885,7 +1948,7 @@ class MEC_skins extends MEC_base
                 $item = esc_html__('Select', 'modern-events-calendar-lite');
                 $option = in_array($this->skin, $skins) ? '<option class="mec-none-item" value="none" selected="selected">' . esc_html($item) . '</option>' : '';
 
-                $output .= '<div class="mec-date-search"><input type="hidden" id="mec-filter-none" value="' . esc_attr($item) . '">';
+                $output .= '<div class="mec-date-search"><input type="hidden" id="mec-filter-none-' . esc_attr($this->id) . '" data-mec-filter-none="1" value="' . esc_attr($item) . '">';
                 if ($display_label == 1) $output .= '<label for="mec_sf_month_' . esc_attr($this->id) . '">' . esc_html($label) . ': </label>';
                 $output .= $this->icons->display('calendar') . '
                     <select id="mec_sf_month_' . esc_attr($this->id) . '" title="' . esc_attr__('Month Filter', 'modern-events-calendar-lite') . '" aria-label="' . esc_attr($this->sf_accessible_label($label, __('month', 'modern-events-calendar-lite'))) . '">
@@ -1901,6 +1964,7 @@ class MEC_skins extends MEC_base
                 }
 
                 $output .= '</select>';
+                if ($display_label == 1) $output .= '<label for="mec_sf_year_' . esc_attr($this->id) . '">' . esc_html__('Year', 'modern-events-calendar-lite') . ': </label>';
                 $output .= '<select id="mec_sf_year_' . esc_attr($this->id) . '" title="' . esc_attr__('Year Filter', 'modern-events-calendar-lite') . '" aria-label="' . esc_attr($this->sf_accessible_label($label, __('year', 'modern-events-calendar-lite'))) . '">' . $option;
 
                 $start_year = $min_start_year = $this->db->select("SELECT MIN(cast(meta_value as unsigned)) AS date FROM `#__postmeta` WHERE `meta_key`='mec_start_date'", 'loadResult');
@@ -2234,6 +2298,9 @@ class MEC_skins extends MEC_base
             {
                 $start = $this->main->standardize_format($sf['start']);
                 $_REQUEST['mec_start_date'] = $start;
+                // Liquid List/Grid month navigator must follow the selected range month
+                $_REQUEST['mec_year'] = date('Y', strtotime($start));
+                $_REQUEST['mec_month'] = date('m', strtotime($start));
 
                 $end = $this->main->standardize_format($sf['end']);
                 $_REQUEST['mec_maximum_date'] = $end;
@@ -2249,12 +2316,31 @@ class MEC_skins extends MEC_base
                 $atts['date-range-start'] = $start;
                 $atts['date-range-end'] = $end;
             }
+            // Start date only (end not selected yet) — still jump month navigator
+            elseif (isset($sf['start']) and trim($sf['start']) and (!isset($sf['end']) or !trim($sf['end'])))
+            {
+                $start = $this->main->standardize_format($sf['start']);
+                $_REQUEST['mec_start_date'] = $start;
+                $_REQUEST['mec_year'] = date('Y', strtotime($start));
+                $_REQUEST['mec_month'] = date('m', strtotime($start));
+
+                $skins = $this->main->get_skins();
+                foreach ($skins as $skin => $label)
+                {
+                    $atts['sk-options'][$skin]['start_date_type'] = 'date';
+                    $atts['sk-options'][$skin]['start_date'] = $start;
+                }
+
+                $atts['date-range-start'] = $start;
+            }
 
             // Apply Date Start and Date End (for date picker fields)
             if (isset($sf['date_start']) and trim($sf['date_start']) and isset($sf['date_end']) and trim($sf['date_end']))
             {
                 $start = $this->main->standardize_format($sf['date_start']);
                 $_REQUEST['mec_start_date'] = $start;
+                $_REQUEST['mec_year'] = date('Y', strtotime($start));
+                $_REQUEST['mec_month'] = date('m', strtotime($start));
 
                 $end = $this->main->standardize_format($sf['date_end']);
                 $_REQUEST['mec_maximum_date'] = $end;
@@ -2277,6 +2363,8 @@ class MEC_skins extends MEC_base
             {
                 $start = $this->main->standardize_format($sf['date_start']);
                 $_REQUEST['mec_start_date'] = $start;
+                $_REQUEST['mec_year'] = date('Y', strtotime($start));
+                $_REQUEST['mec_month'] = date('m', strtotime($start));
 
                 $skins = $this->main->get_skins();
                 foreach ($skins as $skin => $label)
@@ -2806,7 +2894,7 @@ class MEC_skins extends MEC_base
         if ($this->pagination === 'loadmore' and $this->found >= $this->limit)
         {
             return '<div class="mec-load-more-wrap">
-                <div tabindex="0" onkeydown="if(event.keyCode===13){jQuery(this).trigger(\'click\');}" class="mec-load-more-button ' . ($this->has_more_events ? '' : 'mec-util-hidden') . '">' . esc_html__('Load More', 'modern-events-calendar-lite') . '</div>
+                <div role="button" tabindex="0" onkeydown="if(event.keyCode===13||event.keyCode===32){event.preventDefault();jQuery(this).trigger(\'click\');}" class="mec-load-more-button ' . ($this->has_more_events ? '' : 'mec-util-hidden') . '">' . esc_html__('Load More', 'modern-events-calendar-lite') . '</div>
             </div>';
         }
 

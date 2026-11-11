@@ -2,6 +2,8 @@
 /** no direct access **/
 defined('MECEXEC') or die();
 
+$date_heading_tag = $this->get_date_heading_tag('h2');
+
 /** @var MEC_skin_tile $this */
 
 // Get layout path
@@ -39,7 +41,7 @@ if($this->next_previous_button)
         $navigator_html .= '<div class="mec-previous-month mec-load-month mec-previous-month" data-mec-year="'.date('Y', $_1month_before).'" data-mec-month="'.date('m', $_1month_before).'"><a href="#" class="mec-load-month-link"><i class="mec-sl-angle-left"></i> '.esc_html($this->main->date_i18n('F', $_1month_before)).'</a></div>';
     }
 
-    $navigator_html .= '<div class="mec-calendar-header"><h2>'.esc_html($this->main->date_i18n('F Y', $current_month_time)).'</h2></div>';
+    $navigator_html .= '<div class="mec-calendar-header"><'.$date_heading_tag.'>'.esc_html($this->main->date_i18n('F Y', $current_month_time)).'</'.$date_heading_tag.'></div>';
 
     // Show next month handler if needed
     if(!$this->show_only_expired_events or
@@ -78,6 +80,7 @@ jQuery(document).ready(function()
         jQuery("#mec_tile_month_'.esc_js($this->id).'_'.date('Ym', $current_month_time).'").mecTileView(
         {
             id: "'.esc_js($this->id).'",
+            search_form_id: "'.esc_js($this->atts['search_form_id'] ?? $this->id).'",
             start_date: "'.esc_js($this->start_date).'",
             end_date: "'.esc_js($this->end_date).'",
             offset: "'.esc_js($this->next_offset).'",

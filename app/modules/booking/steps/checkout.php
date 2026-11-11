@@ -64,6 +64,20 @@ $first_gateway_id = NULL;
 
 $free_booking = isset($price_details['total']) && $price_details['total'] == 0;
 $paid_booking = !$free_booking;
+
+if ($paid_booking)
+{
+    foreach ($active_gateways as $gateway)
+    {
+        if (!($gateway instanceof MEC_gateway_stripe) && !($gateway instanceof MEC_gateway_paypal_standard)) continue;
+        if (!$this->getCapacity()->place_hold_for_transaction($transaction_id))
+        {
+            echo '<div class="mec-error">' . esc_html__('Sorry, this event has just sold out.', 'modern-events-calendar-lite') . '</div>';
+            return;
+        }
+        break;
+    }
+}
 ?>
 <style>.mec-book-price-detail-type-discount{display: none;}</style>
 <div id="mec_book_payment_form" class="mec-booking-form-container mec-wrap-checkout">

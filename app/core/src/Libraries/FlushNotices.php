@@ -53,7 +53,7 @@ class FlushNotices extends Singleton {
 
         foreach ( $notices as $notice ) {
 
-            printf('<div class="notice notice-%1$s %2$s"><p>%3$s</p></div>',
+            printf('<div class="notice mec-admin-notice notice-%1$s %2$s"><p>%3$s</p></div>',
                 $notice['type'],
                 $notice['dismissible'],
                 $notice['notice']

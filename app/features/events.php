@@ -56,6 +56,7 @@ class MEC_feature_events extends MEC_base
 
         $this->factory->action('init', [$this, 'register_endpoints']);
         $this->factory->action('add_meta_boxes_' . $this->PT, [$this, 'remove_taxonomies_metaboxes']);
+        $this->factory->action('add_meta_boxes_' . $this->PT, [$this, 'tag_mec_metaboxes'], 9999);
         $this->factory->action('save_post', [$this, 'save_event'], 10);
         $this->factory->action('edit_post', [$this, 'quick_edit'], 10);
         $this->factory->action('delete_post', [$this, 'delete_event'], 10);
@@ -439,6 +440,58 @@ class MEC_feature_events extends MEC_base
         remove_meta_box('tagsdiv-mec_label', $this->PT, 'side');
     }
 
+
+    /**
+     * Adds the .mec-metabox class to every metabox that belongs to MEC or to one of
+     * its addons, so the event editor design applies to them as well.
+     * WordPress core boxes (Publish, Tags, Featured image, taxonomy boxes...) and
+     * third-party plugins boxes are left untouched.
+     * An addon can opt in/out with the 'mec_is_mec_metabox' filter.
+     *
+     * @author Webnus <info@webnus.net>
+     */
+    public function tag_mec_metaboxes()
+    {
+        global $wp_meta_boxes;
+
+        if(empty($wp_meta_boxes[$this->PT]) || !is_array($wp_meta_boxes[$this->PT])) return;
+
+        $taxonomy_boxes = [];
+        foreach(get_object_taxonomies($this->PT) as $taxonomy)
+        {
+            $taxonomy_boxes[] = $taxonomy . 'div';
+            $taxonomy_boxes[] = 'tagsdiv-' . $taxonomy;
+        }
+
+        foreach($wp_meta_boxes[$this->PT] as $priorities)
+        {
+            if(!is_array($priorities)) continue;
+
+            foreach($priorities as $boxes)
+            {
+                if(!is_array($boxes)) continue;
+
+                foreach($boxes as $id => $box)
+                {
+                    if(!$box || in_array($id, $taxonomy_boxes, true)) continue;
+
+                    $callback = $box['callback'] ?? null;
+                    $owner = (is_array($callback) && isset($callback[0])) ? (is_object($callback[0]) ? get_class($callback[0]) : (string) $callback[0]) : '';
+
+                    $is_mec = (stripos((string) $id, 'modern-events-calendar-lite') === 0) || (strpos($owner, 'MEC') === 0);
+                    $is_mec = (bool) apply_filters('mec_is_mec_metabox', $is_mec, $id, $box);
+                    if(!$is_mec) continue;
+
+                    add_filter('postbox_classes_' . $this->PT . '_' . $id, function ($classes)
+                    {
+                        $classes[] = 'mec-metabox';
+                        return $classes;
+                    });
+                }
+            }
+        }
+    }
+
     /**
      * Registers 2 meta boxes for event data
      *
@@ -757,9 +810,9 @@ class MEC_feature_events extends MEC_base
                             <option
                                 value="0" <?php if ('0' == $public) echo 'selected="selected"'; ?>><?php esc_html_e('Hide from calendars & lists', 'modern-events-calendar-lite'); ?></option>
                         </select>
+                        <p class="description"><?php esc_html_e('Hidden events stay published but will not appear in frontend calendar and list layouts.', 'modern-events-calendar-lite'); ?></p>
                     </div>
                 </div>
-                <p class="description"><?php esc_html_e('Hidden events stay published but will not appear in frontend calendar and list layouts.', 'modern-events-calendar-lite'); ?></p>
             <?php endif; ?>
             <?php if (isset($this->settings['style_per_event']) and $this->settings['style_per_event']): ?>
                 <label class="post-attributes-label"><?php esc_html_e('Details Page Style', 'modern-events-calendar-lite'); ?></label>
@@ -820,6 +873,7 @@ class MEC_feature_events extends MEC_base
         $one_occurrence = get_post_meta($post->ID, 'one_occurrence', true);
         $comment = get_post_meta($post->ID, 'mec_comment', true);
         $hide_time = get_post_meta($post->ID, 'mec_hide_time', true);
+        $hide_date = get_post_meta($post->ID, 'mec_hide_date', true);
         $start_date = get_post_meta($post->ID, 'mec_start_date', true);
 
         $hide_end_time_global = isset($this->settings['hide_event_end_time']) && $this->settings['hide_event_end_time'];
@@ -1027,21 +1081,22 @@ class MEC_feature_events extends MEC_base
                                 <span><?php esc_html_e('All-day Event', 'modern-events-calendar-lite'); ?></span>
                             </label>
                         </div>
-                        <div class="mec-form-row mec-field mec-field--check <?php echo $hide_end_time_global ? 'w-hidden' : ''; ?>">
-                            <label class="mec-check" for="mec_hide_end_time">
+                    </div>
+                    <div class="mec-basvanced-advanced w-hidden mec-panel__body">
+                        <div class="mec-form-row mec-field mec-field--check">
+                            <label class="mec-check" for="mec_hide_date">
                                 <input
                                     <?php
-                                    if ($hide_end_time == '1')
+                                    if ($hide_date == '1')
                                     {
                                         echo 'checked="checked"';
                                     }
                                     ?>
-                                    type="checkbox" name="mec[date][hide_end_time]" id="mec_hide_end_time" value="1"/>
-                                <span><?php esc_html_e('Hide Event End Time', 'modern-events-calendar-lite'); ?></span>
+                                    type="checkbox" name="mec[date][hide_date]" id="mec_hide_date" value="1"/>
+                                <span><?php esc_html_e('Hide Event Date', 'modern-events-calendar-lite'); ?></span>
                             </label>
+                            <p class="mec-field__help"><?php esc_html_e('The event date is not shown on the single event page, listings and emails. Also the event will no longer appear in the calendar views since its date is not determined.', 'modern-events-calendar-lite'); ?></p>
                         </div>
-                    </div>
-                    <div class="mec-basvanced-advanced w-hidden mec-panel__body">
                         <div class="mec-form-row mec-field mec-field--check">
                             <label class="mec-check" for="mec_hide_time">
                                 <input
@@ -1054,6 +1109,21 @@ class MEC_feature_events extends MEC_base
                                     type="checkbox" name="mec[date][hide_time]" id="mec_hide_time" value="1"/>
                                 <span><?php esc_html_e('Hide Event Time', 'modern-events-calendar-lite'); ?></span>
                             </label>
+                            <p class="mec-field__help"><?php esc_html_e('The event start and end times are not shown on the single event page, listings and emails.', 'modern-events-calendar-lite'); ?></p>
+                        </div>
+                        <div class="mec-form-row mec-field mec-field--check <?php echo $hide_end_time_global ? 'w-hidden' : ''; ?>">
+                            <label class="mec-check" for="mec_hide_end_time">
+                                <input
+                                    <?php
+                                    if ($hide_end_time == '1')
+                                    {
+                                        echo 'checked="checked"';
+                                    }
+                                    ?>
+                                    type="checkbox" name="mec[date][hide_end_time]" id="mec_hide_end_time" value="1"/>
+                                <span><?php esc_html_e('Hide Event End Time', 'modern-events-calendar-lite'); ?></span>
+                            </label>
+                            <p class="mec-field__help"><?php esc_html_e('The event end time is not shown on the single event page, listings and emails. The start time will still be displayed.', 'modern-events-calendar-lite'); ?></p>
                         </div>
                         <div class="mec-form-row mec-field">
                             <div class="mec-field__label">
@@ -1721,11 +1791,11 @@ class MEC_feature_events extends MEC_base
                 </div>
             <?php endif; ?>
 
-            <div class="mec-basvanced-basic mec-panel__body">
-                <div class="mec-panel__head">
-                    <h4 class="mec-panel__title"><?php echo esc_html($this->main->m('event_cost', esc_html__('Event Cost', 'modern-events-calendar-lite'))); ?></h4>
-                </div>
+            <div class="mec-panel__head">
+                <h4 class="mec-panel__title"><?php echo esc_html($this->main->m('event_cost', esc_html__('Event Cost', 'modern-events-calendar-lite'))); ?></h4>
+            </div>
 
+            <div class="mec-basvanced-basic mec-panel__body">
                 <div id="mec_meta_box_cost_form" class="<?php echo($cost_auto_calculate ? 'mec-is-hidden' : ''); ?>">
                     <div class="mec-form-row mec-field">
                         <div class="mec-field__label">
@@ -1769,9 +1839,7 @@ class MEC_feature_events extends MEC_base
 
             <div class="mec-basvanced-advanced w-hidden mec-panel__body">
                 <?php if ($currency_per_event): ?>
-                    <div class="mec-panel__head">
-                        <h4 class="mec-panel__title"><?php esc_html_e('Currency Options', 'modern-events-calendar-lite'); ?></h4>
-                    </div>
+                    <h5 class="mec-form-subtitle"><?php esc_html_e('Currency Options', 'modern-events-calendar-lite'); ?></h5>
 
                     <div class="mec-form-row mec-field">
                         <div class="mec-field__label">
@@ -1899,7 +1967,9 @@ class MEC_feature_events extends MEC_base
         $not_in_days = trim($not_in_days_str) ? explode(',', $not_in_days_str) : [];
         ?>
         <div class="mec-meta-box-fields mec-event-tab-content mec-fes-exceptional-days" id="mec-exceptional-days">
-            <h4><?php esc_html_e('Exceptional Days (Exclude Dates)', 'modern-events-calendar-lite'); ?></h4>
+            <div class="mec-panel__head">
+                <h4 class="mec-panel__title"><?php esc_html_e('Exceptional Days (Exclude Dates)', 'modern-events-calendar-lite'); ?></h4>
+            </div>
             <div id="mec_meta_box_exceptions_form">
                 <div id="mec_exceptions_not_in_days_container">
                     <?php
@@ -2208,8 +2278,11 @@ class MEC_feature_events extends MEC_base
                        data-href="mec_meta_box_booking_options_form_gateways_per_event"
                        href="#"><?php echo esc_html__('Payment Gateways', 'modern-events-calendar-lite'); ?></a>
                 <?php endif; ?>
-                <a class="mec-add-booking-tabs-link" data-href="mec_meta_box_booking_options_form_attendees"
-                   href="#"><?php echo esc_html__('Bookings', 'modern-events-calendar-lite'); ?></a>
+                <?php /* the attendees panel is only rendered for saved events (FormBuilder::attendees) */ ?>
+                <?php if (isset($post->post_status) and $post->post_status != 'auto-draft'): ?>
+                    <a class="mec-add-booking-tabs-link" data-href="mec_meta_box_booking_options_form_attendees"
+                       href="#"><?php echo esc_html__('Bookings', 'modern-events-calendar-lite'); ?></a>
+                <?php endif; ?>
                 <?php do_action('add_event_booking_sections_left_menu'); ?>
             </div>
             <div class="mec-add-booking-tabs-right">
@@ -2270,6 +2343,10 @@ class MEC_feature_events extends MEC_base
                                 <div class="mec-backend-tab-item"><?php esc_html_e('Advanced', 'modern-events-calendar-lite'); ?></div>
                             </div>
                         </div>
+
+                    <div class="mec-panel__head">
+                        <h4 class="mec-panel__title"><?php esc_html_e('Booking Options', 'modern-events-calendar-lite'); ?></h4>
+                    </div>
 
                     <div class="mec-basvanced-basic">
                         <?php
@@ -2508,8 +2585,8 @@ class MEC_feature_events extends MEC_base
         $location_id = isset($_mec['location_id']) ? sanitize_text_field($_mec['location_id']) : 0;
         $dont_show_map = isset($_mec['dont_show_map']) ? sanitize_text_field($_mec['dont_show_map']) : 0;
         $organizer_id = isset($_mec['organizer_id']) ? sanitize_text_field($_mec['organizer_id']) : 0;
-        $read_more = isset($_mec['read_more']) ? sanitize_url($_mec['read_more']) : '';
-        $more_info = (isset($_mec['more_info']) and trim($_mec['more_info'])) ? sanitize_url($_mec['more_info']) : '';
+        $read_more = isset($raw_mec['read_more']) && is_string($raw_mec['read_more']) ? sanitize_url($raw_mec['read_more']) : '';
+        $more_info = isset($raw_mec['more_info']) && is_string($raw_mec['more_info']) ? sanitize_url($raw_mec['more_info']) : '';
         $more_info_title = isset($_mec['more_info_title']) ? sanitize_text_field($_mec['more_info_title']) : '';
         $more_info_target = isset($_mec['more_info_target']) ? sanitize_text_field($_mec['more_info_target']) : '';
 
@@ -2662,6 +2739,7 @@ class MEC_feature_events extends MEC_base
         $allday = isset($date['allday']) ? 1 : 0;
         $one_occurrence = isset($date['one_occurrence']) ? 1 : 0;
         $hide_time = isset($date['hide_time']) ? 1 : 0;
+        $hide_date = isset($date['hide_date']) ? 1 : 0;
         $hide_end_time = isset($date['hide_end_time']) ? 1 : 0;
         $comment = isset($date['comment']) ? sanitize_text_field($date['comment']) : '';
         $timezone = (isset($_mec['timezone']) and trim($_mec['timezone']) != '') ? sanitize_text_field($_mec['timezone']) : 'global';
@@ -2742,6 +2820,7 @@ class MEC_feature_events extends MEC_base
         update_post_meta($post_id, 'mec_allday', $allday);
         update_post_meta($post_id, 'one_occurrence', $one_occurrence);
         update_post_meta($post_id, 'mec_hide_time', $hide_time);
+        update_post_meta($post_id, 'mec_hide_date', $hide_date);
         update_post_meta($post_id, 'mec_hide_end_time', $hide_end_time);
         update_post_meta($post_id, 'mec_comment', $comment);
         update_post_meta($post_id, 'mec_timezone', $timezone);
@@ -3121,6 +3200,8 @@ class MEC_feature_events extends MEC_base
             $new_tickets = [];
             foreach ($tickets as $key => $ticket)
             {
+                $private_description = $raw_mec['tickets'][$key]['private_description'] ?? '';
+                $ticket['private_description'] = is_string($private_description) ? wp_kses_post($private_description) : '';
                 unset($ticket['dates'][':j:']);
                 $ticket_start_time_ampm = ((isset($ticket['ticket_start_time_hour']) and (intval($ticket['ticket_start_time_hour']) > 0 and intval($ticket['ticket_start_time_hour']) < 13) and isset($ticket['ticket_start_time_ampm'])) ? $ticket['ticket_start_time_ampm'] : '');
                 $ticket_render_start_time = ((isset($ticket['ticket_start_time_hour']) and $ticket['ticket_start_time_hour']) ? date('h:ia', strtotime(sprintf('%02d', $ticket['ticket_start_time_hour']) . ':' . sprintf('%02d', $ticket['ticket_start_time_minute']) . $ticket_start_time_ampm)) : '');
@@ -3294,7 +3375,7 @@ class MEC_feature_events extends MEC_base
         }
 
         // Event Dates Changed?
-        if ($prev_start_datetime and $prev_end_datetime and !$repeat_status and $prev_start_datetime != $start_datetime and $prev_end_datetime != $end_datetime)
+        if ($prev_start_datetime and $prev_end_datetime and !$repeat_status and ($prev_start_datetime != $start_datetime or $prev_end_datetime != $end_datetime))
         {
             $this->main->event_date_updated($post_id, $prev_start_datetime, $prev_end_datetime);
         }

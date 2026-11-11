@@ -1398,8 +1398,26 @@ class MEC_skin_single extends MEC_skins
 
         echo '<div class="mec-event-meta">';
 
+        // Hidden Event Date
+        $hide_date = (isset($event->data->meta['mec_hide_date']) and $event->data->meta['mec_hide_date']) ? true : false;
+
         // Event Date
-        if(isset($event->data->meta['mec_date']['start']) and !empty($event->data->meta['mec_date']['start']))
+        if($hide_date)
+        {
+            ?>
+            <div class="mec-single-event-date mec-single-event-date-hidden">
+                <?php echo $this->icons->display('calendar'); ?>
+                <div class="mec-date"><?php esc_html_e('Date', 'modern-events-calendar-lite'); ?></div>
+                <dl>
+                    <dd><abbr class="mec-events-abbr"><?php echo esc_html($this->main->get_tba_label()); ?></abbr></dd>
+                </dl>
+            </div>
+            <?php
+
+            do_action( 'mec_single_after_event_date', $event );
+        }
+        // Event Date
+        elseif(isset($event->data->meta['mec_date']['start']) and !empty($event->data->meta['mec_date']['start']))
         {
             ?>
             <div class="mec-single-event-date">
@@ -1434,12 +1452,13 @@ class MEC_skin_single extends MEC_skins
         {
             $more_info_target = MEC_feature_occurrences::param($event->ID, $event->date['start']['timestamp'], 'more_info_target', $event->data->meta['mec_more_info_target'] ?? '');
             $more_info_title = MEC_feature_occurrences::param($event->ID, $event->date['start']['timestamp'], 'more_info_title', ((isset($event->data->meta['mec_more_info_title']) and trim($event->data->meta['mec_more_info_title'])) ? $event->data->meta['mec_more_info_title'] : esc_html__('Read More', 'modern-events-calendar-lite')));
+            $a11y = $this->main->get_more_info_link_accessibility($more_info, ($event->data->title ?? ''), $more_info_target);
             ?>
             <div class="mec-event-meta">
             <div class="mec-event-more-info">
                 <?php echo $this->icons->display('info'); ?>
                 <div class="mec-cost"><?php echo esc_html($this->main->m('more_info_link', esc_html__('More Info', 'modern-events-calendar-lite'))); ?></div>
-                <dl><dd class="mec-events-event-more-info"><a class="mec-more-info-button a mec-color-hover" target="<?php echo esc_attr($more_info_target); ?>" href="<?php echo esc_url($more_info); ?>"><?php echo esc_html($more_info_title); ?></a></dd></dl>
+                <dl><dd class="mec-events-event-more-info"><a class="mec-more-info-button a mec-color-hover" target="<?php echo esc_attr($more_info_target); ?>" href="<?php echo esc_url($more_info); ?>"<?php echo $a11y['attr']; ?>><?php echo esc_html($more_info_title); ?><?php echo $a11y['sr']; ?></a></dd></dl>
             </div>
             </div>
             <?php
@@ -1538,12 +1557,14 @@ class MEC_skin_single extends MEC_skins
             <?php
                 $more_info_target = MEC_feature_occurrences::param($event->ID, $event->date['start']['timestamp'], 'more_info_target', (isset($event->data->meta['mec_more_info_target']) ? $event->data->meta['mec_more_info_target'] : '_self'));
                 $more_info_title = MEC_feature_occurrences::param($event->ID, $event->date['start']['timestamp'], 'more_info_title', ((isset($event->data->meta['mec_more_info_title']) and trim($event->data->meta['mec_more_info_title'])) ? $event->data->meta['mec_more_info_title'] : esc_html__('Read More', 'modern-events-calendar-lite')));
+                $a11y = $this->main->get_more_info_link_accessibility($more_info, ($event->data->title ?? ''), $more_info_target);
             ?>
             <div class="mec-reg-btn mec-frontbox">
-                <a class="mec-booking-button mec-bg-color" target="<?php echo esc_attr($more_info_target); ?>" href="<?php echo esc_url($more_info); ?>">
+                <a class="mec-booking-button mec-bg-color" target="<?php echo esc_attr($more_info_target); ?>" href="<?php echo esc_url($more_info); ?>"<?php echo $a11y['attr']; ?>>
                     <?php
                         if($more_info_title) echo esc_html__($more_info_title, 'modern-events-calendar-lite');
                         else echo esc_html($this->main->m('register_button', esc_html__('REGISTER', 'modern-events-calendar-lite')));
+                        echo $a11y['sr'];
                     ?>
                 </a>
             </div>
@@ -2216,12 +2237,17 @@ class MEC_skin_single extends MEC_skins
 
         // Check if it's a midnight event
         $midnight_event = $this->main->is_midnight_event($event);
+
+        // Hidden Event Date
+        $hide_date = (isset($event->data->meta['mec_hide_date']) and $event->data->meta['mec_hide_date']) ? true : false;
         ?>
         <div class="mec-single-event-date">
             <?php echo $this->icons->display('calendar'); ?>
             <div class="mec-date"><?php esc_html_e('Date', 'modern-events-calendar-lite'); ?></div>
             <dl>
-            <?php if($midnight_event): ?>
+            <?php if($hide_date): ?>
+                <dd><abbr class="mec-events-abbr"><?php echo esc_html($this->main->get_tba_label()); ?></abbr></dd>
+            <?php elseif($midnight_event): ?>
                 <dd><abbr class="mec-events-abbr"><?php echo MEC_kses::element($this->main->dateify($event, $this->date_format1)); ?></abbr></dd>
             <?php else: ?>
                 <?php 
