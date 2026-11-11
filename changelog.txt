@@ -1,4 +1,9 @@
-﻿v 7.38.2 - 11 November 2026
+v 7.38.2.1 - 11nov26
+- fixed ical CREATED/LAST-MODIFIED format
+- added missing timezone display, reformat
+- fixed countdown
+
+v 7.38.2 - 11 November 2026
 - Added: Admin Dark Mode option in Appearance settings, separate from the front-end dark mode (the front-end option is now labeled Frontend Dark Mode).
 - Added: Code editor with syntax highlighting and line numbers to the Custom CSS settings tab, plus a settings search box.
 - Added: Add-on settings tabs now get the standard page header, shared settings layout and AJAX save, and appear in the settings search.
