@@ -11650,27 +11650,32 @@ class MEC_main extends MEC_base
     {
         if (!is_object($event)) return '';
 
-        $event_id = $event->ID;
-        if (isset($event->requested_id)) $event_id = $event->requested_id; // Requested Event in Multilingual Websites
+        $event_id = $event->requested_id  // Requested Event in Multilingual Websites
+                    ?? $event->ID;
 
-        $start_timestamp = (isset($event->data->time['start_timestamp']) ? $event->data->time['start_timestamp'] : (isset($event->date['start']['timestamp']) ? $event->date['start']['timestamp'] : strtotime($event->date['start']['date'])));
-
+        $start_timestamp = $event->data->time['start_timestamp'] 
+                           ??  ( $event->date['start']['timestamp'] 
+                                 ?? strtotime($event->date['start']['date']));
         // All Params
         $params = MEC_feature_occurrences::param($event_id, $start_timestamp, '*');
 
-        $event_status = (isset($event->data->meta['mec_event_status']) and trim($event->data->meta['mec_event_status'])) ? $event->data->meta['mec_event_status'] : 'EventScheduled';
-        $event_status = (isset($params['event_status']) and trim($params['event_status']) != '') ? $params['event_status'] : $event_status;
+        $event_status = $params['event_status'] 
+                        ?? ($event->data->meta['mec_event_status'] 
+                            ?? 'EventScheduled');
+        if ( $event_status ==  'EventScheduled' )
+            return '';
 
-        $reason = get_post_meta($event_id, 'mec_cancelled_reason', true);
-        $reason = (isset($params['cancelled_reason']) and trim($params['cancelled_reason']) != '') ? $params['cancelled_reason'] : $reason;
-
-        $output = '';
-        if (isset($event_status) and $event_status == 'EventCancelled' && $display_reason != false and isset($reason) and !empty($reason))
+        $output = '<div class="mec-cancellation-reason"><span>'
+                    . $event_status;
+        if ( $display_reason && $event_status == 'EventCancelled')
         {
-            $output = '<div class="mec-cancellation-reason"><span>' . MEC_kses::element($reason) . '</span></div>';
+            $reason = $params['cancelled_reason'] 
+                        ?? get_post_meta($event_id, 'mec_cancelled_reason', true);
+            if ( $reason)
+                $output .= MEC_kses::element(' due to ' . $reason);
         }
-
-        return $output;
+        return str_replace('Event', '', $output )
+                . '</span></div>';
     }
 
     public function standardize_format($date = '', $format = 'Y-m-d')

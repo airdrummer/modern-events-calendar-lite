@@ -1,3 +1,7 @@
+ 7.38.2.2 - 14nov26
+- fixed display_cancellation_reason: it now always displays SEO Schema / Event Status 
+		(other than Eventscheduled), and cancel reason if specified 
+
 v 7.38.2.1 - 11nov26
 - fixed ical CREATED/LAST-MODIFIED format
 - added missing timezone display, reformat

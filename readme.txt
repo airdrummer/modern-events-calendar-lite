@@ -3,9 +3,9 @@ Contributors: webnus
 Donate link: https://webnus.net
 Tags: Event, Events, Calendar, Booking, Schedule, Organizer, Venue
 Requires at least: 4.0.0
-Tested up to: 7.1
-Stable tag: 7.38.2.1
-Requires PHP: 5.6
+Tested up to: 8.5
+Stable tag: 7.38.2.2
+Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -472,6 +472,10 @@ You can see [plugin documentation](https://webnus.net/dox/modern-events-calendar
 43. WordPress Event Calendar - Daily view(Fluent View Layouts Addon)
 
 == Changelog ==
+
+= 7.38.2.2 - 14nov26
+- fixed display_cancellation_reason: it now always displays SEO Schema / Event Status 
+		(other than Eventscheduled), and cancel reason if specified 
 
 = 7.38.2.1 - 11nov26
 - fixed ical CREATED/LAST-MODIFIED format
